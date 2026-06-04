@@ -1,0 +1,10 @@
+export const RELEASES_URL = "https://ellenemasri.com/#stream";
+export const CONTACT_EMAIL = "contact@ellenemasri.com";
+export const INSTAGRAM_URL = "https://www.instagram.com/ellenemasri/";
+export const TIKTOK_URL = "https://www.tiktok.com/@ellenemasri";
+export const SPOTIFY_URL = "https://open.spotify.com/intl-fr/track/3rzrziofCOwRrI1r99IUbQ?si=a2cd3f4cbe364a94";
+export const APPLE_MUSIC_URL = "https://music.apple.com/fr/song/mayami-my-miami/6771742499";
+export const YOUTUBE_URL = "https://youtu.be/EH_QcQ92hSk?si=gpybhKJbZrDN1Ew5";
+export const DEEZER_URL = "https://www.deezer.com/track/4034160411";
+export const AMAZON_MUSIC_URL = "https://music.amazon.com/tracks/B0H2FR3WHQ?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_gPJPR79AtgfLS0EFarS9Xwi57";
+export const SOUNDCLOUD_URL = "https://soundcloud.com/ellenemasri";

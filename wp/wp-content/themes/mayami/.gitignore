@@ -1,0 +1,32 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build / dependencies (if local tooling is used in theme)
+node_modules/
+dist/
+coverage/
+
+# Local env or secrets
+.env
+.env.*
+
+# Archives and temporary files
+*.zip
+*.tmp
+*.bak
+
+# Local-only files
+php.ini
+assets/mayami-logo_old.png
+
+# Migration OVH - contient données sensibles (ZIP, SQL, credentials)
+migration-ovh/

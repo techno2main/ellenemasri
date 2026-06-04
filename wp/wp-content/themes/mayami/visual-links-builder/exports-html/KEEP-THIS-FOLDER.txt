@@ -1,0 +1,2 @@
+This folder is required by Visual Links Builder exports.
+Do not delete.
