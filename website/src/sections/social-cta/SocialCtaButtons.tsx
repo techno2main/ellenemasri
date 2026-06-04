@@ -23,8 +23,8 @@ function SocialCtaLink({ href, title, label, id, children }: { href: string; tit
   return (
     <a
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={isSocialIcon ? "_blank" : undefined}
+      rel={isSocialIcon ? "noopener noreferrer" : undefined}
       title={title}
       aria-label={label}
       className={`inline-flex items-center justify-center transition-colors [&_svg]:h-6 [&_svg]:w-6 ${
