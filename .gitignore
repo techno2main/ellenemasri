@@ -62,3 +62,7 @@ wp/wp-content/themes/mayami/php.ini
 wp/wp-content/themes/mayami/node_modules/
 wp/wp-content/themes/mayami/migration-ovh/*.zip
 wp/wp-content/themes/mayami/migration-ovh/
+
+# Deployment-only root files
+/.htaccess
+/index.php
