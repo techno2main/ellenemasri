@@ -26,85 +26,60 @@ $open_platform_icons_in_new_tab = false;
 
 
 
-if (is_array($marquee_items)) {
-
-    $marquee_items = array_values(array_filter($marquee_items, static function ($item) {
-
-        if (!is_array($item)) {
-
-            return false;
-
-        }
-
-
-
-        if (!empty($item['is_hidden'])) {
-
-            return false;
-
-        }
-
-
-
-        $label = strtolower(trim(remove_accents((string) ($item['label'] ?? ''))));
-
-
-
-        if ($label === 'icone plateformes' || $label === 'icones stream' || $label === 'afficher les icones') {
-
-            return false;
-
-        }
-
-
-
-        return !empty($item['label']) && !empty($item['href']);
-
-    }));
-
-} else {
+if (!is_array($marquee_items)) {
 
     $marquee_items = array();
 
 }
 
+$marquee_items = array_values(array_filter($marquee_items, 'is_array'));
 
+$sanitize_marquee_item = static function ($item) {
 
-$normalize_marquee_label = static function ($value) {
-    return strtolower(trim(remove_accents((string) $value)));
-};
+    if (!is_array($item)) {
 
-$find_marquee_item = static function (array $items, array $expected_labels) use ($normalize_marquee_label) {
-    $normalized_expected = array_map($normalize_marquee_label, $expected_labels);
+        return null;
 
-    foreach ($items as $item) {
-        if (!is_array($item)) {
-            continue;
-        }
-
-        $label = $normalize_marquee_label($item['label'] ?? '');
-        if (in_array($label, $normalized_expected, true)) {
-            return $item;
-        }
     }
 
-    return null;
+    if (!empty($item['is_hidden'])) {
+
+        return null;
+
+    }
+
+    $label = trim((string) ($item['label'] ?? ''));
+
+    $href = trim((string) ($item['href'] ?? ''));
+
+    $normalized = strtolower(trim(remove_accents($label)));
+
+    if ($normalized === 'icone plateformes' || $normalized === 'icones stream' || $normalized === 'afficher les icones') {
+
+        return null;
+
+    }
+
+    if ($label === '' || $href === '') {
+
+        return null;
+
+    }
+
+    $item['label'] = $label;
+
+    $item['href'] = $href;
+
+    return $item;
+
 };
 
-$desktop_left_item = $find_marquee_item($marquee_items, array('Baseline'));
-if ($desktop_left_item === null) {
-    $desktop_left_item = $marquee_items[1] ?? ($marquee_items[0] ?? null);
-}
+// Slots fixes TOP-BAR (0: Titre Single, 1: CTA central, 2: Baseline)
+$desktop_right_item = $sanitize_marquee_item($marquee_items[0] ?? null);
 
-$desktop_center_item = $find_marquee_item($marquee_items, array('CTA central'));
-if ($desktop_center_item === null) {
-    $desktop_center_item = $marquee_items[0] ?? ($marquee_items[1] ?? null);
-}
+$desktop_center_item = $sanitize_marquee_item($marquee_items[1] ?? null);
 
-$desktop_right_item = $find_marquee_item($marquee_items, array('Titre Single', 'Titre single'));
-if ($desktop_right_item === null) {
-    $desktop_right_item = $marquee_items[2] ?? null;
-}
+$desktop_left_item = $sanitize_marquee_item($marquee_items[2] ?? null);
 
 
 
