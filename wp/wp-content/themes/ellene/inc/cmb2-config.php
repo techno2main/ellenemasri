@@ -642,7 +642,7 @@ function mayami_register_options() {
 
         'menu_title'   => 'Mayami Landing Local',
 
-        'position'     => 2,
+        'position'     => 4,
 
     ));
 

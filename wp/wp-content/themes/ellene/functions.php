@@ -25,6 +25,7 @@ if (!defined('ABSPATH')) {
 // Include CMB2 Configuration
 
 require_once get_template_directory() . '/inc/cmb2-config.php';
+require_once get_template_directory() . '/inc/home-landing-config.php';
 
 require_once get_template_directory() . '/inc/visual-links.php';
 
@@ -143,6 +144,156 @@ function ellene_get_landing_admin_page_slug() {
 function ellene_get_landing_admin_hook_suffix() {
 
     return 'toplevel_page_' . ellene_get_landing_admin_page_slug();
+
+}
+
+
+
+/**
+
+ * Get the CMB2 option key used by the Home Landing admin page.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_home_landing_option_key() {
+
+    return 'ellene_home_landing_options';
+
+}
+
+
+
+/**
+
+ * Get the admin page slug for Home Landing settings.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_home_landing_admin_page_slug() {
+
+    return ellene_get_home_landing_option_key();
+
+}
+
+
+
+/**
+
+ * Get the WordPress admin hook suffix for Home Landing settings.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_home_landing_admin_hook_suffix() {
+
+    return 'toplevel_page_' . ellene_get_home_landing_admin_page_slug();
+
+}
+
+
+
+/**
+
+ * Build the admin URL for Home Landing settings.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_home_landing_admin_url() {
+
+    return admin_url('admin.php?page=' . ellene_get_home_landing_admin_page_slug());
+
+}
+
+
+
+/**
+
+ * Build the public URL used to reach Mayami Landing.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_mayami_landing_public_url() {
+
+    $default_url = home_url('/?landing=mayami');
+
+    return (string) apply_filters('ellene_mayami_landing_public_url', $default_url);
+
+}
+
+
+
+/**
+
+ * Check whether current front request targets the Mayami landing variant.
+
+ *
+
+ * @return bool
+
+ */
+
+function ellene_is_mayami_landing_request() {
+
+    if (!isset($_GET['landing'])) {
+
+        return false;
+
+    }
+
+
+
+    return sanitize_key(wp_unslash($_GET['landing'])) === 'mayami';
+
+}
+
+
+
+/**
+
+ * Get a Home Landing option value.
+
+ *
+
+ * @param string $field_id Option field id.
+
+ * @param mixed  $default  Default value.
+
+ * @return mixed
+
+ */
+
+function ellene_get_home_landing_option($field_id, $default = '') {
+
+    $options = get_option(ellene_get_home_landing_option_key(), array());
+
+    if (is_array($options) && array_key_exists($field_id, $options)) {
+
+        return $options[$field_id];
+
+    }
+
+
+
+    return $default;
 
 }
 
@@ -432,6 +583,52 @@ function mayami_enqueue_assets() {
 
 
 
+    if (is_front_page() && !ellene_is_mayami_landing_request()) {
+
+        wp_enqueue_style(
+
+            'ellene-home-fonts',
+
+            'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500;600&display=swap',
+
+            array(),
+
+            null
+
+        );
+
+        $home_landing_css_path = get_template_directory() . '/assets/home-landing.css';
+
+        $home_landing_overrides_css_path = get_template_directory() . '/assets/home-landing-overrides.css';
+
+        wp_enqueue_style(
+
+            'ellene-home-landing',
+
+            get_template_directory_uri() . '/assets/home-landing.css',
+
+            array('mayami-tailwind', 'ellene-home-fonts'),
+
+            file_exists($home_landing_css_path) ? (string) filemtime($home_landing_css_path) : '1.0.0'
+
+        );
+
+        wp_enqueue_style(
+
+            'ellene-home-landing-overrides',
+
+            get_template_directory_uri() . '/assets/home-landing-overrides.css',
+
+            array('ellene-home-landing'),
+
+            file_exists($home_landing_overrides_css_path) ? (string) filemtime($home_landing_overrides_css_path) : '1.0.0'
+
+        );
+
+    }
+
+
+
     $visual_links_css_path = get_template_directory() . '/assets/visual-links.css';
 
     wp_enqueue_style(
@@ -514,11 +711,13 @@ function mayami_enqueue_admin_assets($hook) {
 
     $is_landing_page = (ellene_get_landing_admin_hook_suffix() === $hook);
 
+    $is_home_landing_page = (ellene_get_home_landing_admin_hook_suffix() === $hook);
+
     $is_visual_links_page = (strpos((string) $hook, 'mayami_visual_links') !== false);
 
 
 
-    if (!$is_landing_page && !$is_visual_links_page) {
+    if (!$is_landing_page && !$is_home_landing_page && !$is_visual_links_page) {
 
         return;
 
@@ -534,7 +733,7 @@ function mayami_enqueue_admin_assets($hook) {
 
     // Keep existing landing admin assets behavior unchanged.
 
-    if (!$is_landing_page) {
+    if (!$is_landing_page && !$is_home_landing_page) {
 
         return;
 
@@ -633,6 +832,8 @@ function mayami_hide_wp_footer_text_on_landing($text) {
     if ($screen && (
 
         $screen->id === ellene_get_landing_admin_hook_suffix() ||
+
+        $screen->id === ellene_get_home_landing_admin_hook_suffix() ||
 
         strpos($screen->id, 'mayami_visual_links') !== false
 

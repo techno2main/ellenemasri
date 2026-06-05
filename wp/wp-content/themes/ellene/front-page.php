@@ -55,21 +55,28 @@ if (!defined('ABSPATH')) {
 
 
 <main class="relative overflow-x-clip">
-    <?php
-    if (function_exists('ellene_render_layout')) {
-        ellene_render_layout();
-    } else {
-        get_template_part('template-parts/sections/top-bar');
-        get_template_part('template-parts/sections/hero');
-        get_template_part('template-parts/sections/stream');
-        get_template_part('template-parts/sections/social');
-        get_template_part('template-parts/sections/video');
-        get_template_part('template-parts/sections/release-info');
-        get_template_part('template-parts/sections/cta');
-        get_template_part('template-parts/sections/footer-section');
-        get_template_part('template-parts/sections/sticky-bar');
-    }
-    ?>
+    <?php if (function_exists('ellene_is_mayami_landing_request') && ellene_is_mayami_landing_request()): ?>
+        <?php
+        if (function_exists('ellene_render_layout')) {
+            ellene_render_layout();
+        } else {
+            get_template_part('template-parts/sections/top-bar');
+            get_template_part('template-parts/sections/hero');
+            get_template_part('template-parts/sections/stream');
+            get_template_part('template-parts/sections/social');
+            get_template_part('template-parts/sections/video');
+            get_template_part('template-parts/sections/release-info');
+            get_template_part('template-parts/sections/cta');
+            get_template_part('template-parts/sections/footer-section');
+            get_template_part('template-parts/sections/sticky-bar');
+        }
+        ?>
+    <?php else: ?>
+        <?php get_template_part('template-parts/home/top-bar'); ?>
+        <?php get_template_part('template-parts/home/hero'); ?>
+        <?php get_template_part('template-parts/home/contact'); ?>
+        <?php get_template_part('template-parts/home/footer'); ?>
+    <?php endif; ?>
 
 </main>
 

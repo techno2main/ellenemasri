@@ -24,6 +24,8 @@
 
     'section_stream_shared_title',
 
+    'section_contact_title',
+
     'section_social_title',
 
     'section_video_title',
@@ -2194,6 +2196,10 @@
 
   function createStickyNav() {
 
+    const isHomeLandingPage = document.body && document.body.classList.contains('toplevel_page_ellene_home_landing_options');
+
+    const settingsTitle = isHomeLandingPage ? 'Home Landing Local Settings' : 'Mayami Landing Local Settings';
+
     const sections = [
 
       { id: 'section_modules_title', label: 'Modules' },
@@ -2207,6 +2213,8 @@
       { id: 'section_stream_title', label: 'Stream' },
 
       { id: 'section_stream_shared_title', label: '⧉' },
+
+      { id: 'section_contact_title', label: 'Contact' },
 
       { id: 'section_social_title', label: 'Social' },
 
@@ -2254,9 +2262,9 @@
 
     title.className = 'mayami-admin-home';
 
-    title.setAttribute('title', 'Mayami Landing Local Settings');
+    title.setAttribute('title', settingsTitle);
 
-    title.setAttribute('aria-label', 'Mayami Landing Local Settings');
+    title.setAttribute('aria-label', settingsTitle);
 
     title.innerHTML = '<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>';
 
