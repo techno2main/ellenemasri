@@ -632,7 +632,7 @@ function mayami_register_options() {
 
         'id'           => 'mayami_main_page',
 
-        'title'        => 'Mayami Landing Local Settings',
+        'title'        => 'Mayami Settings',
 
         'object_types' => array('options-page'),
 
@@ -640,7 +640,7 @@ function mayami_register_options() {
 
         'icon_url'     => 'dashicons-admin-site-alt3',
 
-        'menu_title'   => 'Mayami Landing Local',
+        'menu_title'   => 'Mayami Settings',
 
         'position'     => 4,
 
