@@ -2198,7 +2198,7 @@
 
     const isHomeLandingPage = document.body && document.body.classList.contains('toplevel_page_ellene_home_landing_options');
 
-    const settingsTitle = isHomeLandingPage ? 'Home Landing Local Settings' : 'Mayami Landing Local Settings';
+    const settingsTitle = isHomeLandingPage ? 'Home Settings' : 'Mayami Settings';
 
     const sections = [
 
