@@ -42,6 +42,78 @@ require_once get_template_directory() . '/inc/modules/shared-sections.php';
 
 /**
 
+ * Get the technical owner login used for unrestricted admin access.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_owner_admin_login() {
+
+    return (string) apply_filters('ellene_owner_admin_login', 'admin-my');
+
+}
+
+
+
+/**
+
+ * Check whether the provided user is the technical owner account.
+
+ *
+
+ * @param WP_User|null $user User to test. Falls back to current user.
+
+ * @return bool
+
+ */
+
+function ellene_is_owner_admin_user($user = null) {
+
+    if (!$user) {
+
+        $user = wp_get_current_user();
+
+    }
+
+
+
+    if (!$user || empty($user->user_login)) {
+
+        return false;
+
+    }
+
+
+
+    return $user->user_login === ellene_get_owner_admin_login();
+
+}
+
+
+
+/**
+
+ * Build the admin URL for the landing settings screen.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_landing_admin_url() {
+
+    return admin_url('admin.php?page=mayami_landing_options');
+
+}
+
+
+
+/**
+
  * Get a landing option value from the active key, with legacy key compatibility.
 
  *
@@ -492,7 +564,7 @@ function mayami_media_modal_edit_button() {
 
     $current_user = wp_get_current_user();
 
-    if ($current_user && $current_user->user_login === 'admin-my') {
+    if (ellene_is_owner_admin_user($current_user)) {
 
         return;
 
@@ -524,7 +596,7 @@ function mayami_media_modal_edit_button() {
 
             btn.className = 'button button-primary mayami-edit-btn';
 
-            btn.textContent = '💾 Modifier / Enregistrer';
+            btn.textContent = '💾 Modifier / Save';
 
             btn.style.cssText = 'display:block;text-align:center;margin:12px 0 4px;width:100%;box-sizing:border-box;';
 
@@ -592,7 +664,7 @@ function mayami_limit_admin_menu_for_client() {
 
     // Keep full menu for owner account.
 
-    if ($current_user->user_login === 'admin-my') {
+    if (ellene_is_owner_admin_user($current_user)) {
 
         return;
 
@@ -694,7 +766,7 @@ function mayami_client_login_redirect($redirect_to, $requested_redirect_to, $use
 
 
 
-    if ($user->user_login === 'admin-my') {
+    if (ellene_is_owner_admin_user($user)) {
 
         return $redirect_to;
 
@@ -702,7 +774,7 @@ function mayami_client_login_redirect($redirect_to, $requested_redirect_to, $use
 
 
 
-    return admin_url('admin.php?page=mayami_landing_options');
+    return ellene_get_landing_admin_url();
 
 }
 
@@ -744,7 +816,7 @@ function mayami_limit_admin_bar_for_client($wp_admin_bar) {
 
 
 
-    if ($current_user->user_login === 'admin-my') {
+    if (ellene_is_owner_admin_user($current_user)) {
 
         return;
 
@@ -838,7 +910,7 @@ function mayami_redirect_admin_bar_edit_to_landing($wp_admin_bar) {
 
 
 
-    if ($current_user->user_login === 'admin-my') {
+    if (ellene_is_owner_admin_user($current_user)) {
 
         return;
 
@@ -856,7 +928,7 @@ function mayami_redirect_admin_bar_edit_to_landing($wp_admin_bar) {
 
 
 
-    $edit_node->href = admin_url('admin.php?page=mayami_landing_options');
+    $edit_node->href = ellene_get_landing_admin_url();
 
     $wp_admin_bar->add_node($edit_node);
 
@@ -2910,7 +2982,7 @@ function mayami_register_statistics_page() {
 
     $current_user = wp_get_current_user();
 
-    if (!$current_user || $current_user->user_login !== 'admin-my') {
+    if (!ellene_is_owner_admin_user($current_user)) {
 
         return;
 
@@ -2944,7 +3016,7 @@ function mayami_statistics_page() {
 
     $current_user = wp_get_current_user();
 
-    if (!$current_user || $current_user->user_login !== 'admin-my') {
+    if (!ellene_is_owner_admin_user($current_user)) {
 
         wp_die(esc_html__('You are not allowed to access this page.', 'ellene'), 403);
 

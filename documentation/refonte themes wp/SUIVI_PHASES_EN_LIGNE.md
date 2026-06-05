@@ -43,3 +43,10 @@ Statut: actif
 
 ## Prochaine action
 - Continuer la phase en cours côté admin métier: stabilisation UX CMB2 (navbar/accordéons/groupes) puis reprise de la structuration des écrans/menus cibles.
+
+## Avancement phase suivante (2026-06-05)
+- Lot 1 livré (socle architecture admin métier, non destructif):
+  - centralisation du login propriétaire technique via helper `ellene_get_owner_admin_login()`
+  - centralisation des contrôles d'accès propriétaire via `ellene_is_owner_admin_user(...)`
+  - centralisation de l'URL d'accès Landing via `ellene_get_landing_admin_url()`
+  - remplacement des occurrences hardcodées dans login redirect, menu admin limité, admin bar et page Statistics

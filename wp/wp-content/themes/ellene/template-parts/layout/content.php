@@ -22,7 +22,6 @@ $modules = apply_filters(
         'social',
         'video',
         'release-info',
-        'visual-links',
         'cta',
     )
 );

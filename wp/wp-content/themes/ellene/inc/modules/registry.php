@@ -41,12 +41,6 @@ function ellene_get_module_registry() {
             'default_enabled' => true,
             'supports_shared' => false,
         ),
-        'visual-links' => array(
-            'label' => __('Visual Links', 'ellene'),
-            'template' => 'template-parts/sections/visual-links',
-            'default_enabled' => true,
-            'supports_shared' => false,
-        ),
         'cta' => array(
             'label' => __('CTA', 'ellene'),
             'template' => 'template-parts/sections/cta',

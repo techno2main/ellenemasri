@@ -132,7 +132,7 @@ function mayami_sticky_save_button() {
 
                     if ($navbar.length) {
 
-                        var $saveButton = $('<button type="button" id="mayami-save-button-sticky">💾 Enregistrer</button>');
+                        var $saveButton = $('<button type="button" id="mayami-save-button-sticky">💾 Save</button>');
 
                         
 
@@ -672,6 +672,12 @@ function mayami_register_options() {
 
         'options' => array(
 
+            'top-bar'      => 'Top-Bar',
+
+            'header'       => 'Header',
+
+            'hero'         => 'Hero',
+
             'stream'       => 'Stream',
 
             'social'       => 'Social',
@@ -680,13 +686,15 @@ function mayami_register_options() {
 
             'release-info' => 'Release Info',
 
-            'visual-links' => 'Visual Links',
-
             'cta'          => 'CTA',
+
+            'footer'       => 'Footer',
 
         ),
 
-        'desc' => 'Sélection des modules affichés dans la zone content.',
+        'default' => array('top-bar', 'header', 'hero', 'stream', 'social', 'video', 'release-info', 'cta', 'footer'),
+
+        'desc' => 'Coche/décoche les blocs du front (Top-Bar, Header, Hero, sections content, Footer).',
 
     ));
 
@@ -700,7 +708,17 @@ function mayami_register_options() {
 
         'type' => 'text',
 
-        'desc' => 'Ordre explicite en slugs séparés par virgule. Exemple : stream,social,video,release-info,visual-links,cta',
+        'desc' => 'Ordre des modules (assistant visuel disponible sous le champ). Glissez les modules actifs, le champ se met à jour automatiquement.',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'id'   => 'modules_slots_migrated',
+
+        'type' => 'hidden',
 
     ));
 

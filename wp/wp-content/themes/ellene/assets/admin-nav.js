@@ -146,6 +146,8 @@
 
     layoutInlineFieldToggles();
 
+    initModulesOrderAssistant();
+
     bindRepeatableGroupAccordionEvents();
 
     bindTopBarVisualEvents();
@@ -2350,6 +2352,8 @@
 
         btn.className += ' mayami-nav-btn--shared';
 
+        btn.innerHTML = '<span class="mayami-nav-icon-deezer" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>';
+
         btn.setAttribute('title', 'Stream partage');
 
         btn.setAttribute('aria-label', 'Stream partage');
@@ -2390,7 +2394,7 @@
 
     
 
-    // Bouton Enregistrer à droite
+    // Bouton Save à droite
 
     const saveButton = document.createElement('button');
 
@@ -2398,7 +2402,7 @@
 
     saveButton.className = 'mayami-save-btn';
 
-    saveButton.innerHTML = '💾 Enregistrer';
+    saveButton.innerHTML = '💾 Save';
 
     saveButton.style.cssText = 'background: #fff; color: #6b21a8; border: 2px solid #fff; padding: 8px 20px; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; margin-left: auto; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s;';
 
@@ -2572,6 +2576,581 @@
 
 
 
+  function getModuleLabelFromSlug(slug) {
+
+    const labels = {
+
+      'top-bar': 'Top-Bar',
+
+      'header': 'Header',
+
+      'hero': 'Hero',
+
+      'stream': 'Stream',
+
+      'social': 'Social',
+
+      'video': 'Video',
+
+      'release-info': 'Release Info',
+
+      'cta': 'CTA',
+
+      'footer': 'Footer'
+
+    };
+
+
+
+    return labels[slug] || slug;
+
+  }
+
+
+
+  function isOrderableContentModuleSlug(slug) {
+
+    return ['stream', 'social', 'video', 'release-info', 'cta'].indexOf(slug) !== -1;
+
+  }
+
+
+
+  function parseModulesOrderValue(value) {
+
+    const seen = {};
+
+    return String(value || '')
+
+      .split(',')
+
+      .map(function(item) {
+
+        return item.trim();
+
+      })
+
+      .filter(function(item) {
+
+        if (!item || seen[item]) {
+
+          return false;
+
+        }
+
+        seen[item] = true;
+
+        return true;
+
+      });
+
+  }
+
+
+
+  function getEnabledModuleSlugs() {
+
+    const checkboxes = document.querySelectorAll('.cmb2-id-modules-enabled input[type="checkbox"]');
+
+    const enabled = [];
+
+
+
+    checkboxes.forEach(function(checkbox) {
+
+      if (!checkbox.checked) {
+
+        return;
+
+      }
+
+
+
+      const slug = String(checkbox.value || '').trim();
+
+      if (!slug || !isOrderableContentModuleSlug(slug) || enabled.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      enabled.push(slug);
+
+    });
+
+
+
+    return enabled;
+
+  }
+
+
+
+  function buildEffectiveModulesOrder(enabledSlugs, currentOrder) {
+
+    const effective = [];
+
+
+
+    currentOrder.forEach(function(slug) {
+
+      if (enabledSlugs.indexOf(slug) === -1 || effective.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      effective.push(slug);
+
+    });
+
+
+
+    enabledSlugs.forEach(function(slug) {
+
+      if (effective.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      effective.push(slug);
+
+    });
+
+
+
+    return effective;
+
+  }
+
+
+
+  function initModulesOrderAssistant() {
+
+    const row = document.querySelector('.cmb2-id-modules-order');
+
+    if (!row) {
+
+      return;
+
+    }
+
+
+
+    const input = row.querySelector('input[type="text"]');
+
+    const td = row.querySelector('.cmb-td');
+
+    if (!input || !td) {
+
+      return;
+
+    }
+
+
+
+    input.placeholder = 'stream,social,video,release-info,cta';
+
+
+
+    let helper = row.querySelector('.mayami-modules-order-helper');
+
+    if (!helper) {
+
+      helper = document.createElement('div');
+
+      helper.className = 'mayami-modules-order-helper';
+
+      helper.innerHTML = '' +
+
+        '<div class="mayami-modules-order-actions">' +
+
+        '  <button type="button" class="mayami-order-reset-btn">Auto depuis modules actifs</button>' +
+
+        '</div>' +
+
+        '<div class="mayami-modules-order-note">Glissez les modules content pour définir l\'ordre. Le champ texte est mis à jour automatiquement.</div>' +
+
+        '<div class="mayami-modules-order-chips"></div>';
+
+      td.appendChild(helper);
+
+    }
+
+
+
+    const chipsHost = helper.querySelector('.mayami-modules-order-chips');
+
+    const resetBtn = helper.querySelector('.mayami-order-reset-btn');
+
+    let draggingSlug = '';
+
+
+
+    const syncOrder = function(preferredOrder) {
+
+      const enabled = getEnabledModuleSlugs();
+
+      const orderSource = Array.isArray(preferredOrder)
+
+        ? preferredOrder
+
+        : parseModulesOrderValue(input.value);
+
+      const effectiveOrder = buildEffectiveModulesOrder(enabled, orderSource);
+
+
+
+      input.value = effectiveOrder.join(',');
+
+      chipsHost.innerHTML = '';
+
+
+
+      if (!effectiveOrder.length) {
+
+        const empty = document.createElement('div');
+
+        empty.className = 'mayami-modules-order-empty';
+
+        empty.textContent = 'Active au moins un module content pour définir un ordre.';
+
+        chipsHost.appendChild(empty);
+
+        return;
+
+      }
+
+
+
+      effectiveOrder.forEach(function(slug) {
+
+        const chip = document.createElement('button');
+
+        chip.type = 'button';
+
+        chip.className = 'mayami-modules-order-chip';
+
+        chip.draggable = true;
+
+        chip.dataset.slug = slug;
+
+        chip.textContent = getModuleLabelFromSlug(slug);
+
+
+
+        chip.addEventListener('dragstart', function() {
+
+          draggingSlug = slug;
+
+          chip.classList.add('is-dragging');
+
+        });
+
+
+
+        chip.addEventListener('dragend', function() {
+
+          draggingSlug = '';
+
+          chip.classList.remove('is-dragging');
+
+        });
+
+
+
+        chip.addEventListener('dragover', function(event) {
+
+          event.preventDefault();
+
+          chip.classList.add('is-drop-target');
+
+        });
+
+
+
+        chip.addEventListener('dragleave', function() {
+
+          chip.classList.remove('is-drop-target');
+
+        });
+
+
+
+        chip.addEventListener('drop', function(event) {
+
+          event.preventDefault();
+
+          chip.classList.remove('is-drop-target');
+
+
+
+          if (!draggingSlug || draggingSlug === slug) {
+
+            return;
+
+          }
+
+
+
+          const current = parseModulesOrderValue(input.value);
+
+          const fromIndex = current.indexOf(draggingSlug);
+
+          const toIndex = current.indexOf(slug);
+
+
+
+          if (fromIndex === -1 || toIndex === -1) {
+
+            return;
+
+          }
+
+
+
+          const moved = current.splice(fromIndex, 1)[0];
+
+          current.splice(toIndex, 0, moved);
+
+          syncOrder(current);
+
+        });
+
+
+
+        chipsHost.appendChild(chip);
+
+      });
+
+    };
+
+
+
+    if (resetBtn && resetBtn.dataset.mayamiBound !== '1') {
+
+      resetBtn.dataset.mayamiBound = '1';
+
+      resetBtn.addEventListener('click', function() {
+
+        syncOrder(getEnabledModuleSlugs());
+
+      });
+
+    }
+
+
+
+    if (input.dataset.mayamiOrderAssistantBound !== '1') {
+
+      input.dataset.mayamiOrderAssistantBound = '1';
+
+      input.addEventListener('change', function() {
+
+        syncOrder();
+
+      });
+
+    }
+
+
+
+    if (document.body.dataset.mayamiModulesEnabledBound !== '1') {
+
+      document.body.dataset.mayamiModulesEnabledBound = '1';
+
+
+
+      document.addEventListener('change', function(event) {
+
+        if (!event.target || !event.target.matches('.cmb2-id-modules-enabled input[type="checkbox"]')) {
+
+          return;
+
+        }
+
+        syncOrder();
+
+      });
+
+
+
+      document.addEventListener('click', function(event) {
+
+        if (!event.target || !event.target.closest('.cmb2-id-modules-enabled .button')) {
+
+          return;
+
+        }
+
+        window.setTimeout(function() {
+
+          syncOrder();
+
+        }, 0);
+
+      });
+
+    }
+
+
+
+    syncOrder();
+
+  }
+
+
+
+  function setSectionVisibility(sectionId, isVisible) {
+
+    const titleEl = getSectionTitleElement(sectionId);
+
+    const rows = getSectionContentRows(sectionId);
+
+    const isOpen = !!(titleEl && titleEl.classList.contains('mayami-section-open'));
+
+
+
+    if (titleEl) {
+
+      titleEl.style.display = isVisible ? '' : 'none';
+
+    }
+
+
+
+    rows.forEach(function(row) {
+
+      if (!isVisible) {
+
+        row.style.display = 'none';
+
+        return;
+
+      }
+
+
+
+      row.style.display = isOpen ? '' : 'none';
+
+    });
+
+
+
+    const navBtn = document.querySelector('.mayami-nav-btn[data-section="' + sectionId + '"]');
+
+    if (navBtn) {
+
+      navBtn.style.display = isVisible ? '' : 'none';
+
+    }
+
+  }
+
+
+
+  function syncSharedStreamSourceVisibility() {
+
+    const sharedToggle = getSharedStreamEnabledCheckbox();
+
+    if (!sharedToggle) {
+
+      return;
+
+    }
+
+
+
+    const sharedActive = !!sharedToggle.checked;
+
+    document.body.classList.toggle('mayami-stream-shared-active', sharedActive);
+
+
+
+    // Keep one editing source visible at a time to avoid confusion.
+    setSectionVisibility('section_stream_title', !sharedActive);
+
+    setSectionVisibility('section_stream_shared_title', sharedActive);
+
+
+
+    if (sharedActive) {
+
+      closeSection('section_stream_title');
+
+      openSection('section_stream_shared_title');
+
+      setActiveButtonBySection('section_stream_shared_title');
+
+      return;
+
+    }
+
+
+
+  closeSection('section_stream_shared_title');
+
+    openSection('section_stream_title');
+
+    setActiveButtonBySection('section_stream_title');
+
+  }
+
+
+
+  function bindSharedStreamSourceVisibility() {
+
+    const sharedToggle = getSharedStreamEnabledCheckbox();
+
+    if (!sharedToggle || sharedToggle.dataset.mayamiSharedSourceBound === '1') {
+
+      return;
+
+    }
+
+
+
+    sharedToggle.dataset.mayamiSharedSourceBound = '1';
+
+
+
+    const triggerSync = function() {
+
+      window.setTimeout(function() {
+
+        syncSharedStreamSourceVisibility();
+
+      }, 0);
+
+    };
+
+
+
+    sharedToggle.addEventListener('change', triggerSync);
+
+    sharedToggle.addEventListener('click', triggerSync);
+
+    document.addEventListener('change', function(event) {
+
+      if (event.target === sharedToggle || (event.target && event.target.matches('.cmb2-id-shared-stream-enabled input[type="checkbox"]'))) {
+
+        triggerSync();
+
+      }
+
+    });
+
+  }
+
+
+
   function styleBottomSaveButtons() {
 
     const selectors = [
@@ -2628,11 +3207,11 @@
 
       if (btn.tagName === 'INPUT') {
 
-        btn.value = '💾 Enregistrer';
+        btn.value = '💾 Save';
 
       } else {
 
-        btn.textContent = '💾 Enregistrer';
+        btn.textContent = '💾 Save';
 
       }
 
@@ -2812,7 +3391,11 @@
 
     const titleEl = getSectionTitleElement(sectionId);
 
-    if (!titleEl) return [];
+    if (!titleEl) {
+
+      return [];
+
+    }
 
 
 

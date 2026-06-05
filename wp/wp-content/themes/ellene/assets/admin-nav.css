@@ -100,6 +100,8 @@
 
   border-color: #60a5fa;
 
+  color: #fff !important;
+
   box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.35);
 
 }
@@ -146,10 +148,6 @@
 
   padding-right: 0;
 
-  background: rgba(251, 146, 60, 0.24);
-
-  border-color: rgba(251, 146, 60, 0.45);
-
 }
 
 .mayami-nav-btn--shared.active {
@@ -163,6 +161,42 @@
   box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25);
 
 }
+
+.mayami-nav-icon-deezer {
+
+  display: inline-flex;
+
+  align-items: flex-end;
+
+  justify-content: center;
+
+  gap: 2px;
+
+  height: 12px;
+
+}
+
+.mayami-nav-icon-deezer i {
+
+  display: block;
+
+  width: 2px;
+
+  background: currentColor;
+
+  border-radius: 1px;
+
+}
+
+.mayami-nav-icon-deezer i:nth-child(1) { height: 4px; }
+
+.mayami-nav-icon-deezer i:nth-child(2) { height: 7px; }
+
+.mayami-nav-icon-deezer i:nth-child(3) { height: 10px; }
+
+.mayami-nav-icon-deezer i:nth-child(4) { height: 7px; }
+
+.mayami-nav-icon-deezer i:nth-child(5) { height: 4px; }
 
 
 
@@ -185,6 +219,128 @@
   border-color: #13f7bc;
 
   box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.2);
+
+}
+
+.mayami-nav-btn.mayami-nav-btn--modules.active {
+
+  background: #1d4ed8;
+
+  border-color: #60a5fa;
+
+  color: #fff !important;
+
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.35);
+
+}
+
+.mayami-nav-btn.mayami-nav-btn--shared.active {
+
+  background: #fb923c;
+
+  border-color: #fdba74;
+
+  color: #2a1300 !important;
+
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25);
+
+}
+
+.mayami-modules-order-helper {
+
+  margin-top: 10px;
+
+}
+
+.mayami-modules-order-actions {
+
+  margin-bottom: 8px;
+
+}
+
+.mayami-order-reset-btn {
+
+  background: #fff;
+
+  border: 1px solid #d0d7de;
+
+  border-radius: 5px;
+
+  padding: 5px 10px;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+}
+
+.mayami-order-reset-btn:hover {
+
+  background: #f6f8fa;
+
+}
+
+.mayami-modules-order-note {
+
+  font-size: 12px;
+
+  color: #4b5563;
+
+  margin-bottom: 8px;
+
+}
+
+.mayami-modules-order-chips {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+}
+
+.mayami-modules-order-chip {
+
+  border: 1px solid #cbd5e1;
+
+  background: #fff;
+
+  color: #0f172a;
+
+  border-radius: 999px;
+
+  padding: 4px 10px;
+
+  font-size: 12px;
+
+  font-weight: 600;
+
+  cursor: grab;
+
+}
+
+.mayami-modules-order-chip.is-dragging {
+
+  opacity: 0.55;
+
+}
+
+.mayami-modules-order-chip.is-drop-target {
+
+  border-color: #1d4ed8;
+
+  box-shadow: 0 0 0 2px rgba(29, 78, 216, 0.15);
+
+}
+
+.mayami-modules-order-empty {
+
+  font-size: 12px;
+
+  color: #6b7280;
+
+  font-style: italic;
 
 }
 

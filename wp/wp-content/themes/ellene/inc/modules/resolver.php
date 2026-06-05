@@ -37,6 +37,24 @@ function ellene_normalize_module_slug_list($value) {
 }
 
 /**
+ * Return default enabled toggle slugs for layout + content modules.
+ *
+ * @param array<string, array<string, mixed>> $registry Registry.
+ * @return string[]
+ */
+function ellene_get_default_enabled_toggle_slugs($registry) {
+    $defaults = array('top-bar', 'header', 'hero', 'footer');
+
+    foreach ($registry as $slug => $config) {
+        if (!empty($config['default_enabled'])) {
+            $defaults[] = sanitize_key((string) $slug);
+        }
+    }
+
+    return array_values(array_unique($defaults));
+}
+
+/**
  * Resolve enabled modules from options with sane defaults.
  *
  * @param array<string, array<string, mixed>> $registry Registry.
@@ -45,12 +63,26 @@ function ellene_normalize_module_slug_list($value) {
 function ellene_get_enabled_modules($registry) {
     $raw_enabled = mayami_get_landing_option('modules_enabled', array());
     $enabled = ellene_normalize_module_slug_list($raw_enabled);
+    $default_enabled = ellene_get_default_enabled_toggle_slugs($registry);
 
     if (empty($enabled)) {
-        foreach ($registry as $slug => $config) {
-            if (!empty($config['default_enabled'])) {
-                $enabled[] = sanitize_key((string) $slug);
-            }
+        return $default_enabled;
+    }
+
+    // Legacy migration: when layout slot toggles did not exist yet,
+    // keep them enabled by default once to avoid surprise disappearance.
+    $layout_slots = array('top-bar', 'header', 'hero', 'footer');
+    $has_layout_slot = !empty(array_intersect($enabled, $layout_slots));
+    $migrated = (string) mayami_get_landing_option('modules_slots_migrated', '') === '1';
+
+    if (!$migrated && !$has_layout_slot) {
+        $enabled = array_values(array_unique(array_merge($layout_slots, $enabled)));
+
+        $options = get_option('mayami_landing_options', array());
+        if (is_array($options)) {
+            $options['modules_enabled'] = $enabled;
+            $options['modules_slots_migrated'] = '1';
+            update_option('mayami_landing_options', $options, false);
         }
     }
 

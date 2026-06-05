@@ -65,7 +65,6 @@ if (!defined('ABSPATH')) {
         get_template_part('template-parts/sections/social');
         get_template_part('template-parts/sections/video');
         get_template_part('template-parts/sections/release-info');
-        get_template_part('template-parts/sections/visual-links');
         get_template_part('template-parts/sections/cta');
         get_template_part('template-parts/sections/footer-section');
         get_template_part('template-parts/sections/sticky-bar');

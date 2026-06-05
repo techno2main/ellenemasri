@@ -58,7 +58,7 @@ function mayami_register_options_page() {
 
         'menu_title'   => 'Mayami Landing Local',
 
-        'save_button'  => 'Enregistrer',
+        'save_button'  => 'Save',
 
     ]);
 
