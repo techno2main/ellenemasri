@@ -54,14 +54,69 @@ Statut: actif
   - livrable attendu de fin de phase:
     - admin métier stable, lisible, testable, avec règles d'accès centralisées et sans régression UX critique
 
+- Phase 6: à lancer (Home Landing + Mayami Landing séparés)
+  - objectif: ajouter une entrée admin `Home Landing` distincte de `Mayami Landing`, avec le même template d'édition mais des données isolées
+  - résultat attendu:
+    - menu admin avec `Home Landing` au-dessus de `Mayami Landing`
+    - `Home Landing` géré via son propre jeu d'options (aucun mélange avec Mayami)
+    - modules Home par défaut: Top-Bar, Header, Hero, Footer
+    - modules Home supplémentaires: Contact, Releases
+    - module `Releases` Home: premier item relié à `Mayami Landing`
+  - plan étape par étape:
+    - Étape 1: créer l'option key Home dédiée (ex: `ellene_home_landing_options`) + helpers centralisés (slug, hook, URL)
+    - Étape 2: enregistrer une nouvelle page CMB2 `Home Landing` en réutilisant la structure admin (navbar sticky/accordéons)
+    - Étape 3: conserver `Mayami Landing` comme page distincte, sans changer ses données actuelles
+    - Étape 4: configurer les modules actifs par défaut de Home: Top-Bar, Header, Hero, Footer
+    - Étape 5: ajouter les sections/modules Home `Contact` et `Releases` dans la config CMB2 Home
+    - Étape 6: initialiser `Releases` Home avec un premier item pointant vers `Mayami Landing`
+    - Étape 7: brancher le rendu front Home sur les données Home (sans impacter le rendu Mayami)
+    - Étape 8: valider le parcours admin complet (Save, reload, navigation) sur les deux pages séparées
+  - contraintes phase 6:
+    - aucune modification WordPress core
+    - pas de migration destructive des options Mayami existantes
+    - compatibilité maintenue pendant toute la bascule
+  - spécification contenu Home Landing (source: dossier website):
+    - Module Top-Bar (front + admin):
+      - logo à gauche
+      - icônes stream
+      - icônes sociaux
+      - CTA `Releases` (lien vers Mayami Landing)
+    - Module Hero (front + admin):
+      - slider
+      - slide 1 avec contenu découpé en items séparés
+      - slide 2 avec contenu découpé en items séparés
+    - Module Contact (front + admin):
+      - libellé + phrase `Get in touch`
+      - intro (`The full website is being shaped...`)
+      - email
+      - liens stream
+      - liens sociaux
+    - Module Footer (front + admin):
+      - copyright à gauche
+      - URL au centre
+      - CTA à droite (`Releases` vers Mayami Landing)
+
 ## Liens docs de référence
 - PA principal: documentation/refonte themes wp/PA_RESTRUCTURATION_ELLENE_MAYAMI.md
 - Inventaire Phase 2: documentation/refonte themes wp/INVENTAIRE_PHASE2_MAYAMI.md
 
 ## Phase active
-- Phase active: clôture Phase 5
+- Phase active: préparation Phase 6
 - Prochain lot immédiat:
-  - aucun (Phase 5 finalisée)
+  - valider en UI la nouvelle page admin `Home Landing Local` (CMB2 distinct)
+  - vérifier le rendu navbar/accordéons identique à Mayami sur `Home Landing Local`
+  - enchaîner sur l'Étape 7 (rendu front Home branché sur les données Home)
+
+## Avancement Phase 6 (2026-06-05)
+- Lot 1 en cours (socle admin Home Landing):
+  - ajout des helpers dédiés Home (`option_key`, `slug`, `hook`, `url`) dans `functions.php`
+  - ajout du getter dédié `ellene_get_home_landing_option(...)`
+  - création d'une page CMB2 distincte `Home Landing Local` avec option key `ellene_home_landing_options`
+  - ajout de l'initialisation par défaut Home (modules actifs + premier item Releases vers Mayami)
+  - chargement des assets admin partagés (navbar/accordéons) sur Home Landing + Mayami
+  - extension de la navbar sticky admin pour supporter la section `Contact`
+  - ajustement des positions menu CMB2 pour garder `Tableau de bord` au-dessus
+  - thème visuel Home Landing sur la navbar admin: fond marron + onglets actifs beige
 
 ## Avancement Phase 5 (2026-06-05)
 - Lot 1 livré (socle architecture admin métier, non destructif):
