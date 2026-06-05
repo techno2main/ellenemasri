@@ -12,6 +12,8 @@
 
   const SECTION_IDS = [
 
+    'section_modules_title',
+
     'section_marquee_title',
 
     'section_hero_title',
@@ -19,6 +21,8 @@
     'section_slider_title',
 
     'section_stream_title',
+
+    'section_stream_shared_title',
 
     'section_social_title',
 
@@ -116,11 +120,15 @@
 
     syncStreamPlatformTitles();
 
+    syncSharedStreamPlatformTitles();
+
     syncReleaseRowTitles();
 
     bindSliderNameEvents();
 
     bindStreamPlatformNameEvents();
+
+    bindSharedStreamPlatformNameEvents();
 
     bindReleaseRowNameEvents();
 
@@ -672,6 +680,10 @@
 
           syncStreamPlatformTitles();
 
+          collapseSharedStreamPlatformItemsByDefault();
+
+          syncSharedStreamPlatformTitles();
+
           collapseReleaseRowsByDefault();
 
           syncReleaseRowTitles();
@@ -995,6 +1007,116 @@
       closeSliderGroup(group);
 
       group.dataset.mayamiStreamPlatformInit = '1';
+
+    });
+
+  }
+
+
+
+  function getDefaultSharedStreamPlatformTitle(index) {
+
+    return 'Plateforme partagee ' + (index + 1);
+
+  }
+
+
+
+  function syncSharedStreamPlatformTitles() {
+
+    const groups = document.querySelectorAll('.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping');
+
+    if (!groups.length) {
+
+      return;
+
+    }
+
+
+
+    groups.forEach(function(group, index) {
+
+      const labelInput = group.querySelector('input[name*="[label]"]');
+
+      if (!labelInput) {
+
+        return;
+
+      }
+
+
+
+      const fallbackTitle = getDefaultSharedStreamPlatformTitle(index);
+
+      const value = String(labelInput.value || '').trim();
+
+      setStreamPlatformTitle(group, value || fallbackTitle);
+
+    });
+
+  }
+
+
+
+  function bindSharedStreamPlatformNameEvents() {
+
+    if (document.body.dataset.mayamiSharedStreamPlatformNameBound === '1') {
+
+      return;
+
+    }
+
+
+
+    document.body.dataset.mayamiSharedStreamPlatformNameBound = '1';
+
+
+
+    const syncFromInput = function(target) {
+
+      if (!target || !target.matches('.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping input[name*="[label]"]')) {
+
+        return;
+
+      }
+
+
+
+      const group = target.closest('.cmb-repeatable-grouping');
+
+      if (!group) {
+
+        return;
+
+      }
+
+
+
+      const groups = Array.from(document.querySelectorAll('.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping'));
+
+      const index = Math.max(groups.indexOf(group), 0);
+
+      const fallbackTitle = getDefaultSharedStreamPlatformTitle(index);
+
+      const value = String(target.value || '').trim();
+
+      setStreamPlatformTitle(group, value || fallbackTitle);
+
+    };
+
+
+
+    document.addEventListener('input', function(event) {
+
+      syncFromInput(event.target);
+
+    });
+
+
+
+    document.addEventListener('change', function(event) {
+
+      syncFromInput(event.target);
 
     });
 
@@ -2068,6 +2190,8 @@
 
     const sections = [
 
+      { id: 'section_modules_title', label: 'Modules' },
+
       { id: 'section_marquee_title', label: 'TOP-BAR' },
 
       { id: 'section_hero_title', label: 'Hero' },
@@ -2075,6 +2199,8 @@
       { id: 'section_slider_title', label: 'Slider' },
 
       { id: 'section_stream_title', label: 'Stream' },
+
+      { id: 'section_stream_shared_title', label: '⧉' },
 
       { id: 'section_social_title', label: 'Social' },
 
@@ -2214,6 +2340,22 @@
 
 
 
+      if (section.id === 'section_modules_title') {
+
+        btn.className += ' mayami-nav-btn--modules';
+
+      }
+
+      if (section.id === 'section_stream_shared_title') {
+
+        btn.className += ' mayami-nav-btn--shared';
+
+        btn.setAttribute('title', 'Stream partage');
+
+        btn.setAttribute('aria-label', 'Stream partage');
+
+      }
+
       btn.addEventListener('click', function(e) {
 
         e.preventDefault();
@@ -2232,9 +2374,17 @@
 
       buttonsContainer.appendChild(btn);
 
+      if (section.id === 'section_modules_title') {
+
+        const sep = document.createElement('span');
+
+        sep.className = 'mayami-nav-sep';
+
+        buttonsContainer.appendChild(sep);
+
+      }
+
     });
-
-
 
     navInner.appendChild(buttonsContainer);
 

@@ -628,6 +628,58 @@ add_action('admin_menu', 'mayami_limit_admin_menu_for_client', 999);
 
 /**
 
+ * Display active theme name discreetly at the top of the admin sidebar.
+
+ */
+
+function ellene_display_theme_badge_in_admin() {
+
+    $theme = wp_get_theme();
+
+    $name  = esc_html($theme->get('Name'));
+
+    $version = esc_html($theme->get('Version'));
+
+    ?>
+
+    <style>
+
+        #adminmenuwrap::before {
+
+            content: '<?php echo $name; ?>';
+
+            display: block;
+
+            padding: 10px 16px 8px;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.12em;
+
+            text-transform: uppercase;
+
+            color: rgba(255,255,255,0.28);
+
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+
+            pointer-events: none;
+
+        }
+
+    </style>
+
+    <?php
+
+}
+
+add_action('admin_head', 'ellene_display_theme_badge_in_admin');
+
+
+
+/**
+
  * Redirect client accounts to Mayami Landing instead of the dashboard after login.
 
  */

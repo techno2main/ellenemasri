@@ -1,1041 +1,2349 @@
-/**
- * Admin Navigation Sticky - Styles
- */
-
-.wrap > h1,
-.wrap > h1.wp-heading-inline,
-.wrap .wp-heading-inline {
-  display: none !important;
-}
-
-.mayami-admin-nav {
-  position: sticky;
-  top: 32px; /* WordPress admin bar height */
-  z-index: 999;
-  background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin: -20px -20px 30px -20px;
-  padding: 20px;
-}
-
-.mayami-admin-nav-inner {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.mayami-admin-nav-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  flex: 1;
-}
-
-.mayami-nav-btn {
-  display: inline-block;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff !important;
-  text-decoration: none !important;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
-}
-
-.mayami-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-.mayami-nav-btn.active {
-  background: #13f7bc;
-  color: #0f0420 !important;
-  border-color: #13f7bc;
-  box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.2);
-}
-
-/* Style des sections titres */
-.cmb2-id-section-hero-title .cmb-th,
-.cmb2-id-section-slider-title .cmb-th,
-.cmb2-id-section-stream-title .cmb-th,
-.cmb2-id-section-social-title .cmb-th,
-.cmb2-id-section-video-title .cmb-th,
-.cmb2-id-section-release-title .cmb-th,
-.cmb2-id-section-cta-title .cmb-th,
-.cmb2-id-section-footer-title .cmb-th,
-.cmb2-id-section-links-title .cmb-th,
-.cmb2-id-section-marquee-title .cmb-th {
-  background: #f2f2f3;
-  color: #1f2937;
-  padding: 16px 20px;
-  border-radius: 8px;
-  margin-top: 60px;
-  margin-bottom: 20px;
-  padding-top: 16px;
-  font-size: 22px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-left: 5px solid #dadde2;
-  scroll-margin-top: 120px;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th {
-  background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
-  color: #fff !important;
-  border-left-color: #13f7bc !important;
-}
-
-/* CMB2 applies background on the title row itself (.cmb-type-title). */
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open {
-  background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
-  border-left: 5px solid #13f7bc !important;
-}
-
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-closed {
-  background: #f2f2f3 !important;
-  border-left: 5px solid #dadde2 !important;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th .cmb2-metabox-title,
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th h3,
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th label {
-  color: #fff !important;
-}
-
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open .cmb2-metabox-title,
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open h3,
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open label {
-  color: #fff !important;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-open .mayami-eye-indicator {
-  color: #fff !important;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th .cmb2-metabox-title,
-.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th h3,
-.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th label {
-  color: #1f2937 !important;
-}
-
-.cmb2-id-section-hero-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-slider-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-stream-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-social-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-video-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-release-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-cta-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-footer-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-links-title.mayami-section-toggle .cmb-th,
-.cmb2-id-section-marquee-title.mayami-section-toggle .cmb-th {
-  position: relative;
-  padding-right: 48px;
-  cursor: pointer;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-toggle,
-.cmb2-wrap .cmb-row.mayami-section-toggle * {
-  cursor: pointer;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-toggle,
-.cmb2-wrap .cmb-row.mayami-section-toggle .cmb-th {
-  position: relative;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-toggle .mayami-eye-indicator {
-  width: 20px;
-  height: 20px;
-  font-size: 20px;
-  line-height: 20px;
-  position: absolute;
-  right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b21a8;
-  opacity: 0.95;
-  pointer-events: none;
-}
-
-.cmb2-wrap .cmb-row.mayami-section-toggle.mayami-section-open .mayami-eye-indicator {
-  opacity: 1;
-}
-
-.cmb2-id-section-hero-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-slider-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-stream-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-social-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-video-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-release-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-cta-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-footer-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-links-title.mayami-section-toggle .cmb-th:hover,
-.cmb2-id-section-marquee-title.mayami-section-toggle .cmb-th:hover {
-  filter: brightness(1.08);
-}
-
-/* TOP-BAR visual field: narrower path input for better balance. */
-.cmb2-id-marquee-logo-png .cmb-td input[type="text"],
-.cmb2-id-marquee-logo-png .cmb-td input[type="url"] {
-  width: min(100%, 360px) !important;
-  max-width: 360px !important;
-}
-
-.cmb2-id-marquee-logo-png .mayami-inline-hide-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: 12px;
-  vertical-align: middle;
-}
-
-.cmb2-id-marquee-logo-png .mayami-inline-hide-toggle .mayami-inline-hide-label {
-  font-weight: 600;
-}
-
-.cmb2-id-marquee-logo-hidden.mayami-hidden-source-row {
-  display: none !important;
-}
-
-.cmb-row.cmb-field-with-toggle .cmb-td {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.cmb-row.cmb-field-with-toggle .cmb-td .mayami-inline-field-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-left: auto;
-  white-space: nowrap;
-}
-
-.cmb-row.cmb-field-with-toggle .cmb-td .mayami-inline-field-toggle-label {
-  font-weight: 600;
-  color: #374151;
-}
-
-.cmb-row.cmb-inline-toggle.mayami-hidden-source-row {
-  display: none !important;
-}
-
-body.mayami-delete-modal-open {
-  overflow: hidden;
-}
-
-.mayami-delete-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 100000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: rgba(15, 23, 42, 0.5);
-}
-
-.mayami-delete-modal-backdrop[hidden] {
-  display: none !important;
-}
-
-.mayami-delete-modal {
-  width: min(100%, 520px);
-  border-radius: 14px;
-  background: #ffffff;
-  color: #1f2937;
-  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.28);
-  border: 1px solid #e5e7eb;
-  padding: 20px;
-}
-
-.mayami-delete-modal-title {
-  margin: 0;
-  font-size: 20px;
-  line-height: 1.3;
-  color: #111827;
-}
-
-.mayami-delete-modal-message {
-  margin: 10px 0 0;
-  color: #374151;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.mayami-delete-modal-actions {
-  margin-top: 18px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.mayami-delete-modal-actions .button {
-  min-width: 112px;
-  height: 36px;
-}
-
-.mayami-delete-confirm-btn {
-  background: #dc2626 !important;
-  border-color: #dc2626 !important;
-}
-
-.mayami-delete-confirm-btn:hover,
-.mayami-delete-confirm-btn:focus {
-  background: #b91c1c !important;
-  border-color: #b91c1c !important;
-}
-
-/* SLIDER: reduce vertical spacing inside each slide item. */
-.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-row {
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-
-.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-group-title > span {
-  display: block;
-  padding-right: 14px;
-}
-
-.cmb2-id-hero-slider .cmb-repeatable-grouping .mayami-slide-title-editor {
-  min-width: 180px;
-  max-width: 320px;
-  width: 100%;
-  height: 30px;
-  padding: 4px 8px;
-  border: 1px solid #93a0b4;
-  border-radius: 6px;
-  background: #fff;
-  color: #1f2937;
-  font-size: 14px;
-  line-height: 1.2;
-}
-
-.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-th,
-.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td .cmb2-metabox-description,
-.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td .cmb2-media-status,
-.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td p {
-  margin-top: 4px;
-  margin-bottom: 0;
-}
-
-.cmb2-id-section-hero-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-slider-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-stream-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-social-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-video-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-release-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-cta-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-footer-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-links-title.mayami-section-toggle:focus .cmb-th,
-.cmb2-id-section-marquee-title.mayami-section-toggle:focus .cmb-th {
-  box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.35);
-}
-
-.cmb2-id-section-hero-title {
-  margin-top: 0 !important;
-}
-
-.cmb2-id-section-hero-title .cmb-th {
-  margin-top: 0 !important;
-  padding-top: 16px !important;
-}
-
-/* Responsive */
-@media screen and (max-width: 782px) {
-  .mayami-admin-nav {
-    top: 46px; /* WordPress admin bar mobile height */
-  }
-  
-  .mayami-admin-nav-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  .mayami-admin-nav-buttons {
-    width: 100%;
-  }
-  
-  .mayami-nav-btn {
-    font-size: 11px;
-    padding: 6px 12px;
-  }
-}
-
-/* Bottom save button: match top white/violet action style. */
-.toplevel_page_mayami_landing_options .cmb2-wrap input[type="submit"],
-.toplevel_page_mayami_landing_options .cmb2-wrap button[type="submit"],
-.toplevel_page_mayami_landing_options .cmb2-wrap .button-primary,
-.toplevel_page_mayami_landing_options .wrap p.submit input[type="submit"],
-.toplevel_page_mayami_landing_options .wrap .button.button-primary {
-  background: #fff !important;
-  color: #6b21a8 !important;
-  border: 2px solid #fff !important;
-  padding: 8px 20px !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  border-radius: 6px !important;
-  cursor: pointer !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  transition: all 0.2s !important;
-  box-shadow: none !important;
-}
-
-.toplevel_page_mayami_landing_options .cmb2-wrap input[type="submit"]:hover,
-.toplevel_page_mayami_landing_options .cmb2-wrap button[type="submit"]:hover,
-.toplevel_page_mayami_landing_options .cmb2-wrap .button-primary:hover,
-.toplevel_page_mayami_landing_options .wrap p.submit input[type="submit"]:hover,
-.toplevel_page_mayami_landing_options .wrap .button.button-primary:hover {
-  background: #f0f0f1 !important;
-  color: #6b21a8 !important;
-  border-color: #fff !important;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) !important;
-}
-
-@media screen and (max-width: 600px) {
-  .mayami-admin-nav {
-    top: 0;
-  }
-}
-
-/*
- * Use a single custom checkbox rendering to avoid duplicated native markers on mobile.
- */
-.cmb2-wrap .cmb-type-checkbox input[type="checkbox"],
-.cmb2-wrap .cmb-row input[type="checkbox"] {
-  -webkit-appearance: none !important;
-  appearance: none !important;
-  width: 18px !important;
-  height: 18px !important;
-  min-width: 18px !important;
-  min-height: 18px !important;
-  margin: 0 !important;
-  background: #fff !important;
-  border: 2px solid #5b6cff !important;
-  border-radius: 3px !important;
-  display: inline-grid !important;
-  place-content: center !important;
-  vertical-align: middle !important;
-  cursor: pointer !important;
-  position: relative !important;
-  z-index: 2 !important;
-  pointer-events: auto !important;
-}
-
-.cmb2-wrap .cmb-type-checkbox input[type="checkbox"]::before,
-.cmb2-wrap .cmb-row input[type="checkbox"]::before {
-  content: "";
-  width: 5px;
-  height: 10px;
-  border: solid #6b21a8;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg) scale(0);
-  transform-origin: center;
-  transition: transform 0.1s ease;
-}
-
-.cmb2-wrap .cmb-type-checkbox input[type="checkbox"]:checked::before,
-.cmb2-wrap .cmb-row input[type="checkbox"]:checked::before {
-  transform: rotate(45deg) scale(1);
-}
-
-.cmb2-wrap .cmb-row .cmb-th label,
-.cmb2-wrap .cmb-row .cmb-td label {
-  cursor: pointer;
-}
-
-/* Global CMB2 move arrows: compact, borderless icon controls. */
-.cmb2-wrap a.cmb-shift-rows,
-.cmb2-wrap button.cmb-shift-rows {
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  min-width: 30px !important;
-  min-height: 30px !important;
-  width: 30px !important;
-  height: 30px !important;
-  padding: 0 !important;
-  line-height: 1 !important;
-}
-
-.cmb2-wrap a.cmb-shift-rows:hover,
-.cmb2-wrap a.cmb-shift-rows:focus,
-.cmb2-wrap button.cmb-shift-rows:hover,
-.cmb2-wrap button.cmb-shift-rows:focus {
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-.cmb2-wrap a.cmb-shift-rows .dashicons,
-.cmb2-wrap button.cmb-shift-rows .dashicons {
-  font-size: 18px !important;
-  width: 18px !important;
-  height: 18px !important;
-  line-height: 18px !important;
-}
-
-/* Compact two-column layout for top-level fields in every section. */
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-th {
-  float: none;
-  width: 220px;
-  min-width: 220px;
-  margin: 0;
-  padding: 0 8px 0 0;
-}
-
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td {
-  float: none;
-  flex: 1;
-  width: auto;
-  margin: 0;
-  padding: 0;
-}
-
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-th label {
-  display: block;
-  margin: 0;
-  font-weight: 600;
-}
-
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td input[type="text"],
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td input[type="url"],
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td input[type="number"],
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td select {
-  width: 100%;
-  max-width: 560px;
-}
-
-.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td textarea {
-  width: 100%;
-  max-width: 720px;
-  min-height: 96px;
-}
-
-@media screen and (max-width: 900px) {
-  .cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-th,
-  .cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td {
-    width: 100%;
-    min-width: 0;
-  }
-}
-
-/* Keep single checkbox fields on one compact line: label + checkbox. */
-.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) .cmb-th,
-.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) .cmb-td {
-  width: auto;
-  padding: 0;
-}
-
-.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) .cmb-th label {
-  margin: 0;
-  font-weight: 600;
-}
-
-/* Specific row for marquee play icon toggle. */
-.cmb2-id-marquee-show-music-icon {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cmb2-id-marquee-show-music-icon .cmb-th,
-.cmb2-id-marquee-show-music-icon .cmb-td {
-  width: auto;
-  padding: 0;
-}
-
-.cmb2-id-marquee-show-music-icon .cmb-th label {
-  margin: 0;
-}
-
-/* Compact layout for marquee group rows */
-.cmb2-id-marquee-items .cmb-repeatable-grouping {
-  margin-bottom: 10px;
-}
-
-/* TOP-BAR item header: keep native CMB2 controls visible and stable. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title {
-  padding-left: 12px !important;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping {
-  position: relative;
-}
-
-/* Hide the red remove cross in item header. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button) {
-  display: none !important;
-}
-
-/* Move native up/down arrows to title line, after the red cross (only top-level item controls). */
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
-  position: absolute;
-  top: 15px;
-  left: 30px;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0 !important;
-}
-
-/* Safety reset: any nested shift controls must stay in normal flow. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row .cmb-shift-rows,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-td .cmb-shift-rows,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-th .cmb-shift-rows {
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
-}
-
-/* Shift "Item" text to the right so it doesn't overlap controls. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title > span {
-  display: inline-block;
-  padding-left: 0;
-}
-
-/* Show bottom remove button next to arrows. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-remove-row {
-  display: inline-flex;
-  align-items: center;
-  float: none !important;
-  margin-left: 8px;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-remove-group-row-button {
-  display: inline-block !important;
-  float: none !important;
-  margin: 0 !important;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-th,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-td {
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
-  display: inline-flex;
-  width: calc(18% - 6px);
-  margin-right: 6px;
-  vertical-align: top;
-  align-items: center;
-  gap: 6px;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
-  margin-right: 0;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
-  width: auto !important;
-  float: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td input[type="checkbox"],
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td input[type="checkbox"] {
-  margin: 0;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
-  display: inline-block;
-  margin: 0;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* TOP-BAR group line 1: Label + Lien on the same row. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
-  display: inline-flex;
-  width: calc(32% - 8px);
-  vertical-align: top;
-  margin-right: 8px;
-  align-items: center;
-  gap: 8px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
-  margin-right: 8px;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
-  width: 70px;
-  min-width: 70px;
-  float: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
-  flex: 1;
-  width: auto;
-  float: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th label,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th label {
-  display: block;
-  margin: 0;
-  font-weight: 600;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input {
-  margin: 0;
-  width: 100%;
-  max-width: none;
-}
-
-/* Ensure TOP-BAR text fields stay readable and never collapse to tiny squares. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"],
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="url"],
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="text"] {
-  -webkit-appearance: auto !important;
-  appearance: auto !important;
-  box-sizing: border-box;
-  display: block;
-  width: min(100%, 420px) !important;
-  min-width: 220px;
-  height: 40px;
-  padding: 8px 10px;
-  color: #1d2327 !important;
-  background-color: #fff !important;
-  border: 1px solid #8c8f94 !important;
-  border-radius: 2px;
-}
-
-/* TOP-BAR native move controls: icon-only visual cleanup. */
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  width: auto !important;
-  height: auto !important;
-  line-height: 1 !important;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows:focus,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows:hover,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows:focus,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows:hover {
-  border: 0 !important;
-  border-style: none !important;
-  box-shadow: none !important;
-  background: transparent !important;
-  outline: 0 !important;
-}
-
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows .dashicons,
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows .dashicons {
-  color: #6b21a8 !important;
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
-  line-height: 18px;
-}
-
-/* STREAM platforms: one row layout (Active - Name - Link). */
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
-  display: inline-flex;
-  box-sizing: border-box;
-  vertical-align: top;
-  align-items: center;
-  gap: 12px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  margin-right: 12px;
-  border-bottom: 0;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] {
-  width: calc(16% - 12px);
-  min-width: 150px;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] {
-  width: calc(33% - 12px);
-  min-width: 300px;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
-  width: calc(47% - 12px);
-  min-width: 380px;
-  margin-right: 0;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
-  float: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th {
-  width: auto;
-  min-width: 0;
-  padding-right: 8px;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th label {
-  margin: 0;
-  white-space: nowrap;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td {
-  width: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
-  width: 56px;
-  min-width: 56px;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
-  flex: 1;
-  width: auto;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input {
-  width: 100% !important;
-  max-width: none !important;
-  min-width: 0;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"] {
-  min-width: 220px;
-}
-
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="url"],
-.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="text"] {
-  min-width: 320px;
-}
-
-/* RELEASE rows: one line layout (Label + Valeur). */
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"],
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] {
-  display: inline-flex !important;
-  clear: none !important;
-  box-sizing: border-box;
-  vertical-align: top;
-  align-items: center;
-  gap: 12px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  margin-right: 12px;
-  border-bottom: 0;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] {
-  width: calc(50% - 6px);
-  min-width: 0;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] {
-  width: calc(50% - 6px);
-  min-width: 0;
-  margin-right: 0;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-th,
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td,
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-th,
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td {
-  float: none;
-  margin: 0;
-  padding: 0;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-th,
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-th {
-  width: 72px;
-  min-width: 72px;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td,
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td {
-  flex: 1;
-  width: auto;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td input,
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td input {
-  display: block;
-  flex: 1 1 auto;
-  width: 100% !important;
-  max-width: none !important;
-  min-width: 0;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td input[type="text"] {
-  min-width: 220px !important;
-}
-
-.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td input[type="text"] {
-  min-width: 280px !important;
-}
-
-@media screen and (max-width: 782px) {
-  .cmb2-id-marquee-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button),
-  .cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
-  .cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
-    position: static !important;
-  }
-
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title > span {
-    padding-left: 0;
-  }
-
-  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
-  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
-  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
-    display: flex;
-    width: 100%;
-    margin-right: 0;
-  }
-
-  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
-  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
-    width: 120px;
-    min-width: 120px;
-  }
-
-  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"],
-  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] {
-    display: flex;
-    width: 100%;
-    margin-right: 0;
-  }
-
-  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-th,
-  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-th {
-    width: 70px;
-    min-width: 70px;
-  }
-
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row {
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
-    display: flex;
-    width: 100%;
-    margin-right: 0;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
-    font-size: 14px;
-    line-height: 1.2;
-  }
-
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
-    display: flex;
-    width: 100%;
-    margin-right: 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
-    width: 100%;
-    min-width: 0;
-  }
-
-  .cmb2-id-marquee-show-music-icon {
-    gap: 6px;
-  }
-
-  /* No custom item controls on mobile. */
-}
+/**
+
+ * Admin Navigation Sticky - Styles
+
+ */
+
+
+
+.wrap > h1,
+
+.wrap > h1.wp-heading-inline,
+
+.wrap .wp-heading-inline {
+
+  display: none !important;
+
+}
+
+
+
+.mayami-admin-nav {
+
+  position: sticky;
+
+  top: 32px; /* WordPress admin bar height */
+
+  z-index: 999;
+
+  background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%);
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+  margin: -20px -20px 30px -20px;
+
+  padding: 20px;
+
+}
+
+
+
+.mayami-admin-nav-inner {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  flex-wrap: wrap;
+
+}
+
+
+
+.mayami-admin-nav-buttons {
+
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 6px;
+
+  flex: 1;
+
+}
+
+
+
+.mayami-nav-sep {
+
+  display: inline-block;
+
+  width: 1px;
+
+  height: 28px;
+
+  background: rgba(255, 255, 255, 0.2);
+
+  align-self: center;
+
+  margin: 0 4px;
+
+}
+
+
+
+.mayami-nav-btn--modules {
+
+  background: rgba(29, 78, 216, 0.55);
+
+  border-color: rgba(96, 165, 250, 0.5);
+
+}
+
+
+
+.mayami-nav-btn--modules.active {
+
+  background: #1d4ed8;
+
+  border-color: #60a5fa;
+
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.35);
+
+}
+
+
+
+.mayami-nav-btn {
+
+  display: inline-block;
+
+  padding: 6px 11px;
+
+  background: rgba(255, 255, 255, 0.1);
+
+  color: #fff !important;
+
+  text-decoration: none !important;
+
+  border-radius: 16px;
+
+  font-size: 11px;
+
+  font-weight: 600;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.3px;
+
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+
+  border: 2px solid transparent;
+
+}
+
+.mayami-nav-btn--shared {
+
+  min-width: 34px;
+
+  text-align: center;
+
+  padding-left: 0;
+
+  padding-right: 0;
+
+  background: rgba(251, 146, 60, 0.24);
+
+  border-color: rgba(251, 146, 60, 0.45);
+
+}
+
+.mayami-nav-btn--shared.active {
+
+  background: #fb923c;
+
+  border-color: #fdba74;
+
+  color: #2a1300 !important;
+
+  box-shadow: 0 0 0 3px rgba(251, 146, 60, 0.25);
+
+}
+
+
+
+.mayami-nav-btn:hover {
+
+  background: rgba(255, 255, 255, 0.2);
+
+  transform: translateY(-1px);
+
+}
+
+
+
+.mayami-nav-btn.active {
+
+  background: #13f7bc;
+
+  color: #0f0420 !important;
+
+  border-color: #13f7bc;
+
+  box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.2);
+
+}
+
+
+
+/* Style des sections titres */
+
+.cmb2-id-section-modules-title .cmb-th,
+
+.cmb2-id-section-hero-title .cmb-th,
+
+.cmb2-id-section-slider-title .cmb-th,
+
+.cmb2-id-section-stream-title .cmb-th,
+
+.cmb2-id-section-social-title .cmb-th,
+
+.cmb2-id-section-video-title .cmb-th,
+
+.cmb2-id-section-release-title .cmb-th,
+
+.cmb2-id-section-cta-title .cmb-th,
+
+.cmb2-id-section-footer-title .cmb-th,
+
+.cmb2-id-section-links-title .cmb-th,
+
+.cmb2-id-section-marquee-title .cmb-th {
+
+  background: #f2f2f3;
+
+  color: #1f2937;
+
+  padding: 16px 20px;
+
+  border-radius: 8px;
+
+  margin-top: 60px;
+
+  margin-bottom: 20px;
+
+  padding-top: 16px;
+
+  font-size: 22px;
+
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+
+  border-left: 5px solid #dadde2;
+
+  scroll-margin-top: 120px;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-open .cmb-th {
+
+  background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
+
+  color: #fff !important;
+
+  border-left-color: #13f7bc !important;
+
+}
+
+
+
+/* CMB2 applies background on the title row itself (.cmb-type-title). */
+
+.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open {
+
+  background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
+
+  border-left: 5px solid #13f7bc !important;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-closed {
+
+  background: #f2f2f3 !important;
+
+  border-left: 5px solid #dadde2 !important;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-open .cmb-th .cmb2-metabox-title,
+
+.cmb2-wrap .cmb-row.mayami-section-open .cmb-th h3,
+
+.cmb2-wrap .cmb-row.mayami-section-open .cmb-th label {
+
+  color: #fff !important;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open .cmb2-metabox-title,
+
+.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open h3,
+
+.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open label {
+
+  color: #fff !important;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-open .mayami-eye-indicator {
+
+  color: #fff !important;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th .cmb2-metabox-title,
+
+.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th h3,
+
+.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th label {
+
+  color: #1f2937 !important;
+
+}
+
+
+
+.cmb2-id-section-modules-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-hero-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-slider-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-stream-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-stream-shared-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-social-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-video-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-release-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-cta-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-footer-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-links-title.mayami-section-toggle .cmb-th,
+
+.cmb2-id-section-marquee-title.mayami-section-toggle .cmb-th {
+
+  position: relative;
+
+  padding-right: 48px;
+
+  cursor: pointer;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-toggle,
+
+.cmb2-wrap .cmb-row.mayami-section-toggle * {
+
+  cursor: pointer;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-toggle,
+
+.cmb2-wrap .cmb-row.mayami-section-toggle .cmb-th {
+
+  position: relative;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-toggle .mayami-eye-indicator {
+
+  width: 20px;
+
+  height: 20px;
+
+  font-size: 20px;
+
+  line-height: 20px;
+
+  position: absolute;
+
+  right: 18px;
+
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #6b21a8;
+
+  opacity: 0.95;
+
+  pointer-events: none;
+
+}
+
+
+
+.cmb2-wrap .cmb-row.mayami-section-toggle.mayami-section-open .mayami-eye-indicator {
+
+  opacity: 1;
+
+}
+
+
+
+.cmb2-id-section-hero-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-slider-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-modules-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-stream-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-stream-shared-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-social-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-video-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-release-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-cta-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-footer-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-links-title.mayami-section-toggle .cmb-th:hover,
+
+.cmb2-id-section-marquee-title.mayami-section-toggle .cmb-th:hover {
+
+  filter: brightness(1.08);
+
+}
+
+
+
+/* Modules — couleur bleue quand ouvert */
+.cmb2-id-section-modules-title.mayami-section-toggle.mayami-section-open .cmb-th,
+.cmb2-id-section-modules-title.mayami-section-open .cmb-th {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important;
+  color: #fff !important;
+  border-left-color: #60a5fa !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open.cmb2-id-section-modules-title {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important;
+  border-left: 5px solid #60a5fa !important;
+}
+
+.cmb2-id-section-modules-title.mayami-section-toggle .mayami-eye-indicator {
+  color: #1d4ed8;
+}
+
+.cmb2-id-section-modules-title.mayami-section-toggle.mayami-section-open .mayami-eye-indicator {
+  color: #fff !important;
+}
+
+/* Stream partagé (mutualisé) — couleur orange au lieu du violet */
+.cmb2-id-section-stream-shared-title.mayami-section-toggle.mayami-section-open .cmb-th,
+.cmb2-id-section-stream-shared-title.mayami-section-open .cmb-th {
+  background: linear-gradient(135deg, #b85000 0%, #7a3200 100%) !important;
+  color: #fff !important;
+  border-left-color: #f97316 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open.cmb2-id-section-stream-shared-title {
+  background: linear-gradient(135deg, #b85000 0%, #7a3200 100%) !important;
+  border-left: 5px solid #f97316 !important;
+}
+
+.cmb2-id-section-stream-shared-title.mayami-section-toggle .mayami-eye-indicator {
+  color: #f97316;
+}
+
+.cmb2-id-section-stream-shared-title.mayami-section-toggle.mayami-section-open .mayami-eye-indicator {
+  color: #fff !important;
+}
+
+/* Hover spécifique orange */
+.cmb2-id-section-stream-shared-title.mayami-section-toggle .cmb-th:hover {
+  filter: brightness(1.06);
+}
+
+
+
+.cmb2-id-marquee-logo-png .cmb-td input[type="text"],
+
+.cmb2-id-marquee-logo-png .cmb-td input[type="url"] {
+
+  width: min(100%, 360px) !important;
+
+  max-width: 360px !important;
+
+}
+
+
+
+.cmb2-id-marquee-logo-png .mayami-inline-hide-toggle {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-left: 12px;
+
+  vertical-align: middle;
+
+}
+
+
+
+.cmb2-id-marquee-logo-png .mayami-inline-hide-toggle .mayami-inline-hide-label {
+
+  font-weight: 600;
+
+}
+
+
+
+.cmb2-id-marquee-logo-hidden.mayami-hidden-source-row {
+
+  display: none !important;
+
+}
+
+
+
+.cmb-row.cmb-field-with-toggle .cmb-td {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+
+}
+
+
+
+.cmb-row.cmb-field-with-toggle .cmb-td .mayami-inline-field-toggle {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin-left: auto;
+
+  white-space: nowrap;
+
+}
+
+
+
+.cmb-row.cmb-field-with-toggle .cmb-td .mayami-inline-field-toggle-label {
+
+  font-weight: 600;
+
+  color: #374151;
+
+}
+
+
+
+.cmb-row.cmb-inline-toggle.mayami-hidden-source-row {
+
+  display: none !important;
+
+}
+
+
+
+body.mayami-delete-modal-open {
+
+  overflow: hidden;
+
+}
+
+
+
+.mayami-delete-modal-backdrop {
+
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 100000;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.5);
+
+}
+
+
+
+.mayami-delete-modal-backdrop[hidden] {
+
+  display: none !important;
+
+}
+
+
+
+.mayami-delete-modal {
+
+  width: min(100%, 520px);
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  color: #1f2937;
+
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.28);
+
+  border: 1px solid #e5e7eb;
+
+  padding: 20px;
+
+}
+
+
+
+.mayami-delete-modal-title {
+
+  margin: 0;
+
+  font-size: 20px;
+
+  line-height: 1.3;
+
+  color: #111827;
+
+}
+
+
+
+.mayami-delete-modal-message {
+
+  margin: 10px 0 0;
+
+  color: #374151;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+}
+
+
+
+.mayami-delete-modal-actions {
+
+  margin-top: 18px;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+}
+
+
+
+.mayami-delete-modal-actions .button {
+
+  min-width: 112px;
+
+  height: 36px;
+
+}
+
+
+
+.mayami-delete-confirm-btn {
+
+  background: #dc2626 !important;
+
+  border-color: #dc2626 !important;
+
+}
+
+
+
+.mayami-delete-confirm-btn:hover,
+
+.mayami-delete-confirm-btn:focus {
+
+  background: #b91c1c !important;
+
+  border-color: #b91c1c !important;
+
+}
+
+
+
+/* SLIDER: reduce vertical spacing inside each slide item. */
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-row {
+
+  padding-top: 5px;
+
+  padding-bottom: 5px;
+
+}
+
+
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-group-title > span {
+
+  display: block;
+
+  padding-right: 14px;
+
+}
+
+
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .mayami-slide-title-editor {
+
+  min-width: 180px;
+
+  max-width: 320px;
+
+  width: 100%;
+
+  height: 30px;
+
+  padding: 4px 8px;
+
+  border: 1px solid #93a0b4;
+
+  border-radius: 6px;
+
+  background: #fff;
+
+  color: #1f2937;
+
+  font-size: 14px;
+
+  line-height: 1.2;
+
+}
+
+
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-th,
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td {
+
+  padding-top: 4px;
+
+  padding-bottom: 4px;
+
+}
+
+
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td .cmb2-metabox-description,
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td .cmb2-media-status,
+
+.cmb2-id-hero-slider .cmb-repeatable-grouping .cmb-td p {
+
+  margin-top: 4px;
+
+  margin-bottom: 0;
+
+}
+
+
+
+.cmb2-id-section-hero-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-slider-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-stream-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-social-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-video-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-release-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-cta-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-footer-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-links-title.mayami-section-toggle:focus .cmb-th,
+
+.cmb2-id-section-marquee-title.mayami-section-toggle:focus .cmb-th {
+
+  box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.35);
+
+}
+
+
+
+.cmb2-id-section-hero-title {
+
+  margin-top: 0 !important;
+
+}
+
+
+
+.cmb2-id-section-hero-title .cmb-th {
+
+  margin-top: 0 !important;
+
+  padding-top: 16px !important;
+
+}
+
+
+
+/* Responsive */
+
+@media screen and (max-width: 782px) {
+
+  .mayami-admin-nav {
+
+    top: 46px; /* WordPress admin bar mobile height */
+
+  }
+
+  
+
+  .mayami-admin-nav-inner {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+  }
+
+  
+
+  .mayami-admin-nav-buttons {
+
+    width: 100%;
+
+  }
+
+  
+
+  .mayami-nav-btn {
+
+    font-size: 11px;
+
+    padding: 6px 12px;
+
+  }
+
+}
+
+
+
+/* Bottom save button: match top white/violet action style. */
+
+.toplevel_page_mayami_landing_options .cmb2-wrap input[type="submit"],
+
+.toplevel_page_mayami_landing_options .cmb2-wrap button[type="submit"],
+
+.toplevel_page_mayami_landing_options .cmb2-wrap .button-primary,
+
+.toplevel_page_mayami_landing_options .wrap p.submit input[type="submit"],
+
+.toplevel_page_mayami_landing_options .wrap .button.button-primary {
+
+  background: #fff !important;
+
+  color: #6b21a8 !important;
+
+  border: 2px solid #fff !important;
+
+  padding: 8px 20px !important;
+
+  font-size: 13px !important;
+
+  font-weight: 700 !important;
+
+  border-radius: 6px !important;
+
+  cursor: pointer !important;
+
+  text-transform: uppercase !important;
+
+  letter-spacing: 0.5px !important;
+
+  transition: all 0.2s !important;
+
+  box-shadow: none !important;
+
+}
+
+
+
+.toplevel_page_mayami_landing_options .cmb2-wrap input[type="submit"]:hover,
+
+.toplevel_page_mayami_landing_options .cmb2-wrap button[type="submit"]:hover,
+
+.toplevel_page_mayami_landing_options .cmb2-wrap .button-primary:hover,
+
+.toplevel_page_mayami_landing_options .wrap p.submit input[type="submit"]:hover,
+
+.toplevel_page_mayami_landing_options .wrap .button.button-primary:hover {
+
+  background: #f0f0f1 !important;
+
+  color: #6b21a8 !important;
+
+  border-color: #fff !important;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2) !important;
+
+}
+
+
+
+@media screen and (max-width: 600px) {
+
+  .mayami-admin-nav {
+
+    top: 0;
+
+  }
+
+}
+
+
+
+/*
+
+ * Use a single custom checkbox rendering to avoid duplicated native markers on mobile.
+
+ */
+
+.cmb2-wrap .cmb-type-checkbox input[type="checkbox"],
+
+.cmb2-wrap .cmb-row input[type="checkbox"] {
+
+  -webkit-appearance: none !important;
+
+  appearance: none !important;
+
+  width: 18px !important;
+
+  height: 18px !important;
+
+  min-width: 18px !important;
+
+  min-height: 18px !important;
+
+  margin: 0 !important;
+
+  background: #fff !important;
+
+  border: 2px solid #5b6cff !important;
+
+  border-radius: 3px !important;
+
+  display: inline-grid !important;
+
+  place-content: center !important;
+
+  vertical-align: middle !important;
+
+  cursor: pointer !important;
+
+  position: relative !important;
+
+  z-index: 2 !important;
+
+  pointer-events: auto !important;
+
+}
+
+
+
+.cmb2-wrap .cmb-type-checkbox input[type="checkbox"]::before,
+
+.cmb2-wrap .cmb-row input[type="checkbox"]::before {
+
+  content: "";
+
+  width: 5px;
+
+  height: 10px;
+
+  border: solid #6b21a8;
+
+  border-width: 0 2px 2px 0;
+
+  transform: rotate(45deg) scale(0);
+
+  transform-origin: center;
+
+  transition: transform 0.1s ease;
+
+}
+
+
+
+.cmb2-wrap .cmb-type-checkbox input[type="checkbox"]:checked::before,
+
+.cmb2-wrap .cmb-row input[type="checkbox"]:checked::before {
+
+  transform: rotate(45deg) scale(1);
+
+}
+
+
+
+.cmb2-wrap .cmb-row .cmb-th label,
+
+.cmb2-wrap .cmb-row .cmb-td label {
+
+  cursor: pointer;
+
+}
+
+
+
+/* Global CMB2 move arrows: compact, borderless icon controls. */
+
+.cmb2-wrap a.cmb-shift-rows,
+
+.cmb2-wrap button.cmb-shift-rows {
+
+  border: 0 !important;
+
+  background: transparent !important;
+
+  box-shadow: none !important;
+
+  min-width: 30px !important;
+
+  min-height: 30px !important;
+
+  width: 30px !important;
+
+  height: 30px !important;
+
+  padding: 0 !important;
+
+  line-height: 1 !important;
+
+}
+
+
+
+.cmb2-wrap a.cmb-shift-rows:hover,
+
+.cmb2-wrap a.cmb-shift-rows:focus,
+
+.cmb2-wrap button.cmb-shift-rows:hover,
+
+.cmb2-wrap button.cmb-shift-rows:focus {
+
+  border: 0 !important;
+
+  background: transparent !important;
+
+  box-shadow: none !important;
+
+}
+
+
+
+.cmb2-wrap a.cmb-shift-rows .dashicons,
+
+.cmb2-wrap button.cmb-shift-rows .dashicons {
+
+  font-size: 18px !important;
+
+  width: 18px !important;
+
+  height: 18px !important;
+
+  line-height: 18px !important;
+
+}
+
+
+
+/* Compact two-column layout for top-level fields in every section. */
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 18px;
+
+  padding-top: 10px;
+
+  padding-bottom: 10px;
+
+}
+
+
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-th {
+
+  float: none;
+
+  width: 220px;
+
+  min-width: 220px;
+
+  margin: 0;
+
+  padding: 0 8px 0 0;
+
+}
+
+
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td {
+
+  float: none;
+
+  flex: 1;
+
+  width: auto;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-th label {
+
+  display: block;
+
+  margin: 0;
+
+  font-weight: 600;
+
+}
+
+
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td input[type="text"],
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td input[type="url"],
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td input[type="number"],
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td select {
+
+  width: 100%;
+
+  max-width: 560px;
+
+}
+
+
+
+.cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td textarea {
+
+  width: 100%;
+
+  max-width: 720px;
+
+  min-height: 96px;
+
+}
+
+
+
+@media screen and (max-width: 900px) {
+
+  .cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 6px;
+
+  }
+
+
+
+  .cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-th,
+
+  .cmb2-wrap .cmb-metabox > .cmb-row:not(.cmb-type-title):not(.cmb-type-checkbox):not(.cmb-repeatable-grouping) .cmb-td {
+
+    width: 100%;
+
+    min-width: 0;
+
+  }
+
+}
+
+
+
+/* Keep single checkbox fields on one compact line: label + checkbox. */
+
+.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+
+
+.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) .cmb-th,
+
+.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) .cmb-td {
+
+  width: auto;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-wrap .cmb-type-checkbox:not(.cmb-repeatable-grouping) .cmb-th label {
+
+  margin: 0;
+
+  font-weight: 600;
+
+}
+
+
+
+/* Specific row for marquee play icon toggle. */
+
+.cmb2-id-marquee-show-music-icon {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+}
+
+
+
+.cmb2-id-marquee-show-music-icon .cmb-th,
+
+.cmb2-id-marquee-show-music-icon .cmb-td {
+
+  width: auto;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-id-marquee-show-music-icon .cmb-th label {
+
+  margin: 0;
+
+}
+
+
+
+/* Compact layout for marquee group rows */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping {
+
+  margin-bottom: 10px;
+
+}
+
+
+
+/* TOP-BAR item header: keep native CMB2 controls visible and stable. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title {
+
+  padding-left: 12px !important;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping {
+
+  position: relative;
+
+}
+
+
+
+/* Hide the red remove cross in item header. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button) {
+
+  display: none !important;
+
+}
+
+
+
+/* Move native up/down arrows to title line, after the red cross (only top-level item controls). */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
+
+  position: absolute;
+
+  top: 15px;
+
+  left: 30px;
+
+  z-index: 3;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  margin: 0 !important;
+
+}
+
+
+
+/* Safety reset: any nested shift controls must stay in normal flow. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row .cmb-shift-rows,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-td .cmb-shift-rows,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-th .cmb-shift-rows {
+
+  position: static !important;
+
+  top: auto !important;
+
+  left: auto !important;
+
+}
+
+
+
+/* Shift "Item" text to the right so it doesn't overlap controls. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title > span {
+
+  display: inline-block;
+
+  padding-left: 0;
+
+}
+
+
+
+/* Show bottom remove button next to arrows. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-remove-row {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  float: none !important;
+
+  margin-left: 8px;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-remove-group-row-button {
+
+  display: inline-block !important;
+
+  float: none !important;
+
+  margin: 0 !important;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row {
+
+  padding-top: 8px;
+
+  padding-bottom: 8px;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-th,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-td {
+
+  padding-top: 6px;
+
+  padding-bottom: 6px;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
+
+  display: inline-flex;
+
+  width: calc(18% - 6px);
+
+  margin-right: 6px;
+
+  vertical-align: top;
+
+  align-items: center;
+
+  gap: 6px;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
+
+  margin-right: 0;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
+
+  width: auto !important;
+
+  float: none;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: flex-start;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td input[type="checkbox"],
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td input[type="checkbox"] {
+
+  margin: 0;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
+
+  display: inline-block;
+
+  margin: 0;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+
+}
+
+
+
+/* TOP-BAR group line 1: Label + Lien on the same row. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+
+  display: inline-flex;
+
+  width: calc(32% - 8px);
+
+  vertical-align: top;
+
+  margin-right: 8px;
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding-top: 6px;
+
+  padding-bottom: 6px;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+
+  margin-right: 8px;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
+
+  width: 70px;
+
+  min-width: 70px;
+
+  float: none;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+
+  flex: 1;
+
+  width: auto;
+
+  float: none;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th label,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th label {
+
+  display: block;
+
+  margin: 0;
+
+  font-weight: 600;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input {
+
+  margin: 0;
+
+  width: 100%;
+
+  max-width: none;
+
+}
+
+
+
+/* Ensure TOP-BAR text fields stay readable and never collapse to tiny squares. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"],
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="url"],
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="text"] {
+
+  -webkit-appearance: auto !important;
+
+  appearance: auto !important;
+
+  box-sizing: border-box;
+
+  display: block;
+
+  width: min(100%, 420px) !important;
+
+  min-width: 220px;
+
+  height: 40px;
+
+  padding: 8px 10px;
+
+  color: #1d2327 !important;
+
+  background-color: #fff !important;
+
+  border: 1px solid #8c8f94 !important;
+
+  border-radius: 2px;
+
+}
+
+
+
+/* TOP-BAR native move controls: icon-only visual cleanup. */
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
+
+  border: 0 !important;
+
+  background: transparent !important;
+
+  box-shadow: none !important;
+
+  padding: 0 !important;
+
+  min-width: 0 !important;
+
+  min-height: 0 !important;
+
+  width: auto !important;
+
+  height: auto !important;
+
+  line-height: 1 !important;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows:focus,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows:hover,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows:focus,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows:hover {
+
+  border: 0 !important;
+
+  border-style: none !important;
+
+  box-shadow: none !important;
+
+  background: transparent !important;
+
+  outline: 0 !important;
+
+}
+
+
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows .dashicons,
+
+.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows .dashicons {
+
+  color: #6b21a8 !important;
+
+  font-size: 18px;
+
+  width: 18px;
+
+  height: 18px;
+
+  line-height: 18px;
+
+}
+
+
+
+/* STREAM platforms: one row layout (Active - Name - Link). */
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+
+  display: inline-flex;
+
+  box-sizing: border-box;
+
+  vertical-align: top;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding-top: 6px;
+
+  padding-bottom: 6px;
+
+  margin-right: 12px;
+
+  border-bottom: 0;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] {
+
+  width: calc(16% - 12px);
+
+  min-width: 150px;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] {
+
+  width: calc(33% - 12px);
+
+  min-width: 300px;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+
+  width: calc(47% - 12px);
+
+  min-width: 380px;
+
+  margin-right: 0;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+
+  float: none;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th {
+
+  width: auto;
+
+  min-width: 0;
+
+  padding-right: 8px;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th label {
+
+  margin: 0;
+
+  white-space: nowrap;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td {
+
+  width: auto;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: flex-start;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
+
+  width: 56px;
+
+  min-width: 56px;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+
+  flex: 1;
+
+  width: auto;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input {
+
+  width: 100% !important;
+
+  max-width: none !important;
+
+  min-width: 0;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"] {
+
+  min-width: 220px;
+
+}
+
+
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="url"],
+
+.cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="text"] {
+
+  min-width: 320px;
+
+}
+
+
+
+/* RELEASE rows: one line layout (Label + Valeur). */
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"],
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] {
+
+  display: inline-flex !important;
+
+  clear: none !important;
+
+  box-sizing: border-box;
+
+  vertical-align: top;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding-top: 6px;
+
+  padding-bottom: 6px;
+
+  margin-right: 12px;
+
+  border-bottom: 0;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] {
+
+  width: calc(50% - 6px);
+
+  min-width: 0;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] {
+
+  width: calc(50% - 6px);
+
+  min-width: 0;
+
+  margin-right: 0;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-th,
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td,
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-th,
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td {
+
+  float: none;
+
+  margin: 0;
+
+  padding: 0;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-th,
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-th {
+
+  width: 72px;
+
+  min-width: 72px;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td,
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td {
+
+  flex: 1;
+
+  width: auto;
+
+  min-width: 0;
+
+  display: flex;
+
+  align-items: center;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td input,
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td input {
+
+  display: block;
+
+  flex: 1 1 auto;
+
+  width: 100% !important;
+
+  max-width: none !important;
+
+  min-width: 0;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-td input[type="text"] {
+
+  min-width: 220px !important;
+
+}
+
+
+
+.cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-td input[type="text"] {
+
+  min-width: 280px !important;
+
+}
+
+
+
+@media screen and (max-width: 782px) {
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button),
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
+
+    position: static !important;
+
+  }
+
+
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title > span {
+
+    padding-left: 0;
+
+  }
+
+
+
+  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
+
+  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
+
+  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+
+    display: flex;
+
+    width: 100%;
+
+    margin-right: 0;
+
+  }
+
+
+
+  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+
+  .cmb2-id-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
+
+    width: 120px;
+
+    min-width: 120px;
+
+  }
+
+
+
+  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"],
+
+  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] {
+
+    display: flex;
+
+    width: 100%;
+
+    margin-right: 0;
+
+  }
+
+
+
+  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-key"] .cmb-th,
+
+  .cmb2-id-release-rows .cmb-repeatable-grouping .cmb-row[class*="-value"] .cmb-th {
+
+    width: 70px;
+
+    min-width: 70px;
+
+  }
+
+
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row {
+
+    padding-top: 6px;
+
+    padding-bottom: 6px;
+
+  }
+
+
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
+
+    display: flex;
+
+    width: 100%;
+
+    margin-right: 0;
+
+    align-items: center;
+
+    gap: 6px;
+
+  }
+
+
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
+
+    font-size: 14px;
+
+    line-height: 1.2;
+
+  }
+
+
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+
+    display: flex;
+
+    width: 100%;
+
+    margin-right: 0;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 6px;
+
+  }
+
+
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+
+  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+
+    width: 100%;
+
+    min-width: 0;
+
+  }
+
+
+
+  .cmb2-id-marquee-show-music-icon {
+
+    gap: 6px;
+
+  }
+
+
+
+  /* No custom item controls on mobile. */
+
+}
+
+
+/* SHARED STREAM platforms: même présentation que stream-platforms. */
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+  display: inline-flex;
+  box-sizing: border-box;
+  vertical-align: top;
+  align-items: center;
+  gap: 12px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  margin-right: 12px;
+  border-bottom: 0;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] {
+  width: calc(16% - 12px);
+  min-width: 150px;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] {
+  width: calc(33% - 12px);
+  min-width: 300px;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+  width: calc(47% - 12px);
+  min-width: 380px;
+  margin-right: 0;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+  float: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th {
+  width: auto;
+  min-width: 0;
+  padding-right: 8px;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
+  width: 56px;
+  min-width: 56px;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+  flex: 1;
+  width: auto;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"] {
+  min-width: 220px;
+}
+
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="url"],
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="text"] {
+  min-width: 320px;
+}
+
+@media (max-width: 900px) {
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+    display: flex;
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
+    width: 120px;
+    min-width: 120px;
+  }
+}
+
+/* SHARED STREAM platforms: meme presentation que stream-platforms. */
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+  display: inline-flex; box-sizing: border-box; vertical-align: top; align-items: center;
+  gap: 12px; padding-top: 6px; padding-bottom: 6px; margin-right: 12px; border-bottom: 0;
+}
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] { width: calc(16% - 12px); min-width: 150px; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] { width: calc(33% - 12px); min-width: 300px; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] { width: calc(47% - 12px); min-width: 380px; margin-right: 0; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td { float: none; margin: 0; padding: 0; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th { width: auto; min-width: 0; padding-right: 8px; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-th label { margin: 0; white-space: nowrap; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"] .cmb-td { width: auto; display: inline-flex; align-items: center; justify-content: flex-start; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th { width: 56px; min-width: 56px; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td { flex: 1; width: auto; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input { width: 100% !important; max-width: none !important; min-width: 0; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type='text'] { min-width: 220px; }
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type='url'],
+.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type='text'] { min-width: 320px; }
+@media (max-width: 900px) {
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-is-active"],
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"],
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] { display: flex; width: 100%; margin-right: 0; }
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+  .cmb2-id-shared-stream-platforms .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th { width: 120px; min-width: 120px; }
+}
