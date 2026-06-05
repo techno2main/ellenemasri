@@ -34,6 +34,7 @@ website/*.local
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 **/.vscode/*
 !**/.vscode/extensions.json
 website/.vscode/
@@ -50,9 +51,10 @@ website/.vscode/
 
 # Ignore full WordPress tree, keep only the custom theme
 wp/*
+!wp/AGENTS.md
+!wp/wp-content/
 wp/wp-admin/
 wp/wp-includes/
-!wp/wp-content/
 wp/wp-content/*
 !wp/wp-content/themes/
 wp/wp-content/themes/*
@@ -60,9 +62,14 @@ wp/wp-content/themes/*
 !wp/wp-content/themes/mayami/**
 wp/wp-content/themes/mayami/php.ini
 wp/wp-content/themes/mayami/node_modules/
-wp/wp-content/themes/mayami/migration-ovh/*.zip
 wp/wp-content/themes/mayami/migration-ovh/
+wp/wp-content/themes/mayami/migration-ovh/*.zip
 
 # Deployment-only root files
 /.htaccess
 /index.php
+
+# Instructions & local audit documentation
+/documentation/*
+!/documentation/copilot-memory-audit/
+!/documentation/copilot-memory-audit/**
