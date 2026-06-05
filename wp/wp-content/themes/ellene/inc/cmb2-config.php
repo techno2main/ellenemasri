@@ -2130,5 +2130,89 @@ function mayami_register_options() {
 
     ));
 
+
+
+    // ========== SECTION: MODULES ===========
+
+    $cmb->add_field(array(
+
+        'name' => 'Modules',
+
+        'type' => 'title',
+
+        'id'   => 'section_modules_title',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name'    => 'Modules actifs',
+
+        'id'      => 'modules_enabled',
+
+        'type'    => 'multicheck_inline',
+
+        'options' => array(
+
+            'stream' => 'Stream',
+
+            'social' => 'Social',
+
+            'video' => 'Video',
+
+            'release-info' => 'Release Info',
+
+            'visual-links' => 'Visual Links',
+
+            'cta' => 'CTA',
+
+        ),
+
+        'desc' => 'Selection des modules affiches dans la zone content.',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name' => 'Ordre des modules',
+
+        'id'   => 'modules_order',
+
+        'type' => 'text',
+
+        'desc' => 'Ordre explicite en slugs separes par virgule. Exemple: stream,social,video,release-info,visual-links,cta',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name'    => 'Modules mutualises',
+
+        'id'      => 'modules_shared',
+
+        'type'    => 'multicheck_inline',
+
+        'options' => array(
+
+            'stream' => 'Stream',
+
+            'social' => 'Social',
+
+            'video' => 'Video',
+
+            'cta' => 'CTA',
+
+        ),
+
+        'desc' => 'Active le mode source partagee (mutualise) pour les modules compatibles.',
+
+    ));
+
 }
 

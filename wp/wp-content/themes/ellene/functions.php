@@ -30,6 +30,14 @@ require_once get_template_directory() . '/inc/visual-links.php';
 
 require_once get_template_directory() . '/inc/layout.php';
 
+require_once get_template_directory() . '/inc/modules/registry.php';
+
+require_once get_template_directory() . '/inc/modules/resolver.php';
+
+require_once get_template_directory() . '/inc/modules/renderer.php';
+
+require_once get_template_directory() . '/inc/modules/shared-sections.php';
+
 
 
 /**

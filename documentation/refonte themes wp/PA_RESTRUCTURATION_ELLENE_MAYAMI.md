@@ -366,3 +366,4 @@ Données recommandées pour l’ordre:
 - Phase 1 engagée: thème `ellene` dupliqué depuis `mayami`, identité du thème renommée (Theme Name, Text Domain), activation locale testée via `template/stylesheet=ellene`
 - Phase 2 livrée: inventaire complet documenté dans `documentation/refonte themes wp/INVENTAIRE_PHASE2_MAYAMI.md`
 - Phase 3 livrée: socles communs implémentés dans `template-parts/layout` (top-bar, header, hero, content, footer), renderer commun ajouté (`inc/layout.php`), `front-page.php` branchée sur ce renderer avec fallback
+- Phase 4 livrée: architecture modulaire initiale ajoutée avec registre (`inc/modules/registry.php`), resolver (`inc/modules/resolver.php`), renderer (`inc/modules/renderer.php`), helper shared/local (`inc/modules/shared-sections.php`), et champs CMB2 (`modules_enabled`, `modules_order`, `modules_shared`) pour piloter ordre/activation/mutualisation

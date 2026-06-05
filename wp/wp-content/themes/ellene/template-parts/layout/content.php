@@ -10,6 +10,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (function_exists('ellene_render_content_modules')) {
+    ellene_render_content_modules('home');
+    return;
+}
+
 $modules = apply_filters(
     'ellene_content_modules',
     array(
