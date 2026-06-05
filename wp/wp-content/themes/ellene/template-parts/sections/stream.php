@@ -12,11 +12,11 @@
 
 
 
-$stream_kicker = trim((string) cmb2_get_option('mayami_landing_options', 'stream_kicker'));
+$stream_kicker = trim((string) ellene_get_module_option('stream', 'kicker', ''));
 
-$stream_title_prefix = trim((string) cmb2_get_option('mayami_landing_options', 'stream_title_prefix'));
+$stream_title_prefix = trim((string) ellene_get_module_option('stream', 'title_prefix', ''));
 
-$stream_title_highlight = trim((string) cmb2_get_option('mayami_landing_options', 'stream_title_highlight'));
+$stream_title_highlight = trim((string) ellene_get_module_option('stream', 'title_highlight', ''));
 
 $stream_title_logo_url = '';
 
@@ -32,13 +32,13 @@ if ($stream_title_highlight !== '' && filter_var($stream_title_highlight, FILTER
 
 $stream_title_logo_alt = $stream_title_prefix !== '' ? $stream_title_prefix . ' logo' : 'Stream logo';
 
-$stream_availability_text = trim((string) cmb2_get_option('mayami_landing_options', 'stream_availability_text'));
+$stream_availability_text = trim((string) ellene_get_module_option('stream', 'availability_text', ''));
 
-$stream_card_label = trim((string) cmb2_get_option('mayami_landing_options', 'stream_card_label'));
+$stream_card_label = trim((string) ellene_get_module_option('stream', 'card_label', ''));
 
 
 
-$stream_platforms = cmb2_get_option('mayami_landing_options', 'stream_platforms');
+$stream_platforms = ellene_get_module_option('stream', 'platforms', array());
 
 if (!is_array($stream_platforms)) {
 

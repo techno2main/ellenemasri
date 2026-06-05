@@ -28,6 +28,7 @@ Statut: actif
 
 - Phase 4: terminee et poussee
   - resume: catalogue modulaire ajoute (registre, resolver, renderer), activation/ordre des modules via options CMB2, distinction local vs mutualise dans la couche de resolution
+  - complement: Stream mutualise rendu effectif avec source partagee dediee + fallback local
 
 ## Liens docs de reference
 - PA principal: documentation/refonte themes wp/PA_RESTRUCTURATION_ELLENE_MAYAMI.md

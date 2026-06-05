@@ -1300,6 +1300,148 @@ function mayami_register_options() {
 
 
 
+    $cmb->add_field(array(
+
+        'name' => 'Stream partagé (mode mutualisé)',
+
+        'type' => 'title',
+
+        'id'   => 'section_stream_shared_title',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name'    => 'Kicker partagé',
+
+        'id'      => 'shared_stream_kicker',
+
+        'type'    => 'text',
+
+        'default' => '01 / Listen',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name'    => 'Title Prefix partagé',
+
+        'id'      => 'shared_stream_title_prefix',
+
+        'type'    => 'text',
+
+        'default' => 'Stream',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name'    => 'Title Logo partagé',
+
+        'id'      => 'shared_stream_title_highlight',
+
+        'type'    => 'file',
+
+        'desc'    => 'Source partagee utilisee quand le module Stream est mutualise.',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name'    => 'Availability Text partagé',
+
+        'id'      => 'shared_stream_availability_text',
+
+        'type'    => 'text',
+
+        'default' => 'Available everywhere',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
+        'name'    => 'Card Label partagé',
+
+        'id'      => 'shared_stream_card_label',
+
+        'type'    => 'text',
+
+        'default' => 'Listen on',
+
+    ));
+
+
+
+    $shared_stream_platforms = $cmb->add_field(array(
+
+        'id'      => 'shared_stream_platforms',
+
+        'type'    => 'group',
+
+        'options' => array(
+
+            'group_title'   => 'Plateforme partagee {#}',
+
+            'add_button'    => '+ Ajouter une plateforme partagee',
+
+            'remove_button' => 'Supprimer',
+
+            'sortable'      => true,
+
+        ),
+
+    ));
+
+
+
+    $cmb->add_group_field($shared_stream_platforms, array(
+
+        'name'    => 'Active',
+
+        'id'      => 'is_active',
+
+        'type'    => 'checkbox',
+
+        'default' => 'on',
+
+    ));
+
+
+
+    $cmb->add_group_field($shared_stream_platforms, array(
+
+        'name' => 'Nom',
+
+        'id'   => 'label',
+
+        'type' => 'text',
+
+    ));
+
+
+
+    $cmb->add_group_field($shared_stream_platforms, array(
+
+        'name' => 'Lien',
+
+        'id'   => 'href',
+
+        'type' => 'text_url',
+
+    ));
+
+
+
     // ========== SECTION: SOCIAL ==========
 
     $cmb->add_field(array(
