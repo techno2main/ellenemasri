@@ -2088,9 +2088,9 @@
 
     title.className = 'mayami-admin-home';
 
-    title.setAttribute('title', 'Mayami Landing Settings');
+    title.setAttribute('title', 'Mayami Landing Local Settings');
 
-    title.setAttribute('aria-label', 'Mayami Landing Settings');
+    title.setAttribute('aria-label', 'Mayami Landing Local Settings');
 
     title.innerHTML = '<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>';
 

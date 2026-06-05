@@ -23,11 +23,12 @@ Statut: actif
   - commit: 01d3356
   - resume: inventaire complet Mayami + PA mis a jour
 
-- Phase 3: non demarree
+- Phase 3: terminee et poussee
+  - resume: socles layout communs (top-bar/header/hero/content/footer), renderer central, front-page branchee sur le renderer, renommage local des libelles admin
 
 ## Liens docs de reference
 - PA principal: documentation/refonte themes wp/PA_RESTRUCTURATION_ELLENE_MAYAMI.md
 - Inventaire Phase 2: documentation/refonte themes wp/INVENTAIRE_PHASE2_MAYAMI.md
 
 ## Prochaine action
-- Demarrer Phase 3 (socles communs Ellene): top-bar, header, hero, content, footer.
+- Demarrer Phase 4 (catalogue modulaire): registre des modules + ordre/activation + preparation local vs mutualise.

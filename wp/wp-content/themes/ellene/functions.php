@@ -28,6 +28,8 @@ require_once get_template_directory() . '/inc/cmb2-config.php';
 
 require_once get_template_directory() . '/inc/visual-links.php';
 
+require_once get_template_directory() . '/inc/layout.php';
+
 
 
 /**
