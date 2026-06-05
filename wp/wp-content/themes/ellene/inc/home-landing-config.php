@@ -26,11 +26,11 @@ function ellene_register_home_landing_options() {
 
     $cmb = new_cmb2_box(array(
         'id'           => 'ellene_home_landing_page',
-        'title'        => 'Home Landing Local Settings',
+        'title'        => 'Home Settings',
         'object_types' => array('options-page'),
         'option_key'   => $option_key,
         'icon_url'     => 'dashicons-admin-home',
-        'menu_title'   => 'Home Landing Local',
+        'menu_title'   => 'Home Settings',
         'position'     => 3,
     ));
 

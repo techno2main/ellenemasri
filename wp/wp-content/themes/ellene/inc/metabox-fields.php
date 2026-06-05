@@ -46,7 +46,7 @@ function mayami_register_options_page() {
 
         'id'           => 'mayami_options_page',
 
-        'title'        => 'Mayami Landing Local Settings',
+        'title'        => 'Mayami Settings',
 
         'object_types' => ['options-page'],
 
@@ -56,7 +56,7 @@ function mayami_register_options_page() {
 
         'position'     => 2,
 
-        'menu_title'   => 'Mayami Landing Local',
+        'menu_title'   => 'Mayami Settings',
 
         'save_button'  => 'Save',
 
