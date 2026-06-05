@@ -725,7 +725,7 @@ function mayami_enqueue_admin_assets($hook) {
 
 
 
-    // Required by the Visual Links Builder (selection from WP media library).
+    // Required by the VLB (Visual Links Builder) (selection from WP media library).
 
     wp_enqueue_media();
 
@@ -1261,9 +1261,9 @@ function mayami_register_visual_links_html_menu() {
 
     add_menu_page(
 
-        'Visual Links Builder',
+        'VLB',
 
-        'Visual Links Builder',
+        'VLB',
 
         'manage_options',
 
@@ -2821,7 +2821,7 @@ function mayami_render_visual_links_html_builder_page() {
 
     <div class="wrap mayami-vlb-html-page">
 
-        <h1>Visual Links Builder</h1>
+        <h1>Visual Links Builder (VLB)</h1>
 
         <p>Utilisez ce builder pour ajouter des zones cliquables sur n'importe quel visuel.</p>
 
