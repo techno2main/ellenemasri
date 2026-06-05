@@ -1314,13 +1314,25 @@ function mayami_register_options() {
 
     $cmb->add_field(array(
 
+        'name' => 'Activer la source partagée Stream',
+
+        'id'   => 'shared_stream_enabled',
+
+        'type' => 'checkbox',
+
+        'desc' => 'Quand activé : Stream lit les champs partagés ci-dessous. Quand désactivé : Stream reste 100% local.',
+
+    ));
+
+
+
+    $cmb->add_field(array(
+
         'name'    => 'Kicker partagé',
 
         'id'      => 'shared_stream_kicker',
 
         'type'    => 'text',
-
-        'default' => '01 / Listen',
 
     ));
 
@@ -1334,8 +1346,6 @@ function mayami_register_options() {
 
         'type'    => 'text',
 
-        'default' => 'Stream',
-
     ));
 
 
@@ -1348,7 +1358,7 @@ function mayami_register_options() {
 
         'type'    => 'file',
 
-        'desc'    => 'Source partagee utilisee quand le module Stream est mutualise.',
+        'desc'    => 'Source partagée utilisée quand le module Stream est mutualisé.',
 
     ));
 
@@ -1362,8 +1372,6 @@ function mayami_register_options() {
 
         'type'    => 'text',
 
-        'default' => 'Available everywhere',
-
     ));
 
 
@@ -1375,8 +1383,6 @@ function mayami_register_options() {
         'id'      => 'shared_stream_card_label',
 
         'type'    => 'text',
-
-        'default' => 'Listen on',
 
     ));
 
@@ -1390,9 +1396,9 @@ function mayami_register_options() {
 
         'options' => array(
 
-            'group_title'   => 'Plateforme partagee {#}',
+            'group_title'   => 'Plateforme partagée {#}',
 
-            'add_button'    => '+ Ajouter une plateforme partagee',
+            'add_button'    => '+ Ajouter une plateforme partagée',
 
             'remove_button' => 'Supprimer',
 

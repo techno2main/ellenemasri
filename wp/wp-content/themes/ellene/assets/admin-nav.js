@@ -106,6 +106,8 @@
 
     collapseStreamPlatformItemsByDefault();
 
+    collapseSharedStreamPlatformItemsByDefault();
+
     collapseReleaseRowsByDefault();
 
     syncSliderTypeVisibility();
@@ -993,6 +995,38 @@
       closeSliderGroup(group);
 
       group.dataset.mayamiStreamPlatformInit = '1';
+
+    });
+
+  }
+
+
+
+  function collapseSharedStreamPlatformItemsByDefault() {
+
+    const groups = document.querySelectorAll('.cmb2-id-shared-stream-platforms .cmb-repeatable-grouping');
+
+    if (!groups.length) {
+
+      return;
+
+    }
+
+
+
+    groups.forEach(function(group) {
+
+      if (group.dataset.mayamiSharedStreamPlatformInit === '1') {
+
+        return;
+
+      }
+
+
+
+      closeSliderGroup(group);
+
+      group.dataset.mayamiSharedStreamPlatformInit = '1';
 
     });
 
