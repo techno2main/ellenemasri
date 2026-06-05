@@ -3074,32 +3074,10 @@
 
 
 
-    // Keep one editing source visible at a time to avoid confusion.
-    setSectionVisibility('section_stream_title', !sharedActive);
+    // Always keep both editing entries visible in admin navigation.
+    setSectionVisibility('section_stream_title', true);
 
-    setSectionVisibility('section_stream_shared_title', sharedActive);
-
-
-
-    if (sharedActive) {
-
-      closeSection('section_stream_title');
-
-      openSection('section_stream_shared_title');
-
-      setActiveButtonBySection('section_stream_shared_title');
-
-      return;
-
-    }
-
-
-
-  closeSection('section_stream_shared_title');
-
-    openSection('section_stream_title');
-
-    setActiveButtonBySection('section_stream_title');
+    setSectionVisibility('section_stream_shared_title', true);
 
   }
 

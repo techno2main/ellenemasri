@@ -36,15 +36,36 @@ Statut: actif
     - compactage des boutons de navbar pour limiter les retours à la ligne
     - synchronisation dynamique du titre des items `shared_stream_platforms` depuis le champ `Nom`
     - fermeture par défaut conservée sur les groupes répétables stream local + stream partagé
+  - stabilisation finale (2026-06-05):
+    - correction de la casse JS admin (navbar/accordéons) pour restaurer un état fonctionnel
+    - réaffichage permanent de l'entrée `Stream partagé` dans la liste/navbar admin
+    - commit de stabilisation poussé: `da9b7be`
+
+- Phase 5: en cours (démarrée le 2026-06-05)
+  - correspond exactement à: structuration de l'admin métier Ellene (accès, navigation, écrans et cohérence UX CMB2) sans modifier le cœur WordPress
+  - inclus:
+    - fiabilisation de la navigation admin dédiée (sections, accordéons, groupes, sauvegarde)
+    - centralisation des helpers d'accès owner/admin et suppression des hardcodes restants
+    - clarification des chemins d'accès métier (Landing/Statistics) et cohérence des labels/action Save
+  - exclut:
+    - refonte visuelle front publique
+    - changements structurels WordPress core
+    - migration vers un autre framework de champs que CMB2
+  - livrable attendu de fin de phase:
+    - admin métier stable, lisible, testable, avec règles d'accès centralisées et sans régression UX critique
 
 ## Liens docs de référence
 - PA principal: documentation/refonte themes wp/PA_RESTRUCTURATION_ELLENE_MAYAMI.md
 - Inventaire Phase 2: documentation/refonte themes wp/INVENTAIRE_PHASE2_MAYAMI.md
 
-## Prochaine action
-- Continuer la phase en cours côté admin métier: stabilisation UX CMB2 (navbar/accordéons/groupes) puis reprise de la structuration des écrans/menus cibles.
+## Phase active
+- Phase active: Phase 5 (admin métier)
+- Prochain lot immédiat:
+  - finaliser la stabilisation UX CMB2 (navbar/accordéons/groupes répétables)
+  - terminer l'alignement des écrans/menus cibles sur les helpers centralisés
+  - valider le parcours admin owner de bout en bout (navigation, édition, sauvegarde)
 
-## Avancement phase suivante (2026-06-05)
+## Avancement Phase 5 (2026-06-05)
 - Lot 1 livré (socle architecture admin métier, non destructif):
   - centralisation du login propriétaire technique via helper `ellene_get_owner_admin_login()`
   - centralisation des contrôles d'accès propriétaire via `ellene_is_owner_admin_user(...)`
