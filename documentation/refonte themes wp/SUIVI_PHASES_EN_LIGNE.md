@@ -103,15 +103,15 @@ Statut: actif
 ## Phase active
 - Phase active: préparation Phase 6
 - Prochain lot immédiat:
-  - valider en UI la nouvelle page admin `Home Landing Local` (CMB2 distinct)
-  - vérifier le rendu navbar/accordéons identique à Mayami sur `Home Landing Local`
+  - valider en UI la nouvelle page admin `Home Settings` (CMB2 distinct)
+  - vérifier le rendu navbar/accordéons identique à Mayami sur `Home Settings`
   - enchaîner sur l'Étape 7 (rendu front Home branché sur les données Home)
 
 ## Avancement Phase 6 (2026-06-05)
 - Lot 1 en cours (socle admin Home Landing):
   - ajout des helpers dédiés Home (`option_key`, `slug`, `hook`, `url`) dans `functions.php`
   - ajout du getter dédié `ellene_get_home_landing_option(...)`
-  - création d'une page CMB2 distincte `Home Landing Local` avec option key `ellene_home_landing_options`
+  - création d'une page CMB2 distincte `Home Settings` avec option key `ellene_home_landing_options`
   - ajout de l'initialisation par défaut Home (modules actifs + premier item Releases vers Mayami)
   - chargement des assets admin partagés (navbar/accordéons) sur Home Landing + Mayami
   - extension de la navbar sticky admin pour supporter la section `Contact`

@@ -40,7 +40,7 @@ Source dominante: functions.php
 - simplification admin client: menu admin réduit, redirections login/admin-bar
 - menus métier existants Mayami:
   - Mayami Landing (CMB2)
-  - Visual Links Builder (menu + sous-menus + preview)
+  - VLB (Visual Links Builder) (menu + sous-menus + preview)
   - Statistiques
 - endpoints AJAX Visual Links:
   - save/get draft
