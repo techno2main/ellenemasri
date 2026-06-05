@@ -1,0 +1,127 @@
+.mayami-preview-banner {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    padding: 10px 16px;
+    background: #111827;
+    color: #f9fafb;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+.mayami-vlb-section {
+    position: relative;
+    padding: 88px 20px;
+    background: linear-gradient(180deg, #f5efe5 0%, #f2dcb4 100%);
+    color: #151515;
+}
+
+.mayami-vlb-shell {
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.mayami-vlb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.mayami-vlb-kicker {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+}
+
+.mayami-vlb-title {
+    margin: 10px 0 0;
+    font-size: clamp(42px, 7vw, 84px);
+    line-height: 0.95;
+}
+
+.mayami-vlb-description {
+    max-width: 780px;
+    margin: 20px 0 0;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.mayami-vlb-preview-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(17, 24, 39, 0.1);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.mayami-vlb-visual {
+    position: relative;
+    margin-top: 32px;
+    overflow: hidden;
+    border: 2px solid #151515;
+    border-radius: 28px;
+    background: #111827;
+    box-shadow: 14px 14px 0 #151515;
+}
+
+.mayami-vlb-visual img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.mayami-vlb-hotspot {
+    position: absolute;
+    display: block;
+    border: 0;
+    background: rgba(255, 255, 255, 0.001);
+}
+
+.mayami-vlb-hotspot:focus-visible,
+.mayami-vlb-hotspot:hover {
+    outline: 3px solid rgba(236, 72, 153, 0.7);
+    outline-offset: -3px;
+}
+
+.mayami-vlb-hotspot-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    max-width: calc(100% - 16px);
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: rgba(17, 24, 39, 0.8);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+[data-vlb-preview="1"] .mayami-vlb-hotspot {
+    background: rgba(236, 72, 153, 0.18);
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 767px) {
+    .mayami-vlb-section {
+        padding: 72px 16px;
+    }
+
+    .mayami-vlb-header {
+        flex-direction: column;
+    }
+
+    .mayami-vlb-visual {
+        border-radius: 22px;
+        box-shadow: 8px 8px 0 #151515;
+    }
+}
