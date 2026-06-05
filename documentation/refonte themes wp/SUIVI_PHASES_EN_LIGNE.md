@@ -41,7 +41,7 @@ Statut: actif
     - réaffichage permanent de l'entrée `Stream partagé` dans la liste/navbar admin
     - commit de stabilisation poussé: `da9b7be`
 
-- Phase 5: en cours (démarrée le 2026-06-05)
+- Phase 5: terminée et poussée
   - correspond exactement à: structuration de l'admin métier Ellene (accès, navigation, écrans et cohérence UX CMB2) sans modifier le cœur WordPress
   - inclus:
     - fiabilisation de la navigation admin dédiée (sections, accordéons, groupes, sauvegarde)
@@ -59,11 +59,9 @@ Statut: actif
 - Inventaire Phase 2: documentation/refonte themes wp/INVENTAIRE_PHASE2_MAYAMI.md
 
 ## Phase active
-- Phase active: Phase 5 (admin métier)
+- Phase active: clôture Phase 5
 - Prochain lot immédiat:
-  - finaliser la stabilisation UX CMB2 (navbar/accordéons/groupes répétables)
-  - terminer l'alignement des écrans/menus cibles sur les helpers centralisés
-  - valider le parcours admin owner de bout en bout (navigation, édition, sauvegarde)
+  - aucun (Phase 5 finalisée)
 
 ## Avancement Phase 5 (2026-06-05)
 - Lot 1 livré (socle architecture admin métier, non destructif):
@@ -71,9 +69,15 @@ Statut: actif
   - centralisation des contrôles d'accès propriétaire via `ellene_is_owner_admin_user(...)`
   - centralisation de l'URL d'accès Landing via `ellene_get_landing_admin_url()`
   - remplacement des occurrences hardcodées dans login redirect, menu admin limité, admin bar et page Statistics
-- Lot 2 en cours (stabilisation et centralisation des chemins admin):
+- Lot 2 livré (stabilisation et centralisation des chemins admin):
   - centralisation de la clé d'options Landing via `ellene_get_landing_option_key()`
   - centralisation du slug/hook Landing via `ellene_get_landing_admin_page_slug()` et `ellene_get_landing_admin_hook_suffix()`
   - remplacement des checks hardcodés Landing dans `functions.php` et `inc/cmb2-config.php`
   - centralisation du slug/hook/url Statistics via `ellene_get_statistics_admin_page_slug()`, `ellene_get_statistics_admin_hook_suffix()` et `ellene_get_statistics_admin_url()`
   - ajout d'un accès retour Landing sur la page Statistics (par helper centralisé)
+- Lot 3 livré (stabilisation UX CMB2 navbar/accordéons/groupes):
+  - branchement explicite de la synchro Stream partagé au chargement admin
+  - exécution de `bindSharedStreamSourceVisibility()` et `syncSharedStreamSourceVisibility()` dans l'init
+  - correctif runtime: restauration du helper `getSharedStreamEnabledCheckbox()` (suppression de l'erreur JS au chargement)
+  - conservation explicite de la visibilité des entrées Stream local + Stream partagé dans la navbar/liste admin
+  - validation syntaxique JS/PHP sans erreur sur les fichiers modifiés

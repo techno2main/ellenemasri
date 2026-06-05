@@ -154,6 +154,10 @@
 
     bindSliderTypeEvents();
 
+    bindSharedStreamSourceVisibility();
+
+    syncSharedStreamSourceVisibility();
+
     styleBottomSaveButtons();
 
     restoreActiveSectionAfterSave();
@@ -3051,6 +3055,14 @@
       navBtn.style.display = isVisible ? '' : 'none';
 
     }
+
+  }
+
+
+
+  function getSharedStreamEnabledCheckbox() {
+
+    return document.querySelector('.cmb2-id-shared-stream-enabled input[type="checkbox"]');
 
   }
 
