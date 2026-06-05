@@ -71,3 +71,9 @@ Statut: actif
   - centralisation des contrôles d'accès propriétaire via `ellene_is_owner_admin_user(...)`
   - centralisation de l'URL d'accès Landing via `ellene_get_landing_admin_url()`
   - remplacement des occurrences hardcodées dans login redirect, menu admin limité, admin bar et page Statistics
+- Lot 2 en cours (stabilisation et centralisation des chemins admin):
+  - centralisation de la clé d'options Landing via `ellene_get_landing_option_key()`
+  - centralisation du slug/hook Landing via `ellene_get_landing_admin_page_slug()` et `ellene_get_landing_admin_hook_suffix()`
+  - remplacement des checks hardcodés Landing dans `functions.php` et `inc/cmb2-config.php`
+  - centralisation du slug/hook/url Statistics via `ellene_get_statistics_admin_page_slug()`, `ellene_get_statistics_admin_hook_suffix()` et `ellene_get_statistics_admin_url()`
+  - ajout d'un accès retour Landing sur la page Statistics (par helper centralisé)

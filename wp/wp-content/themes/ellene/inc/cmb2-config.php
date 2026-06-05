@@ -44,7 +44,7 @@ function mayami_sticky_save_button() {
 
     $screen = get_current_screen();
 
-    if ($screen && strpos($screen->id, 'mayami_landing_options') !== false) {
+    if ($screen && $screen->id === ellene_get_landing_admin_hook_suffix()) {
 
         ?>
 
@@ -182,7 +182,7 @@ function mayami_sticky_save_button() {
 
 function mayami_initialize_default_content() {
 
-    $option_key = 'mayami_landing_options';
+    $option_key = ellene_get_landing_option_key();
 
     
 
@@ -444,7 +444,7 @@ function mayami_sync_marquee_play_link_once() {
 
 
 
-    $option_key = 'mayami_landing_options';
+    $option_key = ellene_get_landing_option_key();
 
     $options = get_option($option_key, array());
 
@@ -520,7 +520,7 @@ function mayami_sync_marquee_items_once() {
 
 
 
-    $option_key = 'mayami_landing_options';
+    $option_key = ellene_get_landing_option_key();
 
     $options = get_option($option_key, array());
 
@@ -622,7 +622,7 @@ function mayami_register_options() {
 
     
 
-    $option_key = 'mayami_landing_options';
+    $option_key = ellene_get_landing_option_key();
 
     
 

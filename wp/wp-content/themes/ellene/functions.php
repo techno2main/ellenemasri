@@ -96,6 +96,114 @@ function ellene_is_owner_admin_user($user = null) {
 
 /**
 
+ * Get the CMB2 option key used by the landing admin page.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_landing_option_key() {
+
+    return 'mayami_landing_options';
+
+}
+
+
+
+/**
+
+ * Get the admin page slug for landing settings.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_landing_admin_page_slug() {
+
+    return ellene_get_landing_option_key();
+
+}
+
+
+
+/**
+
+ * Get the WordPress admin hook suffix for the landing settings page.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_landing_admin_hook_suffix() {
+
+    return 'toplevel_page_' . ellene_get_landing_admin_page_slug();
+
+}
+
+
+
+/**
+
+ * Get the admin page slug for the owner-only statistics screen.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_statistics_admin_page_slug() {
+
+    return 'mayami_statistics';
+
+}
+
+
+
+/**
+
+ * Get the WordPress admin hook suffix for the statistics page.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_statistics_admin_hook_suffix() {
+
+    return 'toplevel_page_' . ellene_get_statistics_admin_page_slug();
+
+}
+
+
+
+/**
+
+ * Build the admin URL for the owner-only statistics page.
+
+ *
+
+ * @return string
+
+ */
+
+function ellene_get_statistics_admin_url() {
+
+    return admin_url('admin.php?page=' . ellene_get_statistics_admin_page_slug());
+
+}
+
+
+
+/**
+
  * Build the admin URL for the landing settings screen.
 
  *
@@ -106,7 +214,7 @@ function ellene_is_owner_admin_user($user = null) {
 
 function ellene_get_landing_admin_url() {
 
-    return admin_url('admin.php?page=mayami_landing_options');
+    return admin_url('admin.php?page=' . ellene_get_landing_admin_page_slug());
 
 }
 
@@ -134,7 +242,7 @@ function ellene_get_landing_admin_url() {
 
 function mayami_get_landing_option($field_id, $default = '') {
 
-    $primary_options = get_option('mayami_landing_options', array());
+    $primary_options = get_option(ellene_get_landing_option_key(), array());
 
     if (is_array($primary_options) && array_key_exists($field_id, $primary_options)) {
 
@@ -404,7 +512,7 @@ add_action('wp_enqueue_scripts', 'mayami_enqueue_assets');
 
 function mayami_enqueue_admin_assets($hook) {
 
-    $is_landing_page = ('toplevel_page_mayami_landing_options' === $hook);
+    $is_landing_page = (ellene_get_landing_admin_hook_suffix() === $hook);
 
     $is_visual_links_page = (strpos((string) $hook, 'mayami_visual_links') !== false);
 
@@ -524,7 +632,7 @@ function mayami_hide_wp_footer_text_on_landing($text) {
 
     if ($screen && (
 
-        $screen->id === 'toplevel_page_mayami_landing_options' ||
+        $screen->id === ellene_get_landing_admin_hook_suffix() ||
 
         strpos($screen->id, 'mayami_visual_links') !== false
 
@@ -3000,7 +3108,7 @@ function mayami_register_statistics_page() {
 
         'manage_options',
 
-        'mayami_statistics',
+        ellene_get_statistics_admin_page_slug(),
 
         'mayami_statistics_page'
 
@@ -3024,6 +3132,10 @@ function mayami_statistics_page() {
 
 
 
+    $landing_url = ellene_get_landing_admin_url();
+
+
+
     ?>
 
     <div class="wrap">
@@ -3031,6 +3143,12 @@ function mayami_statistics_page() {
         <h1>📊 Statistics — ellenemasri.pro</h1>
 
         <p>View your site analytics directly in Google Analytics 4.</p>
+
+        <p>
+
+            <a href="<?php echo esc_url($landing_url); ?>" class="button button-secondary">Back to Landing Settings</a>
+
+        </p>
 
         <a href="https://analytics.google.com/analytics/web/#/p539563734/reports/reportinghub"
 
