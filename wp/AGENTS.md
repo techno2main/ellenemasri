@@ -8,7 +8,7 @@ It is the production target, not the prototype area.
 ## Stack
 
 - Standard WordPress installation
-- Active custom theme: `wp-content/themes/mayami`
+- Active custom theme: `wp-content/themes/ellene-wp` (Theme Name: `ellene-wp`)
 - Custom admin fields and metaboxes: CMB2
 - Styling: Tailwind CSS 4 with `@tailwindcss/cli`
 - Theme structure relies on PHP templates, `template-parts/`, and `inc/`
