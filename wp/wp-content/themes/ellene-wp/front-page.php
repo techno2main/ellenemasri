@@ -42,18 +42,6 @@ if (!defined('ABSPATH')) {
 
 
 
-<?php if (mayami_is_visual_links_preview_request()): ?>
-
-    <div class="mayami-preview-banner">
-
-        Prévisualisation privée Visual Links active. Seul votre compte admin voit ce brouillon.
-
-    </div>
-
-<?php endif; ?>
-
-
-
 <main class="relative overflow-x-clip">
 
     <!-- Sticky Marquee Top -->

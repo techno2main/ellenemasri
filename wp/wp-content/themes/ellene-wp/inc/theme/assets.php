@@ -25,15 +25,6 @@ function mayami_enqueue_assets() {
         '1.0.0'
     );
 
-    $visual_links_css_path = get_template_directory() . '/assets/visual-links.css';
-
-    wp_enqueue_style(
-        'mayami-visual-links',
-        get_template_directory_uri() . '/assets/visual-links.css',
-        array('mayami-tailwind'),
-        file_exists($visual_links_css_path) ? (string) filemtime($visual_links_css_path) : '1.0.0'
-    );
-
     wp_add_inline_style(
         'mayami-tailwind',
         'img, video, iframe { -webkit-user-drag: none; -webkit-touch-callout: none; user-select: none; }'

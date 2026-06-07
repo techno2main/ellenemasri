@@ -55,10 +55,10 @@ add_action('cmb2_admin_init', 'mayami_register_options');
 function mayami_register_options() {
     $cmb = new_cmb2_box(array(
         'id'           => 'mayami_landing_options',
-        'title'        => __('ellene-wp Landing Settings', 'ellene-wp'),
+        'title'        => __('LANDING PAGE SETTINGS', 'ellene-wp'),
         'object_types' => array('options-page'),
         'option_key'   => 'mayami_landing_options',
-        'menu_title'   => __('ellene-wp Landing', 'ellene-wp'),
+        'menu_title'   => __('LANDING PAGE', 'ellene-wp'),
         'position'     => 2,
         'capability'   => 'manage_options',
     ));
