@@ -27,6 +27,7 @@ require_once get_template_directory() . '/inc/metabox-fields/slider.php';
 require_once get_template_directory() . '/inc/metabox-fields/stream.php';
 require_once get_template_directory() . '/inc/metabox-fields/social.php';
 require_once get_template_directory() . '/inc/metabox-fields/video.php';
+require_once get_template_directory() . '/inc/metabox-fields/release.php';
 
 
 
@@ -140,77 +141,7 @@ function mayami_register_options_page() {
 
     
 
-    $cmb_options->add_field([
-
-        'name'    => 'Title Highlight',
-
-        'id'      => 'release_title_highlight',
-
-        'type'    => 'text',
-
-        'default' => 'ELLENE-WP',
-
-    ]);
-
-    
-
-    $cmb_options->add_field([
-
-        'name' => 'Cover Image',
-
-        'id'   => 'release_cover_image',
-
-        'type' => 'file',
-
-    ]);
-
-    
-
-    $release_group = $cmb_options->add_field([
-
-        'id'          => 'release_rows',
-
-        'type'        => 'group',
-
-        'description' => 'Lignes d\'information (Label : Valeur)',
-
-        'options'     => [
-
-            'group_title'   => 'Info {#}',
-
-            'add_button'    => 'Ajouter une ligne',
-
-            'remove_button' => 'Supprimer',
-
-            'sortable'      => true,
-
-        ],
-
-    ]);
-
-    
-
-    $cmb_options->add_group_field($release_group, [
-
-        'name' => 'Label',
-
-        'id'   => 'key',
-
-        'type' => 'text',
-
-    ]);
-
-    
-
-    $cmb_options->add_group_field($release_group, [
-
-        'name' => 'Valeur',
-
-        'id'   => 'value',
-
-        'type' => 'text',
-
-    ]);
+    mayami_register_release_section_fields($cmb_options);
 
 
 
