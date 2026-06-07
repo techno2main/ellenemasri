@@ -30,6 +30,7 @@ require_once get_template_directory() . '/inc/metabox-fields/video.php';
 require_once get_template_directory() . '/inc/metabox-fields/release.php';
 require_once get_template_directory() . '/inc/metabox-fields/cta.php';
 require_once get_template_directory() . '/inc/metabox-fields/footer.php';
+require_once get_template_directory() . '/inc/metabox-fields/top-bar.php';
 
 
 
@@ -155,87 +156,7 @@ function mayami_register_options_page() {
 
 
 
-    // ============================================
-
-    // TAB: MARQUEE (Top Bar)
-
-    // ============================================
-
-    $cmb_options->add_field([
-
-        'name' => 'Marquee (Top Sticky Bar)',
-
-        'id'   => 'marquee_tab',
-
-        'type' => 'title',
-
-        'render_row_cb' => 'mayami_cmb2_tab_open',
-
-        'tab' => 'marquee',
-
-    ]);
-
-    
-
-    $marquee_group = $cmb_options->add_field([
-
-        'id'          => 'marquee_items',
-
-        'type'        => 'group',
-
-        'description' => 'Items défilants du marquee en haut de page',
-
-        'options'     => [
-
-            'group_title'   => 'Item {#}',
-
-            'add_button'    => 'Ajouter un item',
-
-            'remove_button' => 'Supprimer',
-
-            'sortable'      => true,
-
-        ],
-
-    ]);
-
-    
-
-    $cmb_options->add_group_field($marquee_group, [
-
-        'name' => 'Label',
-
-        'id'   => 'label',
-
-        'type' => 'text',
-
-    ]);
-
-    
-
-    $cmb_options->add_group_field($marquee_group, [
-
-        'name' => 'Lien (URL)',
-
-        'id'   => 'href',
-
-        'type' => 'text_url',
-
-    ]);
-
-    
-
-    $cmb_options->add_group_field($marquee_group, [
-
-        'name' => 'Lien externe',
-
-        'id'   => 'external',
-
-        'type' => 'checkbox',
-
-        'desc' => 'Ouvrir dans un nouvel onglet',
-
-    ]);
+    mayami_register_top_bar_section_fields($cmb_options);
 
 }
 
@@ -1109,13 +1030,13 @@ function mayami_register_meta_boxes($meta_boxes) {
 
     // ============================================
 
-    // MARQUEE (Top Sticky Bar)
+    // TOP BAR (Top Sticky Bar)
 
     // ============================================
 
     $meta_boxes[] = [
 
-        'title'      => 'Marquee (Top Bar)',
+        'title'      => 'Top Bar',
 
         'id'         => 'mayami-marquee',
 
@@ -1127,7 +1048,7 @@ function mayami_register_meta_boxes($meta_boxes) {
 
             [
 
-                'name'   => 'Marquee Items',
+                'name'   => 'Top Bar Items',
 
                 'id'     => 'marquee_items',
 
