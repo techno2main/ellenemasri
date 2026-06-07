@@ -60,7 +60,7 @@ if (!defined('ABSPATH')) {
 
     <div class="sticky top-0 z-60">
 
-        <?php get_template_part('template-parts/sections/hero-marquee'); ?>
+        <?php get_template_part('template-parts/sections/top-bar/index'); ?>
 
     </div>
 
@@ -68,7 +68,7 @@ if (!defined('ABSPATH')) {
 
     <!-- Hero Section -->
 
-    <?php get_template_part('template-parts/sections/hero'); ?>
+    <?php get_template_part('template-parts/sections/hero/index'); ?>
 
     
 
@@ -80,7 +80,7 @@ if (!defined('ABSPATH')) {
 
     <!-- Footer Section -->
 
-    <?php get_template_part('template-parts/sections/footer-section'); ?>
+    <?php get_template_part('template-parts/sections/footer/index'); ?>
 
     
 

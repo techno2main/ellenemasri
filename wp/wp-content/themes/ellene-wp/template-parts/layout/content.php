@@ -36,7 +36,9 @@ foreach ($modules as $module) {
         continue;
     }
 
-    get_template_part('template-parts/sections/' . $module_slug);
+    $module_template = $module_slug === 'release-info' ? 'release' : $module_slug;
+
+    get_template_part('template-parts/sections/' . $module_template . '/index');
 }
 
-get_template_part('template-parts/sections/sticky-bar');
+get_template_part('template-parts/sections/footer/sticky-bar');

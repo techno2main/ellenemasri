@@ -40,7 +40,7 @@ function ellene_render_content_modules($context = 'home') {
     set_query_var('ellene_module_slug', null);
     set_query_var('ellene_module_mode', null);
 
-    get_template_part('template-parts/sections/sticky-bar');
+    get_template_part('template-parts/sections/footer/sticky-bar');
 }
 
 /**
