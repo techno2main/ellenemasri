@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mayami_register_cmb2_release_section($cmb) {
+function ellene_wp_register_cmb2_release_section($cmb) {
     // ========== SECTION: RELEASE INFO ==========
 
     $cmb->add_field(array(

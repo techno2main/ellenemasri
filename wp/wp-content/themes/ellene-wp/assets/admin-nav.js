@@ -1,6 +1,6 @@
-﻿/**
+/**
 
- * Admin Navigation Sticky - Mayami Landing
+ * Admin Navigation Sticky - Ellene Landing
 
  */
 
@@ -48,7 +48,7 @@
 
 
 
-  const ACTIVE_SECTION_STORAGE_KEY = 'mayami_active_section_after_save';
+  const ACTIVE_SECTION_STORAGE_KEY = 'ellene_wp_active_section_after_save';
 
   const SECTION_ROW_SELECTORS = {};
 
@@ -62,7 +62,7 @@
 
 
 
-  // Attendre que le DOM soit charg├®
+  // Attendre que le DOM soit charge
 
   if (document.readyState === 'loading') {
 
@@ -78,7 +78,7 @@
 
   function init() {
 
-    // V├®rifier qu'on est sur la page admin Mayami
+    // Verifier qu'on est sur la page admin Ellene
 
     if (!document.querySelector('.cmb2-id-section-hero-title')) return;
 
@@ -164,7 +164,7 @@
 
       const sectionTitle = getSectionTitleElement(sectionId);
 
-      if (sectionTitle && sectionTitle.classList.contains('mayami-section-open')) {
+      if (sectionTitle && sectionTitle.classList.contains('ellene-wp-section-open')) {
 
         return sectionId;
 
@@ -192,7 +192,7 @@
 
     forms.forEach(function(form) {
 
-      if (!form || form.dataset.mayamiSaveSectionBound === '1') {
+      if (!form || form.dataset.elleneWpSaveSectionBound === '1') {
 
         return;
 
@@ -200,7 +200,7 @@
 
 
 
-      form.dataset.mayamiSaveSectionBound = '1';
+      form.dataset.elleneWpSaveSectionBound = '1';
 
       form.addEventListener('submit', function() {
 
@@ -292,7 +292,7 @@
 
     const scope = document.querySelector('.cmb2-wrap');
 
-    if (!scope || scope.dataset.mayamiDeleteGuard === '1') {
+    if (!scope || scope.dataset.elleneWpDeleteGuard === '1') {
 
       return;
 
@@ -300,7 +300,7 @@
 
 
 
-    scope.dataset.mayamiDeleteGuard = '1';
+    scope.dataset.elleneWpDeleteGuard = '1';
 
     ensureDeleteConfirmModal();
 
@@ -318,7 +318,7 @@
 
 
 
-      if (target.closest('.mayami-delete-modal, .mayami-delete-modal-backdrop')) {
+      if (target.closest('.ellene-wp-delete-modal, .ellene-wp-delete-modal-backdrop')) {
 
         return;
 
@@ -336,9 +336,9 @@
 
 
 
-      if (destructiveControl.dataset.mayamiDeleteConfirmed === '1') {
+      if (destructiveControl.dataset.elleneWpDeleteConfirmed === '1') {
 
-        delete destructiveControl.dataset.mayamiDeleteConfirmed;
+        delete destructiveControl.dataset.elleneWpDeleteConfirmed;
 
         return;
 
@@ -430,7 +430,7 @@
 
   function ensureDeleteConfirmModal() {
 
-    const existing = document.getElementById('mayami-delete-confirm');
+    const existing = document.getElementById('ellene-wp-delete-confirm');
 
     if (existing) {
 
@@ -438,13 +438,13 @@
 
         root: existing,
 
-        title: existing.querySelector('.mayami-delete-modal-title'),
+        title: existing.querySelector('.ellene-wp-delete-modal-title'),
 
-        message: existing.querySelector('.mayami-delete-modal-message'),
+        message: existing.querySelector('.ellene-wp-delete-modal-message'),
 
-        confirmBtn: existing.querySelector('.mayami-delete-confirm-btn'),
+        confirmBtn: existing.querySelector('.ellene-wp-delete-confirm-btn'),
 
-        cancelBtn: existing.querySelector('.mayami-delete-cancel-btn')
+        cancelBtn: existing.querySelector('.ellene-wp-delete-cancel-btn')
 
       };
 
@@ -456,25 +456,25 @@
 
     const root = document.createElement('div');
 
-    root.id = 'mayami-delete-confirm';
+    root.id = 'ellene-wp-delete-confirm';
 
-    root.className = 'mayami-delete-modal-backdrop';
+    root.className = 'ellene-wp-delete-modal-backdrop';
 
     root.hidden = true;
 
     root.innerHTML = '' +
 
-      '<div class="mayami-delete-modal" role="dialog" aria-modal="true" aria-labelledby="mayami-delete-title">' +
+      '<div class="ellene-wp-delete-modal" role="dialog" aria-modal="true" aria-labelledby="ellene-wp-delete-title">' +
 
-        '<h3 id="mayami-delete-title" class="mayami-delete-modal-title">Confirmer la suppression</h3>' +
+        '<h3 id="ellene-wp-delete-title" class="ellene-wp-delete-modal-title">Confirmer la suppression</h3>' +
 
-        '<p class="mayami-delete-modal-message">Cette action est d├®finitive. Veux-tu vraiment supprimer cet ├®l├®ment ?</p>' +
+        '<p class="ellene-wp-delete-modal-message">Cette action est definitive. Veux-tu vraiment supprimer cet element ?</p>' +
 
-        '<div class="mayami-delete-modal-actions">' +
+        '<div class="ellene-wp-delete-modal-actions">' +
 
-          '<button type="button" class="button mayami-delete-cancel-btn">Annuler</button>' +
+          '<button type="button" class="button ellene-wp-delete-cancel-btn">Annuler</button>' +
 
-          '<button type="button" class="button button-primary mayami-delete-confirm-btn">Oui, supprimer</button>' +
+          '<button type="button" class="button button-primary ellene-wp-delete-confirm-btn">Oui, supprimer</button>' +
 
         '</div>' +
 
@@ -486,13 +486,13 @@
 
 
 
-    const title = root.querySelector('.mayami-delete-modal-title');
+    const title = root.querySelector('.ellene-wp-delete-modal-title');
 
-    const message = root.querySelector('.mayami-delete-modal-message');
+    const message = root.querySelector('.ellene-wp-delete-modal-message');
 
-    const confirmBtn = root.querySelector('.mayami-delete-confirm-btn');
+    const confirmBtn = root.querySelector('.ellene-wp-delete-confirm-btn');
 
-    const cancelBtn = root.querySelector('.mayami-delete-cancel-btn');
+    const cancelBtn = root.querySelector('.ellene-wp-delete-cancel-btn');
 
 
 
@@ -510,7 +510,7 @@
 
       }
 
-      control.dataset.mayamiDeleteConfirmed = '1';
+      control.dataset.elleneWpDeleteConfirmed = '1';
 
       if (typeof control.click === 'function') {
 
@@ -590,15 +590,15 @@
 
     deleteModalElements.message.textContent = label
 
-      ? 'Tu es sur le point de supprimer "' + label + '". Cette action est d├®finitive.'
+      ? 'Tu es sur le point de supprimer "' + label + '". Cette action est definitive.'
 
-      : 'Cette action est d├®finitive. Veux-tu vraiment supprimer cet ├®l├®ment ?';
+      : 'Cette action est definitive. Veux-tu vraiment supprimer cet element ?';
 
 
 
     deleteModalElements.root.hidden = false;
 
-    document.body.classList.add('mayami-delete-modal-open');
+    document.body.classList.add('ellene-wp-delete-modal-open');
 
     deleteModalElements.cancelBtn.focus();
 
@@ -618,7 +618,7 @@
 
     deleteModalElements.root.hidden = true;
 
-    document.body.classList.remove('mayami-delete-modal-open');
+    document.body.classList.remove('ellene-wp-delete-modal-open');
 
     pendingDeleteControl = null;
 
@@ -750,7 +750,7 @@
 
   function bindReleaseRowNameEvents() {
 
-    if (document.body.dataset.mayamiReleaseRowNameBound === '1') {
+    if (document.body.dataset.elleneWpReleaseRowNameBound === '1') {
 
       return;
 
@@ -758,7 +758,7 @@
 
 
 
-    document.body.dataset.mayamiReleaseRowNameBound = '1';
+    document.body.dataset.elleneWpReleaseRowNameBound = '1';
 
 
 
@@ -828,7 +828,7 @@
 
     groups.forEach(function(group) {
 
-      if (group.dataset.mayamiReleaseRowInit === '1') {
+      if (group.dataset.elleneWpReleaseRowInit === '1') {
 
         return;
 
@@ -838,7 +838,7 @@
 
       closeSliderGroup(group);
 
-      group.dataset.mayamiReleaseRowInit = '1';
+      group.dataset.elleneWpReleaseRowInit = '1';
 
     });
 
@@ -908,7 +908,7 @@
 
   function bindStreamPlatformNameEvents() {
 
-    if (document.body.dataset.mayamiStreamPlatformNameBound === '1') {
+    if (document.body.dataset.elleneWpStreamPlatformNameBound === '1') {
 
       return;
 
@@ -916,7 +916,7 @@
 
 
 
-    document.body.dataset.mayamiStreamPlatformNameBound = '1';
+    document.body.dataset.elleneWpStreamPlatformNameBound = '1';
 
 
 
@@ -986,7 +986,7 @@
 
     groups.forEach(function(group) {
 
-      if (group.dataset.mayamiStreamPlatformInit === '1') {
+      if (group.dataset.elleneWpStreamPlatformInit === '1') {
 
         return;
 
@@ -996,7 +996,7 @@
 
       closeSliderGroup(group);
 
-      group.dataset.mayamiStreamPlatformInit = '1';
+      group.dataset.elleneWpStreamPlatformInit = '1';
 
     });
 
@@ -1066,7 +1066,7 @@
 
             if (newGroup) {
 
-              newGroup.dataset.mayamiSliderInit = '1';
+              newGroup.dataset.elleneWpSliderInit = '1';
 
               openSliderGroup(newGroup);
 
@@ -1170,7 +1170,7 @@
 
   function bindSliderNameEvents() {
 
-    if (document.body.dataset.mayamiSliderNameBound === '1') {
+    if (document.body.dataset.elleneWpSliderNameBound === '1') {
 
       return;
 
@@ -1178,7 +1178,7 @@
 
 
 
-    document.body.dataset.mayamiSliderNameBound = '1';
+    document.body.dataset.elleneWpSliderNameBound = '1';
 
 
 
@@ -1238,7 +1238,7 @@
 
     const sliderRoot = document.querySelector('.cmb2-id-hero-slider');
 
-    if (!sliderRoot || sliderRoot.dataset.mayamiSliderObserver === '1' || typeof MutationObserver === 'undefined') {
+    if (!sliderRoot || sliderRoot.dataset.elleneWpSliderObserver === '1' || typeof MutationObserver === 'undefined') {
 
       return;
 
@@ -1246,7 +1246,7 @@
 
 
 
-    sliderRoot.dataset.mayamiSliderObserver = '1';
+    sliderRoot.dataset.elleneWpSliderObserver = '1';
 
     const observer = new MutationObserver(function(mutations) {
 
@@ -1308,7 +1308,7 @@
 
           if (newGroup) {
 
-            newGroup.dataset.mayamiSliderInit = '1';
+            newGroup.dataset.elleneWpSliderInit = '1';
 
             openSliderGroup(newGroup);
 
@@ -1444,7 +1444,7 @@
 
     groups.forEach(function(group) {
 
-      if (group.dataset.mayamiSliderInit === '1') {
+      if (group.dataset.elleneWpSliderInit === '1') {
 
         return;
 
@@ -1454,7 +1454,7 @@
 
       closeSliderGroup(group);
 
-      group.dataset.mayamiSliderInit = '1';
+      group.dataset.elleneWpSliderInit = '1';
 
     });
 
@@ -1624,7 +1624,7 @@
 
     const scope = document.querySelector('.cmb2-wrap');
 
-    if (!scope || scope.dataset.mayamiMediaObserver === '1' || typeof MutationObserver === 'undefined') {
+    if (!scope || scope.dataset.elleneWpMediaObserver === '1' || typeof MutationObserver === 'undefined') {
 
       return;
 
@@ -1632,7 +1632,7 @@
 
 
 
-    scope.dataset.mayamiMediaObserver = '1';
+    scope.dataset.elleneWpMediaObserver = '1';
 
     const observer = new MutationObserver(function() {
 
@@ -1690,19 +1690,19 @@
 
 
 
-    let inlineWrap = logoTd.querySelector('.mayami-inline-hide-toggle');
+    let inlineWrap = logoTd.querySelector('.ellene-wp-inline-hide-toggle');
 
     if (!inlineWrap) {
 
       inlineWrap = document.createElement('span');
 
-      inlineWrap.className = 'mayami-inline-hide-toggle';
+      inlineWrap.className = 'ellene-wp-inline-hide-toggle';
 
 
 
       const label = document.createElement('span');
 
-      label.className = 'mayami-inline-hide-label';
+      label.className = 'ellene-wp-inline-hide-label';
 
       label.textContent = 'Masquer';
 
@@ -1734,7 +1734,7 @@
 
 
 
-    hideRow.classList.add('mayami-hidden-source-row');
+    hideRow.classList.add('ellene-wp-hidden-source-row');
 
   }
 
@@ -1776,19 +1776,19 @@
 
 
 
-      let inlineWrap = fieldTd.querySelector('.mayami-inline-field-toggle');
+      let inlineWrap = fieldTd.querySelector('.ellene-wp-inline-field-toggle');
 
       if (!inlineWrap) {
 
         inlineWrap = document.createElement('span');
 
-        inlineWrap.className = 'mayami-inline-field-toggle';
+        inlineWrap.className = 'ellene-wp-inline-field-toggle';
 
 
 
         const label = document.createElement('span');
 
-        label.className = 'mayami-inline-field-toggle-label';
+        label.className = 'ellene-wp-inline-field-toggle-label';
 
         label.textContent = 'Masquer';
 
@@ -1820,7 +1820,7 @@
 
 
 
-      toggleRow.classList.add('mayami-hidden-source-row');
+      toggleRow.classList.add('ellene-wp-hidden-source-row');
 
     });
 
@@ -2068,19 +2068,19 @@
 
 
 
-    // Cr├®er la navigation
+    // Creer la navigation
 
     const nav = document.createElement('div');
 
-    nav.id = 'mayami-admin-nav';
+    nav.id = 'ellene-wp-admin-nav';
 
-    nav.className = 'mayami-admin-nav';
+    nav.className = 'ellene-wp-admin-nav';
 
     
 
     const navInner = document.createElement('div');
 
-    navInner.className = 'mayami-admin-nav-inner';
+    navInner.className = 'ellene-wp-admin-nav-inner';
 
 
 
@@ -2090,11 +2090,11 @@
 
     title.href = '#';
 
-    title.className = 'mayami-admin-home';
+    title.className = 'ellene-wp-admin-home';
 
-    title.setAttribute('title', 'Mayami Landing Settings');
+    title.setAttribute('title', 'Ellene Landing Settings');
 
-    title.setAttribute('aria-label', 'Mayami Landing Settings');
+    title.setAttribute('aria-label', 'Ellene Landing Settings');
 
     title.innerHTML = '<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>';
 
@@ -2112,7 +2112,7 @@
 
 
 
-      const nav = document.getElementById('mayami-admin-nav');
+      const nav = document.getElementById('ellene-wp-admin-nav');
 
       if (!nav) return;
 
@@ -2160,7 +2160,7 @@
 
     const buttonsContainer = document.createElement('div');
 
-    buttonsContainer.className = 'mayami-admin-nav-buttons';
+    buttonsContainer.className = 'ellene-wp-admin-nav-buttons';
 
 
 
@@ -2178,7 +2178,7 @@
 
       btn.textContent = section.label;
 
-      btn.className = 'mayami-nav-btn';
+      btn.className = 'ellene-wp-nav-btn';
 
       btn.dataset.section = section.id;
 
@@ -2210,13 +2210,13 @@
 
     
 
-    // Bouton Enregistrer ├á droite
+    // Bouton Enregistrer a droite
 
     const saveButton = document.createElement('button');
 
     saveButton.type = 'button';
 
-    saveButton.className = 'mayami-save-btn';
+    saveButton.className = 'ellene-wp-save-btn';
 
     saveButton.innerHTML = '💾 Enregistrer';
 
@@ -2270,13 +2270,13 @@
 
 
 
-    // Ins├®rer avant le formulaire
+    // Inserer avant le formulaire
 
     formContainer.parentNode.insertBefore(nav, formContainer);
 
 
 
-    // Observer le scroll pour mettre ├á jour le bouton actif
+    // Observer le scroll pour mettre a jour le bouton actif
 
     observeSections(sections);
 
@@ -2292,7 +2292,7 @@
 
       if (sectionTitle) {
 
-        sectionTitle.setAttribute('data-mayami-section', sectionId);
+        sectionTitle.setAttribute('data-ellene-wp-section', sectionId);
 
         makeSectionTitleInteractive(sectionId);
 
@@ -2310,7 +2310,7 @@
 
     const sectionTitle = getSectionTitleElement(sectionId);
 
-    if (!sectionTitle || sectionTitle.dataset.mayamiClickable === '1') {
+    if (!sectionTitle || sectionTitle.dataset.elleneWpClickable === '1') {
 
       return;
 
@@ -2318,7 +2318,7 @@
 
 
 
-    sectionTitle.dataset.mayamiClickable = '1';
+    sectionTitle.dataset.elleneWpClickable = '1';
 
     sectionTitle.setAttribute('role', 'button');
 
@@ -2326,7 +2326,7 @@
 
     sectionTitle.setAttribute('aria-expanded', 'false');
 
-    sectionTitle.classList.add('mayami-section-toggle');
+    sectionTitle.classList.add('ellene-wp-section-toggle');
 
     injectSectionEyeIcon(sectionTitle);
 
@@ -2372,7 +2372,7 @@
 
     const iconHost = sectionTitle.querySelector('.cmb-th') || sectionTitle;
 
-    if (!iconHost || iconHost.querySelector('.mayami-eye-indicator')) {
+    if (!iconHost || iconHost.querySelector('.ellene-wp-eye-indicator')) {
 
       return;
 
@@ -2382,7 +2382,7 @@
 
     const eye = document.createElement('span');
 
-    eye.className = 'mayami-eye-indicator dashicons dashicons-visibility';
+    eye.className = 'ellene-wp-eye-indicator dashicons dashicons-visibility';
 
     eye.setAttribute('aria-hidden', 'true');
 
@@ -2412,7 +2412,7 @@
 
     buttons.forEach(function(btn) {
 
-      if (btn.classList.contains('mayami-save-btn')) {
+      if (btn.classList.contains('ellene-wp-save-btn')) {
 
         return;
 
@@ -2458,7 +2458,7 @@
 
 
 
-      if (btn.dataset.mayamiSaveStyled === '1') {
+      if (btn.dataset.elleneWpSaveStyled === '1') {
 
         return;
 
@@ -2466,7 +2466,7 @@
 
 
 
-      btn.dataset.mayamiSaveStyled = '1';
+      btn.dataset.elleneWpSaveStyled = '1';
 
       btn.addEventListener('mouseenter', function() {
 
@@ -2508,7 +2508,7 @@
 
 
 
-    const isOpen = sectionTitle.classList.contains('mayami-section-open');
+    const isOpen = sectionTitle.classList.contains('ellene-wp-section-open');
 
 
 
@@ -2538,7 +2538,7 @@
 
   function setActiveButtonBySection(sectionId) {
 
-    const btn = document.querySelector('.mayami-nav-btn[data-section="' + sectionId + '"]');
+    const btn = document.querySelector('.ellene-wp-nav-btn[data-section="' + sectionId + '"]');
 
     if (!btn) {
 
@@ -2836,7 +2836,7 @@
 
     const navbarOrder = [];
 
-    const buttons = document.querySelectorAll('.mayami-nav-btn[data-section]');
+    const buttons = document.querySelectorAll('.ellene-wp-nav-btn[data-section]');
 
     buttons.forEach(function(button) {
 
@@ -2976,25 +2976,25 @@
 
 
 
-    let helper = row.querySelector('.mayami-modules-order-helper');
+    let helper = row.querySelector('.ellene-wp-modules-order-helper');
 
     if (!helper) {
 
       helper = document.createElement('div');
 
-      helper.className = 'mayami-modules-order-helper';
+      helper.className = 'ellene-wp-modules-order-helper';
 
       helper.innerHTML = '' +
 
-        '<div class="mayami-modules-order-actions">' +
+        '<div class="ellene-wp-modules-order-actions">' +
 
-        '  <button type="button" class="mayami-order-reset-btn">Auto depuis ordre actuel</button>' +
+        '  <button type="button" class="ellene-wp-order-reset-btn">Auto depuis ordre actuel</button>' +
 
         '</div>' +
 
-        '<div class="mayami-modules-order-note">Glissez les modules pour definir l\'ordre. Le champ texte est mis a jour automatiquement.</div>' +
+        '<div class="ellene-wp-modules-order-note">Glissez les modules pour definir l\'ordre. Le champ texte est mis a jour automatiquement.</div>' +
 
-        '<div class="mayami-modules-order-chips"></div>';
+        '<div class="ellene-wp-modules-order-chips"></div>';
 
       td.appendChild(helper);
 
@@ -3002,9 +3002,9 @@
 
 
 
-    const chipsHost = helper.querySelector('.mayami-modules-order-chips');
+    const chipsHost = helper.querySelector('.ellene-wp-modules-order-chips');
 
-    const resetBtn = helper.querySelector('.mayami-order-reset-btn');
+    const resetBtn = helper.querySelector('.ellene-wp-order-reset-btn');
 
     let draggingSlug = '';
 
@@ -3034,7 +3034,7 @@
 
         const empty = document.createElement('div');
 
-        empty.className = 'mayami-modules-order-empty';
+        empty.className = 'ellene-wp-modules-order-empty';
 
         empty.textContent = 'Active au moins un module pour definir un ordre.';
 
@@ -3052,7 +3052,7 @@
 
         chip.type = 'button';
 
-        chip.className = 'mayami-modules-order-chip';
+        chip.className = 'ellene-wp-modules-order-chip';
 
         chip.draggable = true;
 
@@ -3150,9 +3150,9 @@
 
 
 
-    if (resetBtn && resetBtn.dataset.mayamiBound !== '1') {
+    if (resetBtn && resetBtn.dataset.elleneWpBound !== '1') {
 
-      resetBtn.dataset.mayamiBound = '1';
+      resetBtn.dataset.elleneWpBound = '1';
 
       resetBtn.addEventListener('click', function() {
 
@@ -3164,9 +3164,9 @@
 
 
 
-    if (input.dataset.mayamiOrderAssistantBound !== '1') {
+    if (input.dataset.elleneWpOrderAssistantBound !== '1') {
 
-      input.dataset.mayamiOrderAssistantBound = '1';
+      input.dataset.elleneWpOrderAssistantBound = '1';
 
       input.addEventListener('change', function() {
 
@@ -3178,9 +3178,9 @@
 
 
 
-    if (document.body.dataset.mayamiModulesEnabledBound !== '1') {
+    if (document.body.dataset.elleneWpModulesEnabledBound !== '1') {
 
-      document.body.dataset.mayamiModulesEnabledBound = '1';
+      document.body.dataset.elleneWpModulesEnabledBound = '1';
 
 
 
@@ -3243,9 +3243,9 @@
 
     if (titleEl) {
 
-      titleEl.classList.remove('mayami-section-open');
+      titleEl.classList.remove('ellene-wp-section-open');
 
-      titleEl.classList.add('mayami-section-closed');
+      titleEl.classList.add('ellene-wp-section-closed');
 
       titleEl.setAttribute('aria-expanded', 'false');
 
@@ -3287,9 +3287,9 @@
 
     if (titleEl) {
 
-      titleEl.classList.remove('mayami-section-closed');
+      titleEl.classList.remove('ellene-wp-section-closed');
 
-      titleEl.classList.add('mayami-section-open');
+      titleEl.classList.add('ellene-wp-section-open');
 
       titleEl.setAttribute('aria-expanded', 'true');
 
@@ -3307,7 +3307,7 @@
 
     const heading = titleEl.querySelector('.cmb2-metabox-title') || titleEl.querySelector('h3');
 
-    const eye = titleEl.querySelector('.mayami-eye-indicator');
+    const eye = titleEl.querySelector('.ellene-wp-eye-indicator');
 
     const neutralBg = '#f2f2f3';
 
@@ -3375,11 +3375,11 @@
 
 
 
-    const nav = document.getElementById('mayami-admin-nav');
+    const nav = document.getElementById('ellene-wp-admin-nav');
 
     const navHeight = nav ? nav.offsetHeight : 0;
 
-    const offset = 20; // Padding suppl├®mentaire
+    const offset = 20; // Padding supplementaire
 
 
 
@@ -3403,7 +3403,7 @@
 
   function setActiveButton(activeBtn) {
 
-    const allBtns = document.querySelectorAll('.mayami-nav-btn');
+    const allBtns = document.querySelectorAll('.ellene-wp-nav-btn');
 
     allBtns.forEach(btn => btn.classList.remove('active'));
 
@@ -3415,7 +3415,7 @@
 
   function clearActiveButtons() {
 
-    const allBtns = document.querySelectorAll('.mayami-nav-btn');
+    const allBtns = document.querySelectorAll('.ellene-wp-nav-btn');
 
     allBtns.forEach(btn => btn.classList.remove('active'));
 
@@ -3425,7 +3425,7 @@
 
   function observeSections(sections) {
 
-    const nav = document.getElementById('mayami-admin-nav');
+    const nav = document.getElementById('ellene-wp-admin-nav');
 
     const navHeight = nav ? nav.offsetHeight : 0;
 
@@ -3459,7 +3459,7 @@
 
           const sectionId = entry.target.classList[0].replace('cmb2-id-', '').replace(/-/g, '_');
 
-          const btn = document.querySelector(`.mayami-nav-btn[data-section="${sectionId}"]`);
+          const btn = document.querySelector(`.ellene-wp-nav-btn[data-section="${sectionId}"]`);
 
           if (btn) setActiveButton(btn);
 
@@ -3485,11 +3485,13 @@
 
   function addSmoothScroll() {
 
-    // Style g├®n├®ral pour smooth scroll
+    // Style general pour smooth scroll
 
     document.documentElement.style.scrollBehavior = 'smooth';
 
   }
 
 })();
+
+
 

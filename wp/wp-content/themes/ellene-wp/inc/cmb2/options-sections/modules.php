@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mayami_register_cmb2_modules_section($cmb) {
+function ellene_wp_register_cmb2_modules_section($cmb) {
     // ========== SECTION: MODULES ===========
 
     $cmb->add_field(array(

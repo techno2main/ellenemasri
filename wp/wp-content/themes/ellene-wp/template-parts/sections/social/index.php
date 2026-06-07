@@ -5,21 +5,21 @@
  * @package ElleneWp
  */
 
-$social_kicker = trim((string) mayami_get_landing_option('social_kicker'));
-$social_title_left = trim((string) mayami_get_landing_option('social_title_left'));
-$social_title_right = trim((string) mayami_get_landing_option('social_title_right'));
-$social_description = trim((string) mayami_get_landing_option('social_description'));
+$social_kicker = trim((string) ellene_wp_get_landing_option('social_kicker'));
+$social_title_left = trim((string) ellene_wp_get_landing_option('social_title_left'));
+$social_title_right = trim((string) ellene_wp_get_landing_option('social_title_right'));
+$social_description = trim((string) ellene_wp_get_landing_option('social_description'));
 
-$link_tiktok = trim((string) mayami_get_landing_option('social_tiktok_link'));
-$link_instagram = trim((string) mayami_get_landing_option('social_instagram_link'));
-$link_youtube_video = trim((string) mayami_get_landing_option('social_youtube_link'));
+$link_tiktok = trim((string) ellene_wp_get_landing_option('social_tiktok_link'));
+$link_instagram = trim((string) ellene_wp_get_landing_option('social_instagram_link'));
+$link_youtube_video = trim((string) ellene_wp_get_landing_option('social_youtube_link'));
 
-$social_tiktok_label = trim((string) mayami_get_landing_option('social_tiktok_label'));
-$social_tiktok_badge = trim((string) mayami_get_landing_option('social_tiktok_badge'));
-$social_instagram_label = trim((string) mayami_get_landing_option('social_instagram_label'));
-$social_instagram_badge = trim((string) mayami_get_landing_option('social_instagram_badge'));
-$social_youtube_label = trim((string) mayami_get_landing_option('social_youtube_label'));
-$social_youtube_badge = trim((string) mayami_get_landing_option('social_youtube_badge'));
+$social_tiktok_label = trim((string) ellene_wp_get_landing_option('social_tiktok_label'));
+$social_tiktok_badge = trim((string) ellene_wp_get_landing_option('social_tiktok_badge'));
+$social_instagram_label = trim((string) ellene_wp_get_landing_option('social_instagram_label'));
+$social_instagram_badge = trim((string) ellene_wp_get_landing_option('social_instagram_badge'));
+$social_youtube_label = trim((string) ellene_wp_get_landing_option('social_youtube_label'));
+$social_youtube_badge = trim((string) ellene_wp_get_landing_option('social_youtube_badge'));
 
 $social_cards = array(
     array(

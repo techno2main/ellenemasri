@@ -12,11 +12,11 @@
 
 
 
-$stream_kicker = trim((string) cmb2_get_option('mayami_landing_options', 'stream_kicker'));
+$stream_kicker = trim((string) cmb2_get_option('ellene-wp_landing_options', 'stream_kicker'));
 
-$stream_title_prefix = trim((string) cmb2_get_option('mayami_landing_options', 'stream_title_prefix'));
+$stream_title_prefix = trim((string) cmb2_get_option('ellene-wp_landing_options', 'stream_title_prefix'));
 
-$stream_title_highlight = trim((string) cmb2_get_option('mayami_landing_options', 'stream_title_highlight'));
+$stream_title_highlight = trim((string) cmb2_get_option('ellene-wp_landing_options', 'stream_title_highlight'));
 
 $stream_title_logo_url = '';
 
@@ -32,13 +32,13 @@ if ($stream_title_highlight !== '' && filter_var($stream_title_highlight, FILTER
 
 $stream_title_logo_alt = $stream_title_prefix !== '' ? $stream_title_prefix . ' logo' : 'Stream logo';
 
-$stream_availability_text = trim((string) cmb2_get_option('mayami_landing_options', 'stream_availability_text'));
+$stream_availability_text = trim((string) cmb2_get_option('ellene-wp_landing_options', 'stream_availability_text'));
 
-$stream_card_label = trim((string) cmb2_get_option('mayami_landing_options', 'stream_card_label'));
+$stream_card_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'stream_card_label'));
 
 
 
-$stream_platforms = cmb2_get_option('mayami_landing_options', 'stream_platforms');
+$stream_platforms = cmb2_get_option('ellene-wp_landing_options', 'stream_platforms');
 
 if (!is_array($stream_platforms)) {
 
@@ -54,7 +54,7 @@ $active_stream_platforms = array();
 
 
 
-function mayami_extract_youtube_id($url) {
+function ellene_wp_extract_youtube_id($url) {
 
     if (!is_string($url) || $url === '') {
 
@@ -90,7 +90,7 @@ function mayami_extract_youtube_id($url) {
 
 
 
-function mayami_extract_iframe_src_from_html($html) {
+function ellene_wp_extract_iframe_src_from_html($html) {
 
     if (!is_string($html) || $html === '') {
 
@@ -114,7 +114,7 @@ function mayami_extract_iframe_src_from_html($html) {
 
 
 
-function mayami_get_oembed_iframe_src($url) {
+function ellene_wp_get_oembed_iframe_src($url) {
 
     $url = trim((string) $url);
 
@@ -126,7 +126,7 @@ function mayami_get_oembed_iframe_src($url) {
 
 
 
-    $cache_key = 'mayami_stream_oembed_' . md5($url);
+    $cache_key = 'ellene_wp_stream_oembed_' . md5($url);
 
     $cached = get_transient($cache_key);
 
@@ -140,7 +140,7 @@ function mayami_get_oembed_iframe_src($url) {
 
     $html = wp_oembed_get($url);
 
-    $src = mayami_extract_iframe_src_from_html((string) $html);
+    $src = ellene_wp_extract_iframe_src_from_html((string) $html);
 
     if ($src !== '') {
 
@@ -156,7 +156,7 @@ function mayami_get_oembed_iframe_src($url) {
 
 
 
-function mayami_extract_youtube_channel_id_from_html($html) {
+function ellene_wp_extract_youtube_channel_id_from_html($html) {
 
     if (!is_string($html) || $html === '') {
 
@@ -180,7 +180,7 @@ function mayami_extract_youtube_channel_id_from_html($html) {
 
 
 
-function mayami_get_youtube_channel_id_from_url($url) {
+function ellene_wp_get_youtube_channel_id_from_url($url) {
 
     $url = trim((string) $url);
 
@@ -192,7 +192,7 @@ function mayami_get_youtube_channel_id_from_url($url) {
 
 
 
-    $cache_key = 'mayami_stream_yt_channel_' . md5($url);
+    $cache_key = 'ellene_wp_stream_yt_channel_' . md5($url);
 
     $cached = get_transient($cache_key);
 
@@ -242,7 +242,7 @@ function mayami_get_youtube_channel_id_from_url($url) {
 
     $body = wp_remote_retrieve_body($response);
 
-    $channel_id = mayami_extract_youtube_channel_id_from_html((string) $body);
+    $channel_id = ellene_wp_extract_youtube_channel_id_from_html((string) $body);
 
     if ($channel_id !== '') {
 
@@ -258,7 +258,7 @@ function mayami_get_youtube_channel_id_from_url($url) {
 
 
 
-function mayami_resolve_stream_final_url($url) {
+function ellene_wp_resolve_stream_final_url($url) {
 
     $url = trim((string) $url);
 
@@ -270,7 +270,7 @@ function mayami_resolve_stream_final_url($url) {
 
 
 
-    $cache_key = 'mayami_stream_url_' . md5($url);
+    $cache_key = 'ellene_wp_stream_url_' . md5($url);
 
     $cached = get_transient($cache_key);
 
@@ -370,7 +370,7 @@ function mayami_resolve_stream_final_url($url) {
 
 
 
-function mayami_detect_stream_platform_key($platform_key, $href) {
+function ellene_wp_detect_stream_platform_key($platform_key, $href) {
 
     $platform_key = sanitize_title((string) $platform_key);
 
@@ -462,7 +462,7 @@ function mayami_detect_stream_platform_key($platform_key, $href) {
 
 
 
-function mayami_build_stream_embed_src($platform_key, $href) {
+function ellene_wp_build_stream_embed_src($platform_key, $href) {
 
     $href = trim((string) $href);
 
@@ -474,7 +474,7 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
 
 
-    $resolved_href = mayami_resolve_stream_final_url($href);
+    $resolved_href = ellene_wp_resolve_stream_final_url($href);
 
     if ($resolved_href === '') {
 
@@ -536,11 +536,11 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $video_id = mayami_extract_youtube_id($href);
+            $video_id = ellene_wp_extract_youtube_id($href);
 
             if ($video_id === '') {
 
-                $video_id = mayami_extract_youtube_id($resolved_href);
+                $video_id = ellene_wp_extract_youtube_id($resolved_href);
 
             }
 
@@ -570,7 +570,7 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
             if (preg_match('#youtube\.com/@([^/?\#]+)#i', $resolved_href, $matches)) {
 
-                $channel_id = mayami_get_youtube_channel_id_from_url($resolved_href);
+                $channel_id = ellene_wp_get_youtube_channel_id_from_url($resolved_href);
 
                 if ($channel_id !== '') {
 
@@ -584,7 +584,7 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
             if (preg_match('#youtube\.com/c/([^/?\#]+)#i', $resolved_href)) {
 
-                $channel_id = mayami_get_youtube_channel_id_from_url($resolved_href);
+                $channel_id = ellene_wp_get_youtube_channel_id_from_url($resolved_href);
 
                 if ($channel_id !== '') {
 
@@ -596,7 +596,7 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $youtube_oembed_src = mayami_get_oembed_iframe_src($resolved_href);
+            $youtube_oembed_src = ellene_wp_get_oembed_iframe_src($resolved_href);
 
             if ($youtube_oembed_src !== '') {
 
@@ -636,7 +636,7 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $deezer_oembed_src = mayami_get_oembed_iframe_src($resolved_href);
+            $deezer_oembed_src = ellene_wp_get_oembed_iframe_src($resolved_href);
 
             if ($deezer_oembed_src !== '') {
 
@@ -646,7 +646,7 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $deezer_oembed_src = mayami_get_oembed_iframe_src($href);
+            $deezer_oembed_src = ellene_wp_get_oembed_iframe_src($href);
 
             if ($deezer_oembed_src !== '') {
 
@@ -686,7 +686,7 @@ function mayami_build_stream_embed_src($platform_key, $href) {
 
 
 
-function mayami_stream_player_height($platform_key) {
+function ellene_wp_stream_player_height($platform_key) {
 
     if ($platform_key === 'apple-music') {
 
@@ -850,7 +850,7 @@ $stream_platform_meta = array(
 
                 }
 
-                $platform_type = mayami_detect_stream_platform_key($platform_key, $platform_href);
+                $platform_type = ellene_wp_detect_stream_platform_key($platform_key, $platform_href);
 
 
 
@@ -866,13 +866,13 @@ $stream_platform_meta = array(
 
                 $icon_style_class = (isset($platform_meta['icon_style']) && $platform_meta['icon_style'] === 'solid') ? 'fa-solid' : 'fa-brands';
 
-                $embed_src = mayami_build_stream_embed_src($platform_type, $platform_href);
+                $embed_src = ellene_wp_build_stream_embed_src($platform_type, $platform_href);
 
 
 
                 $has_player = $embed_src !== '';
 
-                $player_height = mayami_stream_player_height($platform_type);
+                $player_height = ellene_wp_stream_player_height($platform_type);
 
 
 

@@ -12,11 +12,11 @@
 
 
 
-$marquee_items = cmb2_get_option('mayami_landing_options', 'marquee_items');
+$marquee_items = cmb2_get_option('ellene-wp_landing_options', 'marquee_items');
 
-$marquee_logo_png = trim((string) cmb2_get_option('mayami_landing_options', 'marquee_logo_png'));
+$marquee_logo_png = trim((string) cmb2_get_option('ellene-wp_landing_options', 'marquee_logo_png'));
 
-$hide_marquee_visual = !empty(cmb2_get_option('mayami_landing_options', 'marquee_logo_hidden'));
+$hide_marquee_visual = !empty(cmb2_get_option('ellene-wp_landing_options', 'marquee_logo_hidden'));
 
 
 
@@ -83,7 +83,7 @@ $desktop_left_item = $sanitize_marquee_item($marquee_items[2] ?? null);
 
 
 
-$stream_platforms = cmb2_get_option('mayami_landing_options', 'stream_platforms');
+$stream_platforms = cmb2_get_option('ellene-wp_landing_options', 'stream_platforms');
 
 if (!is_array($stream_platforms)) {
 

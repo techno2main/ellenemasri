@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mayami_enqueue_assets() {
+function ellene_wp_enqueue_assets() {
     wp_enqueue_style(
         'font-awesome-6',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
@@ -19,14 +19,14 @@ function mayami_enqueue_assets() {
     );
 
     wp_enqueue_style(
-        'mayami-tailwind',
+        'ellene-wp-tailwind',
         get_template_directory_uri() . '/style-compiled.css',
         array(),
         '1.0.0'
     );
 
     wp_add_inline_style(
-        'mayami-tailwind',
+        'ellene-wp-tailwind',
         'img, video, iframe { -webkit-user-drag: none; -webkit-touch-callout: none; user-select: none; }'
     );
 
@@ -34,7 +34,7 @@ function mayami_enqueue_assets() {
     $content_protection_js_path = get_template_directory() . '/assets/content-protection.js';
 
     wp_enqueue_script(
-        'mayami-stream-player',
+        'ellene-wp-stream-player',
         get_template_directory_uri() . '/assets/stream-player.js',
         array(),
         file_exists($stream_player_js_path) ? (string) filemtime($stream_player_js_path) : '1.0.0',
@@ -42,7 +42,7 @@ function mayami_enqueue_assets() {
     );
 
     wp_enqueue_script(
-        'mayami-content-protection',
+        'ellene-wp-content-protection',
         get_template_directory_uri() . '/assets/content-protection.js',
         array(),
         file_exists($content_protection_js_path) ? (string) filemtime($content_protection_js_path) : '1.0.0',
@@ -50,11 +50,11 @@ function mayami_enqueue_assets() {
     );
 }
 
-add_action('wp_enqueue_scripts', 'mayami_enqueue_assets');
+add_action('wp_enqueue_scripts', 'ellene_wp_enqueue_assets');
 
-function mayami_enqueue_admin_assets($hook) {
-    $is_landing_page = ('toplevel_page_mayami_landing_options' === $hook);
-    $is_visual_links_page = (strpos((string) $hook, 'mayami_visual_links') !== false);
+function ellene_wp_enqueue_admin_assets($hook) {
+    $is_landing_page = ('toplevel_page_ellene-wp_landing_options' === $hook);
+    $is_visual_links_page = (strpos((string) $hook, 'ellene_wp_visual_links') !== false);
 
     if (!$is_landing_page && !$is_visual_links_page) {
         return;
@@ -72,14 +72,14 @@ function mayami_enqueue_admin_assets($hook) {
     $visual_links_admin_js_path = get_template_directory() . '/assets/admin-visual-links-builder.js';
 
     wp_enqueue_style(
-        'mayami-admin-nav',
+        'ellene-wp-admin-nav',
         get_template_directory_uri() . '/assets/admin-nav.css',
         array(),
         file_exists($admin_css_path) ? (string) filemtime($admin_css_path) : '1.0.0'
     );
 
     wp_enqueue_script(
-        'mayami-admin-nav',
+        'ellene-wp-admin-nav',
         get_template_directory_uri() . '/assets/admin-nav.js',
         array(),
         file_exists($admin_js_path) ? (string) filemtime($admin_js_path) : '1.0.0',
@@ -87,14 +87,14 @@ function mayami_enqueue_admin_assets($hook) {
     );
 
     wp_enqueue_style(
-        'mayami-admin-visual-links-builder',
+        'ellene-wp-admin-visual-links-builder',
         get_template_directory_uri() . '/assets/admin-visual-links-builder.css',
-        array('mayami-admin-nav'),
+        array('ellene-wp-admin-nav'),
         file_exists($visual_links_admin_css_path) ? (string) filemtime($visual_links_admin_css_path) : '1.0.0'
     );
 
     wp_enqueue_script(
-        'mayami-admin-visual-links-builder',
+        'ellene-wp-admin-visual-links-builder',
         get_template_directory_uri() . '/assets/admin-visual-links-builder.js',
         array('jquery', 'media-editor', 'media-views', 'wp-util'),
         file_exists($visual_links_admin_js_path) ? (string) filemtime($visual_links_admin_js_path) : '1.0.0',
@@ -102,14 +102,14 @@ function mayami_enqueue_admin_assets($hook) {
     );
 }
 
-add_action('admin_enqueue_scripts', 'mayami_enqueue_admin_assets');
+add_action('admin_enqueue_scripts', 'ellene_wp_enqueue_admin_assets');
 
-function mayami_hide_wp_footer_text_on_landing($text) {
+function ellene_wp_hide_wp_footer_text_on_landing($text) {
     $screen = get_current_screen();
 
     if ($screen && (
-        $screen->id === 'toplevel_page_mayami_landing_options' ||
-        strpos($screen->id, 'mayami_visual_links') !== false
+        $screen->id === 'toplevel_page_ellene-wp_landing_options' ||
+        strpos($screen->id, 'ellene_wp_visual_links') !== false
     )) {
         return '';
     }
@@ -117,9 +117,9 @@ function mayami_hide_wp_footer_text_on_landing($text) {
     return $text;
 }
 
-add_filter('admin_footer_text', 'mayami_hide_wp_footer_text_on_landing', 20);
+add_filter('admin_footer_text', 'ellene_wp_hide_wp_footer_text_on_landing', 20);
 
-function mayami_media_modal_edit_button() {
+function ellene_wp_media_modal_edit_button() {
     $screen = get_current_screen();
 
     if (!$screen || $screen->base !== 'upload') {
@@ -136,15 +136,15 @@ function mayami_media_modal_edit_button() {
     (function() {
         function injectEditButton() {
             var sidebar = document.querySelector('.attachment-details .details');
-            if (!sidebar || sidebar.querySelector('.mayami-edit-btn')) return;
+            if (!sidebar || sidebar.querySelector('.ellene-wp-edit-btn')) return;
 
             var editLink = sidebar.querySelector('a.edit-attachment');
             if (!editLink) return;
 
             var btn = document.createElement('a');
             btn.href = editLink.href;
-            btn.className = 'button button-primary mayami-edit-btn';
-            btn.textContent = '💾 Modifier / Enregistrer';
+            btn.className = 'button button-primary ellene-wp-edit-btn';
+            btn.textContent = 'Modifier / Enregistrer';
             btn.style.cssText = 'display:block;text-align:center;margin:12px 0 4px;width:100%;box-sizing:border-box;';
             sidebar.insertBefore(btn, editLink);
         }
@@ -159,9 +159,9 @@ function mayami_media_modal_edit_button() {
     <?php
 }
 
-add_action('admin_footer', 'mayami_media_modal_edit_button');
+add_action('admin_footer', 'ellene_wp_media_modal_edit_button');
 
-function mayami_limit_admin_menu_for_client() {
+function ellene_wp_limit_admin_menu_for_client() {
     if (!is_admin()) {
         return;
     }
@@ -191,9 +191,9 @@ function mayami_limit_admin_menu_for_client() {
     remove_menu_page('options-general.php');
 }
 
-add_action('admin_menu', 'mayami_limit_admin_menu_for_client', 999);
+add_action('admin_menu', 'ellene_wp_limit_admin_menu_for_client', 999);
 
-function mayami_client_login_redirect($redirect_to, $requested_redirect_to, $user) {
+function ellene_wp_client_login_redirect($redirect_to, $requested_redirect_to, $user) {
     if (is_wp_error($user) || empty($user->user_login)) {
         return $redirect_to;
     }
@@ -202,12 +202,12 @@ function mayami_client_login_redirect($redirect_to, $requested_redirect_to, $use
         return $redirect_to;
     }
 
-    return admin_url('admin.php?page=mayami_landing_options');
+    return admin_url('admin.php?page=ellene-wp_landing_options');
 }
 
-add_filter('login_redirect', 'mayami_client_login_redirect', 10, 3);
+add_filter('login_redirect', 'ellene_wp_client_login_redirect', 10, 3);
 
-function mayami_limit_admin_bar_for_client($wp_admin_bar) {
+function ellene_wp_limit_admin_bar_for_client($wp_admin_bar) {
     if (!is_admin_bar_showing()) {
         return;
     }
@@ -233,7 +233,7 @@ function mayami_limit_admin_bar_for_client($wp_admin_bar) {
     $wp_admin_bar->remove_node('new-media');
 
     $wp_admin_bar->add_node(array(
-        'id'    => 'mayami-new-media',
+        'id'    => 'ellene-wp-new-media',
         'title' => 'Ajouter un media',
         'href'  => admin_url('media-new.php'),
         'meta'  => array(
@@ -245,9 +245,9 @@ function mayami_limit_admin_bar_for_client($wp_admin_bar) {
     $wp_admin_bar->remove_node('customize');
 }
 
-add_action('admin_bar_menu', 'mayami_limit_admin_bar_for_client', 999);
+add_action('admin_bar_menu', 'ellene_wp_limit_admin_bar_for_client', 999);
 
-function mayami_redirect_admin_bar_edit_to_landing($wp_admin_bar) {
+function ellene_wp_redirect_admin_bar_edit_to_landing($wp_admin_bar) {
     if (!is_admin_bar_showing() || is_admin()) {
         return;
     }
@@ -271,8 +271,9 @@ function mayami_redirect_admin_bar_edit_to_landing($wp_admin_bar) {
         return;
     }
 
-    $edit_node->href = admin_url('admin.php?page=mayami_landing_options');
+    $edit_node->href = admin_url('admin.php?page=ellene-wp_landing_options');
     $wp_admin_bar->add_node($edit_node);
 }
 
-add_action('admin_bar_menu', 'mayami_redirect_admin_bar_edit_to_landing', 1001);
+add_action('admin_bar_menu', 'ellene_wp_redirect_admin_bar_edit_to_landing', 1001);
+

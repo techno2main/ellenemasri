@@ -61,7 +61,7 @@ function ellene_get_default_enabled_toggle_slugs($registry) {
  * @return string[]
  */
 function ellene_get_enabled_modules($registry) {
-    $raw_enabled = mayami_get_landing_option('modules_enabled', array());
+    $raw_enabled = ellene_wp_get_landing_option('modules_enabled', array());
     $enabled = ellene_normalize_module_slug_list($raw_enabled);
     $default_enabled = ellene_get_default_enabled_toggle_slugs($registry);
 
@@ -73,16 +73,16 @@ function ellene_get_enabled_modules($registry) {
     // keep them enabled by default once to avoid surprise disappearance.
     $layout_slots = array('top-bar', 'header', 'hero', 'footer');
     $has_layout_slot = !empty(array_intersect($enabled, $layout_slots));
-    $migrated = (string) mayami_get_landing_option('modules_slots_migrated', '') === '1';
+    $migrated = (string) ellene_wp_get_landing_option('modules_slots_migrated', '') === '1';
 
     if (!$migrated && !$has_layout_slot) {
         $enabled = array_values(array_unique(array_merge($layout_slots, $enabled)));
 
-        $options = get_option('mayami_landing_options', array());
+        $options = get_option('ellene-wp_landing_options', array());
         if (is_array($options)) {
             $options['modules_enabled'] = $enabled;
             $options['modules_slots_migrated'] = '1';
-            update_option('mayami_landing_options', $options, false);
+            update_option('ellene-wp_landing_options', $options, false);
         }
     }
 
@@ -95,7 +95,7 @@ function ellene_get_enabled_modules($registry) {
  * @return string[]
  */
 function ellene_get_module_order() {
-    $raw_order = mayami_get_landing_option('modules_order', array());
+    $raw_order = ellene_wp_get_landing_option('modules_order', array());
     return ellene_normalize_module_slug_list($raw_order);
 }
 
@@ -106,7 +106,7 @@ function ellene_get_module_order() {
  * @return string[]
  */
 function ellene_get_shared_modules($registry) {
-    $raw_shared = mayami_get_landing_option('modules_shared', array());
+    $raw_shared = ellene_wp_get_landing_option('modules_shared', array());
     $shared = ellene_normalize_module_slug_list($raw_shared);
     $allowed_shared = array();
 

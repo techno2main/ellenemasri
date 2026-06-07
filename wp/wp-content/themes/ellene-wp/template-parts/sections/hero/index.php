@@ -12,53 +12,53 @@
 
 
 
-$hero_top_artist = trim((string) cmb2_get_option('mayami_landing_options', 'hero_top_artist'));
+$hero_top_artist = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_top_artist'));
 
-$hero_top_artist_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_top_artist_hidden'));
+$hero_top_artist_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_top_artist_hidden'));
 
-$hero_top_cta_label = trim((string) cmb2_get_option('mayami_landing_options', 'hero_top_cta_label'));
+$hero_top_cta_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_top_cta_label'));
 
-$hero_top_cta_href = trim((string) cmb2_get_option('mayami_landing_options', 'hero_top_cta_href'));
+$hero_top_cta_href = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_top_cta_href'));
 
-$hero_top_cta_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_top_cta_hidden'));
+$hero_top_cta_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_top_cta_hidden'));
 
-$hero_badge_text = trim((string) cmb2_get_option('mayami_landing_options', 'hero_badge_text'));
+$hero_badge_text = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_badge_text'));
 
-$hero_badge_text_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_badge_text_hidden'));
+$hero_badge_text_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_badge_text_hidden'));
 
-$hero_subtitle = trim((string) cmb2_get_option('mayami_landing_options', 'hero_subtitle'));
+$hero_subtitle = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_subtitle'));
 
-$hero_subtitle_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_subtitle_hidden'));
+$hero_subtitle_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_subtitle_hidden'));
 
-$hero_main_title = trim((string) cmb2_get_option('mayami_landing_options', 'hero_main_title'));
+$hero_main_title = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_main_title'));
 
-$hero_main_title_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_main_title_hidden'));
+$hero_main_title_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_main_title_hidden'));
 
-$hero_description = trim((string) cmb2_get_option('mayami_landing_options', 'hero_description'));
+$hero_description = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_description'));
 
-$hero_description_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_description_hidden'));
+$hero_description_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_description_hidden'));
 
-$hero_stream_label = trim((string) cmb2_get_option('mayami_landing_options', 'hero_stream_label'));
+$hero_stream_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_stream_label'));
 
-$hero_stream_href = trim((string) cmb2_get_option('mayami_landing_options', 'hero_stream_href'));
+$hero_stream_href = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_stream_href'));
 
-$hero_stream_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_stream_hidden'));
+$hero_stream_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_stream_hidden'));
 
-$hero_watch_label = trim((string) cmb2_get_option('mayami_landing_options', 'hero_watch_label'));
+$hero_watch_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_watch_label'));
 
-$hero_watch_href = trim((string) cmb2_get_option('mayami_landing_options', 'hero_watch_href'));
+$hero_watch_href = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_watch_href'));
 
-$hero_watch_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_watch_hidden'));
+$hero_watch_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_watch_hidden'));
 
-$hero_background_image = trim((string) cmb2_get_option('mayami_landing_options', 'hero_background_image'));
+$hero_background_image = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_background_image'));
 
-$hero_background_image_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_background_image_hidden'));
+$hero_background_image_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_background_image_hidden'));
 
-$hero_logo_url = trim((string) cmb2_get_option('mayami_landing_options', 'hero_logo_image'));
+$hero_logo_url = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_logo_image'));
 
-$hero_logo_alt = trim((string) cmb2_get_option('mayami_landing_options', 'hero_logo_alt'));
+$hero_logo_alt = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_logo_alt'));
 
-$hero_logo_hidden = !empty(cmb2_get_option('mayami_landing_options', 'hero_logo_hidden'));
+$hero_logo_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_logo_hidden'));
 
 ?>
 

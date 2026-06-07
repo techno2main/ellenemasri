@@ -5,10 +5,10 @@
  * @package ElleneWp
  */
 
-$sticky_stream_label = trim((string) cmb2_get_option('mayami_landing_options', 'sticky_stream_label'));
-$sticky_video_label = trim((string) cmb2_get_option('mayami_landing_options', 'sticky_video_label'));
-$sticky_tiktok_label = trim((string) cmb2_get_option('mayami_landing_options', 'sticky_tiktok_label'));
-$sticky_tiktok_link = trim((string) cmb2_get_option('mayami_landing_options', 'sticky_tiktok_link'));
+$sticky_stream_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'sticky_stream_label'));
+$sticky_video_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'sticky_video_label'));
+$sticky_tiktok_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'sticky_tiktok_label'));
+$sticky_tiktok_link = trim((string) cmb2_get_option('ellene-wp_landing_options', 'sticky_tiktok_link'));
 ?>
 <div class="fixed inset-x-0 bottom-0 z-50 border-t-2 border-ink bg-cream/95 p-3 backdrop-blur md:hidden">
     <div class="flex gap-2">

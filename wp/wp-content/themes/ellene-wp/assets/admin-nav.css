@@ -18,7 +18,7 @@
 
 
 
-.mayami-admin-nav {
+.ellene-wp-admin-nav {
 
   position: sticky;
 
@@ -38,7 +38,7 @@
 
 
 
-.mayami-admin-nav-inner {
+.ellene-wp-admin-nav-inner {
 
   display: flex;
 
@@ -52,7 +52,7 @@
 
 
 
-.mayami-admin-nav-buttons {
+.ellene-wp-admin-nav-buttons {
 
   display: flex;
 
@@ -66,7 +66,7 @@
 
 
 
-.mayami-nav-btn {
+.ellene-wp-nav-btn {
 
   display: inline-block;
 
@@ -96,7 +96,7 @@
 
 
 
-.mayami-nav-btn:hover {
+.ellene-wp-nav-btn:hover {
 
   background: rgba(255, 255, 255, 0.2);
 
@@ -106,7 +106,7 @@
 
 
 
-.mayami-nav-btn.active {
+.ellene-wp-nav-btn.active {
 
   background: #13f7bc;
 
@@ -118,19 +118,19 @@
 
 }
 
-.mayami-modules-order-helper {
+.ellene-wp-modules-order-helper {
 
   margin-top: 10px;
 
 }
 
-.mayami-modules-order-actions {
+.ellene-wp-modules-order-actions {
 
   margin-bottom: 8px;
 
 }
 
-.mayami-order-reset-btn {
+.ellene-wp-order-reset-btn {
 
   background: #fff;
 
@@ -146,13 +146,13 @@
 
 }
 
-.mayami-order-reset-btn:hover {
+.ellene-wp-order-reset-btn:hover {
 
   background: #f6f8fa;
 
 }
 
-.mayami-modules-order-note {
+.ellene-wp-modules-order-note {
 
   font-size: 12px;
 
@@ -162,7 +162,7 @@
 
 }
 
-.mayami-modules-order-chips {
+.ellene-wp-modules-order-chips {
 
   display: flex;
 
@@ -172,7 +172,7 @@
 
 }
 
-.mayami-modules-order-chip {
+.ellene-wp-modules-order-chip {
 
   border: 1px solid #cbd5e1;
 
@@ -192,13 +192,13 @@
 
 }
 
-.mayami-modules-order-chip.is-dragging {
+.ellene-wp-modules-order-chip.is-dragging {
 
   opacity: 0.55;
 
 }
 
-.mayami-modules-order-chip.is-drop-target {
+.ellene-wp-modules-order-chip.is-drop-target {
 
   border-color: #1d4ed8;
 
@@ -206,7 +206,7 @@
 
 }
 
-.mayami-modules-order-empty {
+.ellene-wp-modules-order-empty {
 
   font-size: 12px;
 
@@ -272,7 +272,7 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th {
+.cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th {
 
   background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
 
@@ -286,7 +286,7 @@
 
 /* CMB2 applies background on the title row itself (.cmb-type-title). */
 
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open {
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open {
 
   background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
 
@@ -296,7 +296,7 @@
 
 
 
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-closed {
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-closed {
 
   background: #f2f2f3 !important;
 
@@ -306,23 +306,11 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th .cmb2-metabox-title,
 
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th h3,
+.cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th h3,
 
-.cmb2-wrap .cmb-row.mayami-section-open .cmb-th label {
-
-  color: #fff !important;
-
-}
-
-
-
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open .cmb2-metabox-title,
-
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open h3,
-
-.cmb2-wrap .cmb-row.cmb-type-title.mayami-section-open label {
+.cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th label {
 
   color: #fff !important;
 
@@ -330,7 +318,11 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-open .mayami-eye-indicator {
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .cmb2-metabox-title,
+
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open h3,
+
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open label {
 
   color: #fff !important;
 
@@ -338,11 +330,19 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.ellene-wp-section-open .ellene-wp-eye-indicator {
 
-.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th h3,
+  color: #fff !important;
 
-.cmb2-wrap .cmb-row.mayami-section-closed .cmb-th label {
+}
+
+
+
+.cmb2-wrap .cmb-row.ellene-wp-section-closed .cmb-th .cmb2-metabox-title,
+
+.cmb2-wrap .cmb-row.ellene-wp-section-closed .cmb-th h3,
+
+.cmb2-wrap .cmb-row.ellene-wp-section-closed .cmb-th label {
 
   color: #1f2937 !important;
 
@@ -350,25 +350,25 @@
 
 
 
-.cmb2-id-section-hero-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-hero-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-slider-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-slider-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-stream-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-stream-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-social-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-social-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-video-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-video-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-release-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-release-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-cta-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-cta-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-footer-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-footer-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-links-title.mayami-section-toggle .cmb-th,
+.cmb2-id-section-links-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-marquee-title.mayami-section-toggle .cmb-th {
+.cmb2-id-section-marquee-title.ellene-wp-section-toggle .cmb-th {
 
   position: relative;
 
@@ -380,9 +380,9 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-toggle,
+.cmb2-wrap .cmb-row.ellene-wp-section-toggle,
 
-.cmb2-wrap .cmb-row.mayami-section-toggle * {
+.cmb2-wrap .cmb-row.ellene-wp-section-toggle * {
 
   cursor: pointer;
 
@@ -390,9 +390,9 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-toggle,
+.cmb2-wrap .cmb-row.ellene-wp-section-toggle,
 
-.cmb2-wrap .cmb-row.mayami-section-toggle .cmb-th {
+.cmb2-wrap .cmb-row.ellene-wp-section-toggle .cmb-th {
 
   position: relative;
 
@@ -400,7 +400,7 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-toggle .mayami-eye-indicator {
+.cmb2-wrap .cmb-row.ellene-wp-section-toggle .ellene-wp-eye-indicator {
 
   width: 20px;
 
@@ -428,7 +428,7 @@
 
 
 
-.cmb2-wrap .cmb-row.mayami-section-toggle.mayami-section-open .mayami-eye-indicator {
+.cmb2-wrap .cmb-row.ellene-wp-section-toggle.ellene-wp-section-open .ellene-wp-eye-indicator {
 
   opacity: 1;
 
@@ -436,25 +436,25 @@
 
 
 
-.cmb2-id-section-hero-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-hero-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-slider-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-slider-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-stream-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-stream-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-social-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-social-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-video-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-video-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-release-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-release-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-cta-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-cta-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-footer-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-footer-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-links-title.mayami-section-toggle .cmb-th:hover,
+.cmb2-id-section-links-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-marquee-title.mayami-section-toggle .cmb-th:hover {
+.cmb2-id-section-marquee-title.ellene-wp-section-toggle .cmb-th:hover {
 
   filter: brightness(1.08);
 
@@ -476,7 +476,7 @@
 
 
 
-.cmb2-id-marquee-logo-png .mayami-inline-hide-toggle {
+.cmb2-id-marquee-logo-png .ellene-wp-inline-hide-toggle {
 
   display: inline-flex;
 
@@ -492,7 +492,7 @@
 
 
 
-.cmb2-id-marquee-logo-png .mayami-inline-hide-toggle .mayami-inline-hide-label {
+.cmb2-id-marquee-logo-png .ellene-wp-inline-hide-toggle .ellene-wp-inline-hide-label {
 
   font-weight: 600;
 
@@ -500,7 +500,7 @@
 
 
 
-.cmb2-id-marquee-logo-hidden.mayami-hidden-source-row {
+.cmb2-id-marquee-logo-hidden.ellene-wp-hidden-source-row {
 
   display: none !important;
 
@@ -522,7 +522,7 @@
 
 
 
-.cmb-row.cmb-field-with-toggle .cmb-td .mayami-inline-field-toggle {
+.cmb-row.cmb-field-with-toggle .cmb-td .ellene-wp-inline-field-toggle {
 
   display: inline-flex;
 
@@ -538,7 +538,7 @@
 
 
 
-.cmb-row.cmb-field-with-toggle .cmb-td .mayami-inline-field-toggle-label {
+.cmb-row.cmb-field-with-toggle .cmb-td .ellene-wp-inline-field-toggle-label {
 
   font-weight: 600;
 
@@ -548,7 +548,7 @@
 
 
 
-.cmb-row.cmb-inline-toggle.mayami-hidden-source-row {
+.cmb-row.cmb-inline-toggle.ellene-wp-hidden-source-row {
 
   display: none !important;
 
@@ -556,7 +556,7 @@
 
 
 
-body.mayami-delete-modal-open {
+body.ellene-wp-delete-modal-open {
 
   overflow: hidden;
 
@@ -564,7 +564,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-modal-backdrop {
+.ellene-wp-delete-modal-backdrop {
 
   position: fixed;
 
@@ -586,7 +586,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-modal-backdrop[hidden] {
+.ellene-wp-delete-modal-backdrop[hidden] {
 
   display: none !important;
 
@@ -594,7 +594,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-modal {
+.ellene-wp-delete-modal {
 
   width: min(100%, 520px);
 
@@ -614,7 +614,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-modal-title {
+.ellene-wp-delete-modal-title {
 
   margin: 0;
 
@@ -628,7 +628,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-modal-message {
+.ellene-wp-delete-modal-message {
 
   margin: 10px 0 0;
 
@@ -642,7 +642,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-modal-actions {
+.ellene-wp-delete-modal-actions {
 
   margin-top: 18px;
 
@@ -656,7 +656,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-modal-actions .button {
+.ellene-wp-delete-modal-actions .button {
 
   min-width: 112px;
 
@@ -666,7 +666,7 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-confirm-btn {
+.ellene-wp-delete-confirm-btn {
 
   background: #dc2626 !important;
 
@@ -676,9 +676,9 @@ body.mayami-delete-modal-open {
 
 
 
-.mayami-delete-confirm-btn:hover,
+.ellene-wp-delete-confirm-btn:hover,
 
-.mayami-delete-confirm-btn:focus {
+.ellene-wp-delete-confirm-btn:focus {
 
   background: #b91c1c !important;
 
@@ -710,7 +710,7 @@ body.mayami-delete-modal-open {
 
 
 
-.cmb2-id-hero-slider .cmb-repeatable-grouping .mayami-slide-title-editor {
+.cmb2-id-hero-slider .cmb-repeatable-grouping .ellene-wp-slide-title-editor {
 
   min-width: 180px;
 
@@ -764,25 +764,25 @@ body.mayami-delete-modal-open {
 
 
 
-.cmb2-id-section-hero-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-hero-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-slider-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-slider-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-stream-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-stream-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-social-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-social-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-video-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-video-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-release-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-release-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-cta-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-cta-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-footer-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-footer-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-links-title.mayami-section-toggle:focus .cmb-th,
+.cmb2-id-section-links-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-marquee-title.mayami-section-toggle:focus .cmb-th {
+.cmb2-id-section-marquee-title.ellene-wp-section-toggle:focus .cmb-th {
 
   box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.35);
 
@@ -812,7 +812,7 @@ body.mayami-delete-modal-open {
 
 @media screen and (max-width: 782px) {
 
-  .mayami-admin-nav {
+  .ellene-wp-admin-nav {
 
     top: 46px; /* WordPress admin bar mobile height */
 
@@ -820,7 +820,7 @@ body.mayami-delete-modal-open {
 
   
 
-  .mayami-admin-nav-inner {
+  .ellene-wp-admin-nav-inner {
 
     flex-direction: column;
 
@@ -830,7 +830,7 @@ body.mayami-delete-modal-open {
 
   
 
-  .mayami-admin-nav-buttons {
+  .ellene-wp-admin-nav-buttons {
 
     width: 100%;
 
@@ -838,7 +838,7 @@ body.mayami-delete-modal-open {
 
   
 
-  .mayami-nav-btn {
+  .ellene-wp-nav-btn {
 
     font-size: 11px;
 
@@ -852,15 +852,15 @@ body.mayami-delete-modal-open {
 
 /* Bottom save button: match top white/violet action style. */
 
-.toplevel_page_mayami_landing_options .cmb2-wrap input[type="submit"],
+.toplevel_page_ellene-wp_landing_options .cmb2-wrap input[type="submit"],
 
-.toplevel_page_mayami_landing_options .cmb2-wrap button[type="submit"],
+.toplevel_page_ellene-wp_landing_options .cmb2-wrap button[type="submit"],
 
-.toplevel_page_mayami_landing_options .cmb2-wrap .button-primary,
+.toplevel_page_ellene-wp_landing_options .cmb2-wrap .button-primary,
 
-.toplevel_page_mayami_landing_options .wrap p.submit input[type="submit"],
+.toplevel_page_ellene-wp_landing_options .wrap p.submit input[type="submit"],
 
-.toplevel_page_mayami_landing_options .wrap .button.button-primary {
+.toplevel_page_ellene-wp_landing_options .wrap .button.button-primary {
 
   background: #fff !important;
 
@@ -890,15 +890,15 @@ body.mayami-delete-modal-open {
 
 
 
-.toplevel_page_mayami_landing_options .cmb2-wrap input[type="submit"]:hover,
+.toplevel_page_ellene-wp_landing_options .cmb2-wrap input[type="submit"]:hover,
 
-.toplevel_page_mayami_landing_options .cmb2-wrap button[type="submit"]:hover,
+.toplevel_page_ellene-wp_landing_options .cmb2-wrap button[type="submit"]:hover,
 
-.toplevel_page_mayami_landing_options .cmb2-wrap .button-primary:hover,
+.toplevel_page_ellene-wp_landing_options .cmb2-wrap .button-primary:hover,
 
-.toplevel_page_mayami_landing_options .wrap p.submit input[type="submit"]:hover,
+.toplevel_page_ellene-wp_landing_options .wrap p.submit input[type="submit"]:hover,
 
-.toplevel_page_mayami_landing_options .wrap .button.button-primary:hover {
+.toplevel_page_ellene-wp_landing_options .wrap .button.button-primary:hover {
 
   background: #f0f0f1 !important;
 
@@ -916,7 +916,7 @@ body.mayami-delete-modal-open {
 
 @media screen and (max-width: 600px) {
 
-  .mayami-admin-nav {
+  .ellene-wp-admin-nav {
 
     top: 0;
 
@@ -2179,4 +2179,6 @@ body.mayami-delete-modal-open {
   /* No custom item controls on mobile. */
 
 }
+
+
 

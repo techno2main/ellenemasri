@@ -5,16 +5,16 @@
  * @package ElleneWp
  */
 
-$release_kicker = trim((string) cmb2_get_option('mayami_landing_options', 'release_kicker'));
-$release_title_left = trim((string) cmb2_get_option('mayami_landing_options', 'release_title_left'));
-$release_title_highlight = trim((string) cmb2_get_option('mayami_landing_options', 'release_title_highlight'));
-$release_rows = cmb2_get_option('mayami_landing_options', 'release_rows');
+$release_kicker = trim((string) cmb2_get_option('ellene-wp_landing_options', 'release_kicker'));
+$release_title_left = trim((string) cmb2_get_option('ellene-wp_landing_options', 'release_title_left'));
+$release_title_highlight = trim((string) cmb2_get_option('ellene-wp_landing_options', 'release_title_highlight'));
+$release_rows = cmb2_get_option('ellene-wp_landing_options', 'release_rows');
 
 if (!is_array($release_rows)) {
     $release_rows = array();
 }
 
-$cover_image = trim((string) cmb2_get_option('mayami_landing_options', 'release_cover_image'));
+$cover_image = trim((string) cmb2_get_option('ellene-wp_landing_options', 'release_cover_image'));
 ?>
 <section id="release" class="relative bg-cream py-20 text-ink sm:py-28">
     <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 sm:px-8 md:grid-cols-[1fr_1.3fr] md:items-center">

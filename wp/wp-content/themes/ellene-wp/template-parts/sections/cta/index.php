@@ -5,21 +5,21 @@
  * @package ElleneWp
  */
 
-$cta_kicker = trim((string) mayami_get_landing_option('cta_kicker'));
-$cta_title_left = trim((string) mayami_get_landing_option('cta_title_left'));
-$cta_title_right = trim((string) mayami_get_landing_option('cta_title_right'));
-$cta_description = trim((string) mayami_get_landing_option('cta_description'));
-$cta_hashtag = trim((string) mayami_get_landing_option('cta_hashtag'));
+$cta_kicker = trim((string) ellene_wp_get_landing_option('cta_kicker'));
+$cta_title_left = trim((string) ellene_wp_get_landing_option('cta_title_left'));
+$cta_title_right = trim((string) ellene_wp_get_landing_option('cta_title_right'));
+$cta_description = trim((string) ellene_wp_get_landing_option('cta_description'));
+$cta_hashtag = trim((string) ellene_wp_get_landing_option('cta_hashtag'));
 
-$cta_stream_link = trim((string) mayami_get_landing_option('cta_stream_link'));
-$cta_stream_label = trim((string) mayami_get_landing_option('cta_stream_label'));
-$cta_video_link = trim((string) mayami_get_landing_option('cta_video_link'));
-$cta_video_label = trim((string) mayami_get_landing_option('cta_video_label'));
-$cta_tiktok_link = trim((string) mayami_get_landing_option('cta_tiktok_link'));
-$cta_tiktok_label = trim((string) mayami_get_landing_option('cta_tiktok_label'));
-$cta_instagram_link = trim((string) mayami_get_landing_option('cta_instagram_link'));
-$cta_instagram_label = trim((string) mayami_get_landing_option('cta_instagram_label'));
-$texture_image = trim((string) mayami_get_landing_option('cta_texture_image'));
+$cta_stream_link = trim((string) ellene_wp_get_landing_option('cta_stream_link'));
+$cta_stream_label = trim((string) ellene_wp_get_landing_option('cta_stream_label'));
+$cta_video_link = trim((string) ellene_wp_get_landing_option('cta_video_link'));
+$cta_video_label = trim((string) ellene_wp_get_landing_option('cta_video_label'));
+$cta_tiktok_link = trim((string) ellene_wp_get_landing_option('cta_tiktok_link'));
+$cta_tiktok_label = trim((string) ellene_wp_get_landing_option('cta_tiktok_label'));
+$cta_instagram_link = trim((string) ellene_wp_get_landing_option('cta_instagram_link'));
+$cta_instagram_label = trim((string) ellene_wp_get_landing_option('cta_instagram_label'));
+$texture_image = trim((string) ellene_wp_get_landing_option('cta_texture_image'));
 ?>
 <section id="cta" class="relative overflow-hidden bg-[oklch(0.68_0.17_182)] py-24 text-ink sm:py-32">
     <?php if ($texture_image !== ''): ?>

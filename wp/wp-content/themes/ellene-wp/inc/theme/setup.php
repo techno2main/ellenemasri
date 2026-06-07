@@ -10,14 +10,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mayami_get_landing_option($field_id, $default = '') {
-    $primary_options = get_option('mayami_landing_options', array());
+function ellene_wp_get_landing_option($field_id, $default = '') {
+    $primary_options = get_option('ellene-wp_landing_options', array());
 
     if (is_array($primary_options) && array_key_exists($field_id, $primary_options)) {
         return $primary_options[$field_id];
     }
 
-    $legacy_options = get_option('mayami_options', array());
+    $legacy_options = get_option('ellene_wp_options', array());
 
     if (is_array($legacy_options) && array_key_exists($field_id, $legacy_options)) {
         return $legacy_options[$field_id];
@@ -26,15 +26,15 @@ function mayami_get_landing_option($field_id, $default = '') {
     return $default;
 }
 
-function mayami_upload_size_limit($size) {
+function ellene_wp_upload_size_limit($size) {
     $desired_limit = 128 * MB_IN_BYTES;
 
     return max((int) $size, $desired_limit);
 }
 
-add_filter('upload_size_limit', 'mayami_upload_size_limit');
+add_filter('upload_size_limit', 'ellene_wp_upload_size_limit');
 
-function mayami_theme_setup() {
+function ellene_wp_theme_setup() {
     add_theme_support('title-tag');
     add_theme_support('post-thumbnails');
 
@@ -44,9 +44,9 @@ function mayami_theme_setup() {
     remove_action('wp_print_styles', 'print_emoji_styles');
 }
 
-add_action('after_setup_theme', 'mayami_theme_setup');
+add_action('after_setup_theme', 'ellene_wp_theme_setup');
 
-function mayami_output_theme_favicon() {
+function ellene_wp_output_theme_favicon() {
     $favicon_svg_path = get_template_directory() . '/assets/favicon.svg';
     $favicon_png_32_path = get_template_directory() . '/assets/favicon-32.png';
     $favicon_png_180_path = get_template_directory() . '/assets/favicon-180.png';
@@ -72,6 +72,6 @@ function mayami_output_theme_favicon() {
     echo '<link rel="apple-touch-icon" sizes="180x180" href="' . esc_url($favicon_png_180_url) . '" />' . "\n";
 }
 
-add_action('wp_head', 'mayami_output_theme_favicon', 1);
-add_action('admin_head', 'mayami_output_theme_favicon', 1);
-add_action('login_head', 'mayami_output_theme_favicon', 1);
+add_action('wp_head', 'ellene_wp_output_theme_favicon', 1);
+add_action('admin_head', 'ellene_wp_output_theme_favicon', 1);
+add_action('login_head', 'ellene_wp_output_theme_favicon', 1);

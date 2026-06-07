@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mayami_force_landing_noindex($robots) {
+function ellene_wp_force_landing_noindex($robots) {
     if (is_admin()) {
         return $robots;
     }
@@ -30,4 +30,4 @@ function mayami_force_landing_noindex($robots) {
     return $robots;
 }
 
-add_filter('wp_robots', 'mayami_force_landing_noindex');
+add_filter('wp_robots', 'ellene_wp_force_landing_noindex');

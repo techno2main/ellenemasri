@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mayami_register_cmb2_stream_section($cmb) {
+function ellene_wp_register_cmb2_stream_section($cmb) {
     // ========== SECTION: STREAM ==========
 
     $cmb->add_field(array(

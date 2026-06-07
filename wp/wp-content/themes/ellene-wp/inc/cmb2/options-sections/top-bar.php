@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function mayami_register_cmb2_top_bar_section($cmb) {
+function ellene_wp_register_cmb2_top_bar_section($cmb) {
     // ========== SECTION: MARQUEE ==========
 
     $cmb->add_field(array(

@@ -5,14 +5,14 @@
  * @package ElleneWp
  */
 
-$video_kicker = trim((string) cmb2_get_option('mayami_landing_options', 'video_kicker'));
-$video_title = trim((string) cmb2_get_option('mayami_landing_options', 'video_title'));
-$video_description = trim((string) cmb2_get_option('mayami_landing_options', 'video_description'));
-$video_status_text = trim((string) cmb2_get_option('mayami_landing_options', 'video_status'));
-$video_watch_button_label = trim((string) cmb2_get_option('mayami_landing_options', 'video_watch_label'));
-$video_watch_href = trim((string) cmb2_get_option('mayami_landing_options', 'video_watch_href'));
-$video_watch_disable_link = (bool) cmb2_get_option('mayami_landing_options', 'video_watch_disable_link');
-$cover_image = trim((string) cmb2_get_option('mayami_landing_options', 'video_cover_image'));
+$video_kicker = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video_kicker'));
+$video_title = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video_title'));
+$video_description = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video_description'));
+$video_status_text = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video_status'));
+$video_watch_button_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video_watch_label'));
+$video_watch_href = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video_watch_href'));
+$video_watch_disable_link = (bool) cmb2_get_option('ellene-wp_landing_options', 'video_watch_disable_link');
+$cover_image = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video_cover_image'));
 ?>
 <section id="video" class="relative bg-[oklch(0.88_0.19_95)] py-20 sm:py-28">
     <div class="absolute inset-0 grain"></div>
