@@ -1,10 +1,13 @@
-﻿## MAJ du flow GH - lot en cours
+﻿## MAJ du flow GH - lot poussé
 
 Date: 2026-06-07
 
 Périmètre:
 1. `wp` uniquement (thème WordPress `ellene-wp`)
-2. Pas d'action Git exécutée automatiquement
+2. Flow GitHub exécuté: commit + push sur `feature/wp-ellene-refacto`
+
+Référence push:
+1. Commit: `004d7f9`
 
 État réel à intégrer dans le flow GH:
 1. Renommage hors VLB finalisé sur les fichiers code ciblés (`.php`, `.js`, `.css`)
