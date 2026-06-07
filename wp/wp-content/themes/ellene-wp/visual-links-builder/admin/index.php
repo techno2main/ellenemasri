@@ -1,10 +1,14 @@
+<?php
+$builder_css_version = file_exists(__DIR__ . '/assets/builder.css') ? (string) filemtime(__DIR__ . '/assets/builder.css') : '1';
+$builder_js_version = file_exists(__DIR__ . '/assets/builder.js') ? (string) filemtime(__DIR__ . '/assets/builder.js') : '1';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>VISUAL LINKS BUILDER (VLB)</title>
-	<link rel="stylesheet" href="assets/builder.css">
+	<link rel="stylesheet" href="assets/builder.css?v=<?php echo esc_attr($builder_css_version); ?>">
 </head>
 <body>
 	<div class="container">
@@ -37,6 +41,6 @@
 
 	<?php include __DIR__ . '/partials/modals.php'; ?>
 
-	<script src="assets/builder.js" defer></script>
+	<script src="assets/builder.js?v=<?php echo esc_attr($builder_js_version); ?>" defer></script>
 </body>
 </html>

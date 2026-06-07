@@ -1,13 +1,14 @@
-﻿## MAJ du flow GH - lot poussé
+﻿## MAJ du flow GH - complet
 
 Date: 2026-06-07
 
 Périmètre:
 1. `wp` uniquement (thème WordPress `ellene-wp`)
-2. Flow GitHub exécuté: commit + push sur `feature/wp-ellene-refacto`
+2. Flow GitHub exécuté: commits + push sur `feature/wp-ellene-refacto`
 
 Référence push:
 1. Commit: `004d7f9`
+2. Commit: `c482321`
 
 État réel à intégrer dans le flow GH:
 1. Renommage hors VLB finalisé sur les fichiers code ciblés (`.php`, `.js`, `.css`)
@@ -15,6 +16,7 @@ Référence push:
 	- suppression des BOM UTF-8 sur les fichiers modifiés pour éliminer `Cannot modify header information`
 	- ajout du fallback `wp/favicon.ico` pour éviter le `GET /favicon.ico 404`
 3. Vérification hors VLB: occurrences `mayami` = 0 fichier / 0 match
+4. Bloc VLB: corrections d'accents/mojibake appliquées sur les fichiers code + cache-busting des assets admin VLB pour forcer le rechargement navigateur
 
 Découpage recommandé en commit atomique:
 1. Commit A - renommage hors VLB + corrections chaînes
@@ -31,7 +33,7 @@ Checklist push:
 
 ## Reste à faire
 
-À ce stade, il ne reste plus rien à renommer hors VLB: le périmètre thème principal est à 0 occurrence `mayami` hors exclusions; les seuls renommages encore possibles concernent le bloc VLB explicitement exclu (`inc/vlb/builder.php`, `inc/vlb/menu.php`, `inc/vlb/pages.php`, `inc/vlb/export.php`, `inc/vlb/data.php`, `inc/vlb/shared.php`, `assets/admin-visual-links-builder.css`, `assets/admin-visual-links-builder.js`, `assets/visual-links.css`, `visual-links-builder/admin/assets/builder.js`), soit 10 fichiers et 360 matches actuels. À ne pas renommer par défaut (sauf demande explicite): archives et non-runtime (`_sources/dump_base_sql/wp_ellene_local_2026-06-07.sql`, `.gitignore`, `.copilot-snapshots/pre-lot2-20260605-202445.patch`) ainsi que les contenus éditoriaux liés au single/EPK.
+À ce stade, il ne reste plus rien à renommer hors VLB: le périmètre thème principal est à 0 occurrence `mayami` hors exclusions. Concernant le bloc VLB, les erreurs d'accents/mojibake côté code ont été corrigées et un cache-busting des assets admin VLB a été ajouté pour forcer le rechargement navigateur; les chaînes éditoriales verrouillées restent inchangées (`Mayami - EPK 2026`, `Download Mayami EPK 2026 in ONESHEET CLICKABLE`, URL PDF associée, et `Visuel ouvert : Mayami - EPK 2026`). Les seuls renommages encore possibles concernent donc uniquement les identifiants `mayami` du bloc VLB (`inc/vlb/builder.php`, `inc/vlb/menu.php`, `inc/vlb/pages.php`, `inc/vlb/export.php`, `inc/vlb/data.php`, `inc/vlb/shared.php`, `assets/admin-visual-links-builder.css`, `assets/admin-visual-links-builder.js`, `assets/visual-links.css`, `visual-links-builder/admin/assets/builder.js`), soit 10 fichiers et 360 matches actuels. À ne pas renommer par défaut (sauf demande explicite): archives et non-runtime (`_sources/dump_base_sql/wp_ellene_local_2026-06-07.sql`, `.gitignore`, `.copilot-snapshots/pre-lot2-20260605-202445.patch`) ainsi que les contenus éditoriaux liés au single/EPK.
 
 ---
 

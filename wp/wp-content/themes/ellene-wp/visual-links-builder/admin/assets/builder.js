@@ -468,7 +468,7 @@
 
                 }
 
-                copyExportUrlBtn.textContent = 'CopiÃ©';
+                copyExportUrlBtn.textContent = 'Copié';
 
                 copyExportUrlBtn.disabled = true;
 
@@ -482,7 +482,7 @@
 
                 }, 1500);
 
-                setDraftStatus('URL export copiÃ©e dans le presse-papiers.');
+                setDraftStatus('URL export copiée dans le presse-papiers.');
 
             } catch (error) {
 
@@ -528,7 +528,7 @@
 
                 }
 
-                copyExportQuickBtn.textContent = 'CopiÃ©';
+                copyExportQuickBtn.textContent = 'Copié';
 
                 copyExportQuickBtn.disabled = true;
 
@@ -542,7 +542,7 @@
 
                 }, 1500);
 
-                setDraftStatus('URL export copiÃ©e dans le presse-papiers.');
+                setDraftStatus('URL export copiée dans le presse-papiers.');
 
             } catch (error) {
 
@@ -676,7 +676,7 @@
 
             if (!html) {
 
-                setDraftStatus('Aucun contenu HTML Ã  tÃ©lÃ©charger.', true);
+                setDraftStatus('Aucun contenu HTML à télécharger.', true);
 
                 return;
 
@@ -712,7 +712,7 @@
 
             if (!html) {
 
-                setDraftStatus('Aucun code HTML Ã  exporter.', true);
+                setDraftStatus('Aucun code HTML à exporter.', true);
 
                 return;
 
@@ -764,7 +764,7 @@
 
 
 
-            setDraftStatus('Fichier code HTML copiable tÃ©lÃ©chargÃ©.');
+            setDraftStatus('Fichier code HTML copiable téléchargé.');
 
         }
 
@@ -934,7 +934,7 @@
 
             if (!(imageCanvas.naturalWidth > 0 && imageCanvas.naturalHeight > 0)) {
 
-                setDraftStatus('Impossible de charger l\'image sÃ©lectionnÃ©e.', true);
+                setDraftStatus('Impossible de charger l\'image sélectionnée.', true);
 
                 return;
 
@@ -954,7 +954,7 @@
 
                 markDraftDirty();
 
-                setDraftStatus('Image remplacÃ©e. Zones conservÃ©es et recalÃ©es.');
+                setDraftStatus('Image remplacée. Zones conservées et recalées.');
 
                 return;
 
@@ -972,7 +972,7 @@
 
             markDraftDirty();
 
-            setDraftStatus('Image chargÃ©e. Ajoutez vos zones puis enregistrez le visuel.');
+            setDraftStatus('Image chargée. Ajoutez vos zones puis enregistrez le visuel.');
 
         }
 
@@ -1068,7 +1068,7 @@
 
             if (!mediaApi) {
 
-                setDraftStatus('BibliothÃ¨que mÃ©dia indisponible sur cette page.', true);
+                setDraftStatus('Bibliothèque média indisponible sur cette page.', true);
 
                 return;
 
@@ -1112,7 +1112,7 @@
 
                     if (!selectedUrl) {
 
-                        setDraftStatus('Aucune image valide sÃ©lectionnÃ©e.', true);
+                        setDraftStatus('Aucune image valide sélectionnée.', true);
 
                         return;
 
@@ -1348,11 +1348,11 @@
 
             if (!currentDraftId) {
 
-                setDraftStatus('Visuel non sauvegardÃ© en base.');
+                setDraftStatus('Visuel non sauvegardé en base.');
 
             } else {
 
-                setDraftStatus('Modifications non sauvegardÃ©es. Enregistrez le visuel.');
+                setDraftStatus('Modifications non sauvegardées. Enregistrez le visuel.');
 
             }
 
@@ -1540,7 +1540,7 @@
 
                 lastSavedPreviewGateSignature = getCurrentPreviewGateSignature();
 
-                setDraftStatus('Visuel enregistrÃ© en base.');
+                setDraftStatus('Visuel enregistré en base.');
 
                 setPdfInlineAlertVisible(false);
 
@@ -1548,7 +1548,7 @@
 
             } catch (error) {
 
-                setDraftStatus('Impossible d\'enregistrer le visuel (erreur rÃ©seau).', true);
+                setDraftStatus('Impossible d\'enregistrer le visuel (erreur réseau).', true);
 
             } finally {
 
@@ -1660,11 +1660,11 @@
 
 
 
-                // SÃ©curitÃ© anti-dÃ©calage: certains anciens drafts ont des canvasWidth/Height
+                // Sécurité anti-décalage: certains anciens drafts ont des canvasWidth/Height
 
-                // incohÃ©rents avec les coordonnÃ©es stockÃ©es. Dans ce cas, on Ã©vite de
+                // incohérents avec les coordonnées stockées. Dans ce cas, on évite de
 
-                // re-multiplier les coordonnÃ©es si elles sont dÃ©jÃ  dans l'espace affichÃ©.
+                // re-multiplier les coordonnées si elles sont déjà dans l'espace affiché.
 
                 const rawMaxX = rawZones.reduce((max, zone) => {
 
@@ -1764,7 +1764,7 @@
 
                 lastSavedPreviewGateSignature = getCurrentPreviewGateSignature();
 
-                setDraftStatus('Visuel chargÃ© depuis la base.');
+                setDraftStatus('Visuel chargé depuis la base.');
 
                 updateGenerateButtonState();
 
@@ -1814,9 +1814,9 @@
 
 
 
-                    // Export considÃ©rÃ© Ã  jour uniquement si Template-HTML et Template-Email
+                    // Export considéré à jour uniquement si Template-HTML et Template-Email
 
-                    // existent tous les deux et sont plus rÃ©cents que le visuel sauvegardÃ©.
+                    // existent tous les deux et sont plus récents que le visuel sauvegardé.
 
                     const hasBothExports = !!(restoredTemplateEmailExportUrl && restoredTemplateHtmlExportUrl);
 
@@ -1832,7 +1832,7 @@
 
                         setExportDownloadButtonsEnabled(false);
 
-                        setDraftStatus('Visuel chargÃ© depuis la base.');
+                        setDraftStatus('Visuel chargé depuis la base.');
 
                     }
 
@@ -2544,7 +2544,7 @@
 
             if (zones.length === 0) {
 
-                zonesList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px; font-size: 13px;">Aucune zone crÃ©Ã©e.<br>Dessinez sur l\'image pour commencer.</p>';
+                zonesList.innerHTML = '<p style="color: #999; text-align: center; padding: 20px; font-size: 13px;">Aucune zone créée.<br>Dessinez sur l\'image pour commencer.</p>';
 
             } else {
 
@@ -2556,13 +2556,13 @@
 
                             <span class="zone-title">Zone ${index + 1}</span>
 
-                            <button class="zone-delete" onclick="deleteZone(${zone.id})">âœ•</button>
+                            <button class="zone-delete" onclick="deleteZone(${zone.id})">✕</button>
 
                         </div>
 
                         <div class="zone-coords">
 
-                            ðŸ“ x:${zone.x}, y:${zone.y}, w:${zone.width}, h:${zone.height}
+                            📐 x:${zone.x}, y:${zone.y}, w:${zone.width}, h:${zone.height}
 
                         </div>
 
@@ -2806,7 +2806,7 @@
 
                         success: false,
 
-                        message: 'RÃ©ponse export invalide (' + response.status + ').'
+                        message: 'Réponse export invalide (' + response.status + ').'
 
                     };
 
@@ -2856,7 +2856,7 @@
 
             } catch (error) {
 
-                return { success: false, message: 'Erreur rÃ©seau pendant l\'export.' };
+                return { success: false, message: 'Erreur réseau pendant l\'export.' };
 
             }
 
@@ -2896,7 +2896,7 @@
 
             if (!imageUrl) {
 
-                throw new Error('Aucune image disponible pour la prÃ©visualisation.');
+                throw new Error('Aucune image disponible pour la prévisualisation.');
 
             }
 
@@ -2904,7 +2904,7 @@
 
             if (zones.length === 0) {
 
-                throw new Error('Veuillez crÃ©er au moins une zone cliquable.');
+                throw new Error('Veuillez créer au moins une zone cliquable.');
 
             }
 
@@ -2964,7 +2964,7 @@
 
             const anchorsMarkup = anchorIds.map((id, index) => {
 
-                return `<section id="${escapeAttr(id)}" class="anchor-section"><h2>Section #${escapeHtml(id)}</h2><p>Ancre de dÃ©monstration ${index + 1}. Le clic sur la zone ancre vous amÃ¨ne ici.</p></section>`;
+                return `<section id="${escapeAttr(id)}" class="anchor-section"><h2>Section #${escapeHtml(id)}</h2><p>Ancre de démonstration ${index + 1}. Le clic sur la zone ancre vous amène ici.</p></section>`;
 
             }).join('');
 
@@ -3336,11 +3336,11 @@
 
   <div class="topbar">
 
-    <div class="topbar-title">PrÃ©visualisation visuelle</div>
+    <div class="topbar-title">Prévisualisation visuelle</div>
 
     <div class="topbar-actions">
 
-      <button class="preview-btn export-template" id="exportTemplateBtn">â¬‡ Exporter Template</button>
+      <button class="preview-btn export-template" id="exportTemplateBtn">⬇ Exporter Template</button>
 
             <a class="preview-btn modify" id="modifyBtn" href="${builderUrlAttr}" style="text-decoration:none;display:inline-block;">Modifier</a>
 
@@ -3390,7 +3390,7 @@
 
             if (!previewWindow) {
 
-                alert('Impossible d\'ouvrir la prÃ©visualisation. Autorisez les popups pour ce site.');
+                alert('Impossible d\'ouvrir la prévisualisation. Autorisez les popups pour ce site.');
 
                 return;
 
@@ -3514,7 +3514,7 @@
 
                 try {
 
-                    // 1. Purger les deux buckets avant de regÃ©nÃ©rer
+                    // 1. Purger les deux buckets avant de regénérer
 
                     const purgeHtml = await purgeExportBucket(draftName, 'template-html');
 
@@ -3580,9 +3580,9 @@
 
 
 
-                    // 3. Export Template-Email (slices + HTML + txt auto-sauvegardÃ© cÃ´tÃ© serveur)
+                    // 3. Export Template-Email (slices + HTML + txt auto-sauvegardé côté serveur)
 
-                    showPreviewStatus('GÃ©nÃ©ration Template E-Mail en cours (dÃ©coupe image)...', false);
+                    showPreviewStatus('Génération Template E-Mail en cours (découpe image)...', false);
 
                     const emailResult = await generateEmailTemplateFromPreviewData(previewData);
 
@@ -3600,15 +3600,15 @@
 
 
 
-                    // 4. Fermer la preview et afficher la popup de rÃ©sultat dans la fenÃªtre d'Ã©dition
+                    // 4. Fermer la preview et afficher la popup de résultat dans la fenêtre d'édition
 
-                    showPreviewStatus('Exports terminÃ©s avec succÃ¨s !', false);
+                    showPreviewStatus('Exports terminés avec succès !', false);
 
                     setTimeout(() => {
 
                         previewWindow.close();
 
-                        // Afficher la popup dans l'Ã©diteur avec les infos du template email (prioritÃ©)
+                        // Afficher la popup dans l'éditeur avec les infos du template email (priorité)
 
                         const finalUrl      = lastTemplateEmailPublicUrl  || htmlResult.url      || '';
 
@@ -3636,7 +3636,7 @@
 
             async function handlePreviewEmailTemplate() {
 
-                // ConservÃ© pour compatibilitÃ© â€” redirige vers le flow unifiÃ©
+                // Conservé pour compatibilité — redirige vers le flow unifié
 
                 return handlePreviewExport();
 
@@ -3692,7 +3692,7 @@
 
         /**
 
-         * Purge tous les fichiers d'un bucket d'export cÃ´tÃ© serveur avant rÃ©gÃ©nÃ©ration.
+         * Purge tous les fichiers d'un bucket d'export côté serveur avant régénération.
 
          * @param {string} draftName
 
@@ -3756,7 +3756,7 @@
 
             } catch (e) {
 
-                return { success: false, message: 'Erreur rÃ©seau pendant la purge.' };
+                return { success: false, message: 'Erreur réseau pendant la purge.' };
 
             }
 
@@ -3910,7 +3910,7 @@
 
                     if (!blob) {
 
-                        reject(new Error('Impossible de gÃ©nÃ©rer le blob image.'));
+                        reject(new Error('Impossible de générer le blob image.'));
 
                         return;
 
@@ -3982,9 +3982,9 @@
 
                     const rawText = (responseText || '').trim();
 
-                    const suffix = rawText ? (' DÃ©tail serveur: ' + rawText.slice(0, 180)) : '';
+                    const suffix = rawText ? (' Détail serveur: ' + rawText.slice(0, 180)) : '';
 
-                    return { success: false, message: 'RÃ©ponse upload slice invalide (' + response.status + ').' + suffix };
+                    return { success: false, message: 'Réponse upload slice invalide (' + response.status + ').' + suffix };
 
                 }
 
@@ -4026,7 +4026,7 @@
 
             } catch (error) {
 
-                return { success: false, message: 'Erreur rÃ©seau pendant upload slice.' };
+                return { success: false, message: 'Erreur réseau pendant upload slice.' };
 
             }
 
@@ -4314,7 +4314,7 @@ ${tableHtml}
 
                     if (!blob) {
 
-                        reject(new Error('Impossible de gÃ©nÃ©rer le blob image.'));
+                        reject(new Error('Impossible de générer le blob image.'));
 
                         return;
 
@@ -4336,7 +4336,7 @@ ${tableHtml}
 
             if (!naturalSlices.length) {
 
-                throw new Error('Aucune slice Ã  gÃ©nÃ©rer.');
+                throw new Error('Aucune slice à générer.');
 
             }
 
@@ -4368,7 +4368,7 @@ ${tableHtml}
 
             if (!baseCanvas) {
 
-                throw new Error('Impossible de prÃ©parer l\'image email.');
+                throw new Error('Impossible de préparer l\'image email.');
 
             }
 
@@ -4392,7 +4392,7 @@ ${tableHtml}
 
 
 
-            setDraftStatus('GÃ©nÃ©ration template e-mail cliquable en cours...');
+            setDraftStatus('Génération template e-mail cliquable en cours...');
 
             for (let i = 0; i < scaledSlices.length; i++) {
 
@@ -4406,7 +4406,7 @@ ${tableHtml}
 
                 if (!upload.success || !upload.url) {
 
-                    throw new Error(upload.message || ('Ã‰chec upload slice ' + (i + 1) + '.'));
+                    throw new Error(upload.message || ('Échec upload slice ' + (i + 1) + '.'));
 
                 }
 
@@ -4428,7 +4428,7 @@ ${tableHtml}
 
                 applyTemplateEmailExportResult(exportResult.url || '', exportResult.filename || localFilename, templateHtml);
 
-                setDraftStatus('Template e-mail cliquable gÃ©nÃ©rÃ© (liens conservÃ©s) + HTML + TXT exportÃ©s dans Template-Email.');
+                setDraftStatus('Template e-mail cliquable généré (liens conservés) + HTML + TXT exportés dans Template-Email.');
 
                 return {
 
@@ -4556,7 +4556,7 @@ ${tableHtml}
 
         function calculateImageSlices(scaleX, scaleY) {
 
-            // CrÃ©er une grille de dÃ©coupe basÃ©e sur les zones
+            // Créer une grille de découpe basée sur les zones
 
             const xPoints = new Set([0]);
 
@@ -4606,7 +4606,7 @@ ${tableHtml}
 
             
 
-            // CrÃ©er les morceaux
+            // Créer les morceaux
 
             const slices = [];
 
@@ -4684,7 +4684,7 @@ ${tableHtml}
 
         function generateEmailTableHTML(slices, imgWidth, targetWidth, getSliceSrc) {
 
-            // Grouper par rangÃ©e
+            // Grouper par rangée
 
             const rows = {};
 
@@ -4810,7 +4810,7 @@ ${tableHtml}
 
             if (pdfHeaderActive.checked) {
 
-                setPdfInlineAlertVisible(true, 'Mode PDF activÃ©. Cliquez sur SAUVEGARDER.');
+                setPdfInlineAlertVisible(true, 'Mode PDF activé. Cliquez sur SAUVEGARDER.');
 
             }
 
@@ -4826,7 +4826,7 @@ ${tableHtml}
 
             if (pdfHeaderInactive.checked) {
 
-                setPdfInlineAlertVisible(true, 'Mode PDF dÃ©sactivÃ©. Cliquez sur SAUVEGARDER.');
+                setPdfInlineAlertVisible(true, 'Mode PDF désactivé. Cliquez sur SAUVEGARDER.');
 
             }
 

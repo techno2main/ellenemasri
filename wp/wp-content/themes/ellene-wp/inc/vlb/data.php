@@ -95,7 +95,7 @@ function mayami_sanitize_visual_links_html_payload($payload) {
 
 function mayami_ajax_save_visual_links_draft() {
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(array('message' => 'AccÃ¨s refusÃ©.'), 403);
+        wp_send_json_error(array('message' => 'Accès refusé.'), 403);
     }
 
     check_ajax_referer('mayami_visual_links_draft', 'nonce');
@@ -139,7 +139,7 @@ add_action('wp_ajax_mayami_save_visual_links_draft', 'mayami_ajax_save_visual_li
 
 function mayami_ajax_get_visual_links_draft() {
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(array('message' => 'AccÃ¨s refusÃ©.'), 403);
+        wp_send_json_error(array('message' => 'Accès refusé.'), 403);
     }
 
     check_ajax_referer('mayami_visual_links_draft', 'nonce');
@@ -151,7 +151,7 @@ function mayami_ajax_get_visual_links_draft() {
 
     $store = mayami_get_visual_links_drafts_store();
     if (empty($store[$draft_id]) || !is_array($store[$draft_id])) {
-        wp_send_json_error(array('message' => 'Visuel non trouvÃ©.'), 404);
+        wp_send_json_error(array('message' => 'Visuel non trouvé.'), 404);
     }
 
     $draft = $store[$draft_id];

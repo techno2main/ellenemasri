@@ -139,7 +139,7 @@ function mayami_render_visual_links_drafts_page() {
             <thead>
                 <tr>
                     <th>Nom du visuel</th>
-                    <th>DerniÃ¨re mise Ã  jour</th>
+                    <th>Dernière mise à jour</th>
                     <th>Action</th>
                 </tr>
             </thead>

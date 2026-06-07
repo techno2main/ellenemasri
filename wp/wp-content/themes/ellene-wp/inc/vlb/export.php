@@ -6,14 +6,14 @@ function mayami_get_visual_links_export_dir() {
     if (!is_dir($export_dir) && !wp_mkdir_p($export_dir)) {
         return new WP_Error(
             'export_dir_create_failed',
-            'Impossible de crÃ©er le dossier d\'export requis: visual-links-builder/exports-html. CrÃ©ez-le manuellement via FTP puis mettez les droits en Ã©criture (755/775).'
+            'Impossible de créer le dossier d\'export requis: visual-links-builder/exports-html. Créez-le manuellement via FTP puis mettez les droits en écriture (755/775).'
         );
     }
 
     if (!is_writable($export_dir)) {
         return new WP_Error(
             'export_dir_not_writable',
-            'Le dossier d\'export requis n\'est pas accessible en Ã©criture: visual-links-builder/exports-html. VÃ©rifiez les permissions (755/775) et le propriÃ©taire.'
+            'Le dossier d\'export requis n\'est pas accessible en écriture: visual-links-builder/exports-html. Vérifiez les permissions (755/775) et le propriétaire.'
         );
     }
 
@@ -58,11 +58,11 @@ function mayami_get_visual_links_export_target($requested_subdir = '') {
     $target_dir = trailingslashit($base_dir) . $safe_subdir;
 
     if (!is_dir($target_dir) && !wp_mkdir_p($target_dir)) {
-        return new WP_Error('export_subdir_create_failed', 'Impossible de crÃ©er le sous-dossier d\'export: ' . $safe_subdir . '.');
+        return new WP_Error('export_subdir_create_failed', 'Impossible de créer le sous-dossier d\'export: ' . $safe_subdir . '.');
     }
 
     if (!is_writable($target_dir)) {
-        return new WP_Error('export_subdir_not_writable', 'Le sous-dossier d\'export n\'est pas accessible en Ã©criture: ' . $safe_subdir . '.');
+        return new WP_Error('export_subdir_not_writable', 'Le sous-dossier d\'export n\'est pas accessible en écriture: ' . $safe_subdir . '.');
     }
 
     $encoded_segments = array_map('rawurlencode', $safe_segments);
@@ -95,7 +95,7 @@ function mayami_build_visual_links_export_subdir($draft_name = '', $export_bucke
 
 function mayami_ajax_upload_visual_links_slice() {
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(array('message' => 'AccÃ¨s refusÃ©.'), 403);
+        wp_send_json_error(array('message' => 'Accès refusé.'), 403);
     }
 
     check_ajax_referer('mayami_visual_links_draft', 'nonce');
@@ -126,7 +126,7 @@ function mayami_ajax_upload_visual_links_slice() {
     $allowed_exts = array('jpg', 'jpeg', 'jpe', 'png', 'webp');
     $requested_ext = strtolower((string) pathinfo($requested_filename, PATHINFO_EXTENSION));
     if ($requested_ext === '' || !in_array($requested_ext, $allowed_exts, true)) {
-        wp_send_json_error(array('message' => 'Extension de slice non autorisÃ©e (jpg/png/webp uniquement).'), 400);
+        wp_send_json_error(array('message' => 'Extension de slice non autorisée (jpg/png/webp uniquement).'), 400);
     }
 
     $image_info = @getimagesize($tmp_name);
@@ -167,7 +167,7 @@ function mayami_ajax_upload_visual_links_slice() {
     if (!$moved) {
         $raw_data = file_get_contents($tmp_name);
         if ($raw_data === false || file_put_contents($target_path, $raw_data) === false) {
-            wp_send_json_error(array('message' => 'Impossible d\'Ã©crire la slice ' . $filename . '.'), 500);
+            wp_send_json_error(array('message' => 'Impossible d\'écrire la slice ' . $filename . '.'), 500);
         }
     }
 
@@ -185,7 +185,7 @@ add_action('wp_ajax_mayami_upload_visual_links_slice', 'mayami_ajax_upload_visua
 
 function mayami_ajax_export_visual_links_html() {
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(array('message' => 'AccÃ¨s refusÃ©.'), 403);
+        wp_send_json_error(array('message' => 'Accès refusé.'), 403);
     }
 
     check_ajax_referer('mayami_visual_links_draft', 'nonce');
@@ -226,7 +226,7 @@ function mayami_ajax_export_visual_links_html() {
     if ($written === false) {
         $last_error = error_get_last();
         $last_error_message = is_array($last_error) && !empty($last_error['message']) ? (string) $last_error['message'] : 'inconnue';
-        wp_send_json_error(array('message' => 'Ã‰chec de l\'Ã©criture du fichier ' . $filename . ' (' . $last_error_message . ').'), 500);
+        wp_send_json_error(array('message' => 'Échec de l\'écriture du fichier ' . $filename . ' (' . $last_error_message . ').'), 500);
     }
 
     if ($export_bucket === 'template-email') {
@@ -234,7 +234,7 @@ function mayami_ajax_export_visual_links_html() {
         $txt_path = trailingslashit((string) $export_target['dir']) . $txt_filename;
         $txt_written = file_put_contents($txt_path, $html);
         if ($txt_written === false) {
-            wp_send_json_error(array('message' => 'Ã‰chec de l\'Ã©criture du fichier TXT ' . $txt_filename . '.'), 500);
+            wp_send_json_error(array('message' => 'Échec de l\'écriture du fichier TXT ' . $txt_filename . '.'), 500);
         }
     }
 
@@ -283,7 +283,7 @@ function mayami_purge_directory_children($dir) {
     $deleted = 0;
     $items = scandir($dir);
     if (!is_array($items)) {
-        return new WP_Error('purge_scan_failed', 'Impossible de lire le contenu du dossier Ã  purger.');
+        return new WP_Error('purge_scan_failed', 'Impossible de lire le contenu du dossier à purger.');
     }
 
     foreach ($items as $item) {
@@ -318,7 +318,7 @@ function mayami_purge_directory_children($dir) {
 
 function mayami_ajax_purge_visual_export_bucket() {
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(array('message' => 'AccÃ¨s refusÃ©.'), 403);
+        wp_send_json_error(array('message' => 'Accès refusé.'), 403);
     }
 
     check_ajax_referer('mayami_visual_links_draft', 'nonce');
@@ -327,7 +327,7 @@ function mayami_ajax_purge_visual_export_bucket() {
     $export_bucket = isset($_POST['export_bucket']) ? sanitize_key(wp_unslash((string) $_POST['export_bucket'])) : '';
 
     if ($draft_name === '' || $export_bucket === '') {
-        wp_send_json_error(array('message' => 'ParamÃ¨tres manquants.'), 400);
+        wp_send_json_error(array('message' => 'Paramètres manquants.'), 400);
     }
 
     $subdir = mayami_build_visual_links_export_subdir($draft_name, $export_bucket);

@@ -171,7 +171,7 @@ function mayami_format_visual_links_timestamp($value) {
 
     if (!is_string($value) || trim($value) === '') {
 
-        return 'Non dÃ©fini';
+        return 'Non défini';
 
     }
 
@@ -181,7 +181,7 @@ function mayami_format_visual_links_timestamp($value) {
 
     if (!$timestamp) {
 
-        return 'Non dÃ©fini';
+        return 'Non défini';
 
     }
 
@@ -223,17 +223,17 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                 <div class="mayami-vlb-proto-header-copy">
 
-                    <h3>CrÃ©ateur de liens sur image - Visual Links</h3>
+                    <h3>Créateur de liens sur image - Visual Links</h3>
 
-                    <p>Dessinez des zones cliquables sur votre image puis prÃ©visualisez et publiez la version validÃ©e sur la landing.</p>
+                    <p>Dessinez des zones cliquables sur votre image puis prévisualisez et publiez la version validée sur la landing.</p>
 
                 </div>
 
                 <div class="mayami-vlb-builder__badges">
 
-                    <span class="mayami-vlb-badge mayami-vlb-badge--draft">Brouillon: <?php echo esc_html(mayami_has_visual_links_payload_data($draft_payload) ? 'prÃªt' : 'vide'); ?></span>
+                    <span class="mayami-vlb-badge mayami-vlb-badge--draft">Brouillon: <?php echo esc_html(mayami_has_visual_links_payload_data($draft_payload) ? 'prêt' : 'vide'); ?></span>
 
-                    <span class="mayami-vlb-badge mayami-vlb-badge--published">Front: <?php echo esc_html(mayami_has_visual_links_payload_data($published_payload) ? 'publiÃ©' : 'hors ligne'); ?></span>
+                    <span class="mayami-vlb-badge mayami-vlb-badge--published">Front: <?php echo esc_html(mayami_has_visual_links_payload_data($published_payload) ? 'publié' : 'hors ligne'); ?></span>
 
                     <span class="mayami-vlb-badge mayami-vlb-badge--check">Validation: <?php echo esc_html($validation_ready ? 'ok' : 'requise'); ?></span>
 
@@ -257,7 +257,7 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
 
 
-                    <div class="mayami-vlb-canvas-empty">SÃ©lectionnez une image dans la mÃ©diathÃ¨que pour commencer.</div>
+                    <div class="mayami-vlb-canvas-empty">Sélectionnez une image dans la médiathèque pour commencer.</div>
 
 
 
@@ -275,13 +275,13 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                         <strong>Mode d'emploi :</strong>
 
-                        1. Choisissez le visuel dans la mÃ©diathÃ¨que.<br>
+                        1. Choisissez le visuel dans la médiathèque.<br>
 
                         2. Cliquez-glissez pour dessiner des zones rectangulaires.<br>
 
                         3. Ajoutez un lien ou une ancre pour chaque zone.<br>
 
-                        4. Enregistrez, prÃ©visualisez, validez, puis publiez.
+                        4. Enregistrez, prévisualisez, validez, puis publiez.
 
                     </div>
 
@@ -309,7 +309,7 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                             <span>Description</span>
 
-                            <textarea rows="3" class="large-text mayami-vlb-input" data-vlb-field="description" placeholder="PrÃ©sentez rapidement cette section."></textarea>
+                            <textarea rows="3" class="large-text mayami-vlb-input" data-vlb-field="description" placeholder="Présentez rapidement cette section."></textarea>
 
                         </label>
 
@@ -343,7 +343,7 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                             <div class="mayami-vlb-stat-number mayami-vlb-linked-count">0</div>
 
-                            <div class="mayami-vlb-stat-label">LiÃ©es</div>
+                            <div class="mayami-vlb-stat-label">Liées</div>
 
                         </div>
 
@@ -363,7 +363,7 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                         <button type="button" class="mayami-vlb-btn mayami-vlb-btn-secondary mayami-vlb-reset-zones">Tout effacer</button>
 
-                        <a href="<?php echo esc_url(mayami_get_visual_links_preview_url()); ?>" target="_blank" rel="noreferrer" class="mayami-vlb-btn mayami-vlb-btn-secondary mayami-vlb-preview-link">PrÃ©visualiser la landing</a>
+                        <a href="<?php echo esc_url(mayami_get_visual_links_preview_url()); ?>" target="_blank" rel="noreferrer" class="mayami-vlb-btn mayami-vlb-btn-secondary mayami-vlb-preview-link">Prévisualiser la landing</a>
 
                         <button type="button" class="mayami-vlb-btn mayami-vlb-btn-primary mayami-vlb-publish-button">Publier Visual Links sur le front</button>
 
@@ -381,7 +381,7 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                         <div class="mayami-vlb-validation-host"></div>
 
-                        <p class="mayami-vlb-workflow-note">PrÃ©visualisation et publication utilisent la derniÃ¨re version enregistrÃ©e. Sauvegardez ellene-wp Landing avant ces actions.</p>
+                        <p class="mayami-vlb-workflow-note">Prévisualisation et publication utilisent la dernière version enregistrée. Sauvegardez ellene-wp Landing avant ces actions.</p>
 
                     </div>
 
@@ -557,7 +557,7 @@ function mayami_render_visual_links_admin_notice() {
 
             $class = 'notice-success';
 
-            $message = 'Le brouillon Visual Links a Ã©tÃ© publiÃ© sur le front.';
+            $message = 'Le brouillon Visual Links a été publié sur le front.';
 
             break;
 
@@ -565,7 +565,7 @@ function mayami_render_visual_links_admin_notice() {
 
             $class = 'notice-warning';
 
-            $message = 'Visual Links a Ã©tÃ© retirÃ© du front.';
+            $message = 'Visual Links a été retiré du front.';
 
             break;
 
@@ -573,7 +573,7 @@ function mayami_render_visual_links_admin_notice() {
 
             $class = 'notice-error';
 
-            $message = 'Cochez dâ€™abord la validation finale Visual Links puis enregistrez la page avant publication.';
+            $message = 'Cochez d’abord la validation finale Visual Links puis enregistrez la page avant publication.';
 
             break;
 
@@ -581,7 +581,7 @@ function mayami_render_visual_links_admin_notice() {
 
             $class = 'notice-error';
 
-            $message = 'Aucun brouillon Visual Links valide Ã  publier.';
+            $message = 'Aucun brouillon Visual Links valide à publier.';
 
             break;
 
