@@ -277,3 +277,46 @@ function ellene_wp_redirect_admin_bar_edit_to_landing($wp_admin_bar) {
 
 add_action('admin_bar_menu', 'ellene_wp_redirect_admin_bar_edit_to_landing', 1001);
 
+function ellene_wp_output_active_theme_name_in_admin_menu() {
+    if (!is_admin()) {
+        return;
+    }
+
+    $theme = wp_get_theme();
+    $theme_name = trim((string) $theme->get('Name'));
+
+    if ($theme_name === '') {
+        return;
+    }
+
+    $label = 'Theme actif: ' . $theme_name;
+    ?>
+    <style>
+    #adminmenu::before {
+        content: "<?php echo esc_js($label); ?>";
+        display: block;
+        padding: 8px 12px 7px;
+        margin: 0 0 4px;
+        font-size: 10px;
+        line-height: 1.2;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: rgba(240, 246, 252, 0.62);
+        border-bottom: 1px solid rgba(240, 246, 252, 0.14);
+        pointer-events: none;
+    }
+
+    .folded #adminmenu::before {
+        content: "<?php echo esc_js($theme_name); ?>";
+        font-size: 9px;
+        letter-spacing: 0;
+        text-transform: none;
+        text-align: center;
+        padding: 8px 2px 7px;
+    }
+    </style>
+    <?php
+}
+
+add_action('admin_head', 'ellene_wp_output_active_theme_name_in_admin_menu', 20);
+

@@ -21,6 +21,7 @@ Mise à jour du lot courant (2026-06-07 - flow GH):
 5. Stream admin/front alignés sur l'état `Active` des plateformes:
 	- suppression du `default => 'on'` sur `stream_platforms[].is_active`
 	- sanitization CMB2 ciblée du groupe `stream_platforms` pour persister explicitement `is_active` (`on`/vide) et éviter les recochages fantômes en admin.
+6. Admin UX: ajout d'un label discret au-dessus du menu `Tableau de bord` affichant le nom du thème actif (`Theme actif: <nom du thème>`), avec variante compacte en menu replié.
 
 État réel à intégrer dans le flow GH:
 1. Renommage hors VLB finalisé sur les fichiers code ciblés (`.php`, `.js`, `.css`)
