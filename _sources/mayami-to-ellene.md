@@ -9,6 +9,7 @@ Périmètre:
 Référence push:
 1. Commit: `004d7f9`
 2. Commit: `c482321`
+3. Commit: `67c8f7d`
 
 État réel à intégrer dans le flow GH:
 1. Renommage hors VLB finalisé sur les fichiers code ciblés (`.php`, `.js`, `.css`)
