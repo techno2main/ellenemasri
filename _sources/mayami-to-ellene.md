@@ -17,6 +17,7 @@ Mise à jour du lot courant (2026-06-07 - flow GH):
 3. UI ciblée MODULES uniquement dans `assets/admin-nav.css`:
 	- onglet actif `MODULES` en bleu (au lieu du vert global)
 	- titre de section `MODULES` (liste CMB2 ouverte) en bleu (au lieu du violet global)
+4. Footer front: correction mojibake dans `template-parts/sections/footer/index.php` (`â†‘` -> `&uarr;`) pour restaurer l'affichage correct.
 
 État réel à intégrer dans le flow GH:
 1. Renommage hors VLB finalisé sur les fichiers code ciblés (`.php`, `.js`, `.css`)
