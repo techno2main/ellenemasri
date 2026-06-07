@@ -2218,7 +2218,7 @@
 
     saveButton.className = 'mayami-save-btn';
 
-    saveButton.innerHTML = '­ƒÆ¥ Enregistrer';
+    saveButton.innerHTML = '💾 Enregistrer';
 
     saveButton.style.cssText = 'background: #fff; color: #6b21a8; border: 2px solid #fff; padding: 8px 20px; font-size: 13px; font-weight: 700; border-radius: 6px; cursor: pointer; margin-left: auto; text-transform: uppercase; letter-spacing: 0.5px; transition: all 0.2s;';
 
@@ -2448,11 +2448,11 @@
 
       if (btn.tagName === 'INPUT') {
 
-        btn.value = '­ƒÆ¥ Enregistrer';
+        btn.value = '💾 Enregistrer';
 
       } else {
 
-        btn.textContent = '­ƒÆ¥ Enregistrer';
+        btn.textContent = '💾 Enregistrer';
 
       }
 
