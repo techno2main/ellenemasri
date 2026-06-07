@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) {
 
 // Include CMB2 Configuration
 
-require_once get_template_directory() . '/inc/cmb2-config.php';
+require_once get_template_directory() . '/inc/cmb2/options-config.php';
 
 require_once get_template_directory() . '/inc/visual-links.php';
 

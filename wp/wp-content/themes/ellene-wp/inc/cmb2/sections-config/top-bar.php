@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * Top bar fields for the CMB2 options page.
+ *
+ * @package ElleneWp
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+function mayami_register_cmb2_top_bar_section($cmb) {
+    // ========== SECTION: MARQUEE ==========
+
+    $cmb->add_field(array(
+        'name' => 'Top-Bar',
+        'type' => 'title',
+        'id'   => 'section_marquee_title',
+    ));
+
+    $marquee_group = $cmb->add_field(array(
+        'id'      => 'marquee_items',
+        'type'    => 'group',
+        'options' => array(
+            'group_title'   => 'Item {#}',
+            'add_button'    => '+ Ajouter',
+            'remove_button' => 'Supprimer',
+            'sortable'      => true,
+        ),
+    ));
+
+    $cmb->add_group_field($marquee_group, array(
+        'name' => 'Label',
+        'id'   => 'label',
+        'type' => 'text',
+    ));
+
+    $cmb->add_group_field($marquee_group, array(
+        'name' => 'Lien',
+        'id'   => 'href',
+        'type' => 'text_url',
+    ));
+
+    $cmb->add_group_field($marquee_group, array(
+        'name' => 'Masquer',
+        'id'   => 'is_hidden',
+        'type' => 'checkbox',
+    ));
+
+    $cmb->add_field(array(
+        'name' => 'Visuel TOP-BAR',
+        'id'   => 'marquee_logo_png',
+        'type' => 'file',
+        'text' => array(
+            'add_upload_file_text' => 'Modifier',
+        ),
+    ));
+
+    $cmb->add_field(array(
+        'name' => 'Masquer',
+        'id'   => 'marquee_logo_hidden',
+        'type' => 'checkbox',
+    ));
+}
