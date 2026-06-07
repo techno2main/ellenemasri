@@ -312,7 +312,8 @@ $hero_slider_footer_text = trim((string) cmb2_get_option('ellene-wp_landing_opti
 
                                         type="button"
 
-                                        class="hero-tiktok-audio-btn"
+
+                                        class="hero-tiktok-audio-btn is-muted"
 
                                         aria-label="Activer le son"
 
@@ -320,7 +321,33 @@ $hero_slider_footer_text = trim((string) cmb2_get_option('ellene-wp_landing_opti
 
                                     >
 
-                                        Mute
+                                        <span class="hero-tiktok-audio-btn-label">Activer le son</span>
+
+                                        <span class="hero-tiktok-audio-icon hero-tiktok-audio-icon-muted" aria-hidden="true">
+
+                                            <svg viewBox="0 0 24 24" focusable="false">
+
+                                                <path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path>
+
+                                                <path d="M17 10l4 4m0-4l-4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+
+                                            </svg>
+
+                                        </span>
+
+                                        <span class="hero-tiktok-audio-icon hero-tiktok-audio-icon-live" aria-hidden="true">
+
+                                            <svg viewBox="0 0 24 24" focusable="false">
+
+                                                <path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path>
+
+                                                <path d="M17 9a5 5 0 0 1 0 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+
+                                                <path d="M19.5 6.5a8.5 8.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+
+                                            </svg>
+
+                                        </span>
 
                                     </button>
 
@@ -570,13 +597,73 @@ $hero_slider_footer_text = trim((string) cmb2_get_option('ellene-wp_landing_opti
 
     color: var(--ink);
 
-    font-size: 18px;
-
-    line-height: 1;
-
     cursor: pointer;
 
     transition: transform .15s ease, background .15s ease;
+
+}
+
+.hero-tiktok-audio-btn-label {
+
+    position: absolute;
+
+    width: 1px;
+
+    height: 1px;
+
+    padding: 0;
+
+    margin: -1px;
+
+    overflow: hidden;
+
+    clip: rect(0, 0, 0, 0);
+
+    white-space: nowrap;
+
+    border: 0;
+
+}
+
+.hero-tiktok-audio-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 18px;
+
+    height: 18px;
+
+}
+
+.hero-tiktok-audio-icon svg {
+
+    width: 18px;
+
+    height: 18px;
+
+    display: block;
+
+}
+
+.hero-tiktok-audio-btn .hero-tiktok-audio-icon-live {
+
+    display: none;
+
+}
+
+.hero-tiktok-audio-btn.is-live .hero-tiktok-audio-icon-live {
+
+    display: flex;
+
+}
+
+.hero-tiktok-audio-btn.is-live .hero-tiktok-audio-icon-muted {
+
+    display: none;
 
 }
 
@@ -1182,7 +1269,9 @@ $hero_slider_footer_text = trim((string) cmb2_get_option('ellene-wp_landing_opti
 
         if (video.muted) {
 
-            button.textContent = 'Mute';
+            button.classList.add('is-muted');
+
+            button.classList.remove('is-live');
 
             button.setAttribute('aria-label', 'Activer le son');
 
@@ -1190,7 +1279,9 @@ $hero_slider_footer_text = trim((string) cmb2_get_option('ellene-wp_landing_opti
 
         } else {
 
-            button.textContent = 'Sound';
+            button.classList.add('is-live');
+
+            button.classList.remove('is-muted');
 
             button.setAttribute('aria-label', 'Couper le son');
 

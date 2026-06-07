@@ -1,3 +1,36 @@
+## Roadmap de suivi en temps réel
+
+Clôture:
+- Déploiement terminé et validé en production le 2026-06-07.
+- Site fonctionnel côté admin et front.
+- Un micro bug visuel non bloquant reste à traiter plus tard sur le bouton mute/sound du slider hero.
+
+Statut:
+- [x] Action 1 - Identifier le commit exact à déployer: `4eaad8e` (dernier commit global de la branche)
+- [x] Action 2 - Préparer un package du thème seulement (`_sources/deploy-packages/ellene-wp_4eaad8e_20260607`)
+- [x] Action 3 - Vérifier les fichiers à exclure avant upload (node_modules/.git/.copilot-snapshots absents du package)
+- [x] Action 4 - Sauvegarde fichiers prod via FileZilla (copie réalisée dans `_sources/backup_wp`)
+- [x] Action 5 - Sauvegarde base de données OVH (`_sources/backup_wp/ovh_prod_backup_2026-06-07.sql.gz`)
+- [x] Action 6 - Vérifier le rollback avant d'écrire
+- [x] Action 7 - Mettre le site en fenêtre de maintenance courte (fenêtre retenue: 2026-06-07 23:08:46, aucune édition admin concurrente pendant la bascule)
+- [x] Action 8 - Upload du thème en production
+- [x] Action 9 - Vérifier les permissions critiques (passes FileZilla appliquées: dossiers 0755, fichiers 0644)
+- [x] Action 10 - Décider s'il faut importer la base locale (décision retenue: oui, écrasement complet de la base prod par une base locale réexportée si nécessaire)
+- [x] Action 11 - Importer la base locale en prod (1er import techniquement réussi avec `_sources/dump_base_sql/wp_ellene_local_2026-06-07.sql`, mais non concluant fonctionnellement)
+- [x] Action 12 - Vérifier et corriger l'admin après import (réimport avec `_sources/dump_base_sql/wp_ellene_local_OK.sql`: back et front revenus)
+- [x] Action 13 - Contrôle front complet desktop (validation utilisateur finale: tout est OK en prod)
+- [x] Action 14 - Contrôle front mobile (validation utilisateur finale: tout est OK en prod)
+- [x] Action 15 - Contrôle admin ciblé (validation utilisateur finale: tout est OK en prod)
+- [ ] Action 16 - Purge cache navigateur/CDN
+- [ ] Action 17 - Contrôle console et logs
+- [x] Action 18 - Rédiger un CR de bascule
+- [x] Action 19 - Procédure rollback (si incident) - prête, non exécutée
+
+Note commit:
+- Dernier commit global: `4eaad8e`
+- Dernier commit runtime thème/admin: `8fd03fc` (inclut l'affichage discret du nom du thème en admin)
+- Delta `8fd03fc..4eaad8e`: documentation uniquement (`_sources/maj-prod-wp.md`), aucun changement du thème.
+
 # PA détaillé - Bascule version locale finalisée vers production OVH
 
 Date: 2026-06-07
@@ -79,7 +112,7 @@ But:
 
 Action unique:
 - Télécharger depuis OVH:
-	- /www/wp/wp-content/themes/ellene-wp
+	- /www/wp/wp-content/themes/mayami
 	- /www/wp/wp-content/uploads (au minimum la partie critique si volumineux)
 
 Résultat attendu:
@@ -95,7 +128,29 @@ But:
 - Garantir un rollback base en cas d'erreur après déploiement.
 
 Action unique:
-- Export complet SQL depuis phpMyAdmin OVH.
+- Export complet SQL depuis phpMyAdmin OVH, avec paramètres stricts:
+	1. Ouvrir phpMyAdmin OVH et sélectionner la base de production (colonne gauche).
+	2. Aller dans l'onglet Exporter.
+	3. Méthode: Personnalisée.
+	4. Format: SQL.
+	5. Tables: toutes les tables de la base (aucune exclusion).
+	6. Sortie:
+		- Enregistrer la sortie dans un fichier: oui.
+		- Compression: gzip (recommandé) ou aucune si besoin.
+	7. Options de création d'objets:
+		- Ajouter l'instruction DROP TABLE / VIEW / PROCEDURE / FUNCTION / EVENT / TRIGGER: activé.
+		- Ajouter l'instruction CREATE TABLE: activé.
+		- IF NOT EXISTS: activé.
+	8. Options de données:
+		- Étendu inserts (multi-lignes): activé.
+		- Transactions: activé si disponible.
+		- Désactiver la vérification des clés étrangères: activé si disponible.
+	9. Jeu de caractères du fichier: utf8mb4.
+	10. Lancer l'export et enregistrer le fichier dans un dossier local horodaté.
+
+Script SQL de contrôle rapide (optionnel) dans l'onglet SQL avant export:
+- SELECT DATABASE() AS base_active;
+- SHOW TABLES;
 
 Résultat attendu:
 - Un fichier SQL complet de la base prod (horodaté).
@@ -111,9 +166,13 @@ But:
 
 Action unique:
 - Noter noir sur blanc:
-	- emplacement sauvegarde fichiers
-	- emplacement sauvegarde SQL
-	- ordre de restauration (fichiers puis SQL si nécessaire)
+	- emplacement sauvegarde fichiers: `C:\xampp\htdocs\web-am\dev.tad\MyWebsites\ellenemasri.com\www\_sources\backup_wp\wp`
+	- emplacement sauvegarde SQL: `C:\xampp\htdocs\web-am\dev.tad\MyWebsites\ellenemasri.com\www\_sources\backup_wp\ovh_prod_backup_2026-06-07.sql.gz`
+	- ordre de restauration:
+		1. Restaurer d'abord les fichiers de prod sauvegardés via FileZilla vers `/www/wp/` si le site casse après l'upload.
+		2. Vérifier immédiatement si le front et l'admin redeviennent accessibles.
+		3. Restaurer ensuite la base SQL OVH uniquement si l'incident vient des données/options et pas seulement des fichiers.
+		4. Après import SQL, revérifier l'admin, le front et les pages critiques.
 
 Résultat attendu:
 - Plan de rollback prêt, clair, exécutable.
@@ -131,6 +190,8 @@ But:
 
 Action unique:
 - Choisir une fenêtre courte de déploiement (trafic bas) et éviter toute édition admin pendant l'upload.
+- Fenêtre retenue pour cette bascule: 2026-06-07 23:08:46.
+- Consigne opératoire: ne pas ouvrir d'autre session d'édition admin ni effectuer de sauvegarde de contenu pendant l'upload du thème.
 
 Résultat attendu:
 - Pas de modifications de contenu simultanées pendant l'opération.
@@ -142,18 +203,22 @@ Validation:
 
 ### Action 8 - Upload du thème en production
 But:
-- Remplacer la version thème prod par la version locale finalisée.
+- Déposer la version locale finalisée du thème `ellene-wp` sur la prod, sans détruire la sauvegarde du thème prod historique `mayami`.
 
 Action unique:
-- Dans FileZilla, envoyer le dossier local ellene-wp vers:
-	- /www/wp/wp-content/themes/ellene-wp
-- Méthode: écraser uniquement les fichiers du thème.
+- Dans FileZilla, envoyer le package local nettoyé vers:
+	- source locale: `_sources/deploy-packages/ellene-wp_4eaad8e_20260607`
+	- destination distante: `/www/wp/wp-content/themes/ellene-wp`
+- Méthode:
+	1. Ne pas écraser le dossier distant `mayami`.
+	2. Créer/mettre à jour uniquement le dossier distant `ellene-wp`.
+	3. Vérifier que tous les fichiers du package sont transférés sans erreur.
 
 Résultat attendu:
-- Le thème prod correspond au contenu local finalisé.
+- Le thème `ellene-wp` présent sur le serveur correspond au package local finalisé, tandis que `mayami` reste disponible comme secours immédiat.
 
 Validation:
-- Les dates/tailles des fichiers clés ont bien changé côté serveur.
+- Les dates/tailles des fichiers clés du dossier `/www/wp/wp-content/themes/ellene-wp` ont bien changé côté serveur.
 
 ---
 
@@ -165,6 +230,15 @@ Action unique:
 - Contrôler permissions standards:
 	- dossiers: 755
 	- fichiers: 644
+	- procédure FileZilla:
+		1. Dans `/www/wp/wp-content/themes/ellene-wp`, clic droit sur un dossier clé (`assets`, `inc`, `template-parts`, `visual-links-builder`) > Droits d'accès au fichier.
+		2. Vérifier que la valeur numérique est `755`.
+		3. Si nécessaire, appliquer `755` aux dossiers uniquement.
+		4. Clic droit sur un fichier clé (`functions.php`, `style.css`, `front-page.php`, `style-compiled.css`) > Droits d'accès au fichier.
+		5. Vérifier que la valeur numérique est `644`.
+		6. Si nécessaire, appliquer `644` aux fichiers uniquement.
+		7. Ne jamais mettre `777`.
+		8. Priorité de contrôle: `functions.php`, `front-page.php`, `inc/`, `assets/`, `template-parts/`, `visual-links-builder/`.
 
 Résultat attendu:
 - Le serveur peut lire tous les fichiers du thème.
@@ -174,54 +248,61 @@ Validation:
 
 ---
 
-## Phase D - Alignement base (uniquement si nécessaire)
+## Phase D - Alignement base (écrasement volontaire demandé)
 
 ### Action 10 - Décider s'il faut importer la base locale
 But:
-- Ne pas écraser inutilement du contenu prod.
+- Figer la stratégie base avant l'écriture SQL.
 
 Action unique:
-- Choisir un scénario:
-	- Scénario A (recommandé): pas d'import global SQL, on garde la base prod et on vérifie les options.
-	- Scénario B: import SQL partiel/ciblé si des options critiques manquent.
+- Décision utilisateur actée: écrasement complet de la base prod par la base locale.
+- En cas d'écart entre la prod et l'état local attendu, réexporter la base locale puis réimporter ce dump frais.
 
 Résultat attendu:
-- Stratégie base choisie avant toute écriture SQL.
+- Stratégie SQL claire, assumée et prête à exécution.
 
 Validation:
-- Le risque de perte de contenu prod est maîtrisé.
+- Le dump local est identifié et le backup SQL prod reste disponible pour rollback.
 
 ---
 
-### Action 11 - Vérifier les options de landing en prod
+### Action 11 - Importer la base locale en prod
 But:
-- S'assurer que la config admin reflète la version attendue.
+- Remplacer totalement l'état des données/options prod par la version locale validée.
 
 Action unique:
+- Dans phpMyAdmin OVH:
+	1. Sélectionner la base de production.
+	2. Ouvrir l'onglet Importer.
+	3. Choisir le fichier local `_sources/dump_base_sql/wp_ellene_local_2026-06-07.sql`.
+	4. Format: SQL.
+	5. Lancer l'import complet et attendre la confirmation sans erreur fatale.
+
+Résultat attendu:
+- La base prod contient désormais exactement les données/options de la base locale exportée.
+
+Validation:
+- 1er import confirmé par phpMyAdmin, puis réévaluation fonctionnelle avant validation finale.
+
+---
+
+### Action 12 - Vérifier et corriger l'admin après import
+But:
+- Confirmer que l'import a bien remis en prod l'état local attendu.
+
+Action unique:
+- Si le site est encore en maintenance, supprimer ou renommer d'abord le fichier distant `/www/wp/.maintenance` dans FileZilla.
+- Attendre 5 a 10 secondes puis recharger l'admin.
 - Ouvrir ellenemasri.com/wp/wp-admin/admin.php?page=ellene-wp_landing_options
 - Vérifier chaque section clé:
 	- TOP-BAR, HERO, SLIDER, STREAM, SOCIAL, VIDEO, RELEASE, CTA, FOOTER
+- Si une valeur reste incohérente, la corriger directement dans l'admin et sauvegarder.
 
 Résultat attendu:
-- Les valeurs importantes sont présentes et cohérentes.
+- Les options affichées en admin correspondent à l'état local attendu.
 
 Validation:
-- Les valeurs affichées correspondent au rendu attendu.
-
----
-
-### Action 12 - Corriger uniquement les options manquantes (si besoin)
-But:
-- Ajuster la prod sans import SQL massif.
-
-Action unique:
-- Renseigner/sauvegarder dans l'admin les champs manquants ou incohérents.
-
-Résultat attendu:
-- Les options sont alignées avec la version validée.
-
-Validation:
-- Après refresh admin, les données restent persistées.
+- Après retrait de `/www/wp/.maintenance`, l'admin redevient accessible puis, après refresh, les valeurs restent persistées et cohérentes avec le front.
 
 ---
 
@@ -352,15 +433,40 @@ Validation:
 
 ---
 
+## CR de bascule
+
+- Horodatage de clôture: 2026-06-07 23:34:48
+- Commit global de référence: `4eaad8e`
+- Commit runtime thème/admin: `8fd03fc`
+- Fichiers déployés: thème `ellene-wp` vers `/www/wp/wp-content/themes/ellene-wp`
+- Sauvegardes confirmées avant écriture:
+	- fichiers: `_sources/backup_wp/wp`
+	- base: `_sources/backup_wp/ovh_prod_backup_2026-06-07.sql.gz`
+- Import SQL initial effectué: `_sources/dump_base_sql/wp_ellene_local_2026-06-07.sql`
+- Incident rencontré après premier import: front et admin partiellement vides
+- Cause opérationnelle identifiée: dump initial non aligné avec la clé d'options active attendue par le thème
+- Correctif opératoire appliqué: réexport local frais puis réimport prod avec `_sources/dump_base_sql/wp_ellene_local_OK.sql`
+- Import SQL final retenu comme source de vérité: `_sources/dump_base_sql/wp_ellene_local_OK.sql`
+- Correctif front complémentaire déployé ensuite: bouton mute/sound du slider hero corrigé dans `wp/wp-content/themes/ellene-wp/template-parts/sections/slider/index.php`
+- Résultat final validé par l'utilisateur:
+	- admin OK
+	- front OK
+	- prod fonctionnelle
+- Anomalies restantes connues: aucune bloquante signalée après le correctif final du slider hero
+- Rollback: prêt, non exécuté
+
+---
+
 ## Checklist ultra-courte opérateur
 
 1. Commit cible validé
 2. Backup fichiers prod OK
 3. Backup SQL prod OK
 4. Upload thème vers /www/wp/wp-content/themes/ellene-wp OK
-5. Vérif admin landing OK
-6. Vérif front desktop/mobile OK
-7. Purge cache OK
-8. Console/logs OK
-9. CR déploiement rédigé
-10. Rollback prêt (non exécuté)
+5. Import SQL local vers prod OK
+6. Vérif admin landing OK
+7. Vérif front desktop/mobile OK
+8. Purge cache: non documentée dans ce runbook
+9. Console/logs: non documentés dans ce runbook
+10. CR déploiement rédigé
+11. Rollback prêt (non exécuté)
