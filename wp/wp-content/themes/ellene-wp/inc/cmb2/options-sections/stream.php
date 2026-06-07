@@ -69,7 +69,6 @@ function ellene_wp_register_cmb2_stream_section($cmb) {
         'name'    => 'Active',
         'id'      => 'is_active',
         'type'    => 'checkbox',
-        'default' => 'on',
     ));
 
     $cmb->add_group_field($stream_platforms, array(
@@ -84,3 +83,36 @@ function ellene_wp_register_cmb2_stream_section($cmb) {
         'type' => 'text_url',
     ));
 }
+
+/**
+ * Ensure group checkboxes keep an explicit value in options.
+ *
+ * Without this, unchecked checkboxes can be omitted from POST data,
+ * and CMB2 may render them as checked again due to field defaults.
+ *
+ * @param mixed $override_value Override value from CMB2 sanitize filter.
+ * @param mixed $value Raw submitted value.
+ * @return mixed
+ */
+function ellene_wp_sanitize_stream_platforms_group($override_value, $value, $object_id, $field_args) {
+    if (!is_array($field_args) || ($field_args['id'] ?? '') !== 'stream_platforms') {
+        return $override_value;
+    }
+
+    if (!is_array($value)) {
+        return $override_value;
+    }
+
+    foreach ($value as $index => $platform) {
+        if (!is_array($platform)) {
+            continue;
+        }
+
+        $platform['is_active'] = !empty($platform['is_active']) ? 'on' : '';
+        $value[$index] = $platform;
+    }
+
+    return $value;
+}
+
+add_filter('cmb2_sanitize_group', 'ellene_wp_sanitize_stream_platforms_group', 10, 4);

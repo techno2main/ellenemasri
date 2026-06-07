@@ -18,6 +18,9 @@ Mise à jour du lot courant (2026-06-07 - flow GH):
 	- onglet actif `MODULES` en bleu (au lieu du vert global)
 	- titre de section `MODULES` (liste CMB2 ouverte) en bleu (au lieu du violet global)
 4. Footer front: correction mojibake dans `template-parts/sections/footer/index.php` (`â†‘` -> `&uarr;`) pour restaurer l'affichage correct.
+5. Stream admin/front alignés sur l'état `Active` des plateformes:
+	- suppression du `default => 'on'` sur `stream_platforms[].is_active`
+	- sanitization CMB2 ciblée du groupe `stream_platforms` pour persister explicitement `is_active` (`on`/vide) et éviter les recochages fantômes en admin.
 
 État réel à intégrer dans le flow GH:
 1. Renommage hors VLB finalisé sur les fichiers code ciblés (`.php`, `.js`, `.css`)
