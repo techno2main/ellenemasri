@@ -2038,6 +2038,8 @@
 
     const sections = [
 
+      { id: 'section_modules_title', label: 'Modules' },
+
       { id: 'section_marquee_title', label: 'TOP-BAR' },
 
       { id: 'section_hero_title', label: 'Hero' },

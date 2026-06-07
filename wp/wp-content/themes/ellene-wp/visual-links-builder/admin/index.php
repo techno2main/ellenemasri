@@ -8,7 +8,7 @@ $builder_js_version = file_exists(__DIR__ . '/assets/builder.js') ? (string) fil
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>VISUAL LINKS BUILDER (VLB)</title>
-	<link rel="stylesheet" href="assets/builder.css?v=<?php echo esc_attr($builder_css_version); ?>">
+	<link rel="stylesheet" href="assets/builder.css?v=<?php echo htmlspecialchars($builder_css_version, ENT_QUOTES, 'UTF-8'); ?>">
 </head>
 <body>
 	<div class="container">
@@ -41,6 +41,6 @@ $builder_js_version = file_exists(__DIR__ . '/assets/builder.js') ? (string) fil
 
 	<?php include __DIR__ . '/partials/modals.php'; ?>
 
-	<script src="assets/builder.js?v=<?php echo esc_attr($builder_js_version); ?>" defer></script>
+	<script src="assets/builder.js?v=<?php echo htmlspecialchars($builder_js_version, ENT_QUOTES, 'UTF-8'); ?>" defer></script>
 </body>
 </html>

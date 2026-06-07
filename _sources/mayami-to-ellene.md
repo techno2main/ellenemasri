@@ -11,6 +11,13 @@ Référence push:
 2. Commit: `c482321`
 3. Commit: `67c8f7d`
 
+Mise à jour du lot courant (2026-06-07 - flow GH):
+1. Correction VLB standalone: remplacement de `esc_attr()` par `htmlspecialchars(..., ENT_QUOTES, 'UTF-8')` dans `visual-links-builder/admin/index.php` pour éviter l'iframe blanche hors bootstrap WordPress.
+2. Navbar admin: ajout du lien `MODULES` avant `TOP-BAR` dans `assets/admin-nav.js`.
+3. UI ciblée MODULES uniquement dans `assets/admin-nav.css`:
+	- onglet actif `MODULES` en bleu (au lieu du vert global)
+	- titre de section `MODULES` (liste CMB2 ouverte) en bleu (au lieu du violet global)
+
 État réel à intégrer dans le flow GH:
 1. Renommage hors VLB finalisé sur les fichiers code ciblés (`.php`, `.js`, `.css`)
 2. Correctifs back/front appliqués après validation visuelle:
