@@ -8,16 +8,16 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once get_template_directory() . '/inc/cmb2/sections-config/hero.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/slider.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/stream.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/social.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/video.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/release.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/cta.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/footer.php';
-require_once get_template_directory() . '/inc/cmb2/sections-config/top-bar.php';
-require_once get_template_directory() . '/inc/cmb2/modules.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/hero.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/slider.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/stream.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/social.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/video.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/release.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/cta.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/footer.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/top-bar.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/modules.php';
 
 function mayami_get_primary_stream_link(array $options) {
     if (empty($options['stream_platforms']) || !is_array($options['stream_platforms'])) {
