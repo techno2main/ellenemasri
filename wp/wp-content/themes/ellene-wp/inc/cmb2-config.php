@@ -10,6 +10,37 @@
 
 if (!defined('ABSPATH')) exit;
 
+function mayami_get_primary_stream_link(array $options) {
+    if (empty($options['stream_platforms']) || !is_array($options['stream_platforms'])) {
+        return '';
+    }
+
+    $fallback_link = '';
+
+    foreach ($options['stream_platforms'] as $platform) {
+        if (!is_array($platform) || empty($platform['is_active'])) {
+            continue;
+        }
+
+        $label = isset($platform['label']) ? strtolower(trim((string) $platform['label'])) : '';
+        $href = isset($platform['href']) ? trim((string) $platform['href']) : '';
+
+        if ($href === '') {
+            continue;
+        }
+
+        if (strpos($label, 'spotify') !== false) {
+            return $href;
+        }
+
+        if ($fallback_link === '') {
+            $fallback_link = $href;
+        }
+    }
+
+    return $fallback_link;
+}
+
 
 
 add_action('cmb2_admin_init', 'mayami_register_options');
@@ -296,9 +327,11 @@ function mayami_initialize_default_content() {
 
 
 
-    if (empty($options['marquee_play_link']) && !empty($options['link_spotify'])) {
+    $primary_stream_link = mayami_get_primary_stream_link($options);
 
-        $options['marquee_play_link'] = $options['link_spotify'];
+    if (empty($options['marquee_play_link']) && $primary_stream_link !== '') {
+
+        $options['marquee_play_link'] = $primary_stream_link;
 
     }
 
@@ -462,15 +495,14 @@ function mayami_sync_marquee_play_link_once() {
 
 
 
-    $spotify_link = isset($options['link_spotify']) ? trim((string) $options['link_spotify']) : '';
-
+    $primary_stream_link = mayami_get_primary_stream_link($options);
     $marquee_play_link = isset($options['marquee_play_link']) ? trim((string) $options['marquee_play_link']) : '';
 
 
 
-    if ($marquee_play_link === '' && $spotify_link !== '') {
+    if ($marquee_play_link === '' && $primary_stream_link !== '') {
 
-        $options['marquee_play_link'] = $spotify_link;
+        $options['marquee_play_link'] = $primary_stream_link;
 
         $changed = true;
 
