@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap');
+@import "tailwindcss";
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-magenta: var(--magenta);
+  --color-aqua: var(--aqua);
+  --color-electric: var(--electric);
+  --color-cream: var(--cream);
+  --color-ink: var(--ink);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --font-display: 'Archivo Black', system-ui, sans-serif;
+  --font-poster: 'Archivo Black', system-ui, sans-serif;
+  --font-sans: 'Archivo Black', system-ui, sans-serif;
+}
+
+:root {
+  --radius: 1rem;
+
+  /* ellene-wp palette — Miami street-pop */
+  --background: oklch(0.68 0.22 45);          /* hot sunset orange */
+  --foreground: oklch(0.15 0.08 280);          /* deep ink blue */
+
+  --primary: oklch(0.35 0.22 270);             /* electric deep blue */
+  --primary-foreground: oklch(0.98 0.02 80);
+
+  --secondary: oklch(0.62 0.28 350);           /* fuchsia magenta */
+  --secondary-foreground: oklch(0.98 0.02 80);
+
+  --accent: oklch(0.68 0.17 182);              /* deeper teal aqua */
+  --accent-foreground: oklch(0.15 0.08 280);
+
+  --muted: oklch(0.72 0.18 50);
+  --muted-foreground: oklch(0.25 0.1 280);
+
+  --card: oklch(0.18 0.09 275);
+  --card-foreground: oklch(0.98 0.02 80);
+
+  --magenta: oklch(0.62 0.28 350);
+  --aqua: oklch(0.68 0.17 182);
+  --electric: oklch(0.45 0.27 265);
+  --cream: oklch(0.97 0.04 85);
+  --ink: oklch(0.15 0.08 280);
+
+  --border: oklch(0.15 0.08 280 / 0.2);
+  --ring: oklch(0.62 0.28 350);
+
+  --destructive: oklch(0.55 0.25 25);
+  --destructive-foreground: oklch(0.98 0.02 80);
+  --popover: var(--card);
+  --popover-foreground: var(--card-foreground);
+  --input: var(--border);
+
+  --grain: radial-gradient(circle at 1px 1px, oklch(0.15 0.08 280 / 0.18) 1px, transparent 0);
+  --shadow-poster: 6px 6px 0 var(--ink);
+  --shadow-pop: 8px 8px 0 var(--magenta);
+  --shadow-aqua: 6px 6px 0 var(--aqua);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--magenta); color: var(--cream); }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); letter-spacing: 0.005em; }
+  .font-poster  { font-family: var(--font-poster); letter-spacing: -0.01em; }
+
+  .text-ink { color: var(--ink) !important; }
+
+  .grain::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: var(--grain);
+    background-size: 3px 3px;
+    opacity: 0.35;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  .grain-soft::before {
+    opacity: 0.18;
+  }
+
+  .text-stack-blue {
+    color: var(--aqua);
+    text-shadow:
+      4px 4px 0 var(--electric),
+      8px 8px 0 var(--ink);
+  }
+  .text-stack-magenta {
+    color: var(--cream);
+    text-shadow:
+      4px 4px 0 var(--magenta),
+      8px 8px 0 var(--ink);
+  }
+  .text-outline-ink {
+    color: transparent;
+    -webkit-text-stroke: 2px var(--ink);
+  }
+
+  .btn-pop {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.6rem;
+    padding: 1rem 1.6rem;
+    font-family: var(--font-poster);
+    font-weight: 800; font-size: 1rem; letter-spacing: 0.02em; text-transform: uppercase;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    box-shadow: var(--shadow-poster);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+    cursor: pointer;
+  }
+  .btn-pop:hover { transform: translate(-2px,-2px); box-shadow: 9px 9px 0 var(--ink); }
+  .btn-pop:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+  .btn-magenta { background: oklch(0.88 0.19 95); color: var(--ink) !important; }
+  .btn-aqua    { background: var(--aqua); color: var(--ink) !important; }
+  .btn-ink     { background: var(--ink); color: var(--cream); }
+  .btn-cream   { background: var(--cream); color: var(--ink); }
+
+  .tape {
+    position: absolute;
+    background: oklch(0.78 0.16 195 / 0.85);
+    border: 1px dashed oklch(0.15 0.08 280 / 0.4);
+    transform: rotate(-4deg);
+  }
+
+  @keyframes marquee { 
+    from { transform: translateX(0); } 
+    to { transform: translateX(-50%); } 
+  }
+  .marquee-track { 
+    animation: marquee 28s linear infinite; 
+  }
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+
+  @keyframes wiggle { 
+    0%, 100% { transform: rotate(-1.5deg); } 
+    50% { transform: rotate(1.5deg); } 
+  }
+  .wiggle { 
+    animation: wiggle 4s ease-in-out infinite; 
+  }
+
+  .aspect-11\/16 {
+    aspect-ratio: 11 / 16;
+  }
+
+  .max-w-120 {
+    max-width: 30rem;
+  }
+
+  .max-w-140 {
+    max-width: 35rem;
+  }
+
+  .w-auto\! {
+    width: auto !important;
+  }
+
+  .rotate-3\! {
+    transform: rotate(3deg) !important;
+  }
+
+  /* Stream players responsive visibility */
+  .platform-player-mobile,
+  .platform-player-desktop {
+    display: none;
+  }
+  .platform-player-mobile.is-active,
+  .platform-player-desktop.is-active {
+    display: block;
+  }
+  /* Mobile: hide desktop players always */
+  @media (max-width: 639px) {
+    .platform-player-desktop {
+      display: none !important;
+    }
+    .platform-player-desktop.is-active {
+      display: none !important;
+    }
+  }
+  /* Desktop: hide mobile players always */
+  @media (min-width: 640px) {
+    .platform-player-mobile {
+      display: none !important;
+    }
+    .platform-player-mobile.is-active {
+      display: none !important;
+    }
+  }
+
+  .poster-shadow { box-shadow: var(--shadow-poster); }
+  .pop-shadow    { box-shadow: var(--shadow-pop); }
+  .aqua-shadow   { box-shadow: var(--shadow-aqua); }
+}
