@@ -25,6 +25,7 @@ if (!defined('ABSPATH')) {
 require_once get_template_directory() . '/inc/metabox-fields/hero.php';
 require_once get_template_directory() . '/inc/metabox-fields/slider.php';
 require_once get_template_directory() . '/inc/metabox-fields/stream.php';
+require_once get_template_directory() . '/inc/metabox-fields/social.php';
 
 
 
@@ -80,81 +81,7 @@ function mayami_register_options_page() {
 
 
 
-    // ============================================
-
-    // TAB: SOCIAL SECTION
-
-    // ============================================
-
-    $cmb_options->add_field([
-
-        'name' => 'Social Section',
-
-        'id'   => 'social_tab',
-
-        'type' => 'title',
-
-        'render_row_cb' => 'mayami_cmb2_tab_open',
-
-        'tab' => 'social',
-
-    ]);
-
-    
-
-    $cmb_options->add_field([
-
-        'name'    => 'Kicker',
-
-        'id'      => 'social_kicker',
-
-        'type'    => 'text',
-
-        'default' => 'Follow',
-
-    ]);
-
-    
-
-    $cmb_options->add_field([
-
-        'name'    => 'Title Left',
-
-        'id'      => 'social_title_left',
-
-        'type'    => 'text',
-
-        'default' => 'The journey on',
-
-    ]);
-
-    
-
-    $cmb_options->add_field([
-
-        'name'    => 'Title Right',
-
-        'id'      => 'social_title_right',
-
-        'type'    => 'text',
-
-        'default' => 'social',
-
-    ]);
-
-    
-
-    $cmb_options->add_field([
-
-        'name'    => 'Description',
-
-        'id'      => 'social_description',
-
-        'type'    => 'textarea_small',
-
-        'default' => 'From studio sessions to city streets. Follow the story behind ellene-wp.',
-
-    ]);
+    mayami_register_social_section_fields($cmb_options);
 
     
 
