@@ -147,14 +147,14 @@
     transform: rotate(-4deg);
   }
 
-  @keyframes marquee { 
+  @keyframes top-bar-scroll { 
     from { transform: translateX(0); } 
     to { transform: translateX(-50%); } 
   }
-  .marquee-track { 
-    animation: marquee 28s linear infinite; 
+  .top-bar-track { 
+    animation: top-bar-scroll 28s linear infinite; 
   }
-  .marquee-track:hover {
+  .top-bar-track:hover {
     animation-play-state: paused;
   }
 

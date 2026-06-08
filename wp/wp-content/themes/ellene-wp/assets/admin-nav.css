@@ -252,7 +252,7 @@
 
 .cmb2-id-section-links-title .cmb-th,
 
-.cmb2-id-section-marquee-title .cmb-th {
+.cmb2-id-section-top-bar-title .cmb-th {
 
   background: #f2f2f3;
 
@@ -389,7 +389,7 @@
 
 .cmb2-id-section-links-title.ellene-wp-section-toggle .cmb-th,
 
-.cmb2-id-section-marquee-title.ellene-wp-section-toggle .cmb-th {
+.cmb2-id-section-top-bar-title.ellene-wp-section-toggle .cmb-th {
 
   position: relative;
 
@@ -475,7 +475,7 @@
 
 .cmb2-id-section-links-title.ellene-wp-section-toggle .cmb-th:hover,
 
-.cmb2-id-section-marquee-title.ellene-wp-section-toggle .cmb-th:hover {
+.cmb2-id-section-top-bar-title.ellene-wp-section-toggle .cmb-th:hover {
 
   filter: brightness(1.08);
 
@@ -485,9 +485,9 @@
 
 /* TOP-BAR visual field: narrower path input for better balance. */
 
-.cmb2-id-marquee-logo-png .cmb-td input[type="text"],
+.cmb2-id-top-bar-logo-png .cmb-td input[type="text"],
 
-.cmb2-id-marquee-logo-png .cmb-td input[type="url"] {
+.cmb2-id-top-bar-logo-png .cmb-td input[type="url"] {
 
   width: min(100%, 360px) !important;
 
@@ -497,7 +497,7 @@
 
 
 
-.cmb2-id-marquee-logo-png .ellene-wp-inline-hide-toggle {
+.cmb2-id-top-bar-logo-png .ellene-wp-inline-hide-toggle {
 
   display: inline-flex;
 
@@ -513,7 +513,7 @@
 
 
 
-.cmb2-id-marquee-logo-png .ellene-wp-inline-hide-toggle .ellene-wp-inline-hide-label {
+.cmb2-id-top-bar-logo-png .ellene-wp-inline-hide-toggle .ellene-wp-inline-hide-label {
 
   font-weight: 600;
 
@@ -521,7 +521,7 @@
 
 
 
-.cmb2-id-marquee-logo-hidden.ellene-wp-hidden-source-row {
+.cmb2-id-top-bar-logo-hidden.ellene-wp-hidden-source-row {
 
   display: none !important;
 
@@ -803,7 +803,7 @@ body.ellene-wp-delete-modal-open {
 
 .cmb2-id-section-links-title.ellene-wp-section-toggle:focus .cmb-th,
 
-.cmb2-id-section-marquee-title.ellene-wp-section-toggle:focus .cmb-th {
+.cmb2-id-section-top-bar-title.ellene-wp-section-toggle:focus .cmb-th {
 
   box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.35);
 
@@ -1255,9 +1255,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-/* Specific row for marquee play icon toggle. */
+/* Specific row for top-bar play icon toggle. */
 
-.cmb2-id-marquee-show-music-icon {
+.cmb2-id-top-bar-show-music-icon {
 
   display: flex;
 
@@ -1269,9 +1269,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-show-music-icon .cmb-th,
+.cmb2-id-top-bar-show-music-icon .cmb-th,
 
-.cmb2-id-marquee-show-music-icon .cmb-td {
+.cmb2-id-top-bar-show-music-icon .cmb-td {
 
   width: auto;
 
@@ -1281,7 +1281,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-show-music-icon .cmb-th label {
+.cmb2-id-top-bar-show-music-icon .cmb-th label {
 
   margin: 0;
 
@@ -1289,9 +1289,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-/* Compact layout for marquee group rows */
+/* Compact layout for top-bar group rows */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping {
 
   margin-bottom: 10px;
 
@@ -1301,7 +1301,7 @@ body.ellene-wp-delete-modal-open {
 
 /* TOP-BAR item header: keep native CMB2 controls visible and stable. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-group-title {
 
   padding-left: 12px !important;
 
@@ -1309,7 +1309,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping {
 
   position: relative;
 
@@ -1319,7 +1319,7 @@ body.ellene-wp-delete-modal-open {
 
 /* Hide the red remove cross in item header. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button) {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button) {
 
   display: none !important;
 
@@ -1329,9 +1329,9 @@ body.ellene-wp-delete-modal-open {
 
 /* Move native up/down arrows to title line, after the red cross (only top-level item controls). */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > a.cmb-shift-rows,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > button.cmb-shift-rows {
 
   position: absolute;
 
@@ -1355,11 +1355,11 @@ body.ellene-wp-delete-modal-open {
 
 /* Safety reset: any nested shift controls must stay in normal flow. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row .cmb-shift-rows,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row .cmb-shift-rows,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-td .cmb-shift-rows,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-td .cmb-shift-rows,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-th .cmb-shift-rows {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-th .cmb-shift-rows {
 
   position: static !important;
 
@@ -1373,7 +1373,7 @@ body.ellene-wp-delete-modal-open {
 
 /* Shift "Item" text to the right so it doesn't overlap controls. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title > span {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-group-title > span {
 
   display: inline-block;
 
@@ -1385,7 +1385,7 @@ body.ellene-wp-delete-modal-open {
 
 /* Show bottom remove button next to arrows. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-remove-row {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-remove-row {
 
   display: inline-flex;
 
@@ -1399,7 +1399,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-remove-group-row-button {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-remove-group-row-button {
 
   display: inline-block !important;
 
@@ -1411,7 +1411,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row {
 
   padding-top: 8px;
 
@@ -1421,9 +1421,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-th,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-th,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-td {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-td {
 
   padding-top: 6px;
 
@@ -1433,9 +1433,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
 
   display: inline-flex;
 
@@ -1453,7 +1453,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
 
   margin-right: 0;
 
@@ -1461,13 +1461,13 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
 
   width: auto !important;
 
@@ -1481,9 +1481,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td {
 
   display: inline-flex;
 
@@ -1495,9 +1495,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td input[type="checkbox"],
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-td input[type="checkbox"],
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td input[type="checkbox"] {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-td input[type="checkbox"] {
 
   margin: 0;
 
@@ -1505,9 +1505,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
 
   display: inline-block;
 
@@ -1523,9 +1523,9 @@ body.ellene-wp-delete-modal-open {
 
 /* TOP-BAR group line 1: Label + Lien on the same row. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
 
   display: inline-flex;
 
@@ -1547,7 +1547,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
 
   margin-right: 8px;
 
@@ -1555,9 +1555,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th {
 
   width: 70px;
 
@@ -1573,9 +1573,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
 
   flex: 1;
 
@@ -1591,9 +1591,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th label,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th label,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th label {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th label {
 
   display: block;
 
@@ -1605,9 +1605,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input {
 
   margin: 0;
 
@@ -1621,11 +1621,11 @@ body.ellene-wp-delete-modal-open {
 
 /* Ensure TOP-BAR text fields stay readable and never collapse to tiny squares. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"],
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"],
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="url"],
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="url"],
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="text"] {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td input[type="text"] {
 
   -webkit-appearance: auto !important;
 
@@ -1657,9 +1657,9 @@ body.ellene-wp-delete-modal-open {
 
 /* TOP-BAR native move controls: icon-only visual cleanup. */
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > a.cmb-shift-rows,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > button.cmb-shift-rows {
 
   border: 0 !important;
 
@@ -1683,17 +1683,17 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > a.cmb-shift-rows,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > button.cmb-shift-rows,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows:focus,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > a.cmb-shift-rows:focus,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows:hover,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > a.cmb-shift-rows:hover,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows:focus,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > button.cmb-shift-rows:focus,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows:hover {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > button.cmb-shift-rows:hover {
 
   border: 0 !important;
 
@@ -1709,9 +1709,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows .dashicons,
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > a.cmb-shift-rows .dashicons,
 
-.cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows .dashicons {
+.cmb2-id-top-bar-items .cmb-repeatable-grouping > button.cmb-shift-rows .dashicons {
 
   color: #6b21a8 !important;
 
@@ -2039,11 +2039,11 @@ body.ellene-wp-delete-modal-open {
 
 @media screen and (max-width: 782px) {
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button),
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping > .cmb-remove-group-row:not(.cmb-remove-group-row-button),
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping > a.cmb-shift-rows,
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping > a.cmb-shift-rows,
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping > button.cmb-shift-rows {
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping > button.cmb-shift-rows {
 
     position: static !important;
 
@@ -2051,7 +2051,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-group-title > span {
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-group-title > span {
 
     padding-left: 0;
 
@@ -2113,7 +2113,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row {
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row {
 
     padding-top: 6px;
 
@@ -2123,9 +2123,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"],
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] {
 
     display: flex;
 
@@ -2141,9 +2141,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-external"] .cmb-th label,
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-is-hidden"] .cmb-th label {
 
     font-size: 14px;
 
@@ -2153,9 +2153,9 @@ body.ellene-wp-delete-modal-open {
 
 
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"],
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] {
 
     display: flex;
 
@@ -2173,13 +2173,13 @@ body.ellene-wp-delete-modal-open {
 
 
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th,
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-th,
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td,
 
-  .cmb2-id-marquee-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
+  .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-href"] .cmb-td {
 
     width: 100%;
 
@@ -2189,7 +2189,7 @@ body.ellene-wp-delete-modal-open {
 
 
 
-  .cmb2-id-marquee-show-music-icon {
+  .cmb2-id-top-bar-show-music-icon {
 
     gap: 6px;
 

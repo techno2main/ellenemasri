@@ -14,7 +14,7 @@
 
     'section_modules_title',
 
-    'section_marquee_title',
+    'section_top_bar_title',
 
     'section_hero_title',
 
@@ -36,7 +36,7 @@
 
 
 
-  const MARQUEE_ITEM_TITLES = [
+  const TOP_BAR_ITEM_TITLES = [
 
     'Titre Single',
 
@@ -102,7 +102,7 @@
 
     setupAccordion();
 
-    collapseMarqueeItemsByDefault();
+    collapseTopBarItemsByDefault();
 
     collapseSliderItemsByDefault();
 
@@ -130,7 +130,7 @@
 
     observeDynamicMediaButtons();
 
-    renameMarqueeItemTitles();
+    renameTopBarItemTitles();
 
     refreshTopBarVisualFieldUi();
 
@@ -1544,7 +1544,7 @@
 
   function refreshTopBarVisualFieldUi() {
 
-    const row = document.querySelector('.cmb2-id-marquee-logo-png');
+    const row = document.querySelector('.cmb2-id-top-bar-logo-png');
 
     if (!row) {
 
@@ -1658,9 +1658,9 @@
 
   function layoutTopBarVisualInlineToggle() {
 
-    const logoRow = document.querySelector('.cmb2-id-marquee-logo-png');
+    const logoRow = document.querySelector('.cmb2-id-top-bar-logo-png');
 
-    const hideRow = document.querySelector('.cmb2-id-marquee-logo-hidden');
+    const hideRow = document.querySelector('.cmb2-id-top-bar-logo-hidden');
 
     if (!logoRow || !hideRow) {
 
@@ -1828,9 +1828,9 @@
 
 
 
-  function renameMarqueeItemTitles() {
+  function renameTopBarItemTitles() {
 
-    const groups = document.querySelectorAll('.cmb2-id-marquee-items .cmb-repeatable-grouping');
+    const groups = document.querySelectorAll('.cmb2-id-top-bar-items .cmb-repeatable-grouping');
 
     if (!groups.length) {
 
@@ -1852,7 +1852,7 @@
 
 
 
-      const customTitle = MARQUEE_ITEM_TITLES[index];
+      const customTitle = TOP_BAR_ITEM_TITLES[index];
 
       if (customTitle) {
 
@@ -1880,11 +1880,11 @@
 
 
 
-      if (target.closest('.cmb2-id-marquee-items .add-group-row, .cmb2-id-marquee-items .cmb-remove-group-row, .cmb2-id-marquee-items .cmb-remove-group-row-button, .cmb2-id-marquee-items .cmb-shift-rows, .cmb2-id-marquee-items .cmbhandlediv, .cmb2-id-marquee-items .handlediv')) {
+      if (target.closest('.cmb2-id-top-bar-items .add-group-row, .cmb2-id-top-bar-items .cmb-remove-group-row, .cmb2-id-top-bar-items .cmb-remove-group-row-button, .cmb2-id-top-bar-items .cmb-shift-rows, .cmb2-id-top-bar-items .cmbhandlediv, .cmb2-id-top-bar-items .handlediv')) {
 
         window.setTimeout(function() {
 
-          renameMarqueeItemTitles();
+          renameTopBarItemTitles();
 
           renameAllMediaUploadButtons();
 
@@ -1898,7 +1898,7 @@
 
 
 
-      if (target.closest('.cmb2-id-marquee-logo-png .cmb2-upload-button, .cmb2-id-marquee-logo-png .cmb2-remove-file-button')) {
+      if (target.closest('.cmb2-id-top-bar-logo-png .cmb2-upload-button, .cmb2-id-top-bar-logo-png .cmb2-remove-file-button')) {
 
         window.setTimeout(function() {
 
@@ -1918,9 +1918,9 @@
 
 
 
-  function collapseMarqueeItemsByDefault() {
+  function collapseTopBarItemsByDefault() {
 
-    const groups = document.querySelectorAll('.cmb2-id-marquee-items .cmb-repeatable-grouping');
+    const groups = document.querySelectorAll('.cmb2-id-top-bar-items .cmb-repeatable-grouping');
 
     if (!groups.length) {
 
@@ -2040,7 +2040,7 @@
 
       { id: 'section_modules_title', label: 'Modules' },
 
-      { id: 'section_marquee_title', label: 'TOP-BAR' },
+      { id: 'section_top_bar_title', label: 'TOP-BAR' },
 
       { id: 'section_hero_title', label: 'Hero' },
 
@@ -2816,7 +2816,7 @@
 
     const sectionToSlug = {
 
-      section_marquee_title: 'top-bar',
+      section_top_bar_title: 'top-bar',
 
       section_hero_title: 'hero',
 

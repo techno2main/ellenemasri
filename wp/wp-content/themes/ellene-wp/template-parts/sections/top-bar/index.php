@@ -2,7 +2,7 @@
 
 /**
 
- * Template part - Hero Marquee
+ * Template part - Top-Bar
 
  *
 
@@ -12,11 +12,11 @@
 
 
 
-$marquee_items = cmb2_get_option('ellene-wp_landing_options', 'marquee_items');
+$top_bar_items = cmb2_get_option('ellene-wp_landing_options', 'top_bar_items');
 
-$marquee_logo_png = trim((string) cmb2_get_option('ellene-wp_landing_options', 'marquee_logo_png'));
+$top_bar_logo_png = trim((string) cmb2_get_option('ellene-wp_landing_options', 'top_bar_logo_png'));
 
-$hide_marquee_visual = !empty(cmb2_get_option('ellene-wp_landing_options', 'marquee_logo_hidden'));
+$hide_top_bar_visual = !empty(cmb2_get_option('ellene-wp_landing_options', 'top_bar_logo_hidden'));
 
 
 
@@ -26,15 +26,15 @@ $open_platform_icons_in_new_tab = false;
 
 
 
-if (!is_array($marquee_items)) {
+if (!is_array($top_bar_items)) {
 
-    $marquee_items = array();
+    $top_bar_items = array();
 
 }
 
-$marquee_items = array_values(array_filter($marquee_items, 'is_array'));
+$top_bar_items = array_values(array_filter($top_bar_items, 'is_array'));
 
-$sanitize_marquee_item = static function ($item) {
+$sanitize_top_bar_item = static function ($item) {
 
     if (!is_array($item)) {
 
@@ -75,11 +75,11 @@ $sanitize_marquee_item = static function ($item) {
 };
 
 // Slots fixes TOP-BAR (0: Titre Single, 1: CTA central, 2: Baseline)
-$desktop_right_item = $sanitize_marquee_item($marquee_items[0] ?? null);
+$desktop_right_item = $sanitize_top_bar_item($top_bar_items[0] ?? null);
 
-$desktop_center_item = $sanitize_marquee_item($marquee_items[1] ?? null);
+$desktop_center_item = $sanitize_top_bar_item($top_bar_items[1] ?? null);
 
-$desktop_left_item = $sanitize_marquee_item($marquee_items[2] ?? null);
+$desktop_left_item = $sanitize_top_bar_item($top_bar_items[2] ?? null);
 
 
 
@@ -111,7 +111,7 @@ $platform_icon_map = array(
 
 
 
-$marquee_platform_links = array();
+$top_bar_platform_links = array();
 
 if ($show_platform_icons) {
 
@@ -143,7 +143,7 @@ if ($show_platform_icons) {
 
 
 
-        $marquee_platform_links[] = array(
+        $top_bar_platform_links[] = array(
 
             'href' => $open_platform_icons_in_new_tab ? $href : '#stream',
 
@@ -171,7 +171,7 @@ $mobile_stream_link = $desktop_center_item;
 
 <style>
 
-    #hero-marquee {
+    #top-bar {
 
         border-top: 2px solid var(--ink);
 
@@ -183,7 +183,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee-desktop.marquee-track {
+    #top-bar-desktop.top-bar-track {
 
         animation: none !important;
 
@@ -199,7 +199,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-scroller {
+    #top-bar .top-bar-scroller {
 
         display: block;
 
@@ -213,7 +213,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-line-desktop {
+    #top-bar .top-bar-line-desktop {
 
         display: grid;
 
@@ -231,7 +231,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-col-left {
+    #top-bar .top-bar-col-left {
 
         justify-self: start;
 
@@ -239,7 +239,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-col-center {
+    #top-bar .top-bar-col-center {
 
         justify-self: center;
 
@@ -247,7 +247,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-col-right {
+    #top-bar .top-bar-col-right {
 
         justify-self: end;
 
@@ -259,7 +259,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-link {
+    #top-bar .top-bar-link {
 
         color: var(--cream);
 
@@ -269,7 +269,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-link:hover {
+    #top-bar .top-bar-link:hover {
 
         color: var(--aqua);
 
@@ -277,7 +277,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-platform-icons {
+    #top-bar .top-bar-platform-icons {
 
         display: inline-flex;
 
@@ -289,7 +289,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-platform-link {
+    #top-bar .top-bar-platform-link {
 
         display: inline-flex;
 
@@ -317,7 +317,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-platform-link:hover {
+    #top-bar .top-bar-platform-link:hover {
 
         color: var(--aqua);
 
@@ -327,7 +327,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-logo-row {
+    #top-bar .top-bar-logo-row {
 
         display: grid;
 
@@ -349,7 +349,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-logo-row.no-visual {
+    #top-bar .top-bar-logo-row.no-visual {
 
         grid-template-columns: 1fr;
 
@@ -357,9 +357,9 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-logo-mark,
+    #top-bar .top-bar-logo-mark,
 
-    #hero-marquee .marquee-logo-year {
+    #top-bar .top-bar-logo-year {
 
         flex: 0 0 auto;
 
@@ -375,7 +375,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-logo-image {
+    #top-bar .top-bar-logo-image {
 
         display: block;
 
@@ -391,7 +391,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-logo-copy {
+    #top-bar .top-bar-logo-copy {
 
         display: inline-flex;
 
@@ -407,7 +407,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-logo-mark {
+    #top-bar .top-bar-logo-mark {
 
         font-family: "Brush Script MT", "Segoe Script", "Snell Roundhand", cursive;
 
@@ -419,7 +419,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee .marquee-logo-year {
+    #top-bar .top-bar-logo-year {
 
         font-family: var(--font-poster);
 
@@ -433,7 +433,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    #hero-marquee-mobile {
+    #top-bar-mobile {
 
         display: none;
 
@@ -443,7 +443,7 @@ $mobile_stream_link = $desktop_center_item;
 
     @media (min-width: 768px) {
 
-        #hero-marquee-desktop.marquee-track {
+        #top-bar-desktop.top-bar-track {
 
             padding: 0 32px;
 
@@ -451,7 +451,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-platform-icons {
+        #top-bar .top-bar-platform-icons {
 
             gap: 26px;
 
@@ -459,7 +459,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-platform-link {
+        #top-bar .top-bar-platform-link {
 
             font-size: 26px;
 
@@ -467,7 +467,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-row {
+        #top-bar .top-bar-logo-row {
 
             padding: 0 32px 18px 0;
 
@@ -475,7 +475,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-copy {
+        #top-bar .top-bar-logo-copy {
 
             gap: 12px;
 
@@ -483,7 +483,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-mark {
+        #top-bar .top-bar-logo-mark {
 
             font-size: 20px;
 
@@ -491,7 +491,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-year {
+        #top-bar .top-bar-logo-year {
 
             font-size: 14px;
 
@@ -499,7 +499,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-image {
+        #top-bar .top-bar-logo-image {
 
             max-width: 280px;
 
@@ -511,7 +511,7 @@ $mobile_stream_link = $desktop_center_item;
 
     @media (max-width: 767px) {
 
-        #hero-marquee-desktop {
+        #top-bar-desktop {
 
             display: none;
 
@@ -519,7 +519,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee-mobile {
+        #top-bar-mobile {
 
             display: flex;
 
@@ -537,7 +537,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-row {
+        #top-bar .top-bar-logo-row {
 
             padding: 0 12px 12px 0;
 
@@ -545,7 +545,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-copy {
+        #top-bar .top-bar-logo-copy {
 
             gap: 8px;
 
@@ -553,7 +553,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-mark {
+        #top-bar .top-bar-logo-mark {
 
             font-size: 13px;
 
@@ -563,7 +563,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-year {
+        #top-bar .top-bar-logo-year {
 
             font-size: 11px;
 
@@ -573,7 +573,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-logo-image {
+        #top-bar .top-bar-logo-image {
 
             max-width: 160px;
 
@@ -581,7 +581,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-mobile-row {
+        #top-bar .top-bar-mobile-row {
 
             display: flex;
 
@@ -593,7 +593,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-mobile-row-top {
+        #top-bar .top-bar-mobile-row-top {
 
             justify-content: flex-start;
 
@@ -601,7 +601,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-mobile-row-bottom {
+        #top-bar .top-bar-mobile-row-bottom {
 
             display: none;
 
@@ -609,7 +609,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-mobile-title {
+        #top-bar .top-bar-mobile-title {
 
             color: var(--cream);
 
@@ -627,7 +627,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-mobile-title:hover {
+        #top-bar .top-bar-mobile-title:hover {
 
             color: var(--aqua);
 
@@ -635,7 +635,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-mobile-row-top .marquee-platform-icons {
+        #top-bar .top-bar-mobile-row-top .top-bar-platform-icons {
 
             margin-left: auto;
 
@@ -647,7 +647,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        #hero-marquee .marquee-mobile-row-top .marquee-platform-link {
+        #top-bar .top-bar-mobile-row-top .top-bar-platform-link {
 
             font-size: 18px;
 
@@ -657,17 +657,17 @@ $mobile_stream_link = $desktop_center_item;
 
 </style>
 
-<div id="hero-marquee" class="relative z-20 overflow-hidden py-3">
+<div id="top-bar" class="relative z-20 overflow-hidden py-3">
 
-    <div class="marquee-logo-row<?php echo $hide_marquee_visual ? ' no-visual' : ''; ?>">
+    <div class="top-bar-logo-row<?php echo $hide_top_bar_visual ? ' no-visual' : ''; ?>">
 
-        <?php if (!$hide_marquee_visual && $marquee_logo_png !== ''): ?>
+        <?php if (!$hide_top_bar_visual && $top_bar_logo_png !== ''): ?>
 
-            <img src="<?php echo esc_url($marquee_logo_png); ?>" alt="" class="marquee-logo-image" loading="lazy" decoding="async" />
+            <img src="<?php echo esc_url($top_bar_logo_png); ?>" alt="" class="top-bar-logo-image" loading="lazy" decoding="async" />
 
         <?php endif; ?>
 
-        <div class="marquee-logo-copy">
+        <div class="top-bar-logo-copy">
 
             <?php
 
@@ -685,7 +685,7 @@ $mobile_stream_link = $desktop_center_item;
 
             <?php if ($right_href !== '' && $right_label !== ''): ?>
 
-                <a href="<?php echo esc_url($right_href); ?>" <?php if ($right_is_external): ?>target="<?php echo esc_attr($right_target); ?>" rel="<?php echo esc_attr($right_rel); ?>"<?php endif; ?> class="marquee-logo-mark marquee-link">
+                <a href="<?php echo esc_url($right_href); ?>" <?php if ($right_is_external): ?>target="<?php echo esc_attr($right_target); ?>" rel="<?php echo esc_attr($right_rel); ?>"<?php endif; ?> class="top-bar-logo-mark top-bar-link">
 
                     <?php echo esc_html($right_label); ?>
 
@@ -697,23 +697,23 @@ $mobile_stream_link = $desktop_center_item;
 
     </div>
 
-    <div id="hero-marquee-mobile">
+    <div id="top-bar-mobile">
 
-        <div class="marquee-mobile-row marquee-mobile-row-top">
+        <div class="top-bar-mobile-row top-bar-mobile-row-top">
 
             <?php if ($mobile_title !== ''): ?>
 
-                <a href="#page-top" class="marquee-mobile-title font-poster uppercase"><?php echo esc_html($mobile_title); ?></a>
+                <a href="#page-top" class="top-bar-mobile-title font-poster uppercase"><?php echo esc_html($mobile_title); ?></a>
 
             <?php endif; ?>
 
-            <?php if (!empty($marquee_platform_links)): ?>
+            <?php if (!empty($top_bar_platform_links)): ?>
 
-                <span class="marquee-platform-icons">
+                <span class="top-bar-platform-icons">
 
-                    <?php foreach ($marquee_platform_links as $platform): ?>
+                    <?php foreach ($top_bar_platform_links as $platform): ?>
 
-                        <button type="button" data-open-platform="<?php echo esc_attr($platform['platform']); ?>" aria-label="<?php echo esc_attr($platform['label']); ?>" title="<?php echo esc_attr($platform['label']); ?>" class="marquee-platform-link">
+                        <button type="button" data-open-platform="<?php echo esc_attr($platform['platform']); ?>" aria-label="<?php echo esc_attr($platform['label']); ?>" title="<?php echo esc_attr($platform['label']); ?>" class="top-bar-platform-link">
 
                             <i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i>
 
@@ -729,7 +729,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-        <div class="marquee-mobile-row marquee-mobile-row-bottom">
+        <div class="top-bar-mobile-row top-bar-mobile-row-bottom">
 
             <?php
 
@@ -747,7 +747,7 @@ $mobile_stream_link = $desktop_center_item;
 
             <?php if ($mobile_stream_href !== '' && $mobile_stream_label !== ''): ?>
 
-                <a href="<?php echo esc_url($mobile_stream_href); ?>" <?php if ($mobile_stream_external): ?>target="<?php echo esc_attr($mobile_stream_target); ?>" rel="<?php echo esc_attr($mobile_stream_rel); ?>"<?php endif; ?> class="marquee-mobile-stream-link font-poster uppercase"><?php echo esc_html($mobile_stream_label); ?></a>
+                <a href="<?php echo esc_url($mobile_stream_href); ?>" <?php if ($mobile_stream_external): ?>target="<?php echo esc_attr($mobile_stream_target); ?>" rel="<?php echo esc_attr($mobile_stream_rel); ?>"<?php endif; ?> class="top-bar-mobile-stream-link font-poster uppercase"><?php echo esc_html($mobile_stream_label); ?></a>
 
             <?php endif; ?>
 
@@ -757,13 +757,13 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-    <div id="hero-marquee-desktop" class="marquee-track whitespace-nowrap">
+    <div id="top-bar-desktop" class="top-bar-track whitespace-nowrap">
 
-        <div class="marquee-scroller">
+        <div class="top-bar-scroller">
 
-            <div class="marquee-line-desktop font-poster text-lg uppercase tracking-widest text-cream">
+            <div class="top-bar-line-desktop font-poster text-lg uppercase tracking-widest text-cream">
 
-                <div class="marquee-col-left">
+                <div class="top-bar-col-left">
 
                     <?php
 
@@ -781,7 +781,7 @@ $mobile_stream_link = $desktop_center_item;
 
                     <?php if ($left_href !== '' && $left_label !== ''): ?>
 
-                        <a href="<?php echo esc_url($left_href); ?>" <?php if ($left_is_external): ?>target="<?php echo esc_attr($left_target); ?>" rel="<?php echo esc_attr($left_rel); ?>"<?php endif; ?> class="marquee-link">
+                        <a href="<?php echo esc_url($left_href); ?>" <?php if ($left_is_external): ?>target="<?php echo esc_attr($left_target); ?>" rel="<?php echo esc_attr($left_rel); ?>"<?php endif; ?> class="top-bar-link">
 
                             <?php echo esc_html($left_label); ?>
 
@@ -793,7 +793,7 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-                <div class="marquee-col-center">
+                <div class="top-bar-col-center">
 
                     <?php
 
@@ -811,7 +811,7 @@ $mobile_stream_link = $desktop_center_item;
 
                     <?php if ($center_href !== '' && $center_label !== ''): ?>
 
-                        <a href="<?php echo esc_url($center_href); ?>" <?php if ($center_is_external): ?>target="<?php echo esc_attr($center_target); ?>" rel="<?php echo esc_attr($center_rel); ?>"<?php endif; ?> class="marquee-link">
+                        <a href="<?php echo esc_url($center_href); ?>" <?php if ($center_is_external): ?>target="<?php echo esc_attr($center_target); ?>" rel="<?php echo esc_attr($center_rel); ?>"<?php endif; ?> class="top-bar-link">
 
                             <?php echo esc_html($center_label); ?>
 
@@ -823,15 +823,15 @@ $mobile_stream_link = $desktop_center_item;
 
 
 
-                <div class="marquee-col-right">
+                <div class="top-bar-col-right">
 
-                    <?php if (!empty($marquee_platform_links)): ?>
+                    <?php if (!empty($top_bar_platform_links)): ?>
 
-                        <span class="marquee-platform-icons">
+                        <span class="top-bar-platform-icons">
 
-                            <?php foreach ($marquee_platform_links as $platform): ?>
+                            <?php foreach ($top_bar_platform_links as $platform): ?>
 
-                                <button type="button" data-open-platform="<?php echo esc_attr($platform['platform']); ?>" aria-label="<?php echo esc_attr($platform['label']); ?>" title="<?php echo esc_attr($platform['label']); ?>" class="marquee-platform-link">
+                                <button type="button" data-open-platform="<?php echo esc_attr($platform['platform']); ?>" aria-label="<?php echo esc_attr($platform['label']); ?>" title="<?php echo esc_attr($platform['label']); ?>" class="top-bar-platform-link">
 
                                     <i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i>
 

@@ -43,6 +43,52 @@ function ellene_wp_migrate_legacy_landing_options_once() {
 
 add_action('init', 'ellene_wp_migrate_legacy_landing_options_once', 1);
 
+/**
+ * One-shot migration from legacy top-bar option keys using the previous naming.
+ */
+function ellene_wp_migrate_top_bar_option_keys_once() {
+    $migration_flag_key = 'ellene_wp_top_bar_option_keys_migrated_v1';
+
+    if (get_option($migration_flag_key, '0') === '1') {
+        return;
+    }
+
+    $options = get_option(ELLENE_WP_LANDING_OPTIONS_KEY, null);
+    if (!is_array($options) || empty($options)) {
+        update_option($migration_flag_key, '1', false);
+        return;
+    }
+
+    $changed = false;
+    $old_prefix = 'mar' . 'quee';
+    $key_map = array(
+        $old_prefix . '_items' => 'top_bar_items',
+        $old_prefix . '_logo_png' => 'top_bar_logo_png',
+        $old_prefix . '_logo_hidden' => 'top_bar_logo_hidden',
+    );
+
+    foreach ($key_map as $old_key => $new_key) {
+        if (!array_key_exists($old_key, $options)) {
+            continue;
+        }
+
+        if (!array_key_exists($new_key, $options)) {
+            $options[$new_key] = $options[$old_key];
+        }
+
+        unset($options[$old_key]);
+        $changed = true;
+    }
+
+    if ($changed) {
+        update_option(ELLENE_WP_LANDING_OPTIONS_KEY, $options, false);
+    }
+
+    update_option($migration_flag_key, '1', false);
+}
+
+add_action('init', 'ellene_wp_migrate_top_bar_option_keys_once', 2);
+
 require_once get_template_directory() . '/inc/cmb2/options-sections/modules.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/top-bar.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/hero.php';
