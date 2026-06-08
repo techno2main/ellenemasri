@@ -2812,6 +2812,38 @@
 
 
 
+  function getAllModuleSlugs() {
+
+    const checkboxes = document.querySelectorAll('.cmb2-id-modules-enabled input[type="checkbox"]');
+
+    const all = [];
+
+
+
+    checkboxes.forEach(function(checkbox) {
+
+      const slug = (checkbox.value || '').trim();
+
+      if (!slug || all.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      all.push(slug);
+
+    });
+
+
+
+    return all;
+
+  }
+
+
+
   function getNavbarModuleSlugs() {
 
     const sectionToSlug = {
@@ -2826,7 +2858,7 @@
 
       section_video_title: 'video',
 
-      section_release_title: 'release-info',
+      section_release_title: 'release',
 
       section_cta_title: 'cta',
 
@@ -2950,6 +2982,76 @@
 
 
 
+  function buildPersistentModulesOrder(fullOrder, enabledOrder, enabledSlugs, allSlugs) {
+
+    const allowed = Array.isArray(allSlugs) ? allSlugs : [];
+
+    const normalized = [];
+
+
+
+    (Array.isArray(fullOrder) ? fullOrder : []).forEach(function(slug) {
+
+      if (allowed.indexOf(slug) === -1 || normalized.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      normalized.push(slug);
+
+    });
+
+
+
+    allowed.forEach(function(slug) {
+
+      if (normalized.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      normalized.push(slug);
+
+    });
+
+
+
+    const enabledSet = new Set(Array.isArray(enabledSlugs) ? enabledSlugs : []);
+
+    const orderedEnabled = Array.isArray(enabledOrder) ? enabledOrder.slice() : [];
+
+    let enabledIndex = 0;
+
+
+
+    return normalized.map(function(slug) {
+
+      if (!enabledSet.has(slug)) {
+
+        return slug;
+
+      }
+
+
+
+      const nextEnabled = orderedEnabled[enabledIndex] || slug;
+
+      enabledIndex += 1;
+
+      return nextEnabled;
+
+    });
+
+  }
+
+
+
   function initModulesOrderAssistant() {
 
     const row = document.querySelector('.cmb2-id-modules-order');
@@ -2974,7 +3076,7 @@
 
 
 
-    input.placeholder = 'top-bar,hero,stream,social,video,release-info,cta,footer';
+    input.placeholder = 'top-bar,hero,stream,social,video,release,cta,footer';
 
 
 
@@ -3016,17 +3118,27 @@
 
       const enabled = getEnabledModuleSlugs();
 
+      const all = getAllModuleSlugs();
+
+      const currentFullOrder = parseModulesOrderValue(input.value).filter(function(slug) {
+
+        return all.indexOf(slug) !== -1;
+
+      });
+
       const orderSource = forceUiOrder
 
         ? getCurrentUiModuleOrder(enabled)
 
-        : (Array.isArray(preferredOrder) ? preferredOrder : parseModulesOrderValue(input.value));
+        : (Array.isArray(preferredOrder) ? preferredOrder : currentFullOrder);
 
       const effectiveOrder = buildEffectiveModulesOrder(enabled, orderSource);
 
+      const persistedOrder = buildPersistentModulesOrder(currentFullOrder, effectiveOrder, enabled, all);
 
 
-      input.value = effectiveOrder.join(',');
+
+      input.value = persistedOrder.join(',');
 
       chipsHost.innerHTML = '';
 
