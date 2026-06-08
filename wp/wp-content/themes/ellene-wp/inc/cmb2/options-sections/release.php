@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 }
 
 function ellene_wp_register_cmb2_release_section($cmb) {
-    // ========== SECTION: RELEASE INFO ==========
+    // ========== SECTION: RELEASE ==========
 
     $cmb->add_field(array(
         'name' => 'Release',
@@ -23,7 +23,7 @@ function ellene_wp_register_cmb2_release_section($cmb) {
         'name'    => 'Kicker',
         'id'      => 'release_kicker',
         'type'    => 'text',
-        'default' => '04 / Release Info',
+        'default' => '04 / Release',
     ));
 
     $cmb->add_field(array(

@@ -106,17 +106,7 @@ function ellene_get_module_order() {
  * @return string[]
  */
 function ellene_get_shared_modules($registry) {
-    $raw_shared = ellene_wp_get_landing_option('modules_shared', array());
-    $shared = ellene_normalize_module_slug_list($raw_shared);
-    $allowed_shared = array();
-
-    foreach ($registry as $slug => $config) {
-        if (!empty($config['supports_shared'])) {
-            $allowed_shared[] = sanitize_key((string) $slug);
-        }
-    }
-
-    return array_values(array_intersect($shared, $allowed_shared));
+    return array();
 }
 
 /**

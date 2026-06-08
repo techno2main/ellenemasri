@@ -29,7 +29,7 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
             'stream'       => 'Stream',
             'social'       => 'Social',
             'video'        => 'Video',
-            'release-info' => 'Release Info',
+            'release-info' => 'Release',
             'cta'          => 'CTA',
             'footer'       => 'Footer',
         ),
@@ -47,18 +47,5 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
     $cmb->add_field(array(
         'id'   => 'modules_slots_migrated',
         'type' => 'hidden',
-    ));
-
-    $cmb->add_field(array(
-        'name'    => 'Modules mutualises',
-        'id'      => 'modules_shared',
-        'type'    => 'multicheck_inline',
-        'options' => array(
-            'stream' => 'Stream',
-            'social' => 'Social',
-            'video' => 'Video',
-            'cta' => 'CTA',
-        ),
-        'desc' => 'Active le mode source partagee (mutualise) pour les modules compatibles.',
     ));
 }

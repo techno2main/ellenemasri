@@ -17,6 +17,18 @@ if (!defined('ABSPATH')) {
  */
 function ellene_get_module_registry() {
     $registry = array(
+        'top-bar' => array(
+            'label' => __('Top-Bar', 'ellene-wp'),
+            'template' => 'template-parts/sections/top-bar/index',
+            'default_enabled' => true,
+            'supports_shared' => false,
+        ),
+        'hero' => array(
+            'label' => __('Hero', 'ellene-wp'),
+            'template' => 'template-parts/sections/hero/index',
+            'default_enabled' => true,
+            'supports_shared' => false,
+        ),
         'stream' => array(
             'label' => __('Stream', 'ellene-wp'),
             'template' => 'template-parts/sections/stream/index',
@@ -36,7 +48,7 @@ function ellene_get_module_registry() {
             'supports_shared' => true,
         ),
         'release-info' => array(
-            'label' => __('Release Info', 'ellene-wp'),
+            'label' => __('Release', 'ellene-wp'),
             'template' => 'template-parts/sections/release/index',
             'default_enabled' => true,
             'supports_shared' => false,
@@ -46,6 +58,12 @@ function ellene_get_module_registry() {
             'template' => 'template-parts/sections/cta/index',
             'default_enabled' => true,
             'supports_shared' => true,
+        ),
+        'footer' => array(
+            'label' => __('Footer', 'ellene-wp'),
+            'template' => 'template-parts/sections/footer/index',
+            'default_enabled' => true,
+            'supports_shared' => false,
         ),
     );
 

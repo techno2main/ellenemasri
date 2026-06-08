@@ -2990,11 +2990,11 @@
 
         '<div class="ellene-wp-modules-order-actions">' +
 
-        '  <button type="button" class="ellene-wp-order-reset-btn">Auto depuis ordre actuel</button>' +
+        '  <button type="button" class="ellene-wp-order-reset-btn">Ordre par défaut</button>' +
 
         '</div>' +
 
-        '<div class="ellene-wp-modules-order-note">Glissez les modules pour definir l\'ordre. Le champ texte est mis a jour automatiquement.</div>' +
+        '<div class="ellene-wp-modules-order-note">Glissez les modules pour definir l\'ordre. Le champ texte est mis à jour automatiquement.</div>' +
 
         '<div class="ellene-wp-modules-order-chips"></div>';
 
@@ -3194,7 +3194,7 @@
 
         }
 
-        syncOrder([], true);
+        syncOrder();
 
       });
 
@@ -3210,7 +3210,7 @@
 
         window.setTimeout(function() {
 
-          syncOrder([], true);
+          syncOrder();
 
         }, 0);
 
@@ -3220,8 +3220,8 @@
 
 
 
-    // At page load, reflect the current UI order rather than legacy stored values.
-    syncOrder([], true);
+    // At page load, keep and display the saved order from the option value.
+    syncOrder();
 
   }
 
