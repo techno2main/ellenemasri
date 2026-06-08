@@ -2974,7 +2974,7 @@
 
 
 
-    input.placeholder = 'top-bar,header,hero,stream,social,video,release-info,cta,footer';
+    input.placeholder = 'top-bar,hero,stream,social,video,release-info,cta,footer';
 
 
 

@@ -25,7 +25,6 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
         'type'    => 'multicheck_inline',
         'options' => array(
             'top-bar'      => 'Top-Bar',
-            'header'       => 'Header',
             'hero'         => 'Hero',
             'stream'       => 'Stream',
             'social'       => 'Social',
@@ -34,8 +33,8 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
             'cta'          => 'CTA',
             'footer'       => 'Footer',
         ),
-        'default' => array('top-bar', 'header', 'hero', 'stream', 'social', 'video', 'release-info', 'cta', 'footer'),
-        'desc' => 'Coche/decoche les blocs du front (Top-Bar, Header, Hero, sections content, Footer).',
+        'default' => array('top-bar', 'hero', 'stream', 'social', 'video', 'release-info', 'cta', 'footer'),
+        'desc' => 'Coche/decoche les blocs du front (Top-Bar, Hero, sections content, Footer).',
     ));
 
     $cmb->add_field(array(

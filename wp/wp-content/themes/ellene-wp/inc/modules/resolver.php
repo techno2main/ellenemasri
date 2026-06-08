@@ -43,7 +43,7 @@ function ellene_normalize_module_slug_list($value) {
  * @return string[]
  */
 function ellene_get_default_enabled_toggle_slugs($registry) {
-    $defaults = array('top-bar', 'header', 'hero', 'footer');
+    $defaults = array('top-bar', 'hero', 'footer');
 
     foreach ($registry as $slug => $config) {
         if (!empty($config['default_enabled'])) {
@@ -71,7 +71,7 @@ function ellene_get_enabled_modules($registry) {
 
     // Legacy migration: when layout slot toggles did not exist yet,
     // keep them enabled by default once to avoid surprise disappearance.
-    $layout_slots = array('top-bar', 'header', 'hero', 'footer');
+    $layout_slots = array('top-bar', 'hero', 'footer');
     $has_layout_slot = !empty(array_intersect($enabled, $layout_slots));
     $migrated = (string) ellene_wp_get_landing_option('modules_slots_migrated', '') === '1';
 

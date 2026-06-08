@@ -43,6 +43,8 @@ function ellene_wp_migrate_legacy_landing_options_once() {
 
 add_action('init', 'ellene_wp_migrate_legacy_landing_options_once', 1);
 
+require_once get_template_directory() . '/inc/cmb2/options-sections/modules.php';
+require_once get_template_directory() . '/inc/cmb2/options-sections/top-bar.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/hero.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/slider.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/stream.php';
@@ -51,8 +53,6 @@ require_once get_template_directory() . '/inc/cmb2/options-sections/video.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/release.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/cta.php';
 require_once get_template_directory() . '/inc/cmb2/options-sections/footer.php';
-require_once get_template_directory() . '/inc/cmb2/options-sections/top-bar.php';
-require_once get_template_directory() . '/inc/cmb2/options-sections/modules.php';
 
 function ellene_wp_get_primary_stream_link(array $options) {
     if (empty($options['stream_platforms']) || !is_array($options['stream_platforms'])) {
