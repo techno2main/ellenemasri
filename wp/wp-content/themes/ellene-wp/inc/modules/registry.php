@@ -47,7 +47,7 @@ function ellene_get_module_registry() {
             'default_enabled' => true,
             'supports_shared' => true,
         ),
-        'release-info' => array(
+        'release' => array(
             'label' => __('Release', 'ellene-wp'),
             'template' => 'template-parts/sections/release/index',
             'default_enabled' => true,

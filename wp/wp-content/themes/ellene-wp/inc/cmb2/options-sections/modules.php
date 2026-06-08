@@ -14,7 +14,7 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
     // ========== SECTION: MODULES ===========
 
     $cmb->add_field(array(
-        'name' => 'Modules',
+        'name' => 'Modules / Rubriques',
         'type' => 'title',
         'id'   => 'section_modules_title',
     ));
@@ -29,12 +29,12 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
             'stream'       => 'Stream',
             'social'       => 'Social',
             'video'        => 'Video',
-            'release-info' => 'Release',
+            'release' => 'Release',
             'cta'          => 'CTA',
             'footer'       => 'Footer',
         ),
-        'default' => array('top-bar', 'hero', 'stream', 'social', 'video', 'release-info', 'cta', 'footer'),
-        'desc' => 'Coche/decoche les blocs du front (Top-Bar, Hero, sections content, Footer).',
+        'default' => array('top-bar', 'hero', 'stream', 'social', 'video', 'release', 'cta', 'footer'),
+        'desc' => 'Décoche un module pour le masquer sur le site (le module ne sera pas supprimé, tu pourras le réactiver à tout moment).',
     ));
 
     $cmb->add_field(array(
