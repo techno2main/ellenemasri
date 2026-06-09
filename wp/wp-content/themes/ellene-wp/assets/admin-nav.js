@@ -72,6 +72,19 @@
 
   };
 
+  const SECTION_ACCENT_BY_CLASS = {
+    'cmb2-id-section-modules-title': '#4b5563',
+    'cmb2-id-section-top-bar-title': 'oklch(0.15 0.08 280)',
+    'cmb2-id-section-hero-title': 'oklch(0.68 0.22 45)',
+    'cmb2-id-section-slider-title': 'oklch(0.68 0.22 45)',
+    'cmb2-id-section-stream-title': '#6a1b78',
+    'cmb2-id-section-social-title': 'oklch(0.62 0.28 350)',
+    'cmb2-id-section-video-title': 'oklch(0.88 0.19 95)',
+    'cmb2-id-section-release-title': 'oklch(0.78 0.10 80)',
+    'cmb2-id-section-cta-title': 'oklch(0.68 0.17 182)',
+    'cmb2-id-section-footer-title': 'oklch(0.15 0.08 280)'
+  };
+
 
 
   const ACTIVE_SECTION_STORAGE_KEY = 'ellene_wp_active_section_after_save';
@@ -3577,9 +3590,13 @@
 
     const neutralBg = '#f2f2f3';
 
-    const neutralText = '#1f2937';
+    const sectionClassName = Object.keys(SECTION_ACCENT_BY_CLASS).find(className =>
 
-    const activeBg = 'linear-gradient(135deg, #6a1b78 0%, #410b49 100%)';
+      titleEl.classList.contains(className)
+
+    );
+
+    const resolvedAccent = sectionClassName ? SECTION_ACCENT_BY_CLASS[sectionClassName] : '#1f2937';
 
 
 
@@ -3587,27 +3604,27 @@
 
       if (isOpen) {
 
-        headerCell.style.setProperty('background-color', '#5b1b78', 'important');
-
-        headerCell.style.setProperty('background-image', activeBg, 'important');
-
-        headerCell.style.setProperty('background', activeBg, 'important');
-
-        headerCell.style.setProperty('color', '#ffffff', 'important');
-
-        headerCell.style.setProperty('border-left-color', '#13f7bc', 'important');
-
-      } else {
-
         headerCell.style.setProperty('background-image', 'none', 'important');
 
         headerCell.style.setProperty('background-color', neutralBg, 'important');
 
         headerCell.style.setProperty('background', neutralBg, 'important');
 
-        headerCell.style.setProperty('color', neutralText, 'important');
+        headerCell.style.setProperty('color', resolvedAccent, 'important');
 
-        headerCell.style.setProperty('border-left-color', '#dadde2', 'important');
+        headerCell.style.setProperty('border-left-color', resolvedAccent, 'important');
+
+      } else {
+
+        headerCell.style.removeProperty('background-image');
+
+        headerCell.style.removeProperty('background-color');
+
+        headerCell.style.removeProperty('background');
+
+        headerCell.style.removeProperty('color');
+
+        headerCell.style.removeProperty('border-left-color');
 
       }
 
@@ -3617,7 +3634,15 @@
 
     if (heading) {
 
-      heading.style.setProperty('color', isOpen ? '#ffffff' : neutralText, 'important');
+      if (isOpen) {
+
+        heading.style.setProperty('color', resolvedAccent, 'important');
+
+      } else {
+
+        heading.style.removeProperty('color');
+
+      }
 
     }
 
@@ -3625,7 +3650,15 @@
 
     if (eye) {
 
-      eye.style.setProperty('color', isOpen ? '#ffffff' : '#6b21a8', 'important');
+      if (isOpen) {
+
+        eye.style.setProperty('color', resolvedAccent, 'important');
+
+      } else {
+
+        eye.style.removeProperty('color');
+
+      }
 
     }
 
