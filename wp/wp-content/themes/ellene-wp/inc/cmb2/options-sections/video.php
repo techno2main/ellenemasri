@@ -41,13 +41,6 @@ function ellene_wp_register_cmb2_video_section($cmb) {
     ));
 
     $cmb->add_field(array(
-        'name'    => 'Status Text',
-        'id'      => 'video_status',
-        'type'    => 'text',
-        'default' => 'Coming soon',
-    ));
-
-    $cmb->add_field(array(
         'name'    => 'Watch Button Label',
         'id'      => 'video_watch_label',
         'type'    => 'text',
