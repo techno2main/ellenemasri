@@ -663,7 +663,11 @@ $mobile_stream_link = $desktop_center_item;
 
         <?php if (!$hide_top_bar_visual && $top_bar_logo_png !== ''): ?>
 
-            <img src="<?php echo esc_url($top_bar_logo_png); ?>" alt="" class="top-bar-logo-image" loading="lazy" decoding="async" />
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="top-bar-logo-home-link" aria-label="Accueil">
+
+                <img src="<?php echo esc_url($top_bar_logo_png); ?>" alt="" class="top-bar-logo-image" loading="lazy" decoding="async" />
+
+            </a>
 
         <?php endif; ?>
 

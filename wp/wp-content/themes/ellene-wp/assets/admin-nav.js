@@ -1986,9 +1986,9 @@
 
   function hideTopBarAddButtons() {
 
-    const rows = getSectionContentRows('section_top_bar_title');
+    const root = document.querySelector('.cmb2-id-top-bar-items');
 
-    if (!rows.length) {
+    if (!root) {
 
       return;
 
@@ -1996,11 +1996,40 @@
 
 
 
-    rows.forEach(function(row) {
 
-      const addButtons = row.querySelectorAll('.add-group-row');
+    const controls = root.querySelectorAll('button, a, input[type="button"], input[type="submit"]');
 
-      if (!addButtons.length) {
+    if (!controls.length) {
+
+      return;
+
+    }
+
+
+
+    controls.forEach(function(control) {
+
+      const signature = [
+
+        control.className || '',
+
+        control.textContent || '',
+
+        control.value || '',
+
+        control.getAttribute('title') || '',
+
+        control.getAttribute('aria-label') || ''
+
+      ].join(' ').toLowerCase();
+
+
+
+      const isAddControl = signature.indexOf('ajouter') !== -1 || signature.indexOf('add') !== -1;
+
+      const isRemoveControl = signature.indexOf('supprimer') !== -1 || signature.indexOf('remove') !== -1 || signature.indexOf('delete') !== -1;
+
+      if (!isAddControl && !isRemoveControl) {
 
         return;
 
@@ -2008,11 +2037,7 @@
 
 
 
-      addButtons.forEach(function(button) {
-
-        button.style.display = 'none';
-
-      });
+      control.style.setProperty('display', 'none', 'important');
 
     });
 
