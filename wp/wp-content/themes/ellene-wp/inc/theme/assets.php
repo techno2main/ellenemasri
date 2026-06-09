@@ -289,7 +289,7 @@ function ellene_wp_output_active_theme_name_in_admin_menu() {
         return;
     }
 
-    $label = 'Theme actif: ' . $theme_name;
+    $label = 'Thème: ' . $theme_name;
     ?>
     <style>
     #adminmenu::before {

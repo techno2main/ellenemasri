@@ -185,7 +185,9 @@
 
 .ellene-wp-order-reset-btn {
 
-  background: #fff;
+  background: #f15a3b;
+
+  color: #fff !important;
 
   border: 1px solid #d0d7de;
 
@@ -375,7 +377,7 @@
 
   background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
 
-  color: #fff !important;
+  color: #000000 !important;
 
   border-left-color: #13f7bc !important;
 
@@ -420,7 +422,7 @@
 
 .cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th label {
 
-  color: #fff !important;
+  color: #000000 !important;
 
 }
 
@@ -432,17 +434,11 @@
 
 .cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open label {
 
-  color: #fff !important;
+  color: #000000 !important;
 
 }
 
 
-
-.cmb2-wrap .cmb-row.ellene-wp-section-open .ellene-wp-eye-indicator {
-
-  color: #fff !important;
-
-}
 
 
 
@@ -508,15 +504,7 @@
 
 
 
-.cmb2-wrap .cmb-row.ellene-wp-section-toggle .ellene-wp-eye-indicator {
-
-  width: 20px;
-
-  height: 20px;
-
-  font-size: 20px;
-
-  line-height: 20px;
+$126px$226px$326px$426px;
 
   position: absolute;
 
@@ -2304,3 +2292,168 @@ body.ellene-wp-delete-modal-open {
 
 
 
+/* ============================================================
+   SECTION COLORS - filet gauche couleur du front (10px)
+   ============================================================ */
+
+/* ---- MODULES : violet admin (defaut) ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title {
+  border-left: 10px solid #f15a3b !important;
+  background: #f2f2f3 !important;
+}
+
+/* ---- TOP-BAR : ink dark navy ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title {
+  border-left: 10px solid oklch(0.15 0.08 280) !important;
+  background: #f2f2f3 !important;
+}
+.cmb2-wrap .cmb-row.cmb2-id-section-top-bar-title .cmb-th .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb2-id-section-top-bar-title .cmb-th h3,
+.cmb2-wrap .cmb-row.cmb2-id-section-top-bar-title .cmb-th label {
+  color: oklch(0.15 0.08 280) !important;
+}
+
+/* ---- HERO : orange sunset ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title {
+  border-left: 10px solid oklch(0.68 0.22 45) !important;
+  background: #f2f2f3 !important;
+}
+
+/* ---- SLIDER : orange ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title {
+  border-left: 10px solid oklch(0.68 0.22 45) !important;
+  background: #f2f2f3 !important;
+}
+
+/* ---- STREAM : deep purple ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title {
+  border-left: 10px solid #6a1b78 !important;
+  background: #f2f2f3 !important;
+}
+.cmb2-wrap .cmb-row.cmb2-id-section-stream-title .cmb-th .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb2-id-section-stream-title .cmb-th h3,
+.cmb2-wrap .cmb-row.cmb2-id-section-stream-title .cmb-th label {
+  color: #6a1b78 !important;
+}
+
+/* ---- SOCIAL : magenta fuchsia ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title {
+  border-left: 10px solid oklch(0.62 0.28 350) !important;
+  background: #f2f2f3 !important;
+}
+
+/* ---- VIDEO : jaune chaud ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title {
+  border-left: 10px solid oklch(0.88 0.19 95) !important;
+  background: #f2f2f3 !important;
+}
+
+/* ---- RELEASE : cream (bord fonce pour visibilite) ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title {
+  border-left: 10px solid oklch(0.78 0.10 80) !important;
+  background: #f2f2f3 !important;
+}
+
+/* ---- CTA : teal aqua ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title {
+  border-left: 10px solid oklch(0.68 0.17 182) !important;
+  background: #f2f2f3 !important;
+}
+
+/* ---- FOOTER : ink dark navy ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title {
+  border-left: 10px solid oklch(0.15 0.08 280) !important;
+  background: #f2f2f3 !important;
+}
+.cmb2-wrap .cmb-row.cmb2-id-section-footer-title .cmb-th .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb2-id-section-footer-title .cmb-th h3,
+.cmb2-wrap .cmb-row.cmb2-id-section-footer-title .cmb-th label {
+  color: oklch(0.15 0.08 280) !important;
+}
+
+/* Etat ouvert : pas de fond colore, juste le filet reste */
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open {
+  background: linear-gradient(135deg, #6a1b78 0%, #410b49 100%) !important;
+}
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open {
+  background: #f2f2f3 !important;
+}
+/* ---- Correction texte ouvert : fond neutre donc texte fonce ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open label {
+  color: #1f2937 !important;
+}
+
+/* ---- Helpline ouverte : texte fonce ---- */
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .ellene-wp-section-helpline,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .ellene-wp-section-helpline {
+  color: #4b5563 !important;
+}
+
+/* ---- Oeil couleur filet, toujours (ouvert et ferme) ---- */
+.cmb2-wrap .cmb-row.cmb2-id-section-top-bar-title .ellene-wp-eye-indicator { color: oklch(0.15 0.08 280) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-hero-title .ellene-wp-eye-indicator    { color: oklch(0.68 0.22 45) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-slider-title .ellene-wp-eye-indicator  { color: oklch(0.68 0.22 45) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-stream-title .ellene-wp-eye-indicator  { color: #6a1b78 !important;              font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-social-title .ellene-wp-eye-indicator  { color: oklch(0.62 0.28 350) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-video-title .ellene-wp-eye-indicator   { color: oklch(0.88 0.19 95) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-release-title .ellene-wp-eye-indicator { color: oklch(0.78 0.10 80) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-cta-title .ellene-wp-eye-indicator     { color: oklch(0.68 0.17 182) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-footer-title .ellene-wp-eye-indicator  { color: oklch(0.15 0.08 280) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
+
+/* ==========================================================
+   OVERRIDE FINAL - ETAT OUVERT
+   ========================================================== */
+
+.cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th h3,
+.cmb2-wrap .cmb-row.ellene-wp-section-open .cmb-th label,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open label {
+    color: #1f2937 !important;
+}
+
+.cmb2-wrap .cmb-row.ellene-wp-section-open .ellene-wp-section-helpline {
+    color: #4b5563 !important;
+}
