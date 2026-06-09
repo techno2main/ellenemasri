@@ -254,7 +254,9 @@ function ellene_wp_limit_admin_menu_for_client() {
     remove_menu_page('edit.php');
     remove_menu_page('edit-comments.php');
     remove_menu_page('edit.php?post_type=page');
-    remove_menu_page('themes.php');
+    if (!$is_ellene_admin) {
+        remove_menu_page('themes.php');
+    }
     remove_menu_page('plugins.php');
     remove_menu_page('users.php');
     remove_menu_page('tools.php');
@@ -296,6 +298,67 @@ function ellene_wp_limit_settings_submenu_for_ellene_admin() {
 }
 
 add_action('admin_menu', 'ellene_wp_limit_settings_submenu_for_ellene_admin', 1000);
+
+function ellene_wp_limit_appearance_submenu_for_ellene_admin() {
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    $current_user = wp_get_current_user();
+    if (!$current_user || empty($current_user->user_login)) {
+        return;
+    }
+
+    if (strtolower((string) $current_user->user_login) !== 'ellene-admin') {
+        return;
+    }
+
+    global $submenu;
+
+    if (empty($submenu['themes.php']) || !is_array($submenu['themes.php'])) {
+        return;
+    }
+
+    foreach ($submenu['themes.php'] as $index => $submenu_item) {
+        $slug = isset($submenu_item[2]) ? (string) $submenu_item[2] : '';
+
+        if ($slug !== 'themes.php') {
+            unset($submenu['themes.php'][$index]);
+        }
+    }
+}
+
+add_action('admin_menu', 'ellene_wp_limit_appearance_submenu_for_ellene_admin', 1001);
+
+function ellene_wp_redirect_appearance_pages_to_themes_for_ellene_admin() {
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    $current_user = wp_get_current_user();
+    if (!$current_user || empty($current_user->user_login)) {
+        return;
+    }
+
+    if (strtolower((string) $current_user->user_login) !== 'ellene-admin') {
+        return;
+    }
+
+    global $pagenow;
+
+    $blocked_pagenow = array(
+        'customize.php',
+        'site-editor.php',
+        'theme-editor.php',
+    );
+
+    if (in_array((string) $pagenow, $blocked_pagenow, true)) {
+        wp_safe_redirect(admin_url('themes.php'));
+        exit;
+    }
+}
+
+add_action('admin_init', 'ellene_wp_redirect_appearance_pages_to_themes_for_ellene_admin', 20);
 
 function ellene_wp_hide_brevo_menu_for_ellene_admin() {
     if (!is_admin() || !current_user_can('manage_options')) {
@@ -622,6 +685,9 @@ function ellene_wp_customize_themes_admin_preview() {
     if (!$screen || $screen->id !== 'themes') {
         return;
     }
+
+    $current_user = wp_get_current_user();
+    $is_ellene_admin = ($current_user && strtolower((string) $current_user->user_login) === 'ellene-admin');
     ?>
     <style>
     .theme-wrap .theme-author,
@@ -636,7 +702,67 @@ function ellene_wp_customize_themes_admin_preview() {
         text-decoration: none !important;
         box-shadow: none;
     }
+
+    <?php if ($is_ellene_admin) : ?>
+    .wrap .page-title-action[href*="theme-install.php"],
+    .wrap a.page-title-action[href*="themes.php?page=theme-install"],
+    .wrap .add-new-h2,
+    .theme-browser .themes .add-new-theme {
+        display: none !important;
+    }
+
+    .theme-wrap .theme-actions .button[href*="customize.php"],
+    .theme-wrap .theme-actions .button[href*="site-editor.php"],
+    .theme-wrap .theme-actions .button[href*="wp_global_styles"],
+    .theme-wrap .theme-actions .button.load-customize,
+    .theme-wrap .theme-actions .button,
+    .theme-overlay .theme-actions .button,
+    .theme-overlay .theme-actions .button-link {
+        display: none !important;
+    }
+    <?php endif; ?>
     </style>
+    <?php if ($is_ellene_admin) : ?>
+    <script>
+    (function() {
+        var labelsToHide = ['personnaliser', 'compositions', 'polices'];
+
+        function shouldHideButton(button) {
+            if (!button) {
+                return false;
+            }
+
+            var label = (button.textContent || '').toLowerCase().trim();
+            return labelsToHide.indexOf(label) !== -1;
+        }
+
+        function hideThemeInfoButtons() {
+            var buttons = document.querySelectorAll('.theme-actions .button, .theme-actions .button-link');
+            buttons.forEach(function(button) {
+                if (shouldHideButton(button)) {
+                    button.style.display = 'none';
+                }
+            });
+
+            var addThemeButtons = document.querySelectorAll('.page-title-action, .add-new-h2, .add-new-theme');
+            addThemeButtons.forEach(function(button) {
+                var label = (button.textContent || '').toLowerCase().trim();
+                if (label === 'ajouter un thème' || label === 'add new theme') {
+                    button.style.display = 'none';
+                }
+            });
+        }
+
+        hideThemeInfoButtons();
+
+        var observer = new MutationObserver(function() {
+            hideThemeInfoButtons();
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    })();
+    </script>
+    <?php endif; ?>
     <?php
 }
 
