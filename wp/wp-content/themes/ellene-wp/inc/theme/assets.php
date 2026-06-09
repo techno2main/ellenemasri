@@ -371,6 +371,70 @@ function ellene_wp_hide_brevo_menu_for_ellene_admin() {
 
 add_action('admin_menu', 'ellene_wp_hide_brevo_menu_for_ellene_admin', 99999);
 
+function ellene_wp_render_vlb_notice_intermediate_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You are not allowed to access this page.', 'ellene-wp'), 403);
+    }
+    ?>
+    <div class="wrap">
+        <h1>VISUAL LINKS BUILDER (VLB)</h1>
+        <div class="notice notice-warning" style="margin: 12px 0 0;">
+            <p><strong>DO NOT TOUCH WESH 😎</strong></p>
+            <p><strong>Still working on it!</strong></p>
+        </div>
+        <div style="margin-top: 24px; text-align: left;">
+            <img
+                src="https://deretourdufutur.fr/assets/img/Moonwalk.gif"
+                alt="Moonwalk animation"
+                style="max-width: 100%; width: 420px; height: auto; border-radius: 8px;"
+            />
+        </div>
+    </div>
+    <?php
+}
+
+function ellene_wp_register_vlb_notice_intermediate_page() {
+    add_submenu_page(
+        null,
+        'VLB - Development Notice',
+        'VLB - Development Notice',
+        'manage_options',
+        'ellene_vlb_notice_page',
+        'ellene_wp_render_vlb_notice_intermediate_page'
+    );
+}
+
+add_action('admin_menu', 'ellene_wp_register_vlb_notice_intermediate_page', 60);
+
+function ellene_wp_redirect_vlb_to_intermediate_notice_for_ellene_admin() {
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    $current_user = wp_get_current_user();
+    if (!$current_user || empty($current_user->user_login)) {
+        return;
+    }
+
+    if (strtolower((string) $current_user->user_login) !== 'ellene-admin') {
+        return;
+    }
+
+    $page = isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '';
+    $is_vlb_page = (strpos($page, 'mayami_visual_links_') === 0);
+
+    if (!$is_vlb_page) {
+        return;
+    }
+
+    $redirect = add_query_arg(array('page' => 'ellene_vlb_notice_page'), admin_url('admin.php'));
+
+    wp_safe_redirect($redirect);
+    exit;
+}
+
+add_action('admin_init', 'ellene_wp_redirect_vlb_to_intermediate_notice_for_ellene_admin', 20);
+
 function ellene_wp_hide_brevo_menu_for_ellene_admin_fallback_css_js() {
     if (!is_admin() || !current_user_can('manage_options')) {
         return;
