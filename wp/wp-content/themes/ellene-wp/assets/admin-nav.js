@@ -48,6 +48,32 @@
 
 
 
+  const SECTION_HELP_TEXTS = {
+
+    section_modules_title: 'Tu choisis les rubriques que tu veux afficher ou masquer et leur ordre d\'affichage [→ RUBRIQUES].',
+
+    section_top_bar_title: 'C\'est le menu de navigation de ta page. Il est fixe en haut de page et visible en permanence [→ TOP-BAR / HEADER].',
+
+    section_hero_title: 'C\'est la section d\'accroche principale de ta page [→ HERO].',
+
+    section_slider_title: 'C\'est le slider dynamique dans ta section d\'accroche [→ SLIDER HERO].',
+
+    section_stream_title: 'C\'est la section qui affiche tes plateformes de streaming [→ 01/LISTEN].',
+
+    section_social_title: 'C\'est la section qui affiche tes réseaux sociaux [→ 02/FOLLOW].',
+
+    section_video_title: 'C\'est la section qui met en avant une vidéo [→ 03/WATCH].',
+
+    section_release_title: 'C\'est la section qui met en avant le dernier album ou single sorti [→ 04/RELEASE INFOS].',
+
+    section_cta_title: 'C\'est la section qui permet de faire un appel à l\'action clair vers une page de ton site ou un lien externe [→ 05/DON\'T SLEEP ON IT].',
+
+    section_footer_title: 'C\'est la section qui permet de gérer les informations et liens présents en bas de page [→ FOOTER].'
+
+  };
+
+
+
   const ACTIVE_SECTION_STORAGE_KEY = 'ellene_wp_active_section_after_save';
 
   const SECTION_ROW_SELECTORS = {};
@@ -132,11 +158,15 @@
 
     renameTopBarItemTitles();
 
+    hideTopBarAddButtons();
+
     refreshTopBarVisualFieldUi();
 
     layoutTopBarVisualInlineToggle();
 
     layoutInlineFieldToggles();
+
+    moveModulesEnabledHelpAboveChoices();
 
     initModulesOrderAssistant();
 
@@ -149,6 +179,8 @@
     styleBottomSaveButtons();
 
     restoreActiveSectionAfterSave();
+
+    applyDefaultModulesNavState();
 
     addSmoothScroll();
 
@@ -1886,6 +1918,8 @@
 
           renameTopBarItemTitles();
 
+          hideTopBarAddButtons();
+
           renameAllMediaUploadButtons();
 
           refreshTopBarVisualFieldUi();
@@ -1943,6 +1977,42 @@
         toggleButton.setAttribute('aria-expanded', 'false');
 
       }
+
+    });
+
+  }
+
+
+
+  function hideTopBarAddButtons() {
+
+    const rows = getSectionContentRows('section_top_bar_title');
+
+    if (!rows.length) {
+
+      return;
+
+    }
+
+
+
+    rows.forEach(function(row) {
+
+      const addButtons = row.querySelectorAll('.add-group-row');
+
+      if (!addButtons.length) {
+
+        return;
+
+      }
+
+
+
+      addButtons.forEach(function(button) {
+
+        button.style.display = 'none';
+
+      });
 
     });
 
@@ -2086,78 +2156,6 @@
 
 
 
-    // Titre
-
-    const title = document.createElement('a');
-
-    title.href = '#';
-
-    title.className = 'ellene-wp-admin-home';
-
-    title.setAttribute('title', 'Ellene Landing Settings');
-
-    title.setAttribute('aria-label', 'Ellene Landing Settings');
-
-    title.innerHTML = '<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>';
-
-    title.style.cssText = 'display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; color:#fff; text-decoration:none; border-radius:999px; border:2px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); transition:all 0.2s ease;';
-
-    title.addEventListener('click', function(e) {
-
-      e.preventDefault();
-
-      isOverviewMode = true;
-
-      closeAllSections();
-
-      clearActiveButtons();
-
-
-
-      const nav = document.getElementById('ellene-wp-admin-nav');
-
-      if (!nav) return;
-
-
-
-      const navTop = nav.getBoundingClientRect().top + window.pageYOffset;
-
-      const offset = 20;
-
-      window.scrollTo({
-
-        top: Math.max(navTop - offset, 0),
-
-        behavior: 'smooth'
-
-      });
-
-    });
-
-    title.addEventListener('mouseenter', function() {
-
-      this.style.background = 'rgba(255,255,255,0.16)';
-
-      this.style.borderColor = 'rgba(255,255,255,0.35)';
-
-      this.style.transform = 'translateY(-1px)';
-
-    });
-
-    title.addEventListener('mouseleave', function() {
-
-      this.style.background = 'rgba(255,255,255,0.08)';
-
-      this.style.borderColor = 'rgba(255,255,255,0.2)';
-
-      this.style.transform = 'translateY(0)';
-
-    });
-
-    navInner.appendChild(title);
-
-
-
     // Container des boutons
 
     const buttonsContainer = document.createElement('div');
@@ -2178,11 +2176,21 @@
 
       btn.href = '#' + section.id;
 
-      btn.textContent = section.label;
-
       btn.className = 'ellene-wp-nav-btn';
 
       btn.dataset.section = section.id;
+
+      if (section.id === 'section_modules_title') {
+
+        btn.classList.add('ellene-wp-nav-btn-with-icon');
+
+        btn.innerHTML = '<span class="dashicons dashicons-admin-generic ellene-wp-nav-btn-icon" aria-hidden="true"></span><span>' + section.label + '</span>';
+
+      } else {
+
+        btn.textContent = section.label;
+
+      }
 
 
 
@@ -2332,6 +2340,8 @@
 
     injectSectionEyeIcon(sectionTitle);
 
+    injectSectionHelpLine(sectionTitle, sectionId);
+
 
 
     sectionTitle.addEventListener('click', function(e) {
@@ -2389,6 +2399,50 @@
     eye.setAttribute('aria-hidden', 'true');
 
     iconHost.appendChild(eye);
+
+  }
+
+
+
+  function injectSectionHelpLine(sectionTitle, sectionId) {
+
+    const host = sectionTitle.querySelector('.cmb-th') || sectionTitle;
+
+    if (!host || host.querySelector('.ellene-wp-section-helpline')) {
+
+      return;
+
+    }
+
+
+
+    const titleNode = sectionTitle.querySelector('.cmb2-metabox-title, .cmb-th h3');
+
+    const rawLabel = titleNode ? titleNode.textContent : '';
+
+    const label = (rawLabel || '')
+
+      .replace(/\s+/g, ' ')
+
+      .trim();
+
+
+
+    if (!label) {
+
+      return;
+
+    }
+
+
+
+    const helpLine = document.createElement('div');
+
+    helpLine.className = 'ellene-wp-section-helpline';
+
+    helpLine.textContent = SECTION_HELP_TEXTS[sectionId] || ('Aide pour ' + label);
+
+    host.appendChild(helpLine);
 
   }
 
@@ -2518,7 +2572,7 @@
 
       closeSection(sectionId);
 
-      clearActiveButtons();
+      setActiveButtonBySection('section_modules_title');
 
       isOverviewMode = true;
 
@@ -3068,6 +3122,8 @@
 
     const td = row.querySelector('.cmb-td');
 
+    const description = td ? td.querySelector('.cmb2-metabox-description') : null;
+
     if (!input || !td) {
 
       return;
@@ -3090,15 +3146,11 @@
 
       helper.innerHTML = '' +
 
-        '<div class="ellene-wp-modules-order-actions">' +
+         '<div class="ellene-wp-modules-order-note">Déplace les rubriques actives (drag & drop) pour définir l\'ordre :</div>' +     
 
-        '  <button type="button" class="ellene-wp-order-reset-btn">Ordre par défaut</button>' +
+        '<div class="ellene-wp-modules-order-chips"></div>' +
 
-        '</div>' +
-
-        '<div class="ellene-wp-modules-order-note">Glissez les modules pour definir l\'ordre. Le champ texte est mis à jour automatiquement.</div>' +
-
-        '<div class="ellene-wp-modules-order-chips"></div>';
+        '<br>';
 
       td.appendChild(helper);
 
@@ -3106,9 +3158,54 @@
 
 
 
+    let actions = row.querySelector('.ellene-wp-modules-order-actions');
+
+    if (!actions) {
+
+      actions = document.createElement('div');
+
+      actions.className = 'ellene-wp-modules-order-actions';
+
+      actions.innerHTML = '' +
+
+        '<div class="ellene-wp-modules-order-note">Ordre initial : TOP-BAR / HERO / STREAM / SOCIAL / VIDEO / RELEASE / CTA / FOOTER</div>' +
+
+        '<button type="button" class="ellene-wp-order-reset-btn">Réinitialiser les positions</button>';
+
+    }
+
+
+    let separatorBeforeInput = row.querySelector('.ellene-wp-modules-order-separator-before-input');
+    if (!separatorBeforeInput) {
+      separatorBeforeInput = document.createElement('div');
+      separatorBeforeInput.className = 'ellene-wp-modules-order-separator ellene-wp-modules-order-separator-before-input';
+    }
+    td.appendChild(separatorBeforeInput);
+
+    if (description) {
+
+      td.appendChild(description);
+
+    }
+
+    // Keep the editable field below the helper and below its description text.
+    td.appendChild(input);
+
+    let separator = row.querySelector('.ellene-wp-modules-order-separator-before-actions');
+    if (!separator) {
+      separator = document.createElement('div');
+      separator.className = 'ellene-wp-modules-order-separator ellene-wp-modules-order-separator-before-actions';
+    }
+    td.appendChild(separator);
+
+    // Keep reset button + default-order help at the end.
+    td.appendChild(actions);
+
+
+
     const chipsHost = helper.querySelector('.ellene-wp-modules-order-chips');
 
-    const resetBtn = helper.querySelector('.ellene-wp-order-reset-btn');
+    const resetBtn = actions.querySelector('.ellene-wp-order-reset-btn');
 
     let draggingSlug = '';
 
@@ -3339,6 +3436,36 @@
 
 
 
+  function moveModulesEnabledHelpAboveChoices() {
+
+    const row = document.querySelector('.cmb2-id-modules-enabled');
+
+    if (!row) {
+
+      return;
+
+    }
+
+
+
+    const td = row.querySelector('.cmb-td');
+
+    const description = td ? td.querySelector('.cmb2-metabox-description') : null;
+
+    if (!td || !description) {
+
+      return;
+
+    }
+
+
+
+    td.insertBefore(description, td.firstChild);
+
+  }
+
+
+
   function closeSection(sectionId) {
 
     const titleEl = getSectionTitleElement(sectionId);
@@ -3532,6 +3659,34 @@
     const allBtns = document.querySelectorAll('.ellene-wp-nav-btn');
 
     allBtns.forEach(btn => btn.classList.remove('active'));
+
+  }
+
+
+
+  function applyDefaultModulesNavState() {
+
+    const hasActive = !!document.querySelector('.ellene-wp-nav-btn.active');
+
+    if (hasActive) {
+
+      return;
+
+    }
+
+
+
+    const modulesBtn = document.querySelector('.ellene-wp-nav-btn[data-section="section_modules_title"]');
+
+    if (!modulesBtn) {
+
+      return;
+
+    }
+
+
+
+    setActiveButton(modulesBtn);
 
   }
 

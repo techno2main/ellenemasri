@@ -144,6 +144,7 @@ function ellene_wp_register_options() {
         'capability'   => 'manage_options',
     ));
 
+    ellene_wp_register_cmb2_modules_section($cmb);
     ellene_wp_register_cmb2_top_bar_section($cmb);
     ellene_wp_register_cmb2_hero_section($cmb);
     ellene_wp_register_cmb2_slider_section($cmb);
@@ -153,5 +154,4 @@ function ellene_wp_register_options() {
     ellene_wp_register_cmb2_release_section($cmb);
     ellene_wp_register_cmb2_cta_section($cmb);
     ellene_wp_register_cmb2_footer_section($cmb);
-    ellene_wp_register_cmb2_modules_section($cmb);
 }

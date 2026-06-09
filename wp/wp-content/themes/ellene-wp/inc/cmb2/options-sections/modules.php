@@ -14,7 +14,7 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
     // ========== SECTION: MODULES ===========
 
     $cmb->add_field(array(
-        'name' => 'Modules / Rubriques',
+        'name' => 'Modules',
         'type' => 'title',
         'id'   => 'section_modules_title',
     ));
@@ -23,13 +23,14 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
         'name'    => 'Modules actifs',
         'id'      => 'modules_enabled',
         'type'    => 'multicheck_inline',
+        'select_all_button' => false,
         'options' => array(
             'top-bar'      => 'Top-Bar',
             'hero'         => 'Hero',
             'stream'       => 'Stream',
             'social'       => 'Social',
             'video'        => 'Video',
-            'release' => 'Release',
+            'release'      => 'Release',
             'cta'          => 'CTA',
             'footer'       => 'Footer',
         ),
@@ -38,10 +39,10 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
     ));
 
     $cmb->add_field(array(
-        'name' => 'Ordre des modules',
+        'name' => 'Ordre des rubriques',
         'id'   => 'modules_order',
         'type' => 'text',
-        'desc' => 'Ordre des modules (assistant visuel disponible sous le champ). Glissez les modules actifs, le champ se met a jour automatiquement.',
+        'desc' => 'Tu peux aussi modifier l\'ordre ici en séparant les rubriques par une virgule :',
     ));
 
     $cmb->add_field(array(

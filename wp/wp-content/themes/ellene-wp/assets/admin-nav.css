@@ -16,6 +16,13 @@
 
 }
 
+/* Temporaire: masquer le bouton Ajouter (Top-Bar). */
+.cmb2-id-top-bar-items .add-group-row {
+
+  display: none !important;
+
+}
+
 
 
 .ellene-wp-admin-nav {
@@ -94,6 +101,28 @@
 
 }
 
+.ellene-wp-nav-btn-with-icon {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+}
+
+.ellene-wp-nav-btn-icon {
+
+  font-size: 14px;
+
+  width: 14px;
+
+  height: 14px;
+
+  line-height: 14px;
+
+}
+
 
 
 .ellene-wp-nav-btn:hover {
@@ -120,13 +149,13 @@
 
 .ellene-wp-nav-btn[data-section="section_modules_title"].active {
 
-  background: #2f7df6;
+  background: #f15a3b;
 
   color: #fff !important;
 
-  border-color: #2f7df6;
+  border-color: #f15a3b;
 
-  box-shadow: 0 0 0 3px rgba(47, 125, 246, 0.24);
+  box-shadow: 0 0 0 3px rgba(241, 90, 59, 0.26);
 
 }
 
@@ -139,6 +168,18 @@
 .ellene-wp-modules-order-actions {
 
   margin-bottom: 8px;
+
+}
+
+.ellene-wp-modules-order-separator {
+
+  margin: 15px 0 15px;
+
+  border-top: 2px solid #6a0586;
+
+  width: 100%;
+
+  max-width: 450px;
 
 }
 
@@ -166,11 +207,57 @@
 
 .ellene-wp-modules-order-note {
 
-  font-size: 12px;
+  margin-bottom: 8px;
+
+}
+
+.cmb2-id-modules-enabled .cmb2-metabox-description,
+
+.cmb2-id-modules-order .cmb2-metabox-description,
+
+.ellene-wp-modules-order-note {
+
+  font-size: 13px;
+
+  line-height: 1.45;
 
   color: #4b5563;
 
-  margin-bottom: 8px;
+}
+
+.cmb2-id-modules-enabled .cmb2-metabox-description,
+
+.cmb2-id-modules-order .cmb2-metabox-description,
+
+.ellene-wp-modules-order-note {
+
+  position: relative;
+
+  padding-left: 22px;
+
+}
+
+.cmb2-id-modules-enabled .cmb2-metabox-description::before,
+
+.cmb2-id-modules-order .cmb2-metabox-description::before,
+
+.ellene-wp-modules-order-note::before {
+
+  content: '↓';
+
+  font-family: inherit;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  color: #810991;
+
+  position: absolute;
+
+  left: 0;
+
+  top: 0;
 
 }
 
@@ -309,9 +396,9 @@
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open,
 .cmb2-wrap .cmb-row.cmb2-id-section-modules-title.ellene-wp-section-open .cmb-th {
 
-  background: linear-gradient(135deg, #2f7df6 0%, #1e5fd0 100%) !important;
+  background: linear-gradient(135deg, #f15a3b 0%, #e5472a 100%) !important;
 
-  border-left-color: #6ee7ff !important;
+  border-left-color: #ffb4a6 !important;
 
 }
 
@@ -452,6 +539,38 @@
 .cmb2-wrap .cmb-row.ellene-wp-section-toggle.ellene-wp-section-open .ellene-wp-eye-indicator {
 
   opacity: 1;
+
+}
+
+.cmb2-wrap .cmb-row.ellene-wp-section-toggle .ellene-wp-section-helpline {
+
+  display: block;
+
+  margin-top: 6px;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  line-height: 1.35;
+
+  letter-spacing: 0;
+
+  text-transform: none;
+
+  color: #6b7280;
+
+  white-space: nowrap;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+}
+
+.cmb2-wrap .cmb-row.ellene-wp-section-open .ellene-wp-section-helpline {
+
+  color: rgba(255, 255, 255, 0.86);
 
 }
 
@@ -806,24 +925,6 @@ body.ellene-wp-delete-modal-open {
 .cmb2-id-section-top-bar-title.ellene-wp-section-toggle:focus .cmb-th {
 
   box-shadow: 0 0 0 3px rgba(19, 247, 188, 0.35);
-
-}
-
-
-
-.cmb2-id-section-hero-title {
-
-  margin-top: 0 !important;
-
-}
-
-
-
-.cmb2-id-section-hero-title .cmb-th {
-
-  margin-top: 0 !important;
-
-  padding-top: 16px !important;
 
 }
 
