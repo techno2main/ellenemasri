@@ -2406,6 +2406,24 @@ body.ellene-wp-delete-modal-open {
    SECTION COLORS - filet gauche couleur du front (10px)
    ============================================================ */
 
+/* Frame the entire active section block (title + rows) with the section accent color. */
+.cmb2-wrap .ellene-wp-section-active-row {
+  position: relative;
+  box-shadow: inset 2px 0 0 var(--ellene-section-frame-color, #6b7280), inset -2px 0 0 var(--ellene-section-frame-color, #6b7280);
+}
+
+.cmb2-wrap .ellene-wp-section-active-row.ellene-wp-section-active-first {
+  box-shadow: inset 2px 0 0 var(--ellene-section-frame-color, #6b7280), inset -2px 0 0 var(--ellene-section-frame-color, #6b7280), inset 0 2px 0 var(--ellene-section-frame-color, #6b7280);
+}
+
+.cmb2-wrap .ellene-wp-section-active-row.ellene-wp-section-active-last {
+  box-shadow: inset 2px 0 0 var(--ellene-section-frame-color, #6b7280), inset -2px 0 0 var(--ellene-section-frame-color, #6b7280), inset 0 -2px 0 var(--ellene-section-frame-color, #6b7280);
+}
+
+.cmb2-wrap .ellene-wp-section-active-row.ellene-wp-section-active-first.ellene-wp-section-active-last {
+  box-shadow: inset 2px 0 0 var(--ellene-section-frame-color, #6b7280), inset -2px 0 0 var(--ellene-section-frame-color, #6b7280), inset 0 2px 0 var(--ellene-section-frame-color, #6b7280), inset 0 -2px 0 var(--ellene-section-frame-color, #6b7280);
+}
+
 /* ---- MODULES : violet admin (defaut) ---- */
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title {
   border-left: 10px solid #4b5563 !important;

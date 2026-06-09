@@ -3510,6 +3510,8 @@
 
     const rows = getSectionContentRows(sectionId);
 
+    applySectionFrameState(titleEl, rows, false);
+
 
 
     rows.forEach(row => {
@@ -3574,6 +3576,142 @@
 
       applySectionHeaderState(titleEl, true);
 
+      applySectionFrameState(titleEl, rows, true);
+
+    }
+
+  }
+
+
+
+  function getSectionAccentColor(titleEl) {
+
+    if (!titleEl) {
+
+      return '#1f2937';
+
+    }
+
+    const sectionClassName = Object.keys(SECTION_ACCENT_BY_CLASS).find(className =>
+
+      titleEl.classList.contains(className)
+
+    );
+
+    return sectionClassName ? SECTION_ACCENT_BY_CLASS[sectionClassName] : '#1f2937';
+
+  }
+
+
+
+  function applySectionFrameState(titleEl, rows, isOpen) {
+
+    const blockRows = [];
+
+
+
+    if (titleEl) {
+
+      blockRows.push(titleEl);
+
+    }
+
+
+
+    if (titleEl) {
+
+      let current = titleEl.nextElementSibling;
+
+      while (current) {
+
+        if (isSectionTitleRow(current)) {
+
+          break;
+
+        }
+
+        blockRows.push(current);
+
+        current = current.nextElementSibling;
+
+      }
+
+    } else if (Array.isArray(rows) && rows.length) {
+
+      rows.forEach(row => blockRows.push(row));
+
+    }
+
+
+
+    blockRows.forEach(row => {
+
+      row.classList.remove('ellene-wp-section-active-row', 'ellene-wp-section-active-first', 'ellene-wp-section-active-last');
+
+      row.style.removeProperty('--ellene-section-frame-color');
+
+      row.style.removeProperty('box-shadow');
+
+    });
+
+
+
+    if (!isOpen || blockRows.length === 0) {
+
+      return;
+
+    }
+
+
+
+    const accentColor = getSectionAccentColor(titleEl);
+
+
+
+    const visibleBlockRows = blockRows.filter(row => {
+      if (!row || !row.classList) {
+        return false;
+      }
+
+      const computed = window.getComputedStyle(row);
+
+      return computed.display !== 'none' && computed.visibility !== 'hidden';
+    });
+
+
+
+    if (visibleBlockRows.length === 0) {
+      return;
+    }
+
+
+
+    visibleBlockRows.forEach(row => {
+
+      row.classList.add('ellene-wp-section-active-row');
+
+      row.style.setProperty('--ellene-section-frame-color', accentColor);
+
+      row.style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor, 'important');
+
+    });
+
+
+
+    visibleBlockRows[0].classList.add('ellene-wp-section-active-first');
+
+    visibleBlockRows[0].style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor + ', inset 0 2px 0 ' + accentColor, 'important');
+
+    visibleBlockRows[visibleBlockRows.length - 1].classList.add('ellene-wp-section-active-last');
+
+    visibleBlockRows[visibleBlockRows.length - 1].style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor + ', inset 0 -2px 0 ' + accentColor, 'important');
+
+
+
+    if (visibleBlockRows.length === 1) {
+
+      visibleBlockRows[0].style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor + ', inset 0 2px 0 ' + accentColor + ', inset 0 -2px 0 ' + accentColor, 'important');
+
     }
 
   }
@@ -3590,13 +3728,7 @@
 
     const neutralBg = '#f2f2f3';
 
-    const sectionClassName = Object.keys(SECTION_ACCENT_BY_CLASS).find(className =>
-
-      titleEl.classList.contains(className)
-
-    );
-
-    const resolvedAccent = sectionClassName ? SECTION_ACCENT_BY_CLASS[sectionClassName] : '#1f2937';
+    const resolvedAccent = getSectionAccentColor(titleEl);
 
 
 
@@ -3678,7 +3810,7 @@
 
     const navHeight = nav ? nav.offsetHeight : 0;
 
-    const offset = 20; // Padding supplementaire
+    const offset = 40; // Espace top supplementaire entre navbar et titre ouvert.
 
 
 
