@@ -204,9 +204,9 @@
 }
 
 .ellene-wp-nav-btn[data-section="section_modules_title"] {
-  --section-accent: #4b5563;
-  --section-active-bg: #6b7280;
-  --section-active-border: #6b7280;
+  --section-accent: #3858e9;
+  --section-active-bg: #3858e9;
+  --section-active-border: #3858e9;
   --section-hover-text: #ffffff;
   --section-active-text: #ffffff;
 }
@@ -219,9 +219,9 @@
 
 .ellene-wp-nav-btn[data-section="section_hero_title"],
 .ellene-wp-nav-btn[data-section="section_slider_title"] {
-  --section-accent: oklch(0.68 0.22 45);
-  --section-hover-text: #0f0420;
-  --section-active-text: #0f0420;
+  --section-accent: #c2410c;
+  --section-hover-text: #ffffff;
+  --section-active-text: #ffffff;
 }
 
 .ellene-wp-nav-btn[data-section="section_stream_title"] {
@@ -470,6 +470,10 @@
 
   scroll-margin-top: 120px;
 
+}
+
+.cmb2-id-section-modules-title .cmb-th {
+  border-left-color: #3858e9 !important;
 }
 
 /* HERO + SLIDER: remove the visual gap so both blocks read as a linked pair. */
@@ -2686,69 +2690,160 @@ body.ellene-wp-delete-modal-open {
   opacity: 1 !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: #4b5563 !important;
+/* ==========================================================
+   OVERRIDE FINAL BIS - TITRE OUVERT FOND COULEUR + TEXTE/OEIL BLANCS
+   ========================================================== */
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open .cmb-th {
+  background: #4b5563 !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: oklch(0.15 0.08 280) !important;
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .cmb-th,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .cmb-th {
+  background: oklch(0.15 0.08 280) !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: oklch(0.68 0.22 45) !important;
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .cmb-th,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .cmb-th {
+  background: oklch(0.68 0.22 45) !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: #6a1b78 !important;
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .cmb-th {
+  background: #6a1b78 !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: oklch(0.62 0.28 350) !important;
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb-th {
+  background: oklch(0.62 0.28 350) !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: oklch(0.88 0.19 95) !important;
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .cmb-th {
+  background: oklch(0.88 0.19 95) !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: oklch(0.78 0.10 80) !important;
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .cmb-th {
+  background: oklch(0.78 0.10 80) !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: oklch(0.68 0.17 182) !important;
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .cmb-th {
+  background: oklch(0.68 0.17 182) !important;
+  color: #ffffff !important;
 }
 
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .ellene-wp-eye-indicator,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .ellene-wp-eye-indicator:before,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons,
-.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .ellene-wp-eye-indicator .dashicons:before {
-  color: oklch(0.15 0.08 280) !important;
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .cmb-th .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .cmb-th h3,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .cmb-th label,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .ellene-wp-section-helpline {
+  color: #ffffff !important;
+}
+
+
+/* ==========================================================
+   OVERRIDE FINAL TER - FOND TITRE OUVERT SUR TOUTE LA LIGNE + OEIL BLANC
+   ========================================================== */
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open .cmb-th {
+  background: #3858e9 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-closed {
+  border-left-color: #3858e9 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open {
+  border-left: 0 !important;
+  overflow: hidden !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .cmb-th {
+  border-left-width: 5px !important;
+  border-left-style: solid !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-modules-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #3858e9 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .cmb-th,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .cmb-th {
+  background: #0f0420 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-top-bar-title.ellene-wp-section-open .cmb-th,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-footer-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #0f0420 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .cmb-th,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .cmb-th {
+  background: #c2410c !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-hero-title.ellene-wp-section-open .cmb-th,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-slider-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #c2410c !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .cmb-th {
+  background: #6a1b78 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-stream-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #6a1b78 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb-th {
+  background: #e40aa8 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #e40aa8 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .cmb-th {
+  background: #f5ca00 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #f5ca00 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .cmb-th {
+  background: #d8b97f !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-release-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #d8b97f !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open,
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .cmb-th {
+  background: #15b7a5 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-cta-title.ellene-wp-section-open .cmb-th {
+  border-left-color: #15b7a5 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .cmb2-metabox-title,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open h3,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open label,
+.cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .ellene-wp-section-helpline {
+  color: #ffffff !important;
 }

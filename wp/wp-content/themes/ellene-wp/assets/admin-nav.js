@@ -73,16 +73,29 @@
   };
 
   const SECTION_ACCENT_BY_CLASS = {
-    'cmb2-id-section-modules-title': '#4b5563',
+    'cmb2-id-section-modules-title': '#3858e9',
     'cmb2-id-section-top-bar-title': 'oklch(0.15 0.08 280)',
-    'cmb2-id-section-hero-title': 'oklch(0.68 0.22 45)',
-    'cmb2-id-section-slider-title': 'oklch(0.68 0.22 45)',
+    'cmb2-id-section-hero-title': '#c2410c',
+    'cmb2-id-section-slider-title': '#c2410c',
     'cmb2-id-section-stream-title': '#6a1b78',
     'cmb2-id-section-social-title': 'oklch(0.62 0.28 350)',
     'cmb2-id-section-video-title': 'oklch(0.88 0.19 95)',
     'cmb2-id-section-release-title': 'oklch(0.78 0.10 80)',
     'cmb2-id-section-cta-title': 'oklch(0.68 0.17 182)',
     'cmb2-id-section-footer-title': 'oklch(0.15 0.08 280)'
+  };
+
+  const SECTION_ACTIVE_TEXT_BY_CLASS = {
+    'cmb2-id-section-modules-title': '#ffffff',
+    'cmb2-id-section-top-bar-title': '#ffffff',
+    'cmb2-id-section-hero-title': '#ffffff',
+    'cmb2-id-section-slider-title': '#ffffff',
+    'cmb2-id-section-stream-title': '#ffffff',
+    'cmb2-id-section-social-title': '#ffffff',
+    'cmb2-id-section-video-title': '#0f172a',
+    'cmb2-id-section-release-title': '#0f172a',
+    'cmb2-id-section-cta-title': '#0f172a',
+    'cmb2-id-section-footer-title': '#ffffff'
   };
 
 
@@ -3726,9 +3739,19 @@
 
     const eye = titleEl.querySelector('.ellene-wp-eye-indicator');
 
+    const helpLine = titleEl.querySelector('.ellene-wp-section-helpline');
+
     const neutralBg = '#f2f2f3';
 
     const resolvedAccent = getSectionAccentColor(titleEl);
+
+    const sectionClassName = Object.keys(SECTION_ACTIVE_TEXT_BY_CLASS).find(className =>
+
+      titleEl.classList.contains(className)
+
+    );
+
+    const resolvedActiveText = sectionClassName ? SECTION_ACTIVE_TEXT_BY_CLASS[sectionClassName] : '#ffffff';
 
 
 
@@ -3738,11 +3761,17 @@
 
         headerCell.style.setProperty('background-image', 'none', 'important');
 
-        headerCell.style.setProperty('background-color', neutralBg, 'important');
+        headerCell.style.setProperty('background-color', resolvedAccent, 'important');
 
-        headerCell.style.setProperty('background', neutralBg, 'important');
+        headerCell.style.setProperty('background', resolvedAccent, 'important');
 
-        headerCell.style.setProperty('color', resolvedAccent, 'important');
+        headerCell.style.setProperty('color', resolvedActiveText, 'important');
+
+        headerCell.style.setProperty('border-radius', '0', 'important');
+
+        headerCell.style.setProperty('border-left-style', 'solid', 'important');
+
+        headerCell.style.setProperty('border-left-width', '5px', 'important');
 
         headerCell.style.setProperty('border-left-color', resolvedAccent, 'important');
 
@@ -3756,6 +3785,12 @@
 
         headerCell.style.removeProperty('color');
 
+        headerCell.style.removeProperty('border-radius');
+
+        headerCell.style.removeProperty('border-left-style');
+
+        headerCell.style.removeProperty('border-left-width');
+
         headerCell.style.removeProperty('border-left-color');
 
       }
@@ -3768,7 +3803,7 @@
 
       if (isOpen) {
 
-        heading.style.setProperty('color', resolvedAccent, 'important');
+        heading.style.setProperty('color', resolvedActiveText, 'important');
 
       } else {
 
@@ -3784,11 +3819,27 @@
 
       if (isOpen) {
 
-        eye.style.setProperty('color', resolvedAccent, 'important');
+        eye.style.setProperty('color', resolvedActiveText, 'important');
 
       } else {
 
         eye.style.removeProperty('color');
+
+      }
+
+    }
+
+
+
+    if (helpLine) {
+
+      if (isOpen) {
+
+        helpLine.style.setProperty('color', resolvedActiveText, 'important');
+
+      } else {
+
+        helpLine.style.removeProperty('color');
 
       }
 
