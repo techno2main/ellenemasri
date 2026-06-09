@@ -320,3 +320,53 @@ function ellene_wp_output_active_theme_name_in_admin_menu() {
 
 add_action('admin_head', 'ellene_wp_output_active_theme_name_in_admin_menu', 20);
 
+function ellene_wp_customize_themes_admin_preview() {
+    if (!is_admin()) {
+        return;
+    }
+
+    $screen = get_current_screen();
+
+    if (!$screen || $screen->id !== 'themes') {
+        return;
+    }
+    ?>
+    <style>
+    .theme-wrap .theme-author,
+    .theme-wrap .theme-author a {
+        color: #8f4de8 !important;
+    }
+
+    .theme-wrap .theme-author a,
+    .theme-wrap .theme-author a:hover,
+    .theme-wrap .theme-author a:focus,
+    .theme-wrap .theme-author a:active {
+        text-decoration: none !important;
+        box-shadow: none;
+    }
+    </style>
+    <?php
+}
+
+add_action('admin_head', 'ellene_wp_customize_themes_admin_preview', 30);
+
+function ellene_wp_force_by_label_in_theme_preview($translation, $text, $domain) {
+    if (!is_admin()) {
+        return $translation;
+    }
+
+    if ($text !== 'By %s') {
+        return $translation;
+    }
+
+    $screen = get_current_screen();
+
+    if (!$screen || $screen->id !== 'themes') {
+        return $translation;
+    }
+
+    return 'By %s';
+}
+
+add_filter('gettext', 'ellene_wp_force_by_label_in_theme_preview', 20, 3);
+
