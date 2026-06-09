@@ -380,7 +380,6 @@ function ellene_wp_render_vlb_notice_intermediate_page() {
         <h1>VISUAL LINKS BUILDER (VLB)</h1>
         <div class="notice notice-warning" style="margin: 12px 0 0;">
             <p><strong>DO NOT TOUCH WESH 😎</strong></p>
-            <p><strong>Still working on it!</strong></p>
         </div>
         <div style="margin-top: 24px; text-align: left;">
             <img
@@ -388,6 +387,7 @@ function ellene_wp_render_vlb_notice_intermediate_page() {
                 alt="Moonwalk animation"
                 style="max-width: 100%; width: 420px; height: auto; border-radius: 8px;"
             />
+            <p><strong>Still working on it, Baby!</strong></p>
         </div>
     </div>
     <?php
