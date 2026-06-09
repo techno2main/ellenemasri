@@ -722,6 +722,26 @@ function ellene_wp_customize_themes_admin_preview() {
     }
     <?php endif; ?>
     </style>
+    <script>
+    (function() {
+        function forceThemeAuthorLinksToBlank() {
+            var authorLinks = document.querySelectorAll('.theme-wrap .theme-author a, .theme-overlay .theme-author a');
+
+            authorLinks.forEach(function(link) {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            });
+        }
+
+        forceThemeAuthorLinksToBlank();
+
+        var observer = new MutationObserver(function() {
+            forceThemeAuthorLinksToBlank();
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    })();
+    </script>
     <?php if ($is_ellene_admin) : ?>
     <script>
     (function() {
