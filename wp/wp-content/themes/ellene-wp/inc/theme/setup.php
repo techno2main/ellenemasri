@@ -94,3 +94,86 @@ function ellene_wp_output_theme_favicon() {
 add_action('wp_head', 'ellene_wp_output_theme_favicon', 1);
 add_action('admin_head', 'ellene_wp_output_theme_favicon', 1);
 add_action('login_head', 'ellene_wp_output_theme_favicon', 1);
+
+function ellene_wp_get_login_logo_url() {
+    if (function_exists('get_site_icon_url')) {
+        $site_icon_url = get_site_icon_url(512);
+        if (!empty($site_icon_url)) {
+            return $site_icon_url;
+        }
+    }
+
+    $fallback_png_180 = get_template_directory() . '/assets/favicon-180.png';
+    $fallback_png_32 = get_template_directory() . '/assets/favicon-32.png';
+    $fallback_svg = get_template_directory() . '/assets/favicon.svg';
+
+    if (file_exists($fallback_png_180)) {
+        return get_template_directory_uri() . '/assets/favicon-180.png?v=' . filemtime($fallback_png_180);
+    }
+
+    if (file_exists($fallback_png_32)) {
+        return get_template_directory_uri() . '/assets/favicon-32.png?v=' . filemtime($fallback_png_32);
+    }
+
+    if (file_exists($fallback_svg)) {
+        return get_template_directory_uri() . '/assets/favicon.svg?v=' . filemtime($fallback_svg);
+    }
+
+    return '';
+}
+
+function ellene_wp_minimal_customize_login_page() {
+    $logo_url = ellene_wp_get_login_logo_url();
+    ?>
+    <style>
+    <?php if ($logo_url !== '') : ?>
+    .login h1 a {
+        background-image: url('<?php echo esc_url($logo_url); ?>') !important;
+        background-size: contain !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        width: 92px !important;
+        height: 92px !important;
+    }
+    <?php endif; ?>
+    </style>
+    <script>
+    (function() {
+        function patchLoginLinks() {
+            var loginLinks = document.querySelectorAll('#login a');
+
+            loginLinks.forEach(function(link) {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            });
+
+            var backLink = document.querySelector('#backtoblog a');
+            if (backLink) {
+                backLink.textContent = '← Aller sur Ellene Masri';
+                backLink.href = 'https://ellenemasri.com/';
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', patchLoginLinks, { once: true });
+        } else {
+            patchLoginLinks();
+        }
+    })();
+    </script>
+    <?php
+}
+
+add_action('login_enqueue_scripts', 'ellene_wp_minimal_customize_login_page', 20);
+
+function ellene_wp_customize_login_logo_url($url) {
+    return 'https://ellenemasri.com/';
+}
+
+add_filter('login_headerurl', 'ellene_wp_customize_login_logo_url');
+
+function ellene_wp_customize_login_site_link($html) {
+    return '<p id="backtoblog"><a href="https://ellenemasri.com/" target="_blank" rel="noopener noreferrer">&larr; Aller sur Ellene Masri</a></p>';
+}
+
+add_filter('login_site_html_link', 'ellene_wp_customize_login_site_link');
