@@ -474,3 +474,80 @@ function ellene_wp_force_by_label_in_theme_preview($translation, $text, $domain)
 
 add_filter('gettext', 'ellene_wp_force_by_label_in_theme_preview', 20, 3);
 
+function ellene_wp_customize_media_admin_labels($translation, $text, $domain) {
+    if (!is_admin()) {
+        return $translation;
+    }
+
+    $replacements_by_rendered_text = array(
+        'Téléverser un média' => 'Uploader un média',
+        'Déposez vos fichiers pour les téléverser' => 'Dépose tes fichiers pour les uploader',
+        'Ajouter un fichier média' => 'Uploader un média',
+    );
+
+    if (isset($replacements_by_rendered_text[$translation])) {
+        return $replacements_by_rendered_text[$translation];
+    }
+
+    $replacements_by_source_text = array(
+        'Upload New Media' => 'Uploader un média',
+        'Drop files to upload' => 'Dépose tes fichiers pour les uploader',
+        'Add New Media File' => 'Uploader un média',
+    );
+
+    if (isset($replacements_by_source_text[$text])) {
+        return $replacements_by_source_text[$text];
+    }
+
+    return $translation;
+}
+
+add_filter('gettext', 'ellene_wp_customize_media_admin_labels', 25, 3);
+
+function ellene_wp_wink_on_upload_media_title() {
+    global $pagenow;
+
+    $screen = get_current_screen();
+
+    $is_media_new_page = ((string) $pagenow === 'media-new.php');
+    $is_media_screen = ($screen && ($screen->id === 'media' || $screen->base === 'media'));
+
+    if (!$is_media_new_page && !$is_media_screen) {
+        return;
+    }
+    ?>
+    <script>
+    (function() {
+        function applyWink() {
+            var title = document.querySelector('.wrap h1');
+            if (!title || title.getAttribute('data-ellene-winked') === '1') {
+                return;
+            }
+
+            var label = (title.textContent || '').trim();
+            if (!/^Uploader\s+un/i.test(label)) {
+                return;
+            }
+
+            title.textContent = label.replace(/^Uploader\b/i, 'Uploader 😉');
+            title.setAttribute('data-ellene-winked', '1');
+        }
+
+        applyWink();
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', applyWink, { once: true });
+        }
+
+        var observer = new MutationObserver(function() {
+            applyWink();
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    })();
+    </script>
+    <?php
+}
+
+add_action('admin_footer', 'ellene_wp_wink_on_upload_media_title', 30);
+
