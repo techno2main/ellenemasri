@@ -297,6 +297,130 @@ function ellene_wp_limit_settings_submenu_for_ellene_admin() {
 
 add_action('admin_menu', 'ellene_wp_limit_settings_submenu_for_ellene_admin', 1000);
 
+function ellene_wp_hide_brevo_menu_for_ellene_admin() {
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    $current_user = wp_get_current_user();
+    if (!$current_user || empty($current_user->user_login)) {
+        return;
+    }
+
+    if (strtolower((string) $current_user->user_login) !== 'ellene-admin') {
+        return;
+    }
+
+    $known_brevo_slugs = array(
+        'sib_page_home',
+        'mailin',
+        'admin.php?page=sib_page_home',
+    );
+
+    foreach ($known_brevo_slugs as $slug) {
+        remove_menu_page($slug);
+        remove_submenu_page($slug, $slug);
+    }
+
+    global $menu, $submenu;
+
+    if (!empty($menu) && is_array($menu)) {
+        foreach ($menu as $index => $menu_item) {
+            $menu_title = isset($menu_item[0]) ? strtolower(wp_strip_all_tags((string) $menu_item[0])) : '';
+            $menu_slug = isset($menu_item[2]) ? strtolower((string) $menu_item[2]) : '';
+
+            $title_match = (strpos($menu_title, 'brevo') !== false || strpos($menu_title, 'sendinblue') !== false);
+            $slug_match = (
+                strpos($menu_slug, 'brevo') !== false ||
+                strpos($menu_slug, 'sendinblue') !== false ||
+                strpos($menu_slug, 'sib_page_home') !== false ||
+                strpos($menu_slug, 'mailin') !== false
+            );
+
+            if ($title_match || $slug_match) {
+                unset($menu[$index]);
+            }
+        }
+    }
+
+    if (!empty($submenu) && is_array($submenu)) {
+        foreach ($submenu as $parent_slug => $submenu_items) {
+            if (!is_array($submenu_items)) {
+                continue;
+            }
+
+            foreach ($submenu_items as $sub_index => $submenu_item) {
+                $submenu_title = isset($submenu_item[0]) ? strtolower(wp_strip_all_tags((string) $submenu_item[0])) : '';
+                $submenu_slug = isset($submenu_item[2]) ? strtolower((string) $submenu_item[2]) : '';
+
+                $title_match = (strpos($submenu_title, 'brevo') !== false || strpos($submenu_title, 'sendinblue') !== false);
+                $slug_match = (
+                    strpos($submenu_slug, 'brevo') !== false ||
+                    strpos($submenu_slug, 'sendinblue') !== false ||
+                    strpos($submenu_slug, 'sib_page_home') !== false ||
+                    strpos($submenu_slug, 'mailin') !== false
+                );
+
+                if ($title_match || $slug_match) {
+                    unset($submenu[$parent_slug][$sub_index]);
+                }
+            }
+        }
+    }
+}
+
+add_action('admin_menu', 'ellene_wp_hide_brevo_menu_for_ellene_admin', 99999);
+
+function ellene_wp_hide_brevo_menu_for_ellene_admin_fallback_css_js() {
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    $current_user = wp_get_current_user();
+    if (!$current_user || empty($current_user->user_login)) {
+        return;
+    }
+
+    if (strtolower((string) $current_user->user_login) !== 'ellene-admin') {
+        return;
+    }
+    ?>
+    <style>
+      #adminmenu a[href*="page=sib_page_home"],
+      #adminmenu a[href*="mailin"],
+      #adminmenu a[href*="brevo"],
+      #adminmenu a[href*="sendinblue"] {
+        display: none !important;
+      }
+      #adminmenu li.hidden-by-ellene-brevo-hide {
+        display: none !important;
+      }
+    </style>
+    <script>
+    (function() {
+      var items = document.querySelectorAll('#adminmenu li.menu-top');
+      items.forEach(function(li) {
+        var anchor = li.querySelector('a.menu-top');
+        if (!anchor) return;
+        var text = (anchor.textContent || '').toLowerCase();
+        var href = (anchor.getAttribute('href') || '').toLowerCase();
+        if (
+          text.indexOf('brevo') !== -1 ||
+          text.indexOf('sendinblue') !== -1 ||
+          href.indexOf('sib_page_home') !== -1 ||
+          href.indexOf('mailin') !== -1 ||
+          href.indexOf('brevo') !== -1
+        ) {
+          li.classList.add('hidden-by-ellene-brevo-hide');
+        }
+      });
+    })();
+    </script>
+    <?php
+}
+
+add_action('admin_head', 'ellene_wp_hide_brevo_menu_for_ellene_admin_fallback_css_js', 100);
+
 function ellene_wp_client_login_redirect($redirect_to, $requested_redirect_to, $user) {
     if (is_wp_error($user) || empty($user->user_login)) {
         return $redirect_to;
