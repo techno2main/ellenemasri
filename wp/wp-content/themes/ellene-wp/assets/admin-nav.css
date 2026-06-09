@@ -2563,7 +2563,7 @@ body.ellene-wp-delete-modal-open {
 }
 
 /* ---- Oeil couleur filet, toujours (ouvert et ferme) ---- */
-.cmb2-wrap .cmb-row.cmb2-id-section-modules-title .ellene-wp-eye-indicator { color: #4b5563 !important; font-size: 30px !important; width: 30px !important; height: 30px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-modules-title .ellene-wp-eye-indicator { color: #3858e9 !important; font-size: 30px !important; width: 30px !important; height: 30px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-top-bar-title .ellene-wp-eye-indicator { color: oklch(0.15 0.08 280) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-hero-title .ellene-wp-eye-indicator    { color: oklch(0.68 0.22 45) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-slider-title .ellene-wp-eye-indicator  { color: oklch(0.68 0.22 45) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
