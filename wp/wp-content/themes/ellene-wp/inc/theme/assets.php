@@ -605,6 +605,7 @@ function ellene_wp_customize_media_admin_labels($translation, $text, $domain) {
 
     $replacements_by_rendered_text = array(
         'Téléverser un média' => 'Uploader un média',
+        'Téléverser des fichiers' => 'Uploader des fichiers',
         'Déposez vos fichiers pour les téléverser' => 'Dépose tes fichiers pour les uploader',
         'Ajouter un fichier média' => 'Uploader un média',
     );
@@ -615,6 +616,7 @@ function ellene_wp_customize_media_admin_labels($translation, $text, $domain) {
 
     $replacements_by_source_text = array(
         'Upload New Media' => 'Uploader un média',
+        'Upload Files' => 'Uploader des fichiers',
         'Drop files to upload' => 'Dépose tes fichiers pour les uploader',
         'Add New Media File' => 'Uploader un média',
     );
