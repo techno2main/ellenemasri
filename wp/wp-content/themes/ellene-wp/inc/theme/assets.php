@@ -724,6 +724,8 @@ function ellene_wp_customize_themes_admin_preview() {
     </style>
     <script>
     (function() {
+        var clickHandlerBound = false;
+
         function forceThemeAuthorLinksToBlank() {
             var authorLinks = document.querySelectorAll('.theme-wrap .theme-author a, .theme-overlay .theme-author a');
 
@@ -733,7 +735,32 @@ function ellene_wp_customize_themes_admin_preview() {
             });
         }
 
+        function bindThemeAuthorClickHandler() {
+            if (clickHandlerBound) {
+                return;
+            }
+
+            document.addEventListener('click', function(event) {
+                var link = event.target && event.target.closest('.theme-wrap .theme-author a, .theme-overlay .theme-author a');
+                if (!link) {
+                    return;
+                }
+
+                var href = link.getAttribute('href');
+                if (!href) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                window.open(href, '_blank', 'noopener,noreferrer');
+            }, true);
+
+            clickHandlerBound = true;
+        }
+
         forceThemeAuthorLinksToBlank();
+        bindThemeAuthorClickHandler();
 
         var observer = new MutationObserver(function() {
             forceThemeAuthorLinksToBlank();
