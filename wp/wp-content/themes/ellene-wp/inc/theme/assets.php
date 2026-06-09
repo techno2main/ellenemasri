@@ -726,6 +726,88 @@ function ellene_wp_customize_themes_admin_preview() {
     (function() {
         var clickHandlerBound = false;
 
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        function autoLinkUrlsPreservingAnchors(html) {
+            var parts = String(html || '').split(/(<a\b[^>]*>.*?<\/a>)/gi);
+
+            return parts.map(function(part) {
+                if (/^<a\b/i.test(part)) {
+                    return part;
+                }
+
+                return part.replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+            }).join('');
+        }
+
+        function renderRichDescriptionLine(line) {
+            var html = escapeHtml(line || '');
+
+            // Basic markdown-like formatting supported in style.css Description.
+            html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+            // Rich tokens: [b][/b], [i][/i], [u][/u], [color=#ff6600][/color], [link=https://...][/link]
+            html = html.replace(/\[b\]([\s\S]+?)\[\/b\]/gi, '<strong>$1</strong>');
+            html = html.replace(/\[i\]([\s\S]+?)\[\/i\]/gi, '<em>$1</em>');
+            html = html.replace(/\[u\]([\s\S]+?)\[\/u\]/gi, '<span style="text-decoration: underline;">$1</span>');
+            html = html.replace(/\[link=(https?:\/\/[^\]\s]+)\]([\s\S]+?)\[\/link\]/gi, '<a href="$1" target="_blank" rel="noopener noreferrer">$2</a>');
+            html = html.replace(/\[link\s+url=&quot;(https?:\/\/[^&]+)&quot;\]([\s\S]+?)\[\/link\]/gi, '<a href="$1" target="_blank" rel="noopener noreferrer">$2</a>');
+            html = html.replace(/\[color=([^\]]+)\]([\s\S]+?)\[\/color\]/gi, function(match, rawColor, content) {
+                var color = String(rawColor || '').trim();
+                var isHex = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color);
+                var isNamed = /^[a-z]{3,20}$/i.test(color);
+                var isRgb = /^rgba?\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}(\s*,\s*(0|0?\.\d+|1))?\s*\)$/i.test(color);
+
+                if (!isHex && !isNamed && !isRgb) {
+                    return content;
+                }
+
+                return '<span style="color: ' + color + ';">' + content + '</span>';
+            });
+
+            return autoLinkUrlsPreservingAnchors(html);
+        }
+
+        function applyThemeDescriptionRichFormatting() {
+            var descriptionNodes = document.querySelectorAll('.theme-description, .theme-wrap .theme-info p:not(.theme-author), .theme-overlay .theme-info p:not(.theme-author)');
+            var separatorPattern = /\s*\|\|\s*|\s*\|\s+\|\s*/;
+            var enrichPattern = /\|\||\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|https?:\/\/|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[(?:b|i|u|color|link)(?:=|\s|\])/i;
+
+            descriptionNodes.forEach(function(node) {
+                if (!node) {
+                    return;
+                }
+
+                var rawText = (node.textContent || '').trim();
+                if (!enrichPattern.test(rawText)) {
+                    return;
+                }
+
+                var lines = rawText.split(separatorPattern).map(function(part) {
+                    return part.trim();
+                }).filter(function(part) {
+                    return part.length > 0;
+                });
+
+                if (!lines.length) {
+                    return;
+                }
+
+                node.innerHTML = lines.map(renderRichDescriptionLine).join('<br>');
+                node.style.whiteSpace = 'normal';
+                node.setAttribute('data-ellene-linebreak-ready', '1');
+            });
+        }
+
         function forceThemeAuthorLinksToBlank() {
             var authorLinks = document.querySelectorAll('.theme-wrap .theme-author a, .theme-overlay .theme-author a');
 
@@ -761,12 +843,17 @@ function ellene_wp_customize_themes_admin_preview() {
 
         forceThemeAuthorLinksToBlank();
         bindThemeAuthorClickHandler();
+        applyThemeDescriptionRichFormatting();
 
         var observer = new MutationObserver(function() {
             forceThemeAuthorLinksToBlank();
+            applyThemeDescriptionRichFormatting();
         });
 
-        observer.observe(document.body, { childList: true, subtree: true });
+        var observerTarget = document.body || document.documentElement;
+        if (observerTarget && observerTarget.nodeType === 1) {
+            observer.observe(observerTarget, { childList: true, subtree: true });
+        }
     })();
     </script>
     <?php if ($is_ellene_admin) : ?>
@@ -806,7 +893,10 @@ function ellene_wp_customize_themes_admin_preview() {
             hideThemeInfoButtons();
         });
 
-        observer.observe(document.body, { childList: true, subtree: true });
+        var observerTarget = document.body || document.documentElement;
+        if (observerTarget && observerTarget.nodeType === 1) {
+            observer.observe(observerTarget, { childList: true, subtree: true });
+        }
     })();
     </script>
     <?php endif; ?>
@@ -830,7 +920,7 @@ function ellene_wp_force_by_label_in_theme_preview($translation, $text, $domain)
         return $translation;
     }
 
-    return 'By %s';
+    return '%s';
 }
 
 add_filter('gettext', 'ellene_wp_force_by_label_in_theme_preview', 20, 3);
