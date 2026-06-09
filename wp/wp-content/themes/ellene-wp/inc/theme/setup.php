@@ -47,12 +47,23 @@ function ellene_wp_theme_setup() {
 add_action('after_setup_theme', 'ellene_wp_theme_setup');
 
 function ellene_wp_output_theme_favicon() {
+    // Prefer the WordPress Site Icon set in Settings/Customizer.
+    if (function_exists('has_site_icon') && has_site_icon()) {
+        return;
+    }
+
     $favicon_svg_path = get_template_directory() . '/assets/favicon.svg';
     $favicon_png_32_path = get_template_directory() . '/assets/favicon-32.png';
     $favicon_png_180_path = get_template_directory() . '/assets/favicon-180.png';
     $favicon_svg_url = get_template_directory_uri() . '/assets/favicon.svg';
     $favicon_png_32_url = get_template_directory_uri() . '/assets/favicon-32.png';
     $favicon_png_180_url = get_template_directory_uri() . '/assets/favicon-180.png';
+
+    $has_any_theme_favicon = file_exists($favicon_svg_path) || file_exists($favicon_png_32_path) || file_exists($favicon_png_180_path);
+
+    if (!$has_any_theme_favicon) {
+        return;
+    }
 
     if (file_exists($favicon_svg_path)) {
         $favicon_svg_url .= '?v=' . filemtime($favicon_svg_path);
@@ -66,10 +77,18 @@ function ellene_wp_output_theme_favicon() {
         $favicon_png_180_url .= '?v=' . filemtime($favicon_png_180_path);
     }
 
-    echo '<link rel="icon" type="image/svg+xml" href="' . esc_url($favicon_svg_url) . '" />' . "\n";
-    echo '<link rel="icon" type="image/png" sizes="32x32" href="' . esc_url($favicon_png_32_url) . '" />' . "\n";
-    echo '<link rel="shortcut icon" href="' . esc_url($favicon_png_32_url) . '" />' . "\n";
-    echo '<link rel="apple-touch-icon" sizes="180x180" href="' . esc_url($favicon_png_180_url) . '" />' . "\n";
+    if (file_exists($favicon_svg_path)) {
+        echo '<link rel="icon" type="image/svg+xml" href="' . esc_url($favicon_svg_url) . '" />' . "\n";
+    }
+
+    if (file_exists($favicon_png_32_path)) {
+        echo '<link rel="icon" type="image/png" sizes="32x32" href="' . esc_url($favicon_png_32_url) . '" />' . "\n";
+        echo '<link rel="shortcut icon" href="' . esc_url($favicon_png_32_url) . '" />' . "\n";
+    }
+
+    if (file_exists($favicon_png_180_path)) {
+        echo '<link rel="apple-touch-icon" sizes="180x180" href="' . esc_url($favicon_png_180_url) . '" />' . "\n";
+    }
 }
 
 add_action('wp_head', 'ellene_wp_output_theme_favicon', 1);

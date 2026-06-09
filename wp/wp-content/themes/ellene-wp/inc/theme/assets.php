@@ -104,6 +104,73 @@ function ellene_wp_enqueue_admin_assets($hook) {
 
 add_action('admin_enqueue_scripts', 'ellene_wp_enqueue_admin_assets');
 
+function ellene_wp_resolve_user_login_from_avatar_subject($id_or_email) {
+    if ($id_or_email instanceof WP_User) {
+        return (string) $id_or_email->user_login;
+    }
+
+    if ($id_or_email instanceof WP_Comment) {
+        if (!empty($id_or_email->user_id)) {
+            $user = get_user_by('id', (int) $id_or_email->user_id);
+
+            return $user ? (string) $user->user_login : '';
+        }
+
+        if (!empty($id_or_email->comment_author_email)) {
+            $user = get_user_by('email', (string) $id_or_email->comment_author_email);
+
+            return $user ? (string) $user->user_login : '';
+        }
+
+        return '';
+    }
+
+    if (is_numeric($id_or_email)) {
+        $user = get_user_by('id', (int) $id_or_email);
+
+        return $user ? (string) $user->user_login : '';
+    }
+
+    if (is_string($id_or_email) && is_email($id_or_email)) {
+        $user = get_user_by('email', $id_or_email);
+
+        return $user ? (string) $user->user_login : '';
+    }
+
+    return '';
+}
+
+function ellene_wp_customize_account_avatars($args, $id_or_email) {
+    $user_login = strtolower(ellene_wp_resolve_user_login_from_avatar_subject($id_or_email));
+
+    if ($user_login === '') {
+        return $args;
+    }
+
+    $custom_url = '';
+
+    if ($user_login === 'ellene-admin') {
+        $custom_url = get_site_icon_url((int) $args['size']);
+
+        if (!$custom_url) {
+            $custom_url = get_site_icon_url(96);
+        }
+    } elseif ($user_login === 'admin-my') {
+        $custom_url = 'https://ellenemasri.com/wp/wp-content/uploads/2026/06/TAD.jpg';
+    }
+
+    if (!$custom_url) {
+        return $args;
+    }
+
+    $args['url'] = esc_url_raw($custom_url);
+    $args['found_avatar'] = true;
+
+    return $args;
+}
+
+add_filter('pre_get_avatar_data', 'ellene_wp_customize_account_avatars', 20, 2);
+
 function ellene_wp_hide_wp_footer_text_on_landing($text) {
     $screen = get_current_screen();
 
@@ -180,6 +247,9 @@ function ellene_wp_limit_admin_menu_for_client() {
         return;
     }
 
+    $user_login = strtolower((string) $current_user->user_login);
+    $is_ellene_admin = ($user_login === 'ellene-admin');
+
     remove_menu_page('index.php');
     remove_menu_page('edit.php');
     remove_menu_page('edit-comments.php');
@@ -188,10 +258,44 @@ function ellene_wp_limit_admin_menu_for_client() {
     remove_menu_page('plugins.php');
     remove_menu_page('users.php');
     remove_menu_page('tools.php');
-    remove_menu_page('options-general.php');
+
+    if (!$is_ellene_admin) {
+        remove_menu_page('options-general.php');
+    }
 }
 
 add_action('admin_menu', 'ellene_wp_limit_admin_menu_for_client', 999);
+
+function ellene_wp_limit_settings_submenu_for_ellene_admin() {
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    $current_user = wp_get_current_user();
+    if (!$current_user || empty($current_user->user_login)) {
+        return;
+    }
+
+    if (strtolower((string) $current_user->user_login) !== 'ellene-admin') {
+        return;
+    }
+
+    global $submenu;
+
+    if (empty($submenu['options-general.php']) || !is_array($submenu['options-general.php'])) {
+        return;
+    }
+
+    foreach ($submenu['options-general.php'] as $index => $submenu_item) {
+        $slug = isset($submenu_item[2]) ? (string) $submenu_item[2] : '';
+
+        if ($slug !== 'options-general.php') {
+            unset($submenu['options-general.php'][$index]);
+        }
+    }
+}
+
+add_action('admin_menu', 'ellene_wp_limit_settings_submenu_for_ellene_admin', 1000);
 
 function ellene_wp_client_login_redirect($redirect_to, $requested_redirect_to, $user) {
     if (is_wp_error($user) || empty($user->user_login)) {
