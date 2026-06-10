@@ -56,7 +56,7 @@ website/.vscode/
 
 # Ignore full WordPress tree, keep only the custom theme
 wp/*
-!wp/AGENTS.md
+wp/AGENTS.md
 !wp/wp-content/
 wp/wp-admin/
 wp/wp-includes/
