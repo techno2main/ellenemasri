@@ -21,7 +21,7 @@ $modules = apply_filters(
         'stream',
         'social',
         'video',
-        'release-info',
+        'release',
         'cta',
     )
 );
@@ -36,7 +36,7 @@ foreach ($modules as $module) {
         continue;
     }
 
-    $module_template = $module_slug === 'release-info' ? 'release' : $module_slug;
+    $module_template = $module_slug === 'release' ? 'release' : $module_slug;
 
     get_template_part('template-parts/sections/' . $module_template . '/index');
 }

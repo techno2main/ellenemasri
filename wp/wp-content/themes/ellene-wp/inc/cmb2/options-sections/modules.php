@@ -23,43 +23,30 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
         'name'    => 'Modules actifs',
         'id'      => 'modules_enabled',
         'type'    => 'multicheck_inline',
+        'select_all_button' => false,
         'options' => array(
             'top-bar'      => 'Top-Bar',
-            'header'       => 'Header',
             'hero'         => 'Hero',
             'stream'       => 'Stream',
             'social'       => 'Social',
             'video'        => 'Video',
-            'release-info' => 'Release Info',
+            'release'      => 'Release',
             'cta'          => 'CTA',
             'footer'       => 'Footer',
         ),
-        'default' => array('top-bar', 'header', 'hero', 'stream', 'social', 'video', 'release-info', 'cta', 'footer'),
-        'desc' => 'Coche/decoche les blocs du front (Top-Bar, Header, Hero, sections content, Footer).',
+        'default' => array('top-bar', 'hero', 'stream', 'social', 'video', 'release', 'cta', 'footer'),
+        'desc' => 'Affiche/Masque les modules',
     ));
 
     $cmb->add_field(array(
-        'name' => 'Ordre des modules',
+        'name' => 'Ordre des rubriques',
         'id'   => 'modules_order',
         'type' => 'text',
-        'desc' => 'Ordre des modules (assistant visuel disponible sous le champ). Glissez les modules actifs, le champ se met a jour automatiquement.',
+        'desc' => 'Modifie l\'ordre en séparant par une virgule',
     ));
 
     $cmb->add_field(array(
         'id'   => 'modules_slots_migrated',
         'type' => 'hidden',
-    ));
-
-    $cmb->add_field(array(
-        'name'    => 'Modules mutualises',
-        'id'      => 'modules_shared',
-        'type'    => 'multicheck_inline',
-        'options' => array(
-            'stream' => 'Stream',
-            'social' => 'Social',
-            'video' => 'Video',
-            'cta' => 'CTA',
-        ),
-        'desc' => 'Active le mode source partagee (mutualise) pour les modules compatibles.',
     ));
 }

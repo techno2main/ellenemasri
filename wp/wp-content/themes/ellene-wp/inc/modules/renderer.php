@@ -34,7 +34,16 @@ function ellene_render_content_modules($context = 'home') {
 
         set_query_var('ellene_module_slug', $slug);
         set_query_var('ellene_module_mode', $mode);
+
+        if ($slug === 'top-bar') {
+            echo '<div class="sticky top-0 z-60">';
+        }
+
         get_template_part($template);
+
+        if ($slug === 'top-bar') {
+            echo '</div>';
+        }
     }
 
     set_query_var('ellene_module_slug', null);

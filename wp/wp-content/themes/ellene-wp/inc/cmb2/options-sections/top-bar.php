@@ -11,16 +11,16 @@ if (!defined('ABSPATH')) {
 }
 
 function ellene_wp_register_cmb2_top_bar_section($cmb) {
-    // ========== SECTION: MARQUEE ==========
+    // ========== SECTION: TOP-BAR ==========
 
     $cmb->add_field(array(
         'name' => 'Top-Bar',
         'type' => 'title',
-        'id'   => 'section_marquee_title',
+        'id'   => 'section_top_bar_title',
     ));
 
-    $marquee_group = $cmb->add_field(array(
-        'id'      => 'marquee_items',
+    $top_bar_group = $cmb->add_field(array(
+        'id'      => 'top_bar_items',
         'type'    => 'group',
         'options' => array(
             'group_title'   => 'Item {#}',
@@ -30,19 +30,19 @@ function ellene_wp_register_cmb2_top_bar_section($cmb) {
         ),
     ));
 
-    $cmb->add_group_field($marquee_group, array(
+    $cmb->add_group_field($top_bar_group, array(
         'name' => 'Label',
         'id'   => 'label',
         'type' => 'text',
     ));
 
-    $cmb->add_group_field($marquee_group, array(
+    $cmb->add_group_field($top_bar_group, array(
         'name' => 'Lien',
         'id'   => 'href',
         'type' => 'text_url',
     ));
 
-    $cmb->add_group_field($marquee_group, array(
+    $cmb->add_group_field($top_bar_group, array(
         'name' => 'Masquer',
         'id'   => 'is_hidden',
         'type' => 'checkbox',
@@ -50,7 +50,7 @@ function ellene_wp_register_cmb2_top_bar_section($cmb) {
 
     $cmb->add_field(array(
         'name' => 'Visuel TOP-BAR',
-        'id'   => 'marquee_logo_png',
+        'id'   => 'top_bar_logo_png',
         'type' => 'file',
         'text' => array(
             'add_upload_file_text' => 'Modifier',
@@ -59,7 +59,7 @@ function ellene_wp_register_cmb2_top_bar_section($cmb) {
 
     $cmb->add_field(array(
         'name' => 'Masquer',
-        'id'   => 'marquee_logo_hidden',
+        'id'   => 'top_bar_logo_hidden',
         'type' => 'checkbox',
     ));
 }

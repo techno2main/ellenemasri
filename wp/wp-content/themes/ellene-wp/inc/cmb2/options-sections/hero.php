@@ -20,43 +20,6 @@ function ellene_wp_register_cmb2_hero_section($cmb) {
     ));
 
     $cmb->add_field(array(
-        'name'    => 'Top Artist',
-        'id'      => 'hero_top_artist',
-        'type'    => 'text',
-        'default' => 'Artist Name',
-        'row_classes' => 'cmb-field-with-toggle',
-    ));
-
-    $cmb->add_field(array(
-        'name' => 'Masquer',
-        'id'   => 'hero_top_artist_hidden',
-        'type' => 'checkbox',
-        'row_classes' => 'cmb-inline-toggle',
-    ));
-
-    $cmb->add_field(array(
-        'name'    => 'Top CTA Label',
-        'id'      => 'hero_top_cta_label',
-        'type'    => 'text',
-        'default' => 'Out now',
-        'row_classes' => 'cmb-field-with-toggle',
-    ));
-
-    $cmb->add_field(array(
-        'name' => 'Masquer',
-        'id'   => 'hero_top_cta_hidden',
-        'type' => 'checkbox',
-        'row_classes' => 'cmb-inline-toggle',
-    ));
-
-    $cmb->add_field(array(
-        'name' => 'Top CTA Link',
-        'id'   => 'hero_top_cta_href',
-        'type' => 'text_url',
-        'row_classes' => 'cmb-field-with-toggle',
-    ));
-
-    $cmb->add_field(array(
         'name'    => 'Badge Text',
         'id'      => 'hero_badge_text',
         'type'    => 'text',

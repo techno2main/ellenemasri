@@ -44,31 +44,9 @@ if (!defined('ABSPATH')) {
 
 <main class="relative overflow-x-clip">
 
-    <!-- Sticky Marquee Top -->
-
-    <div class="sticky top-0 z-60">
-
-        <?php get_template_part('template-parts/sections/top-bar/index'); ?>
-
-    </div>
-
-    
-
-    <!-- Hero Section -->
-
-    <?php get_template_part('template-parts/sections/hero/index'); ?>
-
-    
-
-    <!-- Content Modules (pilotage depuis l'admin) -->
+    <!-- Modules (pilotage complet depuis l'admin) -->
 
     <?php get_template_part('template-parts/layout/content'); ?>
-
-    
-
-    <!-- Footer Section -->
-
-    <?php get_template_part('template-parts/sections/footer/index'); ?>
 
     
 
