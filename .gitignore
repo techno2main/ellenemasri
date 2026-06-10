@@ -4,6 +4,7 @@ _sources/
 .github/
 docker/ellene-local/
 website/
+docker/
 
 # Logs
 logs
