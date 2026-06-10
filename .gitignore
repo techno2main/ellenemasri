@@ -1,5 +1,8 @@
 # Sources
 _sources/
+.copilot-snapshots/
+.github/
+docker/ellene-local/
 
 # Logs
 logs
