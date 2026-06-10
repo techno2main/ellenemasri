@@ -124,11 +124,11 @@ $active_social_cards = array_values(array_filter($social_cards, static function 
 
 ?>
 
-<section id="social" class="relative overflow-hidden bg-magenta py-20 text-ink sm:py-28">
+<section id="social" class="relative overflow-hidden bg-magenta py-10 text-ink sm:py-20">
 
     <div class="relative mx-auto max-w-6xl px-5 sm:px-8">
 
-        <div class="mb-4 flex justify-end gap-4">
+        <div class="mb-4 flex justify-start gap-4">
 
             <a href="#video" aria-label="Section suivante" class="inline-flex items-center justify-center text-xl leading-none text-ink/70 transition hover:text-ink">↓</a>
 

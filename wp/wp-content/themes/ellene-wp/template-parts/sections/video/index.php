@@ -28,13 +28,13 @@ $cover_image = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video
 
 ?>
 
-<section id="video" class="relative bg-[oklch(0.88_0.19_95)] py-20 sm:py-28">
+<section id="video" class="relative bg-[oklch(0.88_0.19_95)] py-10 sm:py-20">
 
     <div class="absolute inset-0 grain"></div>
 
     <div class="relative mx-auto max-w-6xl px-5 sm:px-8">
 
-        <div class="mb-4 flex justify-end gap-4">
+        <div class="mb-4 flex justify-start gap-4">
 
             <a href="#release" aria-label="Section suivante" class="inline-flex items-center justify-center text-xl leading-none text-ink/70 transition hover:text-ink">↓</a>
 

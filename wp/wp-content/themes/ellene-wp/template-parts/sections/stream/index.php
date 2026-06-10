@@ -774,13 +774,13 @@ $stream_platform_meta = array(
 
 </style>
 
-<section id="stream" class="relative bg-[#6a1b78] py-20 sm:py-28">
+<section id="stream" class="relative bg-[#6a1b78] py-10 sm:py-20">
 
     <div class="absolute inset-0 grain"></div>
 
     <div class="relative mx-auto max-w-6xl px-5 sm:px-8">
 
-        <div class="mb-4 flex justify-end gap-4">
+        <div class="mb-4 flex justify-start gap-4">
 
             <a href="#social" aria-label="Section suivante" class="inline-flex items-center justify-center text-xl leading-none text-cream/80 transition hover:text-aqua">↓</a>
 
