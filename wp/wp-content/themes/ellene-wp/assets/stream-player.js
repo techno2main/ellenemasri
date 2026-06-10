@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const platformLinks = document.querySelectorAll('.platform-card');
 
-  const marqueePlatformLinks = document.querySelectorAll('.marquee-platform-link[data-open-platform]');
+  const topBarPlatformLinks = document.querySelectorAll('.top-bar-platform-link[data-open-platform]');
 
   let activePlatform = null;
 
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-  const openFromMarquee = function(platformName) {
+  const openFromTopBar = function(platformName) {
 
     const streamSection = document.querySelector('#stream');
 
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     }
 
-    openFromMarquee(requestedPlatform);
+    openFromTopBar(requestedPlatform);
 
     const cleanUrl = window.location.pathname + window.location.hash;
 
@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-  marqueePlatformLinks.forEach(link => {
+  topBarPlatformLinks.forEach(link => {
 
     link.addEventListener('click', function(e) {
 
@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-      openFromMarquee(platformName);
+      openFromTopBar(platformName);
 
 
 
@@ -348,11 +348,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-  // Marquee Spotify: open an inline player without leaving the page.
+  // Top-Bar Spotify: open an inline player without leaving the page.
 
-  const spotifyToggles = document.querySelectorAll('.js-marquee-spotify-toggle');
+  const spotifyToggles = document.querySelectorAll('.js-top-bar-spotify-toggle');
 
-  const spotifyPanel = document.getElementById('marquee-spotify-player');
+  const spotifyPanel = document.getElementById('top-bar-spotify-player');
 
   const spotifyIframe = spotifyPanel ? spotifyPanel.querySelector('iframe') : null;
 
@@ -434,31 +434,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-  // Mobile marquee burger menu
+  // Mobile top-bar burger menu
 
-  const marqueeMenuToggle = document.querySelector('.js-marquee-mobile-toggle');
+  const topBarMenuToggle = document.querySelector('.js-top-bar-mobile-toggle');
 
-  const marqueeMobilePanel = document.getElementById('hero-marquee-mobile-panel');
+  const topBarMobilePanel = document.getElementById('top-bar-mobile-panel');
 
 
 
-  if (marqueeMenuToggle && marqueeMobilePanel) {
+  if (topBarMenuToggle && topBarMobilePanel) {
 
-    marqueeMenuToggle.addEventListener('click', function() {
+    topBarMenuToggle.addEventListener('click', function() {
 
-      const isOpen = marqueeMobilePanel.classList.contains('is-open');
+      const isOpen = topBarMobilePanel.classList.contains('is-open');
 
-      marqueeMobilePanel.classList.toggle('is-open', !isOpen);
+      topBarMobilePanel.classList.toggle('is-open', !isOpen);
 
-      marqueeMobilePanel.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
+      topBarMobilePanel.setAttribute('aria-hidden', isOpen ? 'true' : 'false');
 
-      marqueeMenuToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      topBarMenuToggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
 
     });
 
 
 
-    marqueeMobilePanel.addEventListener('click', function(e) {
+    topBarMobilePanel.addEventListener('click', function(e) {
 
       const clicked = e.target.closest('a,button');
 
@@ -466,7 +466,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-      if (clicked.classList.contains('js-marquee-spotify-toggle')) {
+      if (clicked.classList.contains('js-top-bar-spotify-toggle')) {
 
         return;
 
@@ -474,11 +474,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-      marqueeMobilePanel.classList.remove('is-open');
+      topBarMobilePanel.classList.remove('is-open');
 
-      marqueeMobilePanel.setAttribute('aria-hidden', 'true');
+      topBarMobilePanel.setAttribute('aria-hidden', 'true');
 
-      marqueeMenuToggle.setAttribute('aria-expanded', 'false');
+      topBarMenuToggle.setAttribute('aria-expanded', 'false');
 
     });
 
@@ -486,21 +486,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.addEventListener('click', function(e) {
 
-      if (!marqueeMobilePanel.classList.contains('is-open')) return;
+      if (!topBarMobilePanel.classList.contains('is-open')) return;
 
 
 
-      const inMenu = e.target.closest('#hero-marquee-mobile, #hero-marquee-mobile-panel');
+        const inMenu = e.target.closest('#top-bar-mobile, #top-bar-mobile-panel');
 
       if (inMenu) return;
 
 
 
-      marqueeMobilePanel.classList.remove('is-open');
+      topBarMobilePanel.classList.remove('is-open');
 
-      marqueeMobilePanel.setAttribute('aria-hidden', 'true');
+      topBarMobilePanel.setAttribute('aria-hidden', 'true');
 
-      marqueeMenuToggle.setAttribute('aria-expanded', 'false');
+      topBarMenuToggle.setAttribute('aria-expanded', 'false');
 
     });
 

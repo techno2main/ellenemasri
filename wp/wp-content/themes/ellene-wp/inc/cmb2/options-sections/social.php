@@ -68,6 +68,13 @@ function ellene_wp_register_cmb2_social_section($cmb) {
     ));
 
     $cmb->add_field(array(
+        'name'    => 'TikTok Account',
+        'id'      => 'social_tiktok_account',
+        'type'    => 'text',
+        'default' => '@ellenemasri',
+    ));
+
+    $cmb->add_field(array(
         'name' => 'Instagram Link',
         'id'   => 'social_instagram_link',
         'type' => 'text_url',
@@ -88,6 +95,13 @@ function ellene_wp_register_cmb2_social_section($cmb) {
     ));
 
     $cmb->add_field(array(
+        'name'    => 'Instagram Account',
+        'id'      => 'social_instagram_account',
+        'type'    => 'text',
+        'default' => '@ellenemasri',
+    ));
+
+    $cmb->add_field(array(
         'name' => 'YouTube Link',
         'id'   => 'social_youtube_link',
         'type' => 'text_url',
@@ -105,5 +119,12 @@ function ellene_wp_register_cmb2_social_section($cmb) {
         'id'      => 'social_youtube_badge',
         'type'    => 'text',
         'default' => 'Watch',
+    ));
+
+    $cmb->add_field(array(
+        'name'    => 'YouTube Account',
+        'id'      => 'social_youtube_account',
+        'type'    => 'text',
+        'default' => '@ELLENEMASRI',
     ));
 }

@@ -14,7 +14,7 @@
 
     'section_modules_title',
 
-    'section_marquee_title',
+    'section_top_bar_title',
 
     'section_hero_title',
 
@@ -36,7 +36,7 @@
 
 
 
-  const MARQUEE_ITEM_TITLES = [
+  const TOP_BAR_ITEM_TITLES = [
 
     'Titre Single',
 
@@ -45,6 +45,58 @@
     'Baseline'
 
   ];
+
+
+
+  const SECTION_HELP_TEXTS = {
+
+    section_modules_title: 'Section MODULES/RUBRIQUES',
+
+    section_top_bar_title: 'Section TOP-BAR/HEADER',
+
+    section_hero_title: 'Section HERO',
+
+    section_slider_title: 'Section SLIDER/HERO',
+
+    section_stream_title: 'Section 01/LISTEN',
+
+    section_social_title: 'Section 02/FOLLOW',
+
+    section_video_title: 'Section 03/WATCH',
+
+    section_release_title: 'Section 04/RELEASE INFOS',
+
+    section_cta_title: 'Section 05/DON\'T SLEEP ON IT',
+
+    section_footer_title: 'Section FOOTER'
+
+  };
+
+  const SECTION_ACCENT_BY_CLASS = {
+    'cmb2-id-section-modules-title': '#3858e9',
+    'cmb2-id-section-top-bar-title': 'oklch(0.15 0.08 280)',
+    'cmb2-id-section-hero-title': '#c2410c',
+    'cmb2-id-section-slider-title': '#c2410c',
+    'cmb2-id-section-stream-title': '#6a1b78',
+    'cmb2-id-section-social-title': 'oklch(0.62 0.28 350)',
+    'cmb2-id-section-video-title': 'oklch(0.88 0.19 95)',
+    'cmb2-id-section-release-title': 'oklch(0.78 0.10 80)',
+    'cmb2-id-section-cta-title': 'oklch(0.68 0.17 182)',
+    'cmb2-id-section-footer-title': 'oklch(0.15 0.08 280)'
+  };
+
+  const SECTION_ACTIVE_TEXT_BY_CLASS = {
+    'cmb2-id-section-modules-title': '#ffffff',
+    'cmb2-id-section-top-bar-title': '#ffffff',
+    'cmb2-id-section-hero-title': '#ffffff',
+    'cmb2-id-section-slider-title': '#ffffff',
+    'cmb2-id-section-stream-title': '#ffffff',
+    'cmb2-id-section-social-title': '#ffffff',
+    'cmb2-id-section-video-title': '#0f172a',
+    'cmb2-id-section-release-title': '#0f172a',
+    'cmb2-id-section-cta-title': '#0f172a',
+    'cmb2-id-section-footer-title': '#ffffff'
+  };
 
 
 
@@ -102,7 +154,7 @@
 
     setupAccordion();
 
-    collapseMarqueeItemsByDefault();
+    collapseTopBarItemsByDefault();
 
     collapseSliderItemsByDefault();
 
@@ -130,13 +182,19 @@
 
     observeDynamicMediaButtons();
 
-    renameMarqueeItemTitles();
+    renameTopBarItemTitles();
+
+    hideTopBarAddButtons();
 
     refreshTopBarVisualFieldUi();
 
     layoutTopBarVisualInlineToggle();
 
     layoutInlineFieldToggles();
+
+    moveModulesEnabledHelpAboveChoices();
+
+    initModulesEnabledCheckboxUi();
 
     initModulesOrderAssistant();
 
@@ -149,6 +207,8 @@
     styleBottomSaveButtons();
 
     restoreActiveSectionAfterSave();
+
+    applyDefaultModulesNavState();
 
     addSmoothScroll();
 
@@ -1544,7 +1604,7 @@
 
   function refreshTopBarVisualFieldUi() {
 
-    const row = document.querySelector('.cmb2-id-marquee-logo-png');
+    const row = document.querySelector('.cmb2-id-top-bar-logo-png');
 
     if (!row) {
 
@@ -1658,9 +1718,9 @@
 
   function layoutTopBarVisualInlineToggle() {
 
-    const logoRow = document.querySelector('.cmb2-id-marquee-logo-png');
+    const logoRow = document.querySelector('.cmb2-id-top-bar-logo-png');
 
-    const hideRow = document.querySelector('.cmb2-id-marquee-logo-hidden');
+    const hideRow = document.querySelector('.cmb2-id-top-bar-logo-hidden');
 
     if (!logoRow || !hideRow) {
 
@@ -1828,9 +1888,9 @@
 
 
 
-  function renameMarqueeItemTitles() {
+  function renameTopBarItemTitles() {
 
-    const groups = document.querySelectorAll('.cmb2-id-marquee-items .cmb-repeatable-grouping');
+    const groups = document.querySelectorAll('.cmb2-id-top-bar-items .cmb-repeatable-grouping');
 
     if (!groups.length) {
 
@@ -1852,7 +1912,7 @@
 
 
 
-      const customTitle = MARQUEE_ITEM_TITLES[index];
+      const customTitle = TOP_BAR_ITEM_TITLES[index];
 
       if (customTitle) {
 
@@ -1880,11 +1940,13 @@
 
 
 
-      if (target.closest('.cmb2-id-marquee-items .add-group-row, .cmb2-id-marquee-items .cmb-remove-group-row, .cmb2-id-marquee-items .cmb-remove-group-row-button, .cmb2-id-marquee-items .cmb-shift-rows, .cmb2-id-marquee-items .cmbhandlediv, .cmb2-id-marquee-items .handlediv')) {
+      if (target.closest('.cmb2-id-top-bar-items .add-group-row, .cmb2-id-top-bar-items .cmb-remove-group-row, .cmb2-id-top-bar-items .cmb-remove-group-row-button, .cmb2-id-top-bar-items .cmb-shift-rows, .cmb2-id-top-bar-items .cmbhandlediv, .cmb2-id-top-bar-items .handlediv')) {
 
         window.setTimeout(function() {
 
-          renameMarqueeItemTitles();
+          renameTopBarItemTitles();
+
+          hideTopBarAddButtons();
 
           renameAllMediaUploadButtons();
 
@@ -1898,7 +1960,7 @@
 
 
 
-      if (target.closest('.cmb2-id-marquee-logo-png .cmb2-upload-button, .cmb2-id-marquee-logo-png .cmb2-remove-file-button')) {
+      if (target.closest('.cmb2-id-top-bar-logo-png .cmb2-upload-button, .cmb2-id-top-bar-logo-png .cmb2-remove-file-button')) {
 
         window.setTimeout(function() {
 
@@ -1918,9 +1980,9 @@
 
 
 
-  function collapseMarqueeItemsByDefault() {
+  function collapseTopBarItemsByDefault() {
 
-    const groups = document.querySelectorAll('.cmb2-id-marquee-items .cmb-repeatable-grouping');
+    const groups = document.querySelectorAll('.cmb2-id-top-bar-items .cmb-repeatable-grouping');
 
     if (!groups.length) {
 
@@ -1943,6 +2005,67 @@
         toggleButton.setAttribute('aria-expanded', 'false');
 
       }
+
+    });
+
+  }
+
+
+
+  function hideTopBarAddButtons() {
+
+    const root = document.querySelector('.cmb2-id-top-bar-items');
+
+    if (!root) {
+
+      return;
+
+    }
+
+
+
+
+    const controls = root.querySelectorAll('button, a, input[type="button"], input[type="submit"]');
+
+    if (!controls.length) {
+
+      return;
+
+    }
+
+
+
+    controls.forEach(function(control) {
+
+      const signature = [
+
+        control.className || '',
+
+        control.textContent || '',
+
+        control.value || '',
+
+        control.getAttribute('title') || '',
+
+        control.getAttribute('aria-label') || ''
+
+      ].join(' ').toLowerCase();
+
+
+
+      const isAddControl = signature.indexOf('ajouter') !== -1 || signature.indexOf('add') !== -1;
+
+      const isRemoveControl = signature.indexOf('supprimer') !== -1 || signature.indexOf('remove') !== -1 || signature.indexOf('delete') !== -1;
+
+      if (!isAddControl && !isRemoveControl) {
+
+        return;
+
+      }
+
+
+
+      control.style.setProperty('display', 'none', 'important');
 
     });
 
@@ -2040,7 +2163,7 @@
 
       { id: 'section_modules_title', label: 'Modules' },
 
-      { id: 'section_marquee_title', label: 'TOP-BAR' },
+      { id: 'section_top_bar_title', label: 'TOP-BAR' },
 
       { id: 'section_hero_title', label: 'Hero' },
 
@@ -2086,78 +2209,6 @@
 
 
 
-    // Titre
-
-    const title = document.createElement('a');
-
-    title.href = '#';
-
-    title.className = 'ellene-wp-admin-home';
-
-    title.setAttribute('title', 'Ellene Landing Settings');
-
-    title.setAttribute('aria-label', 'Ellene Landing Settings');
-
-    title.innerHTML = '<span class="dashicons dashicons-admin-generic" aria-hidden="true"></span>';
-
-    title.style.cssText = 'display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; color:#fff; text-decoration:none; border-radius:999px; border:2px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); transition:all 0.2s ease;';
-
-    title.addEventListener('click', function(e) {
-
-      e.preventDefault();
-
-      isOverviewMode = true;
-
-      closeAllSections();
-
-      clearActiveButtons();
-
-
-
-      const nav = document.getElementById('ellene-wp-admin-nav');
-
-      if (!nav) return;
-
-
-
-      const navTop = nav.getBoundingClientRect().top + window.pageYOffset;
-
-      const offset = 20;
-
-      window.scrollTo({
-
-        top: Math.max(navTop - offset, 0),
-
-        behavior: 'smooth'
-
-      });
-
-    });
-
-    title.addEventListener('mouseenter', function() {
-
-      this.style.background = 'rgba(255,255,255,0.16)';
-
-      this.style.borderColor = 'rgba(255,255,255,0.35)';
-
-      this.style.transform = 'translateY(-1px)';
-
-    });
-
-    title.addEventListener('mouseleave', function() {
-
-      this.style.background = 'rgba(255,255,255,0.08)';
-
-      this.style.borderColor = 'rgba(255,255,255,0.2)';
-
-      this.style.transform = 'translateY(0)';
-
-    });
-
-    navInner.appendChild(title);
-
-
-
     // Container des boutons
 
     const buttonsContainer = document.createElement('div');
@@ -2178,11 +2229,21 @@
 
       btn.href = '#' + section.id;
 
-      btn.textContent = section.label;
-
       btn.className = 'ellene-wp-nav-btn';
 
       btn.dataset.section = section.id;
+
+      if (section.id === 'section_modules_title') {
+
+        btn.classList.add('ellene-wp-nav-btn-with-icon');
+
+        btn.innerHTML = '<span class="dashicons dashicons-admin-generic ellene-wp-nav-btn-icon" aria-hidden="true"></span><span>' + section.label + '</span>';
+
+      } else {
+
+        btn.textContent = section.label;
+
+      }
 
 
 
@@ -2332,6 +2393,8 @@
 
     injectSectionEyeIcon(sectionTitle);
 
+    injectSectionHelpLine(sectionTitle, sectionId);
+
 
 
     sectionTitle.addEventListener('click', function(e) {
@@ -2389,6 +2452,50 @@
     eye.setAttribute('aria-hidden', 'true');
 
     iconHost.appendChild(eye);
+
+  }
+
+
+
+  function injectSectionHelpLine(sectionTitle, sectionId) {
+
+    const host = sectionTitle.querySelector('.cmb-th') || sectionTitle;
+
+    if (!host || host.querySelector('.ellene-wp-section-helpline')) {
+
+      return;
+
+    }
+
+
+
+    const titleNode = sectionTitle.querySelector('.cmb2-metabox-title, .cmb-th h3');
+
+    const rawLabel = titleNode ? titleNode.textContent : '';
+
+    const label = (rawLabel || '')
+
+      .replace(/\s+/g, ' ')
+
+      .trim();
+
+
+
+    if (!label) {
+
+      return;
+
+    }
+
+
+
+    const helpLine = document.createElement('div');
+
+    helpLine.className = 'ellene-wp-section-helpline';
+
+    helpLine.textContent = SECTION_HELP_TEXTS[sectionId] || ('Aide pour ' + label);
+
+    host.appendChild(helpLine);
 
   }
 
@@ -2518,7 +2625,7 @@
 
       closeSection(sectionId);
 
-      clearActiveButtons();
+      setActiveButtonBySection('section_modules_title');
 
       isOverviewMode = true;
 
@@ -2812,11 +2919,43 @@
 
 
 
+  function getAllModuleSlugs() {
+
+    const checkboxes = document.querySelectorAll('.cmb2-id-modules-enabled input[type="checkbox"]');
+
+    const all = [];
+
+
+
+    checkboxes.forEach(function(checkbox) {
+
+      const slug = (checkbox.value || '').trim();
+
+      if (!slug || all.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      all.push(slug);
+
+    });
+
+
+
+    return all;
+
+  }
+
+
+
   function getNavbarModuleSlugs() {
 
     const sectionToSlug = {
 
-      section_marquee_title: 'top-bar',
+      section_top_bar_title: 'top-bar',
 
       section_hero_title: 'hero',
 
@@ -2826,7 +2965,7 @@
 
       section_video_title: 'video',
 
-      section_release_title: 'release-info',
+      section_release_title: 'release',
 
       section_cta_title: 'cta',
 
@@ -2950,6 +3089,76 @@
 
 
 
+  function buildPersistentModulesOrder(fullOrder, enabledOrder, enabledSlugs, allSlugs) {
+
+    const allowed = Array.isArray(allSlugs) ? allSlugs : [];
+
+    const normalized = [];
+
+
+
+    (Array.isArray(fullOrder) ? fullOrder : []).forEach(function(slug) {
+
+      if (allowed.indexOf(slug) === -1 || normalized.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      normalized.push(slug);
+
+    });
+
+
+
+    allowed.forEach(function(slug) {
+
+      if (normalized.indexOf(slug) !== -1) {
+
+        return;
+
+      }
+
+
+
+      normalized.push(slug);
+
+    });
+
+
+
+    const enabledSet = new Set(Array.isArray(enabledSlugs) ? enabledSlugs : []);
+
+    const orderedEnabled = Array.isArray(enabledOrder) ? enabledOrder.slice() : [];
+
+    let enabledIndex = 0;
+
+
+
+    return normalized.map(function(slug) {
+
+      if (!enabledSet.has(slug)) {
+
+        return slug;
+
+      }
+
+
+
+      const nextEnabled = orderedEnabled[enabledIndex] || slug;
+
+      enabledIndex += 1;
+
+      return nextEnabled;
+
+    });
+
+  }
+
+
+
   function initModulesOrderAssistant() {
 
     const row = document.querySelector('.cmb2-id-modules-order');
@@ -2966,6 +3175,8 @@
 
     const td = row.querySelector('.cmb-td');
 
+    const description = td ? td.querySelector('.cmb2-metabox-description') : null;
+
     if (!input || !td) {
 
       return;
@@ -2974,7 +3185,7 @@
 
 
 
-    input.placeholder = 'top-bar,header,hero,stream,social,video,release-info,cta,footer';
+    input.placeholder = 'top-bar,hero,stream,social,video,release,cta,footer';
 
 
 
@@ -2988,15 +3199,11 @@
 
       helper.innerHTML = '' +
 
-        '<div class="ellene-wp-modules-order-actions">' +
+         '<div class="ellene-wp-modules-order-note">Déplace les rubriques pour définir l\'ordre</div>' +     
 
-        '  <button type="button" class="ellene-wp-order-reset-btn">Auto depuis ordre actuel</button>' +
+        '<div class="ellene-wp-modules-order-chips"></div>' +
 
-        '</div>' +
-
-        '<div class="ellene-wp-modules-order-note">Glissez les modules pour definir l\'ordre. Le champ texte est mis a jour automatiquement.</div>' +
-
-        '<div class="ellene-wp-modules-order-chips"></div>';
+        '<br>';
 
       td.appendChild(helper);
 
@@ -3004,11 +3211,81 @@
 
 
 
+    let actions = row.querySelector('.ellene-wp-modules-order-actions');
+
+    if (!actions) {
+
+      actions = document.createElement('div');
+
+      actions.className = 'ellene-wp-modules-order-actions';
+
+      actions.innerHTML = '' +
+
+        '<div class="ellene-wp-modules-order-note">Ordre initial : TOP-BAR / HERO / STREAM / SOCIAL / VIDEO / RELEASE / CTA / FOOTER</div>' +
+
+        '<button type="button" class="ellene-wp-order-reset-btn">Réinitialiser les positions</button>';
+
+    }
+
+
+    let separatorBeforeInput = row.querySelector('.ellene-wp-modules-order-separator-before-input');
+    if (!separatorBeforeInput) {
+      separatorBeforeInput = document.createElement('div');
+      separatorBeforeInput.className = 'ellene-wp-modules-order-separator ellene-wp-modules-order-separator-before-input';
+    }
+    td.appendChild(separatorBeforeInput);
+
+    if (description) {
+
+      td.appendChild(description);
+
+    }
+
+    // Keep the editable field below the helper and below its description text.
+    td.appendChild(input);
+
+    let separator = row.querySelector('.ellene-wp-modules-order-separator-before-actions');
+    if (!separator) {
+      separator = document.createElement('div');
+      separator.className = 'ellene-wp-modules-order-separator ellene-wp-modules-order-separator-before-actions';
+    }
+    td.appendChild(separator);
+
+    // Keep reset button + default-order help at the end.
+    td.appendChild(actions);
+
+
+
     const chipsHost = helper.querySelector('.ellene-wp-modules-order-chips');
 
-    const resetBtn = helper.querySelector('.ellene-wp-order-reset-btn');
+    const resetBtn = actions.querySelector('.ellene-wp-order-reset-btn');
 
     let draggingSlug = '';
+    let touchDropSlug = '';
+
+    const clearDropTargets = function() {
+      chipsHost.querySelectorAll('.ellene-wp-modules-order-chip.is-drop-target').forEach(function(node) {
+        node.classList.remove('is-drop-target');
+      });
+    };
+
+    const moveSlugBefore = function(fromSlug, toSlug) {
+      if (!fromSlug || !toSlug || fromSlug === toSlug) {
+        return;
+      }
+
+      const current = parseModulesOrderValue(input.value);
+      const fromIndex = current.indexOf(fromSlug);
+      const toIndex = current.indexOf(toSlug);
+
+      if (fromIndex === -1 || toIndex === -1) {
+        return;
+      }
+
+      const moved = current.splice(fromIndex, 1)[0];
+      current.splice(toIndex, 0, moved);
+      syncOrder(current, false);
+    };
 
 
 
@@ -3016,17 +3293,27 @@
 
       const enabled = getEnabledModuleSlugs();
 
+      const all = getAllModuleSlugs();
+
+      const currentFullOrder = parseModulesOrderValue(input.value).filter(function(slug) {
+
+        return all.indexOf(slug) !== -1;
+
+      });
+
       const orderSource = forceUiOrder
 
         ? getCurrentUiModuleOrder(enabled)
 
-        : (Array.isArray(preferredOrder) ? preferredOrder : parseModulesOrderValue(input.value));
+        : (Array.isArray(preferredOrder) ? preferredOrder : currentFullOrder);
 
       const effectiveOrder = buildEffectiveModulesOrder(enabled, orderSource);
 
+      const persistedOrder = buildPersistentModulesOrder(currentFullOrder, effectiveOrder, enabled, all);
 
 
-      input.value = effectiveOrder.join(',');
+
+      input.value = persistedOrder.join(',');
 
       chipsHost.innerHTML = '';
 
@@ -3110,37 +3397,56 @@
 
 
 
-          if (!draggingSlug || draggingSlug === slug) {
-
-            return;
-
-          }
-
-
-
-          const current = parseModulesOrderValue(input.value);
-
-          const fromIndex = current.indexOf(draggingSlug);
-
-          const toIndex = current.indexOf(slug);
-
-
-
-          if (fromIndex === -1 || toIndex === -1) {
-
-            return;
-
-          }
-
-
-
-          const moved = current.splice(fromIndex, 1)[0];
-
-          current.splice(toIndex, 0, moved);
-
-          syncOrder(current, false);
+          moveSlugBefore(draggingSlug, slug);
 
         });
+
+        chip.addEventListener('touchstart', function() {
+          draggingSlug = slug;
+          touchDropSlug = '';
+          chip.classList.add('is-dragging');
+        }, { passive: true });
+
+        chip.addEventListener('touchmove', function(event) {
+          if (!draggingSlug) {
+            return;
+          }
+
+          const touch = event.touches && event.touches[0];
+          if (!touch) {
+            return;
+          }
+
+          event.preventDefault();
+          clearDropTargets();
+
+          const target = document.elementFromPoint(touch.clientX, touch.clientY);
+          const targetChip = target ? target.closest('.ellene-wp-modules-order-chip') : null;
+          if (!targetChip) {
+            touchDropSlug = '';
+            return;
+          }
+
+          touchDropSlug = targetChip.dataset.slug || '';
+          if (touchDropSlug && touchDropSlug !== draggingSlug) {
+            targetChip.classList.add('is-drop-target');
+          }
+        }, { passive: false });
+
+        chip.addEventListener('touchend', function() {
+          chip.classList.remove('is-dragging');
+          clearDropTargets();
+          moveSlugBefore(draggingSlug, touchDropSlug);
+          draggingSlug = '';
+          touchDropSlug = '';
+        }, { passive: true });
+
+        chip.addEventListener('touchcancel', function() {
+          chip.classList.remove('is-dragging');
+          clearDropTargets();
+          draggingSlug = '';
+          touchDropSlug = '';
+        }, { passive: true });
 
 
 
@@ -3194,7 +3500,7 @@
 
         }
 
-        syncOrder([], true);
+        syncOrder();
 
       });
 
@@ -3210,7 +3516,7 @@
 
         window.setTimeout(function() {
 
-          syncOrder([], true);
+          syncOrder();
 
         }, 0);
 
@@ -3220,8 +3526,166 @@
 
 
 
-    // At page load, reflect the current UI order rather than legacy stored values.
-    syncOrder([], true);
+    // At page load, keep and display the saved order from the option value.
+    syncOrder();
+
+  }
+
+
+
+  function moveModulesEnabledHelpAboveChoices() {
+
+    const row = document.querySelector('.cmb2-id-modules-enabled');
+
+    if (!row) {
+
+      return;
+
+    }
+
+
+
+    const td = row.querySelector('.cmb-td');
+
+    const description = td ? td.querySelector('.cmb2-metabox-description') : null;
+
+    if (!td || !description) {
+
+      return;
+
+    }
+
+
+
+    td.insertBefore(description, td.firstChild);
+
+  }
+
+
+
+  function initModulesEnabledCheckboxUi() {
+
+    const row = document.querySelector('.cmb2-id-modules-enabled');
+
+    if (!row) {
+
+      return;
+
+    }
+
+
+
+    const ensureLabelTextContainer = function(label, checkbox) {
+
+      let textSpan = label.querySelector('.ellene-wp-modules-enabled-label-text');
+
+      if (textSpan) {
+
+        return textSpan;
+
+      }
+
+
+
+      textSpan = document.createElement('span');
+
+      textSpan.className = 'ellene-wp-modules-enabled-label-text';
+
+
+
+      const nodes = Array.prototype.slice.call(label.childNodes);
+
+      nodes.forEach(function(node) {
+
+        if (node === checkbox) {
+
+          return;
+
+        }
+
+
+
+        textSpan.appendChild(node);
+
+      });
+
+
+
+      label.appendChild(textSpan);
+
+      return textSpan;
+
+    };
+
+
+
+    const applyStateToLabel = function(label) {
+
+      const checkbox = label ? label.querySelector('input[type="checkbox"]') : null;
+
+      if (!checkbox) {
+
+        return;
+
+      }
+
+
+
+      ensureLabelTextContainer(label, checkbox);
+
+      label.classList.toggle('is-checked', !!checkbox.checked);
+
+      label.classList.toggle('is-unchecked', !checkbox.checked);
+
+    };
+
+
+
+    row.querySelectorAll('.cmb2-list li label, .cmb2-checkbox-list li label').forEach(function(label) {
+
+      applyStateToLabel(label);
+
+    });
+
+
+
+    if (row.dataset.elleneWpModulesEnabledUiBound === '1') {
+
+      return;
+
+    }
+
+
+
+    row.dataset.elleneWpModulesEnabledUiBound = '1';
+
+
+
+    row.addEventListener('change', function(event) {
+
+      const target = event.target;
+
+      if (!target || !target.matches('input[type="checkbox"]')) {
+
+        return;
+
+      }
+
+
+
+      const label = target.closest('label');
+
+      if (!label) {
+
+        return;
+
+      }
+
+
+
+      applyStateToLabel(label);
+
+    });
 
   }
 
@@ -3232,6 +3696,8 @@
     const titleEl = getSectionTitleElement(sectionId);
 
     const rows = getSectionContentRows(sectionId);
+
+    applySectionFrameState(titleEl, rows, false);
 
 
 
@@ -3297,6 +3763,142 @@
 
       applySectionHeaderState(titleEl, true);
 
+      applySectionFrameState(titleEl, rows, true);
+
+    }
+
+  }
+
+
+
+  function getSectionAccentColor(titleEl) {
+
+    if (!titleEl) {
+
+      return '#1f2937';
+
+    }
+
+    const sectionClassName = Object.keys(SECTION_ACCENT_BY_CLASS).find(className =>
+
+      titleEl.classList.contains(className)
+
+    );
+
+    return sectionClassName ? SECTION_ACCENT_BY_CLASS[sectionClassName] : '#1f2937';
+
+  }
+
+
+
+  function applySectionFrameState(titleEl, rows, isOpen) {
+
+    const blockRows = [];
+
+
+
+    if (titleEl) {
+
+      blockRows.push(titleEl);
+
+    }
+
+
+
+    if (titleEl) {
+
+      let current = titleEl.nextElementSibling;
+
+      while (current) {
+
+        if (isSectionTitleRow(current)) {
+
+          break;
+
+        }
+
+        blockRows.push(current);
+
+        current = current.nextElementSibling;
+
+      }
+
+    } else if (Array.isArray(rows) && rows.length) {
+
+      rows.forEach(row => blockRows.push(row));
+
+    }
+
+
+
+    blockRows.forEach(row => {
+
+      row.classList.remove('ellene-wp-section-active-row', 'ellene-wp-section-active-first', 'ellene-wp-section-active-last');
+
+      row.style.removeProperty('--ellene-section-frame-color');
+
+      row.style.removeProperty('box-shadow');
+
+    });
+
+
+
+    if (!isOpen || blockRows.length === 0) {
+
+      return;
+
+    }
+
+
+
+    const accentColor = getSectionAccentColor(titleEl);
+
+
+
+    const visibleBlockRows = blockRows.filter(row => {
+      if (!row || !row.classList) {
+        return false;
+      }
+
+      const computed = window.getComputedStyle(row);
+
+      return computed.display !== 'none' && computed.visibility !== 'hidden';
+    });
+
+
+
+    if (visibleBlockRows.length === 0) {
+      return;
+    }
+
+
+
+    visibleBlockRows.forEach(row => {
+
+      row.classList.add('ellene-wp-section-active-row');
+
+      row.style.setProperty('--ellene-section-frame-color', accentColor);
+
+      row.style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor, 'important');
+
+    });
+
+
+
+    visibleBlockRows[0].classList.add('ellene-wp-section-active-first');
+
+    visibleBlockRows[0].style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor + ', inset 0 2px 0 ' + accentColor, 'important');
+
+    visibleBlockRows[visibleBlockRows.length - 1].classList.add('ellene-wp-section-active-last');
+
+    visibleBlockRows[visibleBlockRows.length - 1].style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor + ', inset 0 -2px 0 ' + accentColor, 'important');
+
+
+
+    if (visibleBlockRows.length === 1) {
+
+      visibleBlockRows[0].style.setProperty('box-shadow', 'inset 2px 0 0 ' + accentColor + ', inset -2px 0 0 ' + accentColor + ', inset 0 2px 0 ' + accentColor + ', inset 0 -2px 0 ' + accentColor, 'important');
+
     }
 
   }
@@ -3311,11 +3913,19 @@
 
     const eye = titleEl.querySelector('.ellene-wp-eye-indicator');
 
+    const helpLine = titleEl.querySelector('.ellene-wp-section-helpline');
+
     const neutralBg = '#f2f2f3';
 
-    const neutralText = '#1f2937';
+    const resolvedAccent = getSectionAccentColor(titleEl);
 
-    const activeBg = 'linear-gradient(135deg, #6a1b78 0%, #410b49 100%)';
+    const sectionClassName = Object.keys(SECTION_ACTIVE_TEXT_BY_CLASS).find(className =>
+
+      titleEl.classList.contains(className)
+
+    );
+
+    const resolvedActiveText = sectionClassName ? SECTION_ACTIVE_TEXT_BY_CLASS[sectionClassName] : '#ffffff';
 
 
 
@@ -3323,27 +3933,39 @@
 
       if (isOpen) {
 
-        headerCell.style.setProperty('background-color', '#5b1b78', 'important');
+        headerCell.style.setProperty('background-image', 'none', 'important');
 
-        headerCell.style.setProperty('background-image', activeBg, 'important');
+        headerCell.style.setProperty('background-color', resolvedAccent, 'important');
 
-        headerCell.style.setProperty('background', activeBg, 'important');
+        headerCell.style.setProperty('background', resolvedAccent, 'important');
 
-        headerCell.style.setProperty('color', '#ffffff', 'important');
+        headerCell.style.setProperty('color', resolvedActiveText, 'important');
 
-        headerCell.style.setProperty('border-left-color', '#13f7bc', 'important');
+        headerCell.style.setProperty('border-radius', '0', 'important');
+
+        headerCell.style.setProperty('border-left-style', 'solid', 'important');
+
+        headerCell.style.setProperty('border-left-width', '5px', 'important');
+
+        headerCell.style.setProperty('border-left-color', resolvedAccent, 'important');
 
       } else {
 
-        headerCell.style.setProperty('background-image', 'none', 'important');
+        headerCell.style.removeProperty('background-image');
 
-        headerCell.style.setProperty('background-color', neutralBg, 'important');
+        headerCell.style.removeProperty('background-color');
 
-        headerCell.style.setProperty('background', neutralBg, 'important');
+        headerCell.style.removeProperty('background');
 
-        headerCell.style.setProperty('color', neutralText, 'important');
+        headerCell.style.removeProperty('color');
 
-        headerCell.style.setProperty('border-left-color', '#dadde2', 'important');
+        headerCell.style.removeProperty('border-radius');
+
+        headerCell.style.removeProperty('border-left-style');
+
+        headerCell.style.removeProperty('border-left-width');
+
+        headerCell.style.removeProperty('border-left-color');
 
       }
 
@@ -3353,7 +3975,15 @@
 
     if (heading) {
 
-      heading.style.setProperty('color', isOpen ? '#ffffff' : neutralText, 'important');
+      if (isOpen) {
+
+        heading.style.setProperty('color', resolvedActiveText, 'important');
+
+      } else {
+
+        heading.style.removeProperty('color');
+
+      }
 
     }
 
@@ -3361,7 +3991,31 @@
 
     if (eye) {
 
-      eye.style.setProperty('color', isOpen ? '#ffffff' : '#6b21a8', 'important');
+      if (isOpen) {
+
+        eye.style.setProperty('color', resolvedActiveText, 'important');
+
+      } else {
+
+        eye.style.removeProperty('color');
+
+      }
+
+    }
+
+
+
+    if (helpLine) {
+
+      if (isOpen) {
+
+        helpLine.style.setProperty('color', resolvedActiveText, 'important');
+
+      } else {
+
+        helpLine.style.removeProperty('color');
+
+      }
 
     }
 
@@ -3381,7 +4035,7 @@
 
     const navHeight = nav ? nav.offsetHeight : 0;
 
-    const offset = 20; // Padding supplementaire
+    const offset = 40; // Espace top supplementaire entre navbar et titre ouvert.
 
 
 
@@ -3420,6 +4074,34 @@
     const allBtns = document.querySelectorAll('.ellene-wp-nav-btn');
 
     allBtns.forEach(btn => btn.classList.remove('active'));
+
+  }
+
+
+
+  function applyDefaultModulesNavState() {
+
+    const hasActive = !!document.querySelector('.ellene-wp-nav-btn.active');
+
+    if (hasActive) {
+
+      return;
+
+    }
+
+
+
+    const modulesBtn = document.querySelector('.ellene-wp-nav-btn[data-section="section_modules_title"]');
+
+    if (!modulesBtn) {
+
+      return;
+
+    }
+
+
+
+    setActiveButton(modulesBtn);
 
   }
 
