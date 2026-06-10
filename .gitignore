@@ -38,11 +38,8 @@ website/*.local
 .dev.vars
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-**/.vscode/*
-!**/.vscode/extensions.json
+.vscode/
+**/.vscode/
 website/.vscode/
 .idea
 .DS_Store
@@ -88,8 +85,4 @@ wp/wp-content/themes/ellene-wp/migration-ovh/*.zip
 /index.php
 
 # Instructions & local audit documentation
-/documentation/*
-!/documentation/copilot-memory-audit/
-!/documentation/copilot-memory-audit/**
-!/documentation/refonte themes wp/
-!/documentation/refonte themes wp/**
+/documentation/
