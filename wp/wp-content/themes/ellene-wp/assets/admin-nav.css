@@ -231,7 +231,7 @@
 }
 
 .ellene-wp-nav-btn[data-section="section_social_title"] {
-  --section-accent: oklch(0.62 0.28 350);
+  --section-accent: oklch(67.308% 0.15877 342.131);
   --section-hover-text: #ffffff;
   --section-active-text: #ffffff;
 }
@@ -2561,7 +2561,7 @@ body.ellene-wp-delete-modal-open {
 
 /* ---- SOCIAL : magenta fuchsia ---- */
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title {
-  border-left: 10px solid oklch(0.62 0.28 350) !important;
+  border-left: 10px solid oklch(67.308% 0.15877 342.131) !important;
   background: #f2f2f3 !important;
 }
 
@@ -2659,7 +2659,7 @@ body.ellene-wp-delete-modal-open {
 .cmb2-wrap .cmb-row.cmb2-id-section-hero-title .ellene-wp-eye-indicator    { color: oklch(0.68 0.22 45) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-slider-title .ellene-wp-eye-indicator  { color: oklch(0.68 0.22 45) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-stream-title .ellene-wp-eye-indicator  { color: #6a1b78 !important;              font-size: 26px !important; width: 26px !important; height: 26px !important; }
-.cmb2-wrap .cmb-row.cmb2-id-section-social-title .ellene-wp-eye-indicator  { color: oklch(0.62 0.28 350) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
+.cmb2-wrap .cmb-row.cmb2-id-section-social-title .ellene-wp-eye-indicator  { color: oklch(67.308% 0.15877 342.131) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-video-title .ellene-wp-eye-indicator   { color: oklch(0.88 0.19 95) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-release-title .ellene-wp-eye-indicator { color: oklch(0.78 0.10 80) !important;  font-size: 26px !important; width: 26px !important; height: 26px !important; }
 .cmb2-wrap .cmb-row.cmb2-id-section-cta-title .ellene-wp-eye-indicator     { color: oklch(0.68 0.17 182) !important; font-size: 26px !important; width: 26px !important; height: 26px !important; }
@@ -2713,7 +2713,7 @@ body.ellene-wp-delete-modal-open {
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb2-metabox-title,
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open h3,
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open label {
-  color: oklch(0.62 0.28 350) !important;
+  color:oklch(67.308% 0.15877 342.131) !important;
 }
 
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .cmb2-metabox-title,
@@ -2758,7 +2758,7 @@ body.ellene-wp-delete-modal-open {
 }
 
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb-th {
-  color: oklch(0.62 0.28 350) !important;
+  color: oklch(67.308% 0.15877 342.131) !important;
 }
 
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open .cmb-th {
@@ -2808,7 +2808,7 @@ body.ellene-wp-delete-modal-open {
 }
 
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb-th {
-  background: oklch(0.62 0.28 350) !important;
+  background: oklch(67.308% 0.15877 342.131) !important;
   color: #ffffff !important;
 }
 
@@ -2898,11 +2898,11 @@ body.ellene-wp-delete-modal-open {
 
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open,
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb-th {
-  background: #e40aa8 !important;
+  background: #d66bb1 !important;
 }
 
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-social-title.ellene-wp-section-open .cmb-th {
-  border-left-color: #e40aa8 !important;
+  border-left-color: #d66bb1 !important;
 }
 
 .cmb2-wrap .cmb-row.cmb-type-title.cmb2-id-section-video-title.ellene-wp-section-open,
