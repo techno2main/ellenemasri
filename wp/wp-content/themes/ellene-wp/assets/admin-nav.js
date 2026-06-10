@@ -50,25 +50,25 @@
 
   const SECTION_HELP_TEXTS = {
 
-    section_modules_title: 'Tu choisis les rubriques que tu veux afficher ou masquer et leur ordre d\'affichage [→ RUBRIQUES].',
+    section_modules_title: 'Section MODULES/RUBRIQUES',
 
-    section_top_bar_title: 'C\'est le menu de navigation de ta page. Il est fixe en haut de page et visible en permanence [→ TOP-BAR / HEADER].',
+    section_top_bar_title: 'Section TOP-BAR/HEADER',
 
-    section_hero_title: 'C\'est la section d\'accroche principale de ta page [→ HERO].',
+    section_hero_title: 'Section HERO',
 
-    section_slider_title: 'C\'est le slider dynamique dans ta section d\'accroche [→ SLIDER HERO].',
+    section_slider_title: 'Section SLIDER/HERO',
 
-    section_stream_title: 'C\'est la section qui affiche tes plateformes de streaming [→ 01/LISTEN].',
+    section_stream_title: 'Section 01/LISTEN',
 
-    section_social_title: 'C\'est la section qui affiche tes réseaux sociaux [→ 02/FOLLOW].',
+    section_social_title: 'Section 02/FOLLOW',
 
-    section_video_title: 'C\'est la section qui met en avant une vidéo [→ 03/WATCH].',
+    section_video_title: 'Section 03/WATCH',
 
-    section_release_title: 'C\'est la section qui met en avant le dernier album ou single sorti [→ 04/RELEASE INFOS].',
+    section_release_title: 'Section 04/RELEASE INFOS',
 
-    section_cta_title: 'C\'est la section qui permet de faire un appel à l\'action clair vers une page de ton site ou un lien externe [→ 05/DON\'T SLEEP ON IT].',
+    section_cta_title: 'Section 05/DON\'T SLEEP ON IT',
 
-    section_footer_title: 'C\'est la section qui permet de gérer les informations et liens présents en bas de page [→ FOOTER].'
+    section_footer_title: 'Section FOOTER'
 
   };
 
@@ -3197,7 +3197,7 @@
 
       helper.innerHTML = '' +
 
-         '<div class="ellene-wp-modules-order-note">Déplace les rubriques actives (drag & drop) pour définir l\'ordre :</div>' +     
+         '<div class="ellene-wp-modules-order-note">Déplace les rubriques pour définir l\'ordre</div>' +     
 
         '<div class="ellene-wp-modules-order-chips"></div>' +
 

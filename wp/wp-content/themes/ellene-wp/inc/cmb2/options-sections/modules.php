@@ -35,14 +35,14 @@ function ellene_wp_register_cmb2_modules_section($cmb) {
             'footer'       => 'Footer',
         ),
         'default' => array('top-bar', 'hero', 'stream', 'social', 'video', 'release', 'cta', 'footer'),
-        'desc' => 'Décoche un module pour le masquer sur le site (le module ne sera pas supprimé, tu pourras le réactiver à tout moment).',
+        'desc' => 'Affiche/Masque les modules',
     ));
 
     $cmb->add_field(array(
         'name' => 'Ordre des rubriques',
         'id'   => 'modules_order',
         'type' => 'text',
-        'desc' => 'Tu peux aussi modifier l\'ordre ici en séparant les rubriques par une virgule :',
+        'desc' => 'Modifie l\'ordre en séparant par une virgule',
     ));
 
     $cmb->add_field(array(
