@@ -12,16 +12,6 @@
 
 
 
-$hero_top_artist = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_top_artist'));
-
-$hero_top_artist_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_top_artist_hidden'));
-
-$hero_top_cta_label = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_top_cta_label'));
-
-$hero_top_cta_href = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_top_cta_href'));
-
-$hero_top_cta_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_top_cta_hidden'));
-
 $hero_badge_text = trim((string) cmb2_get_option('ellene-wp_landing_options', 'hero_badge_text'));
 
 $hero_badge_text_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_badge_text_hidden'));
@@ -64,14 +54,6 @@ $hero_logo_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_lo
 
 <style>
 
-    #hero .hero-top-cta {
-
-        display: none;
-
-    }
-
-
-
     #hero .hero-logo-wrap {
 
         text-align: left;
@@ -108,16 +90,6 @@ $hero_logo_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_lo
 
 
 
-    @media (min-width: 768px) {
-
-        #hero .hero-top-cta {
-
-            display: inline-flex;
-
-        }
-
-    }
-
 </style>
 
 <section id="hero" class="relative w-full overflow-hidden bg-background">
@@ -145,42 +117,6 @@ $hero_logo_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_lo
     <?php endif; ?>
 
     <div class="absolute inset-0 grain grain-soft"></div>
-
-
-
-    <!-- Top bar -->
-
-    <header class="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-5 pt-5 sm:px-8">
-
-        <?php if ($hero_top_artist !== '' && !$hero_top_artist_hidden): ?>
-
-            <span class="font-poster text-sm uppercase tracking-[0.2em] text-ink">
-
-                <?php echo esc_html($hero_top_artist); ?>
-
-            </span>
-
-        <?php endif; ?>
-
-        <?php if ($hero_top_cta_label !== '' && $hero_top_cta_href !== '' && !$hero_top_cta_hidden): ?>
-
-            <a
-
-                href="<?php echo esc_url($hero_top_cta_href); ?>"
-
-                class="hero-top-cta rounded-full border-2 border-ink bg-cream px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-ink shadow-[3px_3px_0_var(--ink)] transition hover:-translate-y-0.5"
-
-            >
-
-                <?php echo esc_html($hero_top_cta_label); ?>
-
-            </a>
-
-        <?php endif; ?>
-
-    </header>
-
-
 
     <div class="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 pb-10 pt-5 sm:px-8 sm:pb-16 sm:pt-8 md:grid-cols-[1.15fr_1fr] md:gap-14 md:pb-32 md:pt-10">
 
