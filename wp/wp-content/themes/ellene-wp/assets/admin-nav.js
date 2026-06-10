@@ -194,6 +194,8 @@
 
     moveModulesEnabledHelpAboveChoices();
 
+    initModulesEnabledCheckboxUi();
+
     initModulesOrderAssistant();
 
     bindRepeatableGroupAccordionEvents();
@@ -3259,6 +3261,31 @@
     const resetBtn = actions.querySelector('.ellene-wp-order-reset-btn');
 
     let draggingSlug = '';
+    let touchDropSlug = '';
+
+    const clearDropTargets = function() {
+      chipsHost.querySelectorAll('.ellene-wp-modules-order-chip.is-drop-target').forEach(function(node) {
+        node.classList.remove('is-drop-target');
+      });
+    };
+
+    const moveSlugBefore = function(fromSlug, toSlug) {
+      if (!fromSlug || !toSlug || fromSlug === toSlug) {
+        return;
+      }
+
+      const current = parseModulesOrderValue(input.value);
+      const fromIndex = current.indexOf(fromSlug);
+      const toIndex = current.indexOf(toSlug);
+
+      if (fromIndex === -1 || toIndex === -1) {
+        return;
+      }
+
+      const moved = current.splice(fromIndex, 1)[0];
+      current.splice(toIndex, 0, moved);
+      syncOrder(current, false);
+    };
 
 
 
@@ -3370,37 +3397,56 @@
 
 
 
-          if (!draggingSlug || draggingSlug === slug) {
-
-            return;
-
-          }
-
-
-
-          const current = parseModulesOrderValue(input.value);
-
-          const fromIndex = current.indexOf(draggingSlug);
-
-          const toIndex = current.indexOf(slug);
-
-
-
-          if (fromIndex === -1 || toIndex === -1) {
-
-            return;
-
-          }
-
-
-
-          const moved = current.splice(fromIndex, 1)[0];
-
-          current.splice(toIndex, 0, moved);
-
-          syncOrder(current, false);
+          moveSlugBefore(draggingSlug, slug);
 
         });
+
+        chip.addEventListener('touchstart', function() {
+          draggingSlug = slug;
+          touchDropSlug = '';
+          chip.classList.add('is-dragging');
+        }, { passive: true });
+
+        chip.addEventListener('touchmove', function(event) {
+          if (!draggingSlug) {
+            return;
+          }
+
+          const touch = event.touches && event.touches[0];
+          if (!touch) {
+            return;
+          }
+
+          event.preventDefault();
+          clearDropTargets();
+
+          const target = document.elementFromPoint(touch.clientX, touch.clientY);
+          const targetChip = target ? target.closest('.ellene-wp-modules-order-chip') : null;
+          if (!targetChip) {
+            touchDropSlug = '';
+            return;
+          }
+
+          touchDropSlug = targetChip.dataset.slug || '';
+          if (touchDropSlug && touchDropSlug !== draggingSlug) {
+            targetChip.classList.add('is-drop-target');
+          }
+        }, { passive: false });
+
+        chip.addEventListener('touchend', function() {
+          chip.classList.remove('is-dragging');
+          clearDropTargets();
+          moveSlugBefore(draggingSlug, touchDropSlug);
+          draggingSlug = '';
+          touchDropSlug = '';
+        }, { passive: true });
+
+        chip.addEventListener('touchcancel', function() {
+          chip.classList.remove('is-dragging');
+          clearDropTargets();
+          draggingSlug = '';
+          touchDropSlug = '';
+        }, { passive: true });
 
 
 
@@ -3512,6 +3558,134 @@
 
 
     td.insertBefore(description, td.firstChild);
+
+  }
+
+
+
+  function initModulesEnabledCheckboxUi() {
+
+    const row = document.querySelector('.cmb2-id-modules-enabled');
+
+    if (!row) {
+
+      return;
+
+    }
+
+
+
+    const ensureLabelTextContainer = function(label, checkbox) {
+
+      let textSpan = label.querySelector('.ellene-wp-modules-enabled-label-text');
+
+      if (textSpan) {
+
+        return textSpan;
+
+      }
+
+
+
+      textSpan = document.createElement('span');
+
+      textSpan.className = 'ellene-wp-modules-enabled-label-text';
+
+
+
+      const nodes = Array.prototype.slice.call(label.childNodes);
+
+      nodes.forEach(function(node) {
+
+        if (node === checkbox) {
+
+          return;
+
+        }
+
+
+
+        textSpan.appendChild(node);
+
+      });
+
+
+
+      label.appendChild(textSpan);
+
+      return textSpan;
+
+    };
+
+
+
+    const applyStateToLabel = function(label) {
+
+      const checkbox = label ? label.querySelector('input[type="checkbox"]') : null;
+
+      if (!checkbox) {
+
+        return;
+
+      }
+
+
+
+      ensureLabelTextContainer(label, checkbox);
+
+      label.classList.toggle('is-checked', !!checkbox.checked);
+
+      label.classList.toggle('is-unchecked', !checkbox.checked);
+
+    };
+
+
+
+    row.querySelectorAll('.cmb2-list li label, .cmb2-checkbox-list li label').forEach(function(label) {
+
+      applyStateToLabel(label);
+
+    });
+
+
+
+    if (row.dataset.elleneWpModulesEnabledUiBound === '1') {
+
+      return;
+
+    }
+
+
+
+    row.dataset.elleneWpModulesEnabledUiBound = '1';
+
+
+
+    row.addEventListener('change', function(event) {
+
+      const target = event.target;
+
+      if (!target || !target.matches('input[type="checkbox"]')) {
+
+        return;
+
+      }
+
+
+
+      const label = target.closest('label');
+
+      if (!label) {
+
+        return;
+
+      }
+
+
+
+      applyStateToLabel(label);
+
+    });
 
   }
 

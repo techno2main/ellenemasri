@@ -366,6 +366,95 @@
 
 }
 
+/* Modules actifs: custom checkbox UI + hidden state on unchecked labels. */
+.cmb2-id-modules-enabled .cmb2-checkbox-list,
+.cmb2-id-modules-enabled .cmb2-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.cmb2-id-modules-enabled .cmb2-checkbox-list li,
+.cmb2-id-modules-enabled .cmb2-list li {
+  margin: 0 !important;
+}
+
+.cmb2-id-modules-enabled .cmb2-checkbox-list li label,
+.cmb2-id-modules-enabled .cmb2-list li label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  color: #1f2937;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.cmb2-id-modules-enabled input[type="checkbox"] {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  border: 2px solid #16a34a !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  position: relative !important;
+  line-height: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.cmb2-id-modules-enabled input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 8px;
+  height: 8px;
+  border: 0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M10.2 2.8a1 1 0 0 1 0 1.4L5.2 9.2a1 1 0 0 1-1.4 0L1.8 7.2a1 1 0 1 1 1.4-1.4l1.3 1.3 4.3-4.3a1 1 0 0 1 1.4 0z' fill='%230c5c29'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 8px 8px;
+  transform: scale(0);
+  transform-origin: center;
+}
+
+.cmb2-id-modules-enabled input[type="checkbox"]:checked {
+  background: #ecfdf3 !important;
+  border-color: #16a34a !important;
+  box-shadow: none !important;
+}
+
+.cmb2-id-modules-enabled input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.cmb2-id-modules-enabled input[type="checkbox"]:focus,
+.cmb2-id-modules-enabled input[type="checkbox"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.cmb2-id-modules-enabled label.is-unchecked .ellene-wp-modules-enabled-label-text {
+  color: #b91c1c;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+
+.cmb2-id-modules-enabled label.is-checked .ellene-wp-modules-enabled-label-text {
+  color: #1f2937;
+  text-decoration: none;
+}
+
+/* Ellene admin only: hide manual CSV ordering UI, keep drag-and-drop chips visible. */
+.toplevel_page_ellene-wp_landing_options .cmb2-id-modules-order .cmb2-metabox-description,
+.toplevel_page_ellene-wp_landing_options .cmb2-id-modules-order input[type="text"],
+.toplevel_page_ellene-wp_landing_options .cmb2-id-modules-order .ellene-wp-modules-order-separator-before-input {
+  display: none !important;
+}
+
 .ellene-wp-modules-order-chips {
 
   display: flex;
@@ -2848,4 +2937,89 @@ body.ellene-wp-delete-modal-open {
 .cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open label,
 .cmb2-wrap .cmb-row.cmb-type-title.ellene-wp-section-open .ellene-wp-section-helpline {
   color: #ffffff !important;
+}
+
+/* ==========================================================
+   FINAL OVERRIDE - MODULES ACTIFS CHECKBOX UI
+   ========================================================== */
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td .cmb2-list,
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td .cmb2-checkbox-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td .cmb2-list li,
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td .cmb2-checkbox-list li {
+  margin: 0 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td .cmb2-list li label,
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td .cmb2-checkbox-list li label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  color: #1f2937 !important;
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td input[type="checkbox"] {
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  margin: 0 !important;
+  background: #ffffff !important;
+  border: 2px solid #16a34a !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  cursor: pointer !important;
+  position: relative !important;
+  line-height: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 8px;
+  height: 8px;
+  border: 0 !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M10.2 2.8a1 1 0 0 1 0 1.4L5.2 9.2a1 1 0 0 1-1.4 0L1.8 7.2a1 1 0 1 1 1.4-1.4l1.3 1.3 4.3-4.3a1 1 0 0 1 1.4 0z' fill='%230c5c29'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 8px 8px;
+  transform: scale(0);
+  transform-origin: center;
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td input[type="checkbox"]:checked {
+  background: #ecfdf3 !important;
+  border-color: #16a34a !important;
+  box-shadow: none !important;
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td input[type="checkbox"]:focus,
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td input[type="checkbox"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td input[type="checkbox"]:not(:checked) + label,
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td label.is-unchecked,
+.cmb2-wrap .cmb-row.cmb2-id-modules-enabled .cmb-td label.is-unchecked .ellene-wp-modules-enabled-label-text {
+  color: #b91c1c !important;
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
 }
