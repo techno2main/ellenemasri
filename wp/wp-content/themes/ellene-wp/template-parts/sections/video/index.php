@@ -76,9 +76,9 @@ $cover_image = trim((string) cmb2_get_option('ellene-wp_landing_options', 'video
 
         <div class="relative mt-10">
 
-            <span class="tape -top-3 left-6 h-6 w-28"></span>
+            <span class="tape -top-3 left-6 h-6 w-28" style="z-index: 12; opacity: 0.82;"></span>
 
-            <span class="tape -top-3 right-10 h-6 w-28" style="transform: rotate(3deg);"></span>
+            <span class="tape -top-3 right-10 h-6 w-28" style="transform: rotate(3deg); z-index: 12; opacity: 0.82;"></span>
 
             <div class="relative aspect-video w-full overflow-hidden rounded-3xl border-2 border-ink bg-ink" style="box-shadow: 10px 10px 0 var(--ink)">
 

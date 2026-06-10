@@ -238,9 +238,9 @@ $hero_slider_footer_text = trim((string) cmb2_get_option('ellene-wp_landing_opti
 
     <div class="relative mx-auto w-full max-w-md">
 
-        <span class="tape -top-4 left-10 h-6 w-24"></span>
+        <span class="tape -top-4 left-10 h-6 w-24" style="z-index: 12; opacity: 0.82;"></span>
 
-        <span class="tape -top-4 right-10 h-6 w-24 rotate-3!"></span>
+        <span class="tape -top-4 right-10 h-6 w-24 rotate-3!" style="z-index: 12; opacity: 0.82;"></span>
 
 
 

@@ -120,11 +120,11 @@ $hero_logo_hidden = !empty(cmb2_get_option('ellene-wp_landing_options', 'hero_lo
 
    <div class="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-5 pb-10 pt-5 sm:px-8 sm:pb-12 sm:pt-8 md:grid-cols-[1.15fr_1fr] md:gap-14 md:pb-12 md:pt-10">
 
-        <!-- Hero copy -->
+        <!-- Hero -->
 
-        <div>
+        <div class="md:-mt-12">
 
-            <div class="-mt-2 mb-4 flex justify-start">
+            <div class="mb-4 flex justify-start">
 
                 <a href="#stream" aria-label="Section suivante" class="inline-flex items-center justify-center text-xl leading-none text-ink/80 transition hover:text-ink">↓</a>
 
