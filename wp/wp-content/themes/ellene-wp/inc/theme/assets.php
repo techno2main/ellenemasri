@@ -172,19 +172,16 @@ function ellene_wp_customize_account_avatars($args, $id_or_email) {
 add_filter('pre_get_avatar_data', 'ellene_wp_customize_account_avatars', 20, 2);
 
 function ellene_wp_hide_wp_footer_text_on_landing($text) {
-    $screen = get_current_screen();
-
-    if ($screen && (
-        $screen->id === 'toplevel_page_ellene-wp_landing_options' ||
-        strpos($screen->id, 'ellene_wp_visual_links') !== false
-    )) {
-        return '';
-    }
-
-    return $text;
+    return '';
 }
 
 add_filter('admin_footer_text', 'ellene_wp_hide_wp_footer_text_on_landing', 20);
+
+function ellene_wp_hide_wp_footer_version($text) {
+    return '';
+}
+
+add_filter('update_footer', 'ellene_wp_hide_wp_footer_version', 20);
 
 function ellene_wp_media_modal_edit_button() {
     $screen = get_current_screen();
@@ -439,6 +436,43 @@ function ellene_wp_render_vlb_notice_intermediate_page() {
         wp_die(esc_html__('You are not allowed to access this page.', 'ellene-wp'), 403);
     }
     ?>
+    <style>
+        body.wp-admin,
+        #wpcontent,
+        #wpbody,
+        #wpbody-content {
+            background: #f8d24a;
+        }
+
+        .wrap {
+            max-width: none;
+        }
+
+        .wrap .notice.notice-warning {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        #wpbody-content {
+            min-height: calc(100vh - 32px);
+            padding-bottom: 24px;
+        }
+
+        .vlb-notice-cone {
+            display: block;
+            width: 187px;
+            max-width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        @media (min-width: 1024px) {
+            .vlb-notice-gif {
+                width: auto;
+                max-height: 420px;
+            }
+        }
+    </style>
     <div class="wrap">
         <h1>VISUAL LINKS BUILDER (VLB)</h1>
         <div class="notice notice-warning" style="margin: 12px 0 0;">
@@ -446,11 +480,11 @@ function ellene_wp_render_vlb_notice_intermediate_page() {
         </div>
         <div style="margin-top: 24px; text-align: left;">
             <img
-                src="https://deretourdufutur.fr/assets/img/Moonwalk.gif"
-                alt="Moonwalk animation"
-                style="max-width: 100%; width: 420px; height: auto; border-radius: 8px;"
+                src="https://www.ellenemasri.com/wp/wp-content/uploads/2026/06/traffic-cone.png"
+                alt="Traffic cone"
+                class="vlb-notice-cone"
             />
-            <p><strong>Still working on it, Baby!</strong></p>
+            <p><strong>Still working on it. Hee Hee !</strong></p>
         </div>
     </div>
     <?php
