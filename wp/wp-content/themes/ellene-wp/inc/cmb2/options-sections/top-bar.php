@@ -86,9 +86,22 @@ function ellene_wp_top_bar_position_indicator_admin_head() {
         display: inline-block;
         width: 22px;
         height: 14px;
+        position: relative;
     }
     .ellene-pos-rect span + span {
         border-left: 1px solid #9a9a9a;
+    }
+    .ellene-pos-rect span::after {
+        content: attr(data-label);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 10px;
+        line-height: 1;
+        font-weight: 700;
+        color: inherit;
+        font-family: Arial, sans-serif;
     }
     </style>
     <script>
@@ -127,10 +140,13 @@ function ellene_wp_top_bar_position_indicator_admin_head() {
         function buildRect(colors) {
             var wrap = document.createElement('span');
             wrap.className = 'ellene-pos-rect';
+            var labels = ['1', '2', '3'];
 
-            colors.forEach(function(color) {
+            colors.forEach(function(color, index) {
                 var part = document.createElement('span');
                 part.style.background = color;
+                part.style.color = (color === ACTIVE_COLOR) ? '#ffffff' : '#111111';
+                part.setAttribute('data-label', labels[index] || '');
                 wrap.appendChild(part);
             });
 
