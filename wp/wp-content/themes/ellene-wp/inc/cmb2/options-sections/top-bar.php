@@ -291,25 +291,19 @@ function ellene_wp_top_bar_position_indicator_admin_head() {
         .cmb2-id-top-bar-logo-png .cmb-td .cmb2-upload-button {
             order: 2;
             margin: 0 !important;
-            width: 42px !important;
-            min-width: 42px !important;
+            width: auto !important;
+            min-width: auto !important;
             height: 40px !important;
-            padding: 0 !important;
+            padding: 0 8px !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-size: 0 !important;
+            font-size: 11px !important;
             line-height: 1 !important;
-        }
-
-        .cmb2-id-top-bar-logo-png .cmb-td .cmb2-upload-button::before {
-            content: "\f464";
-            font-family: "dashicons";
-            font-size: 18px;
-            line-height: 1;
-            color: #3858e9 !important;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-weight: 600;
+            color: #3858e9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .cmb2-id-top-bar-logo-png .cmb-td .ellene-wp-inline-hide-toggle {
