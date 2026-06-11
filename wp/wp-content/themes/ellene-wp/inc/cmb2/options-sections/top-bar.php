@@ -19,6 +19,21 @@ function ellene_wp_register_cmb2_top_bar_section($cmb) {
         'id'   => 'section_top_bar_title',
     ));
 
+    $cmb->add_field(array(
+        'name' => 'Logo TOP-BAR',
+        'id'   => 'top_bar_logo_png',
+        'type' => 'file',
+        'text' => array(
+            'add_upload_file_text' => 'Modifier',
+        ),
+    ));
+
+    $cmb->add_field(array(
+        'name' => 'Masquer',
+        'id'   => 'top_bar_logo_hidden',
+        'type' => 'checkbox',
+    ));
+
     $top_bar_group = $cmb->add_field(array(
         'id'      => 'top_bar_items',
         'type'    => 'group',
@@ -45,21 +60,6 @@ function ellene_wp_register_cmb2_top_bar_section($cmb) {
     $cmb->add_group_field($top_bar_group, array(
         'name' => 'Masquer',
         'id'   => 'is_hidden',
-        'type' => 'checkbox',
-    ));
-
-    $cmb->add_field(array(
-        'name' => 'Visuel TOP-BAR',
-        'id'   => 'top_bar_logo_png',
-        'type' => 'file',
-        'text' => array(
-            'add_upload_file_text' => 'Modifier',
-        ),
-    ));
-
-    $cmb->add_field(array(
-        'name' => 'Masquer',
-        'id'   => 'top_bar_logo_hidden',
         'type' => 'checkbox',
     ));
 }
