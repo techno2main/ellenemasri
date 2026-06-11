@@ -179,25 +179,22 @@ function ellene_wp_top_bar_position_indicator_admin_head() {
     }
 
     .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th label {
+        display: inline-block !important;
         visibility: visible !important;
         opacity: 1 !important;
         color: inherit !important;
+        margin: 0 !important;
+        font-weight: 600;
+        white-space: nowrap;
+        color: #1d2327;
     }
 
     .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .ellene-topbar-native-label {
         display: none !important;
     }
 
-    .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-th label {
-        display: none !important;
-    }
-
     .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .ellene-topbar-label-text {
-        display: inline-block !important;
-        margin: 0 !important;
-        font-weight: 600;
-        white-space: nowrap;
-        color: #1d2327;
+        display: none !important;
     }
 
     .cmb2-id-top-bar-items .cmb-repeatable-grouping .cmb-row[class*="-label"] .cmb-td input[type="text"],
