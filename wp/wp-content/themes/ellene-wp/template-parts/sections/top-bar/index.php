@@ -74,7 +74,7 @@ $sanitize_top_bar_item = static function ($item) {
 
 };
 
-// Slots fixes TOP-BAR (0: Titre Single, 1: CTA central, 2: Baseline)
+// Slots fixes TOP-BAR (0: Titre Single, 1: CTA, 2: Baseline)
 $desktop_right_item = $sanitize_top_bar_item($top_bar_items[0] ?? null);
 
 $desktop_center_item = $sanitize_top_bar_item($top_bar_items[1] ?? null);

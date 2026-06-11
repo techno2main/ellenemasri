@@ -40,7 +40,7 @@
 
     'Titre Single',
 
-    'CTA central',
+    'CTA',
 
     'Baseline'
 

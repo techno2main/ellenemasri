@@ -831,6 +831,22 @@
 
 }
 
+.cmb2-id-top-bar-logo-png {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  border-bottom: 0 !important;
+}
+
+.cmb2-id-top-bar-items {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+  border-top: 0 !important;
+}
+
+.cmb2-id-top-bar-items .cmb-repeatable-grouping {
+  margin-top: 0 !important;
+}
+
 
 
 .cmb2-id-top-bar-logo-hidden.ellene-wp-hidden-source-row {
