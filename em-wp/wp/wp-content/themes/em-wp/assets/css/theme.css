@@ -1,0 +1,124 @@
+/*
+ * Base visuelle du thème em-wp local.
+ */
+
+:root {
+    --em-bg: #f7f4ee;
+    --em-paper: #fffdf9;
+    --em-text: #1d1b19;
+    --em-muted: #6d655e;
+    --em-accent: #b45f2a;
+    --em-border: #e7dfd4;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: radial-gradient(circle at top right, #fff6ea, var(--em-bg));
+    color: var(--em-text);
+    font-family: Georgia, "Times New Roman", serif;
+    line-height: 1.6;
+}
+
+.site-header,
+.site-footer {
+    background: var(--em-paper);
+    border-bottom: 1px solid var(--em-border);
+}
+
+.site-footer {
+    border-top: 1px solid var(--em-border);
+    border-bottom: 0;
+}
+
+.site-header__inner,
+.site-footer__inner {
+    width: min(1100px, 92vw);
+    margin: 0 auto;
+    padding: 18px 0;
+}
+
+.site-header__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.site-header__brand {
+    color: var(--em-text);
+    text-decoration: none;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.primary-menu {
+    display: flex;
+    list-style: none;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+}
+
+.primary-menu a,
+a {
+    color: var(--em-accent);
+}
+
+.site-main {
+    width: min(1100px, 92vw);
+    margin: 36px auto 60px;
+}
+
+.hero,
+.content-block {
+    background: var(--em-paper);
+    border: 1px solid var(--em-border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 22px;
+}
+
+.hero__kicker {
+    color: var(--em-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.78rem;
+    margin-bottom: 8px;
+}
+
+h1,
+h2,
+h3 {
+    line-height: 1.2;
+    margin-top: 0;
+}
+
+.post-list {
+    padding-left: 20px;
+    margin-bottom: 0;
+}
+
+.post-meta {
+    color: var(--em-muted);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 760px) {
+    .site-header__inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .primary-menu {
+        flex-wrap: wrap;
+    }
+
+    .hero,
+    .content-block {
+        padding: 20px;
+    }
+}
