@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/modules/top-bar/settings.php';
+
 /**
  * Slugs modules gérés côté admin.
  */

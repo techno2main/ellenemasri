@@ -13,6 +13,11 @@
 </head>
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
+<?php
+if (function_exists('em_wp_render_top_bar')) {
+    em_wp_render_top_bar();
+}
+?>
 <header class="site-header">
     <div class="site-header__inner">
         <a class="site-header__brand" href="<?php echo esc_url(home_url('/')); ?>">
