@@ -298,7 +298,7 @@ function em_wp_top_bar_render_admin_page(): void
             ?>
             <div class="em-wp-top-bar-admin__panels">
                 <?php em_wp_top_bar_render_style_panel($options); ?>
-                <div class="em-wp-top-bar-admin__section-title"><?php esc_html_e('Items', 'em-wp'); ?></div>
+                <div class="em-wp-top-bar-admin__section-title"><?php esc_html_e('Items', 'em-wp'); ?> <span class="em-wp-top-bar-admin__section-module"><?php esc_html_e('de Top-Bar', 'em-wp'); ?></span></div>
                 <?php em_wp_top_bar_render_logo_panel($options); ?>
                 <?php foreach (em_wp_top_bar_item_definitions() as $key => $title) {
                     em_wp_top_bar_render_item_panel($key, $title, $options['items'][$key] ?? []);
@@ -321,16 +321,17 @@ function em_wp_top_bar_render_stream_links_panel(array $stream_links): void
     ?>
     <section class="em-wp-top-bar-panel">
         <button class="em-wp-top-bar-panel__header" type="button">
-            <span class="em-wp-top-bar-panel__title-wrap"><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('stream_links')); ?><span><?php esc_html_e('Stream Links', 'em-wp'); ?></span></span>
+            <span class="em-wp-top-bar-panel__title-wrap"><span class="em-wp-top-bar-panel__has-children" title="<?php esc_attr_e('Contient des sous-éléments', 'em-wp'); ?>"><i class="fa-solid fa-list" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('stream_links')); ?><span><?php esc_html_e('Stream Links', 'em-wp'); ?></span></span>
         </button>
         <div class="em-wp-top-bar-panel__body">
             <div class="em-wp-top-bar-platform-list">
                 <?php foreach (em_wp_top_bar_stream_platform_definitions() as $slug => $platform) {
                     $item = is_array($stream_links[$slug] ?? null) ? $stream_links[$slug] : [];
                     ?>
+                    <?php $is_active = !empty($item['active']); ?>
                     <details class="em-wp-top-bar-platform-item">
                         <summary>
-                            <span class="em-wp-top-bar-platform-item__label"><i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i><span><?php echo esc_html($platform['label']); ?></span></span>
+                            <span class="em-wp-top-bar-platform-item__label"><span class="em-wp-top-bar-panel__visibility<?php echo $is_active ? '' : ' is-hidden'; ?>" aria-label="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>" title="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_active ? 'fa-eye' : 'fa-eye-slash'; ?>" aria-hidden="true"></i></span><i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i><span><?php echo esc_html($platform['label']); ?></span></span>
                         </summary>
                         <div class="em-wp-top-bar-platform-item__body">
                             <label><span><?php esc_html_e('Label', 'em-wp'); ?></span><input type="text" class="regular-text" name="em_wp_top_bar_options[stream_links][<?php echo esc_attr($slug); ?>][label]" value="<?php echo esc_attr($item['label'] ?? $platform['label']); ?>"></label>
@@ -351,10 +352,11 @@ function em_wp_top_bar_render_stream_links_panel(array $stream_links): void
  */
 function em_wp_top_bar_render_logo_panel(array $options): void
 {
+    $is_hidden = !empty($options['logo_hidden']);
     ?>
     <section class="em-wp-top-bar-panel">
         <button class="em-wp-top-bar-panel__header" type="button">
-            <span class="em-wp-top-bar-panel__title-wrap"><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('logo')); ?><span><?php esc_html_e('Logo', 'em-wp'); ?></span></span>
+            <span class="em-wp-top-bar-panel__title-wrap"><span class="em-wp-top-bar-panel__visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-label="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>" title="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('logo')); ?><span><?php esc_html_e('Logo', 'em-wp'); ?></span></span>
         </button>
         <div class="em-wp-top-bar-panel__body">
             <div class="em-wp-top-bar-logo-picker" data-target="em-wp-top-bar-logo-url">
@@ -372,10 +374,11 @@ function em_wp_top_bar_render_logo_panel(array $options): void
  */
 function em_wp_top_bar_render_item_panel(string $key, string $title, array $item): void
 {
+    $is_hidden = !empty($item['hidden']);
     ?>
     <section class="em-wp-top-bar-panel">
         <button class="em-wp-top-bar-panel__header" type="button">
-            <span class="em-wp-top-bar-panel__title-wrap"><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position($key)); ?><span><?php echo esc_html($title); ?></span></span>
+            <span class="em-wp-top-bar-panel__title-wrap"><span class="em-wp-top-bar-panel__visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-label="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>" title="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position($key)); ?><span><?php echo esc_html($title); ?></span></span>
         </button>
         <div class="em-wp-top-bar-panel__body em-wp-top-bar-panel__body--row">
             <label><span><?php esc_html_e('Label', 'em-wp'); ?></span><input type="text" class="regular-text" name="em_wp_top_bar_options[items][<?php echo esc_attr($key); ?>][label]" value="<?php echo esc_attr($item['label'] ?? ''); ?>"></label>
