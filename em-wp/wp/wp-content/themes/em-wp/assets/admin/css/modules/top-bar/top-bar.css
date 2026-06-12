@@ -3,36 +3,20 @@
 }
 
 .em-wp-top-bar-admin {
-    font-size: 13px;
     --em-topbar-admin-bg: #100421;
     --em-topbar-admin-text: #ffffff;
-    --em-topbar-admin-bg-soft: #e5e7eb;
-    --em-topbar-admin-accent: #374151;
 }
 
 .em-wp-top-bar-admin__hero {
-    margin: 14px 0 0;
-    padding: 12px 16px;
     background: var(--em-topbar-admin-bg);
     color: var(--em-topbar-admin-text);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
 }
 
 .em-wp-top-bar-admin__hero h1 {
     color: inherit;
-    margin: 2px 0 0;
-    font-size: 14px;
-    line-height: 1.2;
 }
 
 .em-wp-top-bar-admin__eyebrow {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
 }
 
 .em-wp-top-bar-admin__toggle,
@@ -42,56 +26,7 @@
     gap: 8px;
 }
 
-.em-wp-top-bar-admin__panels {
-    border: 1px solid #d0d5dd;
-    border-top: 0;
-    background: #f0f0f1;
-    padding: 8px;
-}
-
-.em-wp-top-bar-admin__section-title {
-    margin-top: 12px;
-    margin-bottom: 6px;
-    padding: 0 2px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--em-topbar-admin-accent);
-}
-
-.em-wp-top-bar-admin__section-module {
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    text-transform: none;
-    color: #9ca3af;
-    font-size: 11px;
-}
-
-.em-wp-top-bar-panel {
-    border: 1px solid #d0d5dd;
-    background: #ffffff;
-    margin-top: 8px;
-}
-
-.em-wp-top-bar-panel:first-child {
-    margin-top: 0;
-}
-
 .em-wp-top-bar-panel__header {
-    width: 100%;
-    border: 0;
-    background: var(--em-topbar-admin-bg-soft);
-    color: var(--em-topbar-admin-accent);
-    text-align: left;
-    padding: 10px 14px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
 }
 
 .em-wp-top-bar-panel__title-wrap {
@@ -123,13 +58,6 @@
     background: var(--em-topbar-admin-bg);
 }
 
-.em-wp-top-bar-panel__header::after {
-    content: "\25B8";
-    color: var(--em-topbar-admin-accent);
-    font-size: 14px;
-    line-height: 1;
-}
-
 .em-wp-top-bar-panel__has-children {
     font-size: 14px;
     color: #9ca3af;
@@ -137,32 +65,10 @@
     flex-shrink: 0;
 }
 
-.em-wp-top-bar-panel__visibility {
-    font-size: 13px;
-    color: #6b9e6b;
-    margin-right: 4px;
-    flex-shrink: 0;
-}
-
-.em-wp-top-bar-panel__visibility.is-hidden {
-    color: #c0c4cc;
-}
-
-.em-wp-top-bar-panel.is-open .em-wp-top-bar-panel__header::after {
-    content: "\25BE";
-}
-
-.em-wp-top-bar-panel__body {
-    padding: 12px 14px;
-}
-
 .em-wp-top-bar-panel__body:has(.em-wp-top-bar-logo-picker) {
     padding-bottom: 4px;
 }
 
-.em-wp-top-bar-panel:not(.is-open) .em-wp-top-bar-panel__body {
-    display: none;
-}
 
 .em-wp-top-bar-panel__body--row {
     display: flex;
@@ -255,50 +161,6 @@
     margin-left: 0;
 }
 
-.em-wp-top-bar-panel__body .wp-picker-container {
-    min-width: 170px;
-}
-
-.em-wp-top-bar-color-control {
-    display: grid;
-    gap: 6px;
-    min-width: 200px;
-}
-
-.em-wp-top-bar-panel__body--row .em-wp-top-bar-color-control + .em-wp-top-bar-color-control {
-    margin-left: 34px;
-    padding-left: 18px;
-    border-left: 1px solid #d1d5db;
-}
-
-.em-wp-top-bar-color-label {
-    display: inline-block;
-    font-size: 12px;
-    font-weight: 600;
-    color: #111827;
-}
-
-.em-wp-top-bar-panel__body .wp-picker-input-wrap input[type="text"].wp-color-picker {
-    width: 100px !important;
-    min-width: 100px !important;
-    max-width: 100px !important;
-    height: 30px !important;
-}
-
-.em-wp-top-bar-panel__body .wp-picker-input-wrap {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 6px;
-}
-
-.em-wp-top-bar-panel__body .wp-picker-input-wrap .button,
-.em-wp-top-bar-panel__body .wp-picker-input-wrap .wp-picker-clear,
-.em-wp-top-bar-panel__body .wp-picker-input-wrap .wp-picker-default {
-    margin: 0 !important;
-    height: 30px !important;
-    line-height: 28px !important;
-}
-
 .em-wp-top-bar-platform-item__label {
     display: inline-flex;
     align-items: center;
@@ -308,10 +170,6 @@
 .em-wp-top-bar-platform-item__label .fa-brands {
     font-size: 1.1em;
     color: #6b7280;
-}
-
-.em-wp-top-bar-panel__body .wp-picker-default {
-    display: none !important;
 }
 
 .em-wp-top-bar-panel__body--top-border {

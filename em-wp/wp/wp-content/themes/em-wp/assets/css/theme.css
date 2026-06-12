@@ -73,6 +73,16 @@ a {
     margin: 36px auto 60px;
 }
 
+.site-main.site-main--front {
+    width: 100%;
+    margin: 0;
+    max-width: none;
+}
+
+.site-main.site-main--front + .site-footer {
+    display: none;
+}
+
 .hero,
 .content-block {
     background: var(--em-paper);

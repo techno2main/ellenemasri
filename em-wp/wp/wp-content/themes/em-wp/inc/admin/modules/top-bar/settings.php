@@ -95,16 +95,26 @@ function em_wp_top_bar_render_position_indicator(string $position): void
 }
 
 /**
- * Enregistre la page Top Bar sous Apparence.
+ * Retourne le slug de page admin Top Bar.
+ */
+function em_wp_top_bar_page_slug(): string
+{
+    return 'em-wp-top-bar';
+}
+
+/**
+ * Enregistre la page Top Bar dans le menu principal.
  */
 function em_wp_top_bar_add_admin_page(): void
 {
-    add_theme_page(
+    add_menu_page(
         __('Top Bar', 'em-wp'),
         __('Top Bar', 'em-wp'),
         'manage_options',
-        'em-wp-top-bar',
-        'em_wp_top_bar_render_admin_page'
+        em_wp_top_bar_page_slug(),
+        'em_wp_top_bar_render_admin_page',
+        'dashicons-align-wide',
+        59
     );
 }
 add_action('admin_menu', 'em_wp_top_bar_add_admin_page');
@@ -114,7 +124,8 @@ add_action('admin_menu', 'em_wp_top_bar_add_admin_page');
  */
 function em_wp_top_bar_admin_enqueue(string $hook_suffix): void
 {
-    if ($hook_suffix !== 'appearance_page_em-wp-top-bar') {
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ($page_slug !== em_wp_top_bar_page_slug()) {
         return;
     }
 
@@ -129,15 +140,41 @@ function em_wp_top_bar_admin_enqueue(string $hook_suffix): void
         '6.5.1'
     );
     wp_enqueue_style(
-        'em-wp-top-bar-admin',
-        get_template_directory_uri() . '/assets/admin/css/modules/top-bar/top-bar.css',
+        'em-wp-admin-color-picker',
+        get_template_directory_uri() . '/assets/admin/css/shared/color-picker.css',
         [],
         $theme_version
+    );
+    wp_enqueue_style(
+        'em-wp-admin-module-common',
+        get_template_directory_uri() . '/assets/admin/css/shared/module-common.css',
+        [],
+        $theme_version
+    );
+    wp_enqueue_style(
+        'em-wp-top-bar-admin',
+        get_template_directory_uri() . '/assets/admin/css/modules/top-bar/top-bar.css',
+        ['em-wp-admin-color-picker', 'em-wp-admin-module-common'],
+        $theme_version
+    );
+    wp_enqueue_script(
+        'em-wp-admin-color-picker',
+        get_template_directory_uri() . '/assets/admin/js/shared/color-picker.js',
+        ['jquery', 'wp-color-picker'],
+        $theme_version,
+        true
+    );
+    wp_enqueue_script(
+        'em-wp-admin-accordion',
+        get_template_directory_uri() . '/assets/admin/js/shared/accordion.js',
+        ['jquery'],
+        $theme_version,
+        true
     );
     wp_enqueue_script(
         'em-wp-top-bar-admin',
         get_template_directory_uri() . '/assets/admin/js/modules/top-bar/top-bar.js',
-        ['jquery', 'wp-color-picker'],
+        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-accordion'],
         $theme_version,
         true
     );
@@ -281,11 +318,11 @@ function em_wp_top_bar_render_admin_page(): void
 
     $options = em_wp_top_bar_get_options();
     ?>
-    <div class="wrap em-wp-top-bar-admin">
-        <div class="em-wp-top-bar-admin__hero">
+    <div class="wrap em-wp-top-bar-admin em-wp-admin-module">
+        <div class="em-wp-top-bar-admin__hero em-wp-admin-module__hero">
             <div>
-                <p class="em-wp-top-bar-admin__eyebrow"><?php esc_html_e('TOP-BAR', 'em-wp'); ?></p>
-                <h1><?php esc_html_e('Section TOP-BAR/HEADER', 'em-wp'); ?></h1>
+                <p class="em-wp-top-bar-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('TOP-BAR', 'em-wp'); ?></p>
+                <h1 class="em-wp-admin-module__title"><?php esc_html_e('Section TOP-BAR/HEADER', 'em-wp'); ?></h1>
             </div>
             <label class="em-wp-top-bar-admin__toggle">
                 <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
@@ -296,9 +333,9 @@ function em_wp_top_bar_render_admin_page(): void
             <?php
             settings_fields('em_wp_top_bar_group');
             ?>
-            <div class="em-wp-top-bar-admin__panels">
+            <div class="em-wp-top-bar-admin__panels em-wp-admin-module__panels">
                 <?php em_wp_top_bar_render_style_panel($options); ?>
-                <div class="em-wp-top-bar-admin__section-title"><?php esc_html_e('Items', 'em-wp'); ?> <span class="em-wp-top-bar-admin__section-module"><?php esc_html_e('de Top-Bar', 'em-wp'); ?></span></div>
+                <div class="em-wp-top-bar-admin__section-title em-wp-admin-module__section-title"><?php esc_html_e('Items', 'em-wp'); ?> <span class="em-wp-top-bar-admin__section-module em-wp-admin-module__section-module"><?php esc_html_e('de Top-Bar', 'em-wp'); ?></span></div>
                 <?php em_wp_top_bar_render_logo_panel($options); ?>
                 <?php foreach (em_wp_top_bar_item_definitions() as $key => $title) {
                     em_wp_top_bar_render_item_panel($key, $title, $options['items'][$key] ?? []);
@@ -319,11 +356,11 @@ function em_wp_top_bar_render_admin_page(): void
 function em_wp_top_bar_render_stream_links_panel(array $stream_links): void
 {
     ?>
-    <section class="em-wp-top-bar-panel">
-        <button class="em-wp-top-bar-panel__header" type="button">
-            <span class="em-wp-top-bar-panel__title-wrap"><span class="em-wp-top-bar-panel__has-children" title="<?php esc_attr_e('Contient des sous-éléments', 'em-wp'); ?>"><i class="fa-solid fa-list" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('stream_links')); ?><span><?php esc_html_e('Stream Links', 'em-wp'); ?></span></span>
+    <section class="em-wp-top-bar-panel em-wp-admin-module__panel">
+        <button class="em-wp-top-bar-panel__header em-wp-admin-module__panel-header" type="button">
+            <span class="em-wp-top-bar-panel__title-wrap em-wp-admin-module__item-header-line"><span class="em-wp-top-bar-panel__has-children" title="<?php esc_attr_e('Contient des sous-éléments', 'em-wp'); ?>"><i class="fa-solid fa-list" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('stream_links')); ?><span><?php esc_html_e('Stream Links', 'em-wp'); ?></span></span>
         </button>
-        <div class="em-wp-top-bar-panel__body">
+        <div class="em-wp-top-bar-panel__body em-wp-admin-module__panel-body">
             <div class="em-wp-top-bar-platform-list">
                 <?php foreach (em_wp_top_bar_stream_platform_definitions() as $slug => $platform) {
                     $item = is_array($stream_links[$slug] ?? null) ? $stream_links[$slug] : [];
@@ -331,7 +368,7 @@ function em_wp_top_bar_render_stream_links_panel(array $stream_links): void
                     <?php $is_active = !empty($item['active']); ?>
                     <details class="em-wp-top-bar-platform-item">
                         <summary>
-                            <span class="em-wp-top-bar-platform-item__label"><span class="em-wp-top-bar-panel__visibility<?php echo $is_active ? '' : ' is-hidden'; ?>" aria-label="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>" title="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_active ? 'fa-eye' : 'fa-eye-slash'; ?>" aria-hidden="true"></i></span><i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i><span><?php echo esc_html($platform['label']); ?></span></span>
+                            <span class="em-wp-top-bar-platform-item__label"><span class="em-wp-top-bar-panel__visibility em-wp-admin-module__item-visibility<?php echo $is_active ? '' : ' is-hidden'; ?>" aria-label="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>" title="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_active ? 'fa-eye' : 'fa-eye-slash'; ?>" aria-hidden="true"></i></span><i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i><span><?php echo esc_html($platform['label']); ?></span></span>
                         </summary>
                         <div class="em-wp-top-bar-platform-item__body">
                             <label><span><?php esc_html_e('Label', 'em-wp'); ?></span><input type="text" class="regular-text" name="em_wp_top_bar_options[stream_links][<?php echo esc_attr($slug); ?>][label]" value="<?php echo esc_attr($item['label'] ?? $platform['label']); ?>"></label>
@@ -354,11 +391,11 @@ function em_wp_top_bar_render_logo_panel(array $options): void
 {
     $is_hidden = !empty($options['logo_hidden']);
     ?>
-    <section class="em-wp-top-bar-panel">
-        <button class="em-wp-top-bar-panel__header" type="button">
-            <span class="em-wp-top-bar-panel__title-wrap"><span class="em-wp-top-bar-panel__visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-label="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>" title="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('logo')); ?><span><?php esc_html_e('Logo', 'em-wp'); ?></span></span>
+    <section class="em-wp-top-bar-panel em-wp-admin-module__panel">
+        <button class="em-wp-top-bar-panel__header em-wp-admin-module__panel-header" type="button">
+            <span class="em-wp-top-bar-panel__title-wrap em-wp-admin-module__item-header-line"><span class="em-wp-top-bar-panel__visibility em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-label="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>" title="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('logo')); ?><span><?php esc_html_e('Logo', 'em-wp'); ?></span></span>
         </button>
-        <div class="em-wp-top-bar-panel__body">
+        <div class="em-wp-top-bar-panel__body em-wp-admin-module__panel-body">
             <div class="em-wp-top-bar-logo-picker" data-target="em-wp-top-bar-logo-url">
                 <input type="text" id="em-wp-top-bar-logo-url" name="em_wp_top_bar_options[logo_url]" value="<?php echo esc_attr($options['logo_url']); ?>" class="regular-text em-wp-top-bar-logo-input">
                 <button type="button" class="button button-secondary em-wp-top-bar-media-button" data-target="em-wp-top-bar-logo-url" data-preview="em-wp-top-bar-logo-preview" data-modal-title="<?php echo esc_attr__('Choisir le logo', 'em-wp'); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce logo', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
@@ -377,11 +414,11 @@ function em_wp_top_bar_render_item_panel(string $key, string $title, array $item
 {
     $is_hidden = !empty($item['hidden']);
     ?>
-    <section class="em-wp-top-bar-panel">
-        <button class="em-wp-top-bar-panel__header" type="button">
-            <span class="em-wp-top-bar-panel__title-wrap"><span class="em-wp-top-bar-panel__visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-label="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>" title="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position($key)); ?><span><?php echo esc_html($title); ?></span></span>
+    <section class="em-wp-top-bar-panel em-wp-admin-module__panel">
+        <button class="em-wp-top-bar-panel__header em-wp-admin-module__panel-header" type="button">
+            <span class="em-wp-top-bar-panel__title-wrap em-wp-admin-module__item-header-line"><span class="em-wp-top-bar-panel__visibility em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-label="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>" title="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position($key)); ?><span><?php echo esc_html($title); ?></span></span>
         </button>
-        <div class="em-wp-top-bar-panel__body em-wp-top-bar-panel__body--row">
+        <div class="em-wp-top-bar-panel__body em-wp-admin-module__panel-body em-wp-top-bar-panel__body--row">
             <label><span><?php esc_html_e('Label', 'em-wp'); ?></span><input type="text" class="regular-text" name="em_wp_top_bar_options[items][<?php echo esc_attr($key); ?>][label]" value="<?php echo esc_attr($item['label'] ?? ''); ?>"></label>
             <label><span><?php esc_html_e('Lien', 'em-wp'); ?></span><input type="text" class="regular-text" name="em_wp_top_bar_options[items][<?php echo esc_attr($key); ?>][href]" value="<?php echo esc_attr($item['href'] ?? ''); ?>"></label>
             <label class="em-wp-top-bar-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="em_wp_top_bar_options[items][<?php echo esc_attr($key); ?>][hidden]" value="1" <?php checked(!empty($item['hidden'])); ?>></label>
@@ -396,21 +433,21 @@ function em_wp_top_bar_render_item_panel(string $key, string $title, array $item
 function em_wp_top_bar_render_style_panel(array $options): void
 {
     ?>
-    <section class="em-wp-top-bar-panel">
-        <button class="em-wp-top-bar-panel__header" type="button">
+    <section class="em-wp-top-bar-panel em-wp-admin-module__panel">
+        <button class="em-wp-top-bar-panel__header em-wp-admin-module__panel-header" type="button">
             <span><?php esc_html_e('Styles de base', 'em-wp'); ?></span>
         </button>
-        <div class="em-wp-top-bar-panel__body em-wp-top-bar-panel__body--row">
-            <div class="em-wp-top-bar-color-control">
-                <span class="em-wp-top-bar-color-label"><?php esc_html_e('Couleur de fond', 'em-wp'); ?></span>
-                <input type="text" class="regular-text em-wp-color-field" name="em_wp_top_bar_options[background_color]" value="<?php echo esc_attr($options['background_color']); ?>">
+        <div class="em-wp-top-bar-panel__body em-wp-admin-module__panel-body em-wp-top-bar-panel__body--row em-wp-admin-panel-body--row em-wp-admin-color-field-wrap">
+            <div class="em-wp-admin-color-control">
+                <span class="em-wp-admin-color-label"><?php esc_html_e('Couleur de fond', 'em-wp'); ?></span>
+                <input type="text" class="regular-text em-wp-admin-color-field" name="em_wp_top_bar_options[background_color]" value="<?php echo esc_attr($options['background_color']); ?>">
             </div>
-            <div class="em-wp-top-bar-color-control">
-                <span class="em-wp-top-bar-color-label"><?php esc_html_e('Couleur du texte', 'em-wp'); ?></span>
-                <input type="text" class="regular-text em-wp-color-field" name="em_wp_top_bar_options[text_color]" value="<?php echo esc_attr($options['text_color']); ?>">
+            <div class="em-wp-admin-color-control">
+                <span class="em-wp-admin-color-label"><?php esc_html_e('Couleur du texte', 'em-wp'); ?></span>
+                <input type="text" class="regular-text em-wp-admin-color-field" name="em_wp_top_bar_options[text_color]" value="<?php echo esc_attr($options['text_color']); ?>">
             </div>
         </div>
-        <div class="em-wp-top-bar-panel__body em-wp-top-bar-panel__body--row em-wp-top-bar-panel__body--top-border">
+        <div class="em-wp-top-bar-panel__body em-wp-admin-module__panel-body em-wp-top-bar-panel__body--row em-wp-top-bar-panel__body--top-border">
             <label class="em-wp-top-bar-inline-check em-wp-top-bar-bg-enable-check"><span><?php esc_html_e('Activer image de fond', 'em-wp'); ?></span><input id="em-wp-top-bar-bg-image-enabled" type="checkbox" name="em_wp_top_bar_options[background_image_enabled]" value="1" <?php checked(!empty($options['background_image_enabled'])); ?>></label>
             <div id="em-wp-top-bar-bg-fields" class="em-wp-top-bar-bg-fields<?php echo empty($options['background_image_enabled']) ? ' is-disabled' : ''; ?>">
                 <label class="em-wp-top-bar-background-image-label"><span><?php esc_html_e('Image de fond', 'em-wp'); ?></span></label>

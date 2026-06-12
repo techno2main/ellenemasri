@@ -18,26 +18,28 @@ if (function_exists('em_wp_render_top_bar')) {
     em_wp_render_top_bar();
 }
 ?>
-<header class="site-header">
-    <div class="site-header__inner">
-        <a class="site-header__brand" href="<?php echo esc_url(home_url('/')); ?>">
-            <?php bloginfo('name'); ?>
-        </a>
-        <nav class="site-header__nav" aria-label="Navigation principale">
-            <?php
-            if (has_nav_menu('primary')) {
-                wp_nav_menu([
-                    'theme_location' => 'primary',
-                    'container'      => false,
-                    'menu_class'     => 'primary-menu',
-                    'fallback_cb'    => false,
-                ]);
-            } else {
-                wp_page_menu([
-                    'menu_class' => 'primary-menu',
-                ]);
-            }
-            ?>
-        </nav>
-    </div>
-</header>
+<?php if (!is_front_page()) { ?>
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="site-header__brand" href="<?php echo esc_url(home_url('/')); ?>">
+                <?php bloginfo('name'); ?>
+            </a>
+            <nav class="site-header__nav" aria-label="Navigation principale">
+                <?php
+                if (has_nav_menu('primary')) {
+                    wp_nav_menu([
+                        'theme_location' => 'primary',
+                        'container'      => false,
+                        'menu_class'     => 'primary-menu',
+                        'fallback_cb'    => false,
+                    ]);
+                } else {
+                    wp_page_menu([
+                        'menu_class' => 'primary-menu',
+                    ]);
+                }
+                ?>
+            </nav>
+        </div>
+    </header>
+<?php } ?>

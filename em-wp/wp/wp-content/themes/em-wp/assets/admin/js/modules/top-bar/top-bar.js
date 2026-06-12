@@ -36,27 +36,9 @@
 
         const bgColor = bg || '#13061f';
         const textColor = text || '#ffffff';
-        const rgb = hexToRgb(bgColor);
-        const soft = rgb ? 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', 0.14)' : '#e5e7eb';
 
         root.style.setProperty('--em-topbar-admin-bg', bgColor);
         root.style.setProperty('--em-topbar-admin-text', textColor);
-        root.style.setProperty('--em-topbar-admin-bg-soft', soft);
-        root.style.setProperty('--em-topbar-admin-accent', bgColor);
-    }
-
-    function bindAccordion() {
-        $('.em-wp-top-bar-panel').each(function () {
-            const panel = $(this);
-            const isOpen = panel.hasClass('is-open');
-            panel.find('.em-wp-top-bar-panel__header').attr('aria-expanded', isOpen ? 'true' : 'false');
-        });
-
-        $('.em-wp-top-bar-panel__header').on('click', function () {
-            const panel = $(this).closest('.em-wp-top-bar-panel');
-            panel.toggleClass('is-open');
-            $(this).attr('aria-expanded', panel.hasClass('is-open') ? 'true' : 'false');
-        });
     }
 
     function bindMediaPicker() {
@@ -100,35 +82,6 @@
         });
     }
 
-    function initColorPickers() {
-        if (!$.fn.wpColorPicker) {
-            return;
-        }
-
-        $('.em-wp-color-field').each(function () {
-            const input = $(this);
-            input.wpColorPicker();
-
-            const wrap = input.closest('.wp-picker-container');
-            const toggle = wrap.find('.wp-color-result-text');
-            const hasValue = !!String(input.val() || '').trim();
-
-            if (toggle.length) {
-                toggle.text(hasValue ? 'Change Color' : 'Select Color');
-            }
-
-            input.on('change keyup', function () {
-                const text = String(input.val() || '').trim() ? 'Change Color' : 'Select Color';
-                wrap.find('.wp-color-result-text').text(text);
-                applyAdminColorPreview();
-            });
-        });
-
-        $(document).on('click', '.wp-picker-clear', function () {
-            window.setTimeout(applyAdminColorPreview, 0);
-        });
-    }
-
     function initPreviewState() {
         $('.em-wp-top-bar-logo-preview').each(function () {
             const preview = $(this);
@@ -155,12 +108,21 @@
     }
 
     $(function () {
-        bindAccordion();
+        if (window.EmWpAdminAccordion) {
+            window.EmWpAdminAccordion.init({
+                scope: '.em-wp-top-bar-admin',
+                panelSelector: '.em-wp-top-bar-panel',
+                headerSelector: '.em-wp-top-bar-panel__header'
+            });
+        }
         bindMediaPicker();
         initImagePreviews();
-        initColorPickers();
         initPreviewState();
         initBackgroundImageToggle();
         applyAdminColorPreview();
+
+        $(document).on('emWpAdminColorFieldChanged', function () {
+            applyAdminColorPreview();
+        });
     });
 })(jQuery);

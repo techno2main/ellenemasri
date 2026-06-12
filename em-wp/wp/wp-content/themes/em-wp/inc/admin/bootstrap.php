@@ -10,6 +10,8 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/modules/top-bar/settings.php';
+require_once __DIR__ . '/modules/hero/settings.php';
+require_once __DIR__ . '/modules/slider/settings.php';
 
 /**
  * Slugs modules gérés côté admin.
@@ -19,6 +21,7 @@ function em_wp_admin_module_slugs(): array
     return [
         'top-bar',
         'hero',
+        'slider',
         'stream',
         'social',
         'video',
