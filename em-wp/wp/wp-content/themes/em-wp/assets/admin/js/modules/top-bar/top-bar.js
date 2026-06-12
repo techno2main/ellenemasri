@@ -1,4 +1,14 @@
 (function ($) {
+    function syncPreview(input, preview) {
+        const url = String(input.val() || '').trim();
+        if (!url) {
+            preview.empty().addClass('is-empty');
+            return;
+        }
+
+        preview.html('<img src="' + url + '" alt="">').removeClass('is-empty');
+    }
+
     function hexToRgb(hex) {
         const raw = String(hex || '').trim().replace('#', '');
         if (!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(raw)) {
@@ -66,11 +76,27 @@
             frame.on('select', function () {
                 const attachment = frame.state().get('selection').first().toJSON();
                 input.val(attachment.url);
-                preview.html('<img src="' + attachment.url + '" alt="">');
-                preview.removeClass('is-empty');
+                syncPreview(input, preview);
             });
 
             frame.open();
+        });
+    }
+
+    function initImagePreviews() {
+        $('.em-wp-top-bar-media-button').each(function () {
+            const button = $(this);
+            const input = $('#' + button.data('target'));
+            const preview = $('#' + button.data('preview'));
+
+            if (!input.length || !preview.length) {
+                return;
+            }
+
+            syncPreview(input, preview);
+            input.on('input change', function () {
+                syncPreview(input, preview);
+            });
         });
     }
 
@@ -131,6 +157,7 @@
     $(function () {
         bindAccordion();
         bindMediaPicker();
+        initImagePreviews();
         initColorPickers();
         initPreviewState();
         initBackgroundImageToggle();

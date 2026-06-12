@@ -364,6 +364,7 @@ function em_wp_top_bar_render_logo_panel(array $options): void
                 <button type="button" class="button button-secondary em-wp-top-bar-media-button" data-target="em-wp-top-bar-logo-url" data-preview="em-wp-top-bar-logo-preview" data-modal-title="<?php echo esc_attr__('Choisir le logo', 'em-wp'); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce logo', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
                 <label class="em-wp-top-bar-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="em_wp_top_bar_options[logo_hidden]" value="1" <?php checked(!empty($options['logo_hidden'])); ?>></label>
             </div>
+            <div id="em-wp-top-bar-logo-preview" class="em-wp-top-bar-logo-preview<?php echo empty($options['logo_url']) ? ' is-empty' : ''; ?>"><?php if (!empty($options['logo_url'])) { ?><img src="<?php echo esc_url($options['logo_url']); ?>" alt=""><?php } ?></div>
         </div>
     </section>
     <?php
