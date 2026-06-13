@@ -1,0 +1,377 @@
+.em-wp-admin-module {
+    font-size: 13px;
+}
+
+.em-wp-admin-module .wp-header-end {
+    visibility: hidden;
+}
+
+.em-wp-admin-module__hero {
+    margin: 14px 0 0;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.em-wp-admin-module__eyebrow {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+}
+
+.em-wp-admin-module__title {
+    margin: 2px 0 0;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.em-wp-admin-module__panels {
+    border: 1px solid #d0d5dd;
+    border-top: 0;
+    background: #f0f0f1;
+    padding: 8px;
+}
+
+.em-wp-admin-module__panel {
+    border: 1px solid #d0d5dd;
+    background: #ffffff;
+    margin-top: 8px;
+}
+
+.em-wp-admin-module__panel:first-child {
+    margin-top: 0;
+}
+
+.em-wp-admin-module__panel-header {
+    width: 100%;
+    border: 0;
+    background: #e5e7eb;
+    color: #111827;
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.em-wp-admin-module__panel-header::after {
+    content: "\25B8";
+    color: #111827;
+    font-size: 14px;
+    line-height: 1;
+    margin-left: auto;
+}
+
+.em-wp-admin-module__panel.is-open .em-wp-admin-module__panel-header::after {
+    content: "\25BE";
+}
+
+.em-wp-admin-module__panel-body {
+    padding: 12px 14px;
+}
+
+.em-wp-admin-module__panel:not(.is-open) .em-wp-admin-module__panel-body {
+    display: none !important;
+}
+
+.em-wp-admin-module__section-title {
+    margin-top: 12px;
+    margin-bottom: 6px;
+    padding: 0 2px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #374151;
+}
+
+.em-wp-admin-module__section-module {
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: #9ca3af;
+    font-size: 11px;
+}
+
+.em-wp-admin-module__item-header-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.em-wp-admin-module__item-visibility {
+    font-size: 13px;
+    color: #6b9e6b;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.em-wp-admin-module__item-visibility.is-hidden {
+    color: #c0c4cc;
+}
+
+.em-wp-admin-module__item-info {
+    font-size: 13px;
+    color: #6b7280;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+/* Toggle module (Afficher) + checkbox inline (Masquer, Actif…) */
+.em-wp-admin-module__toggle,
+.em-wp-admin-inline-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.em-wp-admin-module__toggle input[type="checkbox"],
+.em-wp-admin-inline-check input[type="checkbox"] {
+    margin-top: 0;
+    margin-left: 0;
+}
+
+/* Ligne horizontale de champs (Label + Lien + Masquer, etc.) */
+.em-wp-admin-panel-body--row {
+    display: flex;
+    align-items: end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) {
+    display: grid;
+    gap: 6px;
+    min-width: 160px;
+}
+
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row label.em-wp-admin-inline-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: auto;
+    margin-bottom: 1px;
+}
+
+.em-wp-admin-module__panel-body label.em-wp-admin-inline-check span {
+    margin: 0;
+    font-size: 13px;
+}
+
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) .regular-text {
+    width: 170px;
+    min-width: 170px;
+    max-width: 170px;
+    height: 36px;
+    font-size: 14px;
+    padding: 6px 8px;
+}
+
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > .regular-text,
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > .em-wp-admin-field-input--wide {
+    height: 36px;
+    font-size: 14px;
+    padding: 6px 8px;
+}
+
+.em-wp-admin-field-row[data-slide-field] {
+    margin-top: 8px;
+}
+
+.em-wp-admin-module__panel-body:has(.em-wp-admin-media-picker) {
+    padding-bottom: 4px;
+}
+
+.em-wp-admin-panel-body--top-border {
+    border-top: 1px solid #e5e7eb;
+    padding-top: 12px;
+    margin-top: 12px;
+}
+
+.em-wp-admin-panel__has-children {
+    font-size: 14px;
+    color: #9ca3af;
+    margin-right: 2px;
+    flex-shrink: 0;
+}
+
+/* Champs larges (titres, URLs media…) */
+.em-wp-admin-field-input--wide {
+    width: 360px !important;
+    min-width: 360px !important;
+    max-width: 360px !important;
+}
+
+.em-wp-admin-field-input--narrow {
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+}
+
+/* Ligne flex interne (slides, boutons hero…) */
+.em-wp-admin-field-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+
+.em-wp-admin-field-row--media {
+    align-items: flex-start;
+}
+
+.em-wp-admin-field-row.is-hidden {
+    display: none !important;
+}
+
+.em-wp-admin-field-row + .em-wp-admin-field-row,
+.em-wp-admin-field-row + .em-wp-admin-media-preview {
+    margin-top: 8px;
+}
+
+/* Groupe label + contrôle sur une ligne */
+.em-wp-admin-field-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.em-wp-admin-field-group__label {
+    font-size: 13px;
+    color: #111827;
+}
+
+.em-wp-admin-field-select {
+    min-width: 160px;
+    height: 34px;
+}
+
+/* Picker media (input + Modifier + Masquer) */
+.em-wp-admin-media-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: nowrap;
+}
+
+.em-wp-admin-media-button {
+    height: 36px !important;
+    min-height: 36px !important;
+    font-size: 14px !important;
+}
+
+.em-wp-admin-media-preview {
+    margin-top: 8px;
+    min-height: 76px;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 6px;
+    display: inline-block;
+    background-color: #f3f4f6;
+}
+
+.em-wp-admin-media-preview--checkerboard {
+    background-image:
+        linear-gradient(45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(-45deg, #e5e7eb 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #e5e7eb 75%),
+        linear-gradient(-45deg, transparent 75%, #e5e7eb 75%);
+    background-size: 14px 14px;
+    background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+}
+
+.em-wp-admin-media-preview img {
+    max-width: 260px;
+    max-height: 100px;
+    height: auto;
+    display: block;
+}
+
+.em-wp-admin-media-preview video {
+    max-width: 300px;
+    max-height: 140px;
+    height: auto;
+    display: block;
+}
+
+.em-wp-admin-media-preview.is-empty {
+    display: none;
+}
+
+/* Listes imbriquées (slides, plateformes stream…) */
+.em-wp-admin-nested-list {
+    display: grid;
+    gap: 10px;
+}
+
+.em-wp-admin-nested-item {
+    border: 1px solid #d0d5dd;
+    background: #fff;
+}
+
+.em-wp-admin-nested-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 10px 14px;
+    background: #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.em-wp-admin-nested-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.em-wp-admin-nested-item summary::after {
+    content: "\25B8";
+    font-size: 14px;
+    line-height: 1;
+    color: #6b7280;
+    margin-left: 8px;
+}
+
+.em-wp-admin-nested-item[open] summary::after {
+    content: "\25BE";
+}
+
+.em-wp-admin-nested-item__body {
+    padding: 12px 14px;
+}
+
+.em-wp-admin-nested-item__body.em-wp-admin-panel-body--row {
+    align-items: end;
+}
+
+@media (max-width: 860px) {
+    .em-wp-admin-module__hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .em-wp-admin-field-row {
+        flex-wrap: wrap;
+    }
+
+    .em-wp-admin-field-input--wide {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .em-wp-admin-media-picker {
+        flex-wrap: wrap;
+    }
+}

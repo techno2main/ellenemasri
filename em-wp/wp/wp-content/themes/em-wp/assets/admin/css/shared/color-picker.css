@@ -1,0 +1,72 @@
+/* Rangée de color pickers — pattern Hero (colonnes côte à côte, séparateur vertical) */
+.em-wp-admin-color-field-wrap {
+    display: flex;
+    align-items: end;
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+.em-wp-admin-color-field-wrap .em-wp-admin-color-control {
+    display: grid;
+    gap: 6px;
+    min-width: 200px;
+    flex: 1 1 220px;
+    max-width: 100%;
+}
+
+.em-wp-admin-color-field-wrap .em-wp-admin-color-control + .em-wp-admin-color-control {
+    margin-left: 0;
+    padding-left: 18px;
+    border-left: 1px solid #d1d5db;
+}
+
+.em-wp-admin-color-label {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.em-wp-admin-color-field-wrap .wp-picker-container {
+    min-width: 170px;
+}
+
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap input[type="text"].wp-color-picker {
+    width: 100px !important;
+    min-width: 100px !important;
+    max-width: 100px !important;
+    height: 30px !important;
+}
+
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px;
+}
+
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap .button,
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap .wp-picker-clear,
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap .wp-picker-default {
+    margin: 0 !important;
+    height: 30px !important;
+    line-height: 28px !important;
+}
+
+.em-wp-admin-color-field-wrap .wp-picker-default {
+    display: none !important;
+}
+
+@media (max-width: 860px) {
+    .em-wp-admin-color-field-wrap {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .em-wp-admin-color-field-wrap .em-wp-admin-color-control + .em-wp-admin-color-control {
+        margin-top: 12px;
+        padding-left: 0;
+        padding-top: 12px;
+        border-left: 0;
+        border-top: 1px solid #d1d5db;
+    }
+}
