@@ -9,7 +9,6 @@ $top_bar = $args['top_bar'] ?? [];
 $bg = trim((string) ($top_bar['background_color'] ?? ''));
 $text = trim((string) ($top_bar['text_color'] ?? ''));
 $items = is_array($top_bar['items'] ?? null) ? $top_bar['items'] : [];
-$stream_links = is_array($top_bar['stream_links'] ?? null) ? $top_bar['stream_links'] : [];
 $line_1_center = $items['line_1_center'] ?? [];
 $line_1_right = $items['line_1_right'] ?? [];
 $cta = $items['cta'] ?? [];
@@ -39,44 +38,9 @@ $line_1_right = $build_item($line_1_right);
 $cta = $build_item($cta);
 $baseline = $build_item($baseline);
 
-$platform_icon_map = [
-    'spotify' => 'fa-spotify',
-    'apple-music' => 'fa-apple',
-    'youtube-music' => 'fa-youtube',
-    'deezer' => 'fa-deezer',
-    'amazon-music' => 'fa-amazon',
-    'soundcloud' => 'fa-soundcloud',
-];
-
-$active_stream_links = [];
-$stream_links_list = function_exists('em_wp_top_bar_get_stream_links_list')
-    ? em_wp_top_bar_get_stream_links_list(['stream_links' => $stream_links])
+$active_stream_links = function_exists('em_wp_get_top_bar_stream_icons_for_front')
+    ? em_wp_get_top_bar_stream_icons_for_front()
     : [];
-
-foreach ($stream_links_list as $platform_item) {
-    if (!is_array($platform_item)) {
-        continue;
-    }
-
-    $slug = sanitize_key((string) ($platform_item['slug'] ?? ''));
-    $icon = $platform_icon_map[$slug] ?? '';
-    if ($icon === '') {
-        continue;
-    }
-
-    $label = trim((string) ($platform_item['label'] ?? ''));
-    $href = trim((string) ($platform_item['href'] ?? ''));
-
-    if (empty($platform_item['active']) || $label === '' || $href === '') {
-        continue;
-    }
-
-    $active_stream_links[] = [
-        'label' => $label,
-        'href'  => $href,
-        'icon'  => $icon,
-    ];
-}
 
 $inline_style = '';
 $css_vars = [];
@@ -125,9 +89,9 @@ if (!$bg_image_hidden && $bg_image_url !== '') {
                 <?php if (!empty($active_stream_links)) { ?>
                     <span class="em-top-bar__platform-icons">
                         <?php foreach ($active_stream_links as $platform) { ?>
-                            <a class="em-top-bar__platform-link" href="<?php echo esc_url($platform['href']); ?>" aria-label="<?php echo esc_attr($platform['label']); ?>" title="<?php echo esc_attr($platform['label']); ?>">
+                            <button type="button" class="em-top-bar__platform-link top-bar-platform-link" data-open-platform="<?php echo esc_attr($platform['slug']); ?>" aria-label="<?php echo esc_attr($platform['label']); ?>" title="<?php echo esc_attr($platform['label']); ?>">
                                 <i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i>
-                            </a>
+                            </button>
                         <?php } ?>
                     </span>
                 <?php } ?>

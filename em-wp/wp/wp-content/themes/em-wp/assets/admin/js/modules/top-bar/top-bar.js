@@ -107,36 +107,27 @@
         sync();
     }
 
-    function getStreamLinkList() {
-        return document.getElementById('em-wp-top-bar-stream-list');
-    }
-
-    function getStreamLinkItems() {
-        const list = getStreamLinkList();
-        return list ? Array.from(list.querySelectorAll('[data-stream-link-item]')) : [];
-    }
-
-    function reindexStreamLinkFields() {
-        const list = getStreamLinkList();
+    function reindexStreamPlatformFields() {
+        const list = document.getElementById('em-wp-stream-platform-list');
         if (!list) {
             return;
         }
 
-        const optionName = list.getAttribute('data-option-name') || 'em_wp_top_bar_options';
-        getStreamLinkItems().forEach(function (panel, index) {
+        const optionName = list.getAttribute('data-option-name') || 'em_wp_stream_options';
+        const fieldKey = list.getAttribute('data-field-key') || 'platforms';
+        const fieldPattern = new RegExp('^[^\\[]+\\[' + fieldKey + '\\]\\[\\d+\\]');
+        const items = Array.from(list.querySelectorAll('[data-stream-link-item]'));
+
+        items.forEach(function (panel, index) {
             panel.setAttribute('data-list-index', String(index));
 
             panel.querySelectorAll('[name]').forEach(function (field) {
-                const suffix = field.getAttribute('name').replace(/^[^\[]+\[stream_links\]\[\d+\]/, '');
-                field.setAttribute('name', optionName + '[stream_links][' + index + ']' + suffix);
+                const suffix = field.getAttribute('name').replace(fieldPattern, '');
+                field.setAttribute('name', optionName + '[' + fieldKey + '][' + index + ']' + suffix);
             });
         });
 
-        syncStreamLinkMoveButtons();
-    }
-
-    function syncStreamLinkMoveButtons() {
-        getStreamLinkItems().forEach(function (panel, index, items) {
+        items.forEach(function (panel, index) {
             const up = panel.querySelector('.em-wp-top-bar-platform-item__move--up');
             const down = panel.querySelector('.em-wp-top-bar-platform-item__move--down');
             if (up) {
@@ -148,8 +139,8 @@
         });
     }
 
-    function moveStreamLink(panel, direction) {
-        const list = getStreamLinkList();
+    function moveStreamPlatform(panel, direction) {
+        const list = document.getElementById('em-wp-stream-platform-list');
         if (!list || !panel) {
             return;
         }
@@ -160,26 +151,26 @@
             list.insertBefore(panel.nextElementSibling, panel);
         }
 
-        reindexStreamLinkFields();
+        reindexStreamPlatformFields();
     }
 
-    function bindStreamLinkListManager() {
-        const list = getStreamLinkList();
-        const form = document.getElementById('em-wp-top-bar-form');
+    function bindStreamPlatformListManager() {
+        const streamList = document.getElementById('em-wp-stream-platform-list');
+        const streamForm = document.getElementById('em-wp-stream-form');
 
-        if (!list) {
+        if (!streamList) {
             return;
         }
 
         if (window.EmWpSlideSortable) {
-            new window.EmWpSlideSortable(list, {
+            new window.EmWpSlideSortable(streamList, {
                 handle: '.em-wp-top-bar-platform-item__drag',
                 item: '[data-stream-link-item]',
-                onEnd: reindexStreamLinkFields
+                onEnd: reindexStreamPlatformFields
             });
         }
 
-        list.addEventListener('click', function (event) {
+        streamList.addEventListener('click', function (event) {
             if (event.target.closest('.em-wp-top-bar-platform-item__drag')) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -192,22 +183,22 @@
             if (moveUp) {
                 event.preventDefault();
                 event.stopPropagation();
-                moveStreamLink(moveUp.closest('[data-stream-link-item]'), -1);
+                moveStreamPlatform(moveUp.closest('[data-stream-link-item]'), -1);
                 return;
             }
 
             if (moveDown) {
                 event.preventDefault();
                 event.stopPropagation();
-                moveStreamLink(moveDown.closest('[data-stream-link-item]'), 1);
+                moveStreamPlatform(moveDown.closest('[data-stream-link-item]'), 1);
             }
         });
 
-        if (form) {
-            form.addEventListener('submit', reindexStreamLinkFields);
+        if (streamForm) {
+            streamForm.addEventListener('submit', reindexStreamPlatformFields);
         }
 
-        reindexStreamLinkFields();
+        reindexStreamPlatformFields();
     }
 
     $(function () {
@@ -215,7 +206,7 @@
         initImagePreviews();
         initPreviewState();
         initBackgroundImageToggle();
-        bindStreamLinkListManager();
+        bindStreamPlatformListManager();
         applyAdminColorPreview();
 
         $(document).on('emWpAdminColorFieldChanged', function () {

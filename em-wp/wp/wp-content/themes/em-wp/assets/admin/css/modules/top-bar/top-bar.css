@@ -35,10 +35,14 @@
     background: var(--em-topbar-admin-bg);
 }
 
+.em-wp-top-bar-platform-item summary {
+    padding: 12px 16px;
+}
+
 .em-wp-top-bar-platform-item__label {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 18px;
     font-weight: 600;
     min-width: 0;
 }
@@ -46,8 +50,20 @@
 .em-wp-top-bar-platform-item__order {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
+    padding-right: 14px;
+    margin-right: 2px;
+    border-right: 1px solid #d1d5db;
+}
+
+.em-wp-top-bar-platform-item__label > .em-wp-admin-module__item-visibility,
+.em-wp-top-bar-platform-item__label > .em-wp-top-bar-panel__visibility {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    margin-inline: 4px;
 }
 
 .em-wp-top-bar-platform-item__move,
@@ -101,8 +117,9 @@
 }
 
 .em-wp-top-bar-platform-item__label .fa-brands {
-    font-size: 1.1em;
+    font-size: 1.15em;
     color: #6b7280;
+    margin-left: 4px;
 }
 
 .em-wp-top-bar-background-image-label {
