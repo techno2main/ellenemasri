@@ -11,4 +11,5 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/register-saves.php';
 require_once __DIR__ . '/banner.php';
+require_once __DIR__ . '/theme-styles.php';
 require_once __DIR__ . '/pages/list.php';

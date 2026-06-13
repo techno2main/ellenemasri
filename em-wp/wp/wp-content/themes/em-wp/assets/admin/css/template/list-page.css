@@ -33,6 +33,29 @@
     margin: 0;
 }
 
+.em-wp-templates-admin__color-form {
+    min-width: 220px;
+}
+
+.em-wp-templates-admin__color-swatch {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: var(--em-template-swatch, #2d1454);
+    flex-shrink: 0;
+}
+
+.em-wp-templates-admin__color-field {
+    max-width: 120px;
+}
+
+.em-wp-templates-admin__color-form .wp-picker-container {
+    display: inline-flex;
+    align-items: center;
+}
+
 .em-wp-templates-admin__badge {
     display: inline-flex;
     align-items: center;

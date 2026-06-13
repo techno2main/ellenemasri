@@ -45,7 +45,7 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 
 | Phase | Objectif | Statut | Commit(s) | Notes |
 |-------|----------|--------|-----------|-------|
-| **0** | Fondations template (core + bandeau + page Templates) | ✅ | (push Phase 0) | Validée Tyson — ellene-admin, bandeau compact, titres rubriques dynamiques |
+| **0** | Fondations template (core + bandeau + page Templates) | ✅ | c737936 + couleurs | Validée — couleur/template, menu teinté, bandeau blocs blancs |
 | **1** | STREAM par template | ⬜ | — | |
 | **2** | VIDEOS + RELEASES par template | ⬜ | — | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ⬜ | — | |
@@ -69,6 +69,8 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 
 | Date | Auteur | Entrée |
 |------|--------|--------|
+| 2026-06-13 | Tyson | Flow GH couleurs validé |
+| 2026-06-13 | Agent | Couleur par template, menu admin teinté, bandeau UX (blocs blancs, alerte, Save) |
 | 2026-06-13 | Tyson | Phase 0 validée — Flow GH + push, pause avant Phase 1 |
 | 2026-06-13 | Agent | Phase 0 : bandeau compact, ellene-admin CRUD templates, titres rubriques dynamiques |
 | 2026-06-13 | — | Workflow par phase validé : tests BACK/FRONT → validation Tyson → Flow GH + push → phase suivante |

@@ -94,12 +94,13 @@ function em_wp_admin_render_templates_page(): void
     $active_slug = em_wp_get_active_template_slug();
     $editing_slug = em_wp_get_editing_template_slug();
     $can_manage = em_wp_admin_can_manage_templates();
+    $suggested_color = em_wp_template_suggest_new_color();
     ?>
     <div class="wrap em-wp-admin-module em-wp-templates-admin">
         <h1><?php esc_html_e('Templates', 'em-wp'); ?></h1>
 
         <p class="description em-wp-templates-admin__intro">
-            <?php esc_html_e('Un template regroupe tout le contenu des rubriques. Un seul template est actif sur le site ; le bandeau en haut de l’admin choisit celui que vous éditez.', 'em-wp'); ?>
+            <?php esc_html_e('Un template regroupe tout le contenu des rubriques. Assignez-lui une couleur pour vous repérer dans le menu et le bandeau admin.', 'em-wp'); ?>
         </p>
 
         <div class="em-wp-templates-admin__grid">
@@ -110,6 +111,7 @@ function em_wp_admin_render_templates_page(): void
                     <thead>
                         <tr>
                             <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
+                            <th scope="col"><?php esc_html_e('Couleur', 'em-wp'); ?></th>
                             <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
                             <th scope="col"><?php esc_html_e('Actif sur le site', 'em-wp'); ?></th>
                             <th scope="col"><?php esc_html_e('En édition (vous)', 'em-wp'); ?></th>
@@ -122,6 +124,7 @@ function em_wp_admin_render_templates_page(): void
                         <?php foreach ($registry as $slug => $definition) { ?>
                             <?php
                             $label = (string) ($definition['label'] ?? $slug);
+                            $color = em_wp_get_template_color($slug);
                             $is_active = ($slug === $active_slug);
                             $is_editing = ($slug === $editing_slug);
                             ?>
@@ -145,6 +148,36 @@ function em_wp_admin_render_templates_page(): void
                                         </form>
                                     <?php } else { ?>
                                         <strong><?php echo esc_html($label); ?></strong>
+                                    <?php } ?>
+                                </td>
+                                <td>
+                                    <?php if ($can_manage) { ?>
+                                        <form method="post" class="em-wp-templates-admin__inline-form em-wp-templates-admin__color-form">
+                                            <?php wp_nonce_field('em_wp_template_set_color'); ?>
+                                            <input type="hidden" name="em_wp_template_action" value="set_color">
+                                            <input type="hidden" name="em_wp_template_slug" value="<?php echo esc_attr($slug); ?>">
+                                            <span
+                                                class="em-wp-templates-admin__color-swatch"
+                                                style="--em-template-swatch: <?php echo esc_attr($color); ?>;"
+                                                aria-hidden="true"
+                                            ></span>
+                                            <input
+                                                type="text"
+                                                name="em_wp_template_color"
+                                                value="<?php echo esc_attr($color); ?>"
+                                                class="em-wp-admin-color-field em-wp-templates-admin__color-field"
+                                                data-default-color="<?php echo esc_attr(em_wp_template_default_color_for_slug($slug)); ?>"
+                                            >
+                                            <button type="submit" class="button button-small">
+                                                <?php esc_html_e('Save', 'em-wp'); ?>
+                                            </button>
+                                        </form>
+                                    <?php } else { ?>
+                                        <span
+                                            class="em-wp-templates-admin__color-swatch"
+                                            style="--em-template-swatch: <?php echo esc_attr($color); ?>;"
+                                            title="<?php echo esc_attr($color); ?>"
+                                        ></span>
                                     <?php } ?>
                                 </td>
                                 <td><code><?php echo esc_html($slug); ?></code></td>
@@ -216,6 +249,17 @@ function em_wp_admin_render_templates_page(): void
                                 class="regular-text"
                                 required
                                 placeholder="<?php esc_attr_e('Ex. Campagne été', 'em-wp'); ?>"
+                            >
+                        </p>
+                        <p>
+                            <label for="em-wp-template-new-color"><?php esc_html_e('Couleur du template', 'em-wp'); ?></label>
+                            <input
+                                type="text"
+                                id="em-wp-template-new-color"
+                                name="em_wp_template_color"
+                                value="<?php echo esc_attr($suggested_color); ?>"
+                                class="em-wp-admin-color-field"
+                                data-default-color="<?php echo esc_attr($suggested_color); ?>"
                             >
                         </p>
                         <p>

@@ -144,8 +144,8 @@ function em_wp_admin_template_render_banner(): void
                     printf(
                         /* translators: 1: editing template label, 2: live template label */
                         esc_html__('Édition « %1$s » — site public « %2$s »', 'em-wp'),
-                        esc_html($editing_label),
-                        esc_html($active_label)
+                        esc_html(mb_strtoupper($editing_label)),
+                        esc_html(mb_strtoupper($active_label))
                     );
                     ?>
                 </p>

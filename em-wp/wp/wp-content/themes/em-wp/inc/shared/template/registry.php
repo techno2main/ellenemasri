@@ -28,7 +28,7 @@ function em_wp_template_default_slug(): string
 /**
  * Définitions par défaut au premier boot.
  *
- * @return array<string, array{slug:string,label:string,created_at:string}>
+ * @return array<string, array{slug:string,label:string,created_at:string,color:string}>
  */
 function em_wp_template_default_definitions(): array
 {
@@ -38,6 +38,7 @@ function em_wp_template_default_definitions(): array
         $slug => [
             'slug'       => $slug,
             'label'      => 'Mayami',
+            'color'      => em_wp_template_default_color_for_slug($slug),
             'created_at' => gmdate('c'),
         ],
     ];
@@ -64,7 +65,7 @@ add_action('init', 'em_wp_template_maybe_bootstrap_options', 4);
 /**
  * Liste des templates enregistrés.
  *
- * @return array<string, array{slug:string,label:string,created_at:string}>
+ * @return array<string, array{slug:string,label:string,created_at:string,color:string}>
  */
 function em_wp_template_registry(): array
 {
@@ -92,6 +93,7 @@ function em_wp_template_registry(): array
         $normalized[$slug] = [
             'slug'       => $slug,
             'label'      => sanitize_text_field((string) ($definition['label'] ?? $slug)),
+            'color'      => em_wp_template_sanitize_color((string) ($definition['color'] ?? ''), $slug),
             'created_at' => sanitize_text_field((string) ($definition['created_at'] ?? gmdate('c'))),
         ];
 
@@ -121,7 +123,7 @@ function em_wp_template_sanitize_slug(string $raw_slug): string
 /**
  * Retourne une définition template ou null.
  *
- * @return array{slug:string,label:string,created_at:string}|null
+ * @return array{slug:string,label:string,created_at:string,color:string}|null
  */
 function em_wp_template_get(string $slug): ?array
 {
@@ -142,7 +144,7 @@ function em_wp_template_exists(string $slug): bool
 /**
  * Persiste le registre complet.
  *
- * @param array<string, array{slug:string,label:string,created_at:string}> $definitions
+ * @param array<string, array{slug:string,label:string,created_at:string,color:string}> $definitions
  */
 function em_wp_template_save_registry(array $definitions): bool
 {
@@ -162,6 +164,7 @@ function em_wp_template_save_registry(array $definitions): bool
         $normalized[$slug] = [
             'slug'       => $slug,
             'label'      => sanitize_text_field((string) ($definition['label'] ?? $slug)),
+            'color'      => em_wp_template_sanitize_color((string) ($definition['color'] ?? ''), $slug),
             'created_at' => sanitize_text_field((string) ($definition['created_at'] ?? gmdate('c'))),
         ];
     }
@@ -170,15 +173,22 @@ function em_wp_template_save_registry(array $definitions): bool
         return false;
     }
 
-    return update_option(em_wp_template_definitions_option_name(), $normalized, false);
+    $option_name = em_wp_template_definitions_option_name();
+    $current = get_option($option_name, []);
+
+    if (wp_json_encode($current) === wp_json_encode($normalized)) {
+        return true;
+    }
+
+    return (bool) update_option($option_name, $normalized, false);
 }
 
 /**
  * Crée un template à partir d'un libellé.
  *
- * @return array{slug:string,label:string,created_at:string}|WP_Error
+ * @return array{slug:string,label:string,created_at:string,color:string}|WP_Error
  */
-function em_wp_template_create(string $label)
+function em_wp_template_create(string $label, string $color = '')
 {
     $label = sanitize_text_field($label);
 
@@ -201,9 +211,14 @@ function em_wp_template_create(string $label)
         $suffix++;
     }
 
+    $template_color = $color !== ''
+        ? em_wp_template_sanitize_color($color, $slug)
+        : em_wp_template_suggest_new_color();
+
     $registry[$slug] = [
         'slug'       => $slug,
         'label'      => $label,
+        'color'      => $template_color,
         'created_at' => gmdate('c'),
     ];
 

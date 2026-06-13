@@ -64,6 +64,9 @@ function em_wp_admin_template_handle_post_requests(): void
         case 'set_active':
             em_wp_admin_template_handle_set_active();
             break;
+        case 'set_color':
+            em_wp_admin_template_handle_set_color();
+            break;
     }
 }
 add_action('admin_init', 'em_wp_admin_template_handle_post_requests', 5);
@@ -99,7 +102,8 @@ function em_wp_admin_template_handle_create(): void
     check_admin_referer('em_wp_template_create');
 
     $label = sanitize_text_field((string) ($_POST['em_wp_template_label'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-    $result = em_wp_template_create($label);
+    $color = sanitize_text_field((string) ($_POST['em_wp_template_color'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $result = em_wp_template_create($label, $color);
 
     if (is_wp_error($result)) {
         em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'error', $result->get_error_message());
@@ -166,6 +170,24 @@ function em_wp_admin_template_handle_set_active(): void
         'success',
         __('Template actif sur le site mis à jour.', 'em-wp')
     );
+}
+
+/**
+ * Met à jour la couleur d'un template (page liste).
+ */
+function em_wp_admin_template_handle_set_color(): void
+{
+    check_admin_referer('em_wp_template_set_color');
+
+    $slug = em_wp_template_sanitize_slug((string) ($_POST['em_wp_template_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $color = sanitize_text_field((string) ($_POST['em_wp_template_color'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $result = em_wp_template_set_color($slug, $color);
+
+    if (is_wp_error($result)) {
+        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'error', $result->get_error_message());
+    }
+
+    em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'success', __('Couleur du template enregistrée.', 'em-wp'));
 }
 
 /**
