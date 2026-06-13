@@ -70,9 +70,13 @@ function em_wp_stream_normalize_platform_item(array $item): array
 function em_wp_stream_get_platforms_list(?array $stream_options = null): array
 {
     if ($stream_options === null) {
-        $stream_options = function_exists('em_wp_stream_get_options')
-            ? em_wp_stream_get_options()
-            : em_wp_stream_default_options();
+        if (!is_admin() && function_exists('em_wp_stream_get_options_for_front')) {
+            $stream_options = em_wp_stream_get_options_for_front();
+        } elseif (function_exists('em_wp_stream_get_options')) {
+            $stream_options = em_wp_stream_get_options();
+        } else {
+            $stream_options = em_wp_stream_default_options();
+        }
     }
 
     $raw = $stream_options['platforms'] ?? [];

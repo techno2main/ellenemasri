@@ -180,7 +180,8 @@ function em_wp_admin_handle_module_saves(): void
             return;
         }
 
-        $input = isset($_POST[$option_name]) ? wp_unslash($_POST[$option_name]) : null;
+        $value_field = (string) em_wp_admin_resolve_save_config_value($config['value_field'] ?? $option_name);
+        $input = isset($_POST[$value_field]) ? wp_unslash($_POST[$value_field]) : null;
         update_option($option_name, call_user_func($sanitize, $input));
     }
 

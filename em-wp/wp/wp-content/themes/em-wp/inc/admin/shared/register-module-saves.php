@@ -16,7 +16,16 @@ function em_wp_admin_register_all_module_saves(): void
 {
     em_wp_admin_register_module_save('stream', [
         'nonce_action' => 'em_wp_stream_save',
-        'option_name'  => 'em_wp_stream_options',
+        'option_name'  => static function (): string {
+            $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+            if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+            }
+
+            return em_wp_stream_option_name($template_slug !== '' ? $template_slug : null);
+        },
+        'value_field'  => 'em_wp_stream_options',
         'page_slug'    => function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-wp-stream',
         'sanitize'     => 'em_wp_stream_sanitize_options',
     ]);

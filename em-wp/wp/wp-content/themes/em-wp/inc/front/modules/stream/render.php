@@ -10,18 +10,6 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Options Stream pour le front.
- */
-function em_wp_stream_get_options_for_front(): array
-{
-    if (function_exists('em_wp_stream_get_options')) {
-        return em_wp_stream_get_options();
-    }
-
-    return em_wp_stream_default_options();
-}
-
-/**
  * Enqueue assets front Stream.
  */
 function em_wp_stream_enqueue_front_assets(): void

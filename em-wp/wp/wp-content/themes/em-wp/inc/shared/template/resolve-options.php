@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Mapping V1 → options legacy pour le template Mayami uniquement.
  *
- * Phase 1+ migrera vers em_wp_{rubrique}_{template}_options.
+ * Phase 1+ : options par template `em_wp_{rubrique}_{template}_options` (STREAM migré).
  *
  * @return array<string, string>
  */

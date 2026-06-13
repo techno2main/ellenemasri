@@ -3,7 +3,7 @@
 > **Branche :** `feature/em-wp-v2-templates`  
 > **V1 (gelée) :** `feature/theme-em-wp`  
 > **Dernière maj doc :** 2026-06-13  
-> **Statut global :** Phase 0 validée — pause avant Phase 1
+> **Statut global :** Phase 1 validée — pause avant Phase 2
 
 Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phase / commit significatif** (statuts, fichiers créés, dette restante).
 
@@ -46,7 +46,7 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 | Phase | Objectif | Statut | Commit(s) | Notes |
 |-------|----------|--------|-----------|-------|
 | **0** | Fondations template (core + bandeau + page Templates) | ✅ | c737936 + couleurs | Validée — couleur/template, menu teinté, bandeau blocs blancs |
-| **1** | STREAM par template | ⬜ | — | |
+| **1** | STREAM par template | ✅ | (commit Phase 1) | Validée — options par template, migration Mayami, module découpé |
 | **2** | VIDEOS + RELEASES par template | ⬜ | — | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ⬜ | — | |
 | **4** | Hero + Slider rattachés au template | ⬜ | — | |
@@ -69,7 +69,9 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 
 | Date | Auteur | Entrée |
 |------|--------|--------|
-| 2026-06-13 | Tyson | Flow GH couleurs validé |
+| 2026-06-13 | Tyson | Phase 1 validée — Flow GH + push |
+| 2026-06-13 | Agent | Phase 1 STREAM : options par template, migration Mayami, découpage admin module |
+| 2026-06-13 | Tyson | Go Phase 1 |
 | 2026-06-13 | Agent | Couleur par template, menu admin teinté, bandeau UX (blocs blancs, alerte, Save) |
 | 2026-06-13 | Tyson | Phase 0 validée — Flow GH + push, pause avant Phase 1 |
 | 2026-06-13 | Agent | Phase 0 : bandeau compact, ellene-admin CRUD templates, titres rubriques dynamiques |
@@ -241,11 +243,12 @@ em_wp_is_template_rubrique_visible($template_slug, $rubrique_slug)
 - [x] **Maj ce doc** : Phase 0 → ✅
 
 ### Phase 1 — STREAM
-- [ ] Découper `stream/settings.php` → structure module/
-- [ ] Options `em_wp_stream_{template}_options`
-- [ ] Front via `resolve-options` + template live
-- [ ] Migration `em_wp_stream_options` → `em_wp_stream_mayami_options`
-- [ ] **Maj ce doc**
+- [x] Découper `stream/settings.php` → structure module/
+- [x] Options `em_wp_stream_{template}_options`
+- [x] Admin lit/écrit template **en édition** (bandeau) ; front via `resolve-options` + template **live**
+- [x] Migration idempotente `em_wp_stream_options` → `em_wp_stream_mayami_options` (legacy conservé)
+- [x] `settings-api.php` : support `value_field` pour POST fixe / option dynamique
+- [x] **Maj ce doc** : Phase 1 → ✅
 
 ### Phase 2 — VIDEOS + RELEASES
 - [ ] Même pattern que STREAM
