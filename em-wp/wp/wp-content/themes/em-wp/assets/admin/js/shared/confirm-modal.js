@@ -90,6 +90,28 @@
         },
         alert: function (message, options) {
             return openModal(message, Object.assign({}, options || {}, { alert: true }));
-        }
+        },
+        /**
+         * Confirmation standard avant suppression (tous boutons Supprimer admin).
+         *
+         * @param {Function} callback Exécuté uniquement si l'utilisateur confirme.
+         * @param {{message?:string,confirmLabel?:string,cancelLabel?:string}} options
+         */
+        beforeDelete: function (callback, options) {
+            var config = options || {};
+            var message = config.message || 'Confirmer la suppression ?';
+
+            return openModal(message, {
+                confirmLabel: config.confirmLabel || 'Supprimer',
+                cancelLabel: config.cancelLabel || 'Annuler',
+                confirmClass: config.confirmClass || 'button-link-delete',
+            }).then(function (confirmed) {
+                if (confirmed && typeof callback === 'function') {
+                    callback();
+                }
+
+                return confirmed;
+            });
+        },
     };
 })();

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /**
  * Helpers embed plateformes stream (partagés front).
  *

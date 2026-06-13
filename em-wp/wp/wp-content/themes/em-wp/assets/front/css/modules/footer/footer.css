@@ -1,0 +1,97 @@
+.em-footer {
+    background: var(--em-footer-bg, var(--em-ink));
+    color: color-mix(in srgb, var(--em-footer-text, var(--em-cream)) 70%, transparent);
+    text-align: center;
+    padding: 40px 20px;
+}
+
+@media (max-width: 767px) {
+    .em-footer {
+        padding-bottom: calc(7.25rem + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+.em-footer__top-link {
+    margin-bottom: 16px;
+}
+
+.em-footer__top-link a {
+    color: color-mix(in srgb, var(--em-footer-text, var(--em-cream)) 80%, transparent);
+    text-decoration: none;
+    font-size: 20px;
+    line-height: 1;
+    transition: color 0.12s ease;
+}
+
+.em-footer__top-link a:hover {
+    color: var(--em-aqua);
+}
+
+.em-footer__line1 {
+    margin: 0;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+}
+
+.em-footer__line2 {
+    margin: 8px 0 0;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 12px;
+}
+
+.em-sticky-bar {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .em-sticky-bar {
+        display: block;
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 50;
+        border-top: 2px solid var(--em-ink);
+        background: color-mix(in srgb, var(--em-cream) 95%, transparent);
+        backdrop-filter: blur(8px);
+        padding: 12px;
+    }
+
+    .em-sticky-bar__inner {
+        display: flex;
+        gap: 8px;
+    }
+
+    .em-sticky-bar__pill {
+        flex: 1;
+        display: block;
+        padding: 12px 16px;
+        border: 2px solid var(--em-ink);
+        border-radius: 999px;
+        text-align: center;
+        font-family: "Archivo Black", Arial, sans-serif;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-decoration: none;
+        box-shadow: 3px 3px 0 var(--em-ink);
+    }
+
+    .em-sticky-bar__pill--stream {
+        background: oklch(0.88 0.19 95);
+        color: var(--em-ink);
+    }
+
+    .em-sticky-bar__pill--video {
+        background: var(--em-aqua);
+        color: var(--em-ink);
+    }
+
+    .em-sticky-bar__pill--tiktok {
+        background: var(--em-ink);
+        color: var(--em-cream);
+        box-shadow: 3px 3px 0 var(--em-magenta);
+    }
+}

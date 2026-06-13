@@ -55,6 +55,11 @@
     width: 100%;
 }
 
+.site-main--front {
+    font-family: "Archivo Black", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
 .em-landing-section--placeholder {
     min-height: 120px;
     background: var(--em-rubrique-accent, #646970);

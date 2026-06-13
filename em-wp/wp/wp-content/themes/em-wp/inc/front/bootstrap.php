@@ -13,6 +13,11 @@ require_once __DIR__ . '/modules/top-bar/render.php';
 require_once __DIR__ . '/modules/hero/render.php';
 require_once __DIR__ . '/modules/slider/render.php';
 require_once __DIR__ . '/modules/stream/render.php';
+require_once __DIR__ . '/modules/social/render.php';
+require_once __DIR__ . '/modules/video/render.php';
+require_once __DIR__ . '/modules/release/render.php';
+require_once __DIR__ . '/modules/cta/render.php';
+require_once __DIR__ . '/modules/footer/render.php';
 require_once __DIR__ . '/landing-render.php';
 
 /**

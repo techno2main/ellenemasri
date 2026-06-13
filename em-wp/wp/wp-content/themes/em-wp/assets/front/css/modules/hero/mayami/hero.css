@@ -77,6 +77,17 @@
     color: var(--em-hero-ink);
 }
 
+@keyframes em-hero-badge-wiggle {
+    0%,
+    100% {
+        transform: rotate(-1.5deg);
+    }
+
+    50% {
+        transform: rotate(1.5deg);
+    }
+}
+
 .em-hero--mayami .em-hero__badge {
     display: inline-flex;
     align-items: center;
@@ -93,6 +104,17 @@
     text-transform: uppercase;
     box-shadow: 3px 3px 0 var(--em-hero-ink);
     margin-bottom: 18px;
+    transform-origin: center center;
+}
+
+.em-hero--mayami .em-hero__badge.em-wiggle {
+    animation: em-hero-badge-wiggle 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .em-hero--mayami .em-hero__badge.em-wiggle {
+        animation: none;
+    }
 }
 
 .em-hero--mayami .em-hero__badge-dot {

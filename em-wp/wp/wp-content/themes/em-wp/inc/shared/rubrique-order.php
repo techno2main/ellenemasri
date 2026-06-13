@@ -153,6 +153,9 @@ function em_wp_apply_rubrique_visibility_to_module_options(string $module_slug, 
         case 'top-bar':
             $option_name = 'em_wp_top_bar_options';
             break;
+        case 'footer':
+            $option_name = 'em_wp_footer_options';
+            break;
         default:
             return;
     }

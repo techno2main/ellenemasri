@@ -157,6 +157,57 @@
     display: none;
 }
 
+@keyframes em-wp-hero-badge-wiggle {
+    0%,
+    100% {
+        transform: rotate(-1.5deg);
+    }
+
+    50% {
+        transform: rotate(1.5deg);
+    }
+}
+
+.em-wp-hero-badge-preview {
+    margin-top: 12px;
+}
+
+.em-wp-hero-badge-preview__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid #100421;
+    border-radius: 999px;
+    background: oklch(88% 0.19 95);
+    color: #100421;
+    padding: 7px 18px;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    box-shadow: 3px 3px 0 #100421;
+    transform-origin: center center;
+}
+
+.em-wp-hero-badge-preview__badge.em-wiggle {
+    animation: em-wp-hero-badge-wiggle 4s ease-in-out infinite;
+}
+
+.em-wp-hero-badge-preview__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1fcdd5;
+    flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .em-wp-hero-badge-preview__badge.em-wiggle {
+        animation: none;
+    }
+}
+
 @media (max-width: 860px) {
     .em-wp-hero-panel__body--grid {
         grid-template-columns: 1fr;

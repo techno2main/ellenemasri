@@ -43,29 +43,50 @@ function em_wp_enqueue_assets(): void
         ? em_wp_hero_active_style_slug()
         : 'mayami';
 
-    wp_enqueue_style(
-        'em-wp-hero',
-        get_template_directory_uri() . '/assets/front/css/modules/hero/' . $hero_style_slug . '/hero.css',
-        ['em-wp-theme'],
-        $theme_version
-    );
     $slider_style_slug = function_exists('em_wp_slider_active_style_slug')
         ? em_wp_slider_active_style_slug()
         : 'mayami';
 
+    $theme_dir = get_template_directory();
+    $landing_ui_path = 'assets/front/css/landing-ui.css';
+    $hero_css_path = 'assets/front/css/modules/hero/' . $hero_style_slug . '/hero.css';
+    $slider_css_path = 'assets/front/css/modules/slider/' . $slider_style_slug . '/slider.css';
+
+    wp_enqueue_style(
+        'em-wp-landing-ui',
+        get_template_directory_uri() . '/' . $landing_ui_path,
+        ['em-wp-theme'],
+        is_readable($theme_dir . '/' . $landing_ui_path)
+            ? $theme_version . '.' . (string) filemtime($theme_dir . '/' . $landing_ui_path)
+            : $theme_version
+    );
+
+    wp_enqueue_style(
+        'em-wp-hero',
+        get_template_directory_uri() . '/' . $hero_css_path,
+        ['em-wp-theme', 'em-wp-landing-ui'],
+        is_readable($theme_dir . '/' . $hero_css_path)
+            ? $theme_version . '.' . (string) filemtime($theme_dir . '/' . $hero_css_path)
+            : $theme_version
+    );
     wp_enqueue_style(
         'em-wp-slider',
-        get_template_directory_uri() . '/assets/front/css/modules/slider/' . $slider_style_slug . '/slider.css',
+        get_template_directory_uri() . '/' . $slider_css_path,
         ['em-wp-theme'],
-        $theme_version
+        is_readable($theme_dir . '/' . $slider_css_path)
+            ? $theme_version . '.' . (string) filemtime($theme_dir . '/' . $slider_css_path)
+            : $theme_version
     );
 
     if (is_front_page()) {
+        $landing_css_path = 'assets/front/css/landing.css';
         wp_enqueue_style(
             'em-wp-landing',
-            get_template_directory_uri() . '/assets/front/css/landing.css',
-            ['em-wp-hero', 'em-wp-slider'],
-            $theme_version
+            get_template_directory_uri() . '/' . $landing_css_path,
+            ['em-wp-hero', 'em-wp-slider', 'em-wp-landing-ui'],
+            is_readable($theme_dir . '/' . $landing_css_path)
+                ? $theme_version . '.' . (string) filemtime($theme_dir . '/' . $landing_css_path)
+                : $theme_version
         );
     }
 

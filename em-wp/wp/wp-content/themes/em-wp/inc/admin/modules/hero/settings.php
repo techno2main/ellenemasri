@@ -582,6 +582,14 @@ function em_wp_hero_render_mayami_item_panel(string $key, string $label, string 
                 <label class="em-wp-hero-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($context['option_name'] . '[' . $hidden_key . ']'); ?>" value="1" <?php checked($is_hidden); ?>></label>
             <?php } ?>
             </div>
+            <?php if ($key === 'badge_text') { ?>
+                <div class="em-wp-hero-badge-preview" aria-hidden="true">
+                    <div class="em-wp-hero-badge-preview__badge em-wiggle" data-em-hero-badge-preview>
+                        <span class="em-wp-hero-badge-preview__dot"></span>
+                        <span data-em-hero-badge-preview-text><?php echo esc_html((string) $value !== '' ? (string) $value : __('New Single · Available!', 'em-wp')); ?></span>
+                    </div>
+                </div>
+            <?php } ?>
             <?php } ?>
         </div>
     </section>

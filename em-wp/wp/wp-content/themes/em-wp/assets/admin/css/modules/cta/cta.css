@@ -1,0 +1,30 @@
+/* Panneau texture ouvert par défaut (champ vital, facile à manquer). */
+.em-wp-cta-texture-panel.em-wp-admin-module__panel:not(.is-open) .em-wp-admin-module__panel-body {
+    display: block !important;
+}
+
+.em-wp-cta-texture-panel.em-wp-admin-module__panel .em-wp-admin-module__panel-header::after {
+    transform: rotate(180deg);
+}
+
+.em-wp-admin-module--texture-preview .em-wp-admin-module__hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.em-wp-admin-module__hero-texture {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.2;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.em-wp-admin-module--texture-preview .em-wp-admin-module__hero > :not(.em-wp-admin-module__hero-texture) {
+    position: relative;
+    z-index: 1;
+}

@@ -51,8 +51,29 @@
         });
     }
 
+    function initBadgePreview() {
+        const badgeInput = document.getElementById('em-wp-hero-badge_text');
+        const badgeText = document.querySelector('[data-em-hero-badge-preview-text]');
+
+        if (!badgeInput || !badgeText) {
+            return;
+        }
+
+        const fallback = badgeText.textContent || '';
+
+        function syncBadgePreview() {
+            const value = String(badgeInput.value || '').trim();
+            badgeText.textContent = value !== '' ? value : fallback;
+        }
+
+        syncBadgePreview();
+        badgeInput.addEventListener('input', syncBadgePreview);
+        badgeInput.addEventListener('change', syncBadgePreview);
+    }
+
     $(function () {
         bindMediaPicker();
         initImagePreviews();
+        initBadgePreview();
     });
 })(jQuery);

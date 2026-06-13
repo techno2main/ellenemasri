@@ -1,0 +1,50 @@
+<?php
+/**
+ * Rendu front du module CTA.
+ *
+ * @package em-wp
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+function em_wp_cta_enqueue_front_assets(): void
+{
+    $theme_version = wp_get_theme()->get('Version');
+    $theme_uri = get_template_directory_uri();
+    $css_path = 'assets/front/css/modules/cta/cta.css';
+
+    wp_enqueue_style(
+        'em-wp-landing-ui',
+        $theme_uri . '/assets/front/css/landing-ui.css',
+        ['em-wp-theme'],
+        file_exists(get_template_directory() . '/assets/front/css/landing-ui.css')
+            ? $theme_version . '.' . (string) filemtime(get_template_directory() . '/assets/front/css/landing-ui.css')
+            : $theme_version
+    );
+
+    wp_enqueue_style(
+        'em-wp-cta',
+        $theme_uri . '/' . $css_path,
+        ['em-wp-landing-ui'],
+        file_exists(get_template_directory() . '/' . $css_path)
+            ? $theme_version . '.' . (string) filemtime(get_template_directory() . '/' . $css_path)
+            : $theme_version
+    );
+}
+
+function em_wp_render_cta(): void
+{
+    $options = em_wp_cta_get_options();
+
+    if (empty($options['enabled'])) {
+        return;
+    }
+
+    em_wp_cta_enqueue_front_assets();
+
+    get_template_part('template-parts/sections/cta/cta', null, [
+        'cta' => $options,
+    ]);
+}

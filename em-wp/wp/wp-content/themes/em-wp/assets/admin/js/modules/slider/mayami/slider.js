@@ -327,21 +327,27 @@
             }
 
             var confirmApi = window.EmWpAdminConfirm;
-            if (!confirmApi) {
-                if (window.confirm('Supprimer ce slide ?')) {
-                    performDelete();
-                }
+            if (confirmApi && typeof confirmApi.beforeDelete === 'function') {
+                confirmApi.beforeDelete(performDelete, { message: 'Supprimer ce slide ?' });
                 return;
             }
 
-            confirmApi.ask('Supprimer ce slide ?', {
-                confirmLabel: 'Supprimer',
-                cancelLabel: 'Annuler'
-            }).then(function (confirmed) {
-                if (confirmed) {
-                    performDelete();
-                }
-            });
+            if (confirmApi && typeof confirmApi.ask === 'function') {
+                confirmApi.ask('Supprimer ce slide ?', {
+                    confirmLabel: 'Supprimer',
+                    cancelLabel: 'Annuler',
+                    confirmClass: 'button-link-delete',
+                }).then(function (confirmed) {
+                    if (confirmed) {
+                        performDelete();
+                    }
+                });
+                return;
+            }
+
+            if (window.confirm('Supprimer ce slide ?')) {
+                performDelete();
+            }
         });
 
         if (form) {

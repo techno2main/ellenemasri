@@ -92,7 +92,7 @@ $hero_nav_next_href = (string) ($hero_nav['next'] ?? '#stream');
             <?php } ?>
 
             <?php if ($badge_text !== '' && !$badge_text_hidden): ?>
-                <div class="em-hero__badge"><span class="em-hero__badge-dot" aria-hidden="true"></span><?php echo esc_html($badge_text); ?></div>
+                <div class="em-hero__badge em-wiggle"><span class="em-hero__badge-dot" aria-hidden="true"></span><?php echo esc_html($badge_text); ?></div>
             <?php endif; ?>
 
             <?php if ($subtitle !== '' && !$subtitle_hidden): ?>

@@ -95,6 +95,41 @@ function em_wp_admin_register_all_module_saves(): void
         'fallback_page' => function_exists('em_wp_slider_hub_menu_slug') ? em_wp_slider_hub_menu_slug() : 'em-wp-sliders',
         'sanitize'      => 'em_wp_slider_sanitize_active_style',
     ]);
+
+    em_wp_admin_register_module_save('social', [
+        'nonce_action' => 'em_wp_social_save',
+        'option_name'  => 'em_wp_social_options',
+        'page_slug'    => function_exists('em_wp_social_page_slug') ? em_wp_social_page_slug() : 'em-wp-social',
+        'sanitize'     => 'em_wp_social_sanitize_options',
+    ]);
+
+    em_wp_admin_register_module_save('video', [
+        'nonce_action' => 'em_wp_video_save',
+        'option_name'  => 'em_wp_video_options',
+        'page_slug'    => function_exists('em_wp_video_page_slug') ? em_wp_video_page_slug() : 'em-wp-videos',
+        'sanitize'     => 'em_wp_video_sanitize_options',
+    ]);
+
+    em_wp_admin_register_module_save('release', [
+        'nonce_action' => 'em_wp_release_save',
+        'option_name'  => 'em_wp_release_options',
+        'page_slug'    => function_exists('em_wp_release_page_slug') ? em_wp_release_page_slug() : 'em-wp-releases',
+        'sanitize'     => 'em_wp_release_sanitize_options',
+    ]);
+
+    em_wp_admin_register_module_save('cta', [
+        'nonce_action' => 'em_wp_cta_save',
+        'option_name'  => 'em_wp_cta_options',
+        'page_slug'    => function_exists('em_wp_cta_page_slug') ? em_wp_cta_page_slug() : 'em-wp-cta',
+        'sanitize'     => 'em_wp_cta_sanitize_options',
+    ]);
+
+    em_wp_admin_register_module_save('footer', [
+        'nonce_action' => 'em_wp_footer_save',
+        'option_name'  => 'em_wp_footer_options',
+        'page_slug'    => function_exists('em_wp_footer_page_slug') ? em_wp_footer_page_slug() : 'em-wp-footer',
+        'sanitize'     => 'em_wp_footer_sanitize_options',
+    ]);
 }
 
 add_action('admin_init', 'em_wp_admin_register_all_module_saves', 0);

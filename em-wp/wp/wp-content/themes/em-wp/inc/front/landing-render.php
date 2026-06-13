@@ -96,10 +96,13 @@ function em_wp_landing_module_is_enabled(string $module_slug): bool
 
             return !empty(em_wp_stream_get_options()['enabled']);
         case 'social':
+            return !empty(em_wp_social_get_options()['enabled']);
         case 'video':
+            return !empty(em_wp_video_get_options()['enabled']);
         case 'release':
+            return !empty(em_wp_release_get_options()['enabled']);
         case 'cta':
-            return true;
+            return !empty(em_wp_cta_get_options()['enabled']);
         default:
             return false;
     }
@@ -256,10 +259,27 @@ function em_wp_render_landing_module(string $module_slug): void
             break;
 
         case 'social':
+            if (function_exists('em_wp_render_social')) {
+                em_wp_render_social();
+            }
+            break;
+
         case 'video':
+            if (function_exists('em_wp_render_video')) {
+                em_wp_render_video();
+            }
+            break;
+
         case 'release':
+            if (function_exists('em_wp_render_release')) {
+                em_wp_render_release();
+            }
+            break;
+
         case 'cta':
-            em_wp_render_landing_section_placeholder($module_slug);
+            if (function_exists('em_wp_render_cta')) {
+                em_wp_render_cta();
+            }
             break;
     }
 }
@@ -308,22 +328,13 @@ function em_wp_render_landing_middle_sections(): void
 }
 
 /**
- * Affiche le footer landing (placeholder ou futur module).
- */
-function em_wp_render_landing_footer(): void
-{
-    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('footer')) {
-        return;
-    }
-
-    em_wp_render_landing_section_placeholder('footer');
-}
-
-/**
  * Affiche le contenu principal de la page d'accueil.
  */
 function em_wp_render_landing_page(): void
 {
     em_wp_render_landing_middle_sections();
-    em_wp_render_landing_footer();
+
+    if (function_exists('em_wp_render_landing_footer')) {
+        em_wp_render_landing_footer();
+    }
 }

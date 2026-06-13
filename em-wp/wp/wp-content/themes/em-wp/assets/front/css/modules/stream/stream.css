@@ -67,8 +67,6 @@
     flex-wrap: nowrap;
     margin: 8px 0 0;
     font-family: "Archivo Black", Arial, sans-serif;
-    font-size: clamp(2rem, 5vw, 3.75rem);
-    line-height: 0.9;
     color: var(--em-stream-text, #fff6ea);
 }
 

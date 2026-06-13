@@ -59,6 +59,14 @@
                 const attachment = frame.state().get('selection').first().toJSON();
                 input.val(attachment.url);
                 syncPreview(input, preview);
+                input.trigger('change');
+
+                if (window.EmWpAdminModuleStylePreview && typeof window.EmWpAdminModuleStylePreview.applyTexture === 'function') {
+                    const root = input.closest('.em-wp-admin-module--texture-preview');
+                    if (root) {
+                        window.EmWpAdminModuleStylePreview.applyTexture(root);
+                    }
+                }
             });
 
             frame.open();

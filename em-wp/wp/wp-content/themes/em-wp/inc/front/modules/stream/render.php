@@ -32,9 +32,18 @@ function em_wp_stream_enqueue_front_assets(): void
     $js_path = 'assets/front/js/modules/stream/stream.js';
 
     wp_enqueue_style(
+        'em-wp-landing-ui',
+        $theme_uri . '/assets/front/css/landing-ui.css',
+        ['em-wp-theme'],
+        file_exists(get_template_directory() . '/assets/front/css/landing-ui.css')
+            ? $theme_version . '.' . (string) filemtime(get_template_directory() . '/assets/front/css/landing-ui.css')
+            : $theme_version
+    );
+
+    wp_enqueue_style(
         'em-wp-stream',
         $theme_uri . '/' . $css_path,
-        ['em-wp-theme', 'font-awesome-6'],
+        ['em-wp-landing-ui', 'em-wp-theme', 'font-awesome-6'],
         file_exists(get_template_directory() . '/' . $css_path)
             ? $theme_version . '.' . filemtime(get_template_directory() . '/' . $css_path)
             : $theme_version

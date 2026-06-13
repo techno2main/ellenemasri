@@ -74,12 +74,17 @@ function em_wp_admin_render_module_panel(
     string $title,
     string $panel_class,
     callable $body_callback,
-    string $body_classes = ''
+    string $body_classes = '',
+    bool $open_by_default = false
 ): void {
     $body_class_attr = trim('em-wp-admin-module__panel-body ' . $body_classes);
+    $panel_classes = em_wp_admin_module_panel_classes($panel_class);
+    if ($open_by_default) {
+        $panel_classes .= ' is-open';
+    }
     ?>
-    <section class="<?php echo esc_attr(em_wp_admin_module_panel_classes($panel_class)); ?>">
-        <button class="<?php echo esc_attr(em_wp_admin_panel_header_class($panel_class)); ?>" type="button" aria-expanded="<?php echo esc_attr(em_wp_admin_module_panel_aria_expanded()); ?>">
+    <section class="<?php echo esc_attr($panel_classes); ?>"<?php echo $open_by_default ? ' data-default-open' : ''; ?>>
+        <button class="<?php echo esc_attr(em_wp_admin_panel_header_class($panel_class)); ?>" type="button" aria-expanded="<?php echo esc_attr($open_by_default ? 'true' : em_wp_admin_module_panel_aria_expanded()); ?>">
             <?php if ($title !== '') { ?>
                 <span><?php echo esc_html($title); ?></span>
             <?php } ?>
@@ -245,6 +250,11 @@ function em_wp_admin_module_default_style_colors(string $module_slug): array
         'hero'    => ['background' => '#13061f', 'text' => '#ffffff'],
         'slider'  => ['background' => '#12338f', 'text' => '#100421'],
         'stream'  => ['background' => '#6a1b78', 'text' => '#fff6ea'],
+        'social'  => ['background' => '#db2777', 'text' => '#100421'],
+        'video'   => ['background' => '#f5e06a', 'text' => '#100421'],
+        'release' => ['background' => '#fff6ea', 'text' => '#100421'],
+        'cta'     => ['background' => '#0d9488', 'text' => '#100421'],
+        'footer'  => ['background' => '#100421', 'text' => '#fff6ea'],
     ];
 
     return $map[$module_slug] ?? ['background' => '#100421', 'text' => '#ffffff'];
@@ -262,6 +272,11 @@ function em_wp_admin_module_style_color_fields(string $module_slug): ?array
         'hero'    => ['bg' => 'background_color', 'text' => 'text_color'],
         'stream'  => ['bg' => 'background_color', 'text' => 'text_color'],
         'slider'  => ['bg' => 'frame_bg_color', 'text' => 'footer_text'],
+        'social'  => ['bg' => 'background_color', 'text' => 'text_color'],
+        'video'   => ['bg' => 'background_color', 'text' => 'text_color'],
+        'release' => ['bg' => 'background_color', 'text' => 'text_color'],
+        'cta'     => ['bg' => 'background_color', 'text' => 'text_color'],
+        'footer'  => ['bg' => 'background_color', 'text' => 'text_color'],
     ];
 
     return $maps[$module_slug] ?? null;
@@ -279,6 +294,16 @@ function em_wp_admin_get_module_options_for_preview(string $module_slug): array
             return function_exists('em_wp_top_bar_get_options') ? em_wp_top_bar_get_options() : [];
         case 'stream':
             return function_exists('em_wp_stream_get_options') ? em_wp_stream_get_options() : [];
+        case 'social':
+            return function_exists('em_wp_social_get_options') ? em_wp_social_get_options() : [];
+        case 'video':
+            return function_exists('em_wp_video_get_options') ? em_wp_video_get_options() : [];
+        case 'release':
+            return function_exists('em_wp_release_get_options') ? em_wp_release_get_options() : [];
+        case 'cta':
+            return function_exists('em_wp_cta_get_options') ? em_wp_cta_get_options() : [];
+        case 'footer':
+            return function_exists('em_wp_footer_get_options') ? em_wp_footer_get_options() : [];
         case 'hero':
             if (function_exists('em_wp_hero_get_options') && function_exists('em_wp_hero_active_style_slug')) {
                 return em_wp_hero_get_options(em_wp_hero_active_style_slug());

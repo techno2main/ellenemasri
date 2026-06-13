@@ -44,19 +44,79 @@
             root.style.setProperty('--em-slider-admin-bg', bgColor);
             root.style.setProperty('--em-slider-admin-text', textColor);
         }
+
+        applyModuleAdminTexturePreview(root);
+    }
+
+    function findTextureInput(root) {
+        const field = root.getAttribute('data-em-admin-texture-field');
+        if (!field) {
+            return null;
+        }
+
+        if (field.charAt(0) === '[') {
+            return root.querySelector('input[name$="' + field + '"]');
+        }
+
+        return root.querySelector('input[name="' + field + '"]');
+    }
+
+    function applyModuleAdminTexturePreview(root) {
+        if (!root || !root.classList.contains('em-wp-admin-module--texture-preview')) {
+            return;
+        }
+
+        const textureInput = findTextureInput(root);
+        const heroTexture = root.querySelector('.em-wp-admin-module__hero-texture');
+        if (!textureInput || !heroTexture) {
+            return;
+        }
+
+        const url = String(textureInput.value || '').trim();
+        if (url === '') {
+            heroTexture.hidden = true;
+            heroTexture.removeAttribute('src');
+            return;
+        }
+
+        heroTexture.src = url;
+        heroTexture.hidden = false;
+    }
+
+    function bindTextureFieldListeners() {
+        document.querySelectorAll('.em-wp-admin-module--texture-preview').forEach(function (root) {
+            const textureInput = findTextureInput(root);
+            if (!textureInput) {
+                return;
+            }
+
+            textureInput.addEventListener('input', function () {
+                applyModuleAdminTexturePreview(root);
+            });
+
+            textureInput.addEventListener('change', function () {
+                applyModuleAdminTexturePreview(root);
+            });
+        });
     }
 
     function refreshAll() {
         document.querySelectorAll('.em-wp-admin-module[data-em-admin-style]').forEach(applyModuleAdminStylePreview);
+        document.querySelectorAll('.em-wp-admin-module--texture-preview').forEach(applyModuleAdminTexturePreview);
+    }
+
+    function init() {
+        refreshAll();
+        bindTextureFieldListeners();
     }
 
     if (!window.__emWpAdminModuleStylePreviewReady) {
         window.__emWpAdminModuleStylePreviewReady = true;
 
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', refreshAll);
+            document.addEventListener('DOMContentLoaded', init);
         } else {
-            refreshAll();
+            init();
         }
 
         $(document).on('emWpAdminColorFieldChanged', refreshAll);
@@ -64,6 +124,7 @@
 
     window.EmWpAdminModuleStylePreview = {
         refresh: refreshAll,
-        apply: applyModuleAdminStylePreview
+        apply: applyModuleAdminStylePreview,
+        applyTexture: applyModuleAdminTexturePreview,
     };
 })(jQuery);

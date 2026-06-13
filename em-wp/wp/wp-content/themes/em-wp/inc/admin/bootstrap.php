@@ -25,8 +25,11 @@ require_once __DIR__ . '/modules/hero/settings.php';
 require_once __DIR__ . '/modules/slider/slides.php';
 require_once __DIR__ . '/modules/slider/settings.php';
 require_once __DIR__ . '/modules/stream/settings.php';
+require_once __DIR__ . '/modules/social/settings.php';
 require_once __DIR__ . '/modules/video/settings.php';
 require_once __DIR__ . '/modules/release/settings.php';
+require_once __DIR__ . '/modules/cta/settings.php';
+require_once __DIR__ . '/modules/footer/settings.php';
 require_once __DIR__ . '/pages/rubriques.php';
 require_once __DIR__ . '/modules/coming-soon/register.php';
 
