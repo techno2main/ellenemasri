@@ -159,14 +159,18 @@ function em_wp_admin_template_handle_set_active(): void
     check_admin_referer('em_wp_template_set_active');
 
     $slug = em_wp_template_sanitize_slug((string) ($_POST['em_wp_template_active_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $redirect_page = sanitize_key((string) ($_POST['em_wp_template_redirect_page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $redirect_url = ($redirect_page !== '' && str_starts_with($redirect_page, 'em-wp-'))
+        ? admin_url('admin.php?page=' . $redirect_page)
+        : em_wp_admin_templates_page_url();
     $result = em_wp_set_active_template_slug($slug);
 
     if (is_wp_error($result)) {
-        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'error', $result->get_error_message());
+        em_wp_admin_template_redirect_with_notice($redirect_url, 'error', $result->get_error_message());
     }
 
     em_wp_admin_template_redirect_with_notice(
-        em_wp_admin_templates_page_url(),
+        $redirect_url,
         'success',
         __('Template actif sur le site mis à jour.', 'em-wp')
     );

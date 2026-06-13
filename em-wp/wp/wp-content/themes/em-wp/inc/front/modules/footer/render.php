@@ -40,7 +40,9 @@ function em_wp_render_landing_footer(): void
         return;
     }
 
-    $options = em_wp_footer_get_options();
+    $options = function_exists('em_wp_footer_get_options_for_front')
+        ? em_wp_footer_get_options_for_front()
+        : em_wp_footer_get_options();
     em_wp_footer_enqueue_front_assets();
 
     get_template_part('template-parts/sections/footer/footer', null, [

@@ -105,9 +105,9 @@ function em_wp_get_stream_platforms_for_front(): array
  */
 function em_wp_get_top_bar_stream_icons_for_front(): array
 {
-    $top_bar_options = function_exists('em_wp_top_bar_get_options')
-        ? em_wp_top_bar_get_options()
-        : [];
+    $top_bar_options = function_exists('em_wp_top_bar_get_options_for_front')
+        ? em_wp_top_bar_get_options_for_front()
+        : (function_exists('em_wp_top_bar_get_options') ? em_wp_top_bar_get_options() : []);
 
     if (!empty($top_bar_options['stream_icons_hidden'])) {
         return [];

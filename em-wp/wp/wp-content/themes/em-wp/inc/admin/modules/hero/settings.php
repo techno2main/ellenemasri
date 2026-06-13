@@ -233,11 +233,14 @@ function em_wp_hero_admin_enqueue(string $hook_suffix): void
         return;
     }
 
+    // Ellene réutilise le même layout admin que Mayami (Phase 4 : variantes par template).
+    $asset_style_slug = $style_slug === 'ellene' ? 'mayami' : $style_slug;
+
     em_wp_admin_enqueue_module_assets(
         'em-wp-hero-admin',
-        'assets/admin/css/modules/hero/' . $style_slug . '/hero.css',
+        'assets/admin/css/modules/hero/' . $asset_style_slug . '/hero.css',
         'em-wp-hero-admin',
-        'assets/admin/js/modules/hero/' . $style_slug . '/hero.js',
+        'assets/admin/js/modules/hero/' . $asset_style_slug . '/hero.js',
         ['wp-color-picker']
     );
 }
@@ -512,29 +515,7 @@ function em_wp_hero_render_style_setup(array $context, array $options, string $a
             ?>
 
             <div class="em-wp-hero-admin__panels em-wp-admin-module__panels">
-            <?php if ($context['style_slug'] === 'mayami') {
-                em_wp_hero_render_mayami_admin_layout($context, $options);
-            } else { ?>
-                <section class="em-wp-hero-panel em-wp-admin-module__panel">
-                    <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-hero-panel')); ?>" type="button" aria-expanded="false">
-                        <span><?php esc_html_e('Section HERO', 'em-wp'); ?></span>
-                    </button>
-                    <div class="em-wp-admin-module__panel-body em-wp-hero-panel__body--grid">
-                        <label>
-                            <span><?php esc_html_e('Badge Text', 'em-wp'); ?></span>
-                            <input type="text" class="regular-text" name="<?php echo esc_attr($context['option_name']); ?>[badge_text]" value="<?php echo esc_attr($options['badge_text']); ?>">
-                        </label>
-                        <label>
-                            <span><?php esc_html_e('Subtitle', 'em-wp'); ?></span>
-                            <input type="text" class="regular-text" name="<?php echo esc_attr($context['option_name']); ?>[subtitle]" value="<?php echo esc_attr($options['subtitle']); ?>">
-                        </label>
-                        <label class="em-wp-hero-panel__field--wide">
-                            <span><?php esc_html_e('Main Title (SEO)', 'em-wp'); ?></span>
-                            <input type="text" class="regular-text" name="<?php echo esc_attr($context['option_name']); ?>[main_title]" value="<?php echo esc_attr($options['main_title']); ?>">
-                        </label>
-                    </div>
-                </section>
-            <?php } ?>
+            <?php em_wp_hero_render_mayami_admin_layout($context, $options); ?>
             </div>
 
             <?php submit_button(__('Enregistrer', 'em-wp')); ?>

@@ -49,7 +49,9 @@ function em_wp_enqueue_assets(): void
 
     $theme_dir = get_template_directory();
     $landing_ui_path = 'assets/front/css/landing-ui.css';
-    $hero_css_path = 'assets/front/css/modules/hero/' . $hero_style_slug . '/hero.css';
+    // Ellene réutilise le markup/CSS Mayami jusqu'à la Phase 4.
+    $hero_css_style_slug = $hero_style_slug === 'ellene' ? 'mayami' : $hero_style_slug;
+    $hero_css_path = 'assets/front/css/modules/hero/' . $hero_css_style_slug . '/hero.css';
     $slider_css_path = 'assets/front/css/modules/slider/' . $slider_style_slug . '/slider.css';
 
     wp_enqueue_style(

@@ -55,14 +55,21 @@
     color: #111827;
 }
 
-.em-wp-template-banner__block--editing .em-wp-template-banner__select {
+.em-wp-template-banner__block--editing .em-wp-template-banner__select,
+.em-wp-template-banner__block--live .em-wp-template-banner__select {
     border-color: rgba(0, 0, 0, 0.15);
     text-transform: uppercase;
 }
 
-.em-wp-template-banner__block--editing .em-wp-template-banner__select:focus {
+.em-wp-template-banner__block--editing .em-wp-template-banner__select:focus,
+.em-wp-template-banner__block--live .em-wp-template-banner__select:focus {
     border-color: var(--em-template-editing-color, #2d1454);
     box-shadow: 0 0 0 2px var(--em-template-editing-color-soft, rgba(45, 20, 84, 0.25));
+}
+
+.em-wp-template-banner__block--live .em-wp-template-banner__select:focus {
+    border-color: var(--em-template-active-color, #5a7a12);
+    box-shadow: 0 0 0 2px var(--em-template-active-color-soft, rgba(196, 245, 66, 0.35));
 }
 
 .em-wp-template-banner__label {
@@ -86,7 +93,36 @@
 
 .em-wp-template-banner__form {
     display: inline-flex;
+    align-items: center;
+    gap: 8px;
     margin: 0;
+}
+
+.em-wp-template-banner__confirm {
+    min-height: 32px;
+    padding: 4px 12px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background: #ffffff;
+    color: #111827;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.em-wp-template-banner__confirm:hover:not(:disabled),
+.em-wp-template-banner__confirm:focus:not(:disabled) {
+    border-color: var(--em-template-active-color, #5a7a12);
+    background: #f9fafb;
+    color: #111827;
+}
+
+.em-wp-template-banner__confirm:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 .em-wp-template-banner__select {
@@ -111,15 +147,6 @@
     color: #111827;
     background: #ffffff;
     font-weight: 600;
-}
-
-.em-wp-template-banner__live-name {
-    font-size: 16px;
-    font-weight: 800;
-    line-height: 1.2;
-    color: #111827;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
 }
 
 .em-wp-template-banner__alert {

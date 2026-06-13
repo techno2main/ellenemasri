@@ -62,6 +62,14 @@ function em_wp_admin_template_banner_enqueue(): void
         em_wp_admin_asset_version('assets/admin/js/template/banner.js'),
         true
     );
+
+    wp_enqueue_script(
+        'em-wp-admin-notice-autodismiss',
+        $theme_uri . '/assets/admin/js/shared/notice-autodismiss.js',
+        [],
+        em_wp_admin_asset_version('assets/admin/js/shared/notice-autodismiss.js'),
+        true
+    );
 }
 add_action('admin_enqueue_scripts', 'em_wp_admin_template_banner_enqueue');
 
@@ -108,7 +116,7 @@ function em_wp_admin_template_render_banner(): void
                     <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                     <?php esc_html_e('Template en cours d\'édition', 'em-wp'); ?>
                 </span>
-                <form class="em-wp-template-banner__form" method="post" action="">
+                <form class="em-wp-template-banner__form em-wp-template-banner__form--editing" method="post" action="">
                     <?php wp_nonce_field('em_wp_template_set_editing'); ?>
                     <input type="hidden" name="em_wp_template_action" value="set_editing">
                     <input type="hidden" name="em_wp_template_redirect_page" value="<?php echo esc_attr($current_page); ?>">
@@ -134,7 +142,29 @@ function em_wp_admin_template_render_banner(): void
                     <span class="em-wp-template-banner__live-dot" aria-hidden="true"></span>
                     <?php esc_html_e('Template actif sur le site', 'em-wp'); ?>
                 </span>
-                <strong class="em-wp-template-banner__live-name"><?php echo esc_html($active_label); ?></strong>
+                <form class="em-wp-template-banner__form em-wp-template-banner__form--live" method="post" action="">
+                    <?php wp_nonce_field('em_wp_template_set_active'); ?>
+                    <input type="hidden" name="em_wp_template_action" value="set_active">
+                    <input type="hidden" name="em_wp_template_redirect_page" value="<?php echo esc_attr($current_page); ?>">
+                    <label class="screen-reader-text" for="em-wp-template-active-select">
+                        <?php esc_html_e('Choisir le template affiché sur le site', 'em-wp'); ?>
+                    </label>
+                    <select
+                        id="em-wp-template-active-select"
+                        name="em_wp_template_active_slug"
+                        class="em-wp-template-banner__select"
+                        data-current="<?php echo esc_attr($active_slug); ?>"
+                    >
+                        <?php foreach ($registry as $slug => $definition) { ?>
+                            <option value="<?php echo esc_attr($slug); ?>" <?php selected($active_slug, $slug); ?>>
+                                <?php echo esc_html((string) ($definition['label'] ?? $slug)); ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                    <button type="submit" class="em-wp-template-banner__confirm" disabled>
+                        <?php esc_html_e('Valider', 'em-wp'); ?>
+                    </button>
+                </form>
             </div>
 
             <?php if ($differs) { ?>

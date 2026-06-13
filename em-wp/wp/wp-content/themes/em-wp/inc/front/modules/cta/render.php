@@ -40,7 +40,9 @@ function em_wp_render_cta(): void
         return;
     }
 
-    $options = em_wp_cta_get_options();
+    $options = function_exists('em_wp_cta_get_options_for_front')
+        ? em_wp_cta_get_options_for_front()
+        : em_wp_cta_get_options();
 
     if (empty($options['enabled'])) {
         return;

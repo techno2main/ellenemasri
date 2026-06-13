@@ -2,20 +2,37 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
-        var select = document.getElementById('em-wp-template-editing-select');
+        var editingSelect = document.getElementById('em-wp-template-editing-select');
 
-        if (!select) {
+        if (editingSelect) {
+            var editingForm = editingSelect.closest('.em-wp-template-banner__form--editing');
+
+            if (editingForm) {
+                editingSelect.addEventListener('change', function () {
+                    editingForm.submit();
+                });
+            }
+        }
+
+        var liveSelect = document.getElementById('em-wp-template-active-select');
+
+        if (!liveSelect) {
             return;
         }
 
-        var form = select.closest('form');
+        var liveForm = liveSelect.closest('.em-wp-template-banner__form--live');
+        var confirmBtn = liveForm ? liveForm.querySelector('.em-wp-template-banner__confirm') : null;
+        var currentValue = liveSelect.getAttribute('data-current') || liveSelect.value;
 
-        if (!form) {
-            return;
+        function syncLiveConfirmState() {
+            if (!confirmBtn) {
+                return;
+            }
+
+            confirmBtn.disabled = liveSelect.value === currentValue;
         }
 
-        select.addEventListener('change', function () {
-            form.submit();
-        });
+        liveSelect.addEventListener('change', syncLiveConfirmState);
+        syncLiveConfirmState();
     });
 })();

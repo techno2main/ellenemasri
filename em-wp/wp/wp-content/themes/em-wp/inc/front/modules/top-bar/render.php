@@ -14,6 +14,10 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_front_top_bar_options(): array
 {
+    if (function_exists('em_wp_top_bar_get_options_for_front')) {
+        return em_wp_top_bar_get_options_for_front();
+    }
+
     if (function_exists('em_wp_top_bar_get_options')) {
         return em_wp_top_bar_get_options();
     }

@@ -101,9 +101,13 @@ function em_wp_social_sanitize_platforms_from_input($raw): array
 function em_wp_social_get_platforms_list(?array $social_options = null): array
 {
     if ($social_options === null) {
-        $social_options = function_exists('em_wp_social_get_options')
-            ? em_wp_social_get_options()
-            : em_wp_social_default_options();
+        if (!is_admin() && function_exists('em_wp_social_get_options_for_front')) {
+            $social_options = em_wp_social_get_options_for_front();
+        } elseif (function_exists('em_wp_social_get_options')) {
+            $social_options = em_wp_social_get_options();
+        } else {
+            $social_options = em_wp_social_default_options();
+        }
     }
 
     $raw = $social_options['platforms'] ?? [];
@@ -156,7 +160,9 @@ function em_wp_social_get_platforms_list(?array $social_options = null): array
  */
 function em_wp_get_social_cards_for_front(): array
 {
-    $options = function_exists('em_wp_social_get_options') ? em_wp_social_get_options() : em_wp_social_default_options();
+    $options = function_exists('em_wp_social_get_options_for_front')
+        ? em_wp_social_get_options_for_front()
+        : (function_exists('em_wp_social_get_options') ? em_wp_social_get_options() : em_wp_social_default_options());
     $definitions = em_wp_social_platform_definitions();
     $cards = [];
 

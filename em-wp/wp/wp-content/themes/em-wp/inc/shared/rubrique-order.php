@@ -104,11 +104,17 @@ function em_wp_site_rubrique_is_visibility_toggle(string $module_slug): bool
 
 /**
  * Visibilité d'une rubrique sur le site (true = affichée).
+ *
+ * Rubriques template V2 : par template en édition (admin) ou live (front).
  */
-function em_wp_get_site_rubrique_visibility(string $module_slug): bool
+function em_wp_get_site_rubrique_visibility(string $module_slug, ?string $template_slug = null): bool
 {
     if (!em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
         return true;
+    }
+
+    if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
+        return em_wp_get_rubrique_enabled_for_template($module_slug, $template_slug);
     }
 
     $saved = get_option(em_wp_site_rubrique_visibility_option_name(), []);
@@ -123,10 +129,14 @@ function em_wp_get_site_rubrique_visibility(string $module_slug): bool
 /**
  * Enregistre la visibilité d'une rubrique.
  */
-function em_wp_set_site_rubrique_visibility(string $module_slug, bool $visible): bool
+function em_wp_set_site_rubrique_visibility(string $module_slug, bool $visible, ?string $template_slug = null): bool
 {
     if (!em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
         return false;
+    }
+
+    if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
+        return em_wp_set_rubrique_enabled_for_template($module_slug, $visible, $template_slug);
     }
 
     $saved = get_option(em_wp_site_rubrique_visibility_option_name(), []);
@@ -209,6 +219,10 @@ function em_wp_apply_rubrique_visibility_to_module_options(string $module_slug, 
  */
 function em_wp_rubrique_sync_enabled_for_admin(string $module_slug, array $options): array
 {
+    if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
+        return $options;
+    }
+
     if (em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
         $options['enabled'] = em_wp_get_site_rubrique_visibility($module_slug);
     }
@@ -222,6 +236,10 @@ function em_wp_rubrique_sync_enabled_for_admin(string $module_slug, array $optio
 function em_wp_rubrique_sync_visibility_from_module_save(string $module_slug, bool $enabled): void
 {
     if (!em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
+        return;
+    }
+
+    if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
         return;
     }
 
