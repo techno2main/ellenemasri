@@ -1,6 +1,6 @@
 <?php
 /**
- * Ordre et visibilité des rubriques du site (admin + front futur).
+ * Ordre et visibilité des rubriques du site (admin + front).
  *
  * @package em-wp
  */
@@ -139,8 +139,35 @@ function em_wp_set_site_rubrique_visibility(string $module_slug, bool $visible):
 
     $saved[$module_slug] = $visible;
     update_option(em_wp_site_rubrique_visibility_option_name(), $saved, false);
+    em_wp_apply_rubrique_visibility_to_module_options($module_slug, $visible);
 
     return true;
+}
+
+/**
+ * Aligne l'option `enabled` d'un module avec la visibilité du sommaire.
+ */
+function em_wp_apply_rubrique_visibility_to_module_options(string $module_slug, bool $visible): void
+{
+    switch ($module_slug) {
+        case 'top-bar':
+            $option_name = 'em_wp_top_bar_options';
+            break;
+        default:
+            return;
+    }
+
+    $saved = get_option($option_name, []);
+    if (!is_array($saved)) {
+        $saved = [];
+    }
+
+    if ((bool) ($saved['enabled'] ?? true) === $visible) {
+        return;
+    }
+
+    $saved['enabled'] = $visible;
+    update_option($option_name, $saved, false);
 }
 
 /**
@@ -214,59 +241,61 @@ function em_wp_save_site_rubrique_order(array $submitted): array
     return $normalized;
 }
 
-/**
- * AJAX : sauvegarde l'ordre des rubriques depuis le sommaire.
- */
-function em_wp_ajax_save_site_rubrique_order(): void
-{
-    check_ajax_referer('em_wp_rubrique_order', 'nonce');
+if (is_admin()) {
+    /**
+     * AJAX : sauvegarde l'ordre des rubriques depuis le sommaire.
+     */
+    function em_wp_ajax_save_site_rubrique_order(): void
+    {
+        check_ajax_referer('em_wp_rubrique_order', 'nonce');
 
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
+        }
+
+        $raw = isset($_POST['order']) ? wp_unslash($_POST['order']) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $decoded = json_decode((string) $raw, true);
+
+        if (!is_array($decoded)) {
+            wp_send_json_error(['message' => __('Ordre invalide.', 'em-wp')], 400);
+        }
+
+        $order = em_wp_save_site_rubrique_order($decoded);
+
+        wp_send_json_success([
+            'order'   => $order,
+            'message' => __('Ordre enregistré.', 'em-wp'),
+        ]);
     }
+    add_action('wp_ajax_em_wp_save_site_rubrique_order', 'em_wp_ajax_save_site_rubrique_order');
 
-    $raw = isset($_POST['order']) ? wp_unslash($_POST['order']) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-    $decoded = json_decode((string) $raw, true);
+    /**
+     * AJAX : bascule Afficher / Masquer (TOP-BAR, FOOTER).
+     */
+    function em_wp_ajax_save_site_rubrique_visibility(): void
+    {
+        check_ajax_referer('em_wp_rubrique_order', 'nonce');
 
-    if (!is_array($decoded)) {
-        wp_send_json_error(['message' => __('Ordre invalide.', 'em-wp')], 400);
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
+        }
+
+        $module_slug = sanitize_key((string) ($_POST['module_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $visible = isset($_POST['visible']) && (string) wp_unslash($_POST['visible']) === '1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+        if ($module_slug === '' || !em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
+            wp_send_json_error(['message' => __('Rubrique invalide.', 'em-wp')], 400);
+        }
+
+        em_wp_set_site_rubrique_visibility($module_slug, $visible);
+
+        wp_send_json_success([
+            'module_slug' => $module_slug,
+            'visible'     => $visible,
+            'message'     => $visible
+                ? __('Rubrique affichée.', 'em-wp')
+                : __('Rubrique masquée.', 'em-wp'),
+        ]);
     }
-
-    $order = em_wp_save_site_rubrique_order($decoded);
-
-    wp_send_json_success([
-        'order'   => $order,
-        'message' => __('Ordre enregistré.', 'em-wp'),
-    ]);
+    add_action('wp_ajax_em_wp_save_site_rubrique_visibility', 'em_wp_ajax_save_site_rubrique_visibility');
 }
-add_action('wp_ajax_em_wp_save_site_rubrique_order', 'em_wp_ajax_save_site_rubrique_order');
-
-/**
- * AJAX : bascule Afficher / Masquer (TOP-BAR, FOOTER).
- */
-function em_wp_ajax_save_site_rubrique_visibility(): void
-{
-    check_ajax_referer('em_wp_rubrique_order', 'nonce');
-
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
-    }
-
-    $module_slug = sanitize_key((string) ($_POST['module_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-    $visible = filter_var($_POST['visible'] ?? false, FILTER_VALIDATE_BOOLEAN); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-
-    if ($module_slug === '' || !em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
-        wp_send_json_error(['message' => __('Rubrique invalide.', 'em-wp')], 400);
-    }
-
-    em_wp_set_site_rubrique_visibility($module_slug, $visible);
-
-    wp_send_json_success([
-        'module_slug' => $module_slug,
-        'visible'     => $visible,
-        'message'     => $visible
-            ? __('Rubrique affichée.', 'em-wp')
-            : __('Rubrique masquée.', 'em-wp'),
-    ]);
-}
-add_action('wp_ajax_em_wp_save_site_rubrique_visibility', 'em_wp_ajax_save_site_rubrique_visibility');
