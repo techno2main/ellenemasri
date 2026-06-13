@@ -49,12 +49,25 @@ $platform_icon_map = [
 ];
 
 $active_stream_links = [];
-foreach ($platform_icon_map as $slug => $icon) {
-    $platform = is_array($stream_links[$slug] ?? null) ? $stream_links[$slug] : [];
-    $label = trim((string) ($platform['label'] ?? ''));
-    $href = trim((string) ($platform['href'] ?? ''));
+$stream_links_list = function_exists('em_wp_top_bar_get_stream_links_list')
+    ? em_wp_top_bar_get_stream_links_list(['stream_links' => $stream_links])
+    : [];
 
-    if (empty($platform['active']) || $label === '' || $href === '') {
+foreach ($stream_links_list as $platform_item) {
+    if (!is_array($platform_item)) {
+        continue;
+    }
+
+    $slug = sanitize_key((string) ($platform_item['slug'] ?? ''));
+    $icon = $platform_icon_map[$slug] ?? '';
+    if ($icon === '') {
+        continue;
+    }
+
+    $label = trim((string) ($platform_item['label'] ?? ''));
+    $href = trim((string) ($platform_item['href'] ?? ''));
+
+    if (empty($platform_item['active']) || $label === '' || $href === '') {
         continue;
     }
 

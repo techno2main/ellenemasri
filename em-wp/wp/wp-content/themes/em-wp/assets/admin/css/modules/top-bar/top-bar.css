@@ -40,6 +40,59 @@
     align-items: center;
     gap: 10px;
     font-weight: 600;
+    min-width: 0;
+}
+
+.em-wp-top-bar-platform-item__order {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.em-wp-top-bar-platform-item__move,
+.em-wp-top-bar-platform-item__drag {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border-radius: 4px;
+    color: #4b5563;
+    touch-action: none;
+}
+
+.em-wp-top-bar-platform-item__move:hover,
+.em-wp-top-bar-platform-item__move:focus-visible,
+.em-wp-top-bar-platform-item__drag:hover,
+.em-wp-top-bar-platform-item__drag:focus-visible {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.em-wp-top-bar-platform-item__move:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    background: transparent;
+}
+
+.em-wp-top-bar-platform-item__drag {
+    cursor: grab;
+}
+
+.em-wp-top-bar-platform-item__drag:active {
+    cursor: grabbing;
+}
+
+.em-wp-top-bar-platform-item.is-dragging {
+    opacity: 0.92;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    pointer-events: none;
 }
 
 .em-wp-top-bar-platform-item__label i {
@@ -80,4 +133,27 @@
 .em-wp-admin-media-preview--checkerboard img {
     max-width: 220px;
     max-height: 84px;
+}
+
+@media (max-width: 782px) {
+    .em-wp-top-bar-platform-item__move {
+        width: 36px;
+        height: 36px;
+    }
+
+    .em-wp-top-bar-platform-item__drag {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+.em-wp-slide-sortable__placeholder {
+    border: 2px dashed #9ca3af;
+    border-radius: 4px;
+    background: #f9fafb;
+    margin-bottom: 10px;
+}
+
+body.em-wp-slide-sortable-active .em-wp-top-bar-platform-item__drag {
+    cursor: grabbing;
 }

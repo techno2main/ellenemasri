@@ -108,8 +108,8 @@ function em_wp_top_bar_page_slug(): string
 function em_wp_top_bar_add_admin_page(): void
 {
     add_menu_page(
-        __('Top Bar', 'em-wp'),
-        __('Top Bar', 'em-wp'),
+        __('TOP-BAR', 'em-wp'),
+        __('TOP-BAR', 'em-wp'),
         'manage_options',
         em_wp_top_bar_page_slug(),
         'em_wp_top_bar_render_admin_page',
@@ -129,12 +129,31 @@ function em_wp_top_bar_admin_enqueue(string $hook_suffix): void
         return;
     }
 
-    em_wp_admin_enqueue_module_assets(
+    $theme_uri = get_template_directory_uri();
+
+    em_wp_admin_enqueue_shared_assets();
+
+    wp_enqueue_script(
+        'em-wp-admin-slide-sortable',
+        $theme_uri . '/assets/admin/js/shared/slide-sortable.js',
+        [],
+        em_wp_admin_asset_version('assets/admin/js/shared/slide-sortable.js'),
+        true
+    );
+
+    wp_enqueue_style(
         'em-wp-top-bar-admin',
-        'assets/admin/css/modules/top-bar/top-bar.css',
+        $theme_uri . '/assets/admin/css/modules/top-bar/top-bar.css',
+        ['em-wp-admin-color-picker', 'em-wp-admin-module-common'],
+        em_wp_admin_asset_version('assets/admin/css/modules/top-bar/top-bar.css')
+    );
+
+    wp_enqueue_script(
         'em-wp-top-bar-admin',
-        'assets/admin/js/modules/top-bar/top-bar.js',
-        ['wp-color-picker']
+        $theme_uri . '/assets/admin/js/modules/top-bar/top-bar.js',
+        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-accordion', 'em-wp-admin-slide-sortable'],
+        em_wp_admin_asset_version('assets/admin/js/modules/top-bar/top-bar.js'),
+        true
     );
 }
 add_action('admin_enqueue_scripts', 'em_wp_top_bar_admin_enqueue');
@@ -180,12 +199,8 @@ function em_wp_top_bar_default_options(): array
     $items['line_1_right']['href'] = '';
 
     $stream_links = [];
-    foreach (em_wp_top_bar_stream_platform_definitions() as $slug => $platform) {
-        $stream_links[$slug] = [
-            'label'  => $platform['label'],
-            'href'   => '',
-            'active' => false,
-        ];
+    foreach (array_keys(em_wp_top_bar_stream_platform_definitions()) as $slug) {
+        $stream_links[] = em_wp_top_bar_default_stream_link_item($slug);
     }
 
     return [
@@ -217,10 +232,7 @@ function em_wp_top_bar_get_options(): array
         is_array($saved['items'] ?? null) ? $saved['items'] : [],
         em_wp_top_bar_default_options()['items']
     );
-    $options['stream_links'] = wp_parse_args(
-        is_array($saved['stream_links'] ?? null) ? $saved['stream_links'] : [],
-        em_wp_top_bar_default_options()['stream_links']
-    );
+    $options['stream_links'] = em_wp_top_bar_get_stream_links_list($options);
 
     return $options;
 }
@@ -241,15 +253,7 @@ function em_wp_top_bar_sanitize_options(array $input): array
         ];
     }
 
-    $stream_links = [];
-    foreach (em_wp_top_bar_stream_platform_definitions() as $slug => $platform) {
-        $source = is_array($input['stream_links'][$slug] ?? null) ? $input['stream_links'][$slug] : [];
-        $stream_links[$slug] = [
-            'label'  => sanitize_text_field($source['label'] ?? $platform['label']),
-            'href'   => esc_url_raw($source['href'] ?? ''),
-            'active' => !empty($source['active']),
-        ];
-    }
+    $stream_links = em_wp_top_bar_sanitize_stream_links_from_input($input['stream_links'] ?? []);
 
     return [
         'enabled'          => !empty($input['enabled']),
@@ -313,32 +317,63 @@ function em_wp_top_bar_render_admin_page(): void
  */
 function em_wp_top_bar_render_stream_links_panel(array $stream_links): void
 {
+    $links = em_wp_top_bar_get_stream_links_list(['stream_links' => $stream_links]);
+    $definitions = em_wp_top_bar_stream_platform_definitions();
     ?>
     <section class="em-wp-top-bar-panel em-wp-admin-module__panel">
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-top-bar-panel')); ?>" type="button" aria-expanded="false">
             <span class="em-wp-admin-module__item-header-line"><span class="em-wp-admin-panel__has-children" title="<?php esc_attr_e('Contient des sous-éléments', 'em-wp'); ?>"><i class="fa-solid fa-list" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('stream_links')); ?><span><?php esc_html_e('Stream Links', 'em-wp'); ?></span></span>
         </button>
         <div class="em-wp-admin-module__panel-body">
-            <div class="em-wp-admin-nested-list em-wp-top-bar-platform-list">
-                <?php foreach (em_wp_top_bar_stream_platform_definitions() as $slug => $platform) {
-                    $item = is_array($stream_links[$slug] ?? null) ? $stream_links[$slug] : [];
-                    ?>
-                    <?php $is_active = !empty($item['active']); ?>
-                    <details class="em-wp-admin-nested-item em-wp-top-bar-platform-item">
-                        <summary>
-                            <span class="em-wp-top-bar-platform-item__label"><span class="em-wp-top-bar-panel__visibility em-wp-admin-module__item-visibility<?php echo $is_active ? '' : ' is-hidden'; ?>" aria-label="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>" title="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_active ? 'fa-eye' : 'fa-eye-slash'; ?>" aria-hidden="true"></i></span><i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i><span><?php echo esc_html($platform['label']); ?></span></span>
-                        </summary>
-                        <div class="em-wp-admin-nested-item__body em-wp-admin-panel-body--row em-wp-top-bar-platform-item__body">
-                            <label><span><?php esc_html_e('Label', 'em-wp'); ?></span><input type="text" class="regular-text" name="em_wp_top_bar_options[stream_links][<?php echo esc_attr($slug); ?>][label]" value="<?php echo esc_attr($item['label'] ?? $platform['label']); ?>"></label>
-                            <label><span><?php esc_html_e('Lien', 'em-wp'); ?></span><input type="text" class="regular-text" name="em_wp_top_bar_options[stream_links][<?php echo esc_attr($slug); ?>][href]" value="<?php echo esc_attr($item['href'] ?? ''); ?>"></label>
-                            <label class="em-wp-admin-inline-check"><span><?php esc_html_e('Actif', 'em-wp'); ?></span><input type="checkbox" name="em_wp_top_bar_options[stream_links][<?php echo esc_attr($slug); ?>][active]" value="1" <?php checked(!empty($item['active'])); ?>></label>
-                        </div>
-                    </details>
-                    <?php
+            <div class="em-wp-admin-nested-list em-wp-top-bar-platform-list" id="em-wp-top-bar-stream-list" data-option-name="em_wp_top_bar_options">
+                <?php foreach ($links as $list_index => $item) {
+                    em_wp_top_bar_render_stream_link_item((int) $list_index, $item, $definitions);
                 } ?>
             </div>
         </div>
     </section>
+    <?php
+}
+
+/**
+ * Rendu d'un stream link (liste ordonnée).
+ *
+ * @param array<string, array{label:string,icon:string}> $definitions
+ * @param array<string, mixed> $item
+ */
+function em_wp_top_bar_render_stream_link_item(int $list_index, array $item, array $definitions): void
+{
+    $slug = sanitize_key((string) ($item['slug'] ?? ''));
+    $platform = $definitions[$slug] ?? null;
+    if (!is_array($platform)) {
+        return;
+    }
+
+    $field_base = 'em_wp_top_bar_options[stream_links][' . $list_index . ']';
+    $label_value = (string) ($item['label'] ?? $platform['label']);
+    $href_value = (string) ($item['href'] ?? '');
+    $is_active = !empty($item['active']);
+    ?>
+    <details class="em-wp-admin-nested-item em-wp-top-bar-platform-item" data-stream-link-item data-list-index="<?php echo esc_attr((string) $list_index); ?>">
+        <summary>
+            <span class="em-wp-top-bar-platform-item__label">
+                <span class="em-wp-top-bar-platform-item__order">
+                    <button type="button" class="em-wp-top-bar-platform-item__move em-wp-top-bar-platform-item__move--up" aria-label="<?php esc_attr_e('Monter', 'em-wp'); ?>" title="<?php esc_attr_e('Monter', 'em-wp'); ?>"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
+                    <button type="button" class="em-wp-top-bar-platform-item__move em-wp-top-bar-platform-item__move--down" aria-label="<?php esc_attr_e('Descendre', 'em-wp'); ?>" title="<?php esc_attr_e('Descendre', 'em-wp'); ?>"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+                    <span class="em-wp-slide-sortable__handle em-wp-top-bar-platform-item__drag" role="button" tabindex="0" aria-label="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>" title="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+                </span>
+                <span class="em-wp-top-bar-panel__visibility em-wp-admin-module__item-visibility<?php echo $is_active ? '' : ' is-hidden'; ?>" aria-label="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>" title="<?php echo $is_active ? esc_attr__('Actif', 'em-wp') : esc_attr__('Inactif', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_active ? 'fa-eye' : 'fa-eye-slash'; ?>" aria-hidden="true"></i></span>
+                <i class="fa-brands <?php echo esc_attr($platform['icon']); ?>" aria-hidden="true"></i>
+                <span><?php echo esc_html($platform['label']); ?></span>
+            </span>
+        </summary>
+        <div class="em-wp-admin-nested-item__body em-wp-admin-panel-body--row em-wp-top-bar-platform-item__body">
+            <input type="hidden" name="<?php echo esc_attr($field_base . '[slug]'); ?>" value="<?php echo esc_attr($slug); ?>">
+            <label><span><?php esc_html_e('Label', 'em-wp'); ?></span><input type="text" class="regular-text" name="<?php echo esc_attr($field_base . '[label]'); ?>" value="<?php echo esc_attr($label_value); ?>"></label>
+            <label><span><?php esc_html_e('Lien', 'em-wp'); ?></span><input type="text" class="regular-text" name="<?php echo esc_attr($field_base . '[href]'); ?>" value="<?php echo esc_attr($href_value); ?>"></label>
+            <label class="em-wp-admin-inline-check"><span><?php esc_html_e('Actif', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($field_base . '[active]'); ?>" value="1" <?php checked($is_active); ?>></label>
+        </div>
+    </details>
     <?php
 }
 

@@ -107,11 +107,115 @@
         sync();
     }
 
+    function getStreamLinkList() {
+        return document.getElementById('em-wp-top-bar-stream-list');
+    }
+
+    function getStreamLinkItems() {
+        const list = getStreamLinkList();
+        return list ? Array.from(list.querySelectorAll('[data-stream-link-item]')) : [];
+    }
+
+    function reindexStreamLinkFields() {
+        const list = getStreamLinkList();
+        if (!list) {
+            return;
+        }
+
+        const optionName = list.getAttribute('data-option-name') || 'em_wp_top_bar_options';
+        getStreamLinkItems().forEach(function (panel, index) {
+            panel.setAttribute('data-list-index', String(index));
+
+            panel.querySelectorAll('[name]').forEach(function (field) {
+                const suffix = field.getAttribute('name').replace(/^[^\[]+\[stream_links\]\[\d+\]/, '');
+                field.setAttribute('name', optionName + '[stream_links][' + index + ']' + suffix);
+            });
+        });
+
+        syncStreamLinkMoveButtons();
+    }
+
+    function syncStreamLinkMoveButtons() {
+        getStreamLinkItems().forEach(function (panel, index, items) {
+            const up = panel.querySelector('.em-wp-top-bar-platform-item__move--up');
+            const down = panel.querySelector('.em-wp-top-bar-platform-item__move--down');
+            if (up) {
+                up.disabled = index === 0;
+            }
+            if (down) {
+                down.disabled = index === items.length - 1;
+            }
+        });
+    }
+
+    function moveStreamLink(panel, direction) {
+        const list = getStreamLinkList();
+        if (!list || !panel) {
+            return;
+        }
+
+        if (direction < 0 && panel.previousElementSibling) {
+            list.insertBefore(panel, panel.previousElementSibling);
+        } else if (direction > 0 && panel.nextElementSibling) {
+            list.insertBefore(panel.nextElementSibling, panel);
+        }
+
+        reindexStreamLinkFields();
+    }
+
+    function bindStreamLinkListManager() {
+        const list = getStreamLinkList();
+        const form = document.getElementById('em-wp-top-bar-form');
+
+        if (!list) {
+            return;
+        }
+
+        if (window.EmWpSlideSortable) {
+            new window.EmWpSlideSortable(list, {
+                handle: '.em-wp-top-bar-platform-item__drag',
+                item: '[data-stream-link-item]',
+                onEnd: reindexStreamLinkFields
+            });
+        }
+
+        list.addEventListener('click', function (event) {
+            if (event.target.closest('.em-wp-top-bar-platform-item__drag')) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+            }
+
+            const moveUp = event.target.closest('.em-wp-top-bar-platform-item__move--up');
+            const moveDown = event.target.closest('.em-wp-top-bar-platform-item__move--down');
+
+            if (moveUp) {
+                event.preventDefault();
+                event.stopPropagation();
+                moveStreamLink(moveUp.closest('[data-stream-link-item]'), -1);
+                return;
+            }
+
+            if (moveDown) {
+                event.preventDefault();
+                event.stopPropagation();
+                moveStreamLink(moveDown.closest('[data-stream-link-item]'), 1);
+            }
+        });
+
+        if (form) {
+            form.addEventListener('submit', reindexStreamLinkFields);
+        }
+
+        reindexStreamLinkFields();
+    }
+
     $(function () {
         bindMediaPicker();
         initImagePreviews();
         initPreviewState();
         initBackgroundImageToggle();
+        bindStreamLinkListManager();
         applyAdminColorPreview();
 
         $(document).on('emWpAdminColorFieldChanged', function () {
