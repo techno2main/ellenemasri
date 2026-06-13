@@ -108,13 +108,6 @@
     }
 
     $(function () {
-        if (window.EmWpAdminAccordion) {
-            window.EmWpAdminAccordion.init({
-                scope: '.em-wp-top-bar-admin',
-                panelSelector: '.em-wp-top-bar-panel',
-                headerSelector: '.em-wp-top-bar-panel__header'
-            });
-        }
         bindMediaPicker();
         initImagePreviews();
         initPreviewState();
