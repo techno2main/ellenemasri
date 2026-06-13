@@ -240,6 +240,8 @@ function em_wp_release_render_admin_page(): void
                     'em-wp-release-panel'
                 );
 
+                em_wp_admin_render_module_items_section_title('release');
+
                 em_wp_admin_render_module_panel(
                     __('Contenu', 'em-wp'),
                     'em-wp-release-panel',

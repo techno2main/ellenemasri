@@ -276,7 +276,7 @@ function em_wp_top_bar_render_admin_page(): void
             <?php em_wp_admin_render_form_save_fields('top-bar', 'em_wp_top_bar_save'); ?>
             <div class="em-wp-top-bar-admin__panels em-wp-admin-module__panels">
                 <?php em_wp_top_bar_render_style_panel($options); ?>
-                <div class="em-wp-top-bar-admin__section-title em-wp-admin-module__section-title"><?php esc_html_e('Items', 'em-wp'); ?> <span class="em-wp-top-bar-admin__section-module em-wp-admin-module__section-module"><?php esc_html_e('de Top-Bar', 'em-wp'); ?></span></div>
+                <?php em_wp_admin_render_module_items_section_title('top-bar', '', __('Top-Bar', 'em-wp')); ?>
                 <?php em_wp_top_bar_render_logo_panel($options); ?>
                 <?php foreach (em_wp_top_bar_item_definitions() as $key => $title) {
                     em_wp_top_bar_render_item_panel($key, $title, $options['items'][$key] ?? []);

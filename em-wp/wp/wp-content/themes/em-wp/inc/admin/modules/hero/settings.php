@@ -519,7 +519,13 @@ function em_wp_hero_render_mayami_admin_layout(array $context, array $options): 
     );
 
     ?>
-    <div class="em-wp-hero-admin__section-title em-wp-admin-module__section-title"><?php esc_html_e('Items', 'em-wp'); ?> <span class="em-wp-hero-admin__section-module em-wp-admin-module__section-module"><?php esc_html_e('de Hero Mayami', 'em-wp'); ?></span></div>
+    <?php
+    em_wp_admin_render_module_items_section_title(
+        'hero',
+        '',
+        sprintf(__('Hero %s', 'em-wp'), (string) ($context['label'] ?? 'Mayami'))
+    );
+    ?>
 
     <?php
     em_wp_hero_render_mayami_item_panel('badge_text', __('Badge Text', 'em-wp'), 'text', $context, $options, 'badge_text_hidden');

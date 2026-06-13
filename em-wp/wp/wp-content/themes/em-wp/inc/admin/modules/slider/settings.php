@@ -499,12 +499,13 @@ function em_wp_slider_render_style_setup(array $context, array $options): void
                 );
                 ?>
 
-                <div class="em-wp-slider-admin__section-title em-wp-admin-module__section-title">
-                    <?php esc_html_e('Slides', 'em-wp'); ?>
-                    <span class="em-wp-slider-admin__section-module em-wp-admin-module__section-module">
-                        <?php echo esc_html(sprintf(__('de Slider %s', 'em-wp'), (string) ($context['label'] ?? 'Mayami'))); ?>
-                    </span>
-                </div>
+                <?php
+                em_wp_admin_render_module_items_section_title(
+                    'slider',
+                    __('Slides', 'em-wp'),
+                    sprintf(__('Slider %s', 'em-wp'), (string) ($context['label'] ?? 'Mayami'))
+                );
+                ?>
 
                 <section class="em-wp-slider-panel em-wp-admin-module__panel em-wp-slider-item-panel">
                     <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-slider-panel')); ?>" type="button" aria-expanded="false">

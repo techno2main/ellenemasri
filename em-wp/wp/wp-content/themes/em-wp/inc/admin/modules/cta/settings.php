@@ -197,6 +197,8 @@ function em_wp_cta_render_admin_page(): void
                     'em-wp-cta-panel'
                 );
 
+                em_wp_admin_render_module_items_section_title('cta');
+
                 em_wp_admin_render_module_panel(
                     __('Image de fond (texture)', 'em-wp'),
                     'em-wp-cta-panel em-wp-cta-texture-panel',
@@ -213,8 +215,7 @@ function em_wp_cta_render_admin_page(): void
                         </label>
                         <?php
                     },
-                    'em-wp-admin-panel-body--stack',
-                    true
+                    'em-wp-admin-panel-body--stack'
                 );
 
                 em_wp_admin_render_module_panel(

@@ -200,6 +200,8 @@ function em_wp_social_render_admin_page(): void
                     'em-wp-social-panel'
                 );
 
+                em_wp_admin_render_module_items_section_title('social');
+
                 em_wp_admin_render_module_panel(
                     __('Contenu', 'em-wp'),
                     'em-wp-social-panel',

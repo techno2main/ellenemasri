@@ -1,12 +1,3 @@
-/* Panneau texture ouvert par défaut (champ vital, facile à manquer). */
-.em-wp-cta-texture-panel.em-wp-admin-module__panel:not(.is-open) .em-wp-admin-module__panel-body {
-    display: block !important;
-}
-
-.em-wp-cta-texture-panel.em-wp-admin-module__panel .em-wp-admin-module__panel-header::after {
-    transform: rotate(180deg);
-}
-
 .em-wp-admin-module--texture-preview .em-wp-admin-module__hero {
     position: relative;
     overflow: hidden;

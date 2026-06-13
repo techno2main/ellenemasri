@@ -156,6 +156,8 @@ function em_wp_footer_render_admin_page(): void
                     'em-wp-footer-panel'
                 );
 
+                em_wp_admin_render_module_items_section_title('footer');
+
                 em_wp_admin_render_module_panel(
                     __('Contenu footer', 'em-wp'),
                     'em-wp-footer-panel',

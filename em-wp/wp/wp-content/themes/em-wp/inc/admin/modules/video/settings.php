@@ -151,6 +151,8 @@ function em_wp_video_render_admin_page(): void
                     'em-wp-video-panel'
                 );
 
+                em_wp_admin_render_module_items_section_title('video');
+
                 em_wp_admin_render_module_panel(
                     __('Contenu', 'em-wp'),
                     'em-wp-video-panel',

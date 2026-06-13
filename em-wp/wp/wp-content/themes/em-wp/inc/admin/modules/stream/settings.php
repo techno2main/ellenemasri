@@ -550,6 +550,8 @@ function em_wp_stream_render_admin_page(): void
                 );
                 ?>
 
+                <?php em_wp_admin_render_module_items_section_title('stream'); ?>
+
                 <?php
                 em_wp_admin_render_module_panel(
                     __('Contenu', 'em-wp'),

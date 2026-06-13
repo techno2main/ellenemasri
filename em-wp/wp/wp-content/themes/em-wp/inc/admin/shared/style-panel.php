@@ -97,6 +97,39 @@ function em_wp_admin_render_module_panel(
 }
 
 /**
+ * Titre de section « Items de {rubrique} » sous Style de base.
+ *
+ * @param string      $module_slug  Slug rubrique (stream, cta, hero…).
+ * @param string      $items_label  Libellé avant « de » (Items, Slides…).
+ * @param string|null $module_label Libellé dans la pastille (défaut = label rubrique).
+ */
+function em_wp_admin_render_module_items_section_title(
+    string $module_slug,
+    string $items_label = '',
+    ?string $module_label = null
+): void {
+    if ($items_label === '') {
+        $items_label = __('Items', 'em-wp');
+    }
+
+    $definitions = function_exists('em_wp_admin_site_rubrique_definitions')
+        ? em_wp_admin_site_rubrique_definitions()
+        : [];
+
+    if ($module_label === null) {
+        $module_label = (string) ($definitions[$module_slug]['label'] ?? strtoupper($module_slug));
+    }
+
+    ?>
+    <div class="em-wp-admin-module__section-title">
+        <span><?php echo esc_html($items_label); ?></span>
+        <span class="em-wp-admin-module__section-title-sep"><?php esc_html_e('de', 'em-wp'); ?></span>
+        <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html($module_label); ?></span>
+    </div>
+    <?php
+}
+
+/**
  * Rendu des champs couleur (sans wrapper panel-body).
  *
  * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $fields
