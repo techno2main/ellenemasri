@@ -46,7 +46,7 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 | Phase | Objectif | Statut | Commit(s) | Notes |
 |-------|----------|--------|-----------|-------|
 | **0** | Fondations template (core + bandeau + page Templates) | ✅ | c737936 + couleurs | Validée — couleur/template, menu teinté, bandeau blocs blancs |
-| **1** | STREAM par template | ✅ | (commit Phase 1) | Validée — options par template, migration Mayami, module découpé |
+| **1** | STREAM par template | ✅ | 589b3cb | Validée — options par template, migration Mayami, module découpé |
 | **2** | VIDEOS + RELEASES par template | ⬜ | — | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ⬜ | — | |
 | **4** | Hero + Slider rattachés au template | ⬜ | — | |
