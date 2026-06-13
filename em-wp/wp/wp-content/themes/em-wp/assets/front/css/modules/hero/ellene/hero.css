@@ -1,0 +1,39 @@
+.em-hero--ellene {
+    background: #efe7ff;
+    color: #27124a;
+    border-top: 2px solid #27124a;
+    border-bottom: 2px solid #27124a;
+}
+
+.em-hero--ellene .em-hero__inner {
+    width: min(1100px, 92vw);
+    margin: 0 auto;
+    padding: 36px 0;
+}
+
+.em-hero--ellene .em-hero__badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border: 2px solid #27124a;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.em-hero--ellene .em-hero__subtitle {
+    margin: 12px 0 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.em-hero--ellene .em-hero__title {
+    margin: 12px 0 0;
+    font-size: clamp(30px, 5vw, 56px);
+    line-height: 1.05;
+}
+
+.em-hero--ellene .em-hero__description {
+    margin: 14px 0 0;
+    max-width: 70ch;
+    font-size: 18px;
+}

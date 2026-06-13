@@ -1,0 +1,123 @@
+<?php
+/**
+ * Template de la section HERO MAYAMI.
+ *
+ * @package em-wp
+ */
+
+$hero = is_array($args['hero'] ?? null) ? $args['hero'] : [];
+
+$badge_text = trim((string) ($hero['badge_text'] ?? ''));
+$badge_text_hidden = !empty($hero['badge_text_hidden']);
+
+$subtitle = trim((string) ($hero['subtitle'] ?? ''));
+$subtitle_hidden = !empty($hero['subtitle_hidden']);
+
+$main_title = trim((string) ($hero['main_title'] ?? ''));
+
+$background_image = trim((string) ($hero['background_image'] ?? ''));
+$background_image_hidden = !empty($hero['background_image_hidden']);
+
+$logo_image = trim((string) ($hero['logo_image'] ?? ''));
+$logo_hidden = !empty($hero['logo_hidden']);
+$logo_alt = trim((string) ($hero['logo_alt'] ?? ''));
+
+$description = trim((string) ($hero['description'] ?? ''));
+$description_hidden = !empty($hero['description_hidden']);
+
+$stream_label = trim((string) ($hero['stream_label'] ?? ''));
+$stream_href = trim((string) ($hero['stream_href'] ?? ''));
+$stream_hidden = !empty($hero['stream_hidden']);
+
+$watch_label = trim((string) ($hero['watch_label'] ?? ''));
+$watch_href = trim((string) ($hero['watch_href'] ?? ''));
+$watch_hidden = !empty($hero['watch_hidden']);
+
+$split_button_label = static function (string $label): array {
+    $label = trim($label);
+    if ($label === '') {
+        return ['', ''];
+    }
+
+    if (preg_match('/^([^\p{L}\p{N}]+)\s*(.+)$/u', $label, $matches)) {
+        return [trim((string) $matches[1]), trim((string) $matches[2])];
+    }
+
+    return ['', $label];
+};
+
+[$stream_icon, $stream_text] = $split_button_label($stream_label);
+[$watch_icon, $watch_text] = $split_button_label($watch_label);
+
+$background_color = trim((string) ($hero['background_color'] ?? ''));
+$text_color = trim((string) ($hero['text_color'] ?? ''));
+
+$hero_classes = 'em-hero em-hero--mayami';
+if ($background_image !== '' && !$background_image_hidden) {
+    $hero_classes .= ' has-bg';
+}
+
+$hero_style = '';
+if ($background_color !== '') {
+    $hero_style .= '--em-hero-mayami-bg: ' . esc_attr($background_color) . ';';
+}
+if ($text_color !== '') {
+    $hero_style .= '--em-hero-mayami-text: ' . esc_attr($text_color) . ';';
+}
+?>
+<section class="<?php echo esc_attr($hero_classes); ?>" style="<?php echo esc_attr($hero_style); ?>">
+    <?php if ($background_image !== '' && !$background_image_hidden): ?>
+        <img class="em-hero__bg" src="<?php echo esc_url($background_image); ?>" alt="" loading="eager" decoding="async" aria-hidden="true">
+    <?php endif; ?>
+    <div class="em-hero__grain" aria-hidden="true"></div>
+    <div class="em-hero__inner">
+        <div class="em-hero__left">
+            <div class="em-hero__scroll-row">
+                <a href="#stream" class="em-hero__scroll" aria-label="Section suivante">↓</a>
+            </div>
+
+            <?php if ($badge_text !== '' && !$badge_text_hidden): ?>
+                <div class="em-hero__badge"><span class="em-hero__badge-dot" aria-hidden="true"></span><?php echo esc_html($badge_text); ?></div>
+            <?php endif; ?>
+
+            <?php if ($subtitle !== '' && !$subtitle_hidden): ?>
+                <p class="em-hero__subtitle"><?php echo esc_html($subtitle); ?></p>
+            <?php endif; ?>
+
+            <?php if ($logo_image !== '' && !$logo_hidden): ?>
+                <div class="em-hero__logo-wrap">
+                    <img class="em-hero__logo" src="<?php echo esc_url($logo_image); ?>" alt="<?php echo esc_attr($logo_alt); ?>">
+                </div>
+            <?php elseif ($main_title !== ''): ?>
+                <p class="em-hero__main-title-fallback"><?php echo esc_html($main_title); ?></p>
+            <?php endif; ?>
+
+            <?php if ($main_title !== ''): ?>
+                <h1 class="screen-reader-text"><?php echo esc_html($main_title); ?></h1>
+            <?php endif; ?>
+
+            <?php if ($description !== '' && !$description_hidden): ?>
+                <p class="em-hero__description"><?php echo nl2br(esc_html($description)); ?></p>
+            <?php endif; ?>
+
+            <div class="em-hero__actions">
+                <?php if ($stream_label !== '' && $stream_href !== '' && !$stream_hidden): ?>
+                    <a class="em-hero__btn em-hero__btn--stream" href="<?php echo esc_url($stream_href); ?>">
+                        <?php if ($stream_icon !== '') { ?><span class="em-hero__btn-icon" aria-hidden="true"><?php echo esc_html($stream_icon); ?></span><?php } ?>
+                        <span><?php echo esc_html($stream_text !== '' ? $stream_text : $stream_label); ?></span>
+                    </a>
+                <?php endif; ?>
+                <?php if ($watch_label !== '' && $watch_href !== '' && !$watch_hidden): ?>
+                    <a class="em-hero__btn em-hero__btn--watch" href="<?php echo esc_url($watch_href); ?>">
+                        <?php if ($watch_icon !== '') { ?><span class="em-hero__btn-icon em-hero__btn-icon--watch" aria-hidden="true"><?php echo esc_html($watch_icon); ?></span><?php } ?>
+                        <span><?php echo esc_html($watch_text !== '' ? $watch_text : $watch_label); ?></span>
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <aside class="em-hero__slider-slot">
+            <?php if (function_exists('em_wp_render_slider_in_hero')) { em_wp_render_slider_in_hero(); } ?>
+        </aside>
+    </div>
+</section>
