@@ -37,25 +37,26 @@ function em_wp_enqueue_assets(): void
         ['em-wp-theme', 'em-wp-archivo-black'],
         $theme_version
     );
+    $hero_style_slug = function_exists('em_wp_hero_active_style_slug')
+        ? em_wp_hero_active_style_slug()
+        : 'mayami';
+
     wp_enqueue_style(
         'em-wp-hero',
-        get_template_directory_uri() . '/assets/front/css/modules/hero/mayami/hero.css',
+        get_template_directory_uri() . '/assets/front/css/modules/hero/' . $hero_style_slug . '/hero.css',
         ['em-wp-theme'],
         $theme_version
     );
+    $slider_style_slug = function_exists('em_wp_slider_active_style_slug')
+        ? em_wp_slider_active_style_slug()
+        : 'mayami';
+
     wp_enqueue_style(
         'em-wp-slider',
-        get_template_directory_uri() . '/assets/front/css/modules/slider/mayami/slider.css',
+        get_template_directory_uri() . '/assets/front/css/modules/slider/' . $slider_style_slug . '/slider.css',
         ['em-wp-theme'],
         $theme_version
     );
     wp_enqueue_script('em-wp-theme', get_template_directory_uri() . '/assets/js/theme.js', [], $theme_version, true);
-    wp_enqueue_script(
-        'em-wp-slider',
-        get_template_directory_uri() . '/assets/front/js/modules/slider/mayami/slider.js',
-        [],
-        $theme_version,
-        true
-    );
 }
 add_action('wp_enqueue_scripts', 'em_wp_enqueue_assets');
