@@ -10,11 +10,34 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Retourne le slug de style du HERO actif.
+ * Retourne le slug de la page hub Heros.
+ */
+function em_wp_hero_hub_menu_slug(): string
+{
+    return 'em-wp-heros';
+}
+
+/**
+ * Retourne le slug de style du HERO actif sur le front.
  */
 function em_wp_hero_active_style_slug(): string
 {
-    return 'mayami';
+    $saved = get_option('em_wp_hero_active_style', 'mayami');
+
+    return em_wp_hero_sanitize_active_style($saved);
+}
+
+/**
+ * Sanitize le slug du hero actif.
+ *
+ * @param mixed $value
+ */
+function em_wp_hero_sanitize_active_style($value): string
+{
+    $slug = sanitize_key((string) $value);
+    $definitions = em_wp_hero_style_definitions();
+
+    return isset($definitions[$slug]) ? $slug : 'mayami';
 }
 
 /**
@@ -41,7 +64,7 @@ function em_wp_hero_style_definitions(): array
  */
 function em_wp_hero_parent_menu_slug(): string
 {
-    return 'em-wp-hero-mayami';
+    return em_wp_hero_hub_menu_slug();
 }
 
 /**
@@ -49,7 +72,10 @@ function em_wp_hero_parent_menu_slug(): string
  */
 function em_wp_hero_admin_page_slugs(): array
 {
-    return wp_list_pluck(em_wp_hero_style_definitions(), 'page_slug');
+    return array_merge(
+        [em_wp_hero_hub_menu_slug()],
+        wp_list_pluck(em_wp_hero_style_definitions(), 'page_slug')
+    );
 }
 
 /**
@@ -57,13 +83,17 @@ function em_wp_hero_admin_page_slugs(): array
  */
 function em_wp_hero_style_from_page_slug(string $page_slug): string
 {
+    if ($page_slug === em_wp_hero_hub_menu_slug()) {
+        return '';
+    }
+
     foreach (em_wp_hero_style_definitions() as $style_slug => $definition) {
         if (($definition['page_slug'] ?? '') === $page_slug) {
             return $style_slug;
         }
     }
 
-    return 'mayami';
+    return '';
 }
 
 /**
@@ -74,6 +104,17 @@ function em_wp_hero_get_admin_context(): array
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $style_slug = em_wp_hero_style_from_page_slug($page_slug);
     $definitions = em_wp_hero_style_definitions();
+
+    if ($style_slug === '') {
+        return [
+            'style_slug'  => '',
+            'label'       => '',
+            'page_slug'   => em_wp_hero_hub_menu_slug(),
+            'option_name' => '',
+            'group'       => '',
+        ];
+    }
+
     $definition = $definitions[$style_slug] ?? $definitions['mayami'];
 
     return [
@@ -107,12 +148,11 @@ function em_wp_hero_group_name(string $style_slug): string
 function em_wp_hero_add_admin_page(): void
 {
     $definitions = em_wp_hero_style_definitions();
-    $parent_slug = em_wp_hero_parent_menu_slug();
-    $parent_definition = $definitions['mayami'] ?? reset($definitions);
+    $parent_slug = em_wp_hero_hub_menu_slug();
 
     add_menu_page(
-        __('Heros', 'em-wp'),
-        __('Heros', 'em-wp'),
+        __('HEROS', 'em-wp'),
+        __('HEROS', 'em-wp'),
         'manage_options',
         $parent_slug,
         'em_wp_hero_render_admin_page',
@@ -120,33 +160,27 @@ function em_wp_hero_add_admin_page(): void
         58
     );
 
-    if (is_array($parent_definition)) {
-        add_submenu_page(
-            $parent_slug,
-            (string) ($parent_definition['menu_title'] ?? __('Hero Mayami', 'em-wp')),
-            (string) ($parent_definition['menu_title'] ?? __('Hero Mayami', 'em-wp')),
-            'manage_options',
-            (string) ($parent_definition['page_slug'] ?? $parent_slug),
-            'em_wp_hero_render_admin_page'
-        );
-    }
-
-    foreach ($definitions as $style_slug => $definition) {
-        if ($style_slug === 'mayami') {
-            continue;
-        }
-
+    foreach ($definitions as $definition) {
         add_submenu_page(
             $parent_slug,
             (string) ($definition['menu_title'] ?? __('Hero', 'em-wp')),
             (string) ($definition['menu_title'] ?? __('Hero', 'em-wp')),
             'manage_options',
-            (string) ($definition['page_slug'] ?? 'em-wp-hero-ellene'),
+            (string) ($definition['page_slug'] ?? 'em-wp-hero-mayami'),
             'em_wp_hero_render_admin_page'
         );
     }
 }
 add_action('admin_menu', 'em_wp_hero_add_admin_page');
+
+/**
+ * Retire le sous-menu dupliqué créé automatiquement par WordPress.
+ */
+function em_wp_hero_remove_duplicate_submenu(): void
+{
+    remove_submenu_page(em_wp_hero_hub_menu_slug(), em_wp_hero_hub_menu_slug());
+}
+add_action('admin_menu', 'em_wp_hero_remove_duplicate_submenu', 999);
 
 /**
  * Charge les assets admin du module Hero.
@@ -159,7 +193,13 @@ function em_wp_hero_admin_enqueue(string $hook_suffix): void
     }
 
     $context = em_wp_hero_get_admin_context();
-    $style_slug = sanitize_key((string) ($context['style_slug'] ?? 'mayami'));
+    $style_slug = sanitize_key((string) ($context['style_slug'] ?? ''));
+
+    if ($style_slug === '') {
+        em_wp_admin_enqueue_shared_assets();
+
+        return;
+    }
 
     em_wp_admin_enqueue_module_assets(
         'em-wp-hero-admin',
@@ -176,6 +216,16 @@ add_action('admin_enqueue_scripts', 'em_wp_hero_admin_enqueue');
  */
 function em_wp_hero_register_settings(): void
 {
+    register_setting(
+        'em_wp_hero_global_group',
+        'em_wp_hero_active_style',
+        [
+            'type'              => 'string',
+            'sanitize_callback' => 'em_wp_hero_sanitize_active_style',
+            'default'           => 'mayami',
+        ]
+    );
+
     foreach (array_keys(em_wp_hero_style_definitions()) as $style_slug) {
         register_setting(
             em_wp_hero_group_name($style_slug),
@@ -268,7 +318,7 @@ function em_wp_hero_sanitize_options(array $input): array
 }
 
 /**
- * Rendu de la page admin Hero.
+ * Rendu de la page admin Hero (hub + configuration).
  */
 function em_wp_hero_render_admin_page(): void
 {
@@ -277,14 +327,98 @@ function em_wp_hero_render_admin_page(): void
     }
 
     $context = em_wp_hero_get_admin_context();
-    $options = em_wp_hero_get_options($context['style_slug']);
-    $hero_label = strtoupper($context['label']);
+    $style_slug = (string) ($context['style_slug'] ?? '');
+    $active_style = em_wp_hero_active_style_slug();
     ?>
     <div class="wrap em-wp-hero-admin em-wp-admin-module">
         <div class="em-wp-hero-admin__hero em-wp-admin-module__hero">
             <div>
                 <p class="em-wp-hero-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('HERO', 'em-wp'); ?></p>
-                <h1 class="em-wp-admin-module__title"><?php echo esc_html(sprintf(__('Section HERO - %s', 'em-wp'), $hero_label)); ?></h1>
+                <h1 class="em-wp-admin-module__title"><?php esc_html_e('Heros', 'em-wp'); ?></h1>
+            </div>
+        </div>
+
+        <div class="em-wp-admin-module-hub">
+            <?php em_wp_hero_render_admin_sidebar($style_slug, $active_style); ?>
+
+            <div class="em-wp-admin-module-hub__content">
+                <?php if ($style_slug === '') { ?>
+                    <div class="em-wp-admin-module-hub__empty">
+                        <p><?php esc_html_e('Sélectionnez un hero dans la liste pour afficher sa configuration.', 'em-wp'); ?></p>
+                    </div>
+                <?php } else {
+                    $options = em_wp_hero_get_options($style_slug);
+                    em_wp_hero_render_style_setup($context, $options);
+                } ?>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Rendu de la liste des heros disponibles (colonne hub).
+ */
+function em_wp_hero_render_admin_sidebar(string $selected_style_slug, string $active_style_slug): void
+{
+    $definitions = em_wp_hero_style_definitions();
+    ?>
+    <aside class="em-wp-admin-module-hub__sidebar">
+        <h2 class="em-wp-admin-module-hub__title"><?php esc_html_e('Heros disponibles', 'em-wp'); ?></h2>
+
+        <ul class="em-wp-admin-module-hub__list">
+            <?php foreach ($definitions as $style_slug => $definition) {
+                $page_slug = (string) ($definition['page_slug'] ?? '');
+                $label = (string) ($definition['label'] ?? $style_slug);
+                $is_selected = $selected_style_slug === $style_slug;
+                $is_active = $active_style_slug === $style_slug;
+                $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+                ?>
+                <li class="em-wp-admin-module-hub__list-item<?php echo $is_selected ? ' is-selected' : ''; ?><?php echo $is_active ? ' is-active' : ''; ?>">
+                    <a class="em-wp-admin-module-hub__list-link" href="<?php echo esc_url($item_url); ?>">
+                        <span class="em-wp-admin-module-hub__list-label"><?php echo esc_html(sprintf(__('Hero %s', 'em-wp'), $label)); ?></span>
+                        <?php if ($is_active) { ?>
+                            <span class="em-wp-admin-module-hub__badge em-wp-admin-module-hub__badge--active"><?php esc_html_e('Actif', 'em-wp'); ?></span>
+                        <?php } ?>
+                    </a>
+                </li>
+            <?php } ?>
+        </ul>
+
+        <form class="em-wp-admin-module-hub__active-form" method="post" action="options.php">
+            <?php settings_fields('em_wp_hero_global_group'); ?>
+            <fieldset class="em-wp-admin-module-hub__active-fieldset">
+                <legend><?php esc_html_e('Hero affiché sur le site', 'em-wp'); ?></legend>
+                <?php foreach ($definitions as $style_slug => $definition) {
+                    $label = (string) ($definition['label'] ?? $style_slug);
+                    ?>
+                    <label class="em-wp-admin-module-hub__active-option">
+                        <input type="radio" name="em_wp_hero_active_style" value="<?php echo esc_attr($style_slug); ?>" <?php checked($active_style_slug, $style_slug); ?>>
+                        <span><?php echo esc_html($label); ?></span>
+                    </label>
+                <?php } ?>
+            </fieldset>
+            <?php submit_button(__('Enregistrer le hero actif', 'em-wp'), 'secondary', 'submit', false); ?>
+        </form>
+    </aside>
+    <?php
+}
+
+/**
+ * Rendu du panneau de configuration d'une variante Hero.
+ *
+ * @param array<string, mixed> $context
+ * @param array<string, mixed> $options
+ */
+function em_wp_hero_render_style_setup(array $context, array $options): void
+{
+    $hero_label = strtoupper((string) ($context['label'] ?? 'MAYAMI'));
+    ?>
+    <div class="em-wp-hero-admin__setup">
+        <div class="em-wp-hero-admin__setup-header em-wp-admin-module__hero">
+            <div>
+                <p class="em-wp-hero-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('HERO', 'em-wp'); ?></p>
+                <h2 class="em-wp-admin-module__title"><?php echo esc_html(sprintf(__('Section HERO - %s', 'em-wp'), $hero_label)); ?></h2>
             </div>
             <label class="em-wp-hero-admin__toggle">
                 <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
