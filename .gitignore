@@ -100,3 +100,7 @@ em-wp/wp/AGENTS.md
 
 # Instructions & local audit documentation
 /documentation/
+
+# em-wp — doc V2 suivie en repo (reste de em-wp/documentation/ hors repo)
+em-wp/documentation/*
+!em-wp/documentation/TEMPLATE_V2.md
