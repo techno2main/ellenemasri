@@ -10,6 +10,7 @@
     var saving = false;
     var mapSortable = null;
     var visibilitySaving = false;
+    var layoutSaving = false;
 
     function setStatus(message, isError) {
         if (!statusEl) {
@@ -29,7 +30,8 @@
         var listItem = list.querySelector('.em-wp-rubriques-admin__list-item[data-module-slug="' + moduleSlug + '"]');
         var toggle = listItem ? listItem.querySelector('.em-wp-rubriques-visibility-toggle') : null;
         var label = listItem ? listItem.querySelector('.em-wp-rubriques-admin__list-label') : null;
-        var mapZone = map ? map.querySelector('[data-module-slug="' + moduleSlug + '"]') : null;
+        var mapZone = map ? map.querySelector('[data-module-slug="' + moduleSlug + '"]:not([data-header-part])') : null;
+        var headerGroup = map ? map.querySelector('.em-wp-admin-landing-map__header-group[data-module-slug="' + moduleSlug + '"]') : null;
         var hiddenLabel = (config.i18n && config.i18n.visibilityHiddenLabel) || 'Masqué';
 
         if (listItem) {
@@ -81,6 +83,22 @@
                 }
             } else if (visible && mapBadge) {
                 mapBadge.remove();
+            }
+        }
+
+        if (headerGroup) {
+            headerGroup.classList.toggle('is-rubrique-hidden', !visible);
+
+            var toolbar = headerGroup.querySelector('.em-wp-admin-landing-map__header-group-toolbar');
+            var groupBadge = toolbar ? toolbar.querySelector('.em-wp-admin-landing-map__hidden-badge') : null;
+
+            if (!visible && toolbar && !groupBadge) {
+                groupBadge = document.createElement('span');
+                groupBadge.className = 'em-wp-admin-landing-map__hidden-badge';
+                groupBadge.textContent = hiddenLabel;
+                toolbar.appendChild(groupBadge);
+            } else if (visible && groupBadge) {
+                groupBadge.remove();
             }
         }
     }
@@ -161,10 +179,6 @@
         return;
     }
 
-    function isHeroPair(slugA, slugB) {
-        return (slugA === 'hero' && slugB === 'slider') || (slugA === 'slider' && slugB === 'hero');
-    }
-
     function getFullOrderFromList() {
         return Array.prototype.map.call(
             list.querySelectorAll('.em-wp-rubriques-admin__list-item[data-module-slug]'),
@@ -187,13 +201,8 @@
         var order = [];
 
         Array.prototype.forEach.call(mapBody.children, function (child) {
-            if (child.classList.contains('em-wp-admin-landing-map__hero-group')) {
-                Array.prototype.forEach.call(
-                    child.querySelectorAll('[data-module-slug]'),
-                    function (zone) {
-                        order.push(zone.getAttribute('data-module-slug') || '');
-                    }
-                );
+            if (child.classList.contains('em-wp-admin-landing-map__header-group')) {
+                order.push('header');
                 return;
             }
 
@@ -205,103 +214,21 @@
         return order.filter(Boolean);
     }
 
-    function unwrapHeroGroups() {
-        var groups = mapBody.querySelectorAll('.em-wp-admin-landing-map__hero-group');
-
-        Array.prototype.forEach.call(groups, function (group) {
-            var inner = group.querySelector('.em-wp-admin-landing-map__hero-group-inner');
-            var zones = inner
-                ? Array.prototype.slice.call(inner.querySelectorAll('[data-module-slug]'))
-                : Array.prototype.slice.call(group.querySelectorAll('[data-module-slug]'));
-
-            zones.forEach(function (zone) {
-                mapBody.insertBefore(zone, group);
-            });
-
-            group.remove();
-        });
-    }
-
-    function createHeroGroup(firstZone, secondZone) {
-        var group = document.createElement('div');
-        group.className = 'em-wp-admin-landing-map__hero-group is-sortable';
-
-        var toolbar = document.createElement('div');
-        toolbar.className = 'em-wp-admin-landing-map__hero-group-toolbar';
-
-        var handle = document.createElement('span');
-        handle.className = 'em-wp-rubriques-sortable__handle';
-        handle.setAttribute('aria-hidden', 'true');
-        handle.innerHTML = '<i class="fa-solid fa-grip-vertical"></i>';
-
-        var swapBtn = document.createElement('button');
-        swapBtn.type = 'button';
-        swapBtn.className = 'em-wp-admin-landing-map__swap-pair';
-        swapBtn.setAttribute('aria-label', config.i18n.swapHeroSlider || 'Inverser HEROS et SLIDERS');
-        swapBtn.innerHTML = '<i class="fa-solid fa-right-left" aria-hidden="true"></i>';
-        swapBtn.addEventListener('click', function (event) {
-            event.preventDefault();
-            event.stopPropagation();
-            swapHeroInGroup(group);
-        });
-
-        toolbar.appendChild(handle);
-        toolbar.appendChild(swapBtn);
-
-        var inner = document.createElement('div');
-        inner.className = 'em-wp-admin-landing-map__hero-group-inner';
-
-        mapBody.insertBefore(group, firstZone);
-        group.appendChild(toolbar);
-        group.appendChild(inner);
-        inner.appendChild(firstZone);
-        inner.appendChild(secondZone);
-
-        return group;
-    }
-
-    function wrapHeroGroups() {
-        unwrapHeroGroups();
-
-        var children = Array.prototype.slice.call(mapBody.children);
-        var index = 0;
-
-        while (index < children.length - 1) {
-            var current = children[index];
-            var next = children[index + 1];
-
-            if (!current.matches('[data-module-slug]') || !next.matches('[data-module-slug]')) {
-                index += 1;
-                continue;
-            }
-
-            var slugA = current.getAttribute('data-module-slug') || '';
-            var slugB = next.getAttribute('data-module-slug') || '';
-
-            if (isHeroPair(slugA, slugB)) {
-                createHeroGroup(current, next);
-                children = Array.prototype.slice.call(mapBody.children);
-                index += 1;
-                continue;
-            }
-
-            index += 1;
-        }
-
-        reinitMapSortable();
-    }
-
     function reorderMapFlat(order) {
-        unwrapHeroGroups();
-
         order.forEach(function (slug) {
+            if (slug === 'header') {
+                var group = mapBody.querySelector('.em-wp-admin-landing-map__header-group');
+                if (group) {
+                    mapBody.appendChild(group);
+                }
+                return;
+            }
+
             var zone = mapBody.querySelector(':scope > [data-module-slug="' + slug + '"]');
             if (zone) {
                 mapBody.appendChild(zone);
             }
         });
-
-        wrapHeroGroups();
     }
 
     function applyMiddleOrderToList(order) {
@@ -319,19 +246,6 @@
                 list.appendChild(item);
             }
         });
-    }
-
-    function swapHeroInGroup(group) {
-        var inner = group.querySelector('.em-wp-admin-landing-map__hero-group-inner');
-        var zones = inner ? inner.querySelectorAll('[data-module-slug]') : [];
-
-        if (zones.length < 2) {
-            return;
-        }
-
-        inner.insertBefore(zones[1], zones[0]);
-        applyMiddleOrderToList(getMiddleOrderFromMap());
-        saveOrder();
     }
 
     function saveOrder() {
@@ -370,6 +284,57 @@
             });
     }
 
+    function saveHeaderLayout(layout) {
+        if (layoutSaving || !config.ajaxUrl || !config.nonce) {
+            return;
+        }
+
+        layoutSaving = true;
+
+        var body = new window.FormData();
+        body.append('action', 'em_wp_save_header_layout');
+        body.append('nonce', config.nonce);
+        body.append('layout', layout);
+
+        window.fetch(config.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: body,
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (payload) {
+                if (!payload || !payload.success) {
+                    throw new Error((payload && payload.data && payload.data.message) || (config.i18n && config.i18n.layoutError));
+                }
+
+                setStatus((payload.data && payload.data.message) || (config.i18n && config.i18n.layoutSaved), false);
+            })
+            .catch(function () {
+                setStatus((config.i18n && config.i18n.layoutError) || 'Impossible d\'enregistrer le layout HEADER.', true);
+            })
+            .finally(function () {
+                layoutSaving = false;
+            });
+    }
+
+    function swapHeaderLayout(group) {
+        var inner = group.querySelector('.em-wp-admin-landing-map__header-group-inner');
+        var zones = inner ? inner.querySelectorAll('[data-header-part]') : [];
+
+        if (zones.length < 2) {
+            return;
+        }
+
+        inner.insertBefore(zones[1], zones[0]);
+
+        var currentLayout = group.getAttribute('data-header-layout') || 'hero_left';
+        var nextLayout = currentLayout === 'slider_left' ? 'hero_left' : 'slider_left';
+        group.setAttribute('data-header-layout', nextLayout);
+        saveHeaderLayout(nextLayout);
+    }
+
     function syncFromList() {
         reorderMapFlat(getMiddleOrderFromList());
         saveOrder();
@@ -389,8 +354,27 @@
 
         mapSortable = new window.EmWpSlideSortable(mapBody, {
             handle: '.em-wp-rubriques-sortable__handle',
-            item: '.em-wp-admin-landing-map__hero-group.is-sortable, .em-wp-admin-landing-map__zone.is-sortable',
+            item: '.em-wp-admin-landing-map__header-group.is-sortable, .em-wp-admin-landing-map__zone.is-sortable',
             onEnd: syncFromMap,
+        });
+    }
+
+    if (mapBody) {
+        mapBody.addEventListener('click', function (event) {
+            var swapBtn = event.target.closest('.em-wp-admin-landing-map__swap-header');
+            if (!swapBtn) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            var group = swapBtn.closest('.em-wp-admin-landing-map__header-group');
+            if (!group || group.getAttribute('data-header-can-swap') !== '1') {
+                return;
+            }
+
+            swapHeaderLayout(group);
         });
     }
 
@@ -400,5 +384,5 @@
         onEnd: syncFromList,
     });
 
-    wrapHeroGroups();
+    reinitMapSortable();
 })(window, document);

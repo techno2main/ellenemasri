@@ -337,6 +337,8 @@ function em_wp_admin_get_module_options_for_preview(string $module_slug): array
             return function_exists('em_wp_cta_get_options') ? em_wp_cta_get_options() : [];
         case 'footer':
             return function_exists('em_wp_footer_get_options') ? em_wp_footer_get_options() : [];
+        case 'header':
+            return function_exists('em_wp_header_get_options') ? em_wp_header_get_options() : [];
         case 'hero':
             if (function_exists('em_wp_hero_get_options') && function_exists('em_wp_hero_active_style_slug')) {
                 return em_wp_hero_get_options(em_wp_hero_active_style_slug());

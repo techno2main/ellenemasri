@@ -41,6 +41,7 @@ function em_wp_template_scoped_rubrique_slugs(): array
         'video',
         'release',
         'top-bar',
+        'header',
         'social',
         'cta',
         'footer',

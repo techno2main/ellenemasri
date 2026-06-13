@@ -44,10 +44,18 @@ function em_wp_slider_extract_tiktok_video_id(string $url): string
 /**
  * Retourne les options slider pour le front.
  */
-function em_wp_get_slider_options_for_front(string $style_slug = 'mayami'): array
+function em_wp_get_slider_options_for_front(string $style_slug = ''): array
 {
+    if ($style_slug === '' && function_exists('em_wp_slider_active_style_slug')) {
+        $style_slug = em_wp_slider_active_style_slug();
+    }
+
+    if (function_exists('em_wp_slider_normalize_catalog_slug') && $style_slug !== '') {
+        $style_slug = em_wp_slider_normalize_catalog_slug($style_slug);
+    }
+
     if (function_exists('em_wp_slider_get_options')) {
-        return em_wp_slider_get_options($style_slug);
+        return em_wp_slider_get_options($style_slug !== '' ? $style_slug : 'slider-mayami-default');
     }
 
     return [
@@ -150,7 +158,13 @@ function em_wp_slider_collect_slides(array $slider): array
  */
 function em_wp_render_slider_section(array $args = []): void
 {
-    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('slider')) {
+    $skip_visibility = !empty($args['skip_visibility_check']);
+
+    if (
+        !$skip_visibility
+        && function_exists('em_wp_get_site_rubrique_visibility')
+        && !em_wp_get_site_rubrique_visibility('header')
+    ) {
         return;
     }
 
@@ -159,19 +173,22 @@ function em_wp_render_slider_section(array $args = []): void
         $wrapper = 'inline';
     }
 
-    $slider_style_slug = function_exists('em_wp_slider_active_style_slug')
-        ? em_wp_slider_active_style_slug()
-        : 'mayami';
+    $catalog_slug = sanitize_key((string) ($args['catalog_slug'] ?? ''));
 
-    $slider = em_wp_get_slider_options_for_front($slider_style_slug);
+    if ($catalog_slug === '' && function_exists('em_wp_slider_active_style_slug')) {
+        $catalog_slug = em_wp_slider_active_style_slug();
+    }
+
+    $slider = em_wp_get_slider_options_for_front($catalog_slug);
     if (empty($slider['enabled'])) {
         return;
     }
 
     $slides = em_wp_slider_collect_slides($slider);
+    $template_layout = 'mayami';
 
-    $render_slider = static function () use ($slider_style_slug, $slider, $slides): void {
-        get_template_part('template-parts/sections/slider/' . $slider_style_slug . '/slider', null, [
+    $render_slider = static function () use ($template_layout, $slider, $slides): void {
+        get_template_part('template-parts/sections/slider/' . $template_layout . '/slider', null, [
             'slider' => $slider,
             'slides' => $slides,
         ]);
@@ -201,7 +218,10 @@ function em_wp_render_slider_section(array $args = []): void
 /**
  * Affiche le module slider dans la colonne droite du Hero.
  */
-function em_wp_render_slider_in_hero(): void
+function em_wp_render_slider_in_hero(array $args = []): void
 {
-    em_wp_render_slider_section(['wrapper' => 'inline']);
+    em_wp_render_slider_section(array_merge($args, [
+        'wrapper'               => 'inline',
+        'skip_visibility_check' => true,
+    ]));
 }

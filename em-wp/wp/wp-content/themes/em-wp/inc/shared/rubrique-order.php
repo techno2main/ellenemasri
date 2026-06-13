@@ -34,8 +34,7 @@ function em_wp_site_rubrique_default_order(): array
 {
     return [
         'top-bar',
-        'hero',
-        'slider',
+        'header',
         'stream',
         'social',
         'video',
@@ -66,8 +65,7 @@ function em_wp_site_rubrique_pinned_modules(): array
 function em_wp_site_rubrique_middle_modules(): array
 {
     return [
-        'hero',
-        'slider',
+        'header',
         'stream',
         'social',
         'video',
@@ -171,6 +169,12 @@ function em_wp_get_rubrique_module_option_name(string $module_slug): string
             return 'em_wp_release_options';
         case 'cta':
             return 'em_wp_cta_options';
+        case 'header':
+            if (function_exists('em_wp_header_option_name')) {
+                return em_wp_header_option_name();
+            }
+
+            return '';
         case 'hero':
             if (function_exists('em_wp_hero_option_name') && function_exists('em_wp_hero_active_style_slug')) {
                 return em_wp_hero_option_name(em_wp_hero_active_style_slug());
@@ -374,4 +378,33 @@ if (is_admin()) {
         ]);
     }
     add_action('wp_ajax_em_wp_save_site_rubrique_visibility', 'em_wp_ajax_save_site_rubrique_visibility');
+
+    /**
+     * AJAX : layout interne HEADER (hero_left / slider_left) depuis le plan du site.
+     */
+    function em_wp_ajax_save_header_layout(): void
+    {
+        check_ajax_referer('em_wp_rubrique_order', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
+        }
+
+        if (!function_exists('em_wp_header_get_options') || !function_exists('em_wp_header_option_name')) {
+            wp_send_json_error(['message' => __('Module HEADER indisponible.', 'em-wp')], 400);
+        }
+
+        $layout = sanitize_key((string) ($_POST['layout'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $layout = $layout === 'slider_left' ? 'slider_left' : 'hero_left';
+        $options = em_wp_header_get_options();
+        $options['layout'] = $layout;
+
+        update_option(em_wp_header_option_name(), $options, false);
+
+        wp_send_json_success([
+            'layout'  => $layout,
+            'message' => __('Layout HEADER enregistré.', 'em-wp'),
+        ]);
+    }
+    add_action('wp_ajax_em_wp_save_header_layout', 'em_wp_ajax_save_header_layout');
 }

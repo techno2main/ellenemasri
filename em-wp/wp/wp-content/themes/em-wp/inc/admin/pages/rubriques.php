@@ -84,35 +84,19 @@ function em_wp_admin_site_rubrique_definitions(): array
 
         ],
 
-        'hero' => [
+        'header' => [
 
-            'label'        => __('HEROS', 'em-wp'),
+            'label'        => __('HEADER', 'em-wp'),
 
-            'menu_title'   => __('HEROS', 'em-wp'),
+            'menu_title'   => __('HEADER', 'em-wp'),
 
-            'description'  => __('Section HERO', 'em-wp'),
+            'description'  => __('Section HEADER (Hero et/ou Slider)', 'em-wp'),
 
-            'page_slug'    => function_exists('em_wp_hero_hub_menu_slug') ? em_wp_hero_hub_menu_slug() : 'em-wp-heros',
+            'page_slug'    => function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-wp-header',
 
-            'preview_zone' => 'hero_content',
+            'preview_zone' => 'header',
 
             'accent_color' => '#d94a2d',
-
-        ],
-
-        'slider' => [
-
-            'label'        => __('SLIDERS', 'em-wp'),
-
-            'menu_title'   => __('SLIDERS', 'em-wp'),
-
-            'description'  => __('Section SLIDER / HERO', 'em-wp'),
-
-            'page_slug'    => function_exists('em_wp_slider_hub_menu_slug') ? em_wp_slider_hub_menu_slug() : 'em-wp-sliders',
-
-            'preview_zone' => 'hero_slider',
-
-            'accent_color' => '#e85d04',
 
         ],
 
@@ -256,22 +240,8 @@ function em_wp_admin_site_rubrique_entry_page_slug(string $module_slug): string
 
     $page_slug = (string) ($definition['page_slug'] ?? '');
 
-    if ($module_slug === 'hero' && function_exists('em_wp_hero_active_style_slug') && function_exists('em_wp_hero_style_definitions')) {
-        $active = em_wp_hero_active_style_slug();
-        $variants = em_wp_hero_style_definitions();
-
-        if (isset($variants[$active]['page_slug'])) {
-            return (string) $variants[$active]['page_slug'];
-        }
-    }
-
-    if ($module_slug === 'slider' && function_exists('em_wp_slider_active_style_slug') && function_exists('em_wp_slider_style_definitions')) {
-        $active = em_wp_slider_active_style_slug();
-        $variants = em_wp_slider_style_definitions();
-
-        if (isset($variants[$active]['page_slug'])) {
-            return (string) $variants[$active]['page_slug'];
-        }
+    if ($module_slug === 'header') {
+        return function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-wp-header';
     }
 
     return $page_slug;
@@ -409,7 +379,9 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
                 'saved'            => __('Ordre enregistré.', 'em-wp'),
                 'error'            => __('Impossible d\'enregistrer l\'ordre.', 'em-wp'),
                 'handle'           => __('Réordonner', 'em-wp'),
-                'swapHeroSlider'   => __('Inverser HEROS et SLIDERS', 'em-wp'),
+                'swapHeroSlider'   => __('Inverser Hero et Slider dans HEADER', 'em-wp'),
+                'layoutSaved'      => __('Layout HEADER enregistré.', 'em-wp'),
+                'layoutError'      => __('Impossible d\'enregistrer le layout HEADER.', 'em-wp'),
                 'visibilityShown'  => __('Afficher sur le site', 'em-wp'),
                 'visibilityHidden' => __('Masquer sur le site', 'em-wp'),
                 'visibilityHiddenLabel' => __('Masqué', 'em-wp'),
@@ -761,7 +733,7 @@ function em_wp_admin_render_rubriques_page(): void
                             <?php esc_html_e('Survole ou clique une zone pour ouvrir la rubrique.', 'em-wp'); ?><br>
                             <?php esc_html_e('Chaque rubrique peut être affichée ou masquée via l’icône œil.', 'em-wp'); ?><br>
                             <?php esc_html_e('Glisse les sections pour changer leur ordre.', 'em-wp'); ?><br>
-                            <?php esc_html_e('HEROS et SLIDERS côte à côte peuvent être inversés.', 'em-wp'); ?>
+                            <?php esc_html_e('HEADER : encadre le Hero et/ou Slider choisis pour ce template.', 'em-wp'); ?>
                         </p>
                         <p class="em-wp-rubriques-admin__sort-status" id="em-wp-rubriques-sort-status" aria-live="polite" hidden></p>
 

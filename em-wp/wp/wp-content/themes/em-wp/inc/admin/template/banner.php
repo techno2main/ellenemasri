@@ -10,6 +10,65 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Indique si l'écran admin courant est une page catalogue Hero/Slider.
+ *
+ * Les catalogues ne sont pas rattachés à un template : pas de bandeau template.
+ */
+function em_wp_admin_is_catalog_screen(): bool
+{
+    if (!is_admin()) {
+        return false;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return false;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+
+    if ($page_slug === '') {
+        return false;
+    }
+
+    if (function_exists('em_wp_hero_hub_menu_slug') && $page_slug === em_wp_hero_hub_menu_slug()) {
+        return true;
+    }
+
+    if (function_exists('em_wp_slider_hub_menu_slug') && $page_slug === em_wp_slider_hub_menu_slug()) {
+        return true;
+    }
+
+    if (function_exists('em_wp_hero_catalog_slug_from_page') && em_wp_hero_catalog_slug_from_page($page_slug) !== '') {
+        return true;
+    }
+
+    if (function_exists('em_wp_slider_catalog_slug_from_page') && em_wp_slider_catalog_slug_from_page($page_slug) !== '') {
+        return true;
+    }
+
+    if (function_exists('em_wp_hero_legacy_page_slug_map') && isset(em_wp_hero_legacy_page_slug_map()[$page_slug])) {
+        return true;
+    }
+
+    if (function_exists('em_wp_slider_legacy_page_slug_map') && isset(em_wp_slider_legacy_page_slug_map()[$page_slug])) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
+ * Indique si le bandeau template doit s'afficher sur l'écran courant.
+ */
+function em_wp_admin_should_show_template_banner(): bool
+{
+    return em_wp_admin_is_em_wp_screen() && !em_wp_admin_is_catalog_screen();
+}
+
+/**
  * Indique si l'écran admin courant est une page em-wp.
  */
 function em_wp_admin_is_em_wp_screen(): bool
@@ -35,7 +94,7 @@ function em_wp_admin_is_em_wp_screen(): bool
  */
 function em_wp_admin_template_banner_enqueue(): void
 {
-    if (!em_wp_admin_is_em_wp_screen()) {
+    if (!em_wp_admin_should_show_template_banner()) {
         return;
     }
 
@@ -78,7 +137,7 @@ add_action('admin_enqueue_scripts', 'em_wp_admin_template_banner_enqueue');
  */
 function em_wp_admin_template_banner_body_class(string $classes): string
 {
-    if (em_wp_admin_is_em_wp_screen()) {
+    if (em_wp_admin_should_show_template_banner()) {
         $classes .= ' em-wp-has-template-banner';
     }
 
@@ -91,7 +150,7 @@ add_filter('admin_body_class', 'em_wp_admin_template_banner_body_class');
  */
 function em_wp_admin_template_render_banner(): void
 {
-    if (!em_wp_admin_is_em_wp_screen() || !current_user_can('manage_options')) {
+    if (!em_wp_admin_should_show_template_banner() || !current_user_can('manage_options')) {
         return;
     }
 

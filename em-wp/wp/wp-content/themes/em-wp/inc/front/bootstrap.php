@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/modules/top-bar/render.php';
+require_once __DIR__ . '/modules/header/render.php';
 require_once __DIR__ . '/modules/hero/render.php';
 require_once __DIR__ . '/modules/slider/render.php';
 require_once __DIR__ . '/modules/stream/render.php';
@@ -28,8 +29,7 @@ function em_wp_front_module_slugs(): array
 {
     return [
         'top-bar',
-        'hero',
-        'slider',
+        'header',
         'stream',
         'social',
         'video',

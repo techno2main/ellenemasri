@@ -24,8 +24,6 @@ function em_wp_template_legacy_option_map(string $template_slug): array
 
     return [
         'top-bar' => 'em_wp_top_bar_options',
-        'hero'    => 'em_wp_hero_mayami_options',
-        'slider'  => 'em_wp_slider_mayami_options',
         'stream'  => 'em_wp_stream_options',
         'social'  => 'em_wp_social_options',
         'video'   => 'em_wp_video_options',

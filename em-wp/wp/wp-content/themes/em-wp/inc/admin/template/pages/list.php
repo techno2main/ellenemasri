@@ -26,14 +26,6 @@ function em_wp_admin_templates_page_url(): string
 }
 
 /**
- * Position menu Templates (entre Rubriques et Paramètres).
- */
-function em_wp_admin_menu_templates_position(): float
-{
-    return (float) em_wp_admin_menu_separator_bottom_position() + 0.5;
-}
-
-/**
  * Enregistre la page menu Templates.
  */
 function em_wp_admin_templates_register_menu(): void

@@ -10,50 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Indique si deux slugs forment une paire HEROS / SLIDERS adjacente.
- */
-function em_wp_landing_is_hero_slider_pair(string $first, string $second): bool
-{
-    return ($first === 'hero' && $second === 'slider') || ($first === 'slider' && $second === 'hero');
-}
-
-/**
- * Découpe l'ordre du milieu en segments (module seul ou paire hero+slider).
- *
- * @param string[] $order
- * @return array<int, array{type:string,slug?:string,order?:string[]}>
- */
-function em_wp_landing_parse_middle_segments(array $order): array
-{
-    $segments = [];
-    $count = count($order);
-    $index = 0;
-
-    while ($index < $count) {
-        $current = $order[$index];
-        $next = $order[$index + 1] ?? '';
-
-        if ($next !== '' && em_wp_landing_is_hero_slider_pair($current, $next)) {
-            $segments[] = [
-                'type'  => 'hero-slider-pair',
-                'order' => [$current, $next],
-            ];
-            $index += 2;
-            continue;
-        }
-
-        $segments[] = [
-            'type' => 'module',
-            'slug' => $current,
-        ];
-        $index += 1;
-    }
-
-    return $segments;
-}
-
-/**
- * Ancre HTML d'une rubrique sans module front dédié (navigation #stream, etc.).
+ * Ancres HTML d'une rubrique sans module front dédié (navigation #stream, etc.).
  */
 function em_wp_landing_section_anchor_id(string $module_slug): string
 {
@@ -63,8 +20,7 @@ function em_wp_landing_section_anchor_id(string $module_slug): string
         'video'   => 'video',
         'release' => 'release',
         'cta'     => 'cta',
-        'hero'    => 'hero',
-        'slider'  => 'slider',
+        'header'  => 'hero',
         'footer'  => 'footer',
     ];
 
@@ -81,18 +37,12 @@ function em_wp_landing_module_is_enabled(string $module_slug): bool
     }
 
     switch ($module_slug) {
-        case 'hero':
-            if (!function_exists('em_wp_get_hero_options_for_front')) {
+        case 'header':
+            if (!function_exists('em_wp_header_get_options_for_front')) {
                 return true;
             }
 
-            return !empty(em_wp_get_hero_options_for_front()['enabled']);
-        case 'slider':
-            if (!function_exists('em_wp_get_slider_options_for_front')) {
-                return true;
-            }
-
-            return !empty(em_wp_get_slider_options_for_front()['enabled']);
+            return !empty(em_wp_header_get_options_for_front()['enabled']);
         case 'stream':
             if (!function_exists('em_wp_stream_get_options_for_front')) {
                 return !empty(em_wp_stream_get_options()['enabled']);
@@ -141,40 +91,13 @@ function em_wp_landing_build_nav_anchors(): array
         return ['hero', 'stream', 'social', 'footer'];
     }
 
-    $segments = em_wp_landing_parse_middle_segments(em_wp_get_site_rubrique_middle_order());
-
-    foreach ($segments as $segment) {
-        if (($segment['type'] ?? '') === 'hero-slider-pair') {
-            $order = is_array($segment['order'] ?? null) ? $segment['order'] : ['hero', 'slider'];
-
-            if (($order[0] ?? '') === 'hero') {
-                if (em_wp_landing_module_is_enabled('hero')) {
-                    $anchors[] = 'hero';
-                }
-                continue;
-            }
-
-            foreach ($order as $slug) {
-                $slug = sanitize_key((string) $slug);
-                if ($slug === '' || !em_wp_landing_module_is_enabled($slug)) {
-                    continue;
-                }
-
-                $anchor = em_wp_landing_section_anchor_id($slug);
-                if ($anchor !== '' && !in_array($anchor, $anchors, true)) {
-                    $anchors[] = $anchor;
-                }
-            }
-
+    foreach (em_wp_get_site_rubrique_middle_order() as $module_slug) {
+        $module_slug = sanitize_key((string) $module_slug);
+        if ($module_slug === '' || !em_wp_landing_module_is_enabled($module_slug)) {
             continue;
         }
 
-        $slug = sanitize_key((string) ($segment['slug'] ?? ''));
-        if ($slug === '' || !em_wp_landing_module_is_enabled($slug)) {
-            continue;
-        }
-
-        $anchor = em_wp_landing_section_anchor_id($slug);
+        $anchor = em_wp_landing_section_anchor_id($module_slug);
         if ($anchor !== '' && !in_array($anchor, $anchors, true)) {
             $anchors[] = $anchor;
         }
@@ -264,12 +187,10 @@ function em_wp_render_landing_section_placeholder(string $module_slug): void
 function em_wp_render_landing_module(string $module_slug): void
 {
     switch ($module_slug) {
-        case 'hero':
-            em_wp_render_hero(['embed_slider' => false]);
-            break;
-
-        case 'slider':
-            em_wp_render_slider_section(['wrapper' => 'section']);
+        case 'header':
+            if (function_exists('em_wp_render_header')) {
+                em_wp_render_header();
+            }
             break;
 
         case 'stream':
@@ -305,45 +226,20 @@ function em_wp_render_landing_module(string $module_slug): void
 }
 
 /**
- * Affiche un segment (paire ou module seul).
- *
- * @param array{type:string,slug?:string,order?:string[]} $segment
- */
-function em_wp_render_landing_segment(array $segment): void
-{
-    if (($segment['type'] ?? '') === 'hero-slider-pair') {
-        $order = is_array($segment['order'] ?? null) ? $segment['order'] : ['hero', 'slider'];
-
-        if (($order[0] ?? '') === 'hero') {
-            em_wp_render_hero(['embed_slider' => true]);
-            return;
-        }
-
-        get_template_part('template-parts/sections/landing/hero-slider-pair', null, [
-            'order' => $order,
-        ]);
-
-        return;
-    }
-
-    em_wp_render_landing_module((string) ($segment['slug'] ?? ''));
-}
-
-/**
  * Affiche toutes les sections du milieu selon l'ordre admin.
  */
 function em_wp_render_landing_middle_sections(): void
 {
     if (!function_exists('em_wp_get_site_rubrique_middle_order')) {
-        em_wp_render_hero(['embed_slider' => true]);
+        if (function_exists('em_wp_render_header')) {
+            em_wp_render_header();
+        }
 
         return;
     }
 
-    $segments = em_wp_landing_parse_middle_segments(em_wp_get_site_rubrique_middle_order());
-
-    foreach ($segments as $segment) {
-        em_wp_render_landing_segment($segment);
+    foreach (em_wp_get_site_rubrique_middle_order() as $module_slug) {
+        em_wp_render_landing_module((string) $module_slug);
     }
 }
 

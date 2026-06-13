@@ -133,7 +133,16 @@ $hero_nav_next_href = (string) ($hero_nav['next'] ?? '#stream');
 
         <?php if ($embed_slider) { ?>
         <aside class="em-hero__slider-slot">
-            <?php if (function_exists('em_wp_render_slider_in_hero')) { em_wp_render_slider_in_hero(); } ?>
+            <?php
+            if (function_exists('em_wp_render_slider_in_hero')) {
+                $slider_args = [];
+                $slider_catalog = sanitize_key((string) ($args['slider_slug'] ?? ''));
+                if ($slider_catalog !== '') {
+                    $slider_args['catalog_slug'] = $slider_catalog;
+                }
+                em_wp_render_slider_in_hero($slider_args);
+            }
+            ?>
         </aside>
         <?php } ?>
     </div>

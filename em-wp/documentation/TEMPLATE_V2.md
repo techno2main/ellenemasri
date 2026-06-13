@@ -3,7 +3,7 @@
 > **Branche :** `feature/em-wp-v2-templates`  
 > **V1 (gelée) :** `feature/theme-em-wp`  
 > **Dernière maj doc :** 2026-06-13  
-> **Statut global :** Phases 2–3 — Flow GH en cours ; Phase 4 cadrée (SECTION HERO + catalogues)
+> **Statut global :** Phases 2–3 ✅ ; Phase 4 🔄 (HEADER + Catalogues — en cours, non poussée)
 
 Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phase / commit significatif** (statuts, fichiers créés, dette restante).
 
@@ -49,7 +49,7 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 | **1** | STREAM par template | ✅ | 589b3cb | Validée — options par template, migration Mayami, module découpé |
 | **2** | VIDEOS + RELEASES par template | ✅ | 99d9b71 | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ✅ | 4ca7251 | |
-| **4** | Hero + Slider : catalogue global + sélection par template | ⬜ | — | Modèle validé Tyson — après GH Phase 2+3 |
+| **4** | HEADER + Catalogues Hero/Slider + sélection par template | 🔄 | — | Implémentation locale — attente validation Tyson |
 | **5** | Sommaire + visibilité par template | ⬜ | — | |
 | **6** | Migration Mayami + tests front | ⬜ | — | |
 
@@ -69,7 +69,8 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 
 | Date | Auteur | Entrée |
 |------|--------|--------|
-| 2026-06-13 | Agent | Flow GH Phases 2–3 : 99d9b71, 4ca7251 + doc Phase 4 SECTION HERO |
+| 2026-06-13 | Agent | Phase 4 en cours : rubrique HEADER, catalogues Heros/Sliders, migration V1, plan du site encadrant HEADER, front landing-render |
+| 2026-06-13 | Tyson | Modèle Phase 4 : rubrique **HEADER** (pas HEROS/SLIDERS séparés) ; menu **Catalogues** > Heros + Sliders ; swap layout interne HEADER |
 | 2026-06-13 | Tyson | Menu Phase 4 : SECTION HERO (rubrique) + catalogues à part ; SLIDERS hors rubriques ; 1 hero/template V2 |
 | 2026-06-13 | Tyson | Modèle Hero/Slider validé : catalogue global, édition indépendante, sélection par template, mix hero×slider libre ; GH Phase 2+3 avant Phase 4 |
 | 2026-06-13 | Agent | Phase 3 TOP-BAR, SOCIAL, CTA, FOOTER par template + visibilité indépendante |
@@ -229,7 +230,7 @@ em-wp/wp/wp-content/themes/em-wp/
 | `em_wp_slider_catalog` | Registre des sliders (slug, label, layout, métadonnées) |
 | `em_wp_hero_{slug}_options` | Contenu d’**un** hero du catalogue |
 | `em_wp_slider_{slug}_options` | Contenu d’**un** slider du catalogue |
-| `em_wp_template_{template}_selections` | `{ hero: slug, slider: slug }` — choix **par template** (configuré dans SECTION HERO) |
+| `em_wp_header_{template}_options` | Sélection HEADER par template : `{ hero_slug, slider_slug, layout, enabled }` |
 
 **V1 encore en place (Phase 4 à migrer) :** `em_wp_hero_active_style`, `em_wp_slider_active_style`, slugs hardcodés `mayami` / `ellene`.
 
@@ -249,7 +250,7 @@ em_wp_is_template_rubrique_visible($template_slug, $rubrique_slug)
 ## UX rappel
 
 - **Bandeau** : Template en édition + indicateur Live ; warning si édition ≠ live.
-- **Menu rubriques** : raccourcis vers contenu **filtré par template du bandeau** (STREAM, SECTION HERO, …).
+- **Menu rubriques** : raccourcis vers contenu **filtré par template du bandeau** (STREAM, HEADER, …).
 - **Page Templates** : seul endroit pour « Actif sur le site » + CRUD templates.
 
 ### Menu admin — état actuel vs cible Phase 4
@@ -260,16 +261,16 @@ AUJOURD’HUI (V1 + Phases 0–3)          CIBLE PHASE 4
 
 Rubriques                              Rubriques (bandeau = édition)
 ├── TOP-BAR                            ├── TOP-BAR
-├── HEROS          ← confus            ├── SECTION HERO    ← choix hero + slider
+├── HEROS          ← confus            ├── HEADER          ← choix hero + slider catalogue
 ├── SLIDERS        ← rubrique séparée  ├── STREAM
 ├── STREAM                             ├── SOCIAL
 ├── …                                  ├── …
 
 HEROS = hub variantes + radio global   (HEROS / SLIDERS disparaissent des rubriques)
 
-                                       Hors rubriques (ou groupe « Catalogues »)
-                                       ├── Catalogue Hero    ← CRUD contenu
-                                       └── Catalogue Slider  ← CRUD contenu
+                                       Catalogues (menu séparé)
+                                       ├── Heros    ← CRUD contenu
+                                       └── Sliders  ← CRUD contenu
 ```
 
 ```mermaid
@@ -279,7 +280,7 @@ flowchart LR
         SC["Catalogue Slider\n(contenu : slides…)"]
     end
 
-    subgraph rubrique ["Rubrique SECTION HERO\n(template en édition)"]
+    subgraph rubrique ["Rubrique HEADER\n(template en édition)"]
         SH["Hero affiché :\nhero-mayami-default"]
         SS["Slider inséré :\nslider-ellene-default"]
     end
@@ -294,7 +295,7 @@ flowchart LR
     SS --> F
 ```
 
-**SECTION HERO** ne modifie pas le contenu des catalogues : elle **pointe** vers une entrée hero + une entrée slider pour le template en cours d’édition.
+**HEADER** ne modifie pas le contenu des catalogues : il **pointe** vers une entrée hero + une entrée slider pour le template en cours d’édition. Le plan du site affiche un encadrant HEADER ; le swap gauche/droite enregistre le layout interne (`hero_left` / `slider_left`).
 
 ---
 
@@ -333,7 +334,9 @@ flowchart LR
 - [x] Visibilité indépendante par template (étendue aux 7 rubriques V2)
 - [x] **Maj ce doc** (statut ✅ — Flow GH)
 
-### Phase 4 — Hero + Slider (modèle catalogue + SECTION HERO)
+**HEADER** ne modifie pas le contenu des catalogues : il **pointe** vers une entrée hero + une entrée slider pour le template en cours d’édition. Le **Plan du site** affiche un encadrant HEADER avec sous-blocs Hero / Slider ; le bouton swap inverse le layout interne (`hero_left` / `slider_left`), pas l’ordre global des rubriques.
+
+### Phase 4 — HEADER + Catalogues Hero/Slider
 
 **Prérequis :** Phases 2 et 3 poussées sur `feature/em-wp-v2-templates`.
 
@@ -345,41 +348,43 @@ Catalogue Hero          Catalogue Slider
         │                       │
         └───────────┬───────────┘
                     │
-            Rubrique SECTION HERO
+            Rubrique HEADER
             (template en édition via bandeau)
               · hero_slug choisi
-              · slider_slug choisi pour ce hero
+              · slider_slug choisi
+              · layout hero_left | slider_left
               · visibilité rubrique (enabled)
                     │
-                    └── front live : template actif → résolution hero + slider
+                    └── front live : template actif → em_wp_render_header()
 ```
 
-**Cas d’usage validé :** template Ellene live + hero `hero-mayami-default` + slider `slider-ellene-default` — promo Mayami sans dupliquer le contenu.
+**Cas d’usage validé :** template Ellene live + hero `hero-mayami-default` + slider `slider-ellene-default`.
 
-**V2 :** 1 hero + 1 slider par template. Rotation / playlist par intervalle → **hors scope** (phase ultérieure).
+**V2 :** 1 hero + 1 slider par template. Rotation / playlist → **hors scope**.
 
 #### Admin UX cible
 
 | Zone | Comportement |
 |------|--------------|
-| Menu **Catalogue Hero** | Hub CRUD : liste, créer (nom → dupliquer ou vierge), éditer contenu |
-| Menu **Catalogue Slider** | Idem sliders |
-| Rubrique **SECTION HERO** | Pour le **template en édition** : sélecteur hero + sélecteur slider ; visibilité ; **pas** d’édition contenu ici |
-| Menu rubriques | **SLIDERS supprimé** ; **HEROS renommé SECTION HERO** |
-| Badge « Actif » / sélection | = hero (et slider) retenus **pour le template en édition** — plus de radio global site |
-| Bandeau template | Filtre SECTION HERO et rubriques contenu ; **n’influence pas** les catalogues |
+| Menu **Catalogues → Heros** | Hub CRUD : liste, éditer contenu existant |
+| Menu **Catalogues → Sliders** | Idem sliders |
+| Rubrique **HEADER** | Pour le **template en édition** : sélecteurs hero + slider ; layout ; visibilité |
+| Sommaire / Plan du site | Une ligne **HEADER** ; encadrant avec sous-zones Hero / Slider ; swap = layout |
+| Badge « Actif » global V1 | Supprimé (save handlers retirés) |
 
 #### Tâches techniques
 
-- [ ] Menus : SECTION HERO + Catalogues Hero/Slider (hors rubriques)
-- [ ] `inc/shared/hero/` + `inc/shared/slider/` : registry catalogue, option-names, resolve
-- [ ] Options `em_wp_hero_section_{template}_options` ou équivalent (hero_slug, slider_slug, enabled)
-- [ ] Migration V1 → slugs `hero-mayami-default`, `hero-ellene-default`, idem sliders
-- [ ] Supprimer `em_wp_hero_active_style` / `em_wp_slider_active_style` et hubs V1
-- [ ] Découper `hero/settings.php` et `slider/settings.php` monolithiques
-- [ ] CRUD catalogue (créer, dupliquer+renommer, supprimer avec garde-fous)
-- [ ] Front : template live → hero catalogue + slider catalogue via SECTION HERO
-- [ ] **Maj ce doc**
+- [x] Menus : HEADER + Catalogues Heros/Sliders
+- [x] `inc/shared/catalog/` : registry, option-names, migrate-v1, resolve-style
+- [x] Options `em_wp_header_{template}_options`
+- [x] Migration V1 → slugs catalogue + ordre rubrique `header`
+- [x] Front : `em_wp_render_header()` + landing-render sans paire hero/slider
+- [x] Plan du site : encadrant HEADER + AJAX layout swap
+- [x] Enqueue CSS hero/slider depuis config HEADER live
+- [ ] CRUD catalogue complet (créer, dupliquer, supprimer)
+- [ ] Suppression complète options V1 `em_wp_hero_active_style` / UI radio
+- [ ] Découper `hero/settings.php` et `slider/settings.php`
+- [ ] **Maj ce doc** → ✅ après validation Tyson
 
 ### Phase 5 — Sommaire
 - [ ] Visibilité par template en édition
