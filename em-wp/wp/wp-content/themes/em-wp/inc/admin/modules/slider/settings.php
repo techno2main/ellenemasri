@@ -203,7 +203,7 @@ function em_wp_slider_add_admin_page(): void
         $parent_slug,
         'em_wp_slider_render_admin_page',
         'dashicons-images-alt2',
-        59
+        em_wp_admin_menu_position_slider()
     );
 
     foreach ($definitions as $definition) {
@@ -335,7 +335,7 @@ function em_wp_slider_render_admin_page(): void
         <div class="em-wp-slider-admin__hero em-wp-admin-module__hero">
             <div>
                 <p class="em-wp-slider-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('SLIDER', 'em-wp'); ?></p>
-                <h1 class="em-wp-admin-module__title"><?php esc_html_e('Sliders', 'em-wp'); ?></h1>
+                <p class="em-wp-admin-module__description"><?php esc_html_e('Liste des sliders disponibles', 'em-wp'); ?></p>
             </div>
         </div>
 

@@ -114,7 +114,7 @@ function em_wp_top_bar_add_admin_page(): void
         em_wp_top_bar_page_slug(),
         'em_wp_top_bar_render_admin_page',
         'dashicons-align-wide',
-        59
+        em_wp_admin_menu_position_top_bar()
     );
 }
 add_action('admin_menu', 'em_wp_top_bar_add_admin_page');
@@ -284,7 +284,7 @@ function em_wp_top_bar_render_admin_page(): void
         <div class="em-wp-top-bar-admin__hero em-wp-admin-module__hero">
             <div>
                 <p class="em-wp-top-bar-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('TOP-BAR', 'em-wp'); ?></p>
-                <h1 class="em-wp-admin-module__title"><?php esc_html_e('Section TOP-BAR/HEADER', 'em-wp'); ?></h1>
+                <p class="em-wp-admin-module__description"><?php esc_html_e('Menu de navigation du haut', 'em-wp'); ?></p>
             </div>
             <label class="em-wp-admin-module__toggle">
                 <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>

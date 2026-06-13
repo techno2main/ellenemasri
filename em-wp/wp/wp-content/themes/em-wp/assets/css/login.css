@@ -1,0 +1,154 @@
+/**
+ * Page de connexion WordPress (alignée prod ellene-wp).
+ *
+ * @package em-wp
+ */
+
+body.login {
+    background: #f8d24a !important;
+}
+
+body.login #login {
+    width: 320px !important;
+}
+
+body.login #loginform,
+body.login form#loginform,
+body.login #lostpasswordform,
+body.login form#lostpasswordform,
+body.login #resetpassform,
+body.login form#resetpassform,
+body.login .login form {
+    background: #d94a2d !important;
+    border: 1px solid #2f1114 !important;
+    box-shadow: none !important;
+    margin-top: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+body.login #login h1,
+body.login .login h1 {
+    margin-bottom: 0 !important;
+}
+
+body.login #nav,
+body.login #backtoblog,
+body.login #nav a,
+body.login #backtoblog a,
+body.login .language-switcher label,
+body.login .language-switcher .dashicons {
+    color: #1f2937 !important;
+    opacity: 1 !important;
+}
+
+body.login #nav a:hover,
+body.login #nav a:focus,
+body.login #backtoblog a:hover,
+body.login #backtoblog a:focus {
+    color: #111827 !important;
+}
+
+body.login .language-switcher,
+body.login #language-switcher {
+    display: none !important;
+}
+
+body.login #loginform label,
+body.login #lostpasswordform label,
+body.login #resetpassform label,
+body.login #loginform .forgetmenot label,
+body.login #loginform .user-pass-wrap .wp-pwd .button,
+body.login #loginform .dashicons-visibility,
+body.login #loginform .dashicons-hidden {
+    color: #ffffff !important;
+}
+
+body.login #loginform .input,
+body.login #lostpasswordform .input,
+body.login #resetpassform .input,
+body.login #loginform input[type="text"],
+body.login #lostpasswordform input[type="text"],
+body.login #resetpassform input[type="text"],
+body.login #loginform input[type="password"],
+body.login #resetpassform input[type="password"] {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border-color: #d1d5db !important;
+}
+
+body.login #loginform .input:focus,
+body.login #lostpasswordform .input:focus,
+body.login #resetpassform .input:focus,
+body.login #loginform input[type="text"]:focus,
+body.login #lostpasswordform input[type="text"]:focus,
+body.login #resetpassform input[type="text"]:focus,
+body.login #loginform input[type="password"]:focus,
+body.login #resetpassform input[type="password"]:focus {
+    border-color: #2f1114 !important;
+    box-shadow: 0 0 0 1px #2f1114 !important;
+    outline: none !important;
+}
+
+body.login #loginform .wp-pwd .button,
+body.login #loginform .wp-pwd .button.button-secondary {
+    background: #2f1114 !important;
+    border-color: #2f1114 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+body.login #loginform .wp-pwd .button:hover,
+body.login #loginform .wp-pwd .button:focus,
+body.login #loginform .wp-pwd .button.button-secondary:hover,
+body.login #loginform .wp-pwd .button.button-secondary:focus {
+    background: #2f1114 !important;
+    border-color: #2f1114 !important;
+    color: #ffffff !important;
+}
+
+body.login.wp-core-ui #loginform .button.button-primary,
+body.login.wp-core-ui #lostpasswordform .button.button-primary,
+body.login.wp-core-ui #resetpassform .button.button-primary,
+body.login .wp-core-ui #loginform .button.button-primary {
+    background: #2f1114 !important;
+    border-color: #2f1114 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+body.login.wp-core-ui #loginform .button.button-primary:hover,
+body.login.wp-core-ui #loginform .button.button-primary:focus,
+body.login.wp-core-ui #loginform .button.button-primary:active,
+body.login.wp-core-ui #lostpasswordform .button.button-primary:hover,
+body.login.wp-core-ui #lostpasswordform .button.button-primary:focus,
+body.login.wp-core-ui #lostpasswordform .button.button-primary:active,
+body.login.wp-core-ui #resetpassform .button.button-primary:hover,
+body.login.wp-core-ui #resetpassform .button.button-primary:focus,
+body.login.wp-core-ui #resetpassform .button.button-primary:active,
+body.login .wp-core-ui #loginform .button.button-primary:hover,
+body.login .wp-core-ui #loginform .button.button-primary:focus,
+body.login .wp-core-ui #loginform .button.button-primary:active {
+    background: #2f1114 !important;
+    border-color: #2f1114 !important;
+    color: #ffffff !important;
+}
+
+body.login .message,
+body.login #login_error,
+body.login .notice {
+    border-left-color: #2f1114 !important;
+}
+
+.login h1 a {
+    background-size: 100% 100% !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    width: 100% !important;
+    aspect-ratio: 799 / 410 !important;
+    height: auto !important;
+    max-height: none !important;
+    margin-bottom: 0 !important;
+}

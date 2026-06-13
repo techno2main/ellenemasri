@@ -157,7 +157,7 @@ function em_wp_hero_add_admin_page(): void
         $parent_slug,
         'em_wp_hero_render_admin_page',
         'dashicons-format-image',
-        58
+        em_wp_admin_menu_position_hero()
     );
 
     foreach ($definitions as $definition) {
@@ -334,7 +334,7 @@ function em_wp_hero_render_admin_page(): void
         <div class="em-wp-hero-admin__hero em-wp-admin-module__hero">
             <div>
                 <p class="em-wp-hero-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('HERO', 'em-wp'); ?></p>
-                <h1 class="em-wp-admin-module__title"><?php esc_html_e('Heros', 'em-wp'); ?></h1>
+                <p class="em-wp-admin-module__description"><?php esc_html_e('Liste des heros disponibles', 'em-wp'); ?></p>
             </div>
         </div>
 
