@@ -595,6 +595,9 @@ function em_wp_admin_render_rubriques_page(): void
 
 
     $definitions = em_wp_admin_site_rubrique_definitions();
+    $editing_template_label = function_exists('em_wp_get_editing_template_label')
+        ? em_wp_get_editing_template_label()
+        : em_wp_template_default_slug();
 
     ?>
 
@@ -604,9 +607,13 @@ function em_wp_admin_render_rubriques_page(): void
 
             <div>
 
-                <p class="em-wp-admin-module__eyebrow"><?php esc_html_e('EM-WP', 'em-wp'); ?></p>
-
-                <p class="em-wp-admin-module__description"><?php esc_html_e('Rubriques du site', 'em-wp'); ?></p>
+                <p class="em-wp-admin-module__description"><?php
+                printf(
+                    /* translators: %s: template label */
+                    esc_html__('EM-WP - Template %s', 'em-wp'),
+                    esc_html($editing_template_label)
+                );
+                ?></p>
 
             </div>
 
@@ -743,7 +750,13 @@ function em_wp_admin_render_rubriques_page(): void
 
                     <div class="em-wp-rubriques-admin__map-wrap">
 
-                        <p class="em-wp-rubriques-admin__map-label"><?php esc_html_e('Plan du site', 'em-wp'); ?></p>
+                        <p class="em-wp-rubriques-admin__map-label"><?php
+                        printf(
+                            /* translators: %s: template label */
+                            esc_html__('Plan du site - Template %s', 'em-wp'),
+                            esc_html($editing_template_label)
+                        );
+                        ?></p>
                         <p class="em-wp-rubriques-admin__map-hint">
                             <?php esc_html_e('Survole ou clique une zone pour ouvrir la rubrique.', 'em-wp'); ?><br>
                             <?php esc_html_e('Chaque rubrique peut être affichée ou masquée via l’icône œil.', 'em-wp'); ?><br>
