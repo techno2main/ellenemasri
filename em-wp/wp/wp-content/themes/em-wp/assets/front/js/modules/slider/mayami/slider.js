@@ -1,150 +1,261 @@
-(function () {
-    function initSlider(root) {
-        const slides = Array.from(root.querySelectorAll('.em-slider__slide'));
-        const dots = Array.from(root.querySelectorAll('.em-slider__dot'));
-        const prev = root.querySelector('.em-slider__nav--prev');
-        const next = root.querySelector('.em-slider__nav--next');
-        const muteBtn = root.querySelector('.em-slider__mute');
-        const playBtn = root.querySelector('.em-slider__play');
+window.emWpInitMayamiSlider = function (root) {
+    if (!root || root.dataset.emSliderInit === '1') {
+        return;
+    }
 
-        if (slides.length <= 1) {
-            const onlySlide = slides[0];
-            if (onlySlide) {
-                const media = onlySlide.querySelector('video');
-                if (media) {
-                    media.muted = false;
-                    media.volume = 1;
-                    media.play().catch(function () {});
-                }
-            }
+    root.dataset.emSliderInit = '1';
+
+    const slides = Array.from(root.querySelectorAll('.em-slider__slide'));
+    const dots = Array.from(root.querySelectorAll('.em-slider__dot'));
+    const prevButton = root.querySelector('.em-slider__nav--prev');
+    const nextButton = root.querySelector('.em-slider__nav--next');
+    const audioBtn = root.querySelector('.em-slider__audio-btn');
+    const playBtn = root.querySelector('.em-slider__play');
+
+    if (slides.length === 0) {
+        return;
+    }
+
+    let currentIndex = 0;
+    let autoPlayTimer = null;
+    const DEFAULT_AUTOPLAY_DELAY = 5000;
+
+    function getSlideDelay(index) {
+        const slide = slides[index];
+        if (!slide) {
+            return DEFAULT_AUTOPLAY_DELAY;
+        }
+
+        const rawDelay = parseInt(slide.getAttribute('data-delay') || '', 10);
+        if (Number.isNaN(rawDelay) || rawDelay < 1000) {
+            return DEFAULT_AUTOPLAY_DELAY;
+        }
+
+        return rawDelay;
+    }
+
+    function getActiveVideo(index) {
+        const slide = slides[index];
+        return slide ? slide.querySelector('video.em-slider__tiktok-video') : null;
+    }
+
+    function stopAutoPlay() {
+        if (autoPlayTimer) {
+            clearTimeout(autoPlayTimer);
+            autoPlayTimer = null;
+        }
+    }
+
+    function isTimedTikTokEmbedSlide(index) {
+        const slide = slides[index];
+        if (!slide) {
+            return false;
+        }
+
+        return slide.getAttribute('data-type') === 'tiktok' && !slide.querySelector('video.em-slider__tiktok-video');
+    }
+
+    function shouldUseTimedAutoplay(index) {
+        const slide = slides[index];
+        if (!slide) {
+            return true;
+        }
+
+        if (slide.getAttribute('data-type') === 'video') {
+            return false;
+        }
+
+        if (slide.getAttribute('data-type') === 'tiktok') {
+            return isTimedTikTokEmbedSlide(index);
+        }
+
+        return true;
+    }
+
+    function startAutoPlay() {
+        if (slides.length <= 1 || !shouldUseTimedAutoplay(currentIndex)) {
+            stopAutoPlay();
             return;
         }
 
-        let activeIndex = 0;
-        let timer = null;
-        let isSoundOn = true;
+        stopAutoPlay();
+        autoPlayTimer = setTimeout(function () {
+            goToSlide((currentIndex + 1) % slides.length);
+            startAutoPlay();
+        }, getSlideDelay(currentIndex));
+    }
 
-        function getSlideDelay(index) {
-            const slide = slides[index];
-            if (!slide) {
-                return 5000;
-            }
-
-            const delay = Number(slide.getAttribute('data-delay') || '5000');
-            return Number.isFinite(delay) && delay > 0 ? delay : 5000;
+    function updateAudioButtonState(video) {
+        if (!audioBtn) {
+            return;
         }
 
-        function stopSlideMedia(slide) {
-            if (!slide) {
+        if (!video) {
+            audioBtn.classList.add('is-hidden');
+            return;
+        }
+
+        audioBtn.classList.remove('is-hidden');
+
+        if (video.muted) {
+            audioBtn.classList.add('is-muted');
+            audioBtn.classList.remove('is-live');
+            audioBtn.setAttribute('aria-label', 'Activer le son');
+            audioBtn.setAttribute('aria-pressed', 'false');
+        } else {
+            audioBtn.classList.add('is-live');
+            audioBtn.classList.remove('is-muted');
+            audioBtn.setAttribute('aria-label', 'Couper le son');
+            audioBtn.setAttribute('aria-pressed', 'true');
+        }
+    }
+
+    function syncActiveVideoPlayback(index) {
+        const activeVideo = getActiveVideo(index);
+
+        slides.forEach(function (slide, i) {
+            const video = slide.querySelector('video.em-slider__tiktok-video');
+            if (!video) {
                 return;
             }
 
-            const video = slide.querySelector('video');
-            if (video) {
-                video.pause();
-            }
-
-            const iframe = slide.querySelector('iframe');
-            if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
-            }
-        }
-
-        function playSlideMedia(slide) {
-            if (!slide) {
-                return;
-            }
-
-            const video = slide.querySelector('video');
-            if (video) {
-                video.muted = !isSoundOn;
-                video.volume = 1;
+            if (i === index) {
                 video.currentTime = 0;
-                video.play().catch(function () {});
-            }
+                video.muted = false;
+                video.volume = 1;
 
-            const iframe = slide.querySelector('iframe');
-            if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*');
-                iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: isSoundOn ? 'unMute' : 'mute', args: [] }), '*');
-            }
-        }
+                const playPromise = video.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch(function () {
+                        video.muted = true;
+                        updateAudioButtonState(video);
 
-        function scheduleNext() {
-            window.clearTimeout(timer);
-            timer = window.setTimeout(function () {
-                render(activeIndex + 1);
-            }, getSlideDelay(activeIndex));
-        }
+                        const retryPromise = video.play();
+                        if (retryPromise && typeof retryPromise.catch === 'function') {
+                            retryPromise.catch(function () {});
+                        }
+                    });
+                }
 
-        function refreshSoundUi() {
-            if (!muteBtn) {
                 return;
             }
 
-            muteBtn.setAttribute('aria-pressed', isSoundOn ? 'true' : 'false');
-            muteBtn.setAttribute('aria-label', isSoundOn ? 'Couper le son' : 'Activer le son');
-            muteBtn.textContent = isSoundOn ? '🔊' : '🔇';
+            video.pause();
+            video.currentTime = 0;
+            video.muted = true;
+        });
+
+        updateAudioButtonState(activeVideo);
+
+        const activeSlide = slides[index];
+        const iframe = activeSlide ? activeSlide.querySelector('iframe') : null;
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'playVideo', args: [] }), '*');
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
         }
 
-        function render(index) {
-            const oldSlide = slides[activeIndex];
-            activeIndex = (index + slides.length) % slides.length;
+        slides.forEach(function (slide, i) {
+            if (i === index) {
+                return;
+            }
 
-            slides.forEach(function (slide, idx) {
-                slide.classList.toggle('is-active', idx === activeIndex);
-            });
+            const iframeSlide = slide.querySelector('iframe');
+            if (iframeSlide && iframeSlide.contentWindow) {
+                iframeSlide.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'pauseVideo', args: [] }), '*');
+            }
+        });
+    }
 
-            dots.forEach(function (dot, idx) {
-                dot.classList.toggle('is-active', idx === activeIndex);
-            });
+    function goToSlide(index) {
+        slides.forEach(function (slide, i) {
+            slide.classList.toggle('is-active', i === index);
+        });
 
-            stopSlideMedia(oldSlide);
-            playSlideMedia(slides[activeIndex]);
-            scheduleNext();
+        dots.forEach(function (dot, i) {
+            dot.classList.toggle('is-active', i === index);
+        });
+
+        currentIndex = index;
+        syncActiveVideoPlayback(index);
+
+        if (shouldUseTimedAutoplay(index)) {
+            startAutoPlay();
+        } else {
+            stopAutoPlay();
         }
+    }
 
-        if (prev) {
-            prev.addEventListener('click', function () {
-                render(activeIndex - 1);
+    function initVideoEndedHandlers() {
+        slides.forEach(function (slide) {
+            const video = slide.querySelector('video.em-slider__tiktok-video');
+            if (!video || video.dataset.emSliderEndedBound === '1') {
+                return;
+            }
+
+            video.dataset.emSliderEndedBound = '1';
+            video.addEventListener('ended', function () {
+                const slideIndex = slides.indexOf(slide);
+                if (slideIndex !== currentIndex || slides.length <= 1) {
+                    return;
+                }
+
+                goToSlide((currentIndex + 1) % slides.length);
             });
-        }
+        });
+    }
 
-        if (next) {
-            next.addEventListener('click', function () {
-                render(activeIndex + 1);
-            });
-        }
-
+    if (dots.length > 0 && slides.length > 1) {
         dots.forEach(function (dot) {
             dot.addEventListener('click', function () {
                 const target = Number(dot.getAttribute('data-slide-to'));
                 if (Number.isFinite(target)) {
-                    render(target);
+                    goToSlide(target);
                 }
             });
         });
-
-        if (muteBtn) {
-            muteBtn.addEventListener('click', function () {
-                isSoundOn = !isSoundOn;
-                refreshSoundUi();
-                playSlideMedia(slides[activeIndex]);
-            });
-        }
-
-        if (playBtn) {
-            playBtn.addEventListener('click', function () {
-                render(activeIndex + 1);
-            });
-        }
-
-        refreshSoundUi();
-        playSlideMedia(slides[0]);
-        scheduleNext();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.em-slider--mayami[data-em-slider]').forEach(initSlider);
-    });
-})();
+    if (prevButton) {
+        prevButton.addEventListener('click', function () {
+            goToSlide((currentIndex - 1 + slides.length) % slides.length);
+        });
+    }
+
+    if (nextButton) {
+        nextButton.addEventListener('click', function () {
+            goToSlide((currentIndex + 1) % slides.length);
+        });
+    }
+
+    if (audioBtn) {
+        audioBtn.addEventListener('click', function () {
+            const activeVideo = getActiveVideo(currentIndex);
+            if (!activeVideo) {
+                return;
+            }
+
+            activeVideo.muted = !activeVideo.muted;
+            updateAudioButtonState(activeVideo);
+
+            if (!activeVideo.paused) {
+                const playPromise = activeVideo.play();
+                if (playPromise && typeof playPromise.catch === 'function') {
+                    playPromise.catch(function () {});
+                }
+            }
+        });
+    }
+
+    if (playBtn) {
+        playBtn.addEventListener('click', function () {
+            goToSlide((currentIndex + 1) % slides.length);
+        });
+    }
+
+    initVideoEndedHandlers();
+    syncActiveVideoPlayback(currentIndex);
+
+    if (slides.length > 1) {
+        startAutoPlay();
+    }
+};

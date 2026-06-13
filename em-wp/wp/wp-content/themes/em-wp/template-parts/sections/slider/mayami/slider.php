@@ -29,9 +29,19 @@ if ($footer_bg_color !== '') {
 if ($footer_text !== '') {
     $slider_style .= '--em-slider-footer-text: ' . esc_attr($footer_text) . ';';
 }
+
+$slider_uid = 'em-wp-slider-' . wp_unique_id();
+
+$has_tiktok_video_slide = false;
+foreach ($slides as $slide_item) {
+    if (sanitize_key((string) ($slide_item['type'] ?? '')) === 'tiktok' && !empty($slide_item['tiktok_video_url'])) {
+        $has_tiktok_video_slide = true;
+        break;
+    }
+}
 ?>
 
-<div class="em-slider em-slider--mayami" data-em-slider style="<?php echo esc_attr($slider_style); ?>">
+<div id="<?php echo esc_attr($slider_uid); ?>" class="em-slider em-slider--mayami" data-em-slider style="<?php echo esc_attr($slider_style); ?>">
     <div class="em-slider__shell">
         <?php if (!$tape_hidden): ?>
             <span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span>
@@ -60,14 +70,18 @@ if ($footer_text !== '') {
                                 ></iframe>
                             <?php elseif ($slide_type === 'tiktok'): ?>
                                 <?php if (!empty($slide['tiktok_video_url'])): ?>
-                                    <video
-                                        class="em-slider__tiktok-video"
-                                        src="<?php echo esc_url((string) $slide['tiktok_video_url']); ?>"
-                                        poster="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>"
-                                        playsinline
-                                        preload="auto"
-                                        autoplay
-                                    ></video>
+                                    <div class="em-slider__video-wrap">
+                                        <video
+                                            class="em-slider__tiktok-video"
+                                            src="<?php echo esc_url((string) $slide['tiktok_video_url']); ?>"
+                                            poster="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>"
+                                            playsinline
+                                            webkit-playsinline
+                                            preload="metadata"
+                                            controlslist="nodownload noplaybackrate noremoteplayback"
+                                            disablepictureinpicture
+                                        ></video>
+                                    </div>
                                 <?php else: ?>
                                     <blockquote
                                         class="tiktok-embed"
@@ -107,13 +121,28 @@ if ($footer_text !== '') {
                     <button class="em-slider__nav em-slider__nav--next" type="button" aria-label="Slide suivante">&#10095;</button>
                 <?php endif; ?>
 
-                <?php if (!$mute_hidden): ?>
+                <?php if (!$mute_hidden && $has_tiktok_video_slide): ?>
                     <button
-                        class="em-slider__mute"
                         type="button"
-                        aria-label="Couper le son"
+                        class="em-slider__audio-btn is-muted is-hidden"
+                        aria-label="<?php esc_attr_e('Activer le son', 'em-wp'); ?>"
                         aria-pressed="false"
-                    ></button>
+                    >
+                        <span class="em-slider__audio-btn-label"><?php esc_html_e('Activer le son', 'em-wp'); ?></span>
+                        <span class="em-slider__audio-icon em-slider__audio-icon-muted" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path>
+                                <path d="M17 10l4 4m0-4l-4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+                            </svg>
+                        </span>
+                        <span class="em-slider__audio-icon em-slider__audio-icon-live" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path>
+                                <path d="M17 9a5 5 0 0 1 0 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+                                <path d="M19.5 6.5a8.5 8.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path>
+                            </svg>
+                        </span>
+                    </button>
                 <?php endif; ?>
             </div>
 
@@ -146,3 +175,17 @@ if ($footer_text !== '') {
         </div>
     <?php endif; ?>
 </div>
+<?php
+$em_wp_slider_script_uri = get_template_directory_uri() . '/assets/front/js/modules/slider/mayami/slider.js';
+$em_wp_slider_script_path = get_template_directory() . '/assets/front/js/modules/slider/mayami/slider.js';
+$em_wp_slider_script_version = file_exists($em_wp_slider_script_path) ? (string) filemtime($em_wp_slider_script_path) : '1';
+?>
+<script src="<?php echo esc_url($em_wp_slider_script_uri); ?>?ver=<?php echo esc_attr($em_wp_slider_script_version); ?>"></script>
+<script>
+(function () {
+    var root = document.getElementById('<?php echo esc_js($slider_uid); ?>');
+    if (typeof window.emWpInitMayamiSlider === 'function') {
+        window.emWpInitMayamiSlider(root);
+    }
+})();
+</script>

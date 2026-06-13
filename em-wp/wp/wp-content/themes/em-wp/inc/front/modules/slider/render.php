@@ -57,35 +57,38 @@ function em_wp_get_slider_options_for_front(string $style_slug = 'mayami'): arra
         'footer_text'     => '#100421',
         'footer_title'    => __('Mayami, My Miami', 'em-wp'),
         'slider_title_hidden' => false,
-        'slides_count'    => 7,
+        'slides'          => [],
     ];
 }
 
 /**
- * Retourne la liste des slides actives.
+ * Retourne la liste des slides actives (ordre du tableau slides[]).
  */
 function em_wp_slider_collect_slides(array $slider): array
 {
     $slides = [];
-    $max_slides = max(1, min(12, intval($slider['slides_count'] ?? 7)));
+    $raw_slides = function_exists('em_wp_slider_get_slides_list')
+        ? em_wp_slider_get_slides_list($slider)
+        : [];
 
-    for ($i = 1; $i <= $max_slides; $i++) {
-        $slide_type = sanitize_key((string) ($slider['slide_' . $i . '_type'] ?? 'image'));
-        if (!in_array($slide_type, ['image', 'video', 'tiktok'], true)) {
-            $slide_type = 'image';
+    foreach ($raw_slides as $index => $item) {
+        if (!is_array($item)) {
+            continue;
         }
 
-        $name = trim((string) ($slider['slide_' . $i . '_name'] ?? ''));
-        $image = trim((string) ($slider['slide_' . $i . '_image'] ?? ''));
-        $video_url = trim((string) ($slider['slide_' . $i . '_video_url'] ?? ''));
-        $tiktok_url = trim((string) ($slider['slide_' . $i . '_tiktok_url'] ?? ''));
-        $tiktok_video_url = trim((string) ($slider['slide_' . $i . '_tiktok_video_url'] ?? ''));
-        $alt_text = trim((string) ($slider['slide_' . $i . '_alt_text'] ?? ''));
-        $slide_duration_seconds = max(1, intval($slider['slide_' . $i . '_duration'] ?? 5));
+        $slide = em_wp_slider_normalize_slide_item($item);
+        $slide_type = $slide['type'];
+        $name = trim($slide['name']);
+        $image = trim($slide['image']);
+        $video_url = trim($slide['video_url']);
+        $tiktok_url = trim($slide['tiktok_url']);
+        $tiktok_video_url = trim($slide['tiktok_video_url']);
+        $alt_text = trim($slide['alt_text']);
+        $slide_duration_seconds = max(1, intval($slide['duration']));
         $slide_delay_ms = $slide_duration_seconds * 1000;
-        $hidden = !empty($slider['slide_' . $i . '_hidden']);
+        $position = (int) $index + 1;
 
-        if ($hidden) {
+        if (!empty($slide['hidden'])) {
             continue;
         }
 
@@ -97,7 +100,7 @@ function em_wp_slider_collect_slides(array $slider): array
 
             $slides[] = [
                 'type' => 'video',
-                'name' => ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $i)),
+                'name' => ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $position)),
                 'delay_ms' => $slide_delay_ms,
                 'video_id' => $video_id,
             ];
@@ -112,7 +115,7 @@ function em_wp_slider_collect_slides(array $slider): array
 
             $slides[] = [
                 'type' => 'tiktok',
-                'name' => ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $i)),
+                'name' => ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $position)),
                 'delay_ms' => $slide_delay_ms,
                 'tiktok_url' => $tiktok_url,
                 'tiktok_video_url' => $tiktok_video_url,
@@ -131,8 +134,8 @@ function em_wp_slider_collect_slides(array $slider): array
         $slides[] = [
             'type'  => 'image',
             'image' => $image,
-            'name'  => ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $i)),
-            'alt'   => ($alt_text !== '' ? $alt_text : ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $i))),
+            'name'  => ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $position)),
+            'alt'   => ($alt_text !== '' ? $alt_text : ($name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $position))),
             'delay_ms' => $slide_delay_ms,
         ];
     }
