@@ -84,7 +84,8 @@ wp/wp-content/themes/ellene-wp/migration-ovh/*.zip
 
 # Ignore full WordPress tree em-wp, keep only the custom theme
 em-wp/wp/*
-em-wp/wp/wp-content/
+!em-wp/wp/wp-content/
+em-wp/wp/wp-content/*
 !em-wp/wp/wp-content/themes/
 em-wp/wp/wp-content/themes/*
 !em-wp/wp/wp-content/themes/em-wp/
