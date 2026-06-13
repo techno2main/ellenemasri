@@ -35,7 +35,9 @@ function em_wp_enqueue_assets(): void
         'em-wp-top-bar',
         get_template_directory_uri() . '/assets/front/css/modules/top-bar/top-bar.css',
         ['em-wp-theme', 'em-wp-archivo-black'],
-        $theme_version
+        is_readable(get_template_directory() . '/assets/front/css/modules/top-bar/top-bar.css')
+            ? $theme_version . '.' . (string) filemtime(get_template_directory() . '/assets/front/css/modules/top-bar/top-bar.css')
+            : $theme_version
     );
     $hero_style_slug = function_exists('em_wp_hero_active_style_slug')
         ? em_wp_hero_active_style_slug()
@@ -57,6 +59,21 @@ function em_wp_enqueue_assets(): void
         ['em-wp-theme'],
         $theme_version
     );
-    wp_enqueue_script('em-wp-theme', get_template_directory_uri() . '/assets/js/theme.js', [], $theme_version, true);
+
+    if (is_front_page()) {
+        wp_enqueue_style(
+            'em-wp-landing',
+            get_template_directory_uri() . '/assets/front/css/landing.css',
+            ['em-wp-hero', 'em-wp-slider'],
+            $theme_version
+        );
+    }
+
+    $theme_js_path = get_template_directory() . '/assets/js/theme.js';
+    $theme_js_version = is_readable($theme_js_path)
+        ? $theme_version . '.' . (string) filemtime($theme_js_path)
+        : $theme_version;
+
+    wp_enqueue_script('em-wp-theme', get_template_directory_uri() . '/assets/js/theme.js', [], $theme_js_version, true);
 }
 add_action('wp_enqueue_scripts', 'em_wp_enqueue_assets');

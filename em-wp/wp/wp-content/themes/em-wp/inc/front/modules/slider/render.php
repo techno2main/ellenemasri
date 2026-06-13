@@ -144,10 +144,17 @@ function em_wp_slider_collect_slides(array $slider): array
 }
 
 /**
- * Affiche le module slider dans la colonne droite du Hero.
+ * Affiche le slider (inline, colonne paire ou section standalone).
+ *
+ * @param array{wrapper?:string} $args wrapper: inline|column|section
  */
-function em_wp_render_slider_in_hero(): void
+function em_wp_render_slider_section(array $args = []): void
 {
+    $wrapper = sanitize_key((string) ($args['wrapper'] ?? 'inline'));
+    if (!in_array($wrapper, ['inline', 'column', 'section'], true)) {
+        $wrapper = 'inline';
+    }
+
     $slider_style_slug = function_exists('em_wp_slider_active_style_slug')
         ? em_wp_slider_active_style_slug()
         : 'mayami';
@@ -159,8 +166,38 @@ function em_wp_render_slider_in_hero(): void
 
     $slides = em_wp_slider_collect_slides($slider);
 
-    get_template_part('template-parts/sections/slider/' . $slider_style_slug . '/slider', null, [
-        'slider' => $slider,
-        'slides' => $slides,
-    ]);
+    $render_slider = static function () use ($slider_style_slug, $slider, $slides): void {
+        get_template_part('template-parts/sections/slider/' . $slider_style_slug . '/slider', null, [
+            'slider' => $slider,
+            'slides' => $slides,
+        ]);
+    };
+
+    if ($wrapper === 'section') {
+        ?>
+        <section class="em-landing-slider-section" id="slider">
+            <div class="em-landing-slider-section__inner">
+                <?php $render_slider(); ?>
+            </div>
+        </section>
+        <?php
+        return;
+    }
+
+    if ($wrapper === 'column') {
+        echo '<div id="slider" class="em-landing-hero-row__column em-landing-hero-row__column--slider">';
+        $render_slider();
+        echo '</div>';
+        return;
+    }
+
+    $render_slider();
+}
+
+/**
+ * Affiche le module slider dans la colonne droite du Hero.
+ */
+function em_wp_render_slider_in_hero(): void
+{
+    em_wp_render_slider_section(['wrapper' => 'inline']);
 }

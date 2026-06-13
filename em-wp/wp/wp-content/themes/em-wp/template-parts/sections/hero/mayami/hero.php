@@ -6,6 +6,8 @@
  */
 
 $hero = is_array($args['hero'] ?? null) ? $args['hero'] : [];
+$embed_slider = !array_key_exists('embed_slider', $args) || !empty($args['embed_slider']);
+$layout = (string) ($args['layout'] ?? 'default');
 
 $badge_text = trim((string) ($hero['badge_text'] ?? ''));
 $badge_text_hidden = !empty($hero['badge_text_hidden']);
@@ -53,6 +55,12 @@ $background_color = trim((string) ($hero['background_color'] ?? ''));
 $text_color = trim((string) ($hero['text_color'] ?? ''));
 
 $hero_classes = 'em-hero em-hero--mayami';
+if (!$embed_slider) {
+    $hero_classes .= ' em-hero--standalone';
+}
+if ($layout === 'pair-column') {
+    $hero_classes .= ' em-hero--pair-column';
+}
 if ($background_image !== '' && !$background_image_hidden) {
     $hero_classes .= ' has-bg';
 }
@@ -64,17 +72,24 @@ if ($background_color !== '') {
 if ($text_color !== '') {
     $hero_style .= '--em-hero-mayami-text: ' . esc_attr($text_color) . ';';
 }
+
+$hero_nav = function_exists('em_wp_landing_get_section_nav_hrefs')
+    ? em_wp_landing_get_section_nav_hrefs('hero')
+    : ['prev' => '', 'next' => '#stream'];
+$hero_nav_next_href = (string) ($hero_nav['next'] ?? '#stream');
 ?>
-<section class="<?php echo esc_attr($hero_classes); ?>" style="<?php echo esc_attr($hero_style); ?>">
+<section id="hero" class="<?php echo esc_attr($hero_classes); ?>" style="<?php echo esc_attr($hero_style); ?>">
     <?php if ($background_image !== '' && !$background_image_hidden): ?>
         <img class="em-hero__bg" src="<?php echo esc_url($background_image); ?>" alt="" loading="eager" decoding="async" aria-hidden="true">
     <?php endif; ?>
     <div class="em-hero__grain" aria-hidden="true"></div>
     <div class="em-hero__inner">
         <div class="em-hero__left">
+            <?php if ($hero_nav_next_href !== '') { ?>
             <div class="em-hero__scroll-row">
-                <a href="#stream" class="em-hero__scroll" aria-label="Section suivante">↓</a>
+                <a href="<?php echo esc_attr($hero_nav_next_href); ?>" class="em-hero__scroll" aria-label="<?php esc_attr_e('Section suivante', 'em-wp'); ?>">↓</a>
             </div>
+            <?php } ?>
 
             <?php if ($badge_text !== '' && !$badge_text_hidden): ?>
                 <div class="em-hero__badge"><span class="em-hero__badge-dot" aria-hidden="true"></span><?php echo esc_html($badge_text); ?></div>
@@ -116,8 +131,10 @@ if ($text_color !== '') {
             </div>
         </div>
 
+        <?php if ($embed_slider) { ?>
         <aside class="em-hero__slider-slot">
             <?php if (function_exists('em_wp_render_slider_in_hero')) { em_wp_render_slider_in_hero(); } ?>
         </aside>
+        <?php } ?>
     </div>
 </section>

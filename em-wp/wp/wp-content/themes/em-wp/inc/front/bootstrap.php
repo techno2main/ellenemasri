@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/modules/top-bar/render.php';
 require_once __DIR__ . '/modules/hero/render.php';
 require_once __DIR__ . '/modules/slider/render.php';
+require_once __DIR__ . '/modules/stream/render.php';
+require_once __DIR__ . '/landing-render.php';
 
 /**
  * Slugs modules gérés côté front.

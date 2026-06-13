@@ -15,7 +15,7 @@ $main_title = trim((string) ($hero['main_title'] ?? ''));
 $description = trim((string) ($hero['description'] ?? ''));
 $description_hidden = !empty($hero['description_hidden']);
 ?>
-<section class="em-hero em-hero--ellene">
+<section id="hero" class="em-hero em-hero--ellene">
     <div class="em-hero__inner">
         <div class="em-hero__left">
             <?php if ($badge_text !== '' && !$badge_text_hidden): ?>
