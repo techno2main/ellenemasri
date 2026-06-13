@@ -1,31 +1,6 @@
 (function ($) {
     var UNTITLED_LABEL = 'Sans titre';
 
-    function applyAdminColorPreview() {
-        var root = document.querySelector('.em-wp-slider-admin');
-        if (!root) {
-            return;
-        }
-
-        var frameBgInput = document.querySelector('input[name$="[frame_bg_color]"]');
-        var footerBgInput = document.querySelector('input[name$="[footer_bg_color]"]');
-        var footerTextInput = document.querySelector('input[name$="[footer_text]"]');
-        var frameBg = frameBgInput ? String(frameBgInput.value || '').trim() : '';
-        var footerBg = footerBgInput ? String(footerBgInput.value || '').trim() : '';
-        var footerText = footerTextInput ? String(footerTextInput.value || '').trim() : '';
-
-        root.style.setProperty('--em-slider-admin-bg', frameBg || '#100421');
-        root.style.setProperty('--em-slider-admin-text', footerText || '#ffffff');
-
-        root.querySelectorAll('.em-wp-admin-color-field').forEach(function (field) {
-            var value = String(field.value || '').trim();
-            if (!value) {
-                return;
-            }
-            field.style.borderColor = value;
-        });
-    }
-
     function syncPreview(input, preview) {
         var url = String(input.val() || '').trim();
         if (!url) {
@@ -380,8 +355,5 @@
         bindSlideTypeEvents();
         bindSlideListManager();
         syncAllSlideTypeVisibility();
-        applyAdminColorPreview();
-
-        $(document).on('emWpAdminColorFieldChanged', applyAdminColorPreview);
     });
 })(jQuery);

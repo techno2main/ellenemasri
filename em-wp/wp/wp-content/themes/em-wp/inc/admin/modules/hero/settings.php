@@ -232,7 +232,9 @@ function em_wp_hero_register_settings(): void
             em_wp_hero_option_name($style_slug),
             [
                 'type'              => 'array',
-                'sanitize_callback' => 'em_wp_hero_sanitize_options',
+                'sanitize_callback' => static function ($input) use ($style_slug): array {
+                    return em_wp_hero_sanitize_options_for_style($input, $style_slug);
+                },
                 'default'           => em_wp_hero_default_options(),
             ]
         );
@@ -288,32 +290,47 @@ function em_wp_hero_get_options(string $style_slug = 'mayami'): array
 }
 
 /**
- * Sanitize callback de Settings API.
+ * Sanitize callback Settings API pour une variante Hero.
+ *
+ * @param mixed $input
  */
-function em_wp_hero_sanitize_options(array $input): array
+function em_wp_hero_sanitize_options_for_style($input, string $style_slug): array
 {
+    $existing = em_wp_hero_get_options($style_slug);
+
+    if (!is_array($input)) {
+        return $existing;
+    }
+
+    $background_color = sanitize_hex_color($input['background_color'] ?? '');
+    $text_color = sanitize_hex_color($input['text_color'] ?? '');
+
     return [
-        'enabled'                  => !empty($input['enabled']),
-        'background_color'         => sanitize_hex_color($input['background_color'] ?? '') ?: '',
-        'text_color'               => sanitize_hex_color($input['text_color'] ?? '') ?: '',
-        'badge_text'               => sanitize_text_field($input['badge_text'] ?? ''),
-        'badge_text_hidden'        => !empty($input['badge_text_hidden']),
-        'subtitle'                 => sanitize_text_field($input['subtitle'] ?? ''),
-        'subtitle_hidden'          => !empty($input['subtitle_hidden']),
-        'main_title'               => sanitize_text_field($input['main_title'] ?? ''),
-        'background_image'         => esc_url_raw($input['background_image'] ?? ''),
-        'background_image_hidden'  => !empty($input['background_image_hidden']),
-        'logo_image'               => esc_url_raw($input['logo_image'] ?? ''),
-        'logo_hidden'              => !empty($input['logo_hidden']),
-        'logo_alt'                 => sanitize_text_field($input['logo_alt'] ?? ''),
-        'description'              => sanitize_textarea_field($input['description'] ?? ''),
-        'description_hidden'       => !empty($input['description_hidden']),
-        'stream_label'             => sanitize_text_field($input['stream_label'] ?? ''),
-        'stream_hidden'            => !empty($input['stream_hidden']),
-        'stream_href'              => esc_url_raw($input['stream_href'] ?? ''),
-        'watch_label'              => sanitize_text_field($input['watch_label'] ?? ''),
-        'watch_hidden'             => !empty($input['watch_hidden']),
-        'watch_href'               => esc_url_raw($input['watch_href'] ?? ''),
+        'enabled'                  => array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']),
+        'background_color'         => $background_color !== null && $background_color !== false && $background_color !== ''
+            ? $background_color
+            : (string) ($existing['background_color'] ?? ''),
+        'text_color'               => $text_color !== null && $text_color !== false && $text_color !== ''
+            ? $text_color
+            : (string) ($existing['text_color'] ?? ''),
+        'badge_text'               => sanitize_text_field($input['badge_text'] ?? ($existing['badge_text'] ?? '')),
+        'badge_text_hidden'        => array_key_exists('badge_text_hidden', $input) ? !empty($input['badge_text_hidden']) : !empty($existing['badge_text_hidden']),
+        'subtitle'                 => sanitize_text_field($input['subtitle'] ?? ($existing['subtitle'] ?? '')),
+        'subtitle_hidden'          => array_key_exists('subtitle_hidden', $input) ? !empty($input['subtitle_hidden']) : !empty($existing['subtitle_hidden']),
+        'main_title'               => sanitize_text_field($input['main_title'] ?? ($existing['main_title'] ?? '')),
+        'background_image'         => esc_url_raw($input['background_image'] ?? ($existing['background_image'] ?? '')),
+        'background_image_hidden'  => array_key_exists('background_image_hidden', $input) ? !empty($input['background_image_hidden']) : !empty($existing['background_image_hidden']),
+        'logo_image'               => esc_url_raw($input['logo_image'] ?? ($existing['logo_image'] ?? '')),
+        'logo_hidden'              => array_key_exists('logo_hidden', $input) ? !empty($input['logo_hidden']) : !empty($existing['logo_hidden']),
+        'logo_alt'                 => sanitize_text_field($input['logo_alt'] ?? ($existing['logo_alt'] ?? '')),
+        'description'              => sanitize_textarea_field($input['description'] ?? ($existing['description'] ?? '')),
+        'description_hidden'       => array_key_exists('description_hidden', $input) ? !empty($input['description_hidden']) : !empty($existing['description_hidden']),
+        'stream_label'             => sanitize_text_field($input['stream_label'] ?? ($existing['stream_label'] ?? '')),
+        'stream_hidden'            => array_key_exists('stream_hidden', $input) ? !empty($input['stream_hidden']) : !empty($existing['stream_hidden']),
+        'stream_href'              => esc_url_raw($input['stream_href'] ?? ($existing['stream_href'] ?? '')),
+        'watch_label'              => sanitize_text_field($input['watch_label'] ?? ($existing['watch_label'] ?? '')),
+        'watch_hidden'             => array_key_exists('watch_hidden', $input) ? !empty($input['watch_hidden']) : !empty($existing['watch_hidden']),
+        'watch_href'               => esc_url_raw($input['watch_href'] ?? ($existing['watch_href'] ?? '')),
     ];
 }
 
@@ -329,8 +346,12 @@ function em_wp_hero_render_admin_page(): void
     $context = em_wp_hero_get_admin_context();
     $style_slug = (string) ($context['style_slug'] ?? '');
     $active_style = em_wp_hero_active_style_slug();
+    $hero_style_defaults = em_wp_admin_module_default_style_colors('hero');
+    $hero_style_field_map = em_wp_admin_module_style_color_fields('hero');
+    $hero_style_options = $style_slug !== '' ? em_wp_hero_get_options($style_slug) : [];
     ?>
-    <div class="wrap em-wp-hero-admin em-wp-admin-module">
+    <div class="wrap em-wp-hero-admin em-wp-admin-module" <?php echo em_wp_admin_module_style_data_attributes('', $hero_style_defaults, $hero_style_field_map); ?> style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars($hero_style_options, $hero_style_defaults, $hero_style_field_map)); ?>">
+        <?php em_wp_admin_render_settings_notices(); ?>
         <div class="em-wp-hero-admin__hero em-wp-admin-module__hero">
             <div>
                 <p class="em-wp-hero-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('HERO', 'em-wp'); ?></p>
@@ -362,6 +383,9 @@ function em_wp_hero_render_admin_page(): void
 function em_wp_hero_render_admin_sidebar(string $selected_style_slug, string $active_style_slug): void
 {
     $definitions = em_wp_hero_style_definitions();
+    $form_page_slug = $selected_style_slug !== '' && isset($definitions[$selected_style_slug])
+        ? (string) ($definitions[$selected_style_slug]['page_slug'] ?? em_wp_hero_hub_menu_slug())
+        : em_wp_hero_hub_menu_slug();
     ?>
     <aside class="em-wp-admin-module-hub__sidebar">
         <h2 class="em-wp-admin-module-hub__title"><?php esc_html_e('Heros disponibles', 'em-wp'); ?></h2>
@@ -385,8 +409,8 @@ function em_wp_hero_render_admin_sidebar(string $selected_style_slug, string $ac
             <?php } ?>
         </ul>
 
-        <form class="em-wp-admin-module-hub__active-form" method="post" action="options.php">
-            <?php settings_fields('em_wp_hero_global_group'); ?>
+        <form class="em-wp-admin-module-hub__active-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($form_page_slug)); ?>">
+            <?php em_wp_admin_render_form_save_fields('hero-active', 'em_wp_hero_active_save'); ?>
             <fieldset class="em-wp-admin-module-hub__active-fieldset">
                 <legend><?php esc_html_e('Hero affiché sur le site', 'em-wp'); ?></legend>
                 <?php foreach ($definitions as $style_slug => $definition) {
@@ -413,6 +437,8 @@ function em_wp_hero_render_admin_sidebar(string $selected_style_slug, string $ac
 function em_wp_hero_render_style_setup(array $context, array $options): void
 {
     $hero_label = strtoupper((string) ($context['label'] ?? 'MAYAMI'));
+    $style_slug = (string) ($context['style_slug'] ?? 'mayami');
+    $page_slug = (string) ($context['page_slug'] ?? 'em-wp-hero-mayami');
     ?>
     <div class="em-wp-hero-admin__setup">
         <div class="em-wp-hero-admin__setup-header em-wp-admin-module__hero">
@@ -426,8 +452,14 @@ function em_wp_hero_render_style_setup(array $context, array $options): void
             </label>
         </div>
 
-        <form id="em-wp-hero-form" method="post" action="options.php">
-            <?php settings_fields($context['group']); ?>
+        <form id="em-wp-hero-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($page_slug)); ?>">
+            <?php
+            em_wp_admin_render_form_save_fields(
+                'hero',
+                'em_wp_hero_save_' . $style_slug,
+                ['em_wp_module_context' => $style_slug]
+            );
+            ?>
 
             <div class="em-wp-hero-admin__panels em-wp-admin-module__panels">
             <?php if ($context['style_slug'] === 'mayami') {

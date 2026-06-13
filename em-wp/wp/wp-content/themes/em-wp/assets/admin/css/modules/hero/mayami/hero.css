@@ -1,11 +1,12 @@
 .em-wp-hero-admin {
-    --em-hero-admin-bg: #100421;
-    --em-hero-admin-text: #ffffff;
+    --em-hero-admin-bg: var(--em-module-admin-bg, #13061f);
+    --em-hero-admin-text: var(--em-module-admin-text, #ffffff);
 }
 
-.em-wp-hero-admin__hero {
-    background: var(--em-hero-admin-bg);
-    color: var(--em-hero-admin-text);
+.em-wp-hero-admin__hero,
+.em-wp-hero-admin__setup-header.em-wp-admin-module__hero {
+    background: var(--em-module-admin-bg, var(--em-hero-admin-bg));
+    color: var(--em-module-admin-text, var(--em-hero-admin-text));
 }
 
 .em-wp-hero-admin__hero h1 {

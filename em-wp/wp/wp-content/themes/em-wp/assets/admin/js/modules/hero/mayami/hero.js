@@ -9,38 +9,6 @@
         preview.html('<img src="' + url + '" alt="">').removeClass('is-empty');
     }
 
-    function hexToRgb(hex) {
-        const raw = String(hex || '').trim().replace('#', '');
-        if (!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$/.test(raw)) {
-            return null;
-        }
-
-        const full = raw.length === 3 ? raw.split('').map(function (c) { return c + c; }).join('') : raw;
-        return {
-            r: parseInt(full.substring(0, 2), 16),
-            g: parseInt(full.substring(2, 4), 16),
-            b: parseInt(full.substring(4, 6), 16)
-        };
-    }
-
-    function applyAdminColorPreview() {
-        const root = document.querySelector('.em-wp-hero-admin');
-        if (!root) {
-            return;
-        }
-
-        const bgInput = document.querySelector('input[name$="[background_color]"]');
-        const textInput = document.querySelector('input[name$="[text_color]"]');
-        const bg = bgInput ? String(bgInput.value || '').trim() : '';
-        const text = textInput ? String(textInput.value || '').trim() : '';
-
-        const bgColor = bg || '#13061f';
-        const textColor = text || '#ffffff';
-
-        root.style.setProperty('--em-hero-admin-bg', bgColor);
-        root.style.setProperty('--em-hero-admin-text', textColor);
-    }
-
     function bindMediaPicker() {
         $('.em-wp-hero-media-button').on('click', function (event) {
             event.preventDefault();
@@ -86,10 +54,5 @@
     $(function () {
         bindMediaPicker();
         initImagePreviews();
-        applyAdminColorPreview();
-
-        $(document).on('emWpAdminColorFieldChanged', function () {
-            applyAdminColorPreview();
-        });
     });
 })(jQuery);

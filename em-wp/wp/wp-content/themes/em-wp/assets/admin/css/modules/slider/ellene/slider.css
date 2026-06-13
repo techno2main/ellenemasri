@@ -1,11 +1,12 @@
 .em-wp-slider-admin {
-    --em-slider-admin-bg: #100421;
-    --em-slider-admin-text: #ffffff;
+    --em-slider-admin-bg: var(--em-module-admin-bg, #12338f);
+    --em-slider-admin-text: var(--em-module-admin-text, #100421);
 }
 
-.em-wp-slider-admin__hero {
-    background: var(--em-slider-admin-bg);
-    color: var(--em-slider-admin-text);
+.em-wp-slider-admin__hero,
+.em-wp-slider-admin__setup-header.em-wp-admin-module__hero {
+    background: var(--em-module-admin-bg, var(--em-slider-admin-bg));
+    color: var(--em-module-admin-text, var(--em-slider-admin-text));
 }
 
 .em-wp-slider-admin__hero h1 {
