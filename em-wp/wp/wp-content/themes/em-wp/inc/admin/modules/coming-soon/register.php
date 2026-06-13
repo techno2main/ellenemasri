@@ -17,7 +17,6 @@ if (!defined('ABSPATH')) {
 function em_wp_admin_coming_soon_rubrique_slugs(): array
 {
     return [
-        'stream',
         'social',
         'cta',
         'footer',

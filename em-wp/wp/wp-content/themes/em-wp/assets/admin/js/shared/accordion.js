@@ -16,6 +16,10 @@
         }
 
         scope.querySelectorAll(PANEL_SELECTOR).forEach(function (panel) {
+            if (!panel.hasAttribute('data-default-open')) {
+                panel.classList.remove(OPEN_CLASS);
+            }
+
             var header = panel.querySelector(HEADER_SELECTOR);
             if (header) {
                 syncHeaderState(panel, header);

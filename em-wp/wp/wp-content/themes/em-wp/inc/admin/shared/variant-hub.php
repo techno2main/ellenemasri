@@ -59,6 +59,7 @@ function em_wp_admin_boot_variant_hub(array $config): void
 
     add_action('admin_init', static function () use ($config): void {
         em_wp_admin_variant_hub_register_settings($config);
+        em_wp_admin_variant_hub_register_active_save($config);
     });
 
     add_action('admin_enqueue_scripts', static function (string $hook_suffix) use ($config): void {
@@ -192,6 +193,46 @@ function em_wp_admin_variant_hub_register_settings(array $config): void
 }
 
 /**
+ * Enregistre la sauvegarde « variante active » (hub sidebar).
+ *
+ * @param array<string, mixed> $config
+ */
+function em_wp_admin_variant_hub_register_active_save(array $config): void
+{
+    $module_slug = sanitize_key((string) ($config['module_slug'] ?? ''));
+    if ($module_slug === '') {
+        return;
+    }
+
+    $definitions = em_wp_admin_variant_hub_style_definitions($config);
+
+    em_wp_admin_register_module_save($module_slug . '-active', [
+        'type'          => 'active_style',
+        'nonce_action'  => 'em_wp_' . $module_slug . '_active_save',
+        'option_name'   => (string) ($config['active_option'] ?? ''),
+        'value_field'   => (string) ($config['active_option'] ?? ''),
+        'page_slug'     => 'referer',
+        'fallback_page' => (string) ($config['hub_menu_slug'] ?? ''),
+        'sanitize'      => static function ($value) use ($config, $definitions): string {
+            $slug = sanitize_key((string) $value);
+            $default = sanitize_key((string) ($config['default_active_style'] ?? ''));
+
+            if ($slug !== '' && isset($definitions[$slug])) {
+                return $slug;
+            }
+
+            if ($default !== '' && isset($definitions[$default])) {
+                return $default;
+            }
+
+            $keys = array_keys($definitions);
+
+            return $keys[0] ?? '';
+        },
+    ]);
+}
+
+/**
  * @param array<string, mixed> $config
  */
 function em_wp_admin_variant_hub_enqueue(array $config): void
@@ -285,6 +326,7 @@ function em_wp_admin_variant_hub_render_page(array $config): void
     $module_class = 'em-wp-' . sanitize_html_class((string) ($config['module_slug'] ?? 'module')) . '-admin';
     ?>
     <div class="wrap <?php echo esc_attr($module_class); ?> em-wp-admin-module">
+        <?php em_wp_admin_render_settings_notices(); ?>
         <div class="<?php echo esc_attr($module_class . '__hero'); ?> em-wp-admin-module__hero">
             <div>
                 <p class="em-wp-admin-module__eyebrow"><?php echo esc_html((string) ($config['eyebrow'] ?? '')); ?></p>
@@ -323,6 +365,10 @@ function em_wp_admin_variant_hub_render_page(array $config): void
 function em_wp_admin_variant_hub_render_sidebar(array $config, string $selected_style_slug, string $active_style_slug): void
 {
     $definitions = em_wp_admin_variant_hub_style_definitions($config);
+    $module_slug = sanitize_key((string) ($config['module_slug'] ?? ''));
+    $form_page_slug = $selected_style_slug !== '' && isset($definitions[$selected_style_slug])
+        ? (string) ($definitions[$selected_style_slug]['page_slug'] ?? ($config['hub_menu_slug'] ?? ''))
+        : (string) ($config['hub_menu_slug'] ?? '');
     ?>
     <aside class="em-wp-admin-module-hub__sidebar">
         <h2 class="em-wp-admin-module-hub__title"><?php echo esc_html((string) ($config['sidebar_title'] ?? '')); ?></h2>
@@ -350,8 +396,8 @@ function em_wp_admin_variant_hub_render_sidebar(array $config, string $selected_
                 <?php } ?>
             </ul>
 
-            <form class="em-wp-admin-module-hub__active-form" method="post" action="options.php">
-                <?php settings_fields((string) ($config['active_group'] ?? '')); ?>
+            <form class="em-wp-admin-module-hub__active-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($form_page_slug)); ?>">
+                <?php em_wp_admin_render_form_save_fields($module_slug . '-active', 'em_wp_' . $module_slug . '_active_save'); ?>
                 <fieldset class="em-wp-admin-module-hub__active-fieldset">
                     <legend><?php echo esc_html((string) ($config['active_legend'] ?? '')); ?></legend>
                     <?php foreach ($definitions as $style_slug => $definition) {

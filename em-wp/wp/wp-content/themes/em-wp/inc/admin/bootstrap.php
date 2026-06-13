@@ -14,16 +14,17 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/shared/style-panel.php';
 require_once __DIR__ . '/shared/assets.php';
+require_once __DIR__ . '/shared/settings-api.php';
+require_once __DIR__ . '/shared/register-module-saves.php';
 require_once __DIR__ . '/shared/avatars.php';
-require_once __DIR__ . '/shared/rubrique-order.php';
 require_once __DIR__ . '/shared/menu.php';
 require_once __DIR__ . '/shared/landing-preview.php';
 require_once __DIR__ . '/shared/variant-hub.php';
-require_once __DIR__ . '/modules/top-bar/stream-links.php';
 require_once __DIR__ . '/modules/top-bar/settings.php';
 require_once __DIR__ . '/modules/hero/settings.php';
 require_once __DIR__ . '/modules/slider/slides.php';
 require_once __DIR__ . '/modules/slider/settings.php';
+require_once __DIR__ . '/modules/stream/settings.php';
 require_once __DIR__ . '/modules/video/settings.php';
 require_once __DIR__ . '/modules/release/settings.php';
 require_once __DIR__ . '/pages/rubriques.php';

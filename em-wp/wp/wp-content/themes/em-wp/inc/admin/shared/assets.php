@@ -35,6 +35,7 @@ function em_wp_admin_enqueue_shared_assets(): array
     $color_picker_css_version = em_wp_admin_asset_version('assets/admin/css/shared/color-picker.css');
     $module_common_css_version = em_wp_admin_asset_version('assets/admin/css/shared/module-common.css');
     $color_picker_js_version = em_wp_admin_asset_version('assets/admin/js/shared/color-picker.js');
+    $style_preview_version = em_wp_admin_asset_version('assets/admin/js/shared/admin-module-style-preview.js');
     $confirm_modal_version = em_wp_admin_asset_version('assets/admin/js/shared/confirm-modal.js');
 
     wp_enqueue_media();
@@ -78,10 +79,17 @@ function em_wp_admin_enqueue_shared_assets(): array
         $color_picker_js_version,
         true
     );
+    wp_enqueue_script(
+        'em-wp-admin-module-style-preview',
+        $theme_uri . '/assets/admin/js/shared/admin-module-style-preview.js',
+        ['jquery', 'em-wp-admin-color-picker'],
+        $style_preview_version,
+        true
+    );
 
     return [
         'styles'  => ['em-wp-admin-color-picker', 'em-wp-admin-module-common'],
-        'scripts' => ['em-wp-admin-accordion', 'em-wp-admin-confirm-modal', 'em-wp-admin-color-picker'],
+        'scripts' => ['em-wp-admin-accordion', 'em-wp-admin-confirm-modal', 'em-wp-admin-color-picker', 'em-wp-admin-module-style-preview'],
     ];
 }
 
