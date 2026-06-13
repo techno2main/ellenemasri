@@ -124,13 +124,11 @@ function em_wp_admin_site_rubrique_definitions(): array
 
             'description'  => __('Section 01 / LISTEN', 'em-wp'),
 
-            'page_slug'    => 'em-wp-stream',
+            'page_slug'    => function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-wp-stream',
 
             'preview_zone' => 'section_stream',
 
             'accent_color' => '#7c3aed',
-
-            'coming_soon'  => true,
 
         ],
 
@@ -365,6 +363,7 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
                 'swapHeroSlider'   => __('Inverser HEROS et SLIDERS', 'em-wp'),
                 'visibilityShown'  => __('Afficher sur le site', 'em-wp'),
                 'visibilityHidden' => __('Masquer sur le site', 'em-wp'),
+                'visibilityHiddenLabel' => __('Masqué', 'em-wp'),
                 'visibilitySaved'  => __('Visibilité enregistrée.', 'em-wp'),
                 'visibilityError'  => __('Impossible d\'enregistrer la visibilité.', 'em-wp'),
             ],
@@ -421,30 +420,110 @@ add_filter('login_redirect', 'em_wp_admin_login_redirect_to_rubriques', 10, 3);
 
 
 /**
-
- * Redirige le Dashboard WordPress vers le sommaire em-wp.
-
+ * URL admin du sommaire Rubriques du site.
  */
-
-function em_wp_admin_redirect_dashboard_to_rubriques(): void
-
+function em_wp_admin_rubriques_admin_url(): string
 {
-
-    if (!current_user_can('manage_options')) {
-
-        return;
-
-    }
-
-
-
-    wp_safe_redirect(admin_url('admin.php?page=' . em_wp_admin_rubriques_page_slug()));
-
-    exit;
-
+    return admin_url('admin.php?page=' . em_wp_admin_rubriques_page_slug());
 }
 
-add_action('load-index.php', 'em_wp_admin_redirect_dashboard_to_rubriques');
+/**
+ * Pointe le menu Dashboard (et son sous-menu Home) vers le sommaire em-wp.
+ */
+function em_wp_admin_point_dashboard_to_rubriques(): void
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    global $menu, $submenu;
+
+    $rubriques_url = em_wp_admin_rubriques_admin_url();
+
+    foreach ($menu as $position => $item) {
+        if (!is_array($item) || ($item[2] ?? '') !== 'index.php') {
+            continue;
+        }
+
+        $menu[$position][2] = $rubriques_url;
+        break;
+    }
+
+    if (!isset($submenu['index.php']) || !is_array($submenu['index.php'])) {
+        return;
+    }
+
+    foreach ($submenu['index.php'] as $key => $item) {
+        if (!is_array($item) || ($item[2] ?? '') !== 'index.php') {
+            continue;
+        }
+
+        $submenu['index.php'][$key][2] = $rubriques_url;
+    }
+}
+
+add_action('admin_menu', 'em_wp_admin_point_dashboard_to_rubriques', 10001);
+
+/**
+ * Redirige index.php vers le sommaire em-wp (filet de sécurité si l'URL native est ouverte).
+ */
+function em_wp_admin_redirect_dashboard_to_rubriques(): void
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'index.php') {
+        return;
+    }
+
+    $rubriques_url = em_wp_admin_rubriques_admin_url();
+
+    em_wp_admin_safe_redirect($rubriques_url);
+}
+
+add_action('admin_init', 'em_wp_admin_redirect_dashboard_to_rubriques', 1);
+
+/**
+ * Liens « Dashboard » générés par WordPress → sommaire em-wp.
+ *
+ * @param mixed $url
+ * @param mixed $path
+ * @return mixed
+ */
+function em_wp_admin_filter_dashboard_url($url, $path)
+{
+    if (!current_user_can('manage_options')) {
+        return $url;
+    }
+
+    $path = (string) $path;
+
+    if ($path === '' || $path === 'index.php') {
+        return em_wp_admin_rubriques_admin_url();
+    }
+
+    return $url;
+}
+
+add_filter('dashboard_url', 'em_wp_admin_filter_dashboard_url', 10, 2);
+
+/**
+ * @param mixed $url
+ * @param mixed $user_id
+ * @param mixed $path
+ * @return mixed
+ */
+function em_wp_admin_filter_get_dashboard_url($url, $user_id, $path)
+{
+    unset($user_id);
+
+    return em_wp_admin_filter_dashboard_url($url, $path);
+}
+
+add_filter('get_dashboard_url', 'em_wp_admin_filter_get_dashboard_url', 10, 3);
 
 
 
@@ -510,7 +589,10 @@ function em_wp_admin_render_rubriques_page(): void
 
                 $preview_zone = (string) ($definition['preview_zone'] ?? '');
 
-                $accent_color = (string) ($definition['accent_color'] ?? '#646970');
+                $preview_style = function_exists('em_wp_admin_module_style_colors_for_preview')
+                    ? em_wp_admin_module_style_colors_for_preview($module_slug)
+                    : ['background' => (string) ($definition['accent_color'] ?? '#646970'), 'text' => '#ffffff'];
+                $accent_color = (string) $preview_style['background'];
 
                 $is_coming_soon = !empty($definition['coming_soon']);
                 $is_sortable = em_wp_site_rubrique_is_reorderable($module_slug);
@@ -586,7 +668,7 @@ function em_wp_admin_render_rubriques_page(): void
 
                         <span class="em-wp-rubriques-admin__list-icon" aria-hidden="true">
 
-                            <i class="fa-regular fa-eye"></i>
+                            <i class="fa-solid fa-chevron-down"></i>
 
                         </span>
 

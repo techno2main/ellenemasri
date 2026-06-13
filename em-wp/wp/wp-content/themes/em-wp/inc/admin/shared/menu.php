@@ -13,6 +13,12 @@
  * 4. Si la rubrique occupe une nouvelle zone front : étendre la mini-maquette dans landing-preview.php.
  * 5. Ordre / visibilité : rubrique-order.php (milieu réordonnable ; TOP-BAR / FOOTER = afficher-masquer).
  * 6. Modules multi-variantes (HEROS, SLIDERS, VIDEOS, RELEASES) : hub + sous-menus par variante.
+ * 7. Admin obligatoire pour toute nouvelle rubrique (inc/admin/shared/style-panel.php) :
+ *    - Style de base : em_wp_admin_render_base_style_panel()
+ *    - Preview bloc titre : em_wp_admin_module_style_data_attributes() + em_wp_admin_module_style_inline_vars()
+ *    - Panneaux fermés : em_wp_admin_render_module_panel() / em_wp_admin_module_panel_classes()
+ *    - Champs ligne : em-wp-admin-panel-body--row + classes em-wp-admin-field--*
+ *    - Assets : em_wp_admin_enqueue_shared_assets() (accordion, color picker, preview)
  *
  * @package em-wp
  */

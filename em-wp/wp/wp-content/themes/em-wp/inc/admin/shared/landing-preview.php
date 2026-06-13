@@ -54,9 +54,42 @@ function em_wp_admin_landing_preview_zone_label(string $zone): string
 }
 
 /**
- * Couleur d'accent d'une zone.
+ * Couleur d'accent d'une zone (Style de base enregistré, sinon défaut rubrique).
  */
 function em_wp_admin_landing_preview_zone_color(string $zone): string
+{
+    return em_wp_admin_landing_preview_zone_style($zone)['background'];
+}
+
+/**
+ * Couleurs d'une zone du plan (fond + texte depuis Style de base).
+ *
+ * @return array{background:string,text:string}
+ */
+function em_wp_admin_landing_preview_zone_style(string $zone): array
+{
+    $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
+
+    if ($module_slug === '' && $zone === 'hero_content') {
+        $module_slug = 'hero';
+    } elseif ($module_slug === '' && $zone === 'hero_slider') {
+        $module_slug = 'slider';
+    }
+
+    if ($module_slug !== '' && function_exists('em_wp_admin_module_style_colors_for_preview')) {
+        return em_wp_admin_module_style_colors_for_preview($module_slug);
+    }
+
+    return [
+        'background' => em_wp_admin_landing_preview_zone_fallback_color($zone),
+        'text'       => '#ffffff',
+    ];
+}
+
+/**
+ * Couleur statique de repli (définition rubrique).
+ */
+function em_wp_admin_landing_preview_zone_fallback_color(string $zone): string
 {
     $definitions = em_wp_admin_site_rubrique_definitions();
 
@@ -151,7 +184,7 @@ function em_wp_admin_render_landing_map_zone(
     $url = em_wp_admin_landing_preview_zone_url($zone);
     $label = em_wp_admin_landing_preview_zone_label($zone);
     $title = em_wp_admin_landing_preview_zone_title($zone);
-    $color = em_wp_admin_landing_preview_zone_color($zone);
+    $style = em_wp_admin_landing_preview_zone_style($zone);
     $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
 
     if ($module_slug === '' && $zone === 'hero_content') {
@@ -187,7 +220,7 @@ function em_wp_admin_render_landing_map_zone(
             <?php if ($module_slug !== '') { ?>
                 data-module-slug="<?php echo esc_attr($module_slug); ?>"
             <?php } ?>
-            style="--em-zone-accent: <?php echo esc_attr($color); ?>"
+            style="--em-zone-accent: <?php echo esc_attr($style['background']); ?>; --em-zone-text: <?php echo esc_attr($style['text']); ?>"
             title="<?php echo esc_attr($label); ?>"
         ><?php echo $inner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
         <?php
@@ -201,7 +234,7 @@ function em_wp_admin_render_landing_map_zone(
         <?php if ($module_slug !== '') { ?>
             data-module-slug="<?php echo esc_attr($module_slug); ?>"
         <?php } ?>
-        style="--em-zone-accent: <?php echo esc_attr($color); ?>"
+        style="--em-zone-accent: <?php echo esc_attr($style['background']); ?>; --em-zone-text: <?php echo esc_attr($style['text']); ?>"
         title="<?php echo esc_attr($label); ?>"
         aria-label="<?php echo esc_attr($title); ?>"
     ><?php echo $inner; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a>

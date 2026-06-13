@@ -15,6 +15,33 @@
     gap: 20px;
 }
 
+/* Preview live Style de base → bloc titre (mutualisé toutes rubriques) */
+.em-wp-admin-module[data-em-admin-style] {
+    --em-module-admin-bg: #100421;
+    --em-module-admin-text: #ffffff;
+}
+
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__hero {
+    background: var(--em-module-admin-bg);
+    color: var(--em-module-admin-text);
+}
+
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__hero .em-wp-admin-module__eyebrow,
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__hero .em-wp-admin-module__description,
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__hero .em-wp-admin-module__title,
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__hero h1,
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__hero h2 {
+    color: inherit;
+}
+
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__toggle {
+    color: inherit;
+}
+
+.em-wp-admin-module[data-em-admin-style] .em-wp-admin-module__section-module {
+    color: var(--em-module-admin-bg);
+}
+
 .em-wp-admin-module__eyebrow {
     margin: 0;
     font-size: 14px;
@@ -152,7 +179,7 @@
     margin-left: 0;
 }
 
-/* Ligne horizontale de champs (Label + Lien + Masquer, etc.) */
+/* Ligne horizontale de champs (Label + Lien + Masquer, plateformes, items…) */
 .em-wp-admin-panel-body--row {
     display: flex;
     align-items: end;
@@ -160,10 +187,116 @@
     flex-wrap: wrap;
 }
 
+.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check),
 .em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) {
     display: grid;
     gap: 6px;
-    min-width: 160px;
+    min-width: 0;
+}
+
+.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) > span,
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) > span {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d2327;
+    line-height: 1.2;
+}
+
+.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) .regular-text,
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) .regular-text {
+    width: 170px;
+    min-width: 170px;
+    max-width: 170px;
+    height: 36px;
+    font-size: 14px;
+    padding: 6px 8px;
+}
+
+.em-wp-admin-panel-body--row > label.em-wp-admin-field--compact .regular-text {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+}
+
+.em-wp-admin-panel-body--row > label.em-wp-admin-field--wide-inline .regular-text {
+    width: min(100%, 360px);
+    min-width: 220px;
+    max-width: 360px;
+}
+
+/* Une ligne par champ (style CMB2 / prod) */
+.em-wp-admin-panel-body--stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.em-wp-admin-panel-body--stack > label {
+    display: grid;
+    grid-template-columns: minmax(140px, 220px) minmax(0, 1fr);
+    align-items: start;
+    gap: 8px 16px;
+    padding: 12px 0;
+    margin: 0;
+    border-bottom: 1px solid #c3c4c7;
+}
+
+.em-wp-admin-panel-body--stack > label:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.em-wp-admin-panel-body--stack > label:first-child {
+    padding-top: 0;
+}
+
+.em-wp-admin-panel-body--stack > label > span {
+    grid-column: 1;
+    grid-row: 1;
+    font-weight: 600;
+    font-size: 13px;
+    color: #1d2327;
+    padding-top: 8px;
+}
+
+.em-wp-admin-panel-body--stack > label > :not(span) {
+    grid-column: 2;
+    margin: 0;
+}
+
+.em-wp-admin-panel-body--stack > label .regular-text {
+    width: 100%;
+    max-width: 520px;
+    height: 36px;
+    font-size: 14px;
+    padding: 6px 8px;
+}
+
+.em-wp-admin-panel-body--stack > label .em-wp-admin-field-input--wide {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 520px !important;
+}
+
+.em-wp-admin-panel-body--stack > label .em-wp-admin-media-picker {
+    max-width: 520px;
+}
+
+.em-wp-admin-panel-body--stack > label .description {
+    margin-top: 4px;
+    color: #646970;
+    font-size: 12px;
+}
+
+.em-wp-admin-panel-body--stack > label .em-wp-admin-media-preview {
+    max-width: 520px;
+}
+
+.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
 }
 
 .em-wp-admin-module__panel-body.em-wp-admin-panel-body--row label.em-wp-admin-inline-check {
@@ -177,15 +310,6 @@
 .em-wp-admin-module__panel-body label.em-wp-admin-inline-check span {
     margin: 0;
     font-size: 13px;
-}
-
-.em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > label:not(.em-wp-admin-inline-check) .regular-text {
-    width: 170px;
-    min-width: 170px;
-    max-width: 170px;
-    height: 36px;
-    font-size: 14px;
-    padding: 6px 8px;
 }
 
 .em-wp-admin-module__panel-body.em-wp-admin-panel-body--row > .regular-text,
@@ -274,6 +398,13 @@
     align-items: center;
     gap: 10px;
     flex-wrap: nowrap;
+}
+
+.em-wp-admin-media-picker .em-wp-admin-field-input--wide {
+    flex: 1 1 auto;
+    width: auto !important;
+    min-width: 280px !important;
+    max-width: none !important;
 }
 
 .em-wp-admin-media-button {
@@ -672,7 +803,7 @@ body.em-wp-admin-confirm-open {
 .em-wp-admin-landing-map__zone.is-active .em-wp-admin-landing-map__zone-label,
 a.em-wp-admin-landing-map__zone:hover .em-wp-admin-landing-map__zone-label,
 a.em-wp-admin-landing-map__zone:focus .em-wp-admin-landing-map__zone-label {
-    color: #ffffff;
+    color: var(--em-zone-text, #ffffff);
 }
 
 a.em-wp-admin-landing-map__zone {
