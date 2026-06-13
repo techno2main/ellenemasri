@@ -10,11 +10,34 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Retourne le slug de style du Slider actif.
+ * Retourne le slug de la page hub Sliders.
+ */
+function em_wp_slider_hub_menu_slug(): string
+{
+    return 'em-wp-sliders';
+}
+
+/**
+ * Retourne le slug de style du Slider actif sur le front.
  */
 function em_wp_slider_active_style_slug(): string
 {
-    return 'mayami';
+    $saved = get_option('em_wp_slider_active_style', 'mayami');
+
+    return em_wp_slider_sanitize_active_style($saved);
+}
+
+/**
+ * Sanitize le slug du slider actif.
+ *
+ * @param mixed $value
+ */
+function em_wp_slider_sanitize_active_style($value): string
+{
+    $slug = sanitize_key((string) $value);
+    $definitions = em_wp_slider_style_definitions();
+
+    return isset($definitions[$slug]) ? $slug : 'mayami';
 }
 
 /**
@@ -28,6 +51,11 @@ function em_wp_slider_style_definitions(): array
             'menu_title' => __('Slider Mayami', 'em-wp'),
             'page_slug'  => 'em-wp-slider-mayami',
         ],
+        'ellene' => [
+            'label'      => 'Ellene',
+            'menu_title' => __('Slider Ellene', 'em-wp'),
+            'page_slug'  => 'em-wp-slider-ellene',
+        ],
     ];
 }
 
@@ -36,7 +64,7 @@ function em_wp_slider_style_definitions(): array
  */
 function em_wp_slider_parent_menu_slug(): string
 {
-    return 'em-wp-slider-mayami';
+    return em_wp_slider_hub_menu_slug();
 }
 
 /**
@@ -44,7 +72,10 @@ function em_wp_slider_parent_menu_slug(): string
  */
 function em_wp_slider_admin_page_slugs(): array
 {
-    return wp_list_pluck(em_wp_slider_style_definitions(), 'page_slug');
+    return array_merge(
+        [em_wp_slider_hub_menu_slug()],
+        wp_list_pluck(em_wp_slider_style_definitions(), 'page_slug')
+    );
 }
 
 /**
@@ -52,13 +83,17 @@ function em_wp_slider_admin_page_slugs(): array
  */
 function em_wp_slider_style_from_page_slug(string $page_slug): string
 {
+    if ($page_slug === em_wp_slider_hub_menu_slug()) {
+        return '';
+    }
+
     foreach (em_wp_slider_style_definitions() as $style_slug => $definition) {
         if (($definition['page_slug'] ?? '') === $page_slug) {
             return $style_slug;
         }
     }
 
-    return 'mayami';
+    return '';
 }
 
 /**
@@ -69,6 +104,17 @@ function em_wp_slider_get_admin_context(): array
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $style_slug = em_wp_slider_style_from_page_slug($page_slug);
     $definitions = em_wp_slider_style_definitions();
+
+    if ($style_slug === '') {
+        return [
+            'style_slug'  => '',
+            'label'       => '',
+            'page_slug'   => em_wp_slider_hub_menu_slug(),
+            'option_name' => '',
+            'group'       => '',
+        ];
+    }
+
     $definition = $definitions[$style_slug] ?? $definitions['mayami'];
 
     return [
@@ -97,70 +143,6 @@ function em_wp_slider_group_name(string $style_slug): string
 }
 
 /**
- * Nombre max de slides gérées par le module.
- */
-function em_wp_slider_max_slides(): int
-{
-    return 12;
-}
-
-/**
- * Retourne le nombre de slides effectivement visibles dans l'admin.
- */
-function em_wp_slider_effective_slides_count(array $options): int
-{
-    $max = em_wp_slider_max_slides();
-    $count = max(1, min($max, intval($options['slides_count'] ?? 7)));
-    $last_used = $count;
-
-    for ($i = 1; $i <= $max; $i++) {
-        $has_name = trim((string) ($options['slide_' . $i . '_name'] ?? '')) !== '';
-        $has_image = trim((string) ($options['slide_' . $i . '_image'] ?? '')) !== '';
-        $has_video = trim((string) ($options['slide_' . $i . '_video_url'] ?? '')) !== '';
-        $has_tiktok = trim((string) ($options['slide_' . $i . '_tiktok_url'] ?? '')) !== '';
-        $has_tiktok_mp4 = trim((string) ($options['slide_' . $i . '_tiktok_video_url'] ?? '')) !== '';
-
-        if ($has_name || $has_image || $has_video || $has_tiktok || $has_tiktok_mp4) {
-            $last_used = max($last_used, $i);
-        }
-    }
-
-    return max(1, min($max, $last_used));
-}
-
-/**
- * Enregistre la page Slider.
- */
-function em_wp_slider_add_admin_page(): void
-{
-    $definitions = em_wp_slider_style_definitions();
-    $parent_slug = em_wp_slider_parent_menu_slug();
-    $parent_definition = $definitions['mayami'] ?? reset($definitions);
-
-    add_menu_page(
-        __('Sliders', 'em-wp'),
-        __('Sliders', 'em-wp'),
-        'manage_options',
-        $parent_slug,
-        'em_wp_slider_render_admin_page',
-        'dashicons-images-alt2',
-        59
-    );
-
-    if (is_array($parent_definition)) {
-        add_submenu_page(
-            $parent_slug,
-            (string) ($parent_definition['menu_title'] ?? __('Slider Mayami', 'em-wp')),
-            (string) ($parent_definition['menu_title'] ?? __('Slider Mayami', 'em-wp')),
-            'manage_options',
-            (string) ($parent_definition['page_slug'] ?? $parent_slug),
-            'em_wp_slider_render_admin_page'
-        );
-    }
-}
-add_action('admin_menu', 'em_wp_slider_add_admin_page');
-
-/**
  * Charge les assets admin du module Slider.
  */
 function em_wp_slider_admin_enqueue(string $hook_suffix): void
@@ -171,23 +153,96 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
     }
 
     $context = em_wp_slider_get_admin_context();
-    $style_slug = sanitize_key((string) ($context['style_slug'] ?? 'mayami'));
+    $style_slug = sanitize_key((string) ($context['style_slug'] ?? ''));
 
-    em_wp_admin_enqueue_module_assets(
+    em_wp_admin_enqueue_shared_assets();
+
+    if ($style_slug === '') {
+        return;
+    }
+
+    $theme_uri = get_template_directory_uri();
+
+    wp_enqueue_script(
+        'em-wp-admin-slide-sortable',
+        $theme_uri . '/assets/admin/js/shared/slide-sortable.js',
+        [],
+        em_wp_admin_asset_version('assets/admin/js/shared/slide-sortable.js'),
+        true
+    );
+
+    wp_enqueue_style(
         'em-wp-slider-admin',
-        'assets/admin/css/modules/slider/' . $style_slug . '/slider.css',
+        $theme_uri . '/assets/admin/css/modules/slider/' . $style_slug . '/slider.css',
+        ['em-wp-admin-color-picker', 'em-wp-admin-module-common'],
+        em_wp_admin_asset_version('assets/admin/css/modules/slider/' . $style_slug . '/slider.css')
+    );
+
+    wp_enqueue_script(
         'em-wp-slider-admin',
-        'assets/admin/js/modules/slider/' . $style_slug . '/slider.js',
-        ['wp-color-picker']
+        $theme_uri . '/assets/admin/js/modules/slider/' . $style_slug . '/slider.js',
+        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-accordion', 'em-wp-admin-confirm-modal', 'em-wp-admin-slide-sortable'],
+        em_wp_admin_asset_version('assets/admin/js/modules/slider/' . $style_slug . '/slider.js'),
+        true
     );
 }
 add_action('admin_enqueue_scripts', 'em_wp_slider_admin_enqueue');
+
+/**
+ * Enregistre la page Slider.
+ */
+function em_wp_slider_add_admin_page(): void
+{
+    $definitions = em_wp_slider_style_definitions();
+    $parent_slug = em_wp_slider_hub_menu_slug();
+
+    add_menu_page(
+        __('SLIDERS', 'em-wp'),
+        __('SLIDERS', 'em-wp'),
+        'manage_options',
+        $parent_slug,
+        'em_wp_slider_render_admin_page',
+        'dashicons-images-alt2',
+        59
+    );
+
+    foreach ($definitions as $definition) {
+        add_submenu_page(
+            $parent_slug,
+            (string) ($definition['menu_title'] ?? __('Slider', 'em-wp')),
+            (string) ($definition['menu_title'] ?? __('Slider', 'em-wp')),
+            'manage_options',
+            (string) ($definition['page_slug'] ?? 'em-wp-slider-mayami'),
+            'em_wp_slider_render_admin_page'
+        );
+    }
+}
+add_action('admin_menu', 'em_wp_slider_add_admin_page');
+
+/**
+ * Retire le sous-menu dupliqué créé automatiquement par WordPress.
+ */
+function em_wp_slider_remove_duplicate_submenu(): void
+{
+    remove_submenu_page(em_wp_slider_hub_menu_slug(), em_wp_slider_hub_menu_slug());
+}
+add_action('admin_menu', 'em_wp_slider_remove_duplicate_submenu', 999);
 
 /**
  * Enregistre les options Slider via Settings API.
  */
 function em_wp_slider_register_settings(): void
 {
+    register_setting(
+        'em_wp_slider_global_group',
+        'em_wp_slider_active_style',
+        [
+            'type'              => 'string',
+            'sanitize_callback' => 'em_wp_slider_sanitize_active_style',
+            'default'           => 'mayami',
+        ]
+    );
+
     foreach (array_keys(em_wp_slider_style_definitions()) as $style_slug) {
         register_setting(
             em_wp_slider_group_name($style_slug),
@@ -195,7 +250,7 @@ function em_wp_slider_register_settings(): void
             [
                 'type'              => 'array',
                 'sanitize_callback' => 'em_wp_slider_sanitize_options',
-                'default'           => em_wp_slider_default_options(),
+                'default'           => em_wp_slider_default_options($style_slug),
             ]
         );
     }
@@ -205,31 +260,22 @@ add_action('admin_init', 'em_wp_slider_register_settings');
 /**
  * Valeurs par defaut du module Slider.
  */
-function em_wp_slider_default_options(): array
+function em_wp_slider_default_options(string $style_slug = 'mayami'): array
 {
-    $defaults = [
-        'enabled'        => true,
-        'frame_bg_color' => '#12338f',
-        'footer_bg_color'=> '#f2ebd1',
-        'footer_text'    => '#100421',
-        'footer_title'   => __('MAYAMI, MY MIAMI', 'em-wp'),
-        'slider_title_hidden' => false,
-        'slides_count'   => 7,
+    $footer_titles = [
+        'mayami' => __('MAYAMI, MY MIAMI', 'em-wp'),
+        'ellene' => __('ELLENE', 'em-wp'),
     ];
 
-    for ($i = 1; $i <= em_wp_slider_max_slides(); $i++) {
-        $defaults['slide_' . $i . '_name'] = sprintf(__('Slide %d', 'em-wp'), $i);
-        $defaults['slide_' . $i . '_type'] = 'image';
-        $defaults['slide_' . $i . '_image'] = '';
-        $defaults['slide_' . $i . '_video_url'] = '';
-        $defaults['slide_' . $i . '_tiktok_url'] = '';
-        $defaults['slide_' . $i . '_tiktok_video_url'] = '';
-        $defaults['slide_' . $i . '_alt_text'] = '';
-        $defaults['slide_' . $i . '_duration'] = '5';
-        $defaults['slide_' . $i . '_hidden'] = false;
-    }
-
-    return $defaults;
+    return [
+        'enabled'             => true,
+        'frame_bg_color'      => '#12338f',
+        'footer_bg_color'     => '#f2ebd1',
+        'footer_text'         => '#100421',
+        'footer_title'        => $footer_titles[$style_slug] ?? $footer_titles['mayami'],
+        'slider_title_hidden' => false,
+        'slides'              => [em_wp_slider_default_slide()],
+    ];
 }
 
 /**
@@ -238,11 +284,22 @@ function em_wp_slider_default_options(): array
 function em_wp_slider_get_options(string $style_slug = 'mayami'): array
 {
     $saved = get_option(em_wp_slider_option_name($style_slug), []);
+    if ($style_slug === 'mayami' && empty($saved)) {
+        $saved = get_option('em_wp_slider_options', []);
+    }
+
     if (!is_array($saved)) {
         $saved = [];
     }
 
-    return wp_parse_args($saved, em_wp_slider_default_options());
+    $defaults = em_wp_slider_default_options($style_slug);
+    unset($defaults['slides']);
+
+    $merged = wp_parse_args($saved, $defaults);
+    $merged = em_wp_slider_migrate_legacy_options($merged);
+    $merged['slides'] = em_wp_slider_get_slides_list($merged);
+
+    return $merged;
 }
 
 /**
@@ -250,38 +307,19 @@ function em_wp_slider_get_options(string $style_slug = 'mayami'): array
  */
 function em_wp_slider_sanitize_options(array $input): array
 {
-    $sanitized = [
-        'enabled'         => !empty($input['enabled']),
-        'frame_bg_color'  => sanitize_hex_color($input['frame_bg_color'] ?? '') ?: '',
-        'footer_bg_color' => sanitize_hex_color($input['footer_bg_color'] ?? '') ?: '',
-        'footer_text'     => sanitize_hex_color($input['footer_text'] ?? '') ?: '',
-        'footer_title'    => sanitize_text_field($input['footer_title'] ?? ''),
+    return [
+        'enabled'             => !empty($input['enabled']),
+        'frame_bg_color'      => sanitize_hex_color($input['frame_bg_color'] ?? '') ?: '',
+        'footer_bg_color'     => sanitize_hex_color($input['footer_bg_color'] ?? '') ?: '',
+        'footer_text'         => sanitize_hex_color($input['footer_text'] ?? '') ?: '',
+        'footer_title'        => sanitize_text_field($input['footer_title'] ?? ''),
         'slider_title_hidden' => !empty($input['slider_title_hidden']),
-        'slides_count'    => max(1, min(em_wp_slider_max_slides(), intval($input['slides_count'] ?? 7))),
+        'slides'              => em_wp_slider_sanitize_slides_from_input($input['slides'] ?? []),
     ];
-
-    for ($i = 1; $i <= em_wp_slider_max_slides(); $i++) {
-        $sanitized['slide_' . $i . '_name'] = sanitize_text_field($input['slide_' . $i . '_name'] ?? '');
-        $slide_type = sanitize_key((string) ($input['slide_' . $i . '_type'] ?? 'image'));
-        if (!in_array($slide_type, ['image', 'video', 'tiktok'], true)) {
-            $slide_type = 'image';
-        }
-
-        $sanitized['slide_' . $i . '_type'] = $slide_type;
-        $sanitized['slide_' . $i . '_image'] = esc_url_raw($input['slide_' . $i . '_image'] ?? '');
-        $sanitized['slide_' . $i . '_video_url'] = esc_url_raw($input['slide_' . $i . '_video_url'] ?? '');
-        $sanitized['slide_' . $i . '_tiktok_url'] = esc_url_raw($input['slide_' . $i . '_tiktok_url'] ?? '');
-        $sanitized['slide_' . $i . '_tiktok_video_url'] = esc_url_raw($input['slide_' . $i . '_tiktok_video_url'] ?? '');
-        $sanitized['slide_' . $i . '_alt_text'] = sanitize_text_field($input['slide_' . $i . '_alt_text'] ?? '');
-        $sanitized['slide_' . $i . '_duration'] = (string) max(1, intval($input['slide_' . $i . '_duration'] ?? 5));
-        $sanitized['slide_' . $i . '_hidden'] = !empty($input['slide_' . $i . '_hidden']);
-    }
-
-    return $sanitized;
 }
 
 /**
- * Rendu de la page admin Slider.
+ * Rendu de la page admin Slider (hub + configuration).
  */
 function em_wp_slider_render_admin_page(): void
 {
@@ -290,13 +328,98 @@ function em_wp_slider_render_admin_page(): void
     }
 
     $context = em_wp_slider_get_admin_context();
-    $options = em_wp_slider_get_options($context['style_slug']);
+    $style_slug = (string) ($context['style_slug'] ?? '');
+    $active_style = em_wp_slider_active_style_slug();
     ?>
     <div class="wrap em-wp-slider-admin em-wp-admin-module">
         <div class="em-wp-slider-admin__hero em-wp-admin-module__hero">
             <div>
                 <p class="em-wp-slider-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('SLIDER', 'em-wp'); ?></p>
-                <h1 class="em-wp-admin-module__title"><?php esc_html_e('Section SLIDER - MAYAMI', 'em-wp'); ?></h1>
+                <h1 class="em-wp-admin-module__title"><?php esc_html_e('Sliders', 'em-wp'); ?></h1>
+            </div>
+        </div>
+
+        <div class="em-wp-admin-module-hub">
+            <?php em_wp_slider_render_admin_sidebar($style_slug, $active_style); ?>
+
+            <div class="em-wp-admin-module-hub__content">
+                <?php if ($style_slug === '') { ?>
+                    <div class="em-wp-admin-module-hub__empty">
+                        <p><?php esc_html_e('Sélectionnez un slider dans la liste pour afficher sa configuration.', 'em-wp'); ?></p>
+                    </div>
+                <?php } else {
+                    $options = em_wp_slider_get_options($style_slug);
+                    em_wp_slider_render_style_setup($context, $options);
+                } ?>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Rendu de la liste des sliders disponibles (colonne hub).
+ */
+function em_wp_slider_render_admin_sidebar(string $selected_style_slug, string $active_style_slug): void
+{
+    $definitions = em_wp_slider_style_definitions();
+    ?>
+    <aside class="em-wp-admin-module-hub__sidebar">
+        <h2 class="em-wp-admin-module-hub__title"><?php esc_html_e('Sliders disponibles', 'em-wp'); ?></h2>
+
+        <ul class="em-wp-admin-module-hub__list">
+            <?php foreach ($definitions as $style_slug => $definition) {
+                $page_slug = (string) ($definition['page_slug'] ?? '');
+                $label = (string) ($definition['label'] ?? $style_slug);
+                $is_selected = $selected_style_slug === $style_slug;
+                $is_active = $active_style_slug === $style_slug;
+                $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+                ?>
+                <li class="em-wp-admin-module-hub__list-item<?php echo $is_selected ? ' is-selected' : ''; ?><?php echo $is_active ? ' is-active' : ''; ?>">
+                    <a class="em-wp-admin-module-hub__list-link" href="<?php echo esc_url($item_url); ?>">
+                        <span class="em-wp-admin-module-hub__list-label"><?php echo esc_html(sprintf(__('Slider %s', 'em-wp'), $label)); ?></span>
+                        <?php if ($is_active) { ?>
+                            <span class="em-wp-admin-module-hub__badge em-wp-admin-module-hub__badge--active"><?php esc_html_e('Actif', 'em-wp'); ?></span>
+                        <?php } ?>
+                    </a>
+                </li>
+            <?php } ?>
+        </ul>
+
+        <form class="em-wp-admin-module-hub__active-form" method="post" action="options.php">
+            <?php settings_fields('em_wp_slider_global_group'); ?>
+            <fieldset class="em-wp-admin-module-hub__active-fieldset">
+                <legend><?php esc_html_e('Slider affiché sur le site', 'em-wp'); ?></legend>
+                <?php foreach ($definitions as $style_slug => $definition) {
+                    $label = (string) ($definition['label'] ?? $style_slug);
+                    ?>
+                    <label class="em-wp-admin-module-hub__active-option">
+                        <input type="radio" name="em_wp_slider_active_style" value="<?php echo esc_attr($style_slug); ?>" <?php checked($active_style_slug, $style_slug); ?>>
+                        <span><?php echo esc_html($label); ?></span>
+                    </label>
+                <?php } ?>
+            </fieldset>
+            <?php submit_button(__('Enregistrer le slider actif', 'em-wp'), 'secondary', 'submit', false); ?>
+        </form>
+    </aside>
+    <?php
+}
+
+/**
+ * Rendu du panneau de configuration d'une variante Slider.
+ *
+ * @param array<string, mixed> $context
+ * @param array<string, mixed> $options
+ */
+function em_wp_slider_render_style_setup(array $context, array $options): void
+{
+    $slider_label = strtoupper((string) ($context['label'] ?? 'MAYAMI'));
+    ?>
+    <div class="em-wp-slider-admin__setup">
+        <div class="em-wp-slider-admin__setup-header em-wp-admin-module__hero">
+            <div>
+                <p class="em-wp-slider-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('SLIDER', 'em-wp'); ?></p>
+                <h2 class="em-wp-admin-module__title"><?php echo esc_html(sprintf(__('Section SLIDER - %s', 'em-wp'), $slider_label)); ?></h2>
             </div>
             <label class="em-wp-admin-module__toggle">
                 <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
@@ -333,7 +456,12 @@ function em_wp_slider_render_admin_page(): void
                 );
                 ?>
 
-                <div class="em-wp-slider-admin__section-title em-wp-admin-module__section-title"><?php esc_html_e('Slides', 'em-wp'); ?> <span class="em-wp-slider-admin__section-module em-wp-admin-module__section-module"><?php esc_html_e('de Slider Mayami', 'em-wp'); ?></span></div>
+                <div class="em-wp-slider-admin__section-title em-wp-admin-module__section-title">
+                    <?php esc_html_e('Slides', 'em-wp'); ?>
+                    <span class="em-wp-slider-admin__section-module em-wp-admin-module__section-module">
+                        <?php echo esc_html(sprintf(__('de Slider %s', 'em-wp'), (string) ($context['label'] ?? 'Mayami'))); ?>
+                    </span>
+                </div>
 
                 <section class="em-wp-slider-panel em-wp-admin-module__panel em-wp-slider-item-panel">
                     <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-slider-panel')); ?>" type="button" aria-expanded="false">
@@ -362,116 +490,131 @@ function em_wp_slider_render_admin_page(): void
  */
 function em_wp_slider_render_slides_panel(array $context, array $options): void
 {
-    $max_slides = em_wp_slider_max_slides();
-    $visible_slides = em_wp_slider_effective_slides_count($options);
+    $slides = em_wp_slider_get_slides_list($options);
     ?>
     <section class="em-wp-slider-panel em-wp-admin-module__panel">
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-slider-panel')); ?>" type="button" aria-expanded="false">
             <span class="em-wp-admin-module__item-header-line"><span class="em-wp-admin-panel__has-children" title="<?php esc_attr_e('Contient des sous-éléments', 'em-wp'); ?>"><i class="fa-solid fa-list" aria-hidden="true"></i></span><span><?php esc_html_e('Slides', 'em-wp'); ?></span></span>
         </button>
         <div class="em-wp-admin-module__panel-body">
-            <input type="hidden" id="em-wp-slider-slides-count" name="<?php echo esc_attr($context['option_name']); ?>[slides_count]" value="<?php echo esc_attr((string) $visible_slides); ?>">
-            <div class="em-wp-admin-nested-list em-wp-slider-slide-list">
-                <?php for ($i = 1; $i <= $max_slides; $i++) { em_wp_slider_render_slide_panel($i, $context, $options, $i > $visible_slides); } ?>
+            <div class="em-wp-admin-nested-list em-wp-slider-slide-list" id="em-wp-slider-slide-list" data-option-name="<?php echo esc_attr($context['option_name']); ?>">
+                <?php foreach ($slides as $list_index => $slide) {
+                    em_wp_slider_render_slide_item((int) $list_index, $context, $slide);
+                } ?>
             </div>
             <div class="em-wp-slider-slide-actions">
-                <button type="button" class="button button-secondary em-wp-slider-add-slide" data-max-slides="<?php echo esc_attr((string) $max_slides); ?>"><?php esc_html_e('+ Ajouter un slide', 'em-wp'); ?></button>
+                <button type="button" class="button button-secondary em-wp-slider-add-slide"><?php esc_html_e('+ Ajouter un slide', 'em-wp'); ?></button>
             </div>
+            <template id="em-wp-slider-slide-template">
+                <?php em_wp_slider_render_slide_item('__INDEX__', $context, em_wp_slider_default_slide(), true); ?>
+            </template>
         </div>
     </section>
     <?php
 }
 
 /**
- * Rendu d'un panneau slide.
+ * Rendu d'un item slide (liste dynamique).
+ *
+ * @param int|string $list_index Index dans slides[] ou __INDEX__ pour le template JS.
+ * @param array<string, mixed> $context
+ * @param array<string, mixed> $slide
  */
-function em_wp_slider_render_slide_panel(int $index, array $context, array $options, bool $is_extra = false): void
+function em_wp_slider_render_slide_item($list_index, array $context, array $slide, bool $is_template = false): void
 {
-    $name_key = 'slide_' . $index . '_name';
-    $type_key = 'slide_' . $index . '_type';
-    $image_key = 'slide_' . $index . '_image';
-    $video_url_key = 'slide_' . $index . '_video_url';
-    $tiktok_url_key = 'slide_' . $index . '_tiktok_url';
-    $tiktok_video_key = 'slide_' . $index . '_tiktok_video_url';
-    $alt_text_key = 'slide_' . $index . '_alt_text';
-    $duration_key = 'slide_' . $index . '_duration';
-    $hidden_key = 'slide_' . $index . '_hidden';
-    $input_id = 'em-wp-slider-' . $image_key;
-    $tiktok_video_input_id = 'em-wp-slider-' . $tiktok_video_key;
-    $preview_id = $input_id . '-preview';
-    $tiktok_video_preview_id = $tiktok_video_input_id . '-preview';
-    $name_value = trim((string) ($options[$name_key] ?? ''));
-    $display_name = $name_value !== '' ? $name_value : sprintf(__('Slide %d', 'em-wp'), $index);
-    $slide_type = sanitize_key((string) ($options[$type_key] ?? 'image'));
+    $index_token = $is_template ? '__INDEX__' : (string) $list_index;
+    $option_name = $context['option_name'];
+    $field_base = $option_name . '[slides][' . $index_token . ']';
+    $uid = 'em-wp-slider-slide-' . $index_token;
+
+    $name_value = trim((string) ($slide['name'] ?? ''));
+    $display_name = $name_value !== '' ? $name_value : __('Sans titre', 'em-wp');
+    $slide_type = sanitize_key((string) ($slide['type'] ?? 'image'));
     if (!in_array($slide_type, ['image', 'video', 'tiktok'], true)) {
         $slide_type = 'image';
     }
-    $value = (string) ($options[$image_key] ?? '');
-    $video_url_value = (string) ($options[$video_url_key] ?? '');
-    $tiktok_url_value = (string) ($options[$tiktok_url_key] ?? '');
-    $tiktok_video_value = (string) ($options[$tiktok_video_key] ?? '');
-    $alt_text_value = (string) ($options[$alt_text_key] ?? '');
-    $duration_value = (string) ($options[$duration_key] ?? '5');
-    $is_hidden = !empty($options[$hidden_key]);
+
+    $image_value = (string) ($slide['image'] ?? '');
+    $video_url_value = (string) ($slide['video_url'] ?? '');
+    $tiktok_url_value = (string) ($slide['tiktok_url'] ?? '');
+    $tiktok_video_value = (string) ($slide['tiktok_video_url'] ?? '');
+    $alt_text_value = (string) ($slide['alt_text'] ?? '');
+    $duration_value = (string) ($slide['duration'] ?? '5');
+    $is_hidden = !empty($slide['hidden']);
+
+    $image_input_id = $uid . '-image';
+    $image_preview_id = $image_input_id . '-preview';
+    $tiktok_video_input_id = $uid . '-tiktok-video';
+    $tiktok_video_preview_id = $tiktok_video_input_id . '-preview';
     ?>
-    <details class="em-wp-admin-nested-item em-wp-slider-slide-item em-wp-slider-item-panel<?php echo $is_extra ? ' is-extra-slide' : ''; ?>">
+    <details class="em-wp-admin-nested-item em-wp-slider-slide-item em-wp-slider-item-panel" data-slide-item data-list-index="<?php echo esc_attr($index_token); ?>">
         <summary>
-            <span class="em-wp-slider-slide-item__label"><span class="em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-hidden="true"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>"></i></span><button type="button" class="em-wp-slider-slide-item__delete" aria-label="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>" title="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button><i class="fa-solid fa-photo-film" aria-hidden="true"></i><span><?php echo esc_html($display_name); ?></span></span>
+            <span class="em-wp-slider-slide-item__label">
+                <span class="em-wp-slider-slide-item__order">
+                    <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--up" aria-label="<?php esc_attr_e('Monter', 'em-wp'); ?>" title="<?php esc_attr_e('Monter', 'em-wp'); ?>"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
+                    <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--down" aria-label="<?php esc_attr_e('Descendre', 'em-wp'); ?>" title="<?php esc_attr_e('Descendre', 'em-wp'); ?>"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+                    <span class="em-wp-slide-sortable__handle em-wp-slider-slide-item__drag" role="button" tabindex="0" aria-label="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>" title="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+                </span>
+                <span class="em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-hidden="true"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>"></i></span>
+                <button type="button" class="em-wp-slider-slide-item__delete" aria-label="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>" title="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+                <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
+                <span class="em-wp-slider-slide-item__title"><?php echo esc_html($display_name); ?></span>
+            </span>
         </summary>
         <div class="em-wp-admin-nested-item__body em-wp-slider-slide-item__body">
             <div class="em-wp-admin-field-row">
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Nom du slide', 'em-wp'); ?></span>
-                    <input type="text" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($context['option_name'] . '[' . $name_key . ']'); ?>" value="<?php echo esc_attr($display_name); ?>">
+                    <input type="text" class="regular-text em-wp-admin-field-input--wide em-wp-slider-slide-item__name-input" name="<?php echo esc_attr($field_base . '[name]'); ?>" value="<?php echo esc_attr($name_value); ?>">
                 </span>
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Type', 'em-wp'); ?></span>
-                    <select class="em-wp-admin-field-select em-wp-slider-item-panel__type" name="<?php echo esc_attr($context['option_name'] . '[' . $type_key . ']'); ?>">
+                    <select class="em-wp-admin-field-select em-wp-slider-item-panel__type" name="<?php echo esc_attr($field_base . '[type]'); ?>">
                         <option value="image" <?php selected($slide_type, 'image'); ?>><?php esc_html_e('Image', 'em-wp'); ?></option>
                         <option value="video" <?php selected($slide_type, 'video'); ?>><?php esc_html_e('Vidéo YouTube', 'em-wp'); ?></option>
                         <option value="tiktok" <?php selected($slide_type, 'tiktok'); ?>><?php esc_html_e('Vidéo TikTok', 'em-wp'); ?></option>
                     </select>
                 </span>
-                <label class="em-wp-admin-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($context['option_name'] . '[' . $hidden_key . ']'); ?>" value="1" <?php checked($is_hidden); ?>></label>
+                <label class="em-wp-admin-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($field_base . '[hidden]'); ?>" value="1" <?php checked($is_hidden); ?>></label>
             </div>
 
             <div class="em-wp-admin-field-row em-wp-admin-field-row--media em-wp-admin-media-picker" data-slide-field="image">
-                <input type="text" id="<?php echo esc_attr($input_id); ?>" name="<?php echo esc_attr($context['option_name'] . '[' . $image_key . ']'); ?>" value="<?php echo esc_attr($value); ?>" class="regular-text em-wp-admin-field-input--wide">
-                <button type="button" class="button button-secondary em-wp-admin-media-button em-wp-slider-media-button" data-target="<?php echo esc_attr($input_id); ?>" data-preview="<?php echo esc_attr($preview_id); ?>" data-modal-title="<?php echo esc_attr(sprintf(__('Choisir media pour %s', 'em-wp'), $display_name)); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce media', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
+                <input type="text" id="<?php echo esc_attr($image_input_id); ?>" name="<?php echo esc_attr($field_base . '[image]'); ?>" value="<?php echo esc_attr($image_value); ?>" class="regular-text em-wp-admin-field-input--wide">
+                <button type="button" class="button button-secondary em-wp-admin-media-button em-wp-slider-media-button" data-target="<?php echo esc_attr($image_input_id); ?>" data-preview="<?php echo esc_attr($image_preview_id); ?>" data-modal-title="<?php echo esc_attr(sprintf(__('Choisir media pour %s', 'em-wp'), $display_name)); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce media', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
             </div>
-            <div id="<?php echo esc_attr($preview_id); ?>" class="em-wp-admin-media-preview em-wp-slider-preview<?php echo empty($value) ? ' is-empty' : ''; ?>"><?php if (!empty($value)) { ?><img src="<?php echo esc_url($value); ?>" alt=""><?php } ?></div>
+            <div id="<?php echo esc_attr($image_preview_id); ?>" class="em-wp-admin-media-preview em-wp-slider-preview<?php echo $image_value === '' ? ' is-empty' : ''; ?>"><?php if ($image_value !== '') { ?><img src="<?php echo esc_url($image_value); ?>" alt=""><?php } ?></div>
 
             <div class="em-wp-admin-field-row" data-slide-field="video">
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('URL YouTube', 'em-wp'); ?></span>
-                    <input type="url" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($context['option_name'] . '[' . $video_url_key . ']'); ?>" value="<?php echo esc_attr($video_url_value); ?>" placeholder="https://www.youtube.com/watch?v=...">
+                    <input type="url" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($field_base . '[video_url]'); ?>" value="<?php echo esc_attr($video_url_value); ?>" placeholder="https://www.youtube.com/watch?v=...">
                 </span>
             </div>
 
             <div class="em-wp-admin-field-row" data-slide-field="tiktok-url">
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('URL TikTok', 'em-wp'); ?></span>
-                    <input type="url" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($context['option_name'] . '[' . $tiktok_url_key . ']'); ?>" value="<?php echo esc_attr($tiktok_url_value); ?>" placeholder="https://www.tiktok.com/@artist/video/...">
+                    <input type="url" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($field_base . '[tiktok_url]'); ?>" value="<?php echo esc_attr($tiktok_url_value); ?>" placeholder="https://www.tiktok.com/@artist/video/...">
                 </span>
             </div>
 
             <div class="em-wp-admin-field-row em-wp-admin-field-row--media em-wp-admin-media-picker" data-slide-field="tiktok-mp4">
-                <input type="text" id="<?php echo esc_attr($tiktok_video_input_id); ?>" name="<?php echo esc_attr($context['option_name'] . '[' . $tiktok_video_key . ']'); ?>" value="<?php echo esc_attr($tiktok_video_value); ?>" class="regular-text em-wp-admin-field-input--wide">
+                <input type="text" id="<?php echo esc_attr($tiktok_video_input_id); ?>" name="<?php echo esc_attr($field_base . '[tiktok_video_url]'); ?>" value="<?php echo esc_attr($tiktok_video_value); ?>" class="regular-text em-wp-admin-field-input--wide">
                 <button type="button" class="button button-secondary em-wp-admin-media-button em-wp-slider-media-button" data-target="<?php echo esc_attr($tiktok_video_input_id); ?>" data-preview="<?php echo esc_attr($tiktok_video_preview_id); ?>" data-modal-title="<?php echo esc_attr(sprintf(__('Choisir MP4 TikTok pour %s', 'em-wp'), $display_name)); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce media', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
             </div>
-            <div id="<?php echo esc_attr($tiktok_video_preview_id); ?>" class="em-wp-admin-media-preview em-wp-slider-preview<?php echo empty($tiktok_video_value) ? ' is-empty' : ''; ?>"><?php if (!empty($tiktok_video_value)) { ?><video src="<?php echo esc_url($tiktok_video_value); ?>" controls muted preload="metadata"></video><?php } ?></div>
+            <div id="<?php echo esc_attr($tiktok_video_preview_id); ?>" class="em-wp-admin-media-preview em-wp-slider-preview<?php echo $tiktok_video_value === '' ? ' is-empty' : ''; ?>"><?php if ($tiktok_video_value !== '') { ?><video src="<?php echo esc_url($tiktok_video_value); ?>" controls muted preload="metadata"></video><?php } ?></div>
 
             <div class="em-wp-admin-field-row" data-slide-field="alt">
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Texte Alt', 'em-wp'); ?></span>
-                    <input type="text" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($context['option_name'] . '[' . $alt_text_key . ']'); ?>" value="<?php echo esc_attr($alt_text_value); ?>">
+                    <input type="text" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($field_base . '[alt_text]'); ?>" value="<?php echo esc_attr($alt_text_value); ?>">
                 </span>
             </div>
 
             <div class="em-wp-admin-field-row" data-slide-field="duration">
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Durée (secondes)', 'em-wp'); ?></span>
-                    <input type="number" min="1" step="1" class="regular-text em-wp-admin-field-input--narrow" name="<?php echo esc_attr($context['option_name'] . '[' . $duration_key . ']'); ?>" value="<?php echo esc_attr($duration_value); ?>">
+                    <input type="number" min="1" step="1" class="regular-text em-wp-admin-field-input--narrow" name="<?php echo esc_attr($field_base . '[duration]'); ?>" value="<?php echo esc_attr($duration_value); ?>">
                 </span>
             </div>
         </div>
