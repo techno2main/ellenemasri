@@ -2,10 +2,51 @@
 
 > **Branche :** `feature/em-wp-v2-templates`  
 > **V1 (gelée) :** `feature/theme-em-wp`  
-> **Dernière maj doc :** 2026-06-13  
-> **Statut global :** Phases 2–3 ✅ ; Phase 4 🔄 (HEADER + Catalogues — en cours, non poussée)
+> **Dernière maj doc :** 2026-06-13 (soir)  
+> **Statut global :** Phases 0–3 ✅ ; Phase 4 🔄 WIP poussée — **non validée**, revue Tyson demain
 
 Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phase / commit significatif** (statuts, fichiers créés, dette restante).
+
+---
+
+## Prompt reprise (copier-coller en début de session)
+
+```text
+Contexte em-wp V2 — reprise Phase 4 (HEADER + Catalogues Hero/Slider).
+
+Branche : feature/em-wp-v2-templates
+Dernier commit : 64b0ea0 — feat(em-wp/templates): Phase 4 WIP — HEADER, catalogues et menu admin
+Doc suivi : em-wp/documentation/TEMPLATE_V2.md
+Local : http://localhost:8190/wp-admin (Docker em-wp-local, comptes admin-my / ellene-admin)
+
+État : Phase 4 implémentée en WIP et poussée sur GitHub, PAS validée par Tyson.
+Tyson a des remarques et corrections à faire sur ce qui existe déjà — les traiter EN PRIORITÉ
+avant d'enchaîner les tâches restantes.
+
+Modèle Phase 4 validé (ne pas revert) :
+- Rubrique conteneur HEADER (pas HEROS/SLIDERS séparés dans Rubriques)
+- Menu Catalogues > Heros / Sliders (contenu indépendant du bandeau template)
+- HEADER = sélection hero catalogue + slider catalogue + layout (hero_left / slider_left) par template en édition
+- Plan du site : encadrant HEADER avec sous-zones Hero/Slider ; swap = layout interne
+- Pages catalogues : pas de bandeau template
+
+Déjà livré (64b0ea0) :
+- inc/shared/catalog/ (registry, migrate-v1, resolve-style)
+- inc/admin/modules/header/ + inc/front/modules/header/render.php
+- landing-render unifié, header-pair.php, Plan du site encadrant + AJAX layout
+- Menus admin Catalogues + Paramètres, purge séparateurs WP natifs
+- Migration V1 idempotente (em_wp_catalog_maybe_migrate_v1)
+
+Reste Phase 4 (après corrections Tyson) :
+- CRUD catalogue complet (créer, dupliquer, supprimer + nommage obligatoire)
+- Suppression UI/options V1 em_wp_hero_active_style / em_wp_slider_active_style
+- Découper hero/settings.php et slider/settings.php (< 350 L)
+- Tests BACK/FRONT checklist → « OK phase 4 » Tyson → Flow GH
+
+Ensuite : Phase 5 (Sommaire + visibilité par template).
+
+Commencer par : demander / lire les remarques Tyson, puis corriger point par point.
+```
 
 ---
 
@@ -49,7 +90,7 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 | **1** | STREAM par template | ✅ | 589b3cb | Validée — options par template, migration Mayami, module découpé |
 | **2** | VIDEOS + RELEASES par template | ✅ | 99d9b71 | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ✅ | 4ca7251 | |
-| **4** | HEADER + Catalogues Hero/Slider + sélection par template | 🔄 | — | Implémentation locale — attente validation Tyson |
+| **4** | HEADER + Catalogues Hero/Slider + sélection par template | 🔄 | 64b0ea0 | WIP poussée — revue Tyson + corrections avant validation |
 | **5** | Sommaire + visibilité par template | ⬜ | — | |
 | **6** | Migration Mayami + tests front | ⬜ | — | |
 
@@ -57,11 +98,11 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 
 | Fichier | Lignes | Action prévue | Statut |
 |---------|--------|---------------|--------|
-| `inc/admin/modules/slider/settings.php` | ~640 | Découper (voir arborescence) | ⬜ |
-| `inc/admin/modules/hero/settings.php` | ~632 | Découper (voir arborescence) | ⬜ |
+| `inc/admin/modules/slider/settings.php` | ~640 | Découper (voir arborescence) | 🔄 Phase 4 |
+| `inc/admin/modules/hero/settings.php` | ~632 | Découper (voir arborescence) | 🔄 Phase 4 |
 | `inc/admin/pages/rubriques.php` | ~448 | Extraire rendu / helpers | ⬜ |
 | `inc/admin/shared/style-panel.php` | ~406 | OK proche limite ; pas d’ajout massif | ⬜ |
-| `inc/admin/shared/menu.php` | ~401 | Extraire bandeau template → module dédié | ⬜ |
+| `inc/admin/shared/menu.php` | ~720 | Extraire bandeau template → module dédié ; dette accrue Phase 4 | 🔄 |
 | `inc/admin/shared/variant-hub.php` | ~396 | Remplacer progressivement par template-hub | ⬜ |
 | `inc/shared/rubrique-order.php` | ~309 | Ajouter visibilité template sans gonfler | ⬜ |
 
@@ -69,6 +110,9 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 
 | Date | Auteur | Entrée |
 |------|--------|--------|
+| 2026-06-13 | Tyson | Pause soir — remarques/corrections à venir sur Phase 4 WIP ; reprise demain |
+| 2026-06-13 | Agent | Flow GH : commit 64b0ea0 Phase 4 WIP (HEADER, catalogues, menu admin, front) — non validé |
+| 2026-06-13 | Agent | Menu admin : bloc Paramètres, purge séparateurs WP natifs (filet uniforme em-wp) |
 | 2026-06-13 | Agent | Phase 4 en cours : rubrique HEADER, catalogues Heros/Sliders, migration V1, plan du site encadrant HEADER, front landing-render |
 | 2026-06-13 | Tyson | Modèle Phase 4 : rubrique **HEADER** (pas HEROS/SLIDERS séparés) ; menu **Catalogues** > Heros + Sliders ; swap layout interne HEADER |
 | 2026-06-13 | Tyson | Menu Phase 4 : SECTION HERO (rubrique) + catalogues à part ; SLIDERS hors rubriques ; 1 hero/template V2 |
@@ -105,9 +149,9 @@ Plusieurs **Templates** (noms éditables) portent **tout le contenu** des rubriq
 | Priorité multi-template | STREAM → VIDEOS → RELEASES → reste |
 | Hero / Slider | **Catalogue global** réutilisable ; **1 hero + 1 slider par template** (V2) |
 | Édition Hero / Slider | **Catalogues à part** — contenu éditable sans lien au bandeau template |
-| Rattachement hero + slider | Rubrique **SECTION HERO** (template en édition) : choix du hero catalogue + slider catalogue associé |
-| Menu rubriques | **HEROS → SECTION HERO** ; **SLIDERS retiré** (slider = catalogue + choix dans SECTION HERO) |
-| Catalogues admin | **Catalogue Hero** et **Catalogue Slider** — menus **hors** rubriques (CRUD contenu) |
+| Rattachement hero + slider | Rubrique **HEADER** (template en édition) : choix hero catalogue + slider catalogue + layout |
+| Menu rubriques | **HEADER** remplace HEROS/SLIDERS ; sliders retirés des rubriques |
+| Catalogues admin | **Catalogues → Heros / Sliders** — menus hors rubriques (CRUD contenu, sans bandeau template) |
 | Hero × Slider | **Découplés dans le catalogue** ; **associés** au moment du choix dans SECTION HERO (mix libre) |
 | Création Hero / Slider | Dupliquer + renommer immédiat **ou** modèle vierge — **nommage obligatoire en premier** |
 | Slugs initiaux (migration) | `hero-mayami-default`, `hero-ellene-default`, `slider-mayami-default`, `slider-ellene-default` (ajustables plus tard) |
@@ -374,16 +418,20 @@ Catalogue Hero          Catalogue Slider
 
 #### Tâches techniques
 
-- [x] Menus : HEADER + Catalogues Heros/Sliders
+- [x] Menus : HEADER + Catalogues Heros/Sliders + bloc Paramètres (Appearance, Settings, Plugins TAD only)
 - [x] `inc/shared/catalog/` : registry, option-names, migrate-v1, resolve-style
 - [x] Options `em_wp_header_{template}_options`
 - [x] Migration V1 → slugs catalogue + ordre rubrique `header`
 - [x] Front : `em_wp_render_header()` + landing-render sans paire hero/slider
 - [x] Plan du site : encadrant HEADER + AJAX layout swap
 - [x] Enqueue CSS hero/slider depuis config HEADER live
+- [x] Bandeau template masqué sur écrans catalogues (`em_wp_admin_is_catalog_screen`)
+- [x] Menu : séparateurs em-wp uniformes, purge `separator-last` / WP natifs
+- [ ] **Revue Tyson** — remarques et corrections sur l'existant (priorité reprise)
 - [ ] CRUD catalogue complet (créer, dupliquer, supprimer)
 - [ ] Suppression complète options V1 `em_wp_hero_active_style` / UI radio
 - [ ] Découper `hero/settings.php` et `slider/settings.php`
+- [ ] Tests BACK/FRONT checklist ci-dessous
 - [ ] **Maj ce doc** → ✅ après validation Tyson
 
 ### Phase 5 — Sommaire
@@ -397,7 +445,21 @@ Catalogue Hero          Catalogue Slider
 - [ ] Checklist manuelle (tableau ci-dessous)
 - [ ] **Maj ce doc** → statut global Terminé
 
-### Checklist QA finale
+### Checklist QA Phase 4 (avant validation)
+
+| Test | OK |
+|------|-----|
+| Menu : filets uniformes (pas de `li.wp-menu-separator` WP natif) | ⬜ |
+| Menu : Catalogues > Heros / Sliders sans bandeau template | ⬜ |
+| Menu : HEADER dans Rubriques ; Paramètres après Templates | ⬜ |
+| Rubrique HEADER : sélection hero + slider pour template en édition | ⬜ |
+| Plan du site : encadrant HEADER, swap layout hero/slider | ⬜ |
+| Front live : section HEADER rend hero + slider du template actif | ⬜ |
+| Mix catalogue : template Ellene + hero Mayami + slider Ellene | ⬜ |
+| Éditer un hero catalogue sans changer le bandeau template | ⬜ |
+| Migration V1 idempotente (`wp eval 'em_wp_catalog_maybe_migrate_v1();'`) | ⬜ |
+
+### Checklist QA finale (Phase 6)
 
 | Test | OK |
 |------|-----|
