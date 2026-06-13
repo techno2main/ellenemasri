@@ -1,0 +1,77 @@
+<?php
+/**
+ * Rendu front du module Stream.
+ *
+ * @package em-wp
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Options Stream pour le front.
+ */
+function em_wp_stream_get_options_for_front(): array
+{
+    if (function_exists('em_wp_stream_get_options')) {
+        return em_wp_stream_get_options();
+    }
+
+    return em_wp_stream_default_options();
+}
+
+/**
+ * Enqueue assets front Stream.
+ */
+function em_wp_stream_enqueue_front_assets(): void
+{
+    $theme_version = wp_get_theme()->get('Version');
+    $theme_uri = get_template_directory_uri();
+    $css_path = 'assets/front/css/modules/stream/stream.css';
+    $js_path = 'assets/front/js/modules/stream/stream.js';
+
+    wp_enqueue_style(
+        'em-wp-stream',
+        $theme_uri . '/' . $css_path,
+        ['em-wp-theme', 'font-awesome-6'],
+        file_exists(get_template_directory() . '/' . $css_path)
+            ? $theme_version . '.' . filemtime(get_template_directory() . '/' . $css_path)
+            : $theme_version
+    );
+
+    wp_enqueue_script(
+        'em-wp-stream',
+        $theme_uri . '/' . $js_path,
+        ['em-wp-theme'],
+        file_exists(get_template_directory() . '/' . $js_path)
+            ? $theme_version . '.' . filemtime(get_template_directory() . '/' . $js_path)
+            : $theme_version,
+        true
+    );
+}
+
+/**
+ * Affiche la section Stream.
+ */
+function em_wp_render_stream(): void
+{
+    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('stream')) {
+        return;
+    }
+
+    $stream = em_wp_stream_get_options_for_front();
+
+    if (empty($stream['enabled'])) {
+        return;
+    }
+
+    em_wp_stream_enqueue_front_assets();
+
+    get_template_part('template-parts/sections/stream/stream', null, [
+        'stream'    => $stream,
+        'platforms' => function_exists('em_wp_get_stream_platforms_for_front')
+            ? em_wp_get_stream_platforms_for_front()
+            : [],
+    ]);
+}
