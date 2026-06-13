@@ -94,19 +94,35 @@ function em_wp_landing_module_is_enabled(string $module_slug): bool
 
             return !empty(em_wp_get_slider_options_for_front()['enabled']);
         case 'stream':
-            if (!function_exists('em_wp_stream_get_options')) {
-                return true;
+            if (!function_exists('em_wp_stream_get_options_for_front')) {
+                return !empty(em_wp_stream_get_options()['enabled']);
             }
 
-            return !empty(em_wp_stream_get_options()['enabled']);
+            return !empty(em_wp_stream_get_options_for_front()['enabled']);
         case 'social':
-            return !empty(em_wp_social_get_options()['enabled']);
+            if (!function_exists('em_wp_social_get_options_for_front')) {
+                return !empty(em_wp_social_get_options()['enabled']);
+            }
+
+            return !empty(em_wp_social_get_options_for_front()['enabled']);
         case 'video':
-            return !empty(em_wp_video_get_options()['enabled']);
+            if (!function_exists('em_wp_video_get_options_for_front')) {
+                return !empty(em_wp_video_get_options()['enabled']);
+            }
+
+            return !empty(em_wp_video_get_options_for_front()['enabled']);
         case 'release':
-            return !empty(em_wp_release_get_options()['enabled']);
+            if (!function_exists('em_wp_release_get_options_for_front')) {
+                return !empty(em_wp_release_get_options()['enabled']);
+            }
+
+            return !empty(em_wp_release_get_options_for_front()['enabled']);
         case 'cta':
-            return !empty(em_wp_cta_get_options()['enabled']);
+            if (!function_exists('em_wp_cta_get_options_for_front')) {
+                return !empty(em_wp_cta_get_options()['enabled']);
+            }
+
+            return !empty(em_wp_cta_get_options_for_front()['enabled']);
         default:
             return false;
     }

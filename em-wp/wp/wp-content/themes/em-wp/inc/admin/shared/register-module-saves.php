@@ -32,7 +32,16 @@ function em_wp_admin_register_all_module_saves(): void
 
     em_wp_admin_register_module_save('top-bar', [
         'nonce_action' => 'em_wp_top_bar_save',
-        'option_name'  => 'em_wp_top_bar_options',
+        'option_name'  => static function (): string {
+            $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+            if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+            }
+
+            return em_wp_top_bar_option_name($template_slug !== '' ? $template_slug : null);
+        },
+        'value_field'  => 'em_wp_top_bar_options',
         'page_slug'    => function_exists('em_wp_top_bar_page_slug') ? em_wp_top_bar_page_slug() : 'em-wp-top-bar',
         'sanitize'     => 'em_wp_top_bar_sanitize_options',
     ]);
@@ -129,35 +138,80 @@ function em_wp_admin_register_all_module_saves(): void
 
     em_wp_admin_register_module_save('social', [
         'nonce_action' => 'em_wp_social_save',
-        'option_name'  => 'em_wp_social_options',
+        'option_name'  => static function (): string {
+            $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+            if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+            }
+
+            return em_wp_social_option_name($template_slug !== '' ? $template_slug : null);
+        },
+        'value_field'  => 'em_wp_social_options',
         'page_slug'    => function_exists('em_wp_social_page_slug') ? em_wp_social_page_slug() : 'em-wp-social',
         'sanitize'     => 'em_wp_social_sanitize_options',
     ]);
 
     em_wp_admin_register_module_save('video', [
         'nonce_action' => 'em_wp_video_save',
-        'option_name'  => 'em_wp_video_options',
+        'option_name'  => static function (): string {
+            $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+            if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+            }
+
+            return em_wp_video_option_name($template_slug !== '' ? $template_slug : null);
+        },
+        'value_field'  => 'em_wp_video_options',
         'page_slug'    => function_exists('em_wp_video_page_slug') ? em_wp_video_page_slug() : 'em-wp-videos',
         'sanitize'     => 'em_wp_video_sanitize_options',
     ]);
 
     em_wp_admin_register_module_save('release', [
         'nonce_action' => 'em_wp_release_save',
-        'option_name'  => 'em_wp_release_options',
+        'option_name'  => static function (): string {
+            $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+            if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+            }
+
+            return em_wp_release_option_name($template_slug !== '' ? $template_slug : null);
+        },
+        'value_field'  => 'em_wp_release_options',
         'page_slug'    => function_exists('em_wp_release_page_slug') ? em_wp_release_page_slug() : 'em-wp-releases',
         'sanitize'     => 'em_wp_release_sanitize_options',
     ]);
 
     em_wp_admin_register_module_save('cta', [
         'nonce_action' => 'em_wp_cta_save',
-        'option_name'  => 'em_wp_cta_options',
+        'option_name'  => static function (): string {
+            $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+            if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+            }
+
+            return em_wp_cta_option_name($template_slug !== '' ? $template_slug : null);
+        },
+        'value_field'  => 'em_wp_cta_options',
         'page_slug'    => function_exists('em_wp_cta_page_slug') ? em_wp_cta_page_slug() : 'em-wp-cta',
         'sanitize'     => 'em_wp_cta_sanitize_options',
     ]);
 
     em_wp_admin_register_module_save('footer', [
         'nonce_action' => 'em_wp_footer_save',
-        'option_name'  => 'em_wp_footer_options',
+        'option_name'  => static function (): string {
+            $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+            if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+            }
+
+            return em_wp_footer_option_name($template_slug !== '' ? $template_slug : null);
+        },
+        'value_field'  => 'em_wp_footer_options',
         'page_slug'    => function_exists('em_wp_footer_page_slug') ? em_wp_footer_page_slug() : 'em-wp-footer',
         'sanitize'     => 'em_wp_footer_sanitize_options',
     ]);

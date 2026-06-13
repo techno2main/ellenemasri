@@ -30,9 +30,105 @@ function em_wp_template_visibility_store(): array
 }
 
 /**
+ * Rubriques dont la visibilité est portée par les options template V2 (enabled).
+ *
+ * @return string[]
+ */
+function em_wp_template_scoped_rubrique_slugs(): array
+{
+    return [
+        'stream',
+        'video',
+        'release',
+        'top-bar',
+        'social',
+        'cta',
+        'footer',
+    ];
+}
+
+/**
+ * Indique si une rubrique utilise les options par template (visibilité indépendante).
+ */
+function em_wp_rubrique_uses_template_scoped_options(string $module_slug): bool
+{
+    return in_array(sanitize_key($module_slug), em_wp_template_scoped_rubrique_slugs(), true);
+}
+
+/**
+ * Slug template pour résoudre la visibilité (admin = édition, front = live).
+ */
+function em_wp_resolve_rubrique_visibility_template_slug(?string $template_slug = null): string
+{
+    if ($template_slug !== null && $template_slug !== '') {
+        return em_wp_template_sanitize_slug($template_slug);
+    }
+
+    if (is_admin() && function_exists('em_wp_get_editing_template_slug')) {
+        return em_wp_get_editing_template_slug();
+    }
+
+    if (function_exists('em_wp_front_get_live_template_slug')) {
+        return em_wp_front_get_live_template_slug();
+    }
+
+    return function_exists('em_wp_get_active_template_slug') ? em_wp_get_active_template_slug() : '';
+}
+
+/**
+ * Visibilité (enabled) d'une rubrique pour un template via options V2.
+ */
+function em_wp_get_rubrique_enabled_for_template(string $module_slug, ?string $template_slug = null): bool
+{
+    $module_slug = sanitize_key($module_slug);
+    $template_slug = em_wp_resolve_rubrique_visibility_template_slug($template_slug);
+
+    if ($module_slug === '' || $template_slug === '') {
+        return true;
+    }
+
+    $saved = em_wp_get_template_rubrique_options($module_slug, $template_slug);
+
+    if (array_key_exists('enabled', $saved)) {
+        return (bool) $saved['enabled'];
+    }
+
+    return true;
+}
+
+/**
+ * Met à jour enabled dans les options template d'une rubrique.
+ */
+function em_wp_set_rubrique_enabled_for_template(string $module_slug, bool $enabled, ?string $template_slug = null): bool
+{
+    $module_slug = sanitize_key($module_slug);
+    $template_slug = em_wp_resolve_rubrique_visibility_template_slug($template_slug);
+
+    if ($module_slug === '' || $template_slug === '') {
+        return false;
+    }
+
+    $option_name = em_wp_template_resolve_option_name($module_slug, $template_slug);
+    $saved = get_option($option_name, []);
+
+    if (!is_array($saved)) {
+        $saved = [];
+    }
+
+    if ((bool) ($saved['enabled'] ?? true) === $enabled) {
+        return true;
+    }
+
+    $saved['enabled'] = $enabled;
+
+    return update_option($option_name, $saved, false);
+}
+
+/**
  * Indique si une rubrique est visible pour un template.
  *
- * Phase 0 : stockage prêt ; le front continue d'utiliser em_wp_get_site_rubrique_visibility().
+ * Rubriques V2 (stream, video, release) : `enabled` dans options template.
+ * Autres rubriques : store `em_wp_template_visibility` puis défaut visible.
  */
 function em_wp_is_template_rubrique_visible(string $template_slug, string $rubrique_slug): bool
 {
@@ -41,6 +137,10 @@ function em_wp_is_template_rubrique_visible(string $template_slug, string $rubri
 
     if ($template_slug === '' || $rubrique_slug === '') {
         return true;
+    }
+
+    if (em_wp_rubrique_uses_template_scoped_options($rubrique_slug)) {
+        return em_wp_get_rubrique_enabled_for_template($rubrique_slug, $template_slug);
     }
 
     $store = em_wp_template_visibility_store();
