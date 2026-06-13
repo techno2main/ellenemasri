@@ -150,6 +150,10 @@ function em_wp_slider_collect_slides(array $slider): array
  */
 function em_wp_render_slider_section(array $args = []): void
 {
+    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('slider')) {
+        return;
+    }
+
     $wrapper = sanitize_key((string) ($args['wrapper'] ?? 'inline'));
     if (!in_array($wrapper, ['inline', 'column', 'section'], true)) {
         $wrapper = 'inline';

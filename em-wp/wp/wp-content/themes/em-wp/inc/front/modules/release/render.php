@@ -36,6 +36,10 @@ function em_wp_release_enqueue_front_assets(): void
 
 function em_wp_render_release(): void
 {
+    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('release')) {
+        return;
+    }
+
     $options = em_wp_release_get_options();
 
     if (empty($options['enabled'])) {

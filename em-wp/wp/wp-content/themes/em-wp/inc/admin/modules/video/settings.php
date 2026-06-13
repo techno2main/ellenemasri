@@ -37,7 +37,9 @@ function em_wp_video_get_options(): array
         $saved = [];
     }
 
-    return wp_parse_args($saved, em_wp_video_default_options());
+    return function_exists('em_wp_rubrique_sync_enabled_for_admin')
+        ? em_wp_rubrique_sync_enabled_for_admin('video', wp_parse_args($saved, em_wp_video_default_options()))
+        : wp_parse_args($saved, em_wp_video_default_options());
 }
 
 function em_wp_video_sanitize_options($input): array
@@ -46,8 +48,14 @@ function em_wp_video_sanitize_options($input): array
         return em_wp_video_get_options();
     }
 
+    $enabled = !empty($input['enabled']);
+
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save('video', $enabled);
+    }
+
     return [
-        'enabled'            => !empty($input['enabled']),
+        'enabled'            => $enabled,
         'background_color'   => sanitize_hex_color($input['background_color'] ?? '') ?: '',
         'text_color'         => sanitize_hex_color($input['text_color'] ?? '') ?: '',
         'kicker'             => sanitize_text_field($input['kicker'] ?? ''),

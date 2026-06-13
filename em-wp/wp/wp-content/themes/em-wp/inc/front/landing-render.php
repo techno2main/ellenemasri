@@ -76,6 +76,10 @@ function em_wp_landing_section_anchor_id(string $module_slug): string
  */
 function em_wp_landing_module_is_enabled(string $module_slug): bool
 {
+    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility($module_slug)) {
+        return false;
+    }
+
     switch ($module_slug) {
         case 'hero':
             if (!function_exists('em_wp_get_hero_options_for_front')) {

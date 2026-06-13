@@ -18,7 +18,7 @@ function em_wp_site_rubrique_order_option_name(): string
 }
 
 /**
- * Option WordPress stockant la visibilité (TOP-BAR, FOOTER).
+ * Option WordPress stockant la visibilité des rubriques (sommaire + front).
  */
 function em_wp_site_rubrique_visibility_option_name(): string
 {
@@ -77,16 +77,13 @@ function em_wp_site_rubrique_middle_modules(): array
 }
 
 /**
- * Rubriques avec bascule Afficher / Masquer uniquement.
+ * Rubriques avec bascule Afficher / Masquer (sommaire + panneau module).
  *
  * @return string[]
  */
 function em_wp_site_rubrique_visibility_toggle_modules(): array
 {
-    return [
-        'top-bar',
-        'footer',
-    ];
+    return em_wp_site_rubrique_default_order();
 }
 
 /**
@@ -145,19 +142,50 @@ function em_wp_set_site_rubrique_visibility(string $module_slug, bool $visible):
 }
 
 /**
+ * Nom d'option WordPress lié à la visibilité d'une rubrique.
+ */
+function em_wp_get_rubrique_module_option_name(string $module_slug): string
+{
+    switch ($module_slug) {
+        case 'top-bar':
+            return 'em_wp_top_bar_options';
+        case 'footer':
+            return 'em_wp_footer_options';
+        case 'stream':
+            return 'em_wp_stream_options';
+        case 'social':
+            return 'em_wp_social_options';
+        case 'video':
+            return 'em_wp_video_options';
+        case 'release':
+            return 'em_wp_release_options';
+        case 'cta':
+            return 'em_wp_cta_options';
+        case 'hero':
+            if (function_exists('em_wp_hero_option_name') && function_exists('em_wp_hero_active_style_slug')) {
+                return em_wp_hero_option_name(em_wp_hero_active_style_slug());
+            }
+
+            return 'em_wp_hero_mayami_options';
+        case 'slider':
+            if (function_exists('em_wp_slider_option_name') && function_exists('em_wp_slider_active_style_slug')) {
+                return em_wp_slider_option_name(em_wp_slider_active_style_slug());
+            }
+
+            return 'em_wp_slider_mayami_options';
+        default:
+            return '';
+    }
+}
+
+/**
  * Aligne l'option `enabled` d'un module avec la visibilité du sommaire.
  */
 function em_wp_apply_rubrique_visibility_to_module_options(string $module_slug, bool $visible): void
 {
-    switch ($module_slug) {
-        case 'top-bar':
-            $option_name = 'em_wp_top_bar_options';
-            break;
-        case 'footer':
-            $option_name = 'em_wp_footer_options';
-            break;
-        default:
-            return;
+    $option_name = em_wp_get_rubrique_module_option_name($module_slug);
+    if ($option_name === '') {
+        return;
     }
 
     $saved = get_option($option_name, []);
@@ -171,6 +199,33 @@ function em_wp_apply_rubrique_visibility_to_module_options(string $module_slug, 
 
     $saved['enabled'] = $visible;
     update_option($option_name, $saved, false);
+}
+
+/**
+ * Force la checkbox « Afficher » admin depuis la visibilité sommaire.
+ *
+ * @param array<string, mixed> $options
+ * @return array<string, mixed>
+ */
+function em_wp_rubrique_sync_enabled_for_admin(string $module_slug, array $options): array
+{
+    if (em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
+        $options['enabled'] = em_wp_get_site_rubrique_visibility($module_slug);
+    }
+
+    return $options;
+}
+
+/**
+ * Enregistre la visibilité sommaire depuis la checkbox « Afficher » d'un module.
+ */
+function em_wp_rubrique_sync_visibility_from_module_save(string $module_slug, bool $enabled): void
+{
+    if (!em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
+        return;
+    }
+
+    em_wp_set_site_rubrique_visibility($module_slug, $enabled);
 }
 
 /**
@@ -273,7 +328,7 @@ if (is_admin()) {
     add_action('wp_ajax_em_wp_save_site_rubrique_order', 'em_wp_ajax_save_site_rubrique_order');
 
     /**
-     * AJAX : bascule Afficher / Masquer (TOP-BAR, FOOTER).
+     * AJAX : bascule Afficher / Masquer (sommaire rubriques).
      */
     function em_wp_ajax_save_site_rubrique_visibility(): void
     {

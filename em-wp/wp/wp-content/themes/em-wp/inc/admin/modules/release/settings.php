@@ -38,7 +38,9 @@ function em_wp_release_get_options(): array
     $options = wp_parse_args($saved, em_wp_release_default_options());
     $options['rows'] = em_wp_release_normalize_rows($options['rows'] ?? []);
 
-    return $options;
+    return function_exists('em_wp_rubrique_sync_enabled_for_admin')
+        ? em_wp_rubrique_sync_enabled_for_admin('release', $options)
+        : $options;
 }
 
 /**
@@ -79,8 +81,14 @@ function em_wp_release_sanitize_options($input): array
         return em_wp_release_get_options();
     }
 
+    $enabled = !empty($input['enabled']);
+
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save('release', $enabled);
+    }
+
     return [
-        'enabled'          => !empty($input['enabled']),
+        'enabled'          => $enabled,
         'background_color' => sanitize_hex_color($input['background_color'] ?? '') ?: '',
         'text_color'       => sanitize_hex_color($input['text_color'] ?? '') ?: '',
         'kicker'           => sanitize_text_field($input['kicker'] ?? ''),

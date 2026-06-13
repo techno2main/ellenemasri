@@ -188,8 +188,8 @@ function em_wp_top_bar_get_options(): array
     );
     $options['stream_icons_hidden'] = !empty($saved['stream_icons_hidden']);
 
-    if (function_exists('em_wp_get_site_rubrique_visibility')) {
-        $options['enabled'] = em_wp_get_site_rubrique_visibility('top-bar');
+    if (function_exists('em_wp_rubrique_sync_enabled_for_admin')) {
+        return em_wp_rubrique_sync_enabled_for_admin('top-bar', $options);
     }
 
     return $options;
@@ -224,8 +224,8 @@ function em_wp_top_bar_sanitize_options($input): array
     $text_color = sanitize_hex_color($input['text_color'] ?? '');
     $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
 
-    if (function_exists('em_wp_set_site_rubrique_visibility')) {
-        em_wp_set_site_rubrique_visibility('top-bar', $enabled);
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save('top-bar', $enabled);
     }
 
     return [

@@ -28,6 +28,28 @@ function em_wp_admin_register_all_module_saves(): void
         'sanitize'     => 'em_wp_top_bar_sanitize_options',
     ]);
 
+    em_wp_admin_register_module_save('hero-rubrique', [
+        'type'         => 'rubrique_visibility',
+        'module_slug'  => 'hero',
+        'nonce_action' => 'em_wp_hero_rubrique_save',
+        'option_name'  => '',
+        'page_slug'    => function_exists('em_wp_hero_hub_menu_slug') ? em_wp_hero_hub_menu_slug() : 'em-wp-heros',
+        'sanitize'     => static function (): array {
+            return [];
+        },
+    ]);
+
+    em_wp_admin_register_module_save('slider-rubrique', [
+        'type'         => 'rubrique_visibility',
+        'module_slug'  => 'slider',
+        'nonce_action' => 'em_wp_slider_rubrique_save',
+        'option_name'  => '',
+        'page_slug'    => function_exists('em_wp_slider_hub_menu_slug') ? em_wp_slider_hub_menu_slug() : 'em-wp-sliders',
+        'sanitize'     => static function (): array {
+            return [];
+        },
+    ]);
+
     em_wp_admin_register_module_save('hero', [
         'nonce_action' => static function (): string {
             $style_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing

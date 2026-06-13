@@ -183,6 +183,38 @@ function em_wp_hero_remove_duplicate_submenu(): void
 add_action('admin_menu', 'em_wp_hero_remove_duplicate_submenu', 999);
 
 /**
+ * Redirige le hub HEROS vers la variante active (comme le menu latéral).
+ */
+function em_wp_hero_redirect_hub_to_active_variant(): void
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ($page_slug !== em_wp_hero_hub_menu_slug()) {
+        return;
+    }
+
+    $active = em_wp_hero_active_style_slug();
+    $definitions = em_wp_hero_style_definitions();
+    $target = (string) ($definitions[$active]['page_slug'] ?? '');
+
+    if ($target === '' || $target === $page_slug) {
+        return;
+    }
+
+    em_wp_admin_safe_redirect(add_query_arg(['page' => $target], admin_url('admin.php')));
+}
+add_action('admin_init', 'em_wp_hero_redirect_hub_to_active_variant', 2);
+
+/**
  * Charge les assets admin du module Hero.
  */
 function em_wp_hero_admin_enqueue(string $hook_suffix): void
@@ -304,9 +336,14 @@ function em_wp_hero_sanitize_options_for_style($input, string $style_slug): arra
 
     $background_color = sanitize_hex_color($input['background_color'] ?? '');
     $text_color = sanitize_hex_color($input['text_color'] ?? '');
+    $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
+
+    if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
+        em_wp_admin_sync_rubrique_visibility_from_post('hero');
+    }
 
     return [
-        'enabled'                  => array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']),
+        'enabled'                  => $enabled,
         'background_color'         => $background_color !== null && $background_color !== false && $background_color !== ''
             ? $background_color
             : (string) ($existing['background_color'] ?? ''),
@@ -349,6 +386,8 @@ function em_wp_hero_render_admin_page(): void
     $hero_style_defaults = em_wp_admin_module_default_style_colors('hero');
     $hero_style_field_map = em_wp_admin_module_style_color_fields('hero');
     $hero_style_options = $style_slug !== '' ? em_wp_hero_get_options($style_slug) : [];
+    $visibility_form_id = $style_slug !== '' ? 'em-wp-hero-form' : 'em-wp-hero-rubrique-form';
+    $hub_page_slug = em_wp_hero_hub_menu_slug();
     ?>
     <div class="wrap em-wp-hero-admin em-wp-admin-module" <?php echo em_wp_admin_module_style_data_attributes('', $hero_style_defaults, $hero_style_field_map); ?> style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars($hero_style_options, $hero_style_defaults, $hero_style_field_map)); ?>">
         <?php em_wp_admin_render_settings_notices(); ?>
@@ -357,7 +396,17 @@ function em_wp_hero_render_admin_page(): void
                 <p class="em-wp-hero-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('HERO', 'em-wp'); ?></p>
                 <p class="em-wp-admin-module__description"><?php esc_html_e('Liste des heros disponibles', 'em-wp'); ?></p>
             </div>
+            <?php em_wp_admin_render_rubrique_visibility_toggle('hero', $visibility_form_id); ?>
+            <?php if ($style_slug === '') { ?>
+                <button type="submit" form="em-wp-hero-rubrique-form" class="button button-secondary"><?php esc_html_e('Enregistrer', 'em-wp'); ?></button>
+            <?php } ?>
         </div>
+
+        <?php if ($style_slug === '') { ?>
+            <form id="em-wp-hero-rubrique-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($hub_page_slug)); ?>" class="screen-reader-text">
+                <?php em_wp_admin_render_form_save_fields('hero-rubrique', 'em_wp_hero_rubrique_save'); ?>
+            </form>
+        <?php } ?>
 
         <div class="em-wp-admin-module-hub">
             <?php em_wp_hero_render_admin_sidebar($style_slug, $active_style); ?>
@@ -367,9 +416,9 @@ function em_wp_hero_render_admin_page(): void
                     <div class="em-wp-admin-module-hub__empty">
                         <p><?php esc_html_e('Sélectionnez un hero dans la liste pour afficher sa configuration.', 'em-wp'); ?></p>
                     </div>
-                <?php } else {
+                <?php                 } else {
                     $options = em_wp_hero_get_options($style_slug);
-                    em_wp_hero_render_style_setup($context, $options);
+                    em_wp_hero_render_style_setup($context, $options, $active_style);
                 } ?>
             </div>
         </div>
@@ -434,11 +483,14 @@ function em_wp_hero_render_admin_sidebar(string $selected_style_slug, string $ac
  * @param array<string, mixed> $context
  * @param array<string, mixed> $options
  */
-function em_wp_hero_render_style_setup(array $context, array $options): void
+function em_wp_hero_render_style_setup(array $context, array $options, string $active_style_slug = ''): void
 {
     $hero_label = strtoupper((string) ($context['label'] ?? 'MAYAMI'));
     $style_slug = (string) ($context['style_slug'] ?? 'mayami');
     $page_slug = (string) ($context['page_slug'] ?? 'em-wp-hero-mayami');
+    if ($active_style_slug === '') {
+        $active_style_slug = em_wp_hero_active_style_slug();
+    }
     ?>
     <div class="em-wp-hero-admin__setup">
         <div class="em-wp-hero-admin__setup-header em-wp-admin-module__hero">
@@ -446,13 +498,11 @@ function em_wp_hero_render_style_setup(array $context, array $options): void
                 <p class="em-wp-hero-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('HERO', 'em-wp'); ?></p>
                 <h2 class="em-wp-admin-module__title"><?php echo esc_html(sprintf(__('Section HERO - %s', 'em-wp'), $hero_label)); ?></h2>
             </div>
-            <label class="em-wp-hero-admin__toggle">
-                <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
-                <input type="checkbox" name="<?php echo esc_attr($context['option_name']); ?>[enabled]" value="1" form="em-wp-hero-form" <?php checked(!empty($options['enabled'])); ?>>
-            </label>
+            <?php em_wp_admin_render_variant_active_badge($style_slug, $active_style_slug); ?>
         </div>
 
         <form id="em-wp-hero-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($page_slug)); ?>">
+            <input type="hidden" name="<?php echo esc_attr(em_wp_admin_rubrique_visibility_field_name('hero')); ?>" value="0">
             <?php
             em_wp_admin_render_form_save_fields(
                 'hero',

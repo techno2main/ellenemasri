@@ -663,6 +663,12 @@ body.em-wp-admin-confirm-open {
     border: 1px solid #86efac;
 }
 
+.em-wp-admin-module__hero .em-wp-admin-module__active-badge {
+    color: #135e2c;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
 .em-wp-admin-module-hub__active-form {
     margin-top: 4px;
     padding-top: 14px;
@@ -1014,6 +1020,14 @@ a.em-wp-admin-landing-map__zone:focus-visible {
 .em-wp-rubriques-visibility-toggle:focus {
     background: #e5e7eb;
     outline: none;
+}
+
+.em-wp-rubriques-visibility-toggle + .em-wp-rubriques-sortable__handle {
+    border-radius: 0;
+}
+
+.em-wp-rubriques-admin__list-item.is-sortable .em-wp-rubriques-visibility-toggle + .em-wp-rubriques-sortable__handle + .em-wp-rubriques-admin__list-link {
+    border-radius: 0 4px 4px 0;
 }
 
 .em-wp-rubriques-admin__list-item.is-pinned .em-wp-rubriques-visibility-toggle + .em-wp-rubriques-admin__list-link {

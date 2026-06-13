@@ -36,6 +36,10 @@ function em_wp_cta_enqueue_front_assets(): void
 
 function em_wp_render_cta(): void
 {
+    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('cta')) {
+        return;
+    }
+
     $options = em_wp_cta_get_options();
 
     if (empty($options['enabled'])) {

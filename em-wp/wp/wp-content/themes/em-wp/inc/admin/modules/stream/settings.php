@@ -108,9 +108,9 @@ function em_wp_stream_get_options(): array
 
     $options['platforms'] = em_wp_stream_get_platforms_list($options);
 
-
-
-    return $options;
+    return function_exists('em_wp_rubrique_sync_enabled_for_admin')
+        ? em_wp_rubrique_sync_enabled_for_admin('stream', $options)
+        : $options;
 
 }
 
@@ -132,11 +132,17 @@ function em_wp_stream_sanitize_options($input): array
 
     }
 
+    $enabled = !empty($input['enabled']);
+
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save('stream', $enabled);
+    }
+
 
 
     return [
 
-        'enabled'           => !empty($input['enabled']),
+        'enabled'           => $enabled,
 
         'background_color'  => sanitize_hex_color($input['background_color'] ?? '') ?: '',
 

@@ -242,6 +242,55 @@ function em_wp_admin_site_rubrique_definitions(): array
 
 }
 
+/**
+ * Slug admin à ouvrir pour une rubrique (variante active si hub multi-choix).
+ */
+function em_wp_admin_site_rubrique_entry_page_slug(string $module_slug): string
+{
+    $definitions = em_wp_admin_site_rubrique_definitions();
+    $definition = $definitions[$module_slug] ?? null;
+
+    if (!is_array($definition)) {
+        return '';
+    }
+
+    $page_slug = (string) ($definition['page_slug'] ?? '');
+
+    if ($module_slug === 'hero' && function_exists('em_wp_hero_active_style_slug') && function_exists('em_wp_hero_style_definitions')) {
+        $active = em_wp_hero_active_style_slug();
+        $variants = em_wp_hero_style_definitions();
+
+        if (isset($variants[$active]['page_slug'])) {
+            return (string) $variants[$active]['page_slug'];
+        }
+    }
+
+    if ($module_slug === 'slider' && function_exists('em_wp_slider_active_style_slug') && function_exists('em_wp_slider_style_definitions')) {
+        $active = em_wp_slider_active_style_slug();
+        $variants = em_wp_slider_style_definitions();
+
+        if (isset($variants[$active]['page_slug'])) {
+            return (string) $variants[$active]['page_slug'];
+        }
+    }
+
+    return $page_slug;
+}
+
+/**
+ * URL admin d'entrée d'une rubrique (alignée sur le menu latéral).
+ */
+function em_wp_admin_site_rubrique_entry_url(string $module_slug): string
+{
+    $page_slug = em_wp_admin_site_rubrique_entry_page_slug($module_slug);
+
+    if ($page_slug === '') {
+        return '';
+    }
+
+    return add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+}
+
 
 
 /**
@@ -599,7 +648,7 @@ function em_wp_admin_render_rubriques_page(): void
                 $can_toggle_visibility = em_wp_site_rubrique_is_visibility_toggle($module_slug);
                 $is_visible = em_wp_get_site_rubrique_visibility($module_slug);
                 $is_hidden = $can_toggle_visibility && !$is_visible;
-                $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+                $item_url = em_wp_admin_site_rubrique_entry_url($module_slug);
                 ?>
 
                 <li
@@ -609,15 +658,7 @@ function em_wp_admin_render_rubriques_page(): void
 
                     <div class="em-wp-rubriques-admin__list-row">
 
-                        <?php if ($is_sortable) { ?>
-                            <button
-                                type="button"
-                                class="em-wp-rubriques-sortable__handle"
-                                aria-label="<?php esc_attr_e('Réordonner', 'em-wp'); ?>"
-                            >
-                                <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
-                            </button>
-                        <?php } elseif ($can_toggle_visibility) { ?>
+                        <?php if ($can_toggle_visibility) { ?>
                             <button
                                 type="button"
                                 class="em-wp-rubriques-visibility-toggle<?php echo $is_hidden ? ' is-hidden' : ''; ?>"
@@ -627,7 +668,17 @@ function em_wp_admin_render_rubriques_page(): void
                             >
                                 <i class="fa-regular <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i>
                             </button>
-                        <?php } else { ?>
+                        <?php } ?>
+
+                        <?php if ($is_sortable) { ?>
+                            <button
+                                type="button"
+                                class="em-wp-rubriques-sortable__handle"
+                                aria-label="<?php esc_attr_e('Réordonner', 'em-wp'); ?>"
+                            >
+                                <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
+                            </button>
+                        <?php } elseif (!$can_toggle_visibility) { ?>
                             <span class="em-wp-rubriques-admin__list-pin" aria-hidden="true">
                                 <i class="fa-solid fa-lock"></i>
                             </span>
@@ -695,7 +746,7 @@ function em_wp_admin_render_rubriques_page(): void
                         <p class="em-wp-rubriques-admin__map-label"><?php esc_html_e('Plan du site', 'em-wp'); ?></p>
                         <p class="em-wp-rubriques-admin__map-hint">
                             <?php esc_html_e('Survole ou clique une zone pour ouvrir la rubrique.', 'em-wp'); ?><br>
-                            <?php esc_html_e('TOP-BAR et FOOTER : afficher ou masquer.', 'em-wp'); ?><br>
+                            <?php esc_html_e('Chaque rubrique peut être affichée ou masquée via l’icône œil.', 'em-wp'); ?><br>
                             <?php esc_html_e('Glisse les sections pour changer leur ordre.', 'em-wp'); ?><br>
                             <?php esc_html_e('HEROS et SLIDERS côte à côte peuvent être inversés.', 'em-wp'); ?>
                         </p>

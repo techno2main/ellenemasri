@@ -38,8 +38,8 @@ function em_wp_footer_get_options(): array
 
     $options = wp_parse_args($saved, em_wp_footer_default_options());
 
-    if (function_exists('em_wp_get_site_rubrique_visibility')) {
-        $options['enabled'] = em_wp_get_site_rubrique_visibility('footer');
+    if (function_exists('em_wp_rubrique_sync_enabled_for_admin')) {
+        return em_wp_rubrique_sync_enabled_for_admin('footer', $options);
     }
 
     return $options;
@@ -55,8 +55,8 @@ function em_wp_footer_sanitize_options($input): array
 
     $enabled = !empty($input['enabled']);
 
-    if (function_exists('em_wp_set_site_rubrique_visibility')) {
-        em_wp_set_site_rubrique_visibility('footer', $enabled);
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save('footer', $enabled);
     }
 
     return [

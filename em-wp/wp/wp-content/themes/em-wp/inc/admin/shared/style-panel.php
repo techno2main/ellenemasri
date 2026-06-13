@@ -384,3 +384,66 @@ function em_wp_admin_module_style_colors_for_preview(string $module_slug): array
         'text'       => $text !== '' ? (sanitize_hex_color($text) ?: $default_text) : $default_text,
     ];
 }
+
+/**
+ * Nom du champ POST pour la visibilité sommaire d'une rubrique (barre principale admin).
+ */
+function em_wp_admin_rubrique_visibility_field_name(string $module_slug): string
+{
+    return 'em_wp_rubrique_visible_' . str_replace('-', '_', sanitize_key($module_slug));
+}
+
+/**
+ * Toggle Afficher / Masquer sur la barre principale d'une rubrique.
+ */
+function em_wp_admin_render_rubrique_visibility_toggle(string $module_slug, string $form_id): void
+{
+    $field_name = em_wp_admin_rubrique_visibility_field_name($module_slug);
+    $visible = function_exists('em_wp_get_site_rubrique_visibility')
+        ? em_wp_get_site_rubrique_visibility($module_slug)
+        : true;
+    ?>
+    <label class="em-wp-admin-module__toggle">
+        <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
+        <input type="hidden" name="<?php echo esc_attr($field_name); ?>" value="0" form="<?php echo esc_attr($form_id); ?>">
+        <input
+            type="checkbox"
+            name="<?php echo esc_attr($field_name); ?>"
+            value="1"
+            form="<?php echo esc_attr($form_id); ?>"
+            <?php checked($visible); ?>
+        >
+    </label>
+    <?php
+}
+
+/**
+ * Badge ACTIF sur la barre d'une variante (hero, slider…).
+ */
+function em_wp_admin_render_variant_active_badge(string $style_slug, string $active_style_slug): void
+{
+    if ($style_slug === '' || $style_slug !== $active_style_slug) {
+        return;
+    }
+    ?>
+    <span class="em-wp-admin-module-hub__badge em-wp-admin-module-hub__badge--active em-wp-admin-module__active-badge"><?php esc_html_e('Actif', 'em-wp'); ?></span>
+    <?php
+}
+
+/**
+ * Enregistre la visibilité sommaire depuis le champ POST admin.
+ */
+function em_wp_admin_sync_rubrique_visibility_from_post(string $module_slug): void
+{
+    $field_name = em_wp_admin_rubrique_visibility_field_name($module_slug);
+
+    if (!isset($_POST[$field_name])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        return;
+    }
+
+    $visible = (string) wp_unslash($_POST[$field_name]) === '1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save($module_slug, $visible);
+    }
+}

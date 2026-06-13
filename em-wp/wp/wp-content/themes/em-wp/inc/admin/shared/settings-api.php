@@ -158,19 +158,28 @@ function em_wp_admin_handle_module_saves(): void
 
     check_admin_referer($nonce_action);
 
+    $type = (string) ($config['type'] ?? 'options');
     $option_name = (string) em_wp_admin_resolve_save_config_value($config['option_name'] ?? '');
     $sanitize = $config['sanitize'] ?? null;
-    if ($option_name === '' || !is_callable($sanitize)) {
-        return;
-    }
 
-    $type = (string) ($config['type'] ?? 'options');
+    if ($type === 'rubrique_visibility') {
+        $module_slug = sanitize_key((string) ($config['module_slug'] ?? ''));
+        if ($module_slug !== '' && function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
+            em_wp_admin_sync_rubrique_visibility_from_post($module_slug);
+        }
+    } elseif ($type === 'active_style') {
+        if ($option_name === '' || !is_callable($sanitize)) {
+            return;
+        }
 
-    if ($type === 'active_style') {
         $value_field = (string) em_wp_admin_resolve_save_config_value($config['value_field'] ?? $option_name);
         $raw = sanitize_key((string) ($_POST[$value_field] ?? ''));
         update_option($option_name, call_user_func($sanitize, $raw));
     } else {
+        if ($option_name === '' || !is_callable($sanitize)) {
+            return;
+        }
+
         $input = isset($_POST[$option_name]) ? wp_unslash($_POST[$option_name]) : null;
         update_option($option_name, call_user_func($sanitize, $input));
     }

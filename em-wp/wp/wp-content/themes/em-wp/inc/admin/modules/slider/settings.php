@@ -229,6 +229,38 @@ function em_wp_slider_remove_duplicate_submenu(): void
 add_action('admin_menu', 'em_wp_slider_remove_duplicate_submenu', 999);
 
 /**
+ * Redirige le hub SLIDERS vers la variante active (comme le menu latéral).
+ */
+function em_wp_slider_redirect_hub_to_active_variant(): void
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if ($page_slug !== em_wp_slider_hub_menu_slug()) {
+        return;
+    }
+
+    $active = em_wp_slider_active_style_slug();
+    $definitions = em_wp_slider_style_definitions();
+    $target = (string) ($definitions[$active]['page_slug'] ?? '');
+
+    if ($target === '' || $target === $page_slug) {
+        return;
+    }
+
+    em_wp_admin_safe_redirect(add_query_arg(['page' => $target], admin_url('admin.php')));
+}
+add_action('admin_init', 'em_wp_slider_redirect_hub_to_active_variant', 2);
+
+/**
  * Enregistre les options Slider via Settings API.
  */
 function em_wp_slider_register_settings(): void
@@ -320,9 +352,14 @@ function em_wp_slider_sanitize_options_for_style($input, string $style_slug): ar
     $frame_bg_color = sanitize_hex_color($input['frame_bg_color'] ?? '');
     $footer_bg_color = sanitize_hex_color($input['footer_bg_color'] ?? '');
     $footer_text = sanitize_hex_color($input['footer_text'] ?? '');
+    $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
+
+    if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
+        em_wp_admin_sync_rubrique_visibility_from_post('slider');
+    }
 
     return [
-        'enabled'             => array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']),
+        'enabled'             => $enabled,
         'frame_bg_color'      => $frame_bg_color !== null && $frame_bg_color !== false && $frame_bg_color !== ''
             ? $frame_bg_color
             : (string) ($existing['frame_bg_color'] ?? ''),
@@ -357,6 +394,8 @@ function em_wp_slider_render_admin_page(): void
     $slider_style_defaults = em_wp_admin_module_default_style_colors('slider');
     $slider_style_field_map = em_wp_admin_module_style_color_fields('slider');
     $slider_style_options = $style_slug !== '' ? em_wp_slider_get_options($style_slug) : [];
+    $visibility_form_id = $style_slug !== '' ? 'em-wp-slider-form' : 'em-wp-slider-rubrique-form';
+    $hub_page_slug = em_wp_slider_hub_menu_slug();
     ?>
     <div
         class="wrap em-wp-slider-admin em-wp-admin-module"
@@ -369,7 +408,17 @@ function em_wp_slider_render_admin_page(): void
                 <p class="em-wp-slider-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('SLIDER', 'em-wp'); ?></p>
                 <p class="em-wp-admin-module__description"><?php esc_html_e('Liste des sliders disponibles', 'em-wp'); ?></p>
             </div>
+            <?php em_wp_admin_render_rubrique_visibility_toggle('slider', $visibility_form_id); ?>
+            <?php if ($style_slug === '') { ?>
+                <button type="submit" form="em-wp-slider-rubrique-form" class="button button-secondary"><?php esc_html_e('Enregistrer', 'em-wp'); ?></button>
+            <?php } ?>
         </div>
+
+        <?php if ($style_slug === '') { ?>
+            <form id="em-wp-slider-rubrique-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($hub_page_slug)); ?>" class="screen-reader-text">
+                <?php em_wp_admin_render_form_save_fields('slider-rubrique', 'em_wp_slider_rubrique_save'); ?>
+            </form>
+        <?php } ?>
 
         <div class="em-wp-admin-module-hub">
             <?php em_wp_slider_render_admin_sidebar($style_slug, $active_style); ?>
@@ -381,7 +430,7 @@ function em_wp_slider_render_admin_page(): void
                     </div>
                 <?php } else {
                     $options = em_wp_slider_get_options($style_slug);
-                    em_wp_slider_render_style_setup($context, $options);
+                    em_wp_slider_render_style_setup($context, $options, $active_style);
                 } ?>
             </div>
         </div>
@@ -446,11 +495,14 @@ function em_wp_slider_render_admin_sidebar(string $selected_style_slug, string $
  * @param array<string, mixed> $context
  * @param array<string, mixed> $options
  */
-function em_wp_slider_render_style_setup(array $context, array $options): void
+function em_wp_slider_render_style_setup(array $context, array $options, string $active_style_slug = ''): void
 {
     $slider_label = strtoupper((string) ($context['label'] ?? 'MAYAMI'));
     $style_slug = (string) ($context['style_slug'] ?? 'mayami');
     $page_slug = (string) ($context['page_slug'] ?? 'em-wp-slider-mayami');
+    if ($active_style_slug === '') {
+        $active_style_slug = em_wp_slider_active_style_slug();
+    }
     ?>
     <div class="em-wp-slider-admin__setup">
         <div class="em-wp-slider-admin__setup-header em-wp-admin-module__hero">
@@ -458,13 +510,11 @@ function em_wp_slider_render_style_setup(array $context, array $options): void
                 <p class="em-wp-slider-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('SLIDER', 'em-wp'); ?></p>
                 <h2 class="em-wp-admin-module__title"><?php echo esc_html(sprintf(__('Section SLIDER - %s', 'em-wp'), $slider_label)); ?></h2>
             </div>
-            <label class="em-wp-admin-module__toggle">
-                <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
-                <input type="checkbox" name="<?php echo esc_attr($context['option_name']); ?>[enabled]" value="1" form="em-wp-slider-form" <?php checked(!empty($options['enabled'])); ?>>
-            </label>
+            <?php em_wp_admin_render_variant_active_badge($style_slug, $active_style_slug); ?>
         </div>
 
         <form id="em-wp-slider-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($page_slug)); ?>">
+            <input type="hidden" name="<?php echo esc_attr(em_wp_admin_rubrique_visibility_field_name('slider')); ?>" value="0">
             <?php
             em_wp_admin_render_form_save_fields(
                 'slider',

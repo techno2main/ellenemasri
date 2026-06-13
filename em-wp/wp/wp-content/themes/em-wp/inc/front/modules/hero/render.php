@@ -55,6 +55,10 @@ function em_wp_get_hero_options_for_front(string $style_slug = 'mayami'): array
  */
 function em_wp_render_hero(array $args = []): void
 {
+    if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('hero')) {
+        return;
+    }
+
     $embed_slider = array_key_exists('embed_slider', $args) ? (bool) $args['embed_slider'] : true;
     $layout = (string) ($args['layout'] ?? ($embed_slider ? 'default' : 'standalone'));
 

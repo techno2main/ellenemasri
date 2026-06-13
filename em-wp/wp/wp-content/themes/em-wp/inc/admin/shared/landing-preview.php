@@ -115,6 +115,18 @@ function em_wp_admin_landing_zone_active_class(string $zone, string $active_zone
  */
 function em_wp_admin_landing_preview_zone_url(string $zone): string
 {
+    $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
+
+    if ($module_slug === '' && $zone === 'hero_content') {
+        $module_slug = 'hero';
+    } elseif ($module_slug === '' && $zone === 'hero_slider') {
+        $module_slug = 'slider';
+    }
+
+    if ($module_slug !== '' && function_exists('em_wp_admin_site_rubrique_entry_url')) {
+        return em_wp_admin_site_rubrique_entry_url($module_slug);
+    }
+
     $definitions = em_wp_admin_site_rubrique_definitions();
 
     foreach ($definitions as $definition) {
@@ -269,7 +281,9 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
                     default        => 'section',
                 };
 
-                em_wp_admin_render_landing_map_zone($zone, $active_zone, $class_suffix, false, true);
+                $is_hidden = !em_wp_get_site_rubrique_visibility($module_slug);
+
+                em_wp_admin_render_landing_map_zone($zone, $active_zone, $class_suffix, $is_hidden, true);
             } ?>
         </div>
 

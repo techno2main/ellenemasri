@@ -43,7 +43,9 @@ function em_wp_social_get_options(): array
     $options = wp_parse_args($saved, em_wp_social_default_options());
     $options['platforms'] = em_wp_social_get_platforms_list($options);
 
-    return $options;
+    return function_exists('em_wp_rubrique_sync_enabled_for_admin')
+        ? em_wp_rubrique_sync_enabled_for_admin('social', $options)
+        : $options;
 }
 
 function em_wp_social_sanitize_options($input): array
@@ -52,8 +54,14 @@ function em_wp_social_sanitize_options($input): array
         return em_wp_social_get_options();
     }
 
+    $enabled = !empty($input['enabled']);
+
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save('social', $enabled);
+    }
+
     return [
-        'enabled'          => !empty($input['enabled']),
+        'enabled'          => $enabled,
         'background_color' => sanitize_hex_color($input['background_color'] ?? '') ?: '',
         'text_color'       => sanitize_hex_color($input['text_color'] ?? '') ?: '',
         'kicker'           => sanitize_text_field($input['kicker'] ?? ''),

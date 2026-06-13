@@ -61,7 +61,9 @@ function em_wp_cta_get_options(): array
         $options['texture_image'] = em_wp_cta_default_texture_url();
     }
 
-    return $options;
+    return function_exists('em_wp_rubrique_sync_enabled_for_admin')
+        ? em_wp_rubrique_sync_enabled_for_admin('cta', $options)
+        : $options;
 }
 
 function em_wp_cta_sanitize_options($input): array
@@ -70,8 +72,14 @@ function em_wp_cta_sanitize_options($input): array
         return em_wp_cta_get_options();
     }
 
+    $enabled = !empty($input['enabled']);
+
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save('cta', $enabled);
+    }
+
     return [
-        'enabled'          => !empty($input['enabled']),
+        'enabled'          => $enabled,
         'background_color' => sanitize_hex_color($input['background_color'] ?? '') ?: '',
         'text_color'       => sanitize_hex_color($input['text_color'] ?? '') ?: '',
         'kicker'           => sanitize_text_field($input['kicker'] ?? ''),
