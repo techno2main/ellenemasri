@@ -26,3 +26,19 @@
     align-items: center;
     gap: 8px;
 }
+
+.em-wp-header-admin__bg-image {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #dcdcde;
+}
+
+.em-wp-header-admin__bg-image-label {
+    margin: 0 0 4px;
+    font-weight: 600;
+}
+
+.em-wp-header-admin__bg-preview {
+    margin-top: 10px;
+    max-width: 360px;
+}

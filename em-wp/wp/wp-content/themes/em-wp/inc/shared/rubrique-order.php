@@ -390,16 +390,18 @@ if (is_admin()) {
             wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
         }
 
-        if (!function_exists('em_wp_header_get_options') || !function_exists('em_wp_header_option_name')) {
+        if (!function_exists('em_wp_header_get_saved_options') || !function_exists('em_wp_header_persist_options')) {
             wp_send_json_error(['message' => __('Module HEADER indisponible.', 'em-wp')], 400);
         }
 
+        $template_slug = sanitize_key((string) ($_POST['template_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $layout = sanitize_key((string) ($_POST['layout'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $layout = $layout === 'slider_left' ? 'slider_left' : 'hero_left';
-        $options = em_wp_header_get_options();
+        $template_slug = em_wp_header_resolve_template_slug($template_slug);
+        $options = em_wp_header_get_saved_options($template_slug);
         $options['layout'] = $layout;
 
-        update_option(em_wp_header_option_name(), $options, false);
+        em_wp_header_persist_options($options, $template_slug);
 
         wp_send_json_success([
             'layout'  => $layout,

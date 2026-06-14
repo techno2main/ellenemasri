@@ -60,7 +60,7 @@ function em_wp_header_render_admin_page(): void
 
     $slider_choices = function_exists('em_wp_slider_catalog_choices') ? em_wp_slider_catalog_choices() : [];
 
-    $option_name = em_wp_header_option_name();
+    $field = em_wp_header_form_option_key();
 
     ?>
 
@@ -93,8 +93,8 @@ function em_wp_header_render_admin_page(): void
             <?php em_wp_admin_rubrique_open_section('header'); ?>
 
             <div class="em-wp-admin-module__panels">
-
                 <?php
+                em_wp_header_render_style_panel($options, $field);
 
                 em_wp_admin_render_module_panel(
 
@@ -102,7 +102,7 @@ function em_wp_header_render_admin_page(): void
 
                     'em-wp-header-admin__panel',
 
-                    static function () use ($option_name, $options, $hero_choices, $slider_choices): void {
+                    static function () use ($field, $options, $hero_choices, $slider_choices): void {
 
                         ?>
 
@@ -114,7 +114,7 @@ function em_wp_header_render_admin_page(): void
 
                             <span><?php esc_html_e('Hero du catalogue', 'em-wp'); ?></span>
 
-                            <select name="<?php echo esc_attr($option_name); ?>[hero_slug]" class="regular-text">
+                            <select name="<?php echo esc_attr($field); ?>[hero_slug]" class="regular-text">
 
                                 <option value=""><?php esc_html_e('— Aucun —', 'em-wp'); ?></option>
 
@@ -134,7 +134,7 @@ function em_wp_header_render_admin_page(): void
 
                             <span><?php esc_html_e('Slider du catalogue', 'em-wp'); ?></span>
 
-                            <select name="<?php echo esc_attr($option_name); ?>[slider_slug]" class="regular-text">
+                            <select name="<?php echo esc_attr($field); ?>[slider_slug]" class="regular-text">
 
                                 <option value=""><?php esc_html_e('— Aucun —', 'em-wp'); ?></option>
 
@@ -156,7 +156,7 @@ function em_wp_header_render_admin_page(): void
 
                             <label>
 
-                                <input type="radio" name="<?php echo esc_attr($option_name); ?>[layout]" value="hero_left" <?php checked((string) ($options['layout'] ?? 'hero_left'), 'hero_left'); ?>>
+                                <input type="radio" name="<?php echo esc_attr($field); ?>[layout]" value="hero_left" <?php checked((string) ($options['layout'] ?? 'hero_left'), 'hero_left'); ?>>
 
                                 <span><?php esc_html_e('Hero à gauche, Slider à droite', 'em-wp'); ?></span>
 
@@ -164,7 +164,7 @@ function em_wp_header_render_admin_page(): void
 
                             <label>
 
-                                <input type="radio" name="<?php echo esc_attr($option_name); ?>[layout]" value="slider_left" <?php checked((string) ($options['layout'] ?? ''), 'slider_left'); ?>>
+                                <input type="radio" name="<?php echo esc_attr($field); ?>[layout]" value="slider_left" <?php checked((string) ($options['layout'] ?? ''), 'slider_left'); ?>>
 
                                 <span><?php esc_html_e('Slider à gauche, Hero à droite', 'em-wp'); ?></span>
 

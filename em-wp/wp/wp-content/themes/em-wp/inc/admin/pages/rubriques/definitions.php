@@ -265,6 +265,7 @@ function em_wp_admin_rubrique_enabled_field_name(string $module_slug): string
 {
     $getters = [
         'top-bar' => 'em_wp_top_bar_form_option_key',
+        'header'  => 'em_wp_header_form_option_key',
         'stream'  => 'em_wp_stream_form_option_key',
         'social'  => 'em_wp_social_form_option_key',
         'video'   => 'em_wp_video_form_option_key',

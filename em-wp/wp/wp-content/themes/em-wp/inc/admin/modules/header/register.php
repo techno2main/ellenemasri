@@ -56,5 +56,17 @@ function em_wp_header_admin_enqueue(string $hook_suffix): void
         ['em-wp-admin-module-common'],
         em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
     );
+
+    wp_enqueue_style('wp-color-picker');
+
+    wp_enqueue_script(
+        'em-wp-header-admin',
+        get_template_directory_uri() . '/assets/admin/js/modules/header/header.js',
+        ['jquery', 'wp-color-picker', 'wp-util'],
+        em_wp_admin_asset_version('assets/admin/js/modules/header/header.js'),
+        true
+    );
+
+    wp_enqueue_media();
 }
 add_action('admin_enqueue_scripts', 'em_wp_header_admin_enqueue');

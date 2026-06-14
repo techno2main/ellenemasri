@@ -372,6 +372,7 @@ function em_wp_admin_module_default_style_colors(string $module_slug): array
 {
     $map = [
         'top-bar' => ['background' => '#13061f', 'text' => '#ffffff'],
+        'header'  => ['background' => '#ff6f00', 'text' => '#100421'],
         'hero'    => ['background' => '#13061f', 'text' => '#ffffff'],
         'slider'  => ['background' => '#12338f', 'text' => '#100421'],
         'stream'  => ['background' => '#6a1b78', 'text' => '#fff6ea'],
@@ -394,6 +395,7 @@ function em_wp_admin_module_style_color_fields(string $module_slug): ?array
 {
     $maps = [
         'top-bar' => ['bg' => 'background_color', 'text' => 'text_color'],
+        'header'  => ['bg' => 'background_color', 'text' => 'text_color'],
         'hero'    => ['bg' => 'background_color', 'text' => 'text_color'],
         'stream'  => ['bg' => 'background_color', 'text' => 'text_color'],
         'slider'  => ['bg' => 'frame_bg_color', 'text' => 'footer_text'],
