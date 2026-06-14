@@ -79,27 +79,84 @@ function em_wp_admin_menu_position_header(): int
 }
 
 /**
- * Position libellé « Catalogues » (après Rubriques).
+ * Modules catalogues visibles sous CATALOGUES (ordre menu).
+ *
+ * @return string[]
  */
-function em_wp_admin_menu_catalog_section_label_position(): int
+function em_wp_admin_catalog_menu_modules(): array
+{
+    return ['heros', 'sliders', 'videos', 'streams', 'socials'];
+}
+
+/**
+ * Filet au-dessus du bloc Catalogues (séparation visuelle après MEDIAS).
+ */
+function em_wp_admin_menu_catalog_separator_top_position(): int
+{
+    return em_wp_admin_menu_media_position() + 1;
+}
+
+/**
+ * Position menu MEDIAS (juste au-dessus du bloc Catalogues).
+ */
+function em_wp_admin_menu_media_position(): int
 {
     return em_wp_admin_menu_separator_bottom_position() + 1;
 }
 
 /**
- * Position menu Catalogue Heros.
+ * Position parent « CATALOGUES » (après Rubriques).
  */
-function em_wp_admin_menu_position_catalog_heros(): int
+function em_wp_admin_menu_position_catalog_parent(): int
 {
-    return em_wp_admin_menu_catalog_section_label_position() + 1;
+    return em_wp_admin_menu_catalog_separator_top_position() + 1;
 }
 
 /**
- * Position menu Catalogue Sliders.
+ * @deprecated Utiliser em_wp_admin_menu_position_catalog_parent().
+ */
+function em_wp_admin_menu_catalog_section_label_position(): int
+{
+    return em_wp_admin_menu_position_catalog_parent();
+}
+
+/**
+ * Position menu d'un module catalogue (HEROS, SLIDERS, …).
+ */
+function em_wp_admin_menu_position_for_catalog_module(string $module_slug): int
+{
+    $modules = em_wp_admin_catalog_menu_modules();
+    $index = array_search($module_slug, $modules, true);
+
+    if ($index === false) {
+        return em_wp_admin_menu_position_catalog_parent() + 1;
+    }
+
+    return em_wp_admin_menu_position_catalog_parent() + 1 + (int) $index;
+}
+
+/**
+ * Position menu HEROS (catalogues).
+ */
+function em_wp_admin_menu_position_catalog_heros(): int
+{
+    return em_wp_admin_menu_position_for_catalog_module('heros');
+}
+
+/**
+ * Position menu SLIDERS (catalogues).
  */
 function em_wp_admin_menu_position_catalog_sliders(): int
 {
-    return em_wp_admin_menu_position_catalog_heros() + 1;
+    return em_wp_admin_menu_position_for_catalog_module('sliders');
+}
+
+/**
+ * @deprecated Utiliser em_wp_admin_menu_position_catalog_heros().
+ */
+function em_wp_admin_menu_position_catalog_sommaire(): int
+{
+    return em_wp_admin_menu_position_catalog_heros();
 }
 
 /**
@@ -107,7 +164,7 @@ function em_wp_admin_menu_position_catalog_sliders(): int
  */
 function em_wp_admin_menu_catalog_separator_bottom_position(): int
 {
-    return em_wp_admin_menu_position_catalog_sliders() + 1;
+    return em_wp_admin_menu_position_catalog_parent() + 1 + count(em_wp_admin_catalog_menu_modules());
 }
 
 /**
@@ -151,7 +208,7 @@ function em_wp_admin_menu_separator_bottom_position(): int
 }
 
 /**
- * Position menu Templates (après Catalogues, avant Paramètres).
+ * Position menu Templates (parent TEMPLATES, après Catalogues).
  */
 function em_wp_admin_menu_templates_position(): float
 {
@@ -159,11 +216,34 @@ function em_wp_admin_menu_templates_position(): float
 }
 
 /**
+ * Position menu d'un template enregistré (MAYAMI, ELLENE, …).
+ */
+function em_wp_admin_menu_position_for_template(string $template_slug): int
+{
+    $registry = em_wp_template_registry();
+    $index = array_search($template_slug, array_keys($registry), true);
+
+    if ($index === false) {
+        return (int) em_wp_admin_menu_templates_position() + 1;
+    }
+
+    return (int) em_wp_admin_menu_templates_position() + 1 + (int) $index;
+}
+
+/**
+ * Filet sous le bloc Template.
+ */
+function em_wp_admin_menu_templates_separator_bottom_position(): int
+{
+    return (int) em_wp_admin_menu_templates_position() + 1 + count(em_wp_template_registry());
+}
+
+/**
  * Filet entre Templates et le libellé Paramètres.
  */
 function em_wp_admin_menu_settings_separator_position(): int
 {
-    return (int) em_wp_admin_menu_templates_position() + 1;
+    return em_wp_admin_menu_templates_separator_bottom_position() + 1;
 }
 
 /**
@@ -252,22 +332,43 @@ function em_wp_admin_rubrique_reserved_menu_slugs(): array
         em_wp_admin_rubriques_page_slug(),
         'separator-em-wp-site-top',
         'separator-em-wp-bottom',
+        'upload.php',
+        'separator-em-wp-catalog-top',
         'separator-em-wp-catalog-bottom',
         'separator-em-wp-before-settings',
         'em-wp-menu-wp-settings-label',
-        'em-wp-menu-catalog-label',
     ];
+
+    if (function_exists('em_wp_catalog_parent_menu_slug')) {
+        $slugs[] = em_wp_catalog_parent_menu_slug();
+    }
+
+    if (function_exists('em_wp_catalog_registered_hub_menu_slugs')) {
+        $slugs = array_merge($slugs, em_wp_catalog_registered_hub_menu_slugs());
+    }
+
+    if (function_exists('em_wp_catalog_sommaire_menu_slug')) {
+        $slugs[] = em_wp_catalog_sommaire_menu_slug();
+    }
+
+    if (function_exists('em_wp_admin_template_parent_page_slug')) {
+        $slugs[] = em_wp_admin_template_parent_page_slug();
+    }
+
+    if (function_exists('em_wp_admin_template_entry_page_slugs')) {
+        $slugs = array_merge($slugs, em_wp_admin_template_entry_page_slugs());
+    }
+
+    if (function_exists('em_wp_admin_template_choice_page_slug')) {
+        $slugs[] = em_wp_admin_template_choice_page_slug();
+    }
 
     if (function_exists('em_wp_admin_templates_page_slug')) {
         $slugs[] = em_wp_admin_templates_page_slug();
     }
 
-    if (function_exists('em_wp_hero_hub_menu_slug')) {
-        $slugs[] = em_wp_hero_hub_menu_slug();
-    }
-
-    if (function_exists('em_wp_slider_hub_menu_slug')) {
-        $slugs[] = em_wp_slider_hub_menu_slug();
+    if (function_exists('em_wp_admin_dashboard_page_slug')) {
+        $slugs[] = em_wp_admin_dashboard_page_slug();
     }
 
     if (function_exists('em_wp_admin_site_rubrique_definitions')) {
@@ -283,22 +384,30 @@ function em_wp_admin_rubrique_reserved_menu_slugs(): array
 }
 
 /**
- * Slugs réservés au bloc « Catalogues » (Heros / Sliders uniquement).
+ * Slugs réservés au bloc « Catalogues ».
  *
  * @return string[]
  */
 function em_wp_admin_catalog_reserved_menu_slugs(): array
 {
-    $slugs = [
-        'em-wp-menu-catalog-label',
-    ];
+    $slugs = [];
 
-    if (function_exists('em_wp_hero_hub_menu_slug')) {
-        $slugs[] = em_wp_hero_hub_menu_slug();
+    if (function_exists('em_wp_admin_dashboard_page_slug')) {
+        $slugs[] = em_wp_admin_dashboard_page_slug();
     }
 
-    if (function_exists('em_wp_slider_hub_menu_slug')) {
-        $slugs[] = em_wp_slider_hub_menu_slug();
+    $slugs[] = 'upload.php';
+
+    if (function_exists('em_wp_catalog_parent_menu_slug')) {
+        $slugs[] = em_wp_catalog_parent_menu_slug();
+    }
+
+    if (function_exists('em_wp_catalog_registered_hub_menu_slugs')) {
+        $slugs = array_merge($slugs, em_wp_catalog_registered_hub_menu_slugs());
+    }
+
+    if (function_exists('em_wp_catalog_sommaire_menu_slug')) {
+        $slugs[] = em_wp_catalog_sommaire_menu_slug();
     }
 
     return array_values(array_unique($slugs));
@@ -417,19 +526,15 @@ function em_wp_admin_collect_intruding_menus(): array
     );
 
     $intruders += em_wp_admin_collect_menu_intruders_in_range(
-        (float) em_wp_admin_menu_catalog_section_label_position(),
+        (float) em_wp_admin_menu_catalog_separator_top_position(),
         (float) (em_wp_admin_menu_catalog_separator_bottom_position() - 1),
         em_wp_admin_catalog_reserved_menu_slugs()
     );
 
-    $templates_allowed = function_exists('em_wp_admin_templates_page_slug')
-        ? [em_wp_admin_templates_page_slug()]
-        : [];
-
     $intruders += em_wp_admin_collect_menu_intruders_in_range(
         em_wp_admin_menu_templates_position(),
-        em_wp_admin_menu_templates_position(),
-        $templates_allowed
+        (float) (em_wp_admin_menu_templates_separator_bottom_position() - 1),
+        em_wp_admin_template_reserved_menu_slugs()
     );
 
     return $intruders;
@@ -503,9 +608,9 @@ function em_wp_admin_menu_chrome_slugs(): array
     return [
         'separator-em-wp-site-top',
         'separator-em-wp-bottom',
+        'separator-em-wp-catalog-top',
         'separator-em-wp-catalog-bottom',
         'separator-em-wp-before-settings',
-        'em-wp-menu-catalog-label',
         'em-wp-menu-wp-settings-label',
     ];
 }
@@ -527,6 +632,28 @@ function em_wp_admin_purge_menu_chrome_entries(): void
 }
 
 /**
+ * Extrait une entrée du menu admin par slug (retire du tableau global).
+ *
+ * @return array<int, string>|null
+ */
+function em_wp_admin_extract_menu_item_by_slug(string $slug): ?array
+{
+    global $menu;
+
+    foreach ($menu as $position => $item) {
+        if (!is_array($item) || (string) ($item[2] ?? '') !== $slug) {
+            continue;
+        }
+
+        unset($menu[$position]);
+
+        return $item;
+    }
+
+    return null;
+}
+
+/**
  * Libellés de section, séparateurs et espace autour des blocs Rubriques / WP natif.
  */
 function em_wp_admin_register_menu_chrome(): void
@@ -544,6 +671,8 @@ function em_wp_admin_register_menu_chrome(): void
     em_wp_admin_purge_menu_chrome_entries();
     em_wp_admin_purge_native_wp_menu_separators();
 
+    $media_item = em_wp_admin_extract_menu_item_by_slug('upload.php');
+
     $intruders = em_wp_admin_collect_intruding_menus();
 
     em_wp_admin_shift_admin_menu_positions(em_wp_admin_menu_wp_settings_label_position(), 1);
@@ -558,10 +687,14 @@ function em_wp_admin_register_menu_chrome(): void
         'separator-em-wp-bottom'
     );
 
-    $menu[em_wp_admin_menu_catalog_section_label_position()] = em_wp_admin_menu_section_label_item(
-        'em-wp-menu-catalog-label',
-        __('Catalogues', 'em-wp'),
-        'em-wp-menu-catalog-label em-wp-menu-section-label'
+    if ($media_item !== null) {
+        $media_item[0] = __('MEDIAS', 'em-wp');
+        $menu[em_wp_admin_menu_media_position()] = $media_item;
+    }
+
+    $menu[em_wp_admin_menu_catalog_separator_top_position()] = em_wp_admin_menu_separator_item(
+        'separator-em-wp-catalog-top',
+        'separator-em-wp-catalog-top'
     );
 
     $menu[em_wp_admin_menu_catalog_separator_bottom_position()] = em_wp_admin_menu_separator_item(
@@ -592,15 +725,13 @@ function em_wp_admin_menu_chrome_styles(): void
     ?>
     <style id="em-wp-admin-menu-chrome">
         #adminmenu li.em-wp-menu-section-label,
-        #adminmenu li.em-wp-menu-wp-settings-label,
-        #adminmenu li.em-wp-menu-catalog-label {
+        #adminmenu li.em-wp-menu-wp-settings-label {
             cursor: default;
             pointer-events: none;
             margin: 0;
             padding: 0;
         }
 
-        #adminmenu li.em-wp-menu-catalog-label > a,
         #adminmenu li.em-wp-menu-wp-settings-label > a {
             cursor: default;
             background: transparent !important;
@@ -609,8 +740,6 @@ function em_wp_admin_menu_chrome_styles(): void
             margin: 0;
         }
 
-        #adminmenu li.em-wp-menu-catalog-label:hover > a,
-        #adminmenu li.em-wp-menu-catalog-label:focus > a,
         #adminmenu li.em-wp-menu-wp-settings-label:hover > a,
         #adminmenu li.em-wp-menu-wp-settings-label:focus > a {
             background: transparent !important;
@@ -618,14 +747,11 @@ function em_wp_admin_menu_chrome_styles(): void
             color: rgba(255, 255, 255, 0.65);
         }
 
-        #adminmenu li.em-wp-menu-catalog-label .wp-menu-image,
-        #adminmenu li.em-wp-menu-catalog-label .wp-menu-image::before,
         #adminmenu li.em-wp-menu-wp-settings-label .wp-menu-image,
         #adminmenu li.em-wp-menu-wp-settings-label .wp-menu-image::before {
             display: none;
         }
 
-        #adminmenu li.em-wp-menu-catalog-label .wp-menu-name,
         #adminmenu li.em-wp-menu-wp-settings-label .wp-menu-name {
             font-size: 11px;
             font-weight: 600;
@@ -676,6 +802,7 @@ function em_wp_admin_menu_chrome_styles(): void
 
         #adminmenu li.wp-menu-separator.separator-em-wp-site-top,
         #adminmenu li.wp-menu-separator.separator-em-wp-bottom,
+        #adminmenu li.wp-menu-separator.separator-em-wp-catalog-top,
         #adminmenu li.wp-menu-separator.separator-em-wp-catalog-bottom,
         #adminmenu li.wp-menu-separator.separator-em-wp-before-settings {
             cursor: default;
@@ -691,6 +818,7 @@ function em_wp_admin_menu_chrome_styles(): void
 
         #adminmenu li.wp-menu-separator.separator-em-wp-site-top .separator,
         #adminmenu li.wp-menu-separator.separator-em-wp-bottom .separator,
+        #adminmenu li.wp-menu-separator.separator-em-wp-catalog-top .separator,
         #adminmenu li.wp-menu-separator.separator-em-wp-catalog-bottom .separator,
         #adminmenu li.wp-menu-separator.separator-em-wp-before-settings .separator {
             display: block;
@@ -704,7 +832,7 @@ function em_wp_admin_menu_chrome_styles(): void
         }
 
         /* Filets WP natifs résiduels (separator-last, etc.) — masqués, remplacés par em-wp. */
-        #adminmenu li.wp-menu-separator:not(.separator-em-wp-site-top):not(.separator-em-wp-bottom):not(.separator-em-wp-catalog-bottom):not(.separator-em-wp-before-settings) {
+        #adminmenu li.wp-menu-separator:not(.separator-em-wp-site-top):not(.separator-em-wp-bottom):not(.separator-em-wp-catalog-top):not(.separator-em-wp-catalog-bottom):not(.separator-em-wp-before-settings) {
             display: none !important;
         }
     </style>
