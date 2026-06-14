@@ -435,18 +435,20 @@ function em_wp_admin_render_landing_map_zone(
 /**
  * Encadrant HEADER sur le plan (hero / slider selon config template).
  *
- * @param array{interactive?:bool,show_hidden_badge?:bool,header_config?:array<string,mixed>,editing_part?:string,subzones_clickable?:bool,subzone_display?:string} $args
+ * @param array{interactive?:bool,show_hidden_badge?:bool,header_config?:array<string,mixed>,editing_part?:string,subzones_clickable?:bool,subzone_display?:string,disable_header_link?:bool,editing_entry_label?:string} $args
  */
 function em_wp_admin_render_landing_map_header_group(string $active_zone = '', array $args = []): void
 {
     $interactive = !array_key_exists('interactive', $args) || !empty($args['interactive']);
     $show_hidden_badge = !array_key_exists('show_hidden_badge', $args) || !empty($args['show_hidden_badge']);
     $editing_part = sanitize_key((string) ($args['editing_part'] ?? ''));
+    $editing_entry_label = trim((string) ($args['editing_entry_label'] ?? ''));
     $subzone_display = sanitize_key((string) ($args['subzone_display'] ?? 'structure'));
     $layout_only = $subzone_display === 'placeholders';
     $subzones_clickable = array_key_exists('subzones_clickable', $args)
         ? !empty($args['subzones_clickable'])
         : ($editing_part !== '');
+    $disable_header_link = !empty($args['disable_header_link']);
     $header_url = function_exists('em_wp_admin_site_rubrique_entry_url')
         ? em_wp_admin_site_rubrique_entry_url('header')
         : '';
@@ -494,7 +496,7 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
                 <span class="em-wp-admin-landing-map__hidden-badge"><?php esc_html_e('Masqué', 'em-wp'); ?></span>
             <?php } ?>
         </div>
-        <?php if (!$subzones_clickable && $header_url !== '' && $subzones !== []) { ?>
+        <?php if (!$subzones_clickable && !$disable_header_link && $header_url !== '' && $subzones !== []) { ?>
             <a
                 class="em-wp-admin-landing-map__header-group-link<?php echo $layout_only ? ' is-layout-only' : ''; ?>"
                 href="<?php echo esc_url($header_url); ?>"
@@ -529,10 +531,29 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
                     $class_suffix = $part === 'hero' ? 'header-hero' : 'header-slider';
 
                     if ($layout_only) {
-                        $placeholder = $part === 'hero' ? __('HERO', 'em-wp') : __('SLIDE', 'em-wp');
+                        if ($part === 'hero') {
+                            $placeholder = __('HERO', 'em-wp');
+                            if ($editing_part === 'hero' && $editing_entry_label !== '') {
+                                $placeholder = sprintf(
+                                    /* translators: %s: hero catalog entry label */
+                                    __('HERO %s', 'em-wp'),
+                                    $editing_entry_label
+                                );
+                            }
+                        } else {
+                            $placeholder = __('SLIDE', 'em-wp');
+                            if ($editing_part === 'slider' && $editing_entry_label !== '') {
+                                $placeholder = sprintf(
+                                    /* translators: %s: slider catalog entry label */
+                                    __('SLIDE %s', 'em-wp'),
+                                    $editing_entry_label
+                                );
+                            }
+                        }
+                        $part_active_class = em_wp_admin_landing_zone_active_class($zone, $active_zone);
                         ?>
                         <span
-                            class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-part em-wp-admin-landing-map__<?php echo esc_attr($class_suffix); ?>"
+                            class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-part em-wp-admin-landing-map__<?php echo esc_attr($class_suffix); ?><?php echo esc_attr($part_active_class); ?>"
                             data-header-part="<?php echo esc_attr($part); ?>"
                             aria-hidden="true"
                         >
@@ -579,7 +600,7 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
             }
             ?>
         </div>
-        <?php if (!$subzones_clickable && $header_url !== '' && $subzones !== []) { ?>
+        <?php if (!$subzones_clickable && !$disable_header_link && $header_url !== '' && $subzones !== []) { ?>
             </a>
         <?php } ?>
     </div>
@@ -589,14 +610,17 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
 /**
  * Aperçu HEADER seul (wireframe hero / slider), sans le reste du plan.
  *
- * @param array{interactive?:bool,show_hidden_badge?:bool,header_config?:array<string,mixed>,editing_part?:string} $args
+ * @param array{interactive?:bool,show_hidden_badge?:bool,header_config?:array<string,mixed>,editing_part?:string,editing_entry_label?:string} $args
  */
 function em_wp_admin_render_header_structure_preview(string $active_zone = '', array $args = []): void
 {
     $preview_args = array_merge(
         [
-            'interactive'       => false,
-            'show_hidden_badge' => false,
+            'interactive'        => false,
+            'show_hidden_badge'  => false,
+            'subzones_clickable' => false,
+            'disable_header_link' => true,
+            'subzone_display'    => 'placeholders',
         ],
         $args
     );

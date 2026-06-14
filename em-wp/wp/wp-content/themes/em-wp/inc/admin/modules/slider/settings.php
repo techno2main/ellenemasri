@@ -447,9 +447,7 @@ function em_wp_slider_render_admin_page(): void
  */
 function em_wp_slider_render_edit_page_layout(array $context, array $options, string $style_slug): void
 {
-    $template_label = function_exists('em_wp_get_editing_template_label')
-        ? em_wp_get_editing_template_label()
-        : '';
+    $entry_label = trim((string) ($context['label'] ?? ''));
     $header_config = function_exists('em_wp_header_get_options')
         ? em_wp_header_get_options()
         : em_wp_header_default_options();
@@ -465,14 +463,14 @@ function em_wp_slider_render_edit_page_layout(array $context, array $options, st
                 <div class="em-wp-catalog-edit__preview-wrap">
                     <p class="em-wp-catalog-edit__preview-label">
                         <?php
-                        if ($template_label !== '') {
+                        if ($entry_label !== '') {
                             printf(
-                                /* translators: %s: template label */
-                                esc_html__('Placement HEADER — template %s', 'em-wp'),
-                                esc_html($template_label)
+                                /* translators: %s: slider catalog entry label */
+                                esc_html__('Placement SLIDER %s', 'em-wp'),
+                                esc_html($entry_label)
                             );
                         } else {
-                            esc_html_e('Placement HEADER', 'em-wp');
+                            esc_html_e('Placement SLIDER', 'em-wp');
                         }
                         ?>
                     </p>
@@ -481,8 +479,9 @@ function em_wp_slider_render_edit_page_layout(array $context, array $options, st
                     </p>
                     <?php
                     em_wp_admin_render_header_structure_preview('header_slider', [
-                        'header_config' => $header_config,
-                        'editing_part'  => 'slider',
+                        'header_config'       => $header_config,
+                        'editing_part'        => 'slider',
+                        'editing_entry_label' => $entry_label,
                     ]);
                     ?>
                 </div>
@@ -503,8 +502,6 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
     $slider_label = (string) ($context['label'] ?? 'Mayami');
     $style_slug = (string) ($context['style_slug'] ?? 'mayami');
     $page_slug = (string) ($context['page_slug'] ?? 'em-wp-slider-mayami');
-    $slider_style_defaults = em_wp_admin_module_default_style_colors('slider');
-    $slider_style_field_map = em_wp_admin_module_style_color_fields('slider');
     ?>
     <div class="em-wp-slider-admin__setup">
         <?php em_wp_catalog_render_edit_section_open(__('Slider', 'em-wp'), $slider_label); ?>
@@ -519,36 +516,7 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
             );
             ?>
 
-            <div
-                class="em-wp-slider-admin__panels em-wp-admin-module__panels"
-                <?php echo em_wp_admin_module_style_data_attributes('', $slider_style_defaults, $slider_style_field_map); ?>
-                style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars($options, $slider_style_defaults, $slider_style_field_map)); ?>"
-            >
-                <?php
-                em_wp_admin_render_base_style_panel(
-                    __('Style de base', 'em-wp'),
-                    [
-                        [
-                            'name'  => 'frame_bg_color',
-                            'label' => __('Frame BG', 'em-wp'),
-                            'value' => (string) ($options['frame_bg_color'] ?? ''),
-                        ],
-                        [
-                            'name'  => 'footer_bg_color',
-                            'label' => __('Footer BG', 'em-wp'),
-                            'value' => (string) ($options['footer_bg_color'] ?? ''),
-                        ],
-                        [
-                            'name'  => 'footer_text',
-                            'label' => __('Footer Text', 'em-wp'),
-                            'value' => (string) ($options['footer_text'] ?? ''),
-                        ],
-                    ],
-                    $context['option_name'],
-                    'em-wp-slider-panel'
-                );
-                ?>
-
+            <div class="em-wp-slider-admin__panels em-wp-admin-module__panels">
                 <?php
                 em_wp_admin_render_module_items_section_title(
                     'slider',

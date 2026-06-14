@@ -1382,6 +1382,33 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
     background: color-mix(in srgb, #ffffff 12%, var(--em-structure-frame, #12338f));
 }
 
+.em-wp-admin-landing-map__structure-slider-nav {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 3px;
+    pointer-events: none;
+}
+
+.em-wp-admin-landing-map__structure-slider-arrow {
+    width: 0;
+    height: 0;
+    border-top: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    opacity: 0.72;
+}
+
+.em-wp-admin-landing-map__structure-slider-arrow.is-prev {
+    border-right: 4px solid color-mix(in srgb, #ffffff 55%, var(--em-structure-frame, #12338f));
+}
+
+.em-wp-admin-landing-map__structure-slider-arrow.is-next {
+    border-left: 4px solid color-mix(in srgb, #ffffff 55%, var(--em-structure-frame, #12338f));
+}
+
 .em-wp-admin-landing-map__structure-block.is-slider-media {
     width: 56%;
     height: 62%;
@@ -1522,6 +1549,18 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
 
 .em-wp-admin-landing-map__header-group-inner.is-single {
     grid-template-columns: 1fr;
+}
+
+.em-wp-admin-landing-map--header-only .em-wp-admin-landing-map__header-group-inner:not(.is-single),
+.em-wp-admin-landing-map--edit-hero .em-wp-admin-landing-map__header-group-inner:not(.is-single),
+.em-wp-admin-landing-map--edit-slider .em-wp-admin-landing-map__header-group-inner:not(.is-single) {
+    grid-template-columns: 3fr 1fr;
+}
+
+.em-wp-admin-landing-map--header-only .em-wp-admin-landing-map__header-group[data-header-layout="slider_left"] .em-wp-admin-landing-map__header-group-inner:not(.is-single),
+.em-wp-admin-landing-map--edit-hero .em-wp-admin-landing-map__header-group[data-header-layout="slider_left"] .em-wp-admin-landing-map__header-group-inner:not(.is-single),
+.em-wp-admin-landing-map--edit-slider .em-wp-admin-landing-map__header-group[data-header-layout="slider_left"] .em-wp-admin-landing-map__header-group-inner:not(.is-single) {
+    grid-template-columns: 1fr 3fr;
 }
 
 .em-wp-admin-landing-map__header-empty {

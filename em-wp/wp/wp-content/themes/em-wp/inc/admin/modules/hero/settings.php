@@ -437,9 +437,7 @@ function em_wp_hero_render_admin_page(): void
  */
 function em_wp_hero_render_edit_page_layout(array $context, array $options, string $style_slug): void
 {
-    $template_label = function_exists('em_wp_get_editing_template_label')
-        ? em_wp_get_editing_template_label()
-        : '';
+    $entry_label = trim((string) ($context['label'] ?? ''));
     $header_config = function_exists('em_wp_header_get_options')
         ? em_wp_header_get_options()
         : em_wp_header_default_options();
@@ -455,14 +453,14 @@ function em_wp_hero_render_edit_page_layout(array $context, array $options, stri
                 <div class="em-wp-catalog-edit__preview-wrap">
                     <p class="em-wp-catalog-edit__preview-label">
                         <?php
-                        if ($template_label !== '') {
+                        if ($entry_label !== '') {
                             printf(
-                                /* translators: %s: template label */
-                                esc_html__('Placement HEADER — template %s', 'em-wp'),
-                                esc_html($template_label)
+                                /* translators: %s: hero catalog entry label */
+                                esc_html__('Placement HERO %s', 'em-wp'),
+                                esc_html($entry_label)
                             );
                         } else {
-                            esc_html_e('Placement HEADER', 'em-wp');
+                            esc_html_e('Placement HERO', 'em-wp');
                         }
                         ?>
                     </p>
@@ -471,8 +469,9 @@ function em_wp_hero_render_edit_page_layout(array $context, array $options, stri
                     </p>
                     <?php
                     em_wp_admin_render_header_structure_preview('header_hero', [
-                        'header_config' => $header_config,
-                        'editing_part'  => 'hero',
+                        'header_config'      => $header_config,
+                        'editing_part'       => 'hero',
+                        'editing_entry_label' => $entry_label,
                     ]);
                     ?>
                 </div>

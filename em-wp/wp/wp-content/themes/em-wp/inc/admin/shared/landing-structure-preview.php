@@ -131,6 +131,10 @@ function em_wp_admin_landing_slider_structure_html(string $catalog_slug, string 
         aria-hidden="true"
     >
         <span class="em-wp-admin-landing-map__structure-block is-slider-frame">
+            <span class="em-wp-admin-landing-map__structure-slider-nav" aria-hidden="true">
+                <span class="em-wp-admin-landing-map__structure-slider-arrow is-prev"></span>
+                <span class="em-wp-admin-landing-map__structure-slider-arrow is-next"></span>
+            </span>
             <span class="em-wp-admin-landing-map__structure-block is-slider-media"></span>
             <span class="em-wp-admin-landing-map__structure-dots">
                 <span></span><span></span><span></span>
