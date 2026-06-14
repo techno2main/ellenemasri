@@ -72,13 +72,13 @@
         }
 
         #adminmenu li.em-wp-menu-accordion-catalog-entry-child > a.menu-top {
-            padding-left: 38px !important;
+            padding-left: 32px !important;
             box-sizing: border-box;
         }
 
         #adminmenu li.em-wp-menu-accordion-catalog-entry-child .wp-menu-image {
-            width: 22px;
-            opacity: 0.75;
+            display: none !important;
+            width: 0 !important;
         }
 
         #adminmenu li.em-wp-menu-accordion-catalog-entry-child .wp-menu-name {
