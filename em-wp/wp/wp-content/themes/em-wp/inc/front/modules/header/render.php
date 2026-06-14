@@ -126,14 +126,7 @@ function em_wp_render_header(): void
             'wrapper'               => 'section',
             'skip_visibility_check' => true,
         ]);
-    } elseif ($layout !== 'slider_left') {
-        em_wp_render_hero([
-            'catalog_slug' => $hero_slug,
-            'slider_slug'  => $slider_slug,
-            'embed_slider' => true,
-            'in_header'    => true,
-        ]);
-    } else {
+    } elseif ($hero_slug !== '' && $slider_slug !== '') {
         get_template_part('template-parts/sections/landing/header-pair', null, [
             'hero_slug'   => $hero_slug,
             'slider_slug' => $slider_slug,
