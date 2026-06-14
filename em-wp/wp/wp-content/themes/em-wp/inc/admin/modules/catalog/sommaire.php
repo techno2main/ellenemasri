@@ -106,8 +106,8 @@ function em_wp_catalog_menu_definitions(): array
 {
     return [
         'heros' => [
-            'label'       => __('MES HEROS', 'em-wp'),
-            'menu_title'  => __('MES HEROS', 'em-wp'),
+            'label'       => __('HEROS', 'em-wp'),
+            'menu_title'  => __('HEROS', 'em-wp'),
             'slug'        => em_wp_hero_hub_menu_slug(),
             'icon'        => 'dashicons-format-gallery',
             'available'   => true,
@@ -116,8 +116,8 @@ function em_wp_catalog_menu_definitions(): array
             'callback'    => 'em_wp_catalog_render_heros_page',
         ],
         'sliders' => [
-            'label'       => __('MES SLIDERS', 'em-wp'),
-            'menu_title'  => __('MES SLIDERS', 'em-wp'),
+            'label'       => __('SLIDERS', 'em-wp'),
+            'menu_title'  => __('SLIDERS', 'em-wp'),
             'slug'        => em_wp_slider_hub_menu_slug(),
             'icon'        => 'dashicons-slides',
             'available'   => true,
@@ -126,8 +126,8 @@ function em_wp_catalog_menu_definitions(): array
             'callback'    => 'em_wp_catalog_render_sliders_page',
         ],
         'videos' => [
-            'label'       => __('MES VIDÉOS', 'em-wp'),
-            'menu_title'  => __('MES VIDÉOS', 'em-wp'),
+            'label'       => __('VIDÉOS', 'em-wp'),
+            'menu_title'  => __('VIDÉOS', 'em-wp'),
             'slug'        => em_wp_video_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-video-alt3',
             'available'   => false,
@@ -136,8 +136,8 @@ function em_wp_catalog_menu_definitions(): array
             'callback'    => 'em_wp_catalog_render_videos_page',
         ],
         'streams' => [
-            'label'       => __('MES STREAMS', 'em-wp'),
-            'menu_title'  => __('MES STREAMS', 'em-wp'),
+            'label'       => __('STREAMS', 'em-wp'),
+            'menu_title'  => __('STREAMS', 'em-wp'),
             'slug'        => em_wp_stream_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-playlist-audio',
             'available'   => false,
@@ -146,8 +146,8 @@ function em_wp_catalog_menu_definitions(): array
             'callback'    => 'em_wp_catalog_render_streams_page',
         ],
         'socials' => [
-            'label'       => __('MES SOCIALS', 'em-wp'),
-            'menu_title'  => __('MES SOCIALS', 'em-wp'),
+            'label'       => __('SOCIALS', 'em-wp'),
+            'menu_title'  => __('SOCIALS', 'em-wp'),
             'slug'        => em_wp_social_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-share',
             'available'   => false,
