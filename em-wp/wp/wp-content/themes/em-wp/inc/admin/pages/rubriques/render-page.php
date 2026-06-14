@@ -63,7 +63,7 @@ function em_wp_admin_render_rubriques_page(): void
                             <?php esc_html_e('Survole ou clique une zone pour ouvrir la rubrique.', 'em-wp'); ?><br>
                             <?php esc_html_e('Tu peux afficher ou masquer chaque rubrique via l’icône œil.', 'em-wp'); ?><br>
                             <?php esc_html_e('Glisse les sections pour changer leur ordre.', 'em-wp'); ?><br>
-                            <?php esc_html_e('HEADER : encadre le Hero et/ou Slider choisis pour ce template.', 'em-wp'); ?>
+                            <?php esc_html_e('HEADER : aperçu structurel du Hero et/ou Slider configurés pour ce template.', 'em-wp'); ?>
                         </p>
                         <p class="em-wp-rubriques-admin__sort-status" id="em-wp-rubriques-sort-status" aria-live="polite" hidden></p>
 

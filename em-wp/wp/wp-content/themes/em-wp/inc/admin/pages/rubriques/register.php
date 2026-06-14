@@ -87,6 +87,9 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
         [
             'ajaxUrl' => admin_url('admin-ajax.php'),
             'nonce'   => wp_create_nonce('em_wp_rubrique_order'),
+            'templateSlug' => function_exists('em_wp_get_editing_template_slug')
+                ? em_wp_get_editing_template_slug()
+                : '',
             'i18n'    => [
                 'saved'                 => __('Ordre enregistré.', 'em-wp'),
                 'error'                 => __('Impossible d\'enregistrer l\'ordre.', 'em-wp'),

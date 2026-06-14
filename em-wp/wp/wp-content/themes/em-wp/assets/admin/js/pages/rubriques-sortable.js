@@ -296,6 +296,10 @@
         body.append('nonce', config.nonce);
         body.append('layout', layout);
 
+        if (config.templateSlug) {
+            body.append('template_slug', config.templateSlug);
+        }
+
         window.fetch(config.ajaxUrl, {
             method: 'POST',
             credentials: 'same-origin',
@@ -321,16 +325,31 @@
 
     function swapHeaderLayout(group) {
         var inner = group.querySelector('.em-wp-admin-landing-map__header-group-inner');
-        var zones = inner ? inner.querySelectorAll('[data-header-part]') : [];
-
-        if (zones.length < 2) {
+        if (!inner) {
             return;
         }
 
-        inner.insertBefore(zones[1], zones[0]);
-
         var currentLayout = group.getAttribute('data-header-layout') || 'hero_left';
         var nextLayout = currentLayout === 'slider_left' ? 'hero_left' : 'slider_left';
+        var hero = inner.querySelector('.em-wp-admin-landing-map__header-hero');
+        var slider = inner.querySelector('.em-wp-admin-landing-map__header-slider');
+
+        if (hero && slider) {
+            if (nextLayout === 'slider_left') {
+                inner.insertBefore(slider, hero);
+            } else {
+                inner.insertBefore(hero, slider);
+            }
+        } else {
+            var zones = inner.querySelectorAll('[data-header-part]');
+
+            if (zones.length < 2) {
+                return;
+            }
+
+            inner.insertBefore(zones[1], zones[0]);
+        }
+
         group.setAttribute('data-header-layout', nextLayout);
         saveHeaderLayout(nextLayout);
     }
