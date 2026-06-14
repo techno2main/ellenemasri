@@ -3,6 +3,7 @@
 
     var DELAY_MS = 5000;
     var FADE_MS = 300;
+    var NOTICE_SELECTOR = '#wpbody-content .notice:not(.inline)';
 
     function dismissNotice(notice) {
         if (!notice || notice.dataset.emWpAutoDismissed === '1') {
@@ -25,16 +26,20 @@
         }, FADE_MS);
     }
 
-    function initAutoDismiss() {
-        if (!document.body.classList.contains('em-wp-has-template-banner')) {
+    function scheduleDismiss(notice) {
+        if (!notice || notice.dataset.emWpAutoDismissScheduled === '1') {
             return;
         }
 
-        document.querySelectorAll('.notice.notice-success.is-dismissible').forEach(function (notice) {
-            window.setTimeout(function () {
-                dismissNotice(notice);
-            }, DELAY_MS);
-        });
+        notice.dataset.emWpAutoDismissScheduled = '1';
+
+        window.setTimeout(function () {
+            dismissNotice(notice);
+        }, DELAY_MS);
+    }
+
+    function initAutoDismiss() {
+        document.querySelectorAll(NOTICE_SELECTOR).forEach(scheduleDismiss);
     }
 
     if (document.readyState === 'loading') {

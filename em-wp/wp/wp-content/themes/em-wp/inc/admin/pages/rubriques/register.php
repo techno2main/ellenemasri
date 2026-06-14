@@ -51,14 +51,7 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
 
     $theme_uri = get_template_directory_uri();
 
-    em_wp_admin_enqueue_shared_assets();
-
-    wp_enqueue_style(
-        'em-wp-admin-rubriques-picker',
-        $theme_uri . '/assets/admin/css/pages/rubriques-picker.css',
-        ['em-wp-admin-module-common'],
-        em_wp_admin_asset_version('assets/admin/css/pages/rubriques-picker.css')
-    );
+    em_wp_admin_hub_cards_enqueue_assets();
 
     if (!em_wp_admin_has_template_context()) {
         return;

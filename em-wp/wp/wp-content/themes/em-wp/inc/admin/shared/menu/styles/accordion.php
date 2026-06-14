@@ -33,8 +33,72 @@
             display: none !important;
         }
 
-        #adminmenu li.em-wp-menu-accordion-child .wp-menu-name {
+        #adminmenu li.em-wp-menu-accordion-settings-child .wp-menu-name {
             padding-left: 10px;
+        }
+
+        /* Sous-menus Catalogues / Templates / Médias — décalage visuel sans toucher au PHP */
+        #adminmenu li.em-wp-menu-accordion-catalog-child > a.menu-top,
+        #adminmenu li.em-wp-menu-accordion-templates-child > a.menu-top,
+        #adminmenu li.em-wp-menu-accordion-medias-child > a.menu-top,
+        #adminmenu li.em-wp-menu-rubrique-child > a.menu-top {
+            padding-left: 22px !important;
+            box-sizing: border-box;
+        }
+
+        #adminmenu li.em-wp-menu-accordion-catalog-child .wp-menu-image,
+        #adminmenu li.em-wp-menu-accordion-templates-child .wp-menu-image,
+        #adminmenu li.em-wp-menu-accordion-medias-child .wp-menu-image,
+        #adminmenu li.em-wp-menu-rubrique-child .wp-menu-image {
+            width: 30px;
+        }
+
+        #adminmenu li.em-wp-menu-accordion-catalog-child .wp-menu-name,
+        #adminmenu li.em-wp-menu-accordion-templates-child .wp-menu-name,
+        #adminmenu li.em-wp-menu-accordion-medias-child .wp-menu-name,
+        #adminmenu li.em-wp-menu-rubrique-child .wp-menu-name {
+            padding-left: 0;
+        }
+
+        .folded #adminmenu li.em-wp-menu-accordion-catalog-child > a.menu-top,
+        .folded #adminmenu li.em-wp-menu-accordion-templates-child > a.menu-top,
+        .folded #adminmenu li.em-wp-menu-accordion-medias-child > a.menu-top,
+        .folded #adminmenu li.em-wp-menu-rubrique-child > a.menu-top {
+            padding-left: 0 !important;
+        }
+
+        #adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin-right: 8px;
+            border-radius: 999px;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28);
+            vertical-align: middle;
+            transform: translateY(-1px);
+        }
+
+        #adminmenu li.em-wp-menu-rubrique-current > a.menu-top .wp-menu-name::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin-right: 8px;
+            border-radius: 999px;
+            background: #ffffff;
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.28);
+            vertical-align: middle;
+            transform: translateY(-1px);
+        }
+
+        .folded #adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before {
+            margin-right: 0;
+        }
+
+        .folded #adminmenu li.em-wp-menu-rubrique-current > a.menu-top .wp-menu-name::before {
+            margin-right: 0;
         }
 
         #adminmenu li.em-wp-menu-accordion-parent.menu-top {

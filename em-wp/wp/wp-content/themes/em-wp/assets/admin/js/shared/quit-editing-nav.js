@@ -8,6 +8,7 @@
     }
 
     var rubriqueSlugs = config.rubriqueSlugs.slice();
+    var strings = config.strings || {};
     var adminMenu = document.getElementById('adminmenu');
 
     if (!adminMenu) {
@@ -56,6 +57,77 @@
         return url.toString();
     }
 
+    function quitMessage() {
+        var templateLabel = strings.templateLabel || '';
+
+        if (strings.messageTemplate && templateLabel !== '') {
+            return strings.messageTemplate.replace('%s', templateLabel);
+        }
+
+        return strings.message || 'Tu vas quitter l\'édition de ton template.';
+    }
+
+    function handleLeaveTemplateEditing(targetHref) {
+        var confirmApi = window.EmWpAdminConfirm;
+        var formDirty = window.EmWpModuleFormDirty;
+        var dirty = formDirty && typeof formDirty.isDirty === 'function' && formDirty.isDirty();
+        var message = quitMessage();
+
+        if (!confirmApi || typeof confirmApi.ask !== 'function') {
+            if (dirty && formDirty && typeof formDirty.saveSilentlyThen === 'function') {
+                formDirty.saveSilentlyThen(function () {
+                    window.location.href = buildQuitUrl(targetHref);
+                });
+                return;
+            }
+
+            window.location.href = buildQuitUrl(targetHref);
+            return;
+        }
+
+        if (dirty && formDirty && typeof formDirty.saveSilentlyThen === 'function') {
+            confirmApi.ask(message, {
+                confirmLabel: strings.confirmSaveQuit || 'Enregistrer & Quitter',
+                cancelLabel: strings.stay || 'Rester',
+            }).then(function (confirmed) {
+                if (!confirmed) {
+                    return;
+                }
+
+                formDirty.saveSilentlyThen(function (saved) {
+                    if (saved) {
+                        window.location.href = buildQuitUrl(targetHref);
+                    }
+                });
+            });
+            return;
+        }
+
+        confirmApi.ask(message, {
+            confirmLabel: strings.confirmQuit || 'Quitter',
+            cancelLabel: strings.stay || 'Rester',
+        }).then(function (confirmed) {
+            if (confirmed) {
+                window.location.href = buildQuitUrl(targetHref);
+            }
+        });
+    }
+
+    function handleRubriqueNavigation(targetHref) {
+        var formDirty = window.EmWpModuleFormDirty;
+
+        if (!formDirty || typeof formDirty.isDirty !== 'function' || !formDirty.isDirty()) {
+            return;
+        }
+
+        formDirty.requestSave({
+            message: strings.saveConfirm || 'Enregistrer la configuration actuelle et continuer ?',
+            confirmLabel: strings.saveLabel || 'Enregistrer',
+            cancelLabel: strings.saveCancel || 'Annuler',
+            redirectTo: targetHref,
+        });
+    }
+
     adminMenu.addEventListener(
         'click',
         function (event) {
@@ -80,26 +152,17 @@
             }
 
             if (isRubriqueScopedHref(targetHref)) {
+                if (window.EmWpModuleFormDirty && window.EmWpModuleFormDirty.isDirty()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    handleRubriqueNavigation(targetHref);
+                }
                 return;
             }
 
             event.preventDefault();
             event.stopPropagation();
-
-            var confirmApi = window.EmWpAdminConfirm;
-
-            if (!confirmApi || typeof confirmApi.beforeQuitEditing !== 'function') {
-                window.location.href = buildQuitUrl(targetHref);
-                return;
-            }
-
-            confirmApi.beforeQuitEditing(function () {
-                window.location.href = buildQuitUrl(targetHref);
-            }, {
-                message: config.strings && config.strings.message ? config.strings.message : undefined,
-                confirmLabel: config.strings && config.strings.confirm ? config.strings.confirm : undefined,
-                cancelLabel: config.strings && config.strings.cancel ? config.strings.cancel : undefined,
-            });
+            handleLeaveTemplateEditing(targetHref);
         },
         true
     );

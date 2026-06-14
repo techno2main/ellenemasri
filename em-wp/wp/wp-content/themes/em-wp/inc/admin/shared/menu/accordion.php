@@ -114,6 +114,15 @@ function em_wp_admin_apply_menu_accordion_classes(): void
     $template_children = em_wp_admin_template_entry_page_slugs();
     $settings_parent = 'em-wp-menu-wp-settings-label';
     $settings_children = em_wp_admin_menu_accordion_settings_page_slugs();
+    $rubrique_children = function_exists('em_wp_admin_rubrique_menu_child_slugs')
+        ? em_wp_admin_rubrique_menu_child_slugs()
+        : [];
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+    $rubrique_highlight_slug = function_exists('em_wp_admin_rubrique_menu_highlight_slug')
+        ? em_wp_admin_rubrique_menu_highlight_slug($page_slug)
+        : '';
 
     foreach ($menu as $position => $item) {
         if (!is_array($item)) {
@@ -163,10 +172,20 @@ function em_wp_admin_apply_menu_accordion_classes(): void
         }
 
         if (in_array($slug, $template_children, true)) {
-            $menu[$position] = em_wp_admin_menu_item_append_class(
-                $item,
-                'em-wp-menu-accordion-child em-wp-menu-accordion-templates-child'
-            );
+            $classes = 'em-wp-menu-accordion-child em-wp-menu-accordion-templates-child';
+
+            if (
+                function_exists('em_wp_admin_template_slug_from_entry_page')
+                && function_exists('em_wp_get_active_template_slug')
+            ) {
+                $template_slug = em_wp_admin_template_slug_from_entry_page($slug);
+
+                if ($template_slug !== '' && $template_slug === em_wp_get_active_template_slug()) {
+                    $classes .= ' em-wp-menu-template-live';
+                }
+            }
+
+            $menu[$position] = em_wp_admin_menu_item_append_class($item, $classes);
             continue;
         }
 
@@ -183,6 +202,17 @@ function em_wp_admin_apply_menu_accordion_classes(): void
                 $item,
                 'em-wp-menu-accordion-child em-wp-menu-accordion-settings-child'
             );
+            continue;
+        }
+
+        if (in_array($slug, $rubrique_children, true)) {
+            $classes = 'em-wp-menu-rubrique-child';
+
+            if ($rubrique_highlight_slug !== '' && $slug === $rubrique_highlight_slug) {
+                $classes .= ' em-wp-menu-rubrique-current';
+            }
+
+            $menu[$position] = em_wp_admin_menu_item_append_class($item, $classes);
         }
     }
 }

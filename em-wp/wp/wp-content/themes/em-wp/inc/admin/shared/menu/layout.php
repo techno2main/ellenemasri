@@ -355,9 +355,22 @@ function em_wp_admin_menu_layout_ensure_template_entries(array $relocate): array
 
     $capability = em_wp_admin_menu_capability();
     $parent_slug = em_wp_admin_template_parent_page_slug();
+    $parent_label = __('TEMPLATES', 'em-wp');
+
+    if (
+        function_exists('em_wp_admin_has_template_context')
+        && em_wp_admin_has_template_context()
+        && function_exists('em_wp_get_editing_template_label')
+    ) {
+        $editing_label = trim((string) em_wp_get_editing_template_label());
+
+        if ($editing_label !== '') {
+            $parent_label = mb_strtoupper($editing_label);
+        }
+    }
 
     $relocate[$parent_slug] = [
-        __('TEMPLATES', 'em-wp'),
+        $parent_label,
         $capability,
         $parent_slug,
         __('Templates', 'em-wp'),
@@ -373,13 +386,18 @@ function em_wp_admin_menu_layout_ensure_template_entries(array $relocate): array
     foreach (em_wp_template_registry() as $slug => $definition) {
         $page_slug = em_wp_admin_template_entry_page_slug((string) $slug);
         $menu_label = mb_strtoupper((string) ($definition['label'] ?? $slug));
+        $child_classes = 'menu-top em-wp-menu-accordion-child em-wp-menu-accordion-templates-child';
+
+        if (function_exists('em_wp_get_active_template_slug') && (string) $slug === em_wp_get_active_template_slug()) {
+            $child_classes .= ' em-wp-menu-template-live';
+        }
 
         $relocate[$page_slug] = [
             $menu_label,
             $capability,
             $page_slug,
             $menu_label,
-            'menu-top em-wp-menu-accordion-child em-wp-menu-accordion-templates-child',
+            $child_classes,
             $page_slug,
             'dashicons-admin-appearance',
         ];

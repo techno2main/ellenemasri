@@ -296,12 +296,36 @@ function em_wp_admin_enqueue_quit_editing_nav_guard(): void
     );
 
     wp_enqueue_script(
+        'em-wp-admin-module-form-dirty',
+        $theme_uri . '/assets/admin/js/shared/module-form-dirty.js',
+        ['em-wp-admin-confirm-modal'],
+        em_wp_admin_asset_version('assets/admin/js/shared/module-form-dirty.js'),
+        true
+    );
+
+    wp_localize_script(
+        'em-wp-admin-module-form-dirty',
+        'EmWpModuleFormDirtyConfig',
+        [
+            'i18n' => [
+                'saveConfirm' => __('Enregistrer la configuration actuelle et continuer ?', 'em-wp'),
+                'saveLabel'   => __('Enregistrer', 'em-wp'),
+                'cancelLabel' => __('Annuler', 'em-wp'),
+            ],
+        ]
+    );
+
+    wp_enqueue_script(
         'em-wp-admin-quit-editing-nav',
         $theme_uri . '/assets/admin/js/shared/quit-editing-nav.js',
-        ['em-wp-admin-confirm-modal'],
+        ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty'],
         em_wp_admin_asset_version('assets/admin/js/shared/quit-editing-nav.js'),
         true
     );
+
+    $template_label = function_exists('em_wp_get_editing_template_label')
+        ? (string) em_wp_get_editing_template_label()
+        : '';
 
     wp_localize_script(
         'em-wp-admin-quit-editing-nav',
@@ -311,9 +335,14 @@ function em_wp_admin_enqueue_quit_editing_nav_guard(): void
             'quitEndpoint'  => admin_url('admin.php'),
             'nonce'         => wp_create_nonce('em_wp_quit_editing_nav'),
             'strings'       => [
-                'message' => __('Tu es en train d’éditer un template. Quitter l’édition pour continuer ?', 'em-wp'),
-                'confirm' => __('Quitter l’édition', 'em-wp'),
-                'cancel'  => __('Rester', 'em-wp'),
+                'messageTemplate' => __('Tu vas quitter l\'édition de ton template « %s ».', 'em-wp'),
+                'templateLabel'   => $template_label,
+                'confirmQuit'     => __('Quitter', 'em-wp'),
+                'confirmSaveQuit' => __('Enregistrer & Quitter', 'em-wp'),
+                'stay'            => __('Rester', 'em-wp'),
+                'saveConfirm'     => __('Enregistrer la configuration actuelle et continuer ?', 'em-wp'),
+                'saveLabel'       => __('Enregistrer', 'em-wp'),
+                'saveCancel'      => __('Annuler', 'em-wp'),
             ],
         ]
     );
