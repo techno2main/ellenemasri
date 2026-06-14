@@ -20,7 +20,7 @@ function em_wp_admin_dashboard_register_page(): void
         'manage_options',
         em_wp_admin_dashboard_page_slug(),
         'em_wp_admin_render_dashboard_page',
-        'dashicons-admin-home',
+        'dashicons-dashboard',
         3
     );
 }
@@ -56,15 +56,6 @@ function em_wp_admin_dashboard_enqueue(): void
         return;
     }
 
-    em_wp_admin_enqueue_shared_assets();
-
-    wp_enqueue_style('dashicons');
-
-    wp_enqueue_style(
-        'em-wp-admin-dashboard',
-        get_template_directory_uri() . '/assets/admin/css/pages/dashboard.css',
-        ['em-wp-admin-module-common'],
-        em_wp_admin_asset_version('assets/admin/css/pages/dashboard.css')
-    );
+    em_wp_admin_hub_cards_enqueue_assets();
 }
 add_action('admin_enqueue_scripts', 'em_wp_admin_dashboard_enqueue');

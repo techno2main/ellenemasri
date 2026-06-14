@@ -113,7 +113,7 @@ function em_wp_admin_point_dashboard_to_home(): void
         $menu[$position][3] = 'DASHBOARD';
         $menu[$position][2] = 'index.php';
         $menu[$position][4] = trim(((string) ($item[4] ?? 'menu-top')) . ' em-wp-menu-dashboard-entry');
-        $menu[$position][6] = 'dashicons-admin-home';
+        $menu[$position][6] = 'dashicons-dashboard';
     }
 
     foreach ($menu as $position => $item) {
