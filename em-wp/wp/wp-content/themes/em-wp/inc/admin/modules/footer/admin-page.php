@@ -23,29 +23,15 @@ function em_wp_footer_render_admin_page(): void
     $style_defaults = em_wp_admin_module_default_style_colors('footer');
     $field = em_wp_footer_form_option_key();
     ?>
-    <div class="wrap em-wp-footer-admin em-wp-admin-module" <?php echo em_wp_admin_module_style_data_attributes_for_module('footer', $field, $options); ?> style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars_for_module('footer', $options)); ?>">
+    <div class="wrap em-wp-footer-admin em-wp-admin-module em-wp-hub-sommaire" <?php echo em_wp_admin_module_style_data_attributes_for_module('footer', $field, $options); ?> style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars_for_module('footer', $options)); ?>">
         <?php em_wp_admin_render_settings_notices(); ?>
-        <div class="em-wp-admin-module__hero">
-            <div>
-                <p class="em-wp-admin-module__eyebrow"><?php esc_html_e('FOOTER', 'em-wp'); ?></p>
-                <p class="em-wp-admin-module__description"><?php
-                printf(
-                    esc_html__('Pied de page + barre sticky mobile — Template %s', 'em-wp'),
-                    esc_html($template_label)
-                );
-                ?></p>
-            </div>
-            <label class="em-wp-admin-module__toggle">
-                <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
-                <input type="hidden" name="<?php echo esc_attr($field); ?>[enabled]" value="0" form="em-wp-footer-form">
-                <input type="checkbox" name="<?php echo esc_attr($field); ?>[enabled]" value="1" form="em-wp-footer-form" <?php checked(!empty($options['enabled'])); ?>>
-            </label>
-        </div>
+        <?php em_wp_admin_rubrique_render_editing_page_header('footer'); ?>
 
         <form id="em-wp-footer-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action(em_wp_footer_page_slug())); ?>">
             <?php em_wp_admin_render_form_save_fields('footer', 'em_wp_footer_save'); ?>
             <input type="hidden" name="em_wp_template_context" value="<?php echo esc_attr($template_slug); ?>">
 
+            <?php em_wp_admin_rubrique_open_section('footer', $options); ?>
             <div class="em-wp-admin-module__panels">
                 <?php
                 em_wp_admin_render_base_style_panel(
@@ -79,6 +65,7 @@ function em_wp_footer_render_admin_page(): void
                 );
                 ?>
             </div>
+            <?php em_wp_admin_rubrique_close_section(); ?>
 
             <?php submit_button(__('Enregistrer', 'em-wp')); ?>
         </form>

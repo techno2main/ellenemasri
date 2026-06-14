@@ -32,6 +32,18 @@ function em_wp_admin_panel_header_class(string $panel_class = ''): string
 }
 
 /**
+ * Bouton visuel d'édition (icône) en tête de ligne d'un panneau accordion.
+ */
+function em_wp_admin_render_panel_edit_trigger(): void
+{
+    ?>
+    <span class="em-wp-admin-module__panel-edit-trigger" title="<?php esc_attr_e('Modifier', 'em-wp'); ?>">
+        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+    </span>
+    <?php
+}
+
+/**
  * Indique si les panneaux accordion admin sont ouverts au chargement.
  */
 function em_wp_admin_module_panel_is_open_by_default(): bool
@@ -85,8 +97,9 @@ function em_wp_admin_render_module_panel(
     ?>
     <section class="<?php echo esc_attr($panel_classes); ?>"<?php echo $open_by_default ? ' data-default-open' : ''; ?>>
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class($panel_class)); ?>" type="button" aria-expanded="<?php echo esc_attr($open_by_default ? 'true' : em_wp_admin_module_panel_aria_expanded()); ?>">
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
             <?php if ($title !== '') { ?>
-                <span><?php echo esc_html($title); ?></span>
+                <span class="em-wp-admin-module__panel-header-title"><?php echo esc_html($title); ?></span>
             <?php } ?>
         </button>
         <div class="<?php echo esc_attr($body_class_attr); ?>">
@@ -134,10 +147,16 @@ function em_wp_admin_render_module_items_section_title(
  *
  * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $fields
  */
-function em_wp_admin_render_color_fields_wrap(array $fields, string $option_name): void
+function em_wp_admin_render_color_fields_wrap(array $fields, string $option_name, string $group_label = ''): void
 {
     if ($fields === []) {
         return;
+    }
+
+    $open_group = $group_label !== '';
+    if ($open_group) {
+        echo '<div class="em-wp-admin-color-field-group">';
+        echo '<p class="em-wp-admin-color-field-group__title">' . esc_html($group_label) . '</p>';
     }
     ?>
     <div class="em-wp-admin-color-field-wrap">
@@ -163,10 +182,59 @@ function em_wp_admin_render_color_fields_wrap(array $fields, string $option_name
         <?php } ?>
     </div>
     <?php
+    if ($open_group) {
+        echo '</div>';
+    }
 }
 
 /**
- * Rendu du panneau accordion "Style de base" avec champs couleur.
+ * Valeur affichée d'un champ couleur (Styles de base).
+ *
+ * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $color_fields
+ * @return array{value:string,default:string,display:string,input_suffix:string}
+ */
+function em_wp_admin_color_field_display_value(array $color_fields, string $field_name, string $fallback = '#100421'): array
+{
+    $field_name = sanitize_key($field_name);
+
+    foreach ($color_fields as $field) {
+        if (sanitize_key((string) ($field['name'] ?? '')) !== $field_name) {
+            continue;
+        }
+
+        $value = trim((string) ($field['value'] ?? ''));
+        $default = trim((string) ($field['placeholder'] ?? $fallback));
+
+        if ($default === '') {
+            $default = $fallback;
+        }
+
+        return [
+            'value'        => $value,
+            'default'      => $default,
+            'display'      => $value !== '' ? $value : $default,
+            'input_suffix' => '[' . $field_name . ']',
+        ];
+    }
+
+    return [
+        'value'        => '',
+        'default'      => $fallback,
+        'display'      => $fallback,
+        'input_suffix' => '[' . $field_name . ']',
+    ];
+}
+
+/**
+ * Titre du panneau couleurs rubrique (accordion Styles de base).
+ */
+function em_wp_admin_rubrique_inline_colors_panel_title(): string
+{
+    return __('Couleurs en ligne', 'em-wp');
+}
+
+/**
+ * Rendu du panneau accordion couleurs rubrique avec champs couleur.
  *
  * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $color_fields
  * @param string $panel_class Classe module (ex. em-wp-hero-panel) pour ciblage CSS/JS optionnel.
@@ -180,10 +248,34 @@ function em_wp_admin_render_base_style_panel(
     ?callable $extra_body = null
 ): void {
     $panel_classes = em_wp_admin_module_panel_classes($panel_class);
+    $bg_color = em_wp_admin_color_field_display_value($color_fields, 'background_color');
+    $text_color = em_wp_admin_color_field_display_value($color_fields, 'text_color', '#ffffff');
+    $bg_display = sanitize_hex_color($bg_color['display']) ?: $bg_color['default'];
+    $text_display = sanitize_hex_color($text_color['display']) ?: $text_color['default'];
     ?>
-    <section class="<?php echo esc_attr($panel_classes); ?>">
+    <section
+        class="<?php echo esc_attr(trim($panel_classes . ' em-wp-rubrique-colors-panel')); ?>"
+        data-em-rubrique-bg-field="<?php echo esc_attr($bg_color['input_suffix']); ?>"
+        data-em-rubrique-bg-default="<?php echo esc_attr($bg_color['default']); ?>"
+        data-em-rubrique-text-field="<?php echo esc_attr($text_color['input_suffix']); ?>"
+        data-em-rubrique-text-default="<?php echo esc_attr($text_color['default']); ?>"
+    >
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class($panel_class)); ?>" type="button" aria-expanded="<?php echo esc_attr(em_wp_admin_module_panel_aria_expanded()); ?>">
-            <span><?php echo esc_html($title); ?></span>
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
+            <span class="em-wp-rubrique-colors-panel__header-label">
+                <span><?php echo esc_html(em_wp_admin_rubrique_inline_colors_panel_title()); ?></span>
+                <span class="em-wp-rubrique-colors-panel__preview" aria-hidden="true">
+                    <span
+                        class="em-wp-rubrique-colors-panel__preview-surface"
+                        style="<?php echo esc_attr('background-color:' . $bg_display . ';'); ?>"
+                    >
+                        <span
+                            class="em-wp-rubrique-colors-panel__preview-text"
+                            style="<?php echo esc_attr('color:' . $text_display . ';'); ?>"
+                        ><?php esc_html_e('Texte', 'em-wp'); ?></span>
+                    </span>
+                </span>
+            </span>
         </button>
         <div class="em-wp-admin-module__panel-body">
             <?php em_wp_admin_render_color_fields_wrap($color_fields, $option_name); ?>

@@ -97,6 +97,14 @@ function em_wp_admin_safe_redirect(string $url): void
  */
 function em_wp_admin_redirect_after_module_save(string $page_slug): void
 {
+    // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $redirect_to = esc_url_raw(wp_unslash((string) ($_POST['em_wp_redirect_after_save'] ?? '')));
+
+    if ($redirect_to !== '' && wp_validate_redirect($redirect_to, false)) {
+        em_wp_admin_safe_redirect(add_query_arg('settings-updated', 'true', $redirect_to));
+        return;
+    }
+
     em_wp_admin_safe_redirect(add_query_arg([
         'page'             => sanitize_key($page_slug),
         'settings-updated' => 'true',
@@ -206,6 +214,16 @@ function em_wp_admin_render_settings_notices(): void
 {
     em_wp_admin_render_save_notice();
     settings_errors();
+}
+
+/**
+ * Bandeau « template en édition » (sous l'en-tête de page).
+ */
+function em_wp_admin_render_template_editing_banner(): void
+{
+    if (function_exists('em_wp_admin_template_render_banner')) {
+        em_wp_admin_template_render_banner();
+    }
 }
 
 /**

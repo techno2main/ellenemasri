@@ -325,15 +325,11 @@ function em_wp_admin_variant_hub_render_page(array $config): void
     $active_style = em_wp_admin_variant_hub_active_style_slug($config);
     $module_class = 'em-wp-' . sanitize_html_class((string) ($config['module_slug'] ?? 'module')) . '-admin';
     ?>
-    <div class="wrap <?php echo esc_attr($module_class); ?> em-wp-admin-module">
+    <div class="wrap <?php echo esc_attr($module_class); ?> em-wp-admin-module em-wp-hub-sommaire">
         <?php em_wp_admin_render_settings_notices(); ?>
-        <div class="<?php echo esc_attr($module_class . '__hero'); ?> em-wp-admin-module__hero">
-            <div>
-                <p class="em-wp-admin-module__eyebrow"><?php echo esc_html((string) ($config['eyebrow'] ?? '')); ?></p>
-                <p class="em-wp-admin-module__description"><?php echo esc_html((string) ($config['hub_description'] ?? '')); ?></p>
-            </div>
-        </div>
+        <?php em_wp_admin_rubrique_render_editing_page_header((string) ($config['module_slug'] ?? '')); ?>
 
+        <?php em_wp_admin_rubrique_open_section((string) ($config['module_slug'] ?? '')); ?>
         <div class="em-wp-admin-module-hub">
             <?php em_wp_admin_variant_hub_render_sidebar($config, $style_slug, $active_style); ?>
 
@@ -355,6 +351,7 @@ function em_wp_admin_variant_hub_render_page(array $config): void
                 } ?>
             </div>
         </div>
+        <?php em_wp_admin_rubrique_close_section(); ?>
     </div>
     <?php
 }

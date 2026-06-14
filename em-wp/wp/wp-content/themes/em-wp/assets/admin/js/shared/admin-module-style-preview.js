@@ -48,6 +48,39 @@
         applyModuleAdminTexturePreview(root);
     }
 
+    function updateRubriqueColorsPanelSwatches(root) {
+        const scope = root && root.nodeType === 1 ? root : document;
+
+        scope.querySelectorAll('.em-wp-rubrique-colors-panel[data-em-rubrique-bg-field]').forEach(function (panel) {
+            const bgFieldSuffix = panel.getAttribute('data-em-rubrique-bg-field') || '';
+            const bgDefault = panel.getAttribute('data-em-rubrique-bg-default') || '#100421';
+            const textFieldSuffix = panel.getAttribute('data-em-rubrique-text-field') || '';
+            const textDefault = panel.getAttribute('data-em-rubrique-text-default') || '#ffffff';
+            const surface = panel.querySelector('.em-wp-rubrique-colors-panel__preview-surface');
+            const previewText = panel.querySelector('.em-wp-rubrique-colors-panel__preview-text');
+
+            if (!surface) {
+                return;
+            }
+
+            const moduleRoot = panel.closest('.em-wp-admin-module') || document;
+            const bgInput = bgFieldSuffix !== '' ? moduleRoot.querySelector('input[name$="' + bgFieldSuffix + '"]') : null;
+            const textInput = textFieldSuffix !== '' ? moduleRoot.querySelector('input[name$="' + textFieldSuffix + '"]') : null;
+            const bgColor = bgInput && String(bgInput.value || '').trim()
+                ? String(bgInput.value).trim()
+                : bgDefault;
+            const textColor = textInput && String(textInput.value || '').trim()
+                ? String(textInput.value).trim()
+                : textDefault;
+
+            surface.style.backgroundColor = bgColor;
+
+            if (previewText) {
+                previewText.style.color = textColor;
+            }
+        });
+    }
+
     function findTextureInput(root) {
         const field = root.getAttribute('data-em-admin-texture-field');
         if (!field) {
@@ -103,6 +136,7 @@
     function refreshAll() {
         document.querySelectorAll('.em-wp-admin-module[data-em-admin-style]').forEach(applyModuleAdminStylePreview);
         document.querySelectorAll('.em-wp-admin-module--texture-preview').forEach(applyModuleAdminTexturePreview);
+        updateRubriqueColorsPanelSwatches(document);
     }
 
     function init() {
@@ -126,5 +160,6 @@
         refresh: refreshAll,
         apply: applyModuleAdminStylePreview,
         applyTexture: applyModuleAdminTexturePreview,
+        updateRubriqueSwatches: updateRubriqueColorsPanelSwatches,
     };
 })(jQuery);

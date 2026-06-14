@@ -137,3 +137,244 @@ function em_wp_admin_site_rubrique_entry_url(string $module_slug): string
 
     return add_query_arg(['page' => $page_slug], admin_url('admin.php'));
 }
+
+/**
+ * Libellés des rubriques visibles pour un template (ordre sommaire).
+ *
+ * @return string[]
+ */
+function em_wp_admin_template_active_rubrique_labels(string $template_slug): array
+{
+    if (!function_exists('em_wp_is_template_rubrique_visible')) {
+        return [];
+    }
+
+    $template_slug = em_wp_template_sanitize_slug($template_slug);
+
+    if ($template_slug === '') {
+        return [];
+    }
+
+    $labels = [];
+
+    foreach (em_wp_admin_site_rubrique_definitions() as $module_slug => $definition) {
+        if (!empty($definition['coming_soon'])) {
+            continue;
+        }
+
+        if (!em_wp_is_template_rubrique_visible($template_slug, $module_slug)) {
+            continue;
+        }
+
+        $labels[] = mb_strtoupper((string) ($definition['label'] ?? $module_slug));
+    }
+
+    return $labels;
+}
+
+/**
+ * Résumé texte « Rubriques actives : TOP-BAR, HEADER, … ».
+ */
+function em_wp_admin_template_active_rubriques_summary(string $template_slug): string
+{
+    $labels = em_wp_admin_template_active_rubrique_labels($template_slug);
+
+    if ($labels === []) {
+        return __('Rubriques actives : aucune.', 'em-wp');
+    }
+
+    return sprintf(
+        /* translators: %s: comma-separated rubrique labels */
+        __('Rubriques actives : %s.', 'em-wp'),
+        implode(', ', $labels)
+    );
+}
+
+/**
+ * Libellé affiché d'une rubrique (TOP-BAR, HEADER, …).
+ */
+function em_wp_admin_rubrique_label(string $module_slug): string
+{
+    $definition = em_wp_admin_site_rubrique_definitions()[$module_slug] ?? null;
+
+    if (!is_array($definition)) {
+        return mb_strtoupper($module_slug);
+    }
+
+    return (string) ($definition['label'] ?? mb_strtoupper($module_slug));
+}
+
+/**
+ * Libellé du template en cours d'édition (majuscules, barre rubrique + intro).
+ */
+function em_wp_admin_rubrique_editing_template_label(): string
+{
+    $label = function_exists('em_wp_get_editing_template_label')
+        ? trim((string) em_wp_get_editing_template_label())
+        : '';
+
+    return $label !== '' ? mb_strtoupper($label) : '';
+}
+
+/**
+ * Description de page pour une rubrique en édition template (HTML autorisé : strong).
+ */
+function em_wp_admin_rubrique_editing_page_description_html(string $module_slug): string
+{
+    $rubrique_label = em_wp_admin_rubrique_label($module_slug);
+    $template_label = em_wp_admin_rubrique_editing_template_label();
+
+    if ($template_label !== '') {
+        $template_markup = '<strong class="em-wp-hub__template-name">' . esc_html($template_label) . '</strong>';
+
+        return sprintf(
+            /* translators: 1: rubrique label, 2: template label markup */
+            __('Tu es dans la rubrique %1$s de %2$s.', 'em-wp'),
+            esc_html($rubrique_label),
+            $template_markup
+        );
+    }
+
+    return sprintf(
+        /* translators: %s: rubrique label */
+        esc_html__('Tu es dans la rubrique %s.', 'em-wp'),
+        esc_html($rubrique_label)
+    );
+}
+
+/**
+ * En-tête hub (Hello + bandeau template + intro) pour une page rubrique en édition.
+ */
+function em_wp_admin_rubrique_render_editing_page_header(string $module_slug): void
+{
+    if (!function_exists('em_wp_admin_hub_render_sommaire_header')) {
+        return;
+    }
+
+    em_wp_admin_hub_render_sommaire_header(
+        em_wp_admin_rubrique_editing_page_description_html($module_slug),
+        'dashicons-admin-page',
+        true
+    );
+}
+
+/**
+ * Nom du champ options « enabled » pour une rubrique (vide si non applicable).
+ */
+function em_wp_admin_rubrique_enabled_field_name(string $module_slug): string
+{
+    $getters = [
+        'top-bar' => 'em_wp_top_bar_form_option_key',
+        'stream'  => 'em_wp_stream_form_option_key',
+        'social'  => 'em_wp_social_form_option_key',
+        'video'   => 'em_wp_video_form_option_key',
+        'release' => 'em_wp_release_form_option_key',
+        'cta'     => 'em_wp_cta_form_option_key',
+        'footer'  => 'em_wp_footer_form_option_key',
+    ];
+
+    $getter = $getters[$module_slug] ?? '';
+
+    if ($getter === '' || !function_exists($getter)) {
+        return '';
+    }
+
+    return (string) call_user_func($getter);
+}
+
+/**
+ * Indique si la barre rubrique affiche un toggle « Afficher ».
+ */
+function em_wp_admin_rubrique_section_has_toggle(string $module_slug): bool
+{
+    if ($module_slug === 'header') {
+        return true;
+    }
+
+    return em_wp_admin_rubrique_enabled_field_name($module_slug) !== '';
+}
+
+/**
+ * Toggle « Afficher » marron dans la barre titre rubrique.
+ *
+ * @param array<string, mixed> $options Options module (clé enabled pour les rubriques classiques).
+ */
+function em_wp_admin_rubrique_render_section_toggle(string $module_slug, array $options = []): void
+{
+    if ($module_slug === 'header') {
+        $field_name = em_wp_admin_rubrique_visibility_field_name('header');
+        $visible = function_exists('em_wp_get_site_rubrique_visibility')
+            ? em_wp_get_site_rubrique_visibility('header')
+            : true;
+        ?>
+        <label class="em-wp-rubrique-section-bar__toggle">
+            <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
+            <input type="hidden" name="<?php echo esc_attr($field_name); ?>" value="0">
+            <input type="checkbox" name="<?php echo esc_attr($field_name); ?>" value="1" <?php checked($visible); ?>>
+        </label>
+        <?php
+        return;
+    }
+
+    $field = em_wp_admin_rubrique_enabled_field_name($module_slug);
+
+    if ($field === '') {
+        return;
+    }
+    ?>
+    <label class="em-wp-rubrique-section-bar__toggle">
+        <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
+        <?php if ($module_slug === 'footer') { ?>
+            <input type="hidden" name="<?php echo esc_attr($field); ?>[enabled]" value="0">
+        <?php } ?>
+        <input
+            type="checkbox"
+            name="<?php echo esc_attr($field); ?>[enabled]"
+            value="1"
+            <?php checked(!empty($options['enabled'])); ?>
+        >
+    </label>
+    <?php
+}
+
+/**
+ * Ouvre le bloc rubrique (barre titre + bordure haute) avant les panneaux.
+ *
+ * @param array<string, mixed> $options Options module (enabled…).
+ */
+function em_wp_admin_rubrique_open_section(string $module_slug, array $options = []): void
+{
+    ?>
+    <div class="em-wp-rubrique-section">
+        <div class="em-wp-rubrique-section-bar">
+            <div class="em-wp-rubrique-section-bar__heading">
+                <h2 class="em-wp-rubrique-section-bar__title">
+                    <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html(em_wp_admin_rubrique_label($module_slug)); ?></span>
+                    <?php
+                    $template_label = em_wp_admin_rubrique_editing_template_label();
+                    if ($template_label !== '') {
+                        ?>
+                        <span class="em-wp-rubrique-section-bar__template"><?php echo esc_html($template_label); ?></span>
+                        <?php
+                    }
+                    ?>
+                </h2>
+                <?php if (em_wp_admin_rubrique_section_has_toggle($module_slug)) {
+                    em_wp_admin_rubrique_render_section_toggle($module_slug, $options);
+                } ?>
+            </div>
+        </div>
+        <div class="em-wp-rubrique-section__content">
+    <?php
+}
+
+/**
+ * Ferme le bloc rubrique ouvert par em_wp_admin_rubrique_open_section().
+ */
+function em_wp_admin_rubrique_close_section(): void
+{
+    ?>
+        </div>
+    </div>
+    <?php
+}

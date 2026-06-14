@@ -128,14 +128,10 @@ function em_wp_admin_render_coming_soon_rubrique_page(string $module_slug, array
     $label = (string) ($definition['label'] ?? strtoupper($module_slug));
     $description = (string) ($definition['description'] ?? '');
     ?>
-    <div class="wrap em-wp-rubrique-soon em-wp-admin-module">
-        <div class="em-wp-rubrique-soon__hero em-wp-admin-module__hero">
-            <div>
-                <p class="em-wp-admin-module__eyebrow"><?php esc_html_e('EM-WP', 'em-wp'); ?></p>
-                <p class="em-wp-admin-module__description"><?php echo esc_html($label); ?></p>
-            </div>
-        </div>
+    <div class="wrap em-wp-rubrique-soon em-wp-admin-module em-wp-hub-sommaire">
+        <?php em_wp_admin_rubrique_render_editing_page_header($module_slug); ?>
 
+        <?php em_wp_admin_rubrique_open_section($module_slug); ?>
         <div class="em-wp-rubrique-soon__panel">
             <?php if ($description !== '') { ?>
                 <p class="em-wp-rubrique-soon__location"><?php echo esc_html($description); ?></p>
@@ -149,6 +145,7 @@ function em_wp_admin_render_coming_soon_rubrique_page(string $module_slug, array
                 </a>
             </p>
         </div>
+        <?php em_wp_admin_rubrique_close_section(); ?>
     </div>
     <?php
 }
