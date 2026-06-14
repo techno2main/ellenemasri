@@ -1,6 +1,6 @@
 .em-wp-slider-admin {
-    --em-slider-admin-bg: var(--em-module-admin-bg, #12338f);
-    --em-slider-admin-text: var(--em-module-admin-text, #100421);
+    --em-slider-admin-bg: var(--em-module-admin-bg, #13061f);
+    --em-slider-admin-text: var(--em-module-admin-text, #ffffff);
 }
 
 .em-wp-slider-admin__hero,
