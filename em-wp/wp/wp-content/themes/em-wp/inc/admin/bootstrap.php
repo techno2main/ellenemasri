@@ -2,8 +2,8 @@
 /**
  * Bootstrap de la couche admin (BO).
  *
- * Menus admin : accueil Dashboard (pages/dashboard.php), workspace Rubriques Template,
- * catalogues, templates, puis modules em-wp (voir inc/admin/shared/menu.php).
+ * Menus admin : accueil Dashboard (pages/dashboard/), sommaire Rubriques (pages/rubriques/),
+ * catalogues, templates, puis modules em-wp (voir inc/admin/shared/menu/).
  *
  * @package em-wp
  */
@@ -37,6 +37,8 @@ require_once __DIR__ . '/modules/cta/settings.php';
 require_once __DIR__ . '/modules/footer/settings.php';
 require_once __DIR__ . '/pages/rubriques.php';
 require_once __DIR__ . '/pages/dashboard.php';
+require_once __DIR__ . '/shared/menu/layout.php';
+require_once __DIR__ . '/shared/menu/accordion.php';
 require_once __DIR__ . '/shared/onboarding.php';
 require_once __DIR__ . '/modules/coming-soon/register.php';
 
