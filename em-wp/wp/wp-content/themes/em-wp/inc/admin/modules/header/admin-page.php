@@ -65,7 +65,7 @@ function em_wp_header_render_admin_page(): void
             <div class="em-wp-admin-module__panels">
                 <section class="em-wp-admin-module__panel is-open">
                     <div class="em-wp-admin-module__panel-body em-wp-header-admin__selection">
-                        <p class="description"><?php esc_html_e('Choisissez le Hero et/ou le Slider du catalogue à afficher dans le HEADER de ce template. Éditez le contenu dans Catalogues → Heros / Sliders.', 'em-wp'); ?></p>
+                        <p class="description"><?php esc_html_e('Choisis le Hero et/ou le Slider du catalogue à afficher dans le HEADER de ce template. Édite le contenu dans Catalogues → Heros / Sliders.', 'em-wp'); ?></p>
 
                         <label class="em-wp-header-admin__field">
                             <span><?php esc_html_e('Hero du catalogue', 'em-wp'); ?></span>

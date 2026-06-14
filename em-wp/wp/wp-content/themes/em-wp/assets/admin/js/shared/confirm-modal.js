@@ -113,5 +113,26 @@
                 return confirmed;
             });
         },
+        /**
+         * Confirmation avant de quitter l'édition template (navigation menu admin).
+         *
+         * @param {Function} callback Exécuté uniquement si l'utilisateur confirme.
+         * @param {{message?:string,confirmLabel?:string,cancelLabel?:string}} options
+         */
+        beforeQuitEditing: function (callback, options) {
+            var config = options || {};
+            var message = config.message || 'Quitter l’édition en cours ?';
+
+            return openModal(message, {
+                confirmLabel: config.confirmLabel || 'Quitter l’édition',
+                cancelLabel: config.cancelLabel || 'Rester',
+            }).then(function (confirmed) {
+                if (confirmed && typeof callback === 'function') {
+                    callback();
+                }
+
+                return confirmed;
+            });
+        },
     };
 })();

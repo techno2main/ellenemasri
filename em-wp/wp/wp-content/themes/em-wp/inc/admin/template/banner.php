@@ -33,11 +33,7 @@ function em_wp_admin_is_catalog_screen(): bool
         return false;
     }
 
-    if (function_exists('em_wp_hero_hub_menu_slug') && $page_slug === em_wp_hero_hub_menu_slug()) {
-        return true;
-    }
-
-    if (function_exists('em_wp_slider_hub_menu_slug') && $page_slug === em_wp_slider_hub_menu_slug()) {
+    if (function_exists('em_wp_catalog_admin_page_slugs') && in_array($page_slug, em_wp_catalog_admin_page_slugs(), true)) {
         return true;
     }
 
@@ -65,6 +61,10 @@ function em_wp_admin_is_catalog_screen(): bool
  */
 function em_wp_admin_should_show_template_banner(): bool
 {
+    if (function_exists('em_wp_admin_should_show_template_editing_banner')) {
+        return em_wp_admin_should_show_template_editing_banner();
+    }
+
     return em_wp_admin_is_em_wp_screen() && !em_wp_admin_is_catalog_screen();
 }
 
@@ -226,6 +226,14 @@ function em_wp_admin_template_render_banner(): void
                 </form>
             </div>
 
+            <form class="em-wp-template-banner__quit-form" method="post" action="">
+                <?php wp_nonce_field('em_wp_template_clear_editing'); ?>
+                <input type="hidden" name="em_wp_template_action" value="clear_editing">
+                <button type="submit" class="em-wp-template-banner__quit">
+                    <?php esc_html_e('Quitter l’édition', 'em-wp'); ?>
+                </button>
+            </form>
+
             <?php if ($differs) { ?>
                 <p class="em-wp-template-banner__alert" role="status">
                     <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
@@ -239,10 +247,6 @@ function em_wp_admin_template_render_banner(): void
                     ?>
                 </p>
             <?php } ?>
-
-            <a class="em-wp-template-banner__link" href="<?php echo esc_url(em_wp_admin_templates_page_url()); ?>">
-                <?php esc_html_e('Gérer les templates', 'em-wp'); ?>
-            </a>
         </div>
     </div>
     <?php

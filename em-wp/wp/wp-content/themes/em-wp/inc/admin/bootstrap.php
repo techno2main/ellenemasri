@@ -2,8 +2,8 @@
 /**
  * Bootstrap de la couche admin (BO).
  *
- * Menus admin : accueil « Rubriques du site » (inc/admin/pages/rubriques.php), puis modules
- * em-wp dans le même bloc (voir inc/admin/shared/menu.php). Menus WordPress natifs sous « Paramètres ».
+ * Menus admin : accueil Dashboard (pages/dashboard.php), workspace Rubriques Template,
+ * catalogues, templates, puis modules em-wp (voir inc/admin/shared/menu.php).
  *
  * @package em-wp
  */
@@ -25,6 +25,7 @@ require_once __DIR__ . '/client-access.php';
 require_once __DIR__ . '/themes-preview.php';
 require_once __DIR__ . '/modules/top-bar/settings.php';
 require_once __DIR__ . '/modules/header/settings.php';
+require_once __DIR__ . '/modules/catalog/bootstrap.php';
 require_once __DIR__ . '/modules/hero/settings.php';
 require_once __DIR__ . '/modules/slider/slides.php';
 require_once __DIR__ . '/modules/slider/settings.php';
@@ -35,6 +36,8 @@ require_once __DIR__ . '/modules/release/settings.php';
 require_once __DIR__ . '/modules/cta/settings.php';
 require_once __DIR__ . '/modules/footer/settings.php';
 require_once __DIR__ . '/pages/rubriques.php';
+require_once __DIR__ . '/pages/dashboard.php';
+require_once __DIR__ . '/shared/onboarding.php';
 require_once __DIR__ . '/modules/coming-soon/register.php';
 
 /**
