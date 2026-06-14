@@ -1,0 +1,50 @@
+.em-wp-rubriques-picker__back {
+    margin: 0 0 12px;
+}
+
+.em-wp-rubriques-picker__intro {
+    max-width: 640px;
+    margin-bottom: 16px;
+}
+
+.em-wp-rubriques-picker__live {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 20px;
+    padding: 10px 14px;
+    border: 1px solid #dcdcde;
+    border-radius: 6px;
+    background: #f6f7f7;
+    font-size: 13px;
+}
+
+.em-wp-rubriques-picker__live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.em-wp-rubriques-picker__form {
+    max-width: 420px;
+    padding: 18px;
+    border: 1px solid #dcdcde;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.em-wp-rubriques-picker__label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.em-wp-rubriques-picker__select {
+    width: 100%;
+    max-width: 100%;
+}
+
+.em-wp-rubriques-picker__actions {
+    margin: 16px 0 0;
+}

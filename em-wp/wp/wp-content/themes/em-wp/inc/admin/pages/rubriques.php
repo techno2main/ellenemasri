@@ -2,7 +2,7 @@
 
 /**
 
- * Page sommaire « Rubriques du site » (accueil admin em-wp).
+ * Page sommaire « Rubriques Template » (workspace édition par template).
 
  *
 
@@ -275,9 +275,9 @@ function em_wp_admin_rubriques_add_admin_page(): void
 
     add_menu_page(
 
-        __('Rubriques du site', 'em-wp'),
+        __('Rubriques', 'em-wp'),
 
-        __('Rubriques du site', 'em-wp'),
+        __('RUBRIQUES', 'em-wp'),
 
         'manage_options',
 
@@ -345,6 +345,17 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
 
     em_wp_admin_enqueue_shared_assets();
 
+    wp_enqueue_style(
+        'em-wp-admin-rubriques-picker',
+        $theme_uri . '/assets/admin/css/pages/rubriques-picker.css',
+        ['em-wp-admin-module-common'],
+        em_wp_admin_asset_version('assets/admin/css/pages/rubriques-picker.css')
+    );
+
+    if (!em_wp_admin_has_template_context()) {
+        return;
+    }
+
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
         $theme_uri . '/assets/admin/js/shared/slide-sortable.js',
@@ -398,7 +409,7 @@ add_action('admin_enqueue_scripts', 'em_wp_admin_rubriques_enqueue');
 
 /**
 
- * Redirige vers le sommaire après connexion admin.
+ * URL admin du sommaire Rubriques Template.
 
  *
 
@@ -412,36 +423,9 @@ add_action('admin_enqueue_scripts', 'em_wp_admin_rubriques_enqueue');
 
  */
 
-function em_wp_admin_login_redirect_to_rubriques($redirect_to, $requested_redirect_to, $user)
-
-{
-
-    if (!($user instanceof WP_User) || !user_can($user, 'manage_options')) {
-
-        return $redirect_to;
-
-    }
-
-
-
-    if (!empty($requested_redirect_to) && admin_url() !== $requested_redirect_to && admin_url('index.php') !== $requested_redirect_to) {
-
-        return $redirect_to;
-
-    }
-
-
-
-    return admin_url('admin.php?page=' . em_wp_admin_rubriques_page_slug());
-
-}
-
-add_filter('login_redirect', 'em_wp_admin_login_redirect_to_rubriques', 10, 3);
-
-
 
 /**
- * URL admin du sommaire Rubriques du site.
+ * URL admin du sommaire Rubriques Template.
  */
 function em_wp_admin_rubriques_admin_url(): string
 {
@@ -449,127 +433,83 @@ function em_wp_admin_rubriques_admin_url(): string
 }
 
 /**
- * Pointe le menu Dashboard (et son sous-menu Home) vers le sommaire em-wp.
+ * Rendu du sélecteur de template (avant contexte explicite).
  */
-function em_wp_admin_point_dashboard_to_rubriques(): void
+function em_wp_admin_render_rubriques_template_picker(): void
 {
-    if (!current_user_can('manage_options')) {
-        return;
-    }
+    $registry = em_wp_template_registry();
+    $active_slug = em_wp_get_active_template_slug();
+    $active_label = (string) ($registry[$active_slug]['label'] ?? $active_slug);
+    $active_color = em_wp_get_template_color($active_slug);
+    ?>
+    <div class="wrap em-wp-rubriques-admin em-wp-rubriques-picker em-wp-admin-module">
+        <p class="em-wp-rubriques-picker__back">
+            <a href="<?php echo esc_url(em_wp_admin_dashboard_admin_url()); ?>">&larr; <?php esc_html_e('Retour à l’accueil', 'em-wp'); ?></a>
+        </p>
 
-    global $menu, $submenu;
+        <h1><?php esc_html_e('Choix du Template', 'em-wp'); ?></h1>
 
-    $rubriques_url = em_wp_admin_rubriques_admin_url();
+        <p class="description em-wp-rubriques-picker__intro">
+            <?php esc_html_e('Choisis le template que tu veux éditer. Les rubriques (TOP-BAR, HEADER, STREAM…) seront disponibles une fois ta sélection confirmée.', 'em-wp'); ?>
+        </p>
 
-    foreach ($menu as $position => $item) {
-        if (!is_array($item) || ($item[2] ?? '') !== 'index.php') {
-            continue;
-        }
+        <p class="em-wp-rubriques-picker__live" role="status">
+            <span class="em-wp-rubriques-picker__live-dot" style="background: <?php echo esc_attr($active_color); ?>;" aria-hidden="true"></span>
+            <?php
+            printf(
+                esc_html__('Rappel — template actif sur le site : %s', 'em-wp'),
+                '<strong>' . esc_html($active_label) . '</strong>'
+            );
+            ?>
+        </p>
 
-        $menu[$position][2] = $rubriques_url;
-        break;
-    }
+        <form class="em-wp-rubriques-picker__form" method="post" action="">
+            <?php wp_nonce_field('em_wp_template_set_editing'); ?>
+            <input type="hidden" name="em_wp_template_action" value="set_editing">
+            <input type="hidden" name="em_wp_template_redirect_page" value="<?php echo esc_attr(em_wp_admin_rubriques_page_slug()); ?>">
 
-    if (!isset($submenu['index.php']) || !is_array($submenu['index.php'])) {
-        return;
-    }
+            <p>
+                <label for="em-wp-rubriques-editing-select" class="em-wp-rubriques-picker__label">
+                    <?php esc_html_e('Template à éditer', 'em-wp'); ?>
+                </label>
+            </p>
 
-    foreach ($submenu['index.php'] as $key => $item) {
-        if (!is_array($item) || ($item[2] ?? '') !== 'index.php') {
-            continue;
-        }
+            <select id="em-wp-rubriques-editing-select" name="em_wp_template_editing_slug" class="em-wp-rubriques-picker__select" required>
+                <option value=""><?php esc_html_e('— Choisir un template —', 'em-wp'); ?></option>
+                <?php foreach ($registry as $slug => $definition) { ?>
+                    <option value="<?php echo esc_attr($slug); ?>" <?php selected($active_slug, $slug); ?>>
+                        <?php echo esc_html((string) ($definition['label'] ?? $slug)); ?>
+                    </option>
+                <?php } ?>
+            </select>
 
-        $submenu['index.php'][$key][2] = $rubriques_url;
-    }
+            <p class="em-wp-rubriques-picker__actions">
+                <button type="submit" class="button button-primary button-hero">
+                    <?php esc_html_e('Commencer l’édition', 'em-wp'); ?>
+                </button>
+            </p>
+        </form>
+    </div>
+    <?php
 }
-
-add_action('admin_menu', 'em_wp_admin_point_dashboard_to_rubriques', 10001);
-
-/**
- * Redirige index.php vers le sommaire em-wp (filet de sécurité si l'URL native est ouverte).
- */
-function em_wp_admin_redirect_dashboard_to_rubriques(): void
-{
-    if (!current_user_can('manage_options')) {
-        return;
-    }
-
-    global $pagenow;
-
-    if ($pagenow !== 'index.php') {
-        return;
-    }
-
-    $rubriques_url = em_wp_admin_rubriques_admin_url();
-
-    em_wp_admin_safe_redirect($rubriques_url);
-}
-
-add_action('admin_init', 'em_wp_admin_redirect_dashboard_to_rubriques', 1);
-
-/**
- * Liens « Dashboard » générés par WordPress → sommaire em-wp.
- *
- * @param mixed $url
- * @param mixed $path
- * @return mixed
- */
-function em_wp_admin_filter_dashboard_url($url, $path)
-{
-    if (!current_user_can('manage_options')) {
-        return $url;
-    }
-
-    $path = (string) $path;
-
-    if ($path === '' || $path === 'index.php') {
-        return em_wp_admin_rubriques_admin_url();
-    }
-
-    return $url;
-}
-
-add_filter('dashboard_url', 'em_wp_admin_filter_dashboard_url', 10, 2);
-
-/**
- * @param mixed $url
- * @param mixed $user_id
- * @param mixed $path
- * @return mixed
- */
-function em_wp_admin_filter_get_dashboard_url($url, $user_id, $path)
-{
-    unset($user_id);
-
-    return em_wp_admin_filter_dashboard_url($url, $path);
-}
-
-add_filter('get_dashboard_url', 'em_wp_admin_filter_get_dashboard_url', 10, 3);
-
 
 
 /**
-
- * Rendu de la page sommaire Rubriques du site.
-
+ * Rendu de la page sommaire Rubriques Template.
  */
-
 function em_wp_admin_render_rubriques_page(): void
-
 {
-
     if (!current_user_can('manage_options')) {
-
         return;
-
     }
 
-
+    if (!em_wp_admin_has_template_context()) {
+        em_wp_admin_safe_redirect(em_wp_admin_template_choice_admin_url());
+        return;
+    }
 
     $definitions = em_wp_admin_site_rubrique_definitions();
-    $editing_template_label = function_exists('em_wp_get_editing_template_label')
-        ? em_wp_get_editing_template_label()
-        : em_wp_template_default_slug();
+    $editing_template_label = em_wp_get_editing_template_label();
 
     ?>
 
@@ -731,7 +671,7 @@ function em_wp_admin_render_rubriques_page(): void
                         ?></p>
                         <p class="em-wp-rubriques-admin__map-hint">
                             <?php esc_html_e('Survole ou clique une zone pour ouvrir la rubrique.', 'em-wp'); ?><br>
-                            <?php esc_html_e('Chaque rubrique peut être affichée ou masquée via l’icône œil.', 'em-wp'); ?><br>
+                            <?php esc_html_e('Tu peux afficher ou masquer chaque rubrique via l’icône œil.', 'em-wp'); ?><br>
                             <?php esc_html_e('Glisse les sections pour changer leur ordre.', 'em-wp'); ?><br>
                             <?php esc_html_e('HEADER : encadre le Hero et/ou Slider choisis pour ce template.', 'em-wp'); ?>
                         </p>
