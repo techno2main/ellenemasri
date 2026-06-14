@@ -55,8 +55,13 @@ function em_wp_admin_hub_greeting_name(): string
 /**
  * En-tête sommaire partagé (Hello + avatar + description + flèche).
  */
-function em_wp_admin_hub_render_sommaire_header(string $description, string $icon_class = 'dashicons-dashboard', bool $description_allows_html = false): void
-{
+function em_wp_admin_hub_render_sommaire_header(
+    string $description,
+    string $icon_class = 'dashicons-dashboard',
+    bool $description_allows_html = false,
+    bool $show_template_banner = true,
+    ?callable $context_banner_renderer = null
+): void {
     $icon_class = trim($icon_class);
 
     if ($icon_class !== '' && !str_contains($icon_class, 'dashicons ')) {
@@ -91,7 +96,13 @@ function em_wp_admin_hub_render_sommaire_header(string $description, string $ico
         ?>
     </h1>
 
-    <?php em_wp_admin_render_template_editing_banner(); ?>
+    <?php
+    if (is_callable($context_banner_renderer)) {
+        $context_banner_renderer();
+    } elseif ($show_template_banner) {
+        em_wp_admin_render_template_editing_banner();
+    }
+    ?>
 
     <div class="em-wp-hub__intro">
         <p class="description em-wp-hub__intro-text"><?php

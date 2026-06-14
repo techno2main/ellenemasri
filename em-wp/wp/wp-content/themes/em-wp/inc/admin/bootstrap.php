@@ -21,6 +21,7 @@ require_once __DIR__ . '/shared/avatars.php';
 require_once __DIR__ . '/shared/menu.php';
 require_once __DIR__ . '/template/bootstrap.php';
 require_once __DIR__ . '/shared/landing-preview.php';
+require_once __DIR__ . '/shared/landing-structure-preview.php';
 require_once __DIR__ . '/shared/variant-hub.php';
 require_once __DIR__ . '/client-access.php';
 require_once __DIR__ . '/themes-preview.php';

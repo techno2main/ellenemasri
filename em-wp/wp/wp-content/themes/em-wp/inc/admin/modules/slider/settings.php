@@ -242,12 +242,11 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
 add_action('admin_enqueue_scripts', 'em_wp_slider_admin_enqueue');
 
 /**
- * Enregistre les pages d'édition Slider (sous-menu masqué — hub = Sommaire).
+ * Enregistre les pages d'édition Slider (masquées du menu — accessibles via le sommaire).
  */
 function em_wp_slider_add_admin_page(): void
 {
     $definitions = em_wp_slider_style_definitions();
-    $parent_slug = em_wp_slider_hub_menu_slug();
 
     foreach ($definitions as $definition) {
         $page_slug = (string) ($definition['page_slug'] ?? '');
@@ -257,15 +256,13 @@ function em_wp_slider_add_admin_page(): void
         }
 
         add_submenu_page(
-            $parent_slug,
+            null,
             (string) ($definition['menu_title'] ?? __('Slider', 'em-wp')),
             (string) ($definition['menu_title'] ?? __('Slider', 'em-wp')),
             'manage_options',
             $page_slug,
             'em_wp_slider_render_admin_page'
         );
-
-        remove_submenu_page($parent_slug, $page_slug);
     }
 }
 add_action('admin_menu', 'em_wp_slider_add_admin_page', 20);
@@ -389,9 +386,7 @@ function em_wp_slider_sanitize_options_for_style($input, string $style_slug): ar
             ? $footer_text
             : (string) ($existing['footer_text'] ?? ''),
         'footer_title'        => sanitize_text_field($input['footer_title'] ?? ($existing['footer_title'] ?? '')),
-        'slider_title_hidden' => array_key_exists('slider_title_hidden', $input)
-            ? !empty($input['slider_title_hidden'])
-            : !empty($existing['slider_title_hidden']),
+        'slider_title_hidden' => !empty($input['slider_title_hidden']),
         'slides'              => isset($input['slides']) && is_array($input['slides'])
             ? em_wp_slider_sanitize_slides_from_input($input['slides'])
             : $existing['slides'],
@@ -409,69 +404,91 @@ function em_wp_slider_render_admin_page(): void
 
     $context = em_wp_slider_get_admin_context();
     $style_slug = (string) ($context['style_slug'] ?? '');
-    $slider_style_defaults = em_wp_admin_module_default_style_colors('slider');
-    $slider_style_field_map = em_wp_admin_module_style_color_fields('slider');
-    $slider_style_options = $style_slug !== '' ? em_wp_slider_get_options($style_slug) : [];
+    $definitions = em_wp_slider_style_definitions();
     ?>
-    <div
-        class="wrap em-wp-slider-admin em-wp-admin-module"
-        <?php echo em_wp_admin_module_style_data_attributes('', $slider_style_defaults, $slider_style_field_map); ?>
-        style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars($slider_style_options, $slider_style_defaults, $slider_style_field_map)); ?>"
-    >
-        <?php em_wp_admin_render_settings_notices(); ?>
-        <div class="em-wp-slider-admin__hero em-wp-admin-module__hero">
-            <div>
-                <p class="em-wp-slider-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('CATALOGUE', 'em-wp'); ?></p>
-                <p class="em-wp-admin-module__description"><?php esc_html_e('Sliders du catalogue — édition du contenu (rattachement dans HEADER).', 'em-wp'); ?></p>
-            </div>
-        </div>
+    <div class="wrap em-wp-slider-admin em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire em-wp-catalog-edit">
+        <?php
+        em_wp_admin_render_settings_notices();
+        if (function_exists('em_wp_slider_catalog_render_admin_notices')) {
+            em_wp_slider_catalog_render_admin_notices();
+        }
+        ?>
+        <?php
+        em_wp_admin_hub_render_sommaire_header(
+            $style_slug !== ''
+                ? __('Contenu réutilisable dans les rubriques HEADER de tes templates.', 'em-wp')
+                : __('Sélectionnez un slider à éditer.', 'em-wp'),
+            'dashicons-slides',
+            false,
+            false,
+            static function () use ($definitions, $style_slug): void {
+                em_wp_catalog_render_edit_banner('slider', $definitions, $style_slug, em_wp_slider_hub_menu_slug());
+            }
+        );
+        ?>
 
-        <div class="em-wp-admin-module-hub">
-            <?php em_wp_slider_render_admin_sidebar($style_slug, $style_slug); ?>
-
-            <div class="em-wp-admin-module-hub__content">
-                <?php if ($style_slug === '') { ?>
-                    <div class="em-wp-admin-module-hub__empty">
-                        <p><?php esc_html_e('Sélectionnez un slider dans la liste pour éditer son contenu.', 'em-wp'); ?></p>
-                    </div>
-                <?php } else {
-                    $options = em_wp_slider_get_options($style_slug);
-                    em_wp_slider_render_style_setup($context, $options, $style_slug);
-                } ?>
-            </div>
+        <div class="em-wp-catalog-edit__body">
+            <?php if ($style_slug === '') { ?>
+                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Sélectionnez un slider dans la barre ci-dessus.', 'em-wp'); ?></p>
+            <?php } else {
+                $options = em_wp_slider_get_options($style_slug);
+                em_wp_slider_render_edit_page_layout($context, $options, $style_slug);
+            } ?>
         </div>
     </div>
     <?php
 }
 
 /**
- * Rendu de la liste des sliders disponibles (colonne hub).
+ * Layout édition Slider (formulaire + aperçu HEADER).
+ *
+ * @param array<string, mixed> $context
+ * @param array<string, mixed> $options
  */
-function em_wp_slider_render_admin_sidebar(string $selected_style_slug, string $active_style_slug): void
+function em_wp_slider_render_edit_page_layout(array $context, array $options, string $style_slug): void
 {
-    $definitions = em_wp_slider_style_definitions();
-    $form_page_slug = $selected_style_slug !== '' && isset($definitions[$selected_style_slug])
-        ? (string) ($definitions[$selected_style_slug]['page_slug'] ?? em_wp_slider_hub_menu_slug())
-        : em_wp_slider_hub_menu_slug();
+    $template_label = function_exists('em_wp_get_editing_template_label')
+        ? em_wp_get_editing_template_label()
+        : '';
+    $header_config = function_exists('em_wp_header_get_options')
+        ? em_wp_header_get_options()
+        : em_wp_header_default_options();
+    $header_config['slider_slug'] = sanitize_key($style_slug);
     ?>
-    <aside class="em-wp-admin-module-hub__sidebar">
-        <h2 class="em-wp-admin-module-hub__title"><?php esc_html_e('Sliders du catalogue', 'em-wp'); ?></h2>
+    <div class="em-wp-catalog-edit__layout">
+        <div class="em-wp-catalog-edit__main">
+            <?php em_wp_slider_render_style_setup($context, $options, $style_slug); ?>
+        </div>
 
-        <ul class="em-wp-admin-module-hub__list">
-            <?php foreach ($definitions as $style_slug => $definition) {
-                $page_slug = (string) ($definition['page_slug'] ?? '');
-                $label = (string) ($definition['label'] ?? $style_slug);
-                $is_selected = $selected_style_slug === $style_slug;
-                $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
-                ?>
-                <li class="em-wp-admin-module-hub__list-item<?php echo $is_selected ? ' is-selected' : ''; ?>">
-                    <a class="em-wp-admin-module-hub__list-link" href="<?php echo esc_url($item_url); ?>">
-                        <span class="em-wp-admin-module-hub__list-label"><?php echo esc_html($label); ?></span>
-                    </a>
-                </li>
-            <?php } ?>
-        </ul>
-    </aside>
+        <?php if (function_exists('em_wp_admin_render_header_structure_preview')) { ?>
+            <aside class="em-wp-catalog-edit__aside">
+                <div class="em-wp-catalog-edit__preview-wrap">
+                    <p class="em-wp-catalog-edit__preview-label">
+                        <?php
+                        if ($template_label !== '') {
+                            printf(
+                                /* translators: %s: template label */
+                                esc_html__('Placement HEADER — template %s', 'em-wp'),
+                                esc_html($template_label)
+                            );
+                        } else {
+                            esc_html_e('Placement HEADER', 'em-wp');
+                        }
+                        ?>
+                    </p>
+                    <p class="em-wp-catalog-edit__preview-hint">
+                        <?php esc_html_e('Le slider en cours est actif. Le hero est affiché en contexte (non cliquable).', 'em-wp'); ?>
+                    </p>
+                    <?php
+                    em_wp_admin_render_header_structure_preview('header_slider', [
+                        'header_config' => $header_config,
+                        'editing_part'  => 'slider',
+                    ]);
+                    ?>
+                </div>
+            </aside>
+        <?php } ?>
+    </div>
     <?php
 }
 
@@ -483,21 +500,14 @@ function em_wp_slider_render_admin_sidebar(string $selected_style_slug, string $
  */
 function em_wp_slider_render_style_setup(array $context, array $options, string $active_style_slug = ''): void
 {
-    $slider_label = strtoupper((string) ($context['label'] ?? 'MAYAMI'));
+    $slider_label = (string) ($context['label'] ?? 'Mayami');
     $style_slug = (string) ($context['style_slug'] ?? 'mayami');
     $page_slug = (string) ($context['page_slug'] ?? 'em-wp-slider-mayami');
-    if ($active_style_slug === '') {
-        $active_style_slug = em_wp_slider_active_style_slug();
-    }
+    $slider_style_defaults = em_wp_admin_module_default_style_colors('slider');
+    $slider_style_field_map = em_wp_admin_module_style_color_fields('slider');
     ?>
     <div class="em-wp-slider-admin__setup">
-        <div class="em-wp-slider-admin__setup-header em-wp-admin-module__hero">
-            <div>
-                <p class="em-wp-slider-admin__eyebrow em-wp-admin-module__eyebrow"><?php esc_html_e('SLIDER', 'em-wp'); ?></p>
-                <h2 class="em-wp-admin-module__title"><?php echo esc_html(sprintf(__('Section SLIDER - %s', 'em-wp'), $slider_label)); ?></h2>
-            </div>
-            <?php em_wp_admin_render_variant_active_badge($style_slug, $active_style_slug); ?>
-        </div>
+        <?php em_wp_catalog_render_edit_section_open(__('Slider', 'em-wp'), $slider_label); ?>
 
         <form id="em-wp-slider-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($page_slug)); ?>">
             <input type="hidden" name="<?php echo esc_attr(em_wp_admin_rubrique_visibility_field_name('slider')); ?>" value="0">
@@ -509,7 +519,11 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
             );
             ?>
 
-            <div class="em-wp-slider-admin__panels em-wp-admin-module__panels">
+            <div
+                class="em-wp-slider-admin__panels em-wp-admin-module__panels"
+                <?php echo em_wp_admin_module_style_data_attributes('', $slider_style_defaults, $slider_style_field_map); ?>
+                style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars($options, $slider_style_defaults, $slider_style_field_map)); ?>"
+            >
                 <?php
                 em_wp_admin_render_base_style_panel(
                     __('Style de base', 'em-wp'),
@@ -562,6 +576,8 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
 
             <?php submit_button(__('Enregistrer', 'em-wp')); ?>
         </form>
+
+        <?php em_wp_catalog_render_edit_section_close(); ?>
     </div>
     <?php
 }
