@@ -577,6 +577,7 @@ function em_wp_hero_render_mayami_item_panel(string $key, string $label, string 
     ?>
     <section class="em-wp-hero-panel em-wp-admin-module__panel em-wp-hero-item-panel">
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-hero-panel')); ?>" type="button" aria-expanded="false">
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
             <span class="em-wp-hero-item-panel__header-line em-wp-admin-module__item-header-line">
                 <?php if ($hidden_key !== '') { ?>
                     <span class="em-wp-hero-item-panel__visibility em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-hidden="true"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>"></i></span>

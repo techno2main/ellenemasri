@@ -22,6 +22,7 @@ function em_wp_top_bar_render_stream_icons_panel(array $options): void
     ?>
     <section class="em-wp-top-bar-panel em-wp-admin-module__panel">
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-top-bar-panel')); ?>" type="button" aria-expanded="false">
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
             <span class="em-wp-admin-module__item-header-line"><span class="em-wp-top-bar-panel__visibility em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-label="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>" title="<?php echo $is_hidden ? esc_attr__('Masqué', 'em-wp') : esc_attr__('Visible', 'em-wp'); ?>"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>" aria-hidden="true"></i></span><?php em_wp_top_bar_render_position_indicator(em_wp_top_bar_item_position('stream_icons')); ?><span><?php esc_html_e('Stream Icons', 'em-wp'); ?></span></span>
         </button>
         <div class="em-wp-admin-module__panel-body em-wp-admin-panel-body--row">

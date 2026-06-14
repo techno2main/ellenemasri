@@ -29,6 +29,7 @@ function em_wp_stream_render_platform_item(int $list_index, array $item, array $
     ?>
     <details class="em-wp-admin-nested-item em-wp-top-bar-platform-item" data-stream-link-item data-list-index="<?php echo esc_attr((string) $list_index); ?>">
         <summary>
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
             <span class="em-wp-top-bar-platform-item__label">
                 <span class="em-wp-top-bar-platform-item__order">
                     <button type="button" class="em-wp-top-bar-platform-item__move em-wp-top-bar-platform-item__move--up" aria-label="<?php esc_attr_e('Monter', 'em-wp'); ?>" title="<?php esc_attr_e('Monter', 'em-wp'); ?>"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>

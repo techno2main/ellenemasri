@@ -545,6 +545,7 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
 
                 <section class="em-wp-slider-panel em-wp-admin-module__panel em-wp-slider-item-panel">
                     <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-slider-panel')); ?>" type="button" aria-expanded="false">
+                        <?php em_wp_admin_render_panel_edit_trigger(); ?>
                         <span class="em-wp-admin-module__item-header-line">
                             <span class="em-wp-admin-module__item-visibility<?php echo !empty($options['slider_title_hidden']) ? ' is-hidden' : ''; ?>" aria-hidden="true"><i class="fa-solid <?php echo !empty($options['slider_title_hidden']) ? 'fa-eye-slash' : 'fa-eye'; ?>"></i></span>
                             <span><?php esc_html_e('Slider Title', 'em-wp'); ?></span>
@@ -574,6 +575,7 @@ function em_wp_slider_render_slides_panel(array $context, array $options): void
     ?>
     <section class="em-wp-slider-panel em-wp-admin-module__panel">
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-slider-panel')); ?>" type="button" aria-expanded="false">
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
             <span class="em-wp-admin-module__item-header-line"><span class="em-wp-admin-panel__has-children" title="<?php esc_attr_e('Contient des sous-éléments', 'em-wp'); ?>"><i class="fa-solid fa-list" aria-hidden="true"></i></span><span><?php esc_html_e('Slides', 'em-wp'); ?></span></span>
         </button>
         <div class="em-wp-admin-module__panel-body">
@@ -629,6 +631,7 @@ function em_wp_slider_render_slide_item($list_index, array $context, array $slid
     ?>
     <details class="em-wp-admin-nested-item em-wp-slider-slide-item em-wp-slider-item-panel" data-slide-item data-list-index="<?php echo esc_attr($index_token); ?>">
         <summary>
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
             <span class="em-wp-slider-slide-item__label">
                 <span class="em-wp-slider-slide-item__order">
                     <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--up" aria-label="<?php esc_attr_e('Monter', 'em-wp'); ?>" title="<?php esc_attr_e('Monter', 'em-wp'); ?>"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
