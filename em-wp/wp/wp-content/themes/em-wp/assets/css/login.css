@@ -5,11 +5,13 @@
  */
 
 body.login {
-    background: #f8d24a !important;
+    background: #4f080e !important;
 }
 
 body.login #login {
     width: 320px !important;
+    padding-top: 8% !important;
+    overflow: visible !important;
 }
 
 body.login #loginform,
@@ -19,26 +21,46 @@ body.login form#lostpasswordform,
 body.login #resetpassform,
 body.login form#resetpassform,
 body.login .login form {
-    background: #d94a2d !important;
-    border: 1px solid #2f1114 !important;
+    background: #5645a3 !important;
+    border: 1px solid #ffffff !important;
     box-shadow: none !important;
     margin-top: 0 !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    position: relative !important;
+    z-index: 2 !important;
 }
 
 body.login #login h1,
 body.login .login h1 {
-    margin-bottom: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 0 !important;
 }
 
+body.login #login h1 a,
+body.login .login h1 a {
+    display: none !important;
+}
+
+body.login #login h1 .em-wp-login-logo {
+    display: block;
+    width: auto;
+    max-width: 180px;
+    height: auto;
+    margin: 0 auto -15px;
+    vertical-align: bottom;
+}
 body.login #nav,
 body.login #backtoblog,
 body.login #nav a,
 body.login #backtoblog a,
 body.login .language-switcher label,
 body.login .language-switcher .dashicons {
-    color: #1f2937 !important;
+    color: #ffffff !important;
     opacity: 1 !important;
 }
 
@@ -46,7 +68,7 @@ body.login #nav a:hover,
 body.login #nav a:focus,
 body.login #backtoblog a:hover,
 body.login #backtoblog a:focus {
-    color: #111827 !important;
+    color: #f8d24a !important;
 }
 
 body.login .language-switcher,
@@ -57,7 +79,10 @@ body.login #language-switcher {
 body.login #loginform label,
 body.login #lostpasswordform label,
 body.login #resetpassform label,
-body.login #loginform .forgetmenot label,
+body.login #loginform .forgetmenot label {
+    color: #ffffff !important;
+}
+
 body.login #loginform .user-pass-wrap .wp-pwd .button,
 body.login #loginform .dashicons-visibility,
 body.login #loginform .dashicons-hidden {
@@ -140,15 +165,4 @@ body.login .message,
 body.login #login_error,
 body.login .notice {
     border-left-color: #2f1114 !important;
-}
-
-.login h1 a {
-    background-size: 100% 100% !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
-    width: 100% !important;
-    aspect-ratio: 799 / 410 !important;
-    height: auto !important;
-    max-height: none !important;
-    margin-bottom: 0 !important;
 }

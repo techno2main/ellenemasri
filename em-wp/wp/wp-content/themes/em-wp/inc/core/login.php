@@ -52,29 +52,51 @@ function em_wp_enqueue_login_assets(): void
         [],
         em_wp_login_asset_version($login_css_path)
     );
-
-    $logo_url = em_wp_get_login_logo_url();
-
-    if ($logo_url !== '') {
-        wp_add_inline_style(
-            'em-wp-login',
-            '.login h1 a { background-image: url(\'' . esc_url($logo_url) . '\') !important; }'
-        );
-    }
 }
 add_action('login_enqueue_scripts', 'em_wp_enqueue_login_assets', 20);
 
 /**
- * Lien du logo login → accueil du site.
+ * Moonwalk décoratif (sans lien — le lien WP h1 est retiré).
  */
-function em_wp_customize_login_logo_url(string $url): string
+function em_wp_render_login_logo_img(): void
 {
-    return home_url('/');
+    $logo_url = em_wp_get_login_logo_url();
+
+    if ($logo_url === '') {
+        return;
+    }
+
+    $alt = em_wp_customize_login_logo_text('');
+    ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var h1 = document.querySelector('#login h1');
+
+        if (!h1 || h1.querySelector('.em-wp-login-logo')) {
+            return;
+        }
+
+        var link = h1.querySelector('a');
+        var img = document.createElement('img');
+        img.src = <?php echo wp_json_encode($logo_url); ?>;
+        img.alt = <?php echo wp_json_encode($alt); ?>;
+        img.className = 'em-wp-login-logo';
+        img.width = 480;
+        img.height = 480;
+
+        h1.insertBefore(img, link || null);
+
+        if (link) {
+            link.remove();
+        }
+    });
+    </script>
+    <?php
 }
-add_filter('login_headerurl', 'em_wp_customize_login_logo_url');
+add_action('login_footer', 'em_wp_render_login_logo_img', 5);
 
 /**
- * Texte alternatif du logo login.
+ * Texte alternatif des visuels login.
  */
 function em_wp_customize_login_logo_text(string $text): string
 {
