@@ -74,6 +74,8 @@ function em_wp_enqueue_assets(): void
     $slider_css_path = 'assets/front/css/modules/slider/' . $slider_style_slug . '/slider.css';
     $enqueue_hero = empty($header) || !empty($header['hero_slug']);
     $enqueue_slider = empty($header) || !empty($header['slider_slug']);
+    $enqueue_header = empty($header) || !empty($header['hero_slug']) || !empty($header['slider_slug']);
+    $header_css_path = 'assets/front/css/modules/header/header.css';
 
     wp_enqueue_style(
         'em-wp-landing-ui',
@@ -85,6 +87,16 @@ function em_wp_enqueue_assets(): void
     );
 
     $style_deps = ['em-wp-theme', 'em-wp-landing-ui'];
+
+    if ($enqueue_header && is_readable($theme_dir . '/' . $header_css_path)) {
+        wp_enqueue_style(
+            'em-wp-header',
+            get_template_directory_uri() . '/' . $header_css_path,
+            $style_deps,
+            $theme_version . '.' . (string) filemtime($theme_dir . '/' . $header_css_path)
+        );
+        $style_deps[] = 'em-wp-header';
+    }
 
     if ($enqueue_hero && is_readable($theme_dir . '/' . $hero_css_path)) {
         wp_enqueue_style(
@@ -107,7 +119,7 @@ function em_wp_enqueue_assets(): void
 
     if (is_front_page()) {
         $landing_css_path = 'assets/front/css/landing.css';
-        $landing_deps = array_values(array_filter(['em-wp-hero', 'em-wp-slider', 'em-wp-landing-ui']));
+        $landing_deps = array_values(array_filter(['em-wp-header', 'em-wp-hero', 'em-wp-slider', 'em-wp-landing-ui']));
         wp_enqueue_style(
             'em-wp-landing',
             get_template_directory_uri() . '/' . $landing_css_path,

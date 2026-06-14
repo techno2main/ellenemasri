@@ -8,6 +8,7 @@
 $hero = is_array($args['hero'] ?? null) ? $args['hero'] : [];
 $embed_slider = !array_key_exists('embed_slider', $args) || !empty($args['embed_slider']);
 $layout = (string) ($args['layout'] ?? 'default');
+$in_header = !empty($args['in_header']);
 
 $badge_text = trim((string) ($hero['badge_text'] ?? ''));
 $badge_text_hidden = !empty($hero['badge_text_hidden']);
@@ -16,9 +17,6 @@ $subtitle = trim((string) ($hero['subtitle'] ?? ''));
 $subtitle_hidden = !empty($hero['subtitle_hidden']);
 
 $main_title = trim((string) ($hero['main_title'] ?? ''));
-
-$background_image = trim((string) ($hero['background_image'] ?? ''));
-$background_image_hidden = !empty($hero['background_image_hidden']);
 
 $logo_image = trim((string) ($hero['logo_image'] ?? ''));
 $logo_hidden = !empty($hero['logo_hidden']);
@@ -51,26 +49,15 @@ $split_button_label = static function (string $label): array {
 [$stream_icon, $stream_text] = $split_button_label($stream_label);
 [$watch_icon, $watch_text] = $split_button_label($watch_label);
 
-$background_color = trim((string) ($hero['background_color'] ?? ''));
-$text_color = trim((string) ($hero['text_color'] ?? ''));
-
 $hero_classes = 'em-hero em-hero--mayami';
+if ($in_header) {
+    $hero_classes .= ' em-hero--in-header';
+}
 if (!$embed_slider) {
     $hero_classes .= ' em-hero--standalone';
 }
 if ($layout === 'pair-column') {
     $hero_classes .= ' em-hero--pair-column';
-}
-if ($background_image !== '' && !$background_image_hidden) {
-    $hero_classes .= ' has-bg';
-}
-
-$hero_style = '';
-if ($background_color !== '') {
-    $hero_style .= '--em-hero-mayami-bg: ' . esc_attr($background_color) . ';';
-}
-if ($text_color !== '') {
-    $hero_style .= '--em-hero-mayami-text: ' . esc_attr($text_color) . ';';
 }
 
 $hero_nav = function_exists('em_wp_landing_get_section_nav_hrefs')
@@ -78,11 +65,7 @@ $hero_nav = function_exists('em_wp_landing_get_section_nav_hrefs')
     : ['prev' => '', 'next' => '#stream'];
 $hero_nav_next_href = (string) ($hero_nav['next'] ?? '#stream');
 ?>
-<section id="hero" class="<?php echo esc_attr($hero_classes); ?>" style="<?php echo esc_attr($hero_style); ?>">
-    <?php if ($background_image !== '' && !$background_image_hidden): ?>
-        <img class="em-hero__bg" src="<?php echo esc_url($background_image); ?>" alt="" loading="eager" decoding="async" aria-hidden="true">
-    <?php endif; ?>
-    <div class="em-hero__grain" aria-hidden="true"></div>
+<section id="hero" class="<?php echo esc_attr($hero_classes); ?>">
     <div class="em-hero__inner">
         <div class="em-hero__left">
             <?php if ($hero_nav_next_href !== '') { ?>
@@ -103,7 +86,7 @@ $hero_nav_next_href = (string) ($hero_nav['next'] ?? '#stream');
                 <div class="em-hero__logo-wrap">
                     <img class="em-hero__logo" src="<?php echo esc_url($logo_image); ?>" alt="<?php echo esc_attr($logo_alt); ?>">
                 </div>
-            <?php elseif ($main_title !== ''): ?>
+            <?php elseif ($main_title !== '' && $logo_image === ''): ?>
                 <p class="em-hero__main-title-fallback"><?php echo esc_html($main_title); ?></p>
             <?php endif; ?>
 

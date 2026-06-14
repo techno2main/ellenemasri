@@ -33,8 +33,6 @@ function em_wp_get_hero_options_for_front(string $style_slug = ''): array
         'subtitle'                 => __('Mayami, My Miami', 'em-wp'),
         'subtitle_hidden'          => false,
         'main_title'               => __('Mayami, My Miami', 'em-wp'),
-        'background_image'         => '',
-        'background_image_hidden'  => false,
         'logo_image'               => '',
         'logo_hidden'              => false,
         'logo_alt'                 => __('Mayami, My Miami', 'em-wp'),
@@ -98,5 +96,6 @@ function em_wp_render_hero(array $args = []): void
         'embed_slider' => $embed_slider,
         'layout'       => $layout,
         'slider_slug'  => $slider_slug,
+        'in_header'    => !empty($args['in_header']),
     ]);
 }

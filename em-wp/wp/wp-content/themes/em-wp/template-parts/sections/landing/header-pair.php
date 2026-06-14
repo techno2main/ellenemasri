@@ -26,6 +26,7 @@ $slider_slug = sanitize_key((string) ($args['slider_slug'] ?? ''));
                     'catalog_slug' => $hero_slug,
                     'embed_slider' => false,
                     'layout'       => 'pair-column',
+                    'in_header'    => true,
                 ]);
             }
             ?>
