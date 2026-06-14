@@ -19,11 +19,11 @@
     width: 34px;
     height: 34px;
     border-radius: 999px;
-    color: #2271b1;
-    background: linear-gradient(180deg, rgba(34, 113, 177, 0.12) 0%, rgba(34, 113, 177, 0.06) 100%);
+    color: #751820;
+    background: linear-gradient(180deg, rgba(117, 24, 32, 0.12) 0%, rgba(117, 24, 32, 0.06) 100%);
     box-shadow:
-        0 0 0 1px rgba(34, 113, 177, 0.16),
-        0 2px 6px rgba(34, 113, 177, 0.12);
+        0 0 0 1px rgba(117, 24, 32, 0.16),
+        0 2px 6px rgba(78, 8, 14, 0.12);
     animation: em-wp-dashboard-intro-arrow-bounce 2.2s ease-in-out infinite;
 }
 
@@ -51,6 +51,15 @@
 
 .em-wp-dashboard__greeting-text {
     line-height: 1.2;
+}
+
+.em-wp-dashboard__greeting-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    font-size: 32px;
+    line-height: 32px;
+    color: #751820;
 }
 
 .em-wp-dashboard__greeting-avatar {
@@ -117,6 +126,11 @@
     display: inline;
 }
 
+.em-wp-dashboard__live--uppercase .em-wp-dashboard__live-text {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
 .em-wp-dashboard__live-template {
     font-weight: 600;
     color: var(--em-wp-live-color, #2271b1);
@@ -174,11 +188,11 @@
     height: 22px;
     font-size: 22px;
     line-height: 22px;
-    color: #2271b1;
+    color: #751820;
 }
 
 .em-wp-dashboard__card--disabled .em-wp-dashboard__card-title-icon {
-    color: #72aee6;
+    color: #a85560;
 }
 
 .em-wp-dashboard__card-desc {
@@ -205,9 +219,9 @@
     min-height: 42px;
     margin: 0;
     padding: 0 18px;
-    border: 1px solid #1d5f96;
+    border: 1px solid #4e080e;
     border-radius: 999px;
-    background: linear-gradient(180deg, #2583c6 0%, #2271b1 100%);
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
     color: #ffffff;
     font-family: inherit;
     font-size: 12px;
@@ -219,7 +233,7 @@
     cursor: pointer;
     box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.18) inset,
-        0 2px 8px rgba(34, 113, 177, 0.28);
+        0 2px 8px rgba(78, 8, 14, 0.28);
     transition:
         background 0.15s ease,
         border-color 0.15s ease,
@@ -229,17 +243,17 @@
 
 .em-wp-dashboard__action:hover,
 .em-wp-dashboard__action:focus {
-    border-color: #174f7d;
-    background: linear-gradient(180deg, #1f74b3 0%, #1b6398 100%);
+    border-color: #3d060b;
+    background: linear-gradient(180deg, #651620 0%, #3d060b 100%);
     color: #ffffff;
     box-shadow:
         0 1px 0 rgba(255, 255, 255, 0.14) inset,
-        0 4px 12px rgba(34, 113, 177, 0.34);
+        0 4px 12px rgba(78, 8, 14, 0.34);
     transform: translateY(-1px);
 }
 
 .em-wp-dashboard__action:focus {
-    outline: 2px solid rgba(34, 113, 177, 0.35);
+    outline: 2px solid rgba(117, 24, 32, 0.35);
     outline-offset: 2px;
 }
 
