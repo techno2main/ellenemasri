@@ -1,6 +1,6 @@
 <?php
 /**
- * Écran « Choix du template » (sans contexte d'édition).
+ * Sommaire Templates — grille de cartes (style Accueil).
  *
  * Réutilisé par la page Templates (list.php).
  *
@@ -12,62 +12,75 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Rendu du sélecteur de template (avant contexte explicite).
+ * Rendu du sommaire Templates (sélection du template à éditer).
  */
 function em_wp_admin_render_rubriques_template_picker(): void
 {
     $registry = em_wp_template_registry();
     $active_slug = em_wp_get_active_template_slug();
-    $active_label = (string) ($registry[$active_slug]['label'] ?? $active_slug);
-    $active_color = em_wp_get_template_color($active_slug);
     ?>
-    <div class="wrap em-wp-rubriques-admin em-wp-rubriques-picker em-wp-admin-module">
-        <p class="em-wp-rubriques-picker__back">
-            <a href="<?php echo esc_url(em_wp_admin_dashboard_admin_url()); ?>">&larr; <?php esc_html_e('Retour à l’accueil', 'em-wp'); ?></a>
-        </p>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire">
+        <?php
+        em_wp_admin_hub_render_sommaire_header(
+            __('Choisis le template que tu veux éditer. Tu peux aussi switcher le thème du site public.', 'em-wp'),
+            'dashicons-layout'
+        );
+        ?>
 
-        <h1><?php esc_html_e('Choix du Template', 'em-wp'); ?></h1>
+        <?php em_wp_admin_hub_render_live_template_switcher(em_wp_admin_template_choice_page_slug()); ?>
 
-        <p class="description em-wp-rubriques-picker__intro">
-            <?php esc_html_e('Choisis le template que tu veux éditer. Les rubriques (TOP-BAR, HEADER, STREAM…) seront disponibles une fois ta sélection confirmée.', 'em-wp'); ?>
-        </p>
+        <div class="em-wp-hub__rows">
+            <section class="em-wp-hub__row" aria-label="<?php esc_attr_e('Templates enregistrés', 'em-wp'); ?>">
+                <div class="em-wp-hub__cards">
+                    <?php foreach ($registry as $slug => $definition) {
+                        $label = mb_strtoupper((string) ($definition['label'] ?? $slug));
+                        $card_title = sprintf(
+                            /* translators: %s: template name */
+                            __('TEMPLATE %s', 'em-wp'),
+                            $label
+                        );
+                        $display_label = (string) ($definition['label'] ?? $slug);
+                        $color = em_wp_get_template_color($slug);
+                        $is_live = ($slug === $active_slug);
+                        $entry_url = add_query_arg(
+                            ['page' => em_wp_admin_template_entry_page_slug($slug)],
+                            admin_url('admin.php')
+                        );
+                        ?>
+                        <section class="em-wp-hub__card">
+                            <?php em_wp_admin_hub_render_card_title($card_title, 'dashicons-layout'); ?>
+                            <p class="em-wp-hub__card-desc">
+                                <?php echo esc_html(em_wp_admin_template_active_rubriques_summary($slug)); ?>
+                            </p>
+                            <?php if ($is_live) {
+                                em_wp_admin_hub_render_template_live_badge($display_label, $color);
+                            } ?>
+                            <div class="em-wp-hub__card-actions">
+                                <?php em_wp_admin_hub_render_action_link(
+                                    $entry_url,
+                                    sprintf(
+                                        /* translators: %s: template label */
+                                        __('ÉDITER %s', 'em-wp'),
+                                        $label
+                                    ),
+                                    'dashicons-layout'
+                                ); ?>
+                            </div>
+                        </section>
+                    <?php } ?>
 
-        <p class="em-wp-rubriques-picker__live" role="status">
-            <span class="em-wp-rubriques-picker__live-dot" style="background: <?php echo esc_attr($active_color); ?>;" aria-hidden="true"></span>
-            <?php
-            printf(
-                esc_html__('Rappel — template actif sur le site : %s', 'em-wp'),
-                '<strong>' . esc_html($active_label) . '</strong>'
-            );
-            ?>
-        </p>
-
-        <form class="em-wp-rubriques-picker__form" method="post" action="">
-            <?php wp_nonce_field('em_wp_template_set_editing'); ?>
-            <input type="hidden" name="em_wp_template_action" value="set_editing">
-            <input type="hidden" name="em_wp_template_redirect_page" value="<?php echo esc_attr(em_wp_admin_rubriques_page_slug()); ?>">
-
-            <p>
-                <label for="em-wp-rubriques-editing-select" class="em-wp-rubriques-picker__label">
-                    <?php esc_html_e('Template à éditer', 'em-wp'); ?>
-                </label>
-            </p>
-
-            <select id="em-wp-rubriques-editing-select" name="em_wp_template_editing_slug" class="em-wp-rubriques-picker__select" required>
-                <option value=""><?php esc_html_e('— Choisir un template —', 'em-wp'); ?></option>
-                <?php foreach ($registry as $slug => $definition) { ?>
-                    <option value="<?php echo esc_attr($slug); ?>" <?php selected($active_slug, $slug); ?>>
-                        <?php echo esc_html((string) ($definition['label'] ?? $slug)); ?>
-                    </option>
-                <?php } ?>
-            </select>
-
-            <p class="em-wp-rubriques-picker__actions">
-                <button type="submit" class="button button-primary button-hero">
-                    <?php esc_html_e('Commencer l’édition', 'em-wp'); ?>
-                </button>
-            </p>
-        </form>
+                    <section class="em-wp-hub__card em-wp-hub__card--disabled">
+                        <?php em_wp_admin_hub_render_card_title(__('Nouveau Template', 'em-wp'), 'dashicons-layout'); ?>
+                        <p class="em-wp-hub__card-desc">
+                            <?php esc_html_e('Crée un nouveau template à partir d’un modèle vierge.', 'em-wp'); ?>
+                        </p>
+                        <div class="em-wp-hub__card-actions">
+                            <?php em_wp_admin_hub_render_disabled_action(__('Nouveau Template', 'em-wp')); ?>
+                        </div>
+                    </section>
+                </div>
+            </section>
+        </div>
     </div>
     <?php
 }

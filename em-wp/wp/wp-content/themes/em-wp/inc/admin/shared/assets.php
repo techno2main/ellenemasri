@@ -94,6 +94,34 @@ function em_wp_admin_enqueue_shared_assets(): array
 }
 
 /**
+ * Auto-dismiss des notices admin (toasts) après 5 s sur les écrans em-wp.
+ */
+function em_wp_admin_enqueue_notice_autodismiss(): void
+{
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    global $pagenow;
+
+    $is_em_wp = function_exists('em_wp_admin_is_em_wp_screen') && em_wp_admin_is_em_wp_screen();
+    $is_dashboard = $pagenow === 'index.php';
+
+    if (!$is_em_wp && !$is_dashboard) {
+        return;
+    }
+
+    wp_enqueue_script(
+        'em-wp-admin-notice-autodismiss',
+        get_template_directory_uri() . '/assets/admin/js/shared/notice-autodismiss.js',
+        [],
+        em_wp_admin_asset_version('assets/admin/js/shared/notice-autodismiss.js'),
+        true
+    );
+}
+add_action('admin_enqueue_scripts', 'em_wp_admin_enqueue_notice_autodismiss', 5);
+
+/**
  * Enqueue d'un module admin (CSS + JS spécifiques).
  */
 function em_wp_admin_enqueue_module_assets(
