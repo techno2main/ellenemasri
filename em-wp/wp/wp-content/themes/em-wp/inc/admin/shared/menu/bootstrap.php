@@ -16,6 +16,7 @@ $menu_dir = __DIR__;
 require_once $menu_dir . '/capability.php';
 require_once $menu_dir . '/helpers.php';
 require_once $menu_dir . '/rubrique.php';
+require_once $menu_dir . '/submenu-current.php';
 require_once $menu_dir . '/medias.php';
 require_once $menu_dir . '/catalog-positions.php';
 require_once $menu_dir . '/template-positions.php';

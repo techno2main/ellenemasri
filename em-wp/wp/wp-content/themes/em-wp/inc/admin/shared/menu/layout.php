@@ -131,6 +131,20 @@ function em_wp_admin_menu_position_registry(): array
                 if ($hub_slug !== '') {
                     $registry[$hub_slug] = $p++;
                 }
+
+                if (function_exists('em_wp_catalog_sidebar_entry_definitions')) {
+                    foreach (em_wp_catalog_sidebar_entry_definitions() as $entry) {
+                        if ((string) ($entry['module'] ?? '') !== $module_slug) {
+                            continue;
+                        }
+
+                        $entry_slug = (string) ($entry['page_slug'] ?? '');
+
+                        if ($entry_slug !== '') {
+                            $registry[$entry_slug] = $p++;
+                        }
+                    }
+                }
             }
         }
 
@@ -336,6 +350,27 @@ function em_wp_admin_menu_layout_ensure_catalog_entries(array $relocate): array
             $page_slug,
             (string) ($definition['icon'] ?? 'dashicons-admin-generic'),
         ];
+
+        if (function_exists('em_wp_catalog_sidebar_entry_definitions')) {
+            foreach (em_wp_catalog_sidebar_entry_definitions() as $entry_slug => $entry) {
+                if ((string) ($entry['module'] ?? '') !== $module_slug) {
+                    continue;
+                }
+
+                $entry_module = sanitize_key((string) ($entry['module'] ?? ''));
+                $entry_label = (string) ($entry['label'] ?? $entry_slug);
+
+                $relocate[$entry_slug] = [
+                    $entry_label,
+                    $capability,
+                    $entry_slug,
+                    $entry_label,
+                    'menu-top em-wp-menu-accordion-child em-wp-menu-accordion-catalog-child em-wp-menu-accordion-catalog-entry-child em-wp-menu-catalog-' . $entry_module . '-entry',
+                    $entry_slug,
+                    'dashicons-marker',
+                ];
+            }
+        }
     }
 
     return $relocate;

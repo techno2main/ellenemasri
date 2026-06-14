@@ -11,8 +11,10 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/hero/registry.php';
 require_once __DIR__ . '/hero/option-names.php';
+require_once __DIR__ . '/hero/crud.php';
 require_once __DIR__ . '/slider/registry.php';
 require_once __DIR__ . '/slider/option-names.php';
+require_once __DIR__ . '/slider/crud.php';
 require_once __DIR__ . '/migrate-v1.php';
 require_once __DIR__ . '/resolve-style.php';
 

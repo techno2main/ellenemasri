@@ -108,6 +108,9 @@ function em_wp_admin_apply_menu_accordion_classes(): void
 
     $catalog_parent = em_wp_catalog_parent_menu_slug();
     $catalog_children = em_wp_catalog_registered_hub_menu_slugs();
+    $catalog_entries = function_exists('em_wp_catalog_sidebar_entry_page_slugs')
+        ? em_wp_catalog_sidebar_entry_page_slugs()
+        : [];
     $media_parent = em_wp_admin_media_parent_menu_slug();
     $media_children = em_wp_admin_media_accordion_child_slugs();
     $template_parent = em_wp_admin_template_parent_page_slug();
@@ -120,9 +123,8 @@ function em_wp_admin_apply_menu_accordion_classes(): void
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
-    $rubrique_highlight_slug = function_exists('em_wp_admin_rubrique_menu_highlight_slug')
-        ? em_wp_admin_rubrique_menu_highlight_slug($page_slug)
-        : '';
+    $submenu_highlight_slug = em_wp_admin_menu_submenu_highlight_slug($page_slug);
+    $submenu_current_class = em_wp_admin_menu_submenu_current_class();
 
     foreach ($menu as $position => $item) {
         if (!is_array($item)) {
@@ -156,10 +158,33 @@ function em_wp_admin_apply_menu_accordion_classes(): void
         }
 
         if (in_array($slug, $catalog_children, true)) {
-            $menu[$position] = em_wp_admin_menu_item_append_class(
-                $item,
-                'em-wp-menu-accordion-child em-wp-menu-accordion-catalog-child'
-            );
+            $classes = 'em-wp-menu-accordion-child em-wp-menu-accordion-catalog-child';
+
+            if ($submenu_highlight_slug !== '' && $slug === $submenu_highlight_slug) {
+                $classes .= ' ' . $submenu_current_class;
+            }
+
+            $menu[$position] = em_wp_admin_menu_item_append_class($item, $classes);
+            continue;
+        }
+
+        if (in_array($slug, $catalog_entries, true)) {
+            $entry_module = 'heros';
+
+            if (function_exists('em_wp_catalog_sidebar_entry_definitions')) {
+                $entry_definition = em_wp_catalog_sidebar_entry_definitions()[$slug] ?? null;
+                $entry_module = is_array($entry_definition)
+                    ? sanitize_key((string) ($entry_definition['module'] ?? 'heros'))
+                    : 'heros';
+            }
+
+            $classes = 'em-wp-menu-accordion-child em-wp-menu-accordion-catalog-child em-wp-menu-accordion-catalog-entry-child em-wp-menu-catalog-' . $entry_module . '-entry';
+
+            if ($submenu_highlight_slug !== '' && $slug === $submenu_highlight_slug) {
+                $classes .= ' ' . $submenu_current_class;
+            }
+
+            $menu[$position] = em_wp_admin_menu_item_append_class($item, $classes);
             continue;
         }
 
@@ -208,8 +233,8 @@ function em_wp_admin_apply_menu_accordion_classes(): void
         if (in_array($slug, $rubrique_children, true)) {
             $classes = 'em-wp-menu-rubrique-child';
 
-            if ($rubrique_highlight_slug !== '' && $slug === $rubrique_highlight_slug) {
-                $classes .= ' em-wp-menu-rubrique-current';
+            if ($submenu_highlight_slug !== '' && $slug === $submenu_highlight_slug) {
+                $classes .= ' ' . $submenu_current_class;
             }
 
             $menu[$position] = em_wp_admin_menu_item_append_class($item, $classes);

@@ -41,6 +41,10 @@ function em_wp_admin_rubrique_reserved_menu_slugs(): array
         $slugs = array_merge($slugs, em_wp_catalog_registered_hub_menu_slugs());
     }
 
+    if (function_exists('em_wp_catalog_sidebar_entry_page_slugs')) {
+        $slugs = array_merge($slugs, em_wp_catalog_sidebar_entry_page_slugs());
+    }
+
     if (function_exists('em_wp_catalog_sommaire_menu_slug')) {
         $slugs[] = em_wp_catalog_sommaire_menu_slug();
     }
@@ -100,6 +104,10 @@ function em_wp_admin_catalog_reserved_menu_slugs(): array
 
     if (function_exists('em_wp_catalog_registered_hub_menu_slugs')) {
         $slugs = array_merge($slugs, em_wp_catalog_registered_hub_menu_slugs());
+    }
+
+    if (function_exists('em_wp_catalog_sidebar_entry_page_slugs')) {
+        $slugs = array_merge($slugs, em_wp_catalog_sidebar_entry_page_slugs());
     }
 
     if (function_exists('em_wp_catalog_sommaire_menu_slug')) {

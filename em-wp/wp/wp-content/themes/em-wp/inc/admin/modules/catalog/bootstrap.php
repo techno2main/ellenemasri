@@ -10,3 +10,5 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/sommaire.php';
+require_once __DIR__ . '/hero-actions.php';
+require_once __DIR__ . '/slider-actions.php';

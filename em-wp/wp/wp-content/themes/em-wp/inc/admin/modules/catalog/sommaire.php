@@ -159,6 +159,60 @@ function em_wp_catalog_menu_definitions(): array
 }
 
 /**
+ * Entrées hero/slider affichées sous MES HEROS / MES SLIDERS dans le menu latéral.
+ *
+ * @return array<string, array{label:string,module:string,page_slug:string}>
+ */
+function em_wp_catalog_sidebar_entry_definitions(): array
+{
+    $entries = [];
+
+    if (function_exists('em_wp_hero_style_definitions')) {
+        foreach (em_wp_hero_style_definitions() as $catalog_slug => $definition) {
+            $page_slug = (string) ($definition['page_slug'] ?? '');
+
+            if ($page_slug === '') {
+                continue;
+            }
+
+            $entries[$page_slug] = [
+                'label'     => (string) ($definition['menu_title'] ?? $definition['label'] ?? $catalog_slug),
+                'module'    => 'heros',
+                'page_slug' => $page_slug,
+            ];
+        }
+    }
+
+    if (function_exists('em_wp_slider_style_definitions')) {
+        foreach (em_wp_slider_style_definitions() as $catalog_slug => $definition) {
+            $page_slug = (string) ($definition['page_slug'] ?? '');
+
+            if ($page_slug === '') {
+                continue;
+            }
+
+            $entries[$page_slug] = [
+                'label'     => (string) ($definition['menu_title'] ?? $definition['label'] ?? $catalog_slug),
+                'module'    => 'sliders',
+                'page_slug' => $page_slug,
+            ];
+        }
+    }
+
+    return $entries;
+}
+
+/**
+ * Slugs menu des entrées hero/slider (sous MES HEROS / MES SLIDERS).
+ *
+ * @return list<string>
+ */
+function em_wp_catalog_sidebar_entry_page_slugs(): array
+{
+    return array_keys(em_wp_catalog_sidebar_entry_definitions());
+}
+
+/**
  * Slugs des pages admin catalogues (hubs + édition hero/slider).
  *
  * @return string[]
@@ -244,6 +298,72 @@ function em_wp_catalog_remove_duplicate_submenus(): void
 add_action('admin_menu', 'em_wp_catalog_remove_duplicate_submenus', 999);
 
 /**
+ * Assets CRUD sommaire catalogue (hero / slider).
+ */
+function em_wp_catalog_enqueue_sommaire_crud_assets(string $catalog_type): void
+{
+    static $script_enqueued = false;
+
+    $configs = [
+        'hero' => [
+            'slugPrefix'     => 'hero-',
+            'fallbackSlug'   => 'hero-item',
+            'createToggleId' => 'em-wp-hero-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-hero-catalog-create-panel',
+            'createCancelId' => 'em-wp-hero-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer le hero « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+        'slider' => [
+            'slugPrefix'     => 'slider-',
+            'fallbackSlug'   => 'slider-item',
+            'createToggleId' => 'em-wp-slider-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-slider-catalog-create-panel',
+            'createCancelId' => 'em-wp-slider-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer le slider « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+    ];
+
+    if (!isset($configs[$catalog_type])) {
+        return;
+    }
+
+    if (!wp_script_is('em-wp-admin-confirm-modal', 'registered')) {
+        wp_register_script(
+            'em-wp-admin-confirm-modal',
+            get_template_directory_uri() . '/assets/admin/js/shared/confirm-modal.js',
+            [],
+            em_wp_admin_asset_version('assets/admin/js/shared/confirm-modal.js'),
+            true
+        );
+    }
+
+    if (!$script_enqueued) {
+        wp_enqueue_script(
+            'em-wp-admin-catalog-sommaire-crud',
+            get_template_directory_uri() . '/assets/admin/js/catalog/sommaire-catalog.js',
+            ['em-wp-admin-confirm-modal'],
+            em_wp_admin_asset_version('assets/admin/js/catalog/sommaire-catalog.js'),
+            true
+        );
+        $script_enqueued = true;
+    }
+
+    wp_localize_script(
+        'em-wp-admin-catalog-sommaire-crud',
+        'EmWpCatalogSommaire',
+        $configs[$catalog_type]
+    );
+}
+
+/**
  * Assets pages hub catalogues.
  */
 function em_wp_catalog_hub_enqueue(): void
@@ -264,6 +384,12 @@ function em_wp_catalog_hub_enqueue(): void
         return;
     }
 
+    if ($page_slug === em_wp_hero_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('hero');
+    } elseif ($page_slug === em_wp_slider_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('slider');
+    }
+
     wp_enqueue_style(
         'font-awesome-6',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
@@ -279,6 +405,132 @@ function em_wp_catalog_hub_enqueue(): void
     );
 }
 add_action('admin_enqueue_scripts', 'em_wp_catalog_hub_enqueue');
+
+/**
+ * Slugs des pages d'édition catalogue (hero, slider…).
+ *
+ * @return list<string>
+ */
+function em_wp_catalog_edit_page_slugs(): array
+{
+    $slugs = [];
+
+    if (function_exists('em_wp_hero_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_hero_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_slider_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_slider_style_definitions(), 'page_slug'));
+    }
+
+    return array_values(array_filter(array_unique($slugs)));
+}
+
+/**
+ * Assets partagés des pages d'édition catalogue.
+ */
+function em_wp_catalog_edit_enqueue(): void
+{
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+    if (!in_array($page_slug, em_wp_catalog_edit_page_slugs(), true)) {
+        return;
+    }
+
+    em_wp_admin_hub_cards_enqueue_assets();
+
+    wp_enqueue_style(
+        'em-wp-admin-catalog-sommaire',
+        get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
+        ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
+        em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
+    );
+
+    wp_enqueue_style(
+        'em-wp-admin-template-banner',
+        get_template_directory_uri() . '/assets/admin/css/template/banner.css',
+        [],
+        em_wp_admin_asset_version('assets/admin/css/template/banner.css')
+    );
+
+    wp_enqueue_style(
+        'font-awesome-6',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+        [],
+        '6.5.1'
+    );
+
+    if (!wp_script_is('em-wp-admin-confirm-modal', 'registered')) {
+        wp_register_script(
+            'em-wp-admin-confirm-modal',
+            get_template_directory_uri() . '/assets/admin/js/shared/confirm-modal.js',
+            [],
+            em_wp_admin_asset_version('assets/admin/js/shared/confirm-modal.js'),
+            true
+        );
+    }
+
+    wp_enqueue_script(
+        'em-wp-admin-module-form-dirty',
+        get_template_directory_uri() . '/assets/admin/js/shared/module-form-dirty.js',
+        ['em-wp-admin-confirm-modal'],
+        em_wp_admin_asset_version('assets/admin/js/shared/module-form-dirty.js'),
+        true
+    );
+
+    wp_enqueue_script(
+        'em-wp-admin-catalog-banner',
+        get_template_directory_uri() . '/assets/admin/js/catalog/banner.js',
+        ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty'],
+        em_wp_admin_asset_version('assets/admin/js/catalog/banner.js'),
+        true
+    );
+
+    $page_map = [];
+    $hub_url = admin_url('admin.php');
+    $quit_label = __('Quitter et retourner au sommaire Heros ?', 'em-wp');
+
+    if (function_exists('em_wp_hero_catalog_slug_from_page') && em_wp_hero_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_hero_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_hero_hub_menu_slug()], $hub_url);
+    } elseif (function_exists('em_wp_slider_catalog_slug_from_page') && em_wp_slider_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_slider_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_slider_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire Sliders ?', 'em-wp');
+    }
+
+    wp_localize_script(
+        'em-wp-admin-catalog-banner',
+        'EmWpCatalogBanner',
+        [
+            'pageMap' => $page_map,
+            'hubUrl'  => $hub_url,
+            'i18n'    => [
+                'saveConfirm'       => __('Enregistrer la configuration actuelle et rester sur cette page ?', 'em-wp'),
+                'saveLabel'         => __('Enregistrer', 'em-wp'),
+                'saveAutoMessage'   => __('Les modifications sont enregistrées automatiquement.', 'em-wp'),
+                'saveAutoOk'        => __('OK', 'em-wp'),
+                'quitConfirm'       => $quit_label,
+                'quitLabel'         => __('Quitter', 'em-wp'),
+                'cancelLabel'       => __('Annuler', 'em-wp'),
+                'switchConfirmItem' => __('Tu vas basculer l\'édition vers « %s ».', 'em-wp'),
+                'switchConfirm'     => __('Basculer', 'em-wp'),
+                'switchConfirmSave' => __('Enregistrer & Basculer', 'em-wp'),
+            ],
+        ]
+    );
+}
+add_action('admin_enqueue_scripts', 'em_wp_catalog_edit_enqueue', 15);
 
 /**
  * Types de catalogues disponibles (hub CATALOGUES).
@@ -305,6 +557,48 @@ function em_wp_catalog_hub_definitions(): array
     }
 
     return $hubs;
+}
+
+/**
+ * Slug menu catalogue à surligner (hub + pages d'édition hero/slider…).
+ */
+function em_wp_admin_catalog_menu_highlight_slug(string $page_slug): string
+{
+    $page_slug = sanitize_key($page_slug);
+
+    if ($page_slug === '' || !function_exists('em_wp_catalog_menu_definitions')) {
+        return '';
+    }
+
+    foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+        if (empty($definition['available'])) {
+            continue;
+        }
+
+        $hub_slug = sanitize_key((string) ($definition['slug'] ?? ''));
+
+        if ($hub_slug === '') {
+            continue;
+        }
+
+        if ($page_slug === $hub_slug) {
+            return $hub_slug;
+        }
+
+        if ($module_slug === 'heros' && function_exists('em_wp_hero_style_from_page_slug')) {
+            if (em_wp_hero_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+
+        if ($module_slug === 'sliders' && function_exists('em_wp_slider_style_from_page_slug')) {
+            if (em_wp_slider_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+    }
+
+    return '';
 }
 
 /**
@@ -457,20 +751,15 @@ function em_wp_catalog_render_heros_page(): void
     ?>
     <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
         <?php
+        em_wp_admin_render_settings_notices();
+        em_wp_hero_catalog_render_admin_notices();
         em_wp_admin_hub_render_sommaire_header(
-            __('Tes catalogues Hero réutilisables. Gère-les ici, puis sélectionne-les dans les rubriques de tes templates.', 'em-wp'),
+            __('Tes Heros réutilisables. Configure-les ici, puis sélectionne-les dans la rubrique HEADER de tes templates.', 'em-wp'),
             'dashicons-format-gallery'
         );
-        ?>
 
-        <?php em_wp_catalog_render_sommaire_section(
-            'hero',
-            __('MES HEROS', 'em-wp'),
-            __('Hero', 'em-wp'),
-            $hero_entries,
-            'em_wp_hero_catalog_edit_page_slug',
-            'dashicons-format-gallery'
-        ); ?>
+        em_wp_catalog_render_hero_sommaire_section($hero_entries);
+        ?>
     </div>
     <?php
 }
@@ -488,20 +777,15 @@ function em_wp_catalog_render_sliders_page(): void
     ?>
     <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
         <?php
+        em_wp_admin_render_settings_notices();
+        em_wp_slider_catalog_render_admin_notices();
         em_wp_admin_hub_render_sommaire_header(
             __('Tes catalogues Slider réutilisables. Gère-les ici, puis sélectionne-les dans les rubriques de tes templates.', 'em-wp'),
             'dashicons-slides'
         );
-        ?>
 
-        <?php em_wp_catalog_render_sommaire_section(
-            'slider',
-            __('MES SLIDERS', 'em-wp'),
-            __('Slider', 'em-wp'),
-            $slider_entries,
-            'em_wp_slider_catalog_edit_page_slug',
-            'dashicons-slides'
-        ); ?>
+        em_wp_catalog_render_slider_sommaire_section($slider_entries);
+        ?>
     </div>
     <?php
 }
@@ -548,6 +832,316 @@ function em_wp_catalog_render_streams_page(): void
 function em_wp_catalog_render_socials_page(): void
 {
     em_wp_catalog_render_coming_soon_hub_page(__('SOCIALS', 'em-wp'), 'dashicons-share');
+}
+
+/**
+ * Sommaire MES HEROS avec CRUD (nom, identifiant, suppression).
+ *
+ * @param array<string, array{label:string,layout?:string}> $entries
+ */
+function em_wp_catalog_render_hero_sommaire_section(array $entries): void
+{
+    $title_id = 'em-wp-catalog-sommaire-hero-title';
+    ?>
+    <section class="em-wp-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($title_id); ?>">
+        <header class="em-wp-catalog-sommaire__section-header">
+            <div id="<?php echo esc_attr($title_id); ?>" class="em-wp-catalog-sommaire__section-title">
+                <?php em_wp_admin_hub_render_card_title(__('MES HEROS', 'em-wp'), 'dashicons-format-gallery'); ?>
+            </div>
+            <button
+                type="button"
+                class="button button-primary em-wp-catalog-sommaire__new"
+                id="em-wp-hero-catalog-create-toggle"
+            >
+                <?php esc_html_e('Nouveau', 'em-wp'); ?>
+            </button>
+        </header>
+
+        <div class="em-wp-catalog-sommaire__section-body">
+            <form
+                method="post"
+                action="<?php echo esc_url(admin_url('admin.php?page=' . em_wp_hero_hub_menu_slug())); ?>"
+                class="em-wp-catalog-sommaire__create-panel"
+                id="em-wp-hero-catalog-create-panel"
+                hidden
+            >
+                <?php wp_nonce_field(em_wp_hero_catalog_actions_nonce_action()); ?>
+                <input type="hidden" name="em_wp_hero_catalog_action" value="create">
+                <label class="em-wp-catalog-sommaire__field">
+                    <span class="em-wp-catalog-sommaire__field-label"><?php esc_html_e('Nom du hero', 'em-wp'); ?></span>
+                    <input
+                        type="text"
+                        name="em_wp_hero_catalog_label"
+                        class="regular-text em-wp-catalog-sommaire__label-input"
+                        required
+                        data-em-wp-slug-preview
+                    >
+                </label>
+                <p class="em-wp-catalog-sommaire__slug-hint">
+                    <?php esc_html_e('Identifiant prévu :', 'em-wp'); ?>
+                    <code class="em-wp-catalog-sommaire__slug-preview" data-em-wp-slug-preview-for="em-wp-hero-catalog-create-panel"></code>
+                </p>
+                <div class="em-wp-catalog-sommaire__inline-actions">
+                    <?php submit_button(__('Créer', 'em-wp'), 'primary', 'submit', false); ?>
+                    <button type="button" class="button" id="em-wp-hero-catalog-create-cancel">
+                        <?php esc_html_e('Annuler', 'em-wp'); ?>
+                    </button>
+                </div>
+            </form>
+
+            <?php if ($entries === []) { ?>
+                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Aucune entrée pour le moment.', 'em-wp'); ?></p>
+            <?php } else { ?>
+                <table class="widefat striped em-wp-catalog-sommaire__table">
+                    <thead>
+                        <tr>
+                            <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
+                            <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
+                            <th scope="col" class="em-wp-catalog-sommaire__actions-col">
+                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($entries as $catalog_slug => $entry) {
+                            $catalog_slug = sanitize_key((string) $catalog_slug);
+                            $label = sanitize_text_field((string) ($entry['label'] ?? $catalog_slug));
+                            $edit_page_slug = em_wp_hero_catalog_edit_page_slug($catalog_slug);
+                            $edit_url = add_query_arg(['page' => $edit_page_slug], admin_url('admin.php'));
+                            $preview_slug = em_wp_hero_catalog_unique_slug(
+                                em_wp_hero_catalog_slug_from_label($label),
+                                $catalog_slug
+                            );
+                            ?>
+                            <tr>
+                                <td class="em-wp-catalog-sommaire__name">
+                                    <form
+                                        id="<?php echo esc_attr('em-wp-hero-rename-' . $catalog_slug); ?>"
+                                        method="post"
+                                        action="<?php echo esc_url(admin_url('admin.php?page=' . em_wp_hero_hub_menu_slug())); ?>"
+                                        class="em-wp-catalog-sommaire__rename-form"
+                                    >
+                                        <?php wp_nonce_field(em_wp_hero_catalog_actions_nonce_action()); ?>
+                                        <input type="hidden" name="em_wp_hero_catalog_action" value="rename">
+                                        <input type="hidden" name="em_wp_hero_catalog_slug" value="<?php echo esc_attr($catalog_slug); ?>">
+                                        <input
+                                            type="text"
+                                            name="em_wp_hero_catalog_label"
+                                            value="<?php echo esc_attr($label); ?>"
+                                            class="regular-text em-wp-catalog-sommaire__label-input"
+                                            required
+                                            data-em-wp-slug-preview
+                                            data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
+                                        >
+                                    </form>
+                                </td>
+                                <td class="em-wp-catalog-sommaire__slug">
+                                    <code
+                                        class="em-wp-catalog-sommaire__slug-preview"
+                                        data-em-wp-slug-preview-for="<?php echo esc_attr('em-wp-hero-rename-' . $catalog_slug); ?>"
+                                        data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
+                                    ><?php echo esc_html($preview_slug); ?></code>
+                                </td>
+                                <td class="em-wp-catalog-sommaire__actions">
+                                    <button
+                                        type="submit"
+                                        form="<?php echo esc_attr('em-wp-hero-rename-' . $catalog_slug); ?>"
+                                        class="em-wp-catalog-sommaire__save"
+                                        title="<?php esc_attr_e('Enregistrer le nom', 'em-wp'); ?>"
+                                        aria-label="<?php echo esc_attr(sprintf(__('Enregistrer le nom de %s', 'em-wp'), $label)); ?>"
+                                    >
+                                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                                    </button>
+                                    <a
+                                        class="em-wp-catalog-sommaire__edit"
+                                        href="<?php echo esc_url($edit_url); ?>"
+                                        title="<?php esc_attr_e('Éditer le contenu', 'em-wp'); ?>"
+                                        aria-label="<?php echo esc_attr(sprintf(__('Éditer le contenu de %s', 'em-wp'), $label)); ?>"
+                                    >
+                                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                    </a>
+                                    <form
+                                        method="post"
+                                        action="<?php echo esc_url(admin_url('admin.php?page=' . em_wp_hero_hub_menu_slug())); ?>"
+                                        class="em-wp-catalog-sommaire__delete-form"
+                                        data-em-wp-delete-label="<?php echo esc_attr($label); ?>"
+                                    >
+                                        <?php wp_nonce_field(em_wp_hero_catalog_actions_nonce_action()); ?>
+                                        <input type="hidden" name="em_wp_hero_catalog_action" value="delete">
+                                        <input type="hidden" name="em_wp_hero_catalog_slug" value="<?php echo esc_attr($catalog_slug); ?>">
+                                        <button
+                                            type="submit"
+                                            class="em-wp-catalog-sommaire__delete"
+                                            title="<?php esc_attr_e('Supprimer', 'em-wp'); ?>"
+                                            aria-label="<?php echo esc_attr(sprintf(__('Supprimer %s', 'em-wp'), $label)); ?>"
+                                        >
+                                            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            <?php } ?>
+        </div>
+    </section>
+    <?php
+}
+
+/**
+ * Sommaire MES SLIDERS avec CRUD (nom, identifiant, suppression).
+ *
+ * @param array<string, array{label:string,layout?:string}> $entries
+ */
+function em_wp_catalog_render_slider_sommaire_section(array $entries): void
+{
+    $title_id = 'em-wp-catalog-sommaire-slider-title';
+    ?>
+    <section class="em-wp-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($title_id); ?>">
+        <header class="em-wp-catalog-sommaire__section-header">
+            <div id="<?php echo esc_attr($title_id); ?>" class="em-wp-catalog-sommaire__section-title">
+                <?php em_wp_admin_hub_render_card_title(__('MES SLIDERS', 'em-wp'), 'dashicons-slides'); ?>
+            </div>
+            <button
+                type="button"
+                class="button button-primary em-wp-catalog-sommaire__new"
+                id="em-wp-slider-catalog-create-toggle"
+            >
+                <?php esc_html_e('Nouveau', 'em-wp'); ?>
+            </button>
+        </header>
+
+        <div class="em-wp-catalog-sommaire__section-body">
+            <form
+                method="post"
+                action="<?php echo esc_url(admin_url('admin.php?page=' . em_wp_slider_hub_menu_slug())); ?>"
+                class="em-wp-catalog-sommaire__create-panel"
+                id="em-wp-slider-catalog-create-panel"
+                hidden
+            >
+                <?php wp_nonce_field(em_wp_slider_catalog_actions_nonce_action()); ?>
+                <input type="hidden" name="em_wp_slider_catalog_action" value="create">
+                <label class="em-wp-catalog-sommaire__field">
+                    <span class="em-wp-catalog-sommaire__field-label"><?php esc_html_e('Nom du slider', 'em-wp'); ?></span>
+                    <input
+                        type="text"
+                        name="em_wp_slider_catalog_label"
+                        class="regular-text em-wp-catalog-sommaire__label-input"
+                        required
+                        data-em-wp-slug-preview
+                    >
+                </label>
+                <p class="em-wp-catalog-sommaire__slug-hint">
+                    <?php esc_html_e('Identifiant prévu :', 'em-wp'); ?>
+                    <code class="em-wp-catalog-sommaire__slug-preview" data-em-wp-slug-preview-for="em-wp-slider-catalog-create-panel"></code>
+                </p>
+                <div class="em-wp-catalog-sommaire__inline-actions">
+                    <?php submit_button(__('Créer', 'em-wp'), 'primary', 'submit', false); ?>
+                    <button type="button" class="button" id="em-wp-slider-catalog-create-cancel">
+                        <?php esc_html_e('Annuler', 'em-wp'); ?>
+                    </button>
+                </div>
+            </form>
+
+            <?php if ($entries === []) { ?>
+                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Aucune entrée pour le moment.', 'em-wp'); ?></p>
+            <?php } else { ?>
+                <table class="widefat striped em-wp-catalog-sommaire__table">
+                    <thead>
+                        <tr>
+                            <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
+                            <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
+                            <th scope="col" class="em-wp-catalog-sommaire__actions-col">
+                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($entries as $catalog_slug => $entry) {
+                            $catalog_slug = sanitize_key((string) $catalog_slug);
+                            $label = sanitize_text_field((string) ($entry['label'] ?? $catalog_slug));
+                            $edit_page_slug = em_wp_slider_catalog_edit_page_slug($catalog_slug);
+                            $edit_url = add_query_arg(['page' => $edit_page_slug], admin_url('admin.php'));
+                            $preview_slug = em_wp_slider_catalog_unique_slug(
+                                em_wp_slider_catalog_slug_from_label($label),
+                                $catalog_slug
+                            );
+                            ?>
+                            <tr>
+                                <td class="em-wp-catalog-sommaire__name">
+                                    <form
+                                        id="<?php echo esc_attr('em-wp-slider-rename-' . $catalog_slug); ?>"
+                                        method="post"
+                                        action="<?php echo esc_url(admin_url('admin.php?page=' . em_wp_slider_hub_menu_slug())); ?>"
+                                        class="em-wp-catalog-sommaire__rename-form"
+                                    >
+                                        <?php wp_nonce_field(em_wp_slider_catalog_actions_nonce_action()); ?>
+                                        <input type="hidden" name="em_wp_slider_catalog_action" value="rename">
+                                        <input type="hidden" name="em_wp_slider_catalog_slug" value="<?php echo esc_attr($catalog_slug); ?>">
+                                        <input
+                                            type="text"
+                                            name="em_wp_slider_catalog_label"
+                                            value="<?php echo esc_attr($label); ?>"
+                                            class="regular-text em-wp-catalog-sommaire__label-input"
+                                            required
+                                            data-em-wp-slug-preview
+                                            data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
+                                        >
+                                    </form>
+                                </td>
+                                <td class="em-wp-catalog-sommaire__slug">
+                                    <code
+                                        class="em-wp-catalog-sommaire__slug-preview"
+                                        data-em-wp-slug-preview-for="<?php echo esc_attr('em-wp-slider-rename-' . $catalog_slug); ?>"
+                                        data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
+                                    ><?php echo esc_html($preview_slug); ?></code>
+                                </td>
+                                <td class="em-wp-catalog-sommaire__actions">
+                                    <button
+                                        type="submit"
+                                        form="<?php echo esc_attr('em-wp-slider-rename-' . $catalog_slug); ?>"
+                                        class="em-wp-catalog-sommaire__save"
+                                        title="<?php esc_attr_e('Enregistrer le nom', 'em-wp'); ?>"
+                                        aria-label="<?php echo esc_attr(sprintf(__('Enregistrer le nom de %s', 'em-wp'), $label)); ?>"
+                                    >
+                                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                                    </button>
+                                    <a
+                                        class="em-wp-catalog-sommaire__edit"
+                                        href="<?php echo esc_url($edit_url); ?>"
+                                        title="<?php esc_attr_e('Éditer le contenu', 'em-wp'); ?>"
+                                        aria-label="<?php echo esc_attr(sprintf(__('Éditer le contenu de %s', 'em-wp'), $label)); ?>"
+                                    >
+                                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                    </a>
+                                    <form
+                                        method="post"
+                                        action="<?php echo esc_url(admin_url('admin.php?page=' . em_wp_slider_hub_menu_slug())); ?>"
+                                        class="em-wp-catalog-sommaire__delete-form"
+                                        data-em-wp-delete-label="<?php echo esc_attr($label); ?>"
+                                    >
+                                        <?php wp_nonce_field(em_wp_slider_catalog_actions_nonce_action()); ?>
+                                        <input type="hidden" name="em_wp_slider_catalog_action" value="delete">
+                                        <input type="hidden" name="em_wp_slider_catalog_slug" value="<?php echo esc_attr($catalog_slug); ?>">
+                                        <button
+                                            type="submit"
+                                            class="em-wp-catalog-sommaire__delete"
+                                            title="<?php esc_attr_e('Supprimer', 'em-wp'); ?>"
+                                            aria-label="<?php echo esc_attr(sprintf(__('Supprimer %s', 'em-wp'), $label)); ?>"
+                                        >
+                                            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            <?php } ?>
+        </div>
+    </section>
+    <?php
 }
 
 /**
@@ -628,5 +1222,133 @@ function em_wp_catalog_render_sommaire_section(
             <?php } ?>
         </div>
     </section>
+    <?php
+}
+
+/**
+ * Bandeau contexte d'édition catalogue (hero / slider).
+ *
+ * @param array<string, array{label?:string, menu_title?:string, page_slug?:string}> $definitions
+ */
+function em_wp_catalog_render_edit_banner(string $catalog_type, array $definitions, string $selected_slug, string $hub_menu_slug): void
+{
+    if ($selected_slug === '' || $definitions === []) {
+        return;
+    }
+
+    $labels = [
+        'hero'   => __('Hero en cours d\'édition', 'em-wp'),
+        'slider' => __('Slider en cours d\'édition', 'em-wp'),
+    ];
+    $banner_label = $labels[$catalog_type] ?? __('Catalogue en cours d\'édition', 'em-wp');
+    $aria_labels = [
+        'hero'   => __('Contexte hero catalogue', 'em-wp'),
+        'slider' => __('Contexte slider catalogue', 'em-wp'),
+    ];
+    $aria_label = $aria_labels[$catalog_type] ?? __('Contexte catalogue', 'em-wp');
+    ?>
+    <div
+        class="em-wp-template-banner em-wp-catalog-edit-banner em-wp-template-banner--inline"
+        role="region"
+        aria-label="<?php echo esc_attr($aria_label); ?>"
+    >
+        <div class="em-wp-template-banner__inner">
+            <div class="em-wp-template-banner__block em-wp-template-banner__block--editing">
+                <span class="em-wp-template-banner__label">
+                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                    <?php echo esc_html($banner_label); ?>
+                </span>
+                <label class="screen-reader-text" for="em-wp-catalog-editing-select">
+                    <?php echo esc_html($banner_label); ?>
+                </label>
+                <select id="em-wp-catalog-editing-select" class="em-wp-template-banner__select">
+                    <?php foreach ($definitions as $slug => $definition) {
+                        $label = (string) ($definition['menu_title'] ?? $definition['label'] ?? $slug);
+                        ?>
+                        <option value="<?php echo esc_attr($slug); ?>" <?php selected($selected_slug, $slug); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php } ?>
+                </select>
+                <div class="em-wp-template-banner__actions">
+                    <button type="button" class="em-wp-template-banner__save" id="em-wp-catalog-banner-save" disabled aria-disabled="true">
+                        <?php esc_html_e('Enregistrer', 'em-wp'); ?>
+                    </button>
+                    <button type="button" class="em-wp-template-banner__quit" id="em-wp-catalog-banner-quit">
+                        <?php esc_html_e('Quitter', 'em-wp'); ?>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Navbar horizontale pour les pages d'édition catalogue.
+ *
+ * @param array<string, array{label?:string, menu_title?:string, page_slug?:string}> $definitions
+ */
+function em_wp_catalog_render_edit_navbar(array $definitions, string $selected_slug, string $nav_label): void
+{
+    if ($definitions === []) {
+        return;
+    }
+    ?>
+    <nav class="em-wp-catalog-edit__nav" aria-label="<?php echo esc_attr($nav_label); ?>">
+        <ul class="em-wp-catalog-edit__nav-list">
+            <?php foreach ($definitions as $slug => $definition) {
+                $page_slug = (string) ($definition['page_slug'] ?? '');
+
+                if ($page_slug === '') {
+                    continue;
+                }
+
+                $label = (string) ($definition['menu_title'] ?? $definition['label'] ?? $slug);
+                $is_active = $selected_slug === $slug;
+                $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+                ?>
+                <li class="em-wp-catalog-edit__nav-item<?php echo $is_active ? ' is-active' : ''; ?>">
+                    <a
+                        class="em-wp-catalog-edit__nav-link"
+                        href="<?php echo esc_url($item_url); ?>"
+                        <?php echo $is_active ? ' aria-current="page"' : ''; ?>
+                    >
+                        <?php echo esc_html($label); ?>
+                    </a>
+                </li>
+            <?php } ?>
+        </ul>
+    </nav>
+    <?php
+}
+
+/**
+ * Ouvre le bloc section d'édition catalogue (barre marron + contenu blanc).
+ */
+function em_wp_catalog_render_edit_section_open(string $module_label, string $entry_label): void
+{
+    ?>
+    <div class="em-wp-rubrique-section em-wp-catalog-edit__section">
+        <div class="em-wp-rubrique-section-bar">
+            <div class="em-wp-rubrique-section-bar__heading">
+                <h2 class="em-wp-rubrique-section-bar__title">
+                    <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html(mb_strtoupper($module_label)); ?></span>
+                    <span class="em-wp-rubrique-section-bar__template"><?php echo esc_html(mb_strtoupper($entry_label)); ?></span>
+                </h2>
+            </div>
+        </div>
+        <div class="em-wp-rubrique-section__content">
+    <?php
+}
+
+/**
+ * Ferme le bloc section d'édition catalogue.
+ */
+function em_wp_catalog_render_edit_section_close(): void
+{
+    ?>
+        </div>
+    </div>
     <?php
 }
