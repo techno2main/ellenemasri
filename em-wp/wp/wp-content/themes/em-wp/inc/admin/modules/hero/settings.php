@@ -116,7 +116,10 @@ function em_wp_hero_parent_menu_slug(): string
 function em_wp_hero_admin_page_slugs(): array
 {
     return array_merge(
-        [em_wp_hero_hub_menu_slug()],
+        [
+            em_wp_catalog_parent_menu_slug(),
+            em_wp_hero_hub_menu_slug(),
+        ],
         wp_list_pluck(em_wp_hero_style_definitions(), 'page_slug')
     );
 }
@@ -202,81 +205,33 @@ function em_wp_hero_group_name(string $style_slug): string
 }
 
 /**
- * Enregistre la page Hero sous Apparence.
+ * Enregistre les pages d'édition Hero (sous-menu masqué — hub = Sommaire).
  */
 function em_wp_hero_add_admin_page(): void
 {
     $definitions = em_wp_hero_style_definitions();
     $parent_slug = em_wp_hero_hub_menu_slug();
 
-    add_menu_page(
-        __('Catalogue Heros', 'em-wp'),
-        __('Heros', 'em-wp'),
-        'manage_options',
-        $parent_slug,
-        'em_wp_hero_render_admin_page',
-        'dashicons-format-image',
-        em_wp_admin_menu_position_catalog_heros()
-    );
-
     foreach ($definitions as $definition) {
+        $page_slug = (string) ($definition['page_slug'] ?? '');
+
+        if ($page_slug === '') {
+            continue;
+        }
+
         add_submenu_page(
             $parent_slug,
             (string) ($definition['menu_title'] ?? __('Hero', 'em-wp')),
             (string) ($definition['menu_title'] ?? __('Hero', 'em-wp')),
             'manage_options',
-            (string) ($definition['page_slug'] ?? 'em-wp-hero-mayami'),
+            $page_slug,
             'em_wp_hero_render_admin_page'
         );
+
+        remove_submenu_page($parent_slug, $page_slug);
     }
 }
-add_action('admin_menu', 'em_wp_hero_add_admin_page');
-
-/**
- * Retire le sous-menu dupliqué créé automatiquement par WordPress.
- */
-function em_wp_hero_remove_duplicate_submenu(): void
-{
-    remove_submenu_page(em_wp_hero_hub_menu_slug(), em_wp_hero_hub_menu_slug());
-}
-add_action('admin_menu', 'em_wp_hero_remove_duplicate_submenu', 999);
-
-/**
- * Redirige le hub HEROS vers la variante active (comme le menu latéral).
- */
-function em_wp_hero_redirect_hub_to_active_variant(): void
-{
-    if (!current_user_can('manage_options')) {
-        return;
-    }
-
-    global $pagenow;
-
-    if ($pagenow !== 'admin.php') {
-        return;
-    }
-
-    $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-    if ($page_slug !== em_wp_hero_hub_menu_slug()) {
-        return;
-    }
-
-    $active = em_wp_hero_active_style_slug();
-    $definitions = em_wp_hero_style_definitions();
-    $target = (string) ($definitions[$active]['page_slug'] ?? '');
-
-    if ($target === '' && $definitions !== []) {
-        $first = reset($definitions);
-        $target = (string) ($first['page_slug'] ?? '');
-    }
-
-    if ($target === '' || $target === $page_slug) {
-        return;
-    }
-
-    em_wp_admin_safe_redirect(add_query_arg(['page' => $target], admin_url('admin.php')));
-}
-add_action('admin_init', 'em_wp_hero_redirect_hub_to_active_variant', 2);
+add_action('admin_menu', 'em_wp_hero_add_admin_page', 20);
 
 /**
  * Charge les assets admin du module Hero.
