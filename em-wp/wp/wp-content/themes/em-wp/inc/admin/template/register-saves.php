@@ -64,6 +64,9 @@ function em_wp_admin_template_handle_post_requests(): void
         case 'set_active':
             em_wp_admin_template_handle_set_active();
             break;
+        case 'clear_editing':
+            em_wp_admin_template_handle_clear_editing();
+            break;
         case 'set_color':
             em_wp_admin_template_handle_set_color();
             break;
@@ -91,7 +94,23 @@ function em_wp_admin_template_handle_set_editing(): void
         em_wp_admin_template_redirect_with_notice($redirect, 'error', $result->get_error_message());
     }
 
-    em_wp_admin_template_redirect_with_notice($redirect, 'success', __('Template en édition mis à jour.', 'em-wp'));
+    em_wp_admin_template_redirect_with_notice($redirect, 'success', __('Template en édition sélectionné.', 'em-wp'));
+}
+
+/**
+ * Quitte le mode édition template (retour accueil neutre).
+ */
+function em_wp_admin_template_handle_clear_editing(): void
+{
+    check_admin_referer('em_wp_template_clear_editing');
+
+    em_wp_clear_editing_template_context();
+
+    em_wp_admin_template_redirect_with_notice(
+        em_wp_admin_dashboard_admin_url(),
+        'success',
+        __('Édition terminée — tu es de retour à l’accueil.', 'em-wp')
+    );
 }
 
 /**
@@ -212,7 +231,7 @@ function em_wp_admin_template_banner_redirect_url(): string
         return admin_url('admin.php?page=' . $current);
     }
 
-    return em_wp_admin_rubriques_admin_url();
+    return em_wp_admin_dashboard_admin_url();
 }
 
 /**

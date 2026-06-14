@@ -60,22 +60,78 @@ function em_wp_set_active_template_slug(string $slug)
 }
 
 /**
- * Slug du template en édition (bandeau admin).
+ * Indique si l'utilisateur a explicitement choisi un template en édition.
  */
-function em_wp_get_editing_template_slug(): string
+function em_wp_admin_has_template_context(): bool
 {
     $user_id = get_current_user_id();
 
-    if ($user_id > 0) {
-        $saved = get_user_meta($user_id, em_wp_editing_template_user_meta_key(), true);
+    if ($user_id <= 0) {
+        return false;
+    }
 
-        if (is_string($saved) && $saved !== '') {
-            $slug = em_wp_template_sanitize_slug($saved);
+    $saved = get_user_meta($user_id, em_wp_editing_template_user_meta_key(), true);
 
-            if ($slug !== '' && em_wp_template_exists($slug)) {
-                return $slug;
-            }
-        }
+    if (!is_string($saved) || $saved === '') {
+        return false;
+    }
+
+    $slug = em_wp_template_sanitize_slug($saved);
+
+    return $slug !== '' && em_wp_template_exists($slug);
+}
+
+/**
+ * Slug du template en édition enregistré explicitement (sans fallback).
+ */
+function em_wp_get_explicit_editing_template_slug(): string
+{
+    $user_id = get_current_user_id();
+
+    if ($user_id <= 0) {
+        return '';
+    }
+
+    $saved = get_user_meta($user_id, em_wp_editing_template_user_meta_key(), true);
+
+    if (!is_string($saved) || $saved === '') {
+        return '';
+    }
+
+    $slug = em_wp_template_sanitize_slug($saved);
+
+    if ($slug !== '' && em_wp_template_exists($slug)) {
+        return $slug;
+    }
+
+    return '';
+}
+
+/**
+ * Efface le contexte template en édition (retour zone neutre).
+ */
+function em_wp_clear_editing_template_context(): void
+{
+    $user_id = get_current_user_id();
+
+    if ($user_id <= 0) {
+        return;
+    }
+
+    delete_user_meta($user_id, em_wp_editing_template_user_meta_key());
+}
+
+/**
+ * Slug du template en édition (bandeau admin).
+ *
+ * Sans contexte explicite, retombe sur le template actif (saves / modules).
+ */
+function em_wp_get_editing_template_slug(): string
+{
+    $explicit = em_wp_get_explicit_editing_template_slug();
+
+    if ($explicit !== '') {
+        return $explicit;
     }
 
     return em_wp_get_active_template_slug();
