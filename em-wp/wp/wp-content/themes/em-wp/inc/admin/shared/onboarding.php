@@ -20,6 +20,14 @@ function em_wp_admin_neutral_page_slugs(): array
         em_wp_admin_dashboard_page_slug(),
     ];
 
+    if (function_exists('em_wp_admin_media_parent_menu_slug')) {
+        $slugs[] = em_wp_admin_media_parent_menu_slug();
+    }
+
+    if (function_exists('em_wp_admin_media_accordion_child_slugs')) {
+        $slugs = array_merge($slugs, em_wp_admin_media_accordion_child_slugs());
+    }
+
     if (function_exists('em_wp_catalog_parent_menu_slug')) {
         $slugs[] = em_wp_catalog_parent_menu_slug();
     }
