@@ -269,12 +269,8 @@ function em_wp_admin_templates_enqueue(): void
     em_wp_admin_enqueue_shared_assets();
 
     if ($page_slug === em_wp_admin_template_choice_page_slug()) {
-        wp_enqueue_style(
-            'em-wp-admin-rubriques-picker',
-            get_template_directory_uri() . '/assets/admin/css/pages/rubriques-picker.css',
-            ['em-wp-admin-module-common'],
-            em_wp_admin_asset_version('assets/admin/css/pages/rubriques-picker.css')
-        );
+        em_wp_admin_hub_cards_enqueue_assets();
+        em_wp_admin_hub_enqueue_template_live_switcher();
 
         return;
     }

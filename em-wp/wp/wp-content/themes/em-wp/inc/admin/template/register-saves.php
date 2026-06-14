@@ -67,6 +67,9 @@ function em_wp_admin_template_handle_post_requests(): void
         case 'clear_editing':
             em_wp_admin_template_handle_clear_editing();
             break;
+        case 'quit_to_templates':
+            em_wp_admin_template_handle_quit_to_templates();
+            break;
         case 'set_color':
             em_wp_admin_template_handle_set_color();
             break;
@@ -95,6 +98,26 @@ function em_wp_admin_template_handle_set_editing(): void
     }
 
     em_wp_admin_template_redirect_with_notice($redirect, 'success', __('Template en édition sélectionné.', 'em-wp'));
+}
+
+/**
+ * Quitte l'édition rubriques et retourne au sommaire Templates.
+ */
+function em_wp_admin_template_handle_quit_to_templates(): void
+{
+    check_admin_referer('em_wp_template_quit_to_templates');
+
+    em_wp_clear_editing_template_context();
+
+    $redirect_url = function_exists('em_wp_admin_template_choice_admin_url')
+        ? em_wp_admin_template_choice_admin_url()
+        : admin_url('admin.php');
+
+    em_wp_admin_template_redirect_with_notice(
+        $redirect_url,
+        'success',
+        __('Retour au sommaire Templates.', 'em-wp')
+    );
 }
 
 /**
