@@ -106,48 +106,48 @@ function em_wp_catalog_menu_definitions(): array
 {
     return [
         'heros' => [
-            'label'       => __('HEROS', 'em-wp'),
-            'menu_title'  => __('HEROS', 'em-wp'),
+            'label'       => __('MES HEROS', 'em-wp'),
+            'menu_title'  => __('MES HEROS', 'em-wp'),
             'slug'        => em_wp_hero_hub_menu_slug(),
             'icon'        => 'dashicons-format-gallery',
             'available'   => true,
-            'description' => __('Catalogues Hero réutilisables dans tes rubriques HEADER.', 'em-wp'),
+            'description' => __('Liste des Heros réutilisables dans tes rubriques HEADER.', 'em-wp'),
             'url'         => em_wp_hero_hub_page_url(),
             'callback'    => 'em_wp_catalog_render_heros_page',
         ],
         'sliders' => [
-            'label'       => __('SLIDERS', 'em-wp'),
-            'menu_title'  => __('SLIDERS', 'em-wp'),
+            'label'       => __('MES SLIDERS', 'em-wp'),
+            'menu_title'  => __('MES SLIDERS', 'em-wp'),
             'slug'        => em_wp_slider_hub_menu_slug(),
             'icon'        => 'dashicons-slides',
             'available'   => true,
-            'description' => __('Catalogues Slider réutilisables dans tes rubriques HEADER.', 'em-wp'),
+            'description' => __('Liste des Sliders réutilisables dans tes rubriques HEADER.', 'em-wp'),
             'url'         => em_wp_slider_hub_page_url(),
             'callback'    => 'em_wp_catalog_render_sliders_page',
         ],
         'videos' => [
-            'label'       => __('VIDEOS', 'em-wp'),
-            'menu_title'  => __('VIDEOS', 'em-wp'),
+            'label'       => __('MES VIDÉOS', 'em-wp'),
+            'menu_title'  => __('MES VIDÉOS', 'em-wp'),
             'slug'        => em_wp_video_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-video-alt3',
             'available'   => false,
-            'description' => __('Catalogues vidéo réutilisables dans tes rubriques VIDEOS.', 'em-wp'),
+            'description' => __('Liste des Vidéos réutilisables dans tes rubriques VIDEOS.', 'em-wp'),
             'url'         => '',
             'callback'    => 'em_wp_catalog_render_videos_page',
         ],
         'streams' => [
-            'label'       => __('STREAMS', 'em-wp'),
-            'menu_title'  => __('STREAMS', 'em-wp'),
+            'label'       => __('MES STREAMS', 'em-wp'),
+            'menu_title'  => __('MES STREAMS', 'em-wp'),
             'slug'        => em_wp_stream_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-playlist-audio',
             'available'   => false,
-            'description' => __('Catalogues stream réutilisables dans tes rubriques STREAM.', 'em-wp'),
+            'description' => __('Liste des Streams réutilisables dans tes rubriques STREAM.', 'em-wp'),
             'url'         => '',
             'callback'    => 'em_wp_catalog_render_streams_page',
         ],
         'socials' => [
-            'label'       => __('SOCIALS', 'em-wp'),
-            'menu_title'  => __('SOCIALS', 'em-wp'),
+            'label'       => __('MES SOCIALS', 'em-wp'),
+            'menu_title'  => __('MES SOCIALS', 'em-wp'),
             'slug'        => em_wp_social_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-share',
             'available'   => false,
@@ -258,12 +258,23 @@ function em_wp_catalog_hub_enqueue(): void
         return;
     }
 
-    em_wp_admin_enqueue_shared_assets();
+    em_wp_admin_hub_cards_enqueue_assets();
+
+    if ($page_slug === em_wp_catalog_parent_menu_slug()) {
+        return;
+    }
+
+    wp_enqueue_style(
+        'font-awesome-6',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+        [],
+        '6.5.1'
+    );
 
     wp_enqueue_style(
         'em-wp-admin-catalog-sommaire',
         get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
-        ['em-wp-admin-module-common'],
+        ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
         em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
     );
 }
@@ -320,6 +331,53 @@ function em_wp_catalog_redirect_legacy_hubs(): void
 add_action('admin_init', 'em_wp_catalog_redirect_legacy_hubs', 1);
 
 /**
+ * Libellés des entrées catalogue pour pastille hub (HEROS, SLIDERS).
+ *
+ * @return string[]
+ */
+function em_wp_catalog_hub_entry_labels(string $module_slug): array
+{
+    $module_slug = sanitize_key($module_slug);
+    $entries = [];
+
+    if ($module_slug === 'heros' && function_exists('em_wp_hero_catalog_entries')) {
+        $entries = em_wp_hero_catalog_entries();
+    } elseif ($module_slug === 'sliders' && function_exists('em_wp_slider_catalog_entries')) {
+        $entries = em_wp_slider_catalog_entries();
+    }
+
+    $labels = [];
+
+    foreach ($entries as $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+
+        $label = trim(sanitize_text_field((string) ($entry['label'] ?? '')));
+
+        if ($label !== '') {
+            $labels[] = mb_strtoupper($label);
+        }
+    }
+
+    return $labels;
+}
+
+/**
+ * Pastille liste des entrées catalogue (carte hub CATALOGUES).
+ */
+function em_wp_catalog_render_entries_badge(string $module_slug): void
+{
+    $labels = em_wp_catalog_hub_entry_labels($module_slug);
+
+    if ($labels === [] || !function_exists('em_wp_admin_hub_render_status_badge')) {
+        return;
+    }
+
+    em_wp_admin_hub_render_status_badge(implode(', ', $labels) . '.', '#4e080e', true, false);
+}
+
+/**
  * Hub CATALOGUES — vue globale des types disponibles.
  */
 function em_wp_catalog_render_parent_page(): void
@@ -328,41 +386,59 @@ function em_wp_catalog_render_parent_page(): void
         return;
     }
 
-    $hubs = em_wp_catalog_hub_definitions();
+    $definitions = em_wp_catalog_menu_definitions();
     ?>
-    <div class="wrap em-wp-admin-module em-wp-catalog-sommaire em-wp-catalog-hub">
-        <h1><?php esc_html_e('CATALOGUES', 'em-wp'); ?></h1>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire">
+        <?php
+        em_wp_admin_hub_render_sommaire_header(
+            __('Tes bibliothèques de contenus réutilisables, indépendantes des templates. Choisis un type de catalogue à gérer.', 'em-wp'),
+            'dashicons-index-card'
+        );
+        ?>
 
-        <p class="description em-wp-catalog-sommaire__intro">
-            <?php esc_html_e('Tes bibliothèques de contenus réutilisables, indépendantes des templates. Choisis un type de catalogue à gérer.', 'em-wp'); ?>
-        </p>
+        <div class="em-wp-hub__rows">
+            <section class="em-wp-hub__row" aria-label="<?php esc_attr_e('Types de catalogues', 'em-wp'); ?>">
+                <div class="em-wp-hub__cards">
+                    <?php foreach (em_wp_admin_catalog_menu_modules() as $module_slug) {
+                        $definition = $definitions[$module_slug] ?? null;
 
-        <div class="em-wp-catalog-hub__cards">
-            <?php foreach ($hubs as $hub_key => $hub) {
-                $is_available = !empty($hub['available']);
-                ?>
-                <section class="em-wp-catalog-hub__card<?php echo $is_available ? '' : ' is-coming-soon'; ?>">
-                    <h2 class="em-wp-catalog-hub__card-title"><?php echo esc_html((string) ($hub['label'] ?? $hub_key)); ?></h2>
-                    <p class="em-wp-catalog-hub__card-desc"><?php echo esc_html((string) ($hub['description'] ?? '')); ?></p>
-                    <div class="em-wp-catalog-hub__card-actions">
-                        <?php if ($is_available && !empty($hub['url'])) { ?>
-                            <a class="button button-primary" href="<?php echo esc_url((string) $hub['url']); ?>">
-                                <?php
-                                printf(
-                                    /* translators: %s: catalog type label */
-                                    esc_html__('Ouvrir %s', 'em-wp'),
-                                    esc_html((string) ($hub['label'] ?? $hub_key))
-                                );
-                                ?>
-                            </a>
-                        <?php } else { ?>
-                            <button type="button" class="button button-secondary" disabled>
-                                <?php esc_html_e('Prochaine étape', 'em-wp'); ?>
-                            </button>
-                        <?php } ?>
-                    </div>
-                </section>
-            <?php } ?>
+                        if (!is_array($definition)) {
+                            continue;
+                        }
+
+                        $label = (string) ($definition['label'] ?? $module_slug);
+                        $description = (string) ($definition['description'] ?? '');
+                        $icon = (string) ($definition['icon'] ?? 'dashicons-admin-generic');
+                        $is_available = !empty($definition['available']);
+                        $url = (string) ($definition['url'] ?? '');
+                        ?>
+                        <section class="em-wp-hub__card<?php echo $is_available ? '' : ' em-wp-hub__card--disabled'; ?>">
+                            <?php em_wp_admin_hub_render_card_title($label, $icon); ?>
+                            <p class="em-wp-hub__card-desc"><?php echo esc_html($description); ?></p>
+                            <?php
+                            if ($is_available && in_array($module_slug, ['heros', 'sliders'], true)) {
+                                em_wp_catalog_render_entries_badge($module_slug);
+                            }
+                            ?>
+                            <div class="em-wp-hub__card-actions">
+                                <?php if ($is_available && $url !== '') {
+                                    em_wp_admin_hub_render_action_link(
+                                        $url,
+                                        sprintf(
+                                            /* translators: %s: catalog type label */
+                                            __('GÉRER %s', 'em-wp'),
+                                            mb_strtoupper($label)
+                                        ),
+                                        $icon
+                                    );
+                                } else {
+                                    em_wp_admin_hub_render_disabled_action(__('Prochaine étape', 'em-wp'));
+                                } ?>
+                            </div>
+                        </section>
+                    <?php } ?>
+                </div>
+            </section>
         </div>
     </div>
     <?php
@@ -379,19 +455,21 @@ function em_wp_catalog_render_heros_page(): void
 
     $hero_entries = function_exists('em_wp_hero_catalog_entries') ? em_wp_hero_catalog_entries() : [];
     ?>
-    <div class="wrap em-wp-admin-module em-wp-catalog-sommaire">
-        <h1><?php esc_html_e('HEROS', 'em-wp'); ?></h1>
-
-        <p class="description em-wp-catalog-sommaire__intro">
-            <?php esc_html_e('Tes catalogues Hero réutilisables. Gère-les ici, puis sélectionne-les dans les rubriques de tes templates.', 'em-wp'); ?>
-        </p>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
+        <?php
+        em_wp_admin_hub_render_sommaire_header(
+            __('Tes catalogues Hero réutilisables. Gère-les ici, puis sélectionne-les dans les rubriques de tes templates.', 'em-wp'),
+            'dashicons-format-gallery'
+        );
+        ?>
 
         <?php em_wp_catalog_render_sommaire_section(
             'hero',
-            __('Heros', 'em-wp'),
+            __('MES HEROS', 'em-wp'),
             __('Hero', 'em-wp'),
             $hero_entries,
-            'em_wp_hero_catalog_edit_page_slug'
+            'em_wp_hero_catalog_edit_page_slug',
+            'dashicons-format-gallery'
         ); ?>
     </div>
     <?php
@@ -408,19 +486,21 @@ function em_wp_catalog_render_sliders_page(): void
 
     $slider_entries = function_exists('em_wp_slider_catalog_entries') ? em_wp_slider_catalog_entries() : [];
     ?>
-    <div class="wrap em-wp-admin-module em-wp-catalog-sommaire">
-        <h1><?php esc_html_e('SLIDERS', 'em-wp'); ?></h1>
-
-        <p class="description em-wp-catalog-sommaire__intro">
-            <?php esc_html_e('Tes catalogues Slider réutilisables. Gère-les ici, puis sélectionne-les dans les rubriques de tes templates.', 'em-wp'); ?>
-        </p>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
+        <?php
+        em_wp_admin_hub_render_sommaire_header(
+            __('Tes catalogues Slider réutilisables. Gère-les ici, puis sélectionne-les dans les rubriques de tes templates.', 'em-wp'),
+            'dashicons-slides'
+        );
+        ?>
 
         <?php em_wp_catalog_render_sommaire_section(
             'slider',
-            __('Sliders', 'em-wp'),
+            __('MES SLIDERS', 'em-wp'),
             __('Slider', 'em-wp'),
             $slider_entries,
-            'em_wp_slider_catalog_edit_page_slug'
+            'em_wp_slider_catalog_edit_page_slug',
+            'dashicons-slides'
         ); ?>
     </div>
     <?php
@@ -429,17 +509,19 @@ function em_wp_catalog_render_sliders_page(): void
 /**
  * Rendu placeholder pour un hub catalogue à brancher plus tard.
  */
-function em_wp_catalog_render_coming_soon_hub_page(string $title): void
+function em_wp_catalog_render_coming_soon_hub_page(string $title, string $icon_class = 'dashicons-index-card'): void
 {
     if (!current_user_can('manage_options')) {
         return;
     }
     ?>
-    <div class="wrap em-wp-admin-module em-wp-catalog-sommaire">
-        <h1><?php echo esc_html($title); ?></h1>
-        <p class="description em-wp-catalog-sommaire__intro">
-            <?php esc_html_e('Ce catalogue sera branché prochainement.', 'em-wp'); ?>
-        </p>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
+        <?php
+        em_wp_admin_hub_render_sommaire_header(
+            __('Ce catalogue sera branché prochainement.', 'em-wp'),
+            $icon_class
+        );
+        ?>
     </div>
     <?php
 }
@@ -449,7 +531,7 @@ function em_wp_catalog_render_coming_soon_hub_page(string $title): void
  */
 function em_wp_catalog_render_videos_page(): void
 {
-    em_wp_catalog_render_coming_soon_hub_page(__('VIDEOS', 'em-wp'));
+    em_wp_catalog_render_coming_soon_hub_page(__('VIDEOS', 'em-wp'), 'dashicons-video-alt3');
 }
 
 /**
@@ -457,7 +539,7 @@ function em_wp_catalog_render_videos_page(): void
  */
 function em_wp_catalog_render_streams_page(): void
 {
-    em_wp_catalog_render_coming_soon_hub_page(__('STREAMS', 'em-wp'));
+    em_wp_catalog_render_coming_soon_hub_page(__('STREAMS', 'em-wp'), 'dashicons-playlist-audio');
 }
 
 /**
@@ -465,7 +547,7 @@ function em_wp_catalog_render_streams_page(): void
  */
 function em_wp_catalog_render_socials_page(): void
 {
-    em_wp_catalog_render_coming_soon_hub_page(__('SOCIALS', 'em-wp'));
+    em_wp_catalog_render_coming_soon_hub_page(__('SOCIALS', 'em-wp'), 'dashicons-share');
 }
 
 /**
@@ -478,13 +560,17 @@ function em_wp_catalog_render_sommaire_section(
     string $title,
     string $item_singular,
     array $entries,
-    string $edit_page_slug_callback
+    string $edit_page_slug_callback,
+    string $icon_class = 'dashicons-format-gallery'
 ): void {
     $type = sanitize_key($type);
+    $title_id = 'em-wp-catalog-sommaire-' . $type . '-title';
     ?>
-    <section class="em-wp-catalog-sommaire__section" aria-labelledby="em-wp-catalog-sommaire-<?php echo esc_attr($type); ?>-title">
+    <section class="em-wp-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($title_id); ?>">
         <header class="em-wp-catalog-sommaire__section-header">
-            <h2 id="em-wp-catalog-sommaire-<?php echo esc_attr($type); ?>-title"><?php echo esc_html($title); ?></h2>
+            <div id="<?php echo esc_attr($title_id); ?>" class="em-wp-catalog-sommaire__section-title">
+                <?php em_wp_admin_hub_render_card_title($title, $icon_class); ?>
+            </div>
             <button
                 type="button"
                 class="button button-primary em-wp-catalog-sommaire__new"
@@ -495,43 +581,52 @@ function em_wp_catalog_render_sommaire_section(
             </button>
         </header>
 
-        <?php if ($entries === []) { ?>
-            <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Aucune entrée pour le moment.', 'em-wp'); ?></p>
-        <?php } else { ?>
-            <table class="widefat striped em-wp-catalog-sommaire__table">
-                <thead>
-                    <tr>
-                        <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
-                        <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
-                        <th scope="col" class="em-wp-catalog-sommaire__actions-col"><?php esc_html_e('Actions', 'em-wp'); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($entries as $catalog_slug => $entry) {
-                        $catalog_slug = sanitize_key((string) $catalog_slug);
-                        $label = sanitize_text_field((string) ($entry['label'] ?? $catalog_slug));
-                        $edit_page_slug = is_callable($edit_page_slug_callback)
-                            ? (string) call_user_func($edit_page_slug_callback, $catalog_slug)
-                            : '';
-                        $edit_url = $edit_page_slug !== ''
-                            ? add_query_arg(['page' => $edit_page_slug], admin_url('admin.php'))
-                            : '';
-                        ?>
+        <div class="em-wp-catalog-sommaire__section-body">
+            <?php if ($entries === []) { ?>
+                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Aucune entrée pour le moment.', 'em-wp'); ?></p>
+            <?php } else { ?>
+                <table class="widefat striped em-wp-catalog-sommaire__table">
+                    <thead>
                         <tr>
-                            <td class="em-wp-catalog-sommaire__name"><?php echo esc_html($label); ?></td>
-                            <td class="em-wp-catalog-sommaire__slug"><code><?php echo esc_html($catalog_slug); ?></code></td>
-                            <td class="em-wp-catalog-sommaire__actions">
-                                <?php if ($edit_url !== '') { ?>
-                                    <a class="button button-secondary" href="<?php echo esc_url($edit_url); ?>">
-                                        <?php esc_html_e('Éditer', 'em-wp'); ?>
-                                    </a>
-                                <?php } ?>
-                            </td>
+                            <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
+                            <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
+                            <th scope="col" class="em-wp-catalog-sommaire__actions-col">
+                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                            </th>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        <?php } ?>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($entries as $catalog_slug => $entry) {
+                            $catalog_slug = sanitize_key((string) $catalog_slug);
+                            $label = sanitize_text_field((string) ($entry['label'] ?? $catalog_slug));
+                            $edit_page_slug = is_callable($edit_page_slug_callback)
+                                ? (string) call_user_func($edit_page_slug_callback, $catalog_slug)
+                                : '';
+                            $edit_url = $edit_page_slug !== ''
+                                ? add_query_arg(['page' => $edit_page_slug], admin_url('admin.php'))
+                                : '';
+                            ?>
+                            <tr>
+                                <td class="em-wp-catalog-sommaire__name"><?php echo esc_html($label); ?></td>
+                                <td class="em-wp-catalog-sommaire__slug"><code><?php echo esc_html($catalog_slug); ?></code></td>
+                                <td class="em-wp-catalog-sommaire__actions">
+                                    <?php if ($edit_url !== '') { ?>
+                                        <a
+                                            class="em-wp-catalog-sommaire__edit"
+                                            href="<?php echo esc_url($edit_url); ?>"
+                                            title="<?php esc_attr_e('Modifier', 'em-wp'); ?>"
+                                            aria-label="<?php echo esc_attr(sprintf(__('Modifier %s', 'em-wp'), $label)); ?>"
+                                        >
+                                            <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                        </a>
+                                    <?php } ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            <?php } ?>
+        </div>
     </section>
     <?php
 }
