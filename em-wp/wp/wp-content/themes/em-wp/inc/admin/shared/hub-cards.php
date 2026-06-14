@@ -347,3 +347,145 @@ function em_wp_admin_hub_render_live_template_switcher(string $redirect_page = '
     </div>
     <?php
 }
+
+/**
+ * Libellé court pour toggle catalogue (MAYAMI, ELLENE…).
+ */
+function em_wp_admin_catalog_choice_switch_label(string $catalog_slug, string $label): string
+{
+    $catalog_slug = sanitize_key($catalog_slug);
+
+    foreach (['mayami', 'ellene'] as $token) {
+        if ($catalog_slug !== '' && str_contains($catalog_slug, $token)) {
+            return mb_strtoupper($token);
+        }
+    }
+
+    $label = trim($label);
+
+    return $label !== '' ? mb_strtoupper($label) : mb_strtoupper($catalog_slug);
+}
+
+/**
+ * Couleur d'accent pour un toggle catalogue (hero/slider).
+ */
+function em_wp_admin_catalog_choice_switch_color(string $catalog_slug): string
+{
+    $catalog_slug = sanitize_key($catalog_slug);
+
+    if ($catalog_slug === '') {
+        return '#7c3aed';
+    }
+
+    if (function_exists('em_wp_get_template_color')) {
+        if (str_contains($catalog_slug, 'mayami')) {
+            return em_wp_get_template_color('mayami');
+        }
+
+        if (str_contains($catalog_slug, 'ellene')) {
+            return em_wp_get_template_color('ellene');
+        }
+    }
+
+    return '#7c3aed';
+}
+
+/**
+ * Sélecteur catalogue hero/slider (toggles exclusifs, style template live).
+ *
+ * @param array<string, string> $choices slug => label
+ */
+function em_wp_admin_render_catalog_slug_switcher(
+    string $input_name,
+    string $selected_slug,
+    array $choices,
+    string $group_label = '',
+    string $catalog_part = ''
+): void {
+    $selected_slug = sanitize_key($selected_slug);
+    $switch_group_id = wp_unique_id('em-wp-catalog-slug-switches-');
+    $catalog_part = sanitize_key($catalog_part);
+    $field_attrs = 'class="em-wp-header-admin__field em-wp-header-admin__field--catalog"';
+
+    if ($catalog_part !== '') {
+        $field_attrs .= ' data-catalog-part="' . esc_attr($catalog_part) . '"';
+    }
+    ?>
+    <div <?php echo $field_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+        <?php if ($group_label !== '') { ?>
+            <span class="em-wp-header-admin__catalog-switcher-label"><?php echo esc_html($group_label); ?></span>
+        <?php } else { ?>
+            <span class="em-wp-header-admin__catalog-switcher-label" aria-hidden="true"></span>
+        <?php } ?>
+
+        <div class="em-wp-header-admin__catalog-switcher-control">
+        <?php if ($choices === []) { ?>
+            <p class="description"><?php esc_html_e('Aucune entrée catalogue disponible.', 'em-wp'); ?></p>
+            <input type="hidden" name="<?php echo esc_attr($input_name); ?>" value="">
+        <?php } else { ?>
+            <div
+                id="<?php echo esc_attr($switch_group_id); ?>"
+                class="em-wp-hub__live-switches em-wp-admin-catalog-slug-switches"
+                role="group"
+                aria-label="<?php echo esc_attr($group_label !== '' ? $group_label : __('Sélection catalogue', 'em-wp')); ?>"
+            >
+                <?php foreach ($choices as $slug => $label) {
+                    $slug = sanitize_key((string) $slug);
+                    if ($slug === '') {
+                        continue;
+                    }
+
+                    $display_label = em_wp_admin_catalog_choice_switch_label($slug, (string) $label);
+
+                    $is_selected = ($slug === $selected_slug);
+                    $switch_id = $switch_group_id . '-' . sanitize_html_class($slug);
+                    $accent_color = em_wp_admin_catalog_choice_switch_color($slug);
+                    ?>
+                    <label
+                        class="em-wp-hub__live-switch"
+                        for="<?php echo esc_attr($switch_id); ?>"
+                        style="--em-wp-live-color: <?php echo esc_attr($accent_color); ?>;"
+                    >
+                        <span class="em-wp-hub__live-switch-label"><?php echo esc_html($display_label); ?></span>
+                        <input
+                            type="checkbox"
+                            class="em-wp-hub__live-switch-input em-wp-admin-catalog-slug-switch"
+                            id="<?php echo esc_attr($switch_id); ?>"
+                            role="switch"
+                            data-choice-slug="<?php echo esc_attr($slug); ?>"
+                            data-choice-label="<?php echo esc_attr($display_label); ?>"
+                            <?php checked($is_selected); ?>
+                            aria-checked="<?php echo $is_selected ? 'true' : 'false'; ?>"
+                        >
+                        <span class="em-wp-hub__live-switch-ui" aria-hidden="true"></span>
+                    </label>
+                <?php } ?>
+            </div>
+
+            <input
+                type="hidden"
+                class="em-wp-admin-catalog-slug-input"
+                name="<?php echo esc_attr($input_name); ?>"
+                value="<?php echo esc_attr($selected_slug); ?>"
+            >
+        <?php } ?>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Enqueue JS des toggles catalogue (hero/slider HEADER…).
+ */
+function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
+{
+    em_wp_admin_hub_cards_enqueue_assets();
+
+    wp_enqueue_script(
+        'em-wp-admin-catalog-slug-switch',
+        get_template_directory_uri() . '/assets/admin/js/shared/catalog-slug-switch.js',
+        [],
+        em_wp_admin_asset_version('assets/admin/js/shared/catalog-slug-switch.js'),
+        true
+    );
+}

@@ -49,11 +49,12 @@ function em_wp_header_admin_enqueue(string $hook_suffix): void
     }
 
     em_wp_admin_enqueue_shared_assets();
+    em_wp_admin_enqueue_catalog_slug_switch_assets();
 
     wp_enqueue_style(
         'em-wp-header-admin',
         get_template_directory_uri() . '/assets/admin/css/modules/header/header.css',
-        ['em-wp-admin-module-common'],
+        ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
         em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
     );
 
@@ -62,7 +63,7 @@ function em_wp_header_admin_enqueue(string $hook_suffix): void
     wp_enqueue_script(
         'em-wp-header-admin',
         get_template_directory_uri() . '/assets/admin/js/modules/header/header.js',
-        ['jquery', 'wp-color-picker', 'wp-util'],
+        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-module-style-preview', 'wp-util', 'em-wp-admin-catalog-slug-switch'],
         em_wp_admin_asset_version('assets/admin/js/modules/header/header.js'),
         true
     );
