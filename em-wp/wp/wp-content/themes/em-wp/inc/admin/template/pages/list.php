@@ -286,14 +286,6 @@ function em_wp_admin_templates_enqueue(): void
             em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
         );
 
-        wp_enqueue_script(
-            'em-wp-admin-templates-preview',
-            get_template_directory_uri() . '/assets/admin/js/pages/templates-preview.js',
-            [],
-            em_wp_admin_asset_version('assets/admin/js/pages/templates-preview.js'),
-            true
-        );
-
         return;
     }
 

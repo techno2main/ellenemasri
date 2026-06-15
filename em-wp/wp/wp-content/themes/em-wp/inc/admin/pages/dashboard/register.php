@@ -71,13 +71,5 @@ function em_wp_admin_dashboard_enqueue(): void
         ['em-wp-admin-hub-cards'],
         em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
     );
-
-    wp_enqueue_script(
-        'em-wp-admin-dashboard-preview',
-        get_template_directory_uri() . '/assets/admin/js/pages/dashboard-preview.js',
-        [],
-        em_wp_admin_asset_version('assets/admin/js/pages/dashboard-preview.js'),
-        true
-    );
 }
 add_action('admin_enqueue_scripts', 'em_wp_admin_dashboard_enqueue');
