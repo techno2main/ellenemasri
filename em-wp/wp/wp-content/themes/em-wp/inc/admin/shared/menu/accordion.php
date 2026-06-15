@@ -243,6 +243,82 @@ function em_wp_admin_apply_menu_accordion_classes(): void
 }
 
 /**
+ * Classe body pour déplier les entrées d'un module catalogue (HEROS, SLIDERS…).
+ */
+function em_wp_admin_menu_catalog_module_open_body_class(string $page_slug): string
+{
+    $page_slug = sanitize_key($page_slug);
+
+    if ($page_slug === '') {
+        return '';
+    }
+
+    $module_map = [
+        'heros'   => [
+            'body_class' => 'em-wp-accordion-catalog-module-heros-open',
+            'hub_slug'   => function_exists('em_wp_hero_hub_menu_slug') ? em_wp_hero_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_hero_style_from_page_slug',
+        ],
+        'sliders' => [
+            'body_class' => 'em-wp-accordion-catalog-module-sliders-open',
+            'hub_slug'   => function_exists('em_wp_slider_hub_menu_slug') ? em_wp_slider_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_slider_style_from_page_slug',
+        ],
+        'videos'  => [
+            'body_class' => 'em-wp-accordion-catalog-module-videos-open',
+            'hub_slug'   => function_exists('em_wp_video_catalog_hub_menu_slug') ? em_wp_video_catalog_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_video_style_from_page_slug',
+        ],
+        'streams' => [
+            'body_class' => 'em-wp-accordion-catalog-module-streams-open',
+            'hub_slug'   => function_exists('em_wp_stream_catalog_hub_menu_slug') ? em_wp_stream_catalog_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_stream_style_from_page_slug',
+        ],
+        'socials' => [
+            'body_class' => 'em-wp-accordion-catalog-module-socials-open',
+            'hub_slug'   => function_exists('em_wp_social_catalog_hub_menu_slug') ? em_wp_social_catalog_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_social_style_from_page_slug',
+        ],
+        'top-bars' => [
+            'body_class' => 'em-wp-accordion-catalog-module-top-bars-open',
+            'hub_slug'   => function_exists('em_wp_top_bar_catalog_hub_menu_slug') ? em_wp_top_bar_catalog_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_top_bar_style_from_page_slug',
+        ],
+        'releases' => [
+            'body_class' => 'em-wp-accordion-catalog-module-releases-open',
+            'hub_slug'   => function_exists('em_wp_release_catalog_hub_menu_slug') ? em_wp_release_catalog_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_release_style_from_page_slug',
+        ],
+        'ctas' => [
+            'body_class' => 'em-wp-accordion-catalog-module-ctas-open',
+            'hub_slug'   => function_exists('em_wp_cta_catalog_hub_menu_slug') ? em_wp_cta_catalog_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_cta_style_from_page_slug',
+        ],
+        'footers' => [
+            'body_class' => 'em-wp-accordion-catalog-module-footers-open',
+            'hub_slug'   => function_exists('em_wp_footer_catalog_hub_menu_slug') ? em_wp_footer_catalog_hub_menu_slug() : '',
+            'from_page'  => 'em_wp_footer_style_from_page_slug',
+        ],
+    ];
+
+    foreach ($module_map as $config) {
+        $hub_slug = sanitize_key((string) ($config['hub_slug'] ?? ''));
+
+        if ($hub_slug !== '' && $page_slug === $hub_slug) {
+            return ' ' . (string) ($config['body_class'] ?? '');
+        }
+
+        $from_page = (string) ($config['from_page'] ?? '');
+
+        if ($from_page !== '' && function_exists($from_page) && call_user_func($from_page, $page_slug) !== '') {
+            return ' ' . (string) ($config['body_class'] ?? '');
+        }
+    }
+
+    return '';
+}
+
+/**
  * @param mixed $classes
  * @return mixed
  */
@@ -282,6 +358,7 @@ function em_wp_admin_menu_accordion_body_class($classes)
         && in_array($page_slug, em_wp_catalog_admin_page_slugs(), true)
     ) {
         $classes .= ' em-wp-accordion-catalog-open';
+        $classes .= em_wp_admin_menu_catalog_module_open_body_class($page_slug);
     }
 
     if (in_array($page_slug, em_wp_admin_menu_accordion_templates_page_slugs(), true)) {

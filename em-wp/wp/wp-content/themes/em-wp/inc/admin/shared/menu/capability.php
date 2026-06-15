@@ -24,5 +24,5 @@ function em_wp_admin_menu_capability(): string
  */
 function em_wp_admin_catalog_menu_modules(): array
 {
-    return ['heros', 'sliders', 'videos', 'streams', 'socials'];
+    return ['top-bars', 'heros', 'sliders', 'streams', 'socials', 'videos', 'releases', 'ctas', 'footers'];
 }

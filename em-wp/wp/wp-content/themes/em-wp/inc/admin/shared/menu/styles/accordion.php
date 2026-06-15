@@ -11,7 +11,20 @@
             display: block !important;
         }
 
+        /* Entrées catalogue (Mayami, Ellene…) : masquées sur le hub CATALOGUES */
         body.em-wp-accordion-catalog-open #adminmenu li.em-wp-menu-accordion-catalog-entry-child {
+            display: none !important;
+        }
+
+        body.em-wp-accordion-catalog-module-top-bars-open #adminmenu li.em-wp-menu-catalog-top-bars-entry,
+        body.em-wp-accordion-catalog-module-heros-open #adminmenu li.em-wp-menu-catalog-heros-entry,
+        body.em-wp-accordion-catalog-module-sliders-open #adminmenu li.em-wp-menu-catalog-sliders-entry,
+        body.em-wp-accordion-catalog-module-videos-open #adminmenu li.em-wp-menu-catalog-videos-entry,
+        body.em-wp-accordion-catalog-module-streams-open #adminmenu li.em-wp-menu-catalog-streams-entry,
+        body.em-wp-accordion-catalog-module-socials-open #adminmenu li.em-wp-menu-catalog-socials-entry,
+        body.em-wp-accordion-catalog-module-releases-open #adminmenu li.em-wp-menu-catalog-releases-entry,
+        body.em-wp-accordion-catalog-module-ctas-open #adminmenu li.em-wp-menu-catalog-ctas-entry,
+        body.em-wp-accordion-catalog-module-footers-open #adminmenu li.em-wp-menu-catalog-footers-entry {
             display: block !important;
         }
 

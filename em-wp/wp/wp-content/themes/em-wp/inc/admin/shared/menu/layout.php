@@ -477,6 +477,52 @@ function em_wp_admin_menu_layout_ensure_settings_entries(array $relocate): array
 }
 
 /**
+ * Supprime les doublons de hubs catalogues sans classe accordéon (legacy add_menu_page).
+ */
+function em_wp_admin_menu_layout_purge_duplicate_catalog_hubs(): void
+{
+    if (!function_exists('em_wp_catalog_registered_hub_menu_slugs')) {
+        return;
+    }
+
+    global $menu;
+
+    $with_class = [];
+    $without_class = [];
+
+    foreach ($menu as $position => $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+
+        $slug = em_wp_admin_menu_registry_slug_for_item($item);
+
+        if (!in_array($slug, em_wp_catalog_registered_hub_menu_slugs(), true)) {
+            continue;
+        }
+
+        $classes = (string) ($item[4] ?? '');
+
+        if (str_contains($classes, 'em-wp-menu-accordion-catalog-child')) {
+            $with_class[$slug][] = $position;
+            continue;
+        }
+
+        $without_class[$slug][] = $position;
+    }
+
+    foreach ($without_class as $slug => $positions) {
+        if (empty($with_class[$slug])) {
+            continue;
+        }
+
+        foreach ($positions as $position) {
+            unset($menu[$position]);
+        }
+    }
+}
+
+/**
  * Applique le registre de positions (dernier mot sur le menu latéral).
  */
 function em_wp_admin_apply_menu_layout(): void
@@ -568,6 +614,12 @@ function em_wp_admin_apply_menu_layout(): void
         $template_slug = em_wp_admin_template_parent_page_slug();
         em_wp_admin_menu_layout_clear_parent_submenu($template_slug);
     }
+
+    if (function_exists('em_wp_admin_apply_menu_accordion_classes')) {
+        em_wp_admin_apply_menu_accordion_classes();
+    }
+
+    em_wp_admin_menu_layout_purge_duplicate_catalog_hubs();
 
     if (function_exists('em_wp_admin_apply_menu_accordion_classes')) {
         em_wp_admin_apply_menu_accordion_classes();

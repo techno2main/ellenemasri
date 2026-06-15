@@ -60,6 +60,34 @@ function em_wp_admin_neutral_page_slugs(): array
         $slugs = array_merge($slugs, wp_list_pluck(em_wp_slider_style_definitions(), 'page_slug'));
     }
 
+    if (function_exists('em_wp_video_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_video_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_stream_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_stream_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_social_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_social_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_top_bar_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_top_bar_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_release_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_release_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_cta_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_cta_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_footer_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_footer_style_definitions(), 'page_slug'));
+    }
+
     return array_values(array_unique(array_filter($slugs)));
 }
 
@@ -82,12 +110,20 @@ function em_wp_admin_template_scoped_page_slugs(): array
         }
     }
 
-    if (function_exists('em_wp_video_admin_page_slugs')) {
-        $slugs = array_merge($slugs, em_wp_video_admin_page_slugs());
+    if (function_exists('em_wp_video_page_slug')) {
+        $slugs[] = em_wp_video_page_slug();
     }
 
-    if (function_exists('em_wp_release_admin_page_slugs')) {
-        $slugs = array_merge($slugs, em_wp_release_admin_page_slugs());
+    if (function_exists('em_wp_cta_page_slug')) {
+        $slugs[] = em_wp_cta_page_slug();
+    }
+
+    if (function_exists('em_wp_footer_page_slug')) {
+        $slugs[] = em_wp_footer_page_slug();
+    }
+
+    if (function_exists('em_wp_top_bar_page_slug')) {
+        $slugs[] = em_wp_top_bar_page_slug();
     }
 
     return array_values(array_unique(array_filter($slugs)));
