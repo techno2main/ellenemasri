@@ -75,7 +75,7 @@ function em_wp_stream_get_platforms_list(?array $stream_options = null): array
         } elseif (function_exists('em_wp_stream_get_options')) {
             $stream_options = em_wp_stream_get_options();
         } else {
-            $stream_options = em_wp_stream_default_options();
+            $stream_options = em_wp_stream_catalog_default_options();
         }
     }
 
@@ -362,7 +362,7 @@ function em_wp_stream_maybe_migrate_legacy_platform_data(): void
         }
 
         $stream_saved['platforms'] = $platforms;
-        update_option('em_wp_stream_options', wp_parse_args($stream_saved, em_wp_stream_default_options()));
+        update_option('em_wp_stream_options', wp_parse_args($stream_saved, em_wp_stream_catalog_default_options()));
     }
 
     if (!$has_icons && is_array($legacy_links) && $legacy_links !== []) {

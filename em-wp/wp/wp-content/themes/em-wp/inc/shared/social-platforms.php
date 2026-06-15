@@ -106,7 +106,7 @@ function em_wp_social_get_platforms_list(?array $social_options = null): array
         } elseif (function_exists('em_wp_social_get_options')) {
             $social_options = em_wp_social_get_options();
         } else {
-            $social_options = em_wp_social_default_options();
+            $social_options = em_wp_social_catalog_default_options();
         }
     }
 
@@ -162,7 +162,7 @@ function em_wp_get_social_cards_for_front(): array
 {
     $options = function_exists('em_wp_social_get_options_for_front')
         ? em_wp_social_get_options_for_front()
-        : (function_exists('em_wp_social_get_options') ? em_wp_social_get_options() : em_wp_social_default_options());
+        : (function_exists('em_wp_social_get_options') ? em_wp_social_get_options() : em_wp_social_catalog_default_options());
     $definitions = em_wp_social_platform_definitions();
     $cards = [];
 
