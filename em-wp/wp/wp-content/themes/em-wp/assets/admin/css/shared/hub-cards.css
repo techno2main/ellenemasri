@@ -372,30 +372,37 @@
 }
 
 .em-wp-hub__catalog-entry-link {
+    display: inline-block;
     color: var(--em-wp-live-color, #751820);
     font-weight: 600;
     text-decoration: none;
-    transition: color 0.15s ease, opacity 0.15s ease;
+    padding: 1px 4px;
+    margin: -1px 0;
+    border-radius: 999px;
+    transition:
+        color 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
 .em-wp-hub__catalog-entry-link:hover,
-.em-wp-hub__catalog-entry-link:focus {
+.em-wp-hub__catalog-entry-link:focus-visible {
     color: #3d060b;
+    background: color-mix(in srgb, var(--em-wp-live-color, #751820) 14%, #ffffff);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-wp-live-color, #751820) 24%, transparent);
     text-decoration: none;
-    opacity: 0.92;
 }
 
-.em-wp-hub__catalog-entry-link:focus {
+.em-wp-hub__catalog-entry-link:focus-visible {
     outline: 2px solid rgba(117, 24, 32, 0.28);
     outline-offset: 1px;
-    border-radius: 2px;
 }
 
 .em-wp-hub__catalog-entry-sep {
     display: inline-block;
     width: 3px;
     height: 3px;
-    margin: 0 7px;
+    margin: 0 4px;
     border-radius: 999px;
     background: #b4b9be;
     vertical-align: middle;
@@ -440,10 +447,57 @@
 .em-wp-hub__live-switch {
     display: inline-flex;
     align-items: center;
+    gap: 6px;
+    margin: 0;
+    user-select: none;
+}
+
+.em-wp-hub__live-switch-control {
+    display: inline-flex;
+    align-items: center;
     gap: 8px;
     margin: 0;
     cursor: pointer;
-    user-select: none;
+}
+
+.em-wp-catalog-entry-open {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    color: var(--em-wp-live-color, #751820);
+    background: color-mix(in srgb, var(--em-wp-live-color, #751820) 10%, #ffffff);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-wp-live-color, #751820) 14%, transparent);
+    text-decoration: none;
+    transition:
+        color 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease,
+        opacity 0.15s ease;
+}
+
+.em-wp-catalog-entry-open .dashicons {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.em-wp-catalog-entry-open:hover,
+.em-wp-catalog-entry-open:focus {
+    color: #3d060b;
+    background: color-mix(in srgb, var(--em-wp-live-color, #751820) 16%, #ffffff);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-wp-live-color, #751820) 28%, transparent);
+    text-decoration: none;
+    opacity: 0.95;
+}
+
+.em-wp-catalog-entry-open:focus-visible {
+    outline: 2px solid rgba(117, 24, 32, 0.28);
+    outline-offset: 1px;
 }
 
 .em-wp-hub__live-switch-label {
@@ -556,17 +610,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 22px;
-    height: 22px;
-    padding: 0 6px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
     border-radius: 999px;
-    background: #751820;
+    background: color-mix(in srgb, #751820 80%, #ffffff);
     color: #ffffff;
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10px;
+    font-weight: 800;
     line-height: 1;
     flex-shrink: 0;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22) inset;
+    box-shadow: 0 0 0 1px color-mix(in srgb, #751820 16%, transparent);
 }
 
 .em-wp-hub__card-title {
@@ -597,6 +651,13 @@
     color: #50575e;
     font-size: 13px;
     line-height: 1.45;
+}
+
+.em-wp-hub__card-desc-item {
+    font-size: inherit;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: inherit;
 }
 
 .em-wp-hub__card-actions {

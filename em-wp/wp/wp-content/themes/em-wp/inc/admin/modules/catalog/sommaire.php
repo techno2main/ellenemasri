@@ -106,7 +106,7 @@ function em_wp_catalog_registered_hub_menu_slugs(): array
 /**
  * Définitions menu + hub des modules catalogues.
  *
- * @return array<string, array{label:string,menu_title:string,slug:string,icon:string,available:bool,description:string,url:string,callback:callable|string}>
+ * @return array<string, array{label:string,menu_title:string,slug:string,icon:string,available:bool,description_item:string,description_rubrique:string,url:string,callback:callable|string}>
  */
 function em_wp_catalog_menu_definitions(): array
 {
@@ -117,7 +117,8 @@ function em_wp_catalog_menu_definitions(): array
             'slug'        => em_wp_hero_hub_menu_slug(),
             'icon'        => 'dashicons-format-gallery',
             'available'   => true,
-            'description' => __('Liste des Heros réutilisables dans la rubrique HEADER.', 'em-wp'),
+            'description_item'     => __('Heros', 'em-wp'),
+            'description_rubrique' => __('HEADER', 'em-wp'),
             'url'         => em_wp_hero_hub_page_url(),
             'callback'    => 'em_wp_catalog_render_heros_page',
         ],
@@ -127,7 +128,8 @@ function em_wp_catalog_menu_definitions(): array
             'slug'        => em_wp_slider_hub_menu_slug(),
             'icon'        => 'dashicons-slides',
             'available'   => true,
-            'description' => __('Liste des Sliders réutilisables dans la rubrique HEADER.', 'em-wp'),
+            'description_item'     => __('Sliders', 'em-wp'),
+            'description_rubrique' => __('HEADER', 'em-wp'),
             'url'         => em_wp_slider_hub_page_url(),
             'callback'    => 'em_wp_catalog_render_sliders_page',
         ],
@@ -137,7 +139,8 @@ function em_wp_catalog_menu_definitions(): array
             'slug'        => em_wp_video_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-video-alt3',
             'available'   => true,
-            'description' => __('Liste des Vidéos réutilisables dans la rubrique VIDEOS.', 'em-wp'),
+            'description_item'     => __('Vidéos', 'em-wp'),
+            'description_rubrique' => __('VIDEOS', 'em-wp'),
             'url'         => function_exists('em_wp_video_hub_page_url') ? em_wp_video_hub_page_url() : admin_url('admin.php?page=' . em_wp_video_catalog_hub_menu_slug()),
             'callback'    => 'em_wp_catalog_render_videos_page',
         ],
@@ -147,7 +150,8 @@ function em_wp_catalog_menu_definitions(): array
             'slug'        => em_wp_stream_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-playlist-audio',
             'available'   => true,
-            'description' => __('Liste des Streams réutilisables dans la rubrique STREAM.', 'em-wp'),
+            'description_item'     => __('Streams', 'em-wp'),
+            'description_rubrique' => __('STREAM', 'em-wp'),
             'url'         => function_exists('em_wp_stream_hub_page_url') ? em_wp_stream_hub_page_url() : admin_url('admin.php?page=' . em_wp_stream_catalog_hub_menu_slug()),
             'callback'    => 'em_wp_catalog_render_streams_page',
         ],
@@ -157,7 +161,8 @@ function em_wp_catalog_menu_definitions(): array
             'slug'        => em_wp_social_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-share',
             'available'   => true,
-            'description' => __('Catalogues social réutilisables dans la rubrique SOCIAL.', 'em-wp'),
+            'description_item'     => __('Socials', 'em-wp'),
+            'description_rubrique' => __('SOCIAL', 'em-wp'),
             'url'         => function_exists('em_wp_social_hub_page_url') ? em_wp_social_hub_page_url() : admin_url('admin.php?page=' . em_wp_social_catalog_hub_menu_slug()),
             'callback'    => 'em_wp_catalog_render_socials_page',
         ],
@@ -574,14 +579,6 @@ function em_wp_catalog_hub_enqueue(): void
     );
 
     if ($page_slug === em_wp_catalog_parent_menu_slug()) {
-        wp_enqueue_script(
-            'em-wp-admin-catalog-sommaire-preview',
-            get_template_directory_uri() . '/assets/admin/js/catalog/sommaire-preview.js',
-            [],
-            em_wp_admin_asset_version('assets/admin/js/catalog/sommaire-preview.js'),
-            true
-        );
-
         return;
     }
 
@@ -825,6 +822,18 @@ function em_wp_catalog_edit_enqueue(): void
 add_action('admin_enqueue_scripts', 'em_wp_catalog_edit_enqueue', 15);
 
 /**
+ * Texte brut de description carte hub catalogue.
+ */
+function em_wp_catalog_hub_card_description_text(string $item_name, string $rubrique_name, string $module_slug = ''): string
+{
+    if (function_exists('em_wp_admin_hub_catalog_card_description_text')) {
+        return em_wp_admin_hub_catalog_card_description_text($item_name, $rubrique_name, $module_slug);
+    }
+
+    return '';
+}
+
+/**
  * Types de catalogues disponibles (hub CATALOGUES).
  *
  * @return array<string, array{label:string,description:string,url:string,available:bool}>
@@ -842,7 +851,11 @@ function em_wp_catalog_hub_definitions(): array
 
         $hubs[$module_slug] = [
             'label'       => (string) ($definition['label'] ?? $module_slug),
-            'description' => (string) ($definition['description'] ?? ''),
+            'description' => em_wp_catalog_hub_card_description_text(
+                (string) ($definition['description_item'] ?? ($definition['label'] ?? $module_slug)),
+                (string) ($definition['description_rubrique'] ?? ''),
+                $module_slug
+            ),
             'url'         => (string) ($definition['url'] ?? ''),
             'available'   => !empty($definition['available']),
         ];
@@ -1368,7 +1381,6 @@ function em_wp_catalog_render_parent_page(): void
                         }
 
                         $label = (string) ($definition['label'] ?? $module_slug);
-                        $description = (string) ($definition['description'] ?? '');
                         $icon = (string) ($definition['icon'] ?? 'dashicons-admin-generic');
                         $is_available = !empty($definition['available']);
                         $url = (string) ($definition['url'] ?? '');
@@ -1398,7 +1410,15 @@ function em_wp_catalog_render_parent_page(): void
                                     em_wp_admin_hub_render_disabled_action(__('Prochaine étape', 'em-wp'), '', true);
                                 } ?>
                             </header>
-                            <p class="em-wp-hub__card-desc"><?php echo esc_html($description); ?></p>
+                            <?php
+                            if (function_exists('em_wp_admin_hub_render_catalog_card_description')) {
+                                em_wp_admin_hub_render_catalog_card_description(
+                                    (string) ($definition['description_item'] ?? $label),
+                                    (string) ($definition['description_rubrique'] ?? ''),
+                                    $module_slug
+                                );
+                            }
+                            ?>
                             <?php
                             if ($is_available) {
                                 em_wp_catalog_render_entries_badge($module_slug);

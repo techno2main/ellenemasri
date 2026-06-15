@@ -229,6 +229,50 @@ function em_wp_admin_hub_render_count_badge(int $count): void
 }
 
 /**
+ * Texte description carte catalogue (nom d'item en majuscules).
+ */
+function em_wp_admin_hub_catalog_card_description_text(string $item_name, string $rubrique_name, string $module_slug = ''): string
+{
+    $item = mb_strtoupper(trim($item_name));
+    $rubrique = mb_strtoupper(trim($rubrique_name));
+
+    return (string) sprintf(
+        /* translators: 1: catalog item name, 2: rubrique name */
+        __('Liste des %1$s réutilisables dans la rubrique %2$s.', 'em-wp'),
+        $item,
+        $rubrique
+    );
+}
+
+/**
+ * Description carte catalogue — nom d'item en gras / majuscules.
+ */
+function em_wp_admin_hub_render_catalog_card_description(string $item_name, string $rubrique_name, string $module_slug = ''): void
+{
+    $item_html = '<strong class="em-wp-hub__card-desc-item">' . esc_html(mb_strtoupper(trim($item_name))) . '</strong>';
+    $rubrique = esc_html(mb_strtoupper(trim($rubrique_name)));
+
+    $text = sprintf(
+        /* translators: 1: catalog item name, 2: rubrique name */
+        __('Liste des %1$s réutilisables dans la rubrique %2$s.', 'em-wp'),
+        $item_html,
+        $rubrique
+    );
+    ?>
+    <p class="em-wp-hub__card-desc">
+        <?php
+        echo wp_kses(
+            $text,
+            [
+                'strong' => ['class' => true],
+            ]
+        );
+        ?>
+    </p>
+    <?php
+}
+
+/**
  * Rendu d'un bouton d'action pill (lien).
  */
 function em_wp_admin_hub_render_action_link(
@@ -591,6 +635,58 @@ function em_wp_admin_catalog_choice_switch_color(string $catalog_slug): string
 }
 
 /**
+ * Module catalogue associé à un identifiant rubrique (hero, slider, video…).
+ */
+function em_wp_admin_catalog_part_to_module_slug(string $catalog_part): string
+{
+    static $map = [
+        'hero'    => 'heros',
+        'slider'  => 'sliders',
+        'video'   => 'videos',
+        'stream'  => 'streams',
+        'social'  => 'socials',
+        'top-bar' => 'top-bars',
+        'release' => 'releases',
+        'cta'     => 'ctas',
+        'footer'  => 'footers',
+    ];
+
+    return (string) ($map[sanitize_key($catalog_part)] ?? '');
+}
+
+/**
+ * URL admin d'édition d'une entrée catalogue (depuis une rubrique template).
+ */
+function em_wp_admin_catalog_entry_edit_url(string $catalog_part, string $catalog_slug): string
+{
+    $catalog_slug = sanitize_key($catalog_slug);
+
+    if ($catalog_slug === '') {
+        return '';
+    }
+
+    $module_slug = em_wp_admin_catalog_part_to_module_slug($catalog_part);
+
+    if ($module_slug === '' || !function_exists('em_wp_catalog_hub_edit_page_slug_fn')) {
+        return '';
+    }
+
+    $slug_fn = em_wp_catalog_hub_edit_page_slug_fn($module_slug);
+
+    if ($slug_fn === null) {
+        return '';
+    }
+
+    $page_slug = $slug_fn($catalog_slug);
+
+    if ($page_slug === '') {
+        return '';
+    }
+
+    return add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+}
+
+/**
  * Sélecteur catalogue hero/slider (toggles exclusifs, style template live).
  *
  * @param array<string, string> $choices slug => label
@@ -645,26 +741,46 @@ function em_wp_admin_render_catalog_slug_switcher(
                     $is_selected = ($slug === $selected_slug);
                     $switch_id = $switch_group_id . '-' . sanitize_html_class($slug);
                     $accent_color = em_wp_admin_catalog_choice_switch_color($slug);
+                    $entry_url = $catalog_part !== ''
+                        ? em_wp_admin_catalog_entry_edit_url($catalog_part, $slug)
+                        : '';
+                    $entry_open_label = sprintf(
+                        /* translators: %s: catalog entry label */
+                        __('Ouvrir %s dans le catalogue', 'em-wp'),
+                        $display_label
+                    );
                     ?>
-                    <label
+                    <div
                         class="em-wp-hub__live-switch"
-                        for="<?php echo esc_attr($switch_id); ?>"
                         style="--em-wp-live-color: <?php echo esc_attr($accent_color); ?>;"
                     >
-                        <span class="em-wp-hub__live-switch-label"><?php echo esc_html($display_label); ?></span>
-                        <input
-                            type="checkbox"
-                            class="em-wp-hub__live-switch-input em-wp-admin-catalog-slug-switch"
-                            id="<?php echo esc_attr($switch_id); ?>"
-                            role="switch"
-                            data-choice-slug="<?php echo esc_attr($slug); ?>"
-                            data-choice-label="<?php echo esc_attr($display_label); ?>"
-                            data-choice-wireframe-label="<?php echo esc_attr($wireframe_label); ?>"
-                            <?php checked($is_selected); ?>
-                            aria-checked="<?php echo $is_selected ? 'true' : 'false'; ?>"
-                        >
-                        <span class="em-wp-hub__live-switch-ui" aria-hidden="true"></span>
-                    </label>
+                        <?php if ($entry_url !== '') { ?>
+                            <a
+                                href="<?php echo esc_url($entry_url); ?>"
+                                class="em-wp-catalog-entry-open"
+                                aria-label="<?php echo esc_attr($entry_open_label); ?>"
+                                title="<?php echo esc_attr($entry_open_label); ?>"
+                                data-entry-label="<?php echo esc_attr($display_label); ?>"
+                            >
+                                <span class="dashicons dashicons-external" aria-hidden="true"></span>
+                            </a>
+                        <?php } ?>
+                        <label class="em-wp-hub__live-switch-control" for="<?php echo esc_attr($switch_id); ?>">
+                            <span class="em-wp-hub__live-switch-label"><?php echo esc_html($display_label); ?></span>
+                            <input
+                                type="checkbox"
+                                class="em-wp-hub__live-switch-input em-wp-admin-catalog-slug-switch"
+                                id="<?php echo esc_attr($switch_id); ?>"
+                                role="switch"
+                                data-choice-slug="<?php echo esc_attr($slug); ?>"
+                                data-choice-label="<?php echo esc_attr($display_label); ?>"
+                                data-choice-wireframe-label="<?php echo esc_attr($wireframe_label); ?>"
+                                <?php checked($is_selected); ?>
+                                aria-checked="<?php echo $is_selected ? 'true' : 'false'; ?>"
+                            >
+                            <span class="em-wp-hub__live-switch-ui" aria-hidden="true"></span>
+                        </label>
+                    </div>
                 <?php } ?>
             </div>
 
@@ -687,11 +803,60 @@ function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
 {
     em_wp_admin_hub_cards_enqueue_assets();
 
+    if (!wp_script_is('em-wp-admin-confirm-modal', 'registered')) {
+        wp_register_script(
+            'em-wp-admin-confirm-modal',
+            get_template_directory_uri() . '/assets/admin/js/shared/confirm-modal.js',
+            [],
+            em_wp_admin_asset_version('assets/admin/js/shared/confirm-modal.js'),
+            true
+        );
+    }
+
+    if (!wp_script_is('em-wp-admin-module-form-dirty', 'registered')) {
+        wp_register_script(
+            'em-wp-admin-module-form-dirty',
+            get_template_directory_uri() . '/assets/admin/js/shared/module-form-dirty.js',
+            ['em-wp-admin-confirm-modal'],
+            em_wp_admin_asset_version('assets/admin/js/shared/module-form-dirty.js'),
+            true
+        );
+    }
+
+    wp_enqueue_script('em-wp-admin-confirm-modal');
+    wp_enqueue_script('em-wp-admin-module-form-dirty');
+
     wp_enqueue_script(
         'em-wp-admin-catalog-slug-switch',
         get_template_directory_uri() . '/assets/admin/js/shared/catalog-slug-switch.js',
-        [],
+        ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty'],
         em_wp_admin_asset_version('assets/admin/js/shared/catalog-slug-switch.js'),
         true
+    );
+
+    $template_label = function_exists('em_wp_get_editing_template_label')
+        ? (string) em_wp_get_editing_template_label()
+        : '';
+    $has_template_context = function_exists('em_wp_admin_has_template_context') && em_wp_admin_has_template_context();
+
+    wp_localize_script(
+        'em-wp-admin-catalog-slug-switch',
+        'EmWpCatalogEntryOpen',
+        [
+            'hasTemplateContext' => $has_template_context,
+            'quitEndpoint'       => admin_url('admin.php'),
+            'quitNonce'          => wp_create_nonce('em_wp_quit_editing_nav'),
+            'templateLabel'      => $template_label,
+            'strings'            => [
+                'openConfirm'         => __('Tu vas quitter l\'édition en cours pour ouvrir « %s » dans le catalogue.', 'em-wp'),
+                'openConfirmTemplate' => __('Tu vas quitter l\'édition du template « %1$s » pour ouvrir « %2$s » dans le catalogue.', 'em-wp'),
+                'confirmOpen'         => __('Ouvrir le catalogue', 'em-wp'),
+                'confirmSaveOpen'     => __('Enregistrer & Ouvrir', 'em-wp'),
+                'stay'                => __('Rester', 'em-wp'),
+                'saveConfirm'         => __('Enregistrer la configuration actuelle et continuer ?', 'em-wp'),
+                'saveLabel'           => __('Enregistrer', 'em-wp'),
+                'saveCancel'          => __('Annuler', 'em-wp'),
+            ],
+        ]
     );
 }
