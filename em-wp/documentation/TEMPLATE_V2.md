@@ -2,8 +2,8 @@
 
 > **Branche :** `feature/em-wp-v2-templates`  
 > **V1 (gelée) :** `feature/theme-em-wp`  
-> **Dernière maj doc :** 2026-06-13 (soir)  
-> **Statut global :** Phases 0–3 ✅ ; Phase 4 🔄 WIP poussée — **non validée**, revue Tyson demain
+> **Dernière maj doc :** 2026-06-14 (soir — pause avant Wizard)  
+> **Statut global :** Phases 0–4 ✅ ; Phase 5 🔄 WIP avancée (squelette template, CONTACT, hub catalogues) — **Wizard demain soir**
 
 Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phase / commit significatif** (statuts, fichiers créés, dette restante).
 
@@ -12,40 +12,34 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 ## Prompt reprise (copier-coller en début de session)
 
 ```text
-Contexte em-wp V2 — reprise Phase 4 (HEADER + Catalogues Hero/Slider).
+Contexte em-wp V2 — reprise Phase 5 (squelette template + CONTACT + hub).
 
 Branche : feature/em-wp-v2-templates
-Dernier commit : 64b0ea0 — feat(em-wp/templates): Phase 4 WIP — HEADER, catalogues et menu admin
+Dernier commit poussé : f8b6be8 — feat(contacts): rendu front section #contact sur landing
 Doc suivi : em-wp/documentation/TEMPLATE_V2.md
-Local : http://localhost:8190/wp-admin (Docker em-wp-local, comptes admin-my / ellene-admin)
+Local : http://localhost:8190/wp-admin (Docker em-wp-local)
 
-État : Phase 4 implémentée en WIP et poussée sur GitHub, PAS validée par Tyson.
-Tyson a des remarques et corrections à faire sur ce qui existe déjà — les traiter EN PRIORITÉ
-avant d'enchaîner les tâches restantes.
+État Phase 5 (WIP, poussé sauf correctifs du soir) :
+- Squelette rubriques par template : ordre, ajout/retrait, insertion positionnée, couleurs initiales, masquée par défaut
+- UI sommaire : onglet +, panneau ajout, toast auto-dismiss 5s, wireframe / fil d'Ariane
+- Module catalogue CONTACT (custom) : hub, entrées Mayami/Ellene, Label/Valeur/Masquer, slugs canoniques
+- Rubrique template CONTACT : sélection catalogue mutualisée (Release/Stream/Contact), menu latéral, case Afficher, front #contact
+- Hub catalogues : modules custom CRUD, renommage, panneau mutualisé catalog-rubrique-page
+- Bandeau : pastille édition vs live, modale confirmation hub, double validation template live
 
-Modèle Phase 4 validé (ne pas revert) :
-- Rubrique conteneur HEADER (pas HEROS/SLIDERS séparés dans Rubriques)
-- Menu Catalogues > Heros / Sliders (contenu indépendant du bandeau template)
-- HEADER = sélection hero catalogue + slider catalogue + layout (hero_left / slider_left) par template en édition
-- Plan du site : encadrant HEADER avec sous-zones Hero/Slider ; swap = layout interne
-- Pages catalogues : pas de bandeau template
+Correctifs locaux non poussés (soir 14/06) :
+- CONTACT retiré du menu principal hors contexte template
+- Accueil : cartes « Nouveau Catalogue » et « Nouveau Template » actives (deeplink création)
 
-Déjà livré (64b0ea0) :
-- inc/shared/catalog/ (registry, migrate-v1, resolve-style)
-- inc/admin/modules/header/ + inc/front/modules/header/render.php
-- landing-render unifié, header-pair.php, Plan du site encadrant + AJAX layout
-- Menus admin Catalogues + Paramètres, purge séparateurs WP natifs
-- Migration V1 idempotente (em_wp_catalog_maybe_migrate_v1)
+Prochaine session : **Wizard** (demain soir) — ne pas entamer sans Tyson.
 
-Reste Phase 4 (après corrections Tyson) :
-- CRUD catalogue complet (créer, dupliquer, supprimer + nommage obligatoire)
-- Suppression UI/options V1 em_wp_hero_active_style / em_wp_slider_active_style
-- Découper hero/settings.php et slider/settings.php (< 350 L)
-- Tests BACK/FRONT checklist → « OK phase 4 » Tyson → Flow GH
+Reste Phase 5 :
+- Wizard onboarding (session dédiée)
+- CTA / Video / autres rubriques catalogue sur renderer mutualisé (optionnel)
+- Tests BACK/FRONT checklist Phase 5
+- Validation Tyson → Flow GH
 
-Ensuite : Phase 5 (Sommaire + visibilité par template).
-
-Commencer par : demander / lire les remarques Tyson, puis corriger point par point.
+Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Tyson.
 ```
 
 ---
@@ -90,8 +84,8 @@ Commencer par : demander / lire les remarques Tyson, puis corriger point par poi
 | **1** | STREAM par template | ✅ | 589b3cb | Validée — options par template, migration Mayami, module découpé |
 | **2** | VIDEOS + RELEASES par template | ✅ | 99d9b71 | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ✅ | 4ca7251 | |
-| **4** | HEADER + Catalogues Hero/Slider + sélection par template | 🔄 | 64b0ea0 | WIP poussée — revue Tyson + corrections avant validation |
-| **5** | Sommaire + visibilité par template | ⬜ | — | |
+| **4** | HEADER + Catalogues Hero/Slider + sélection par template | ✅ | 64b0ea0 + lots intermédiaires | Hub catalogues, CRUD heros/sliders, HEADER live |
+| **5** | Sommaire + visibilité par template + squelette + CONTACT | 🔄 | f8b6be8 (+ correctifs locaux) | Squelette template, module CONTACT, hub custom — Wizard demain soir |
 | **6** | Migration Mayami + tests front | ⬜ | — | |
 
 ### Dette V1 à traiter pendant V2 (fichiers > 350 lignes)
@@ -110,6 +104,13 @@ Commencer par : demander / lire les remarques Tyson, puis corriger point par poi
 
 | Date | Auteur | Entrée |
 |------|--------|--------|
+| 2026-06-14 | Tyson | Pause — **Wizard demain soir** ; correctifs menu CONTACT + Accueil « Nouveau … » en local |
+| 2026-06-14 | Agent | Flow GH : 5 commits CONTACT + squelette (56f47cb → f8b6be8) |
+| 2026-06-14 | Agent | CONTACT : catalogue custom, rubrique template, front #contact, labels éditables Label/Valeur |
+| 2026-06-14 | Agent | Squelette template : insertion positionnée, couleurs, masquée par défaut, UI panneau + |
+| 2026-06-14 | Agent | Mutualisation panneau catalogue Release/Stream/Contact (`catalog-rubrique-page.php`) |
+| 2026-06-14 | Agent | Hub catalogues custom : CRUD modules, slugs, renommage, entrées Mayami/Ellene |
+| 2026-06-14 | Agent | Bandeau pastille édition/live, modale confirmation hub, fil d'Ariane squelette |
 | 2026-06-13 | Tyson | Pause soir — remarques/corrections à venir sur Phase 4 WIP ; reprise demain |
 | 2026-06-13 | Agent | Flow GH : commit 64b0ea0 Phase 4 WIP (HEADER, catalogues, menu admin, front) — non validé |
 | 2026-06-13 | Agent | Menu admin : bloc Paramètres, purge séparateurs WP natifs (filet uniforme em-wp) |
@@ -143,7 +144,7 @@ Plusieurs **Templates** (noms éditables) portent **tout le contenu** des rubriq
 | Contenu | Toutes rubriques personnalisables par template |
 | Structure site | **Globale** (liste rubriques, ordre, plan) |
 | Visibilité | **Par template** (œil Afficher/Masquer) |
-| Nouvelle rubrique (ex. Contact) | Globale ; masquée par template si besoin |
+| Nouvelle rubrique (ex. Contact) | Globale ; masquée par template si besoin ; **CONTACT livré** (catalogue custom + rubrique squelette) |
 | Menu admin | Option A : rubriques + bandeau sélecteur visible |
 | Template live vs édition | 2 contextes distincts (bandeau vs page Templates) |
 | Priorité multi-template | STREAM → VIDEOS → RELEASES → reste |
@@ -435,10 +436,17 @@ Catalogue Hero          Catalogue Slider
 - [ ] **Maj ce doc** → ✅ après validation Tyson
 
 ### Phase 5 — Sommaire
-- [ ] Visibilité par template en édition
-- [ ] Plan preview selon template bandeau
-- [ ] Retrait `em_wp_site_rubrique_visibility` global (migration)
-- [ ] **Maj ce doc**
+- [x] Squelette rubriques **par template** : ordre persisté, AJAX add/remove/reorder
+- [x] Panneau « + » : rubriques proposables, position d'insertion, couleurs initiales, masquée par défaut
+- [x] Visibilité par template (œil sommaire + options rubrique)
+- [x] Module **CONTACT** : catalogue custom (`contacts`), rubrique `em-wp-contacts`, front `#contact`
+- [x] Hub catalogues : modules custom CRUD + renderer mutualisé Release/Stream/Contact
+- [x] Menu latéral : rubriques hors contexte masquées (pas d'intrus CONTACT sur dashboard)
+- [x] Accueil : cartes « Nouveau Catalogue » / « Nouveau Template » → deeplink création
+- [ ] **Wizard onboarding** (session Tyson — demain soir)
+- [ ] Retrait `em_wp_site_rubrique_visibility` global legacy (si encore utilisé)
+- [ ] Tests BACK/FRONT checklist Phase 5
+- [ ] **Maj ce doc** → ✅ après validation Tyson + Wizard
 
 ### Phase 6 — Migration & QA
 - [ ] Script migrate-v1.php idempotent
@@ -488,10 +496,11 @@ Catalogue Hero          Catalogue Slider
 
 ## Hors scope V2
 
-- Ordre des sections par template
-- Rubrique Contact (structure globale quand demandée)
+- Ordre des sections par template (squelette **par template** livré ; ordre global inchangé)
+- ~~Rubrique Contact~~ → **livré Phase 5** (module catalogue `contacts`)
 - Layouts hero/slider multiples par entité (un layout type « default » suffit en V2 ; renommage slug ajustable)
 - **Playlist hero** : plusieurs heros affichés en rotation / par intervalle (1 hero par template en V2)
+- **Wizard onboarding** : prévu session dédiée (2026-06-15 soir)
 
 ---
 
