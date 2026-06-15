@@ -45,6 +45,18 @@ function em_wp_admin_is_catalog_screen(): bool
         return true;
     }
 
+    if (function_exists('em_wp_video_catalog_slug_from_page') && em_wp_video_catalog_slug_from_page($page_slug) !== '') {
+        return true;
+    }
+
+    if (function_exists('em_wp_stream_catalog_slug_from_page') && em_wp_stream_catalog_slug_from_page($page_slug) !== '') {
+        return true;
+    }
+
+    if (function_exists('em_wp_social_catalog_slug_from_page') && em_wp_social_catalog_slug_from_page($page_slug) !== '') {
+        return true;
+    }
+
     if (function_exists('em_wp_hero_legacy_page_slug_map') && isset(em_wp_hero_legacy_page_slug_map()[$page_slug])) {
         return true;
     }

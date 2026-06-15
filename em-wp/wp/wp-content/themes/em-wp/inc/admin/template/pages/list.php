@@ -272,6 +272,28 @@ function em_wp_admin_templates_enqueue(): void
         em_wp_admin_hub_cards_enqueue_assets();
         em_wp_admin_hub_enqueue_template_live_switcher();
 
+        wp_enqueue_style(
+            'font-awesome-6',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+            [],
+            '6.5.1'
+        );
+
+        wp_enqueue_style(
+            'em-wp-admin-catalog-sommaire',
+            get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
+            ['em-wp-admin-hub-cards'],
+            em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
+        );
+
+        wp_enqueue_script(
+            'em-wp-admin-templates-preview',
+            get_template_directory_uri() . '/assets/admin/js/pages/templates-preview.js',
+            [],
+            em_wp_admin_asset_version('assets/admin/js/pages/templates-preview.js'),
+            true
+        );
+
         return;
     }
 
