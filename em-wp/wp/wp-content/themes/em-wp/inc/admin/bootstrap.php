@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/shared/style-panel.php';
+require_once __DIR__ . '/shared/catalog-rubrique-page.php';
 require_once __DIR__ . '/shared/assets.php';
 require_once __DIR__ . '/shared/hub-cards.php';
 require_once __DIR__ . '/shared/settings-api.php';
@@ -37,6 +38,7 @@ require_once __DIR__ . '/modules/video/settings.php';
 require_once __DIR__ . '/modules/release/settings.php';
 require_once __DIR__ . '/modules/cta/settings.php';
 require_once __DIR__ . '/modules/footer/settings.php';
+require_once __DIR__ . '/modules/custom-catalog-rubrique/settings.php';
 require_once __DIR__ . '/pages/rubriques.php';
 require_once __DIR__ . '/pages/dashboard.php';
 require_once __DIR__ . '/shared/menu/layout.php';

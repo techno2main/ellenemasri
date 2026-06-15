@@ -16,6 +16,12 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_site_rubrique_modules(): array
 {
+    if (function_exists('em_wp_admin_has_template_context')
+        && em_wp_admin_has_template_context()
+        && function_exists('em_wp_get_rubrique_order_for_template')) {
+        return em_wp_get_rubrique_order_for_template();
+    }
+
     return em_wp_get_site_rubrique_order();
 }
 

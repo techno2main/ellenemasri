@@ -44,6 +44,7 @@ function em_wp_template_scoped_rubrique_slugs(): array
         'social',
         'cta',
         'footer',
+        'contacts',
     ];
 }
 

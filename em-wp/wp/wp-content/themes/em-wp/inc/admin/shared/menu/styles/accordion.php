@@ -28,6 +28,23 @@
             display: block !important;
         }
 
+        <?php
+        if (function_exists('em_wp_custom_catalog_modules')) {
+            foreach (array_keys(em_wp_custom_catalog_modules()) as $module_slug) {
+                $module_slug = sanitize_key((string) $module_slug);
+
+                if ($module_slug === '') {
+                    continue;
+                }
+
+                printf(
+                    "body.em-wp-accordion-catalog-module-%1\$s-open #adminmenu li.em-wp-menu-catalog-%1\$s-entry {\n            display: block !important;\n        }\n\n        ",
+                    esc_attr($module_slug)
+                );
+            }
+        }
+        ?>
+
         body.em-wp-accordion-medias-open #adminmenu li.em-wp-menu-accordion-medias-child {
             display: block !important;
         }
@@ -122,7 +139,8 @@
         }
 
         #adminmenu li.em-wp-menu-submenu-current > a.menu-top .wp-menu-name::before,
-        #adminmenu li.em-wp-menu-rubrique-current > a.menu-top .wp-menu-name::before {
+        #adminmenu li.em-wp-menu-rubrique-current > a.menu-top .wp-menu-name::before,
+        #adminmenu li.em-wp-menu-accordion-catalog-entry-child.current > a.menu-top .wp-menu-name::before {
             content: '';
             display: inline-block;
             width: 6px;
@@ -141,7 +159,8 @@
         }
 
         .folded #adminmenu li.em-wp-menu-submenu-current > a.menu-top .wp-menu-name::before,
-        .folded #adminmenu li.em-wp-menu-rubrique-current > a.menu-top .wp-menu-name::before {
+        .folded #adminmenu li.em-wp-menu-rubrique-current > a.menu-top .wp-menu-name::before,
+        .folded #adminmenu li.em-wp-menu-accordion-catalog-entry-child.current > a.menu-top .wp-menu-name::before {
             margin-right: 0;
         }
 

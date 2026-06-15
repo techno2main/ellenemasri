@@ -160,7 +160,10 @@ function em_wp_admin_apply_menu_accordion_classes(): void
         if (in_array($slug, $catalog_children, true)) {
             $classes = 'em-wp-menu-accordion-child em-wp-menu-accordion-catalog-child';
 
-            if ($submenu_highlight_slug !== '' && $slug === $submenu_highlight_slug) {
+            if (
+                ($submenu_highlight_slug !== '' && $slug === $submenu_highlight_slug)
+                || ($page_slug !== '' && $slug === $page_slug)
+            ) {
                 $classes .= ' ' . $submenu_current_class;
             }
 
@@ -180,7 +183,10 @@ function em_wp_admin_apply_menu_accordion_classes(): void
 
             $classes = 'em-wp-menu-accordion-child em-wp-menu-accordion-catalog-child em-wp-menu-accordion-catalog-entry-child em-wp-menu-catalog-' . $entry_module . '-entry';
 
-            if ($submenu_highlight_slug !== '' && $slug === $submenu_highlight_slug) {
+            if (
+                ($submenu_highlight_slug !== '' && $slug === $submenu_highlight_slug)
+                || ($page_slug !== '' && $slug === $page_slug)
+            ) {
                 $classes .= ' ' . $submenu_current_class;
             }
 
@@ -323,6 +329,30 @@ function em_wp_admin_menu_catalog_module_open_body_class(string $page_slug): str
 
         if ($from_page !== '' && function_exists($from_page) && call_user_func($from_page, $page_slug) !== '') {
             return ' ' . (string) ($config['body_class'] ?? '');
+        }
+    }
+
+    if (function_exists('em_wp_custom_catalog_modules')) {
+        foreach (em_wp_custom_catalog_modules() as $module_slug => $module) {
+            unset($module);
+            $module_slug = sanitize_key((string) $module_slug);
+
+            if ($module_slug === '') {
+                continue;
+            }
+
+            $body_class = 'em-wp-accordion-catalog-module-' . $module_slug . '-open';
+            $hub_slug = em_wp_custom_catalog_hub_menu_slug($module_slug);
+
+            if ($hub_slug !== '' && $page_slug === $hub_slug) {
+                return ' ' . $body_class;
+            }
+
+            $resolved = em_wp_custom_catalog_entry_from_page($page_slug);
+
+            if ((string) ($resolved['module_slug'] ?? '') === $module_slug && (string) ($resolved['entry_slug'] ?? '') !== '') {
+                return ' ' . $body_class;
+            }
         }
     }
 

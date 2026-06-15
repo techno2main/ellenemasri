@@ -469,6 +469,43 @@ function em_wp_admin_register_all_module_saves(): void
             return em_wp_footer_sanitize_options($input);
         },
     ]);
+
+    if (function_exists('em_wp_custom_catalog_modules')) {
+        foreach (array_keys(em_wp_custom_catalog_modules()) as $module_slug) {
+            $module_slug = sanitize_key((string) $module_slug);
+
+            if ($module_slug === '') {
+                continue;
+            }
+
+            $save_key = $module_slug;
+            $nonce_prefix = 'em_wp_' . str_replace('-', '_', $module_slug) . '_save';
+
+            em_wp_admin_register_module_save($save_key, [
+                'nonce_action' => static function () use ($nonce_prefix): string {
+                    return $nonce_prefix;
+                },
+                'option_name'  => static function () use ($module_slug): string {
+                    $template_slug = sanitize_key((string) ($_POST['em_wp_template_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+                    if ($template_slug === '' && function_exists('em_wp_get_editing_template_slug')) {
+                        $template_slug = em_wp_get_editing_template_slug();
+                    }
+
+                    return em_wp_custom_catalog_rubrique_option_name($module_slug, $template_slug !== '' ? $template_slug : null);
+                },
+                'value_field'  => static function () use ($module_slug): string {
+                    return em_wp_custom_catalog_rubrique_form_option_key($module_slug);
+                },
+                'page_slug'    => static function () use ($module_slug): string {
+                    return em_wp_custom_catalog_rubrique_page_slug($module_slug);
+                },
+                'sanitize'     => static function ($input) use ($module_slug): array {
+                    return em_wp_custom_catalog_rubrique_sanitize_options($module_slug, $input);
+                },
+            ]);
+        }
+    }
 }
 
 add_action('admin_init', 'em_wp_admin_register_all_module_saves', 0);

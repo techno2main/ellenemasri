@@ -234,6 +234,47 @@ function em_wp_admin_rubrique_inline_colors_panel_title(): string
 }
 
 /**
+ * Champs couleur compacts pour le panneau d'ajout au squelette template.
+ */
+function em_wp_admin_render_skeleton_add_rubrique_colors(string $rubrique_slug): void
+{
+    $rubrique_slug = sanitize_key($rubrique_slug);
+    $defaults = em_wp_admin_module_default_style_colors($rubrique_slug);
+    $bg = sanitize_hex_color((string) ($defaults['background'] ?? '#100421')) ?: '#100421';
+    $text = sanitize_hex_color((string) ($defaults['text'] ?? '#ffffff')) ?: '#ffffff';
+    $bg_id = 'em-wp-rubrique-skeleton-bg-' . sanitize_html_class($rubrique_slug);
+    $text_id = 'em-wp-rubrique-skeleton-text-' . sanitize_html_class($rubrique_slug);
+    ?>
+    <div class="em-wp-rubrique-skeleton-add-panel__color-fields">
+        <div class="em-wp-admin-color-control">
+            <label class="em-wp-admin-color-label" for="<?php echo esc_attr($bg_id); ?>">
+                <?php esc_html_e('Couleur de fond', 'em-wp'); ?>
+            </label>
+            <input
+                type="text"
+                id="<?php echo esc_attr($bg_id); ?>"
+                class="regular-text em-wp-admin-color-field em-wp-rubrique-skeleton-add-panel__bg"
+                value="<?php echo esc_attr($bg); ?>"
+                data-default="<?php echo esc_attr($bg); ?>"
+            >
+        </div>
+        <div class="em-wp-admin-color-control">
+            <label class="em-wp-admin-color-label" for="<?php echo esc_attr($text_id); ?>">
+                <?php esc_html_e('Couleur du texte', 'em-wp'); ?>
+            </label>
+            <input
+                type="text"
+                id="<?php echo esc_attr($text_id); ?>"
+                class="regular-text em-wp-admin-color-field em-wp-rubrique-skeleton-add-panel__text"
+                value="<?php echo esc_attr($text); ?>"
+                data-default="<?php echo esc_attr($text); ?>"
+            >
+        </div>
+    </div>
+    <?php
+}
+
+/**
  * Rendu du panneau accordion couleurs rubrique avec champs couleur.
  *
  * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $color_fields
@@ -383,7 +424,19 @@ function em_wp_admin_module_default_style_colors(string $module_slug): array
         'footer'  => ['background' => '#100421', 'text' => '#fff6ea'],
     ];
 
-    return $map[$module_slug] ?? ['background' => '#100421', 'text' => '#ffffff'];
+    if (isset($map[$module_slug])) {
+        return $map[$module_slug];
+    }
+
+    $definitions = function_exists('em_wp_admin_site_rubrique_all_definitions')
+        ? em_wp_admin_site_rubrique_all_definitions()
+        : [];
+    $accent = sanitize_hex_color((string) ($definitions[$module_slug]['accent_color'] ?? '')) ?: '#100421';
+
+    return [
+        'background' => $accent,
+        'text'       => '#ffffff',
+    ];
 }
 
 /**
@@ -406,7 +459,24 @@ function em_wp_admin_module_style_color_fields(string $module_slug): ?array
         'footer'  => ['bg' => 'background_color', 'text' => 'text_color'],
     ];
 
-    return $maps[$module_slug] ?? null;
+    if (isset($maps[$module_slug])) {
+        return $maps[$module_slug];
+    }
+
+    if (function_exists('em_wp_admin_rubrique_is_catalog_linked')
+        && em_wp_admin_rubrique_is_catalog_linked($module_slug)) {
+        return ['bg' => 'background_color', 'text' => 'text_color'];
+    }
+
+    $definitions = function_exists('em_wp_admin_site_rubrique_all_definitions')
+        ? em_wp_admin_site_rubrique_all_definitions()
+        : [];
+
+    if (isset($definitions[$module_slug])) {
+        return ['bg' => 'background_color', 'text' => 'text_color'];
+    }
+
+    return null;
 }
 
 /**
@@ -441,6 +511,26 @@ function em_wp_admin_get_module_options_for_preview(string $module_slug): array
         case 'slider':
             if (function_exists('em_wp_slider_get_options') && function_exists('em_wp_slider_active_style_slug')) {
                 return em_wp_slider_get_options(em_wp_slider_active_style_slug());
+            }
+            break;
+        default:
+            if (function_exists('em_wp_custom_catalog_is_module')
+                && em_wp_custom_catalog_is_module($module_slug)
+                && function_exists('em_wp_custom_catalog_rubrique_get_options')) {
+                return em_wp_custom_catalog_rubrique_get_options($module_slug);
+            }
+
+            if (function_exists('em_wp_get_template_rubrique_options') && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+
+                if ($template_slug !== '') {
+                    return wp_parse_args(
+                        em_wp_get_template_rubrique_options($module_slug, $template_slug),
+                        function_exists('em_wp_admin_rubrique_default_template_options')
+                            ? em_wp_admin_rubrique_default_template_options($module_slug, $template_slug)
+                            : []
+                    );
+                }
             }
             break;
     }
