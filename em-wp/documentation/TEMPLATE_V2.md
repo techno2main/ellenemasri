@@ -15,11 +15,11 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 Contexte em-wp V2 — reprise Phase 5 (squelette template + CONTACT + hub).
 
 Branche : feature/em-wp-v2-templates
-Dernier commit poussé : f8b6be8 — feat(contacts): rendu front section #contact sur landing
+Dernier commit poussé : 21fbde7 — docs(v2): maj suivi Phase 5
 Doc suivi : em-wp/documentation/TEMPLATE_V2.md
 Local : http://localhost:8190/wp-admin (Docker em-wp-local)
 
-État Phase 5 (WIP, poussé sauf correctifs du soir) :
+État Phase 5 (WIP, poussé) :
 - Squelette rubriques par template : ordre, ajout/retrait, insertion positionnée, couleurs initiales, masquée par défaut
 - UI sommaire : onglet +, panneau ajout, toast auto-dismiss 5s, wireframe / fil d'Ariane
 - Module catalogue CONTACT (custom) : hub, entrées Mayami/Ellene, Label/Valeur/Masquer, slugs canoniques
@@ -27,9 +27,9 @@ Local : http://localhost:8190/wp-admin (Docker em-wp-local)
 - Hub catalogues : modules custom CRUD, renommage, panneau mutualisé catalog-rubrique-page
 - Bandeau : pastille édition vs live, modale confirmation hub, double validation template live
 
-Correctifs locaux non poussés (soir 14/06) :
-- CONTACT retiré du menu principal hors contexte template
-- Accueil : cartes « Nouveau Catalogue » et « Nouveau Template » actives (deeplink création)
+Livré et poussé (soir 14/06) :
+- CONTACT retiré du menu principal hors contexte template (cce73f7)
+- Accueil : cartes « Nouveau Catalogue » et « Nouveau Template » actives (e2c4c5a)
 
 Prochaine session : **Wizard** (demain soir) — ne pas entamer sans Tyson.
 
@@ -85,7 +85,7 @@ Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Ty
 | **2** | VIDEOS + RELEASES par template | ✅ | 99d9b71 | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ✅ | 4ca7251 | |
 | **4** | HEADER + Catalogues Hero/Slider + sélection par template | ✅ | 64b0ea0 + lots intermédiaires | Hub catalogues, CRUD heros/sliders, HEADER live |
-| **5** | Sommaire + visibilité par template + squelette + CONTACT | 🔄 | f8b6be8 (+ correctifs locaux) | Squelette template, module CONTACT, hub custom — Wizard demain soir |
+| **5** | Sommaire + visibilité par template + squelette + CONTACT | 🔄 | f8b6be8 → 21fbde7 | Squelette template, module CONTACT, hub custom, correctifs menu/Accueil — Wizard demain soir |
 | **6** | Migration Mayami + tests front | ⬜ | — | |
 
 ### Dette V1 à traiter pendant V2 (fichiers > 350 lignes)
@@ -104,7 +104,8 @@ Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Ty
 
 | Date | Auteur | Entrée |
 |------|--------|--------|
-| 2026-06-14 | Tyson | Pause — **Wizard demain soir** ; correctifs menu CONTACT + Accueil « Nouveau … » en local |
+| 2026-06-14 | Tyson | Pause — **Wizard demain soir** |
+| 2026-06-14 | Agent | Flow GH soir : fix menu CONTACT (cce73f7), Accueil Nouveau … (e2c4c5a), doc (21fbde7) |
 | 2026-06-14 | Agent | Flow GH : 5 commits CONTACT + squelette (56f47cb → f8b6be8) |
 | 2026-06-14 | Agent | CONTACT : catalogue custom, rubrique template, front #contact, labels éditables Label/Valeur |
 | 2026-06-14 | Agent | Squelette template : insertion positionnée, couleurs, masquée par défaut, UI panneau + |
