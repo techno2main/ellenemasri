@@ -437,6 +437,40 @@ function em_wp_admin_menu_layout_ensure_template_entries(array $relocate): array
 }
 
 /**
+ * Libellés menu latéral Rubriques template (singulier, neutre — pas les catalogues).
+ *
+ * @param array<string, array<int, string>> $relocate
+ * @return array<string, array<int, string>>
+ */
+function em_wp_admin_menu_layout_ensure_rubrique_entries(array $relocate): array
+{
+    if (!function_exists('em_wp_admin_site_rubrique_definitions') || !function_exists('em_wp_admin_rubrique_skeleton_label')) {
+        return $relocate;
+    }
+
+    foreach (em_wp_admin_site_rubrique_definitions() as $module_slug => $definition) {
+        if (!is_array($definition)) {
+            continue;
+        }
+
+        $page_slug = sanitize_key((string) ($definition['page_slug'] ?? ''));
+
+        if ($page_slug === '' || !isset($relocate[$page_slug]) || !is_array($relocate[$page_slug])) {
+            continue;
+        }
+
+        $label = em_wp_admin_rubrique_skeleton_label((string) $module_slug);
+        $relocate[$page_slug][0] = $label;
+
+        if (isset($relocate[$page_slug][3])) {
+            $relocate[$page_slug][3] = $label;
+        }
+    }
+
+    return $relocate;
+}
+
+/**
  * @param array<string, array<int, string>> $relocate
  * @return array<string, array<int, string>>
  */
@@ -564,6 +598,7 @@ function em_wp_admin_apply_menu_layout(): void
     $relocate = em_wp_admin_menu_layout_ensure_medias_entries($relocate);
     $relocate = em_wp_admin_menu_layout_ensure_catalog_entries($relocate);
     $relocate = em_wp_admin_menu_layout_ensure_template_entries($relocate);
+    $relocate = em_wp_admin_menu_layout_ensure_rubrique_entries($relocate);
     $relocate = em_wp_admin_menu_layout_ensure_settings_entries($relocate);
 
     if (

@@ -121,14 +121,14 @@ function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug):
         if ($template_label === '') {
             return [
                 em_wp_admin_hub_breadcrumb_crumb(__('TEMPLATES', 'em-wp')),
-                em_wp_admin_hub_breadcrumb_crumb(__('RUBRIQUES', 'em-wp')),
+                em_wp_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-wp')),
             ];
         }
 
         return [
             em_wp_admin_hub_breadcrumb_crumb(__('TEMPLATES', 'em-wp'), $templates_url),
             em_wp_admin_hub_breadcrumb_crumb($template_label, function_exists('em_wp_admin_rubriques_admin_url') ? em_wp_admin_rubriques_admin_url() : ''),
-            em_wp_admin_hub_breadcrumb_crumb(__('RUBRIQUES', 'em-wp')),
+            em_wp_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-wp')),
         ];
     }
 
@@ -168,9 +168,11 @@ function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug):
         $crumbs[] = em_wp_admin_hub_breadcrumb_crumb(__('RUBRIQUES', 'em-wp'), $rubriques_url);
 
         $crumbs[] = em_wp_admin_hub_breadcrumb_crumb(
-            function_exists('em_wp_admin_rubrique_label')
-                ? em_wp_admin_rubrique_label((string) $module_slug)
-                : (string) ($definition['label'] ?? $module_slug)
+            function_exists('em_wp_admin_rubrique_skeleton_label')
+                ? em_wp_admin_rubrique_skeleton_label((string) $module_slug)
+                : (function_exists('em_wp_admin_rubrique_label')
+                    ? em_wp_admin_rubrique_label((string) $module_slug)
+                    : (string) ($definition['label'] ?? $module_slug))
         );
 
         return $crumbs;

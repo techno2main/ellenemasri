@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_landing_preview_zone_module_slug(string $zone): string
 {
-    foreach (em_wp_admin_site_rubrique_definitions() as $module_slug => $definition) {
+    foreach (em_wp_admin_site_rubrique_all_definitions() as $module_slug => $definition) {
         if (($definition['preview_zone'] ?? '') === $zone) {
             return (string) $module_slug;
         }
@@ -118,7 +118,7 @@ function em_wp_admin_landing_preview_zone_label(string $zone): string
         'top_bar'        => __('Barre du haut', 'em-wp'),
         'header'         => __('Section Header', 'em-wp'),
         'header_hero'    => __('Hero (catalogue)', 'em-wp'),
-        'header_slider'  => __('Slider (catalogue)', 'em-wp'),
+        'header_slider'    => __('Slider (catalogue)', 'em-wp'),
         'section_stream' => __('Section Stream', 'em-wp'),
         'section_social' => __('Section Social', 'em-wp'),
         'section_video'  => __('Section Videos', 'em-wp'),
@@ -127,7 +127,17 @@ function em_wp_admin_landing_preview_zone_label(string $zone): string
         'section_footer' => __('Footer', 'em-wp'),
     ];
 
-    return $labels[$zone] ?? $zone;
+    if (isset($labels[$zone])) {
+        return $labels[$zone];
+    }
+
+    $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
+
+    if ($module_slug !== '' && function_exists('em_wp_admin_rubrique_skeleton_label')) {
+        return em_wp_admin_rubrique_skeleton_label($module_slug);
+    }
+
+    return $zone;
 }
 
 /**
@@ -306,8 +316,12 @@ function em_wp_admin_landing_preview_zone_title(string $zone): string
 
     $definitions = em_wp_admin_site_rubrique_definitions();
 
-    foreach ($definitions as $definition) {
+    foreach ($definitions as $module_slug => $definition) {
         if (($definition['preview_zone'] ?? '') === $zone) {
+            if (function_exists('em_wp_admin_rubrique_skeleton_label')) {
+                return em_wp_admin_rubrique_skeleton_label((string) $module_slug);
+            }
+
             $title = (string) ($definition['label'] ?? '');
             if ($title !== '') {
                 return $title;
@@ -637,12 +651,17 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
     <div
         class="em-wp-admin-landing-map"
         id="em-wp-admin-landing-map"
-        aria-label="<?php esc_attr_e('Plan du site', 'em-wp'); ?>"
+        aria-label="<?php esc_attr_e('Squelette du template', 'em-wp'); ?>"
     >
         <?php em_wp_admin_render_landing_map_zone('top_bar', $active_zone, 'top-bar', $top_hidden, false); ?>
 
         <div class="em-wp-admin-landing-map__body" id="em-wp-admin-landing-map-body">
-            <?php foreach (em_wp_get_site_rubrique_middle_order() as $module_slug) {
+            <?php
+            $middle_order_fn = function_exists('em_wp_get_rubrique_middle_order_for_template')
+                ? 'em_wp_get_rubrique_middle_order_for_template'
+                : 'em_wp_get_site_rubrique_middle_order';
+
+            foreach ($middle_order_fn() as $module_slug) {
                 $module_slug = sanitize_key((string) $module_slug);
 
                 if ($module_slug === 'header') {
@@ -661,7 +680,7 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
 
                 $is_hidden = !em_wp_get_site_rubrique_visibility($module_slug);
 
-                em_wp_admin_render_landing_map_zone($zone, $active_zone, 'section', $is_hidden, true);
+                em_wp_admin_render_landing_map_zone($zone, $active_zone, 'section', $is_hidden, true, $module_slug);
             } ?>
         </div>
 
