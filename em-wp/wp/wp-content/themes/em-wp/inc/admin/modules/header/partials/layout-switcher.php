@@ -75,11 +75,15 @@ function em_wp_header_render_layout_switcher(
     string $input_name,
     string $layout,
     string $hero_name = '',
-    string $slider_name = ''
+    string $slider_name = '',
+    string $hero_hint_name = '',
+    string $slider_hint_name = ''
 ): void {
     $layout = $layout === 'slider_left' ? 'slider_left' : 'hero_left';
     $hero_name = trim($hero_name);
     $slider_name = trim($slider_name);
+    $hero_hint_name = trim($hero_hint_name !== '' ? $hero_hint_name : $hero_name);
+    $slider_hint_name = trim($slider_hint_name !== '' ? $slider_hint_name : $slider_name);
     ?>
     <div class="em-wp-header-admin__field em-wp-header-admin__field--layout">
         <span class="em-wp-header-admin__layout-label"><?php esc_html_e('Disposition (Hero + Slider)', 'em-wp'); ?></span>
@@ -88,8 +92,8 @@ function em_wp_header_render_layout_switcher(
             <div
                 class="em-wp-header-admin__layout-preview"
                 data-header-layout="<?php echo esc_attr($layout); ?>"
-                data-hint-hero_left="<?php echo esc_attr(em_wp_header_layout_hint('hero_left', $hero_name, $slider_name)); ?>"
-                data-hint-slider_left="<?php echo esc_attr(em_wp_header_layout_hint('slider_left', $hero_name, $slider_name)); ?>"
+                data-hint-hero_left="<?php echo esc_attr(em_wp_header_layout_hint('hero_left', $hero_hint_name, $slider_hint_name)); ?>"
+                data-hint-slider_left="<?php echo esc_attr(em_wp_header_layout_hint('slider_left', $hero_hint_name, $slider_hint_name)); ?>"
             >
                 <div class="em-wp-header-admin__layout-wireframe" aria-hidden="true">
                     <span class="em-wp-header-admin__layout-part is-hero<?php echo $hero_name === '' ? ' is-empty' : ''; ?>">
@@ -113,7 +117,7 @@ function em_wp_header_render_layout_switcher(
                 </button>
             </div>
 
-            <p class="em-wp-header-admin__layout-hint description"><?php echo esc_html(em_wp_header_layout_hint($layout, $hero_name, $slider_name)); ?></p>
+            <p class="em-wp-header-admin__layout-hint description"><?php echo esc_html(em_wp_header_layout_hint($layout, $hero_hint_name, $slider_hint_name)); ?></p>
 
             <input
                 type="hidden"

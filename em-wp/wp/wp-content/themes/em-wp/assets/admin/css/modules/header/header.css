@@ -1,7 +1,7 @@
 .em-wp-header-admin__selection {
     display: grid;
     gap: 16px;
-    max-width: 640px;
+    max-width: 960px;
 }
 
 .em-wp-header-admin__selection .em-wp-header-admin__field {
@@ -38,6 +38,20 @@
 .em-wp-header-admin__catalog-switcher-control .em-wp-hub__live-switches {
     width: fit-content;
     max-width: 100%;
+    flex-wrap: nowrap;
+    gap: 10px 14px;
+}
+
+.em-wp-header-admin__catalog-switcher-control .em-wp-hub__live-switch {
+    flex-shrink: 0;
+}
+
+.em-wp-header-admin__catalog-switcher-control .em-wp-hub__live-switch-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    white-space: nowrap;
 }
 
 .em-wp-header-admin__layout-preview {

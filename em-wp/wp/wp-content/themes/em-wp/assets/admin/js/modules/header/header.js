@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    function getCatalogChoiceLabel(form, part) {
+    function getCatalogChoiceLabel(form, part, attributeName) {
         var field = form.querySelector('[data-catalog-part="' + part + '"]');
 
         if (!field) {
@@ -14,7 +14,9 @@
             return '';
         }
 
-        return (checked.getAttribute('data-choice-label') || '').trim();
+        attributeName = attributeName || 'data-choice-label';
+
+        return (checked.getAttribute(attributeName) || '').trim();
     }
 
     function buildWireframePartLabel(part, name) {
@@ -48,8 +50,10 @@
             return;
         }
 
-        var heroName = getCatalogChoiceLabel(form, 'hero');
-        var sliderName = getCatalogChoiceLabel(form, 'slider');
+        var heroWireframeName = getCatalogChoiceLabel(form, 'hero', 'data-choice-wireframe-label');
+        var sliderWireframeName = getCatalogChoiceLabel(form, 'slider', 'data-choice-wireframe-label');
+        var heroHintName = getCatalogChoiceLabel(form, 'hero', 'data-choice-label');
+        var sliderHintName = getCatalogChoiceLabel(form, 'slider', 'data-choice-label');
         var heroLabel = preview.querySelector('[data-layout-part="hero"]');
         var sliderLabel = preview.querySelector('[data-layout-part="slider"]');
         var heroPart = heroLabel ? heroLabel.closest('.em-wp-header-admin__layout-part') : null;
@@ -60,26 +64,26 @@
         var layout = preview.getAttribute('data-header-layout') || 'hero_left';
 
         if (heroLabel) {
-            heroLabel.textContent = buildWireframePartLabel('hero', heroName);
+            heroLabel.textContent = buildWireframePartLabel('hero', heroWireframeName);
         }
 
         if (sliderLabel) {
-            sliderLabel.textContent = buildWireframePartLabel('slider', sliderName);
+            sliderLabel.textContent = buildWireframePartLabel('slider', sliderWireframeName);
         }
 
         if (heroPart) {
-            heroPart.classList.toggle('is-empty', heroName === '');
+            heroPart.classList.toggle('is-empty', heroWireframeName === '');
         }
 
         if (sliderPart) {
-            sliderPart.classList.toggle('is-empty', sliderName === '');
+            sliderPart.classList.toggle('is-empty', sliderWireframeName === '');
         }
 
-        preview.setAttribute('data-hint-hero_left', buildLayoutHint('hero_left', heroName, sliderName));
-        preview.setAttribute('data-hint-slider_left', buildLayoutHint('slider_left', heroName, sliderName));
+        preview.setAttribute('data-hint-hero_left', buildLayoutHint('hero_left', heroHintName, sliderHintName));
+        preview.setAttribute('data-hint-slider_left', buildLayoutHint('slider_left', heroHintName, sliderHintName));
 
         if (hint) {
-            hint.textContent = buildLayoutHint(layout, heroName, sliderName);
+            hint.textContent = buildLayoutHint(layout, heroHintName, sliderHintName);
         }
     }
 

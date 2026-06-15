@@ -71,11 +71,18 @@ function em_wp_header_render_admin_page(): void
         $slider_selected = em_wp_slider_normalize_catalog_slug($slider_selected);
     }
 
-    $hero_wireframe_name = $hero_selected !== '' && isset($hero_choices[$hero_selected])
-        ? em_wp_admin_catalog_choice_switch_label($hero_selected, (string) $hero_choices[$hero_selected])
+    $hero_display_name = $hero_selected !== '' && isset($hero_choices[$hero_selected])
+        ? trim((string) $hero_choices[$hero_selected])
         : '';
-    $slider_wireframe_name = $slider_selected !== '' && isset($slider_choices[$slider_selected])
-        ? em_wp_admin_catalog_choice_switch_label($slider_selected, (string) $slider_choices[$slider_selected])
+    $slider_display_name = $slider_selected !== '' && isset($slider_choices[$slider_selected])
+        ? trim((string) $slider_choices[$slider_selected])
+        : '';
+
+    $hero_wireframe_name = $hero_display_name !== ''
+        ? em_wp_admin_catalog_choice_switch_label($hero_selected, $hero_display_name)
+        : '';
+    $slider_wireframe_name = $slider_display_name !== ''
+        ? em_wp_admin_catalog_choice_switch_label($slider_selected, $slider_display_name)
         : '';
 
     $field = em_wp_header_form_option_key();
@@ -120,7 +127,7 @@ function em_wp_header_render_admin_page(): void
 
                     'em-wp-header-admin__panel',
 
-                    static function () use ($field, $options, $hero_choices, $slider_choices, $hero_selected, $slider_selected, $hero_wireframe_name, $slider_wireframe_name): void {
+                    static function () use ($field, $options, $hero_choices, $slider_choices, $hero_selected, $slider_selected, $hero_wireframe_name, $slider_wireframe_name, $hero_display_name, $slider_display_name): void {
 
                         ?>
 
@@ -149,7 +156,9 @@ function em_wp_header_render_admin_page(): void
                             $field . '[layout]',
                             (string) ($options['layout'] ?? 'hero_left'),
                             $hero_wireframe_name,
-                            $slider_wireframe_name
+                            $slider_wireframe_name,
+                            $hero_display_name,
+                            $slider_display_name
                         );
                     },
 
