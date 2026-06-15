@@ -108,9 +108,13 @@ function em_wp_admin_catalog_rubrique_definitions(): array
             continue;
         }
 
+        $display_label = function_exists('em_wp_admin_rubrique_skeleton_label')
+            ? em_wp_admin_rubrique_skeleton_label($module_slug)
+            : mb_strtoupper($label);
+
         $definitions[$module_slug] = [
-            'label'          => mb_strtoupper($label),
-            'menu_title'     => mb_strtoupper($label),
+            'label'          => $display_label,
+            'menu_title'     => $display_label,
             'description'    => sprintf(
                 /* translators: %s: catalogue label */
                 __('Section %s', 'em-wp'),

@@ -506,6 +506,59 @@ function em_wp_admin_menu_layout_ensure_settings_entries(array $relocate): array
 }
 
 /**
+ * Retire du menu latéral les rubriques absentes du squelette / contexte courant.
+ *
+ * Les pages enregistrées via add_menu_page (Release, Contact…) restent accessibles par URL
+ * mais ne doivent pas apparaître en orphelines entre TEMPLATES et PARAMÈTRES.
+ */
+function em_wp_admin_menu_layout_purge_out_of_context_rubriques(): void
+{
+    if (!function_exists('em_wp_admin_site_rubrique_all_definitions')
+        || !function_exists('em_wp_admin_rubrique_menu_child_slugs')) {
+        return;
+    }
+
+    global $menu;
+
+    $allowed = em_wp_admin_rubrique_menu_child_slugs();
+    $known_rubrique_slugs = [];
+
+    foreach (em_wp_admin_site_rubrique_all_definitions() as $definition) {
+        if (!is_array($definition)) {
+            continue;
+        }
+
+        $page_slug = sanitize_key((string) ($definition['page_slug'] ?? ''));
+
+        if ($page_slug !== '') {
+            $known_rubrique_slugs[] = $page_slug;
+        }
+    }
+
+    if ($known_rubrique_slugs === []) {
+        return;
+    }
+
+    foreach ($menu as $position => $item) {
+        if (!is_array($item)) {
+            continue;
+        }
+
+        $slug = function_exists('em_wp_admin_menu_item_slug')
+            ? em_wp_admin_menu_item_slug($item)
+            : sanitize_key((string) ($item[2] ?? ''));
+
+        if ($slug === '' || !in_array($slug, $known_rubrique_slugs, true)) {
+            continue;
+        }
+
+        if (!in_array($slug, $allowed, true)) {
+            unset($menu[$position]);
+        }
+    }
+}
+
+/**
  * Supprime les doublons de hubs catalogues sans classe accordéon (legacy add_menu_page).
  */
 function em_wp_admin_menu_layout_purge_duplicate_catalog_hubs(): void
@@ -650,6 +703,7 @@ function em_wp_admin_apply_menu_layout(): void
     }
 
     em_wp_admin_menu_layout_purge_duplicate_catalog_hubs();
+    em_wp_admin_menu_layout_purge_out_of_context_rubriques();
 
     if (function_exists('em_wp_admin_apply_menu_accordion_classes')) {
         em_wp_admin_apply_menu_accordion_classes();

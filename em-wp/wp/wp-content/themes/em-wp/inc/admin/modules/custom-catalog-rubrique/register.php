@@ -59,6 +59,53 @@ function em_wp_custom_catalog_rubrique_remove_duplicate_submenus(): void
 }
 add_action('admin_menu', 'em_wp_custom_catalog_rubrique_remove_duplicate_submenus', 999);
 
+/**
+ * CONTACT n'est accessible que dans le contexte template (rubrique du squelette).
+ */
+function em_wp_custom_catalog_rubrique_guard_page_access(): void
+{
+    if (!is_admin()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+    $module_slug = em_wp_custom_catalog_rubrique_module_from_page_slug($page_slug);
+
+    if ($module_slug === '') {
+        return;
+    }
+
+    if (!function_exists('em_wp_admin_has_template_context') || !em_wp_admin_has_template_context()) {
+        $fallback = function_exists('em_wp_admin_template_parent_page_slug')
+            ? em_wp_admin_template_parent_page_slug()
+            : '';
+
+        if ($fallback !== '') {
+            wp_safe_redirect(admin_url('admin.php?page=' . $fallback));
+            exit;
+        }
+
+        return;
+    }
+
+    $definitions = function_exists('em_wp_admin_site_rubrique_definitions')
+        ? em_wp_admin_site_rubrique_definitions()
+        : [];
+
+    if (!isset($definitions[$module_slug]) && function_exists('em_wp_admin_rubriques_page_slug')) {
+        wp_safe_redirect(admin_url('admin.php?page=' . em_wp_admin_rubriques_page_slug()));
+        exit;
+    }
+}
+add_action('admin_init', 'em_wp_custom_catalog_rubrique_guard_page_access', 5);
+
 function em_wp_custom_catalog_rubrique_admin_enqueue(string $hook_suffix): void
 {
     unset($hook_suffix);
