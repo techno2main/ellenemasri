@@ -15,6 +15,77 @@ function em_wp_custom_catalog_entries_option_name(string $module_slug): string
 }
 
 /**
+ * Index de tri d'une entrée catalogue selon l'ordre des templates (Mayami, Ellene…).
+ */
+function em_wp_custom_catalog_entry_template_sort_index(string $entry_slug, array $entry, array $template_slugs): int
+{
+    $entry_slug = sanitize_key($entry_slug);
+    $haystack = strtolower($entry_slug . ' ' . sanitize_key((string) ($entry['label'] ?? '')));
+
+    foreach ($template_slugs as $index => $template_slug) {
+        $template_slug = sanitize_key((string) $template_slug);
+
+        if ($template_slug !== '' && str_contains($haystack, $template_slug)) {
+            return (int) $index;
+        }
+    }
+
+    return count($template_slugs);
+}
+
+/**
+ * Aligne l'ordre des entrées sur le registre template (Mayami avant Ellene).
+ *
+ * @param array<string, array{label:string,layout:string}> $entries
+ * @return array<string, array{label:string,layout:string}>
+ */
+function em_wp_custom_catalog_sort_entries_by_template(array $entries): array
+{
+    if ($entries === [] || !function_exists('em_wp_template_registry')) {
+        return $entries;
+    }
+
+    $template_slugs = array_keys(em_wp_template_registry());
+
+    if ($template_slugs === []) {
+        return $entries;
+    }
+
+    $is_template_scoped = false;
+
+    foreach ($entries as $entry_slug => $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+
+        if (em_wp_custom_catalog_entry_template_sort_index((string) $entry_slug, $entry, $template_slugs) < count($template_slugs)) {
+            $is_template_scoped = true;
+            break;
+        }
+    }
+
+    if (!$is_template_scoped) {
+        return $entries;
+    }
+
+    uksort(
+        $entries,
+        static function (string $slug_a, string $slug_b) use ($entries, $template_slugs): int {
+            $index_a = em_wp_custom_catalog_entry_template_sort_index($slug_a, $entries[$slug_a] ?? [], $template_slugs);
+            $index_b = em_wp_custom_catalog_entry_template_sort_index($slug_b, $entries[$slug_b] ?? [], $template_slugs);
+
+            if ($index_a !== $index_b) {
+                return $index_a <=> $index_b;
+            }
+
+            return strcmp($slug_a, $slug_b);
+        }
+    );
+
+    return $entries;
+}
+
+/**
  * @return array<string, array{label:string,layout:string}>
  */
 function em_wp_custom_catalog_entries(string $module_slug): array
@@ -46,7 +117,7 @@ function em_wp_custom_catalog_entries(string $module_slug): array
         ];
     }
 
-    return $entries;
+    return em_wp_custom_catalog_sort_entries_by_template($entries);
 }
 
 function em_wp_custom_catalog_edit_page_slug(string $module_slug, string $entry_slug): string
@@ -95,22 +166,108 @@ function em_wp_custom_catalog_entry_from_page(string $page_slug): array
     ];
 }
 
+function em_wp_custom_catalog_entry_slug_prefix(string $module_slug): string
+{
+    $module_slug = sanitize_key($module_slug);
+    $module = em_wp_custom_catalog_module($module_slug);
+    $label = trim(sanitize_text_field((string) ($module['label'] ?? '')));
+
+    if ($label !== '') {
+        $base = sanitize_title($label);
+
+        if ($base !== '' && str_ends_with($base, 's')) {
+            $base = substr($base, 0, -1);
+        }
+
+        if ($base !== '') {
+            return sanitize_key($base);
+        }
+    }
+
+    $fallback = preg_replace('/^custom-/', '', $module_slug);
+
+    if (is_string($fallback) && $fallback !== '') {
+        if (str_ends_with($fallback, 's')) {
+            $fallback = substr($fallback, 0, -1);
+        }
+
+        return sanitize_key($fallback);
+    }
+
+    return sanitize_key($module_slug);
+}
+
+/**
+ * @return string[]
+ */
+function em_wp_custom_catalog_legacy_entry_slug_variants(string $module_slug, string $entry_slug): array
+{
+    $module_slug = sanitize_key($module_slug);
+    $entry_slug = sanitize_key($entry_slug);
+    $variants = [];
+
+    if ($entry_slug !== '') {
+        $variants[] = $entry_slug;
+    }
+
+    $legacy_prefix = $module_slug . '-';
+
+    while ($entry_slug !== '' && str_starts_with($entry_slug, $legacy_prefix)) {
+        $entry_slug = sanitize_key(substr($entry_slug, strlen($legacy_prefix)));
+        $variants[] = $entry_slug;
+    }
+
+    return array_values(array_unique(array_filter($variants)));
+}
+
+function em_wp_custom_catalog_resolve_entry_slug(string $module_slug, string $entry_slug): string
+{
+    $module_slug = sanitize_key($module_slug);
+    $entry_slug = sanitize_key($entry_slug);
+
+    if ($module_slug === '') {
+        return '';
+    }
+
+    $entries = em_wp_custom_catalog_entries($module_slug);
+
+    foreach (em_wp_custom_catalog_legacy_entry_slug_variants($module_slug, $entry_slug) as $candidate) {
+        if (isset($entries[$candidate])) {
+            return $candidate;
+        }
+    }
+
+    return '';
+}
+
 function em_wp_custom_catalog_entry_slug_from_label(string $module_slug, string $label): string
 {
     $module_slug = sanitize_key($module_slug);
+    $prefix = em_wp_custom_catalog_entry_slug_prefix($module_slug);
     $base = sanitize_title($label);
 
     if ($base === '') {
         $base = 'item';
     }
 
-    $prefix = $module_slug . '-';
-
-    if (!str_starts_with($base, $prefix)) {
-        $base = $prefix . $base;
+    if ($prefix === '') {
+        return sanitize_key($base);
     }
 
-    return sanitize_key($base);
+    $prefix_with_dash = $prefix . '-';
+
+    if (str_starts_with($base, $prefix_with_dash) || $base === $prefix) {
+        return sanitize_key($base);
+    }
+
+    return sanitize_key($prefix_with_dash . $base);
+}
+
+function em_wp_custom_catalog_entry_slug_prefix_with_dash(string $module_slug): string
+{
+    $prefix = em_wp_custom_catalog_entry_slug_prefix($module_slug);
+
+    return $prefix !== '' ? $prefix . '-' : '';
 }
 
 function em_wp_custom_catalog_unique_entry_slug(string $module_slug, string $base_slug, string $except_slug = ''): string
@@ -121,7 +278,8 @@ function em_wp_custom_catalog_unique_entry_slug(string $module_slug, string $bas
     $entries = em_wp_custom_catalog_entries($module_slug);
 
     if ($base_slug === '') {
-        $base_slug = $module_slug . '-item';
+        $prefix = em_wp_custom_catalog_entry_slug_prefix($module_slug);
+        $base_slug = $prefix !== '' ? $prefix . '-item' : $module_slug . '-item';
     }
 
     $slug = $base_slug;
@@ -180,6 +338,10 @@ function em_wp_custom_catalog_entry_create(string $module_slug, string $label)
         return new WP_Error('em_wp_custom_catalog_persist_failed', __('Impossible d\'enregistrer l\'entrée.', 'em-wp'));
     }
 
+    if (function_exists('em_wp_custom_catalog_init_entry_options')) {
+        em_wp_custom_catalog_init_entry_options($module_slug, $slug);
+    }
+
     return $slug;
 }
 
@@ -194,6 +356,12 @@ function em_wp_custom_catalog_entry_rename(string $module_slug, string $old_slug
 
     if (!em_wp_custom_catalog_is_module($module_slug)) {
         return new WP_Error('em_wp_custom_catalog_module_not_found', __('Catalogue introuvable.', 'em-wp'));
+    }
+
+    $resolved_old_slug = em_wp_custom_catalog_resolve_entry_slug($module_slug, $old_slug);
+
+    if ($resolved_old_slug !== '') {
+        $old_slug = $resolved_old_slug;
     }
 
     if ($old_slug === '') {
@@ -228,6 +396,10 @@ function em_wp_custom_catalog_entry_rename(string $module_slug, string $old_slug
         return new WP_Error('em_wp_custom_catalog_persist_failed', __('Impossible d\'enregistrer l\'entrée.', 'em-wp'));
     }
 
+    if (function_exists('em_wp_custom_catalog_migrate_entry_options')) {
+        em_wp_custom_catalog_migrate_entry_options($module_slug, $old_slug, $new_slug);
+    }
+
     return $new_slug;
 }
 
@@ -244,6 +416,12 @@ function em_wp_custom_catalog_entry_delete(string $module_slug, string $slug)
         return new WP_Error('em_wp_custom_catalog_module_not_found', __('Catalogue introuvable.', 'em-wp'));
     }
 
+    $resolved_slug = em_wp_custom_catalog_resolve_entry_slug($module_slug, $slug);
+
+    if ($resolved_slug !== '') {
+        $slug = $resolved_slug;
+    }
+
     if ($slug === '' || !isset($entries[$slug])) {
         return new WP_Error('em_wp_custom_catalog_not_found', __('Entrée introuvable.', 'em-wp'));
     }
@@ -252,6 +430,10 @@ function em_wp_custom_catalog_entry_delete(string $module_slug, string $slug)
 
     if (!em_wp_custom_catalog_persist_entries($module_slug, $entries)) {
         return new WP_Error('em_wp_custom_catalog_persist_failed', __('Impossible d\'enregistrer l\'entrée.', 'em-wp'));
+    }
+
+    if (function_exists('em_wp_custom_catalog_delete_entry_options')) {
+        em_wp_custom_catalog_delete_entry_options($module_slug, $slug);
     }
 
     return true;
@@ -383,4 +565,95 @@ function em_wp_custom_catalog_style_definitions(string $module_slug): array
     }
 
     return $definitions;
+}
+
+/**
+ * Réaligne les slugs d'entrées sur le format catalogue (contact-mayami, hero-mayami…).
+ */
+function em_wp_custom_catalog_normalize_entry_slugs(string $module_slug): bool
+{
+    $module_slug = sanitize_key($module_slug);
+
+    if ($module_slug === '') {
+        return false;
+    }
+
+    $option_name = em_wp_custom_catalog_entries_option_name($module_slug);
+    $saved = get_option($option_name, []);
+
+    if (!is_array($saved) || $saved === []) {
+        return false;
+    }
+
+    $entries = [];
+
+    foreach ($saved as $slug => $entry) {
+        $slug = sanitize_key((string) $slug);
+
+        if ($slug === '' || !is_array($entry)) {
+            continue;
+        }
+
+        $entries[$slug] = [
+            'label'  => sanitize_text_field((string) ($entry['label'] ?? $slug)),
+            'layout' => sanitize_key((string) ($entry['layout'] ?? 'default')) ?: 'default',
+        ];
+    }
+
+    if ($entries === []) {
+        return false;
+    }
+
+    $normalized = [];
+    $changed = false;
+
+    foreach ($entries as $slug => $entry) {
+        $label = trim((string) ($entry['label'] ?? $slug));
+        $target = em_wp_custom_catalog_entry_slug_from_label($module_slug, $label !== '' ? $label : $slug);
+        $suffix = 2;
+
+        while (isset($normalized[$target])) {
+            $target = sanitize_key($target . '-' . $suffix);
+            $suffix++;
+        }
+
+        if ($slug !== $target) {
+            if (function_exists('em_wp_custom_catalog_migrate_entry_options')) {
+                em_wp_custom_catalog_migrate_entry_options($module_slug, $slug, $target);
+            }
+
+            $changed = true;
+        }
+
+        $normalized[$target] = [
+            'label'  => sanitize_text_field($label !== '' ? $label : (string) ($entry['label'] ?? $target)),
+            'layout' => sanitize_key((string) ($entry['layout'] ?? 'default')) ?: 'default',
+        ];
+    }
+
+    if (!$changed) {
+        return false;
+    }
+
+    return (bool) update_option($option_name, $normalized, false);
+}
+
+/**
+ * Normalise les slugs de tous les catalogues personnalisés (migration idempotente).
+ */
+function em_wp_custom_catalog_maybe_normalize_all_entry_slugs(): void
+{
+    $module_slugs = array_keys(em_wp_custom_catalog_modules());
+
+    if (function_exists('em_wp_contacts_catalog_module_slug')) {
+        $contacts_slug = em_wp_contacts_catalog_module_slug();
+
+        if ($contacts_slug !== '' && !in_array($contacts_slug, $module_slugs, true)) {
+            $module_slugs[] = $contacts_slug;
+        }
+    }
+
+    foreach ($module_slugs as $module_slug) {
+        em_wp_custom_catalog_normalize_entry_slugs((string) $module_slug);
+    }
 }

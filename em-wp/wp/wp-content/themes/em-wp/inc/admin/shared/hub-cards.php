@@ -815,6 +815,14 @@ function em_wp_admin_catalog_choice_switch_color(string $catalog_slug): string
  */
 function em_wp_admin_catalog_part_to_module_slug(string $catalog_part): string
 {
+    $catalog_part = sanitize_key($catalog_part);
+
+    if ($catalog_part !== ''
+        && function_exists('em_wp_custom_catalog_is_module')
+        && em_wp_custom_catalog_is_module($catalog_part)) {
+        return $catalog_part;
+    }
+
     static $map = [
         'hero'    => 'heros',
         'slider'  => 'sliders',
@@ -827,7 +835,7 @@ function em_wp_admin_catalog_part_to_module_slug(string $catalog_part): string
         'footer'  => 'footers',
     ];
 
-    return (string) ($map[sanitize_key($catalog_part)] ?? '');
+    return (string) ($map[$catalog_part] ?? '');
 }
 
 /**

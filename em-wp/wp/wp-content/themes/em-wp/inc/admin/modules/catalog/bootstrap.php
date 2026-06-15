@@ -22,3 +22,4 @@ require_once __DIR__ . '/cta-actions.php';
 require_once __DIR__ . '/footer-actions.php';
 require_once __DIR__ . '/custom-modules-admin.php';
 require_once __DIR__ . '/custom-module-actions.php';
+require_once __DIR__ . '/custom-module-fields.php';

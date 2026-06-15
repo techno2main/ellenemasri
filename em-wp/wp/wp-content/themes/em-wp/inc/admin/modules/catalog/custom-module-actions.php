@@ -147,24 +147,132 @@ function em_wp_custom_catalog_register_entry_settings(): void
 {
     foreach (array_keys(em_wp_custom_catalog_modules()) as $module_slug) {
         foreach (array_keys(em_wp_custom_catalog_entries($module_slug)) as $entry_slug) {
-            $group = 'em_wp_custom_catalog_' . sanitize_key($module_slug) . '_' . sanitize_key($entry_slug) . '_group';
-            $option = 'em_wp_custom_catalog_item_' . sanitize_key($module_slug) . '_' . sanitize_key($entry_slug);
+            $group = em_wp_custom_catalog_entry_group_name($module_slug, $entry_slug);
+            $option = em_wp_custom_catalog_entry_option_name($module_slug, $entry_slug);
 
             register_setting(
                 $group,
                 $option,
                 [
                     'type'              => 'array',
-                    'sanitize_callback' => static function ($input): array {
-                        return is_array($input) ? $input : [];
+                    'sanitize_callback' => static function ($input) use ($module_slug): array {
+                        return em_wp_custom_catalog_sanitize_entry_options($module_slug, $input);
                     },
-                    'default'           => [],
+                    'default'           => em_wp_custom_catalog_entry_default_options($module_slug),
                 ]
             );
         }
     }
 }
 add_action('admin_init', 'em_wp_custom_catalog_register_entry_settings');
+
+/**
+ * Réaligne les identifiants d'entrées (contact-mayami…) à chaque chargement admin.
+ */
+function em_wp_custom_catalog_maybe_normalize_entry_slugs_on_admin(): void
+{
+    if (!is_admin()) {
+        return;
+    }
+
+    if (function_exists('em_wp_contacts_catalog_maybe_migrate_legacy_module_slug')) {
+        em_wp_contacts_catalog_maybe_migrate_legacy_module_slug();
+    }
+
+    if (function_exists('em_wp_custom_catalog_maybe_normalize_all_entry_slugs')) {
+        em_wp_custom_catalog_maybe_normalize_all_entry_slugs();
+    }
+}
+add_action('admin_init', 'em_wp_custom_catalog_maybe_normalize_entry_slugs_on_admin', 5);
+
+/**
+ * Redirige les anciennes URLs admin Contacts (custom-contacts → contacts).
+ */
+function em_wp_contacts_catalog_maybe_redirect_legacy_admin_pages(): void
+{
+    if (!is_admin()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+
+    if ($page_slug === '') {
+        return;
+    }
+
+    $legacy_module = em_wp_contacts_catalog_legacy_module_slug();
+    $module_slug = em_wp_contacts_catalog_module_slug();
+    $legacy_hub = em_wp_custom_catalog_hub_menu_slug($legacy_module);
+    $hub = em_wp_contacts_catalog_hub_menu_slug();
+
+    if ($page_slug === $legacy_hub) {
+        wp_safe_redirect(add_query_arg(['page' => $hub], admin_url('admin.php')));
+        exit;
+    }
+
+    $legacy_edit_prefix = 'em-wp-cced-' . $legacy_module . '-';
+    $edit_prefix = 'em-wp-cced-' . $module_slug . '-';
+
+    if (str_starts_with($page_slug, $legacy_edit_prefix)) {
+        $suffix = substr($page_slug, strlen($legacy_edit_prefix));
+        wp_safe_redirect(add_query_arg(['page' => $edit_prefix . $suffix], admin_url('admin.php')));
+        exit;
+    }
+}
+add_action('admin_init', 'em_wp_contacts_catalog_maybe_redirect_legacy_admin_pages', 11);
+
+/**
+ * Redirige les anciennes URLs d'édition vers le slug canonique de l'entrée.
+ */
+function em_wp_custom_catalog_maybe_redirect_canonical_entry_page(): void
+{
+    if (!is_admin()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+
+    if ($page_slug === '' || !str_starts_with($page_slug, 'em-wp-cced-')) {
+        return;
+    }
+
+    $resolved = em_wp_custom_catalog_entry_from_page($page_slug);
+    $module_slug = (string) ($resolved['module_slug'] ?? '');
+    $parsed_slug = (string) ($resolved['entry_slug'] ?? '');
+
+    if ($module_slug === '' || $parsed_slug === '' || !function_exists('em_wp_custom_catalog_resolve_entry_slug')) {
+        return;
+    }
+
+    $canonical = em_wp_custom_catalog_resolve_entry_slug($module_slug, $parsed_slug);
+
+    if ($canonical === '' || $canonical === $parsed_slug) {
+        return;
+    }
+
+    wp_safe_redirect(
+        add_query_arg(
+            ['page' => em_wp_custom_catalog_edit_page_slug($module_slug, $canonical)],
+            admin_url('admin.php')
+        )
+    );
+    exit;
+}
+add_action('admin_init', 'em_wp_custom_catalog_maybe_redirect_canonical_entry_page', 12);
 
 /**
  * Corrige les icônes génériques des modules custom déjà enregistrés (ex. CONTACTS).

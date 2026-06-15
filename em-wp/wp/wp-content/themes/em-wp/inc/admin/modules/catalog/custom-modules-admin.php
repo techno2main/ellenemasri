@@ -162,7 +162,8 @@ function em_wp_custom_catalog_render_entry_admin_page(): void
     $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
     $resolved = em_wp_custom_catalog_entry_from_page($page_slug);
     $module_slug = (string) ($resolved['module_slug'] ?? '');
-    $entry_slug = (string) ($resolved['entry_slug'] ?? '');
+    $parsed_slug = (string) ($resolved['entry_slug'] ?? '');
+    $entry_slug = em_wp_custom_catalog_resolve_entry_slug($module_slug, $parsed_slug);
     $module = em_wp_custom_catalog_module($module_slug);
     $entries = em_wp_custom_catalog_entries($module_slug);
     $entry = $entries[$entry_slug] ?? null;
@@ -173,6 +174,10 @@ function em_wp_custom_catalog_render_entry_admin_page(): void
 
     $entry_label = (string) ($entry['label'] ?? $entry_slug);
     $hub_url = admin_url('admin.php?page=' . em_wp_custom_catalog_hub_menu_slug($module_slug));
+    $option_name = em_wp_custom_catalog_entry_option_name($module_slug, $entry_slug);
+    $group_name = em_wp_custom_catalog_entry_group_name($module_slug, $entry_slug);
+    $field_definitions = em_wp_custom_catalog_module_field_definitions($module_slug);
+    $options = em_wp_custom_catalog_get_entry_options($module_slug, $entry_slug);
     ?>
     <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire em-wp-catalog-edit">
         <?php
@@ -202,15 +207,36 @@ function em_wp_custom_catalog_render_entry_admin_page(): void
         ?>
 
         <div class="em-wp-catalog-edit__body">
-            <p class="em-wp-catalog-sommaire__empty">
-                <?php
-                printf(
-                    /* translators: %s: entry label */
-                    esc_html__('Configuration de « %s » — à venir.', 'em-wp'),
-                    esc_html($entry_label)
-                );
-                ?>
-            </p>
+            <?php if ($field_definitions !== []) { ?>
+                <div class="em-wp-catalog-edit__layout">
+                    <div class="em-wp-catalog-edit__main">
+                        <?php em_wp_catalog_render_edit_section_open((string) ($module['label'] ?? $module_slug), $entry_label); ?>
+                        <form
+                            id="em-wp-custom-catalog-entry-form"
+                            method="post"
+                            action="options.php"
+                            class="em-wp-custom-catalog-form"
+                        >
+                            <?php
+                            settings_fields($group_name);
+                            em_wp_custom_catalog_render_entry_fields_panel($options, $field_definitions, $option_name, $module_slug);
+                            em_wp_custom_catalog_render_entry_form_actions();
+                            ?>
+                        </form>
+                        <?php em_wp_catalog_render_edit_section_close(); ?>
+                    </div>
+                </div>
+            <?php } else { ?>
+                <p class="em-wp-catalog-sommaire__empty">
+                    <?php
+                    printf(
+                        /* translators: %s: entry label */
+                        esc_html__('Configuration de « %s » — à venir.', 'em-wp'),
+                        esc_html($entry_label)
+                    );
+                    ?>
+                </p>
+            <?php } ?>
         </div>
     </div>
     <?php
@@ -371,3 +397,24 @@ function em_wp_custom_catalog_enqueue_module_create_assets(): void
         true
     );
 }
+
+function em_wp_custom_catalog_enqueue_entry_admin_assets(string $hook_suffix): void
+{
+    unset($hook_suffix);
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+    $resolved = em_wp_custom_catalog_entry_from_page($page_slug);
+
+    if (($resolved['module_slug'] ?? '') === '' || ($resolved['entry_slug'] ?? '') === '') {
+        return;
+    }
+
+    wp_enqueue_style(
+        'em-wp-release-admin',
+        get_template_directory_uri() . '/assets/admin/css/modules/release/release.css',
+        ['em-wp-admin-module-common'],
+        em_wp_admin_asset_version('assets/admin/css/modules/release/release.css')
+    );
+}
+add_action('admin_enqueue_scripts', 'em_wp_custom_catalog_enqueue_entry_admin_assets', 20);
