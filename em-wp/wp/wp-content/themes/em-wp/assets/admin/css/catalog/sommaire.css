@@ -431,6 +431,25 @@ button.em-wp-catalog-edit__nav-link {
     margin-bottom: 4px;
 }
 
+.em-wp-rubrique-skeleton-add-panel.em-wp-catalog-sommaire__create-panel--module {
+    max-width: 520px;
+}
+
+.em-wp-rubrique-skeleton-add-panel__status {
+    margin: 10px 0 0;
+    padding: 8px 10px;
+    border-radius: 6px;
+    background: #f0f6fc;
+    color: #1d2327;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.em-wp-rubrique-skeleton-add-panel__status.is-error {
+    background: #fcf0f1;
+    color: #8a1f2d;
+}
+
 .em-wp-rubrique-skeleton-add-panel__empty {
     margin: 0;
     padding: 0 18px 18px;
@@ -444,26 +463,121 @@ button.em-wp-catalog-edit__nav-link {
     padding: 0 18px 18px;
     list-style: none;
     display: grid;
-    gap: 8px;
+    gap: 12px;
 }
 
 .em-wp-rubrique-skeleton-add-panel__item {
+    margin: 0;
+    padding: 0;
+    border: 1px solid #d8dee6;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+    overflow: hidden;
+}
+
+.em-wp-rubrique-skeleton-add-panel__item-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 12px;
-    border: 1px solid #d8dee6;
-    border-radius: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
     background: #f9fafb;
 }
 
-.em-wp-rubrique-skeleton-add-panel__label {
+.em-wp-rubrique-skeleton-add-panel__item-title {
+    margin: 0;
+    color: #4e080e;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.em-wp-rubrique-skeleton-add-panel__preview-surface {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 34px;
+    padding: 0 10px;
+    border: 1px solid rgba(16, 24, 40, 0.08);
+    border-radius: 6px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.em-wp-rubrique-skeleton-add-panel__preview-text {
     font-size: 13px;
     font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    color: #1d2327;
+    letter-spacing: 0.02em;
+    line-height: 1;
+}
+
+.em-wp-rubrique-skeleton-add-panel__fields {
+    padding-top: 16px !important;
+    padding-bottom: 0 !important;
+    gap: 14px !important;
+}
+
+.em-wp-rubrique-skeleton-add-panel__colors-field {
+    gap: 10px !important;
+}
+
+.em-wp-rubrique-skeleton-add-panel__color-fields {
+    display: grid;
+    gap: 12px;
+}
+
+.em-wp-rubrique-skeleton-add-panel__color-fields .em-wp-admin-color-control {
+    margin: 0;
+}
+
+.em-wp-rubrique-skeleton-add-panel__color-fields .em-wp-admin-color-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #646970;
+}
+
+.em-wp-rubrique-skeleton-add-panel__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #f6f7f7;
+    color: #646970;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.em-wp-rubrique-skeleton-add-panel__note .fa-eye-slash {
+    margin-top: 2px;
+    color: #4e080e;
+}
+
+.em-wp-rubrique-skeleton-add-panel__actions {
+    justify-content: flex-end;
+    margin-top: 0;
+    padding-top: 14px !important;
+    border-top: 1px solid #e5e7eb;
+}
+
+.em-wp-rubrique-skeleton-add-panel__actions .button-primary {
+    min-height: 38px;
+    min-width: 120px;
+    padding-inline: 18px;
+}
+
+@media (max-width: 782px) {
+    .em-wp-rubrique-skeleton-add-panel.em-wp-catalog-sommaire__create-panel--module {
+        max-width: none;
+    }
+
+    .em-wp-rubrique-skeleton-add-panel__actions .button-primary {
+        width: 100%;
+    }
 }
 
 .em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:hover {
@@ -791,3 +905,124 @@ button.em-wp-catalog-edit__nav-link {
     background: #ffffff;
     color: #111827;
 }
+
+.em-wp-custom-catalog-form__panels {
+    margin: 0;
+}
+
+.em-wp-custom-catalog-form__actions {
+    margin: 20px 0 0;
+    padding: 0;
+}
+
+.em-wp-custom-catalog-form__actions .button-primary {
+    min-height: 36px;
+    padding: 0 18px;
+}
+
+.em-wp-custom-catalog-panel .em-wp-custom-catalog-panel__body,
+.em-wp-custom-catalog-panel .em-wp-admin-module__panel-body.em-wp-custom-catalog-panel__body {
+    padding: 16px 18px 18px;
+}
+
+.em-wp-custom-catalog-fields.em-wp-release-rows-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: none;
+}
+
+.em-wp-custom-catalog-field-row.em-wp-release-row-item {
+    margin: 0;
+}
+
+.em-wp-custom-catalog-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 760px;
+}
+
+.em-wp-custom-catalog-field-row {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 20px;
+    row-gap: 8px;
+    padding: 14px 0;
+    margin: 0;
+    border-bottom: 1px solid #dcdcde;
+}
+
+.em-wp-custom-catalog-field-row:first-child {
+    padding-top: 2px;
+}
+
+.em-wp-custom-catalog-field-row:last-child {
+    border-bottom: none;
+    padding-bottom: 2px;
+}
+
+.em-wp-custom-catalog-field-row__label {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.3;
+    color: #1d2327;
+}
+
+.em-wp-custom-catalog-field-row__input {
+    min-width: 0;
+}
+
+.em-wp-custom-catalog-field-row__input .regular-text {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    height: 36px;
+    margin: 0;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    line-height: 1.35;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #1d2327;
+}
+
+.em-wp-custom-catalog-field-row__input .regular-text:focus {
+    border-color: #4e080e;
+    box-shadow: 0 0 0 1px #4e080e;
+    outline: none;
+}
+
+.em-wp-custom-catalog-field-row__hide {
+    justify-self: end;
+    margin: 0;
+    padding-left: 8px;
+    white-space: nowrap;
+}
+
+.em-wp-custom-catalog-field-row__hide span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+@media (max-width: 782px) {
+    .em-wp-custom-catalog-field-row {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+        padding: 16px 0;
+    }
+
+    .em-wp-custom-catalog-field-row__hide {
+        justify-self: start;
+        padding-left: 0;
+    }
+
+    .em-wp-custom-catalog-field-row__input .regular-text {
+        max-width: none;
+    }
+}
+

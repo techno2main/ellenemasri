@@ -85,7 +85,7 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
     wp_enqueue_script(
         'em-wp-admin-template-skeleton',
         $theme_uri . '/assets/admin/js/pages/template-skeleton.js',
-        ['em-wp-admin-confirm-modal'],
+        ['em-wp-admin-confirm-modal', 'em-wp-admin-color-picker'],
         em_wp_admin_asset_version('assets/admin/js/pages/template-skeleton.js'),
         true
     );

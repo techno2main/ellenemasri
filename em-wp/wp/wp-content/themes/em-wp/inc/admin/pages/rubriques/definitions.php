@@ -116,7 +116,9 @@ function em_wp_admin_catalog_rubrique_definitions(): array
                 __('Section %s', 'em-wp'),
                 $label
             ),
-            'page_slug'      => (string) ($module['hub_menu_slug'] ?? em_wp_custom_catalog_hub_menu_slug($module_slug)),
+            'page_slug'      => function_exists('em_wp_custom_catalog_rubrique_page_slug')
+                ? em_wp_custom_catalog_rubrique_page_slug($module_slug)
+                : (string) ($module['hub_menu_slug'] ?? em_wp_custom_catalog_hub_menu_slug($module_slug)),
             'preview_zone'   => 'section_' . $module_slug,
             'accent_color'   => '#751820',
             'catalog_module' => $module_slug,
@@ -188,6 +190,76 @@ function em_wp_admin_template_proposable_rubrique_definitions(?string $template_
 }
 
 /**
+ * Positions d'insertion proposées pour une rubrique dans le squelette template.
+ *
+ * @return array<int, array{value:string,label:string}>
+ */
+function em_wp_admin_template_skeleton_insert_positions(?string $template_slug = null): array
+{
+    if ($template_slug === null && function_exists('em_wp_get_editing_template_slug')) {
+        $template_slug = em_wp_get_editing_template_slug();
+    }
+
+    $template_slug = em_wp_template_sanitize_slug((string) $template_slug);
+    $order = $template_slug !== '' && function_exists('em_wp_get_template_skeleton_order')
+        ? em_wp_get_template_skeleton_order($template_slug)
+        : [];
+
+    if (!is_array($order) || $order === []) {
+        return [
+            [
+                'value' => '__start__',
+                'label' => __('Au début', 'em-wp'),
+            ],
+        ];
+    }
+
+    $positions = [];
+
+    if (in_array('top-bar', $order, true)) {
+        $positions[] = [
+            'value' => 'top-bar',
+            'label' => __('Après TOP-BAR', 'em-wp'),
+        ];
+    } else {
+        $positions[] = [
+            'value' => '__start__',
+            'label' => __('Au début', 'em-wp'),
+        ];
+    }
+
+    foreach ($order as $slug) {
+        $slug = sanitize_key((string) $slug);
+
+        if ($slug === '' || $slug === 'top-bar' || $slug === 'footer') {
+            continue;
+        }
+
+        $label = function_exists('em_wp_admin_rubrique_skeleton_label')
+            ? em_wp_admin_rubrique_skeleton_label($slug)
+            : mb_strtoupper($slug);
+
+        $positions[] = [
+            'value' => $slug,
+            'label' => sprintf(
+                /* translators: %s: rubrique label */
+                __('Après %s', 'em-wp'),
+                $label
+            ),
+        ];
+    }
+
+    if (in_array('footer', $order, true)) {
+        $positions[] = [
+            'value' => '__before_footer__',
+            'label' => __('Avant FOOTER', 'em-wp'),
+        ];
+    }
+
+    return $positions;
+}
+
+/**
  * Une rubrique peut-elle être ajoutée au squelette du template ?
  */
 function em_wp_rubrique_is_proposable_for_template(string $rubrique_slug, ?string $template_slug = null): bool
@@ -220,7 +292,15 @@ function em_wp_rubrique_is_proposable_for_template(string $rubrique_slug, ?strin
     if (em_wp_admin_rubrique_is_catalog_linked($rubrique_slug)) {
         $catalog_slug = sanitize_key((string) ($all[$rubrique_slug]['catalog_module'] ?? $rubrique_slug));
 
-        if ($catalog_slug === '' || !function_exists('em_wp_custom_catalog_entries')) {
+        if ($catalog_slug === '') {
+            return false;
+        }
+
+        if (function_exists('em_wp_catalog_hub_entries')) {
+            return em_wp_catalog_hub_entries($catalog_slug) !== [];
+        }
+
+        if (!function_exists('em_wp_custom_catalog_entries')) {
             return false;
         }
 
@@ -389,14 +469,16 @@ function em_wp_admin_rubrique_skeleton_label(string $module_slug): string
     $module_slug = sanitize_key($module_slug);
 
     $static = [
-        'top-bar' => __('TOP-BAR', 'em-wp'),
-        'header'  => __('HEADER', 'em-wp'),
-        'stream'  => __('STREAM', 'em-wp'),
-        'social'  => __('SOCIAL', 'em-wp'),
-        'video'   => __('VIDEO', 'em-wp'),
-        'release' => __('RELEASE', 'em-wp'),
-        'cta'     => __('CTA', 'em-wp'),
-        'footer'  => __('FOOTER', 'em-wp'),
+        'top-bar'         => __('TOP-BAR', 'em-wp'),
+        'header'          => __('HEADER', 'em-wp'),
+        'stream'          => __('STREAM', 'em-wp'),
+        'social'          => __('SOCIAL', 'em-wp'),
+        'video'           => __('VIDEO', 'em-wp'),
+        'release'         => __('RELEASE', 'em-wp'),
+        'cta'             => __('CTA', 'em-wp'),
+        'footer'          => __('FOOTER', 'em-wp'),
+        'custom-contacts' => __('CONTACT', 'em-wp'),
+        'contacts'        => __('CONTACT', 'em-wp'),
     ];
 
     if (isset($static[$module_slug])) {
@@ -725,11 +807,15 @@ function em_wp_admin_rubrique_enabled_field_name(string $module_slug): string
 
     $getter = $getters[$module_slug] ?? '';
 
+    if ($getter === '' && function_exists('em_wp_custom_catalog_is_module') && em_wp_custom_catalog_is_module($module_slug)) {
+        $getter = 'em_wp_custom_catalog_rubrique_form_option_key';
+    }
+
     if ($getter === '' || !function_exists($getter)) {
         return '';
     }
 
-    return (string) call_user_func($getter);
+    return (string) call_user_func($getter, $module_slug);
 }
 
 /**

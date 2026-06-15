@@ -204,6 +204,10 @@ function em_wp_get_rubrique_module_option_name(string $module_slug): string
 
             return 'em_wp_slider_mayami_options';
         default:
+            if (function_exists('em_wp_custom_catalog_is_module') && em_wp_custom_catalog_is_module($module_slug)) {
+                return em_wp_custom_catalog_rubrique_option_name($module_slug);
+            }
+
             return '';
     }
 }
@@ -423,13 +427,35 @@ if (is_admin()) {
 
         $template_slug = sanitize_key((string) ($_POST['template_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $rubrique_slug = sanitize_key((string) ($_POST['rubrique_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $insert_after = sanitize_key((string) ($_POST['insert_after'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         if ($template_slug === '' || $rubrique_slug === '') {
             wp_send_json_error(['message' => __('Rubrique invalide.', 'em-wp')], 400);
         }
 
+        if ($insert_after !== '' && function_exists('em_wp_admin_template_skeleton_insert_positions')) {
+            $allowed = array_column(
+                em_wp_admin_template_skeleton_insert_positions($template_slug),
+                'value'
+            );
+
+            if (!in_array($insert_after, $allowed, true)) {
+                $insert_after = in_array('__before_footer__', $allowed, true)
+                    ? '__before_footer__'
+                    : (string) ($allowed[0] ?? '');
+            }
+        }
+
         if (!function_exists('em_wp_template_skeleton_add_rubrique')
-            || !em_wp_template_skeleton_add_rubrique($template_slug, $rubrique_slug)) {
+            || !em_wp_template_skeleton_add_rubrique(
+                $template_slug,
+                $rubrique_slug,
+                $insert_after,
+                [
+                    'background_color' => sanitize_hex_color((string) ($_POST['background_color'] ?? '')) ?: '',
+                    'text_color'       => sanitize_hex_color((string) ($_POST['text_color'] ?? '')) ?: '',
+                ]
+            )) {
             wp_send_json_error(['message' => __('Impossible d\'ajouter cette rubrique.', 'em-wp')], 400);
         }
 

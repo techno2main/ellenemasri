@@ -179,7 +179,12 @@ function em_wp_save_template_skeleton_order(string $template_slug, array $order)
         ? (em_wp_template_plans_store()[$template_slug]['order'] ?? em_wp_get_site_rubrique_order())
         : em_wp_get_template_skeleton_order($template_slug);
 
-    $normalized = em_wp_template_skeleton_normalize_order($order, is_array($pool) ? $pool : []);
+    if (!is_array($pool)) {
+        $pool = [];
+    }
+
+    $merged_pool = array_values(array_unique(array_merge($pool, $order)));
+    $normalized = em_wp_template_skeleton_normalize_order($order, $merged_pool);
 
     $store = em_wp_template_plans_store();
     $store[$template_slug] = ['order' => $normalized];
@@ -203,12 +208,20 @@ function em_wp_template_skeleton_bootstrap_order(string $template_slug): array
 }
 
 /**
- * Ajoute une rubrique au squelette (avant FOOTER si présent).
+ * Ajoute une rubrique au squelette à la position demandée.
+ *
+ * @param string $insert_after Slug rubrique existante, __start__, __before_footer__ ou vide (= avant FOOTER).
  */
-function em_wp_template_skeleton_add_rubrique(string $template_slug, string $rubrique_slug): bool
+function em_wp_template_skeleton_add_rubrique(
+    string $template_slug,
+    string $rubrique_slug,
+    string $insert_after = '',
+    array $style_colors = []
+): bool
 {
     $template_slug = em_wp_template_sanitize_slug($template_slug);
     $rubrique_slug = sanitize_key($rubrique_slug);
+    $insert_after = sanitize_key($insert_after);
 
     if ($template_slug === '' || $rubrique_slug === '') {
         return false;
@@ -234,7 +247,23 @@ function em_wp_template_skeleton_add_rubrique(string $template_slug, string $rub
         return true;
     }
 
-    if ($rubrique_slug === 'footer' || $rubrique_slug === 'top-bar') {
+    if ($insert_after === '' || $insert_after === '__before_footer__') {
+        $insert_after = 'footer';
+    }
+
+    if ($insert_after === '__start__') {
+        if (in_array('top-bar', $order, true)) {
+            array_splice($order, 1, 0, [$rubrique_slug]);
+        } else {
+            array_unshift($order, $rubrique_slug);
+        }
+    } elseif ($insert_after === 'footer' && in_array('footer', $order, true)) {
+        $footer_index = array_search('footer', $order, true);
+        array_splice($order, (int) $footer_index, 0, [$rubrique_slug]);
+    } elseif ($insert_after !== '' && in_array($insert_after, $order, true)) {
+        $anchor_index = array_search($insert_after, $order, true);
+        array_splice($order, (int) $anchor_index + 1, 0, [$rubrique_slug]);
+    } elseif ($rubrique_slug === 'footer' || $rubrique_slug === 'top-bar') {
         $order[] = $rubrique_slug;
     } elseif (in_array('footer', $order, true)) {
         $footer_index = array_search('footer', $order, true);
@@ -245,8 +274,16 @@ function em_wp_template_skeleton_add_rubrique(string $template_slug, string $rub
 
     em_wp_save_template_skeleton_order($template_slug, $order);
 
-    if (function_exists('em_wp_set_template_rubrique_visibility')) {
-        em_wp_set_template_rubrique_visibility($template_slug, $rubrique_slug, true);
+    if (function_exists('em_wp_template_skeleton_init_rubrique_options')) {
+        em_wp_template_skeleton_init_rubrique_options($template_slug, $rubrique_slug, $style_colors);
+    }
+
+    if (function_exists('em_wp_site_rubrique_is_visibility_toggle')
+        && em_wp_site_rubrique_is_visibility_toggle($rubrique_slug)
+        && function_exists('em_wp_set_site_rubrique_visibility')) {
+        em_wp_set_site_rubrique_visibility($rubrique_slug, false, $template_slug);
+    } elseif (function_exists('em_wp_set_template_rubrique_visibility')) {
+        em_wp_set_template_rubrique_visibility($template_slug, $rubrique_slug, false);
     }
 
     return true;

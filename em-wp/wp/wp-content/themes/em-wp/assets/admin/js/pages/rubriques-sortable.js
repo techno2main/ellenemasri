@@ -11,15 +11,29 @@
     var mapSortable = null;
     var visibilitySaving = false;
     var layoutSaving = false;
+    var statusDismissTimer = null;
+    var STATUS_DISMISS_MS = 5000;
 
     function setStatus(message, isError) {
         if (!statusEl) {
             return;
         }
 
+        if (statusDismissTimer) {
+            window.clearTimeout(statusDismissTimer);
+            statusDismissTimer = null;
+        }
+
         statusEl.textContent = message || '';
         statusEl.hidden = message === '';
         statusEl.classList.toggle('is-error', !!isError);
+
+        if (message && !isError) {
+            statusDismissTimer = window.setTimeout(function () {
+                statusDismissTimer = null;
+                setStatus('', false);
+            }, STATUS_DISMISS_MS);
+        }
     }
 
     function updateVisibilityUI(moduleSlug, visible) {
