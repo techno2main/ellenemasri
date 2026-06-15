@@ -41,11 +41,53 @@ function em_wp_template_scoped_rubrique_slugs(): array
         'video',
         'release',
         'top-bar',
-        'header',
         'social',
         'cta',
         'footer',
     ];
+}
+
+/**
+ * Visibilité sommaire HEADER (store template, indépendante de `enabled` contenu).
+ */
+function em_wp_get_header_rubrique_visibility(?string $template_slug = null): bool
+{
+    $template_slug = em_wp_resolve_rubrique_visibility_template_slug($template_slug);
+
+    if ($template_slug === '') {
+        return true;
+    }
+
+    $store = em_wp_template_visibility_store();
+
+    if (isset($store[$template_slug]['header'])) {
+        return (bool) $store[$template_slug]['header'];
+    }
+
+    // Migration : anciennes sauvegardes dans enabled × template HEADER.
+    if (function_exists('em_wp_get_template_rubrique_options')) {
+        $raw = em_wp_get_template_rubrique_options('header', $template_slug);
+
+        if (array_key_exists('enabled', $raw)) {
+            return (bool) $raw['enabled'];
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Enregistre la visibilité sommaire HEADER pour un template.
+ */
+function em_wp_set_header_rubrique_visibility(bool $visible, ?string $template_slug = null): bool
+{
+    $template_slug = em_wp_resolve_rubrique_visibility_template_slug($template_slug);
+
+    if ($template_slug === '') {
+        return false;
+    }
+
+    return em_wp_set_template_rubrique_visibility($template_slug, 'header', $visible);
 }
 
 /**
@@ -138,6 +180,10 @@ function em_wp_is_template_rubrique_visible(string $template_slug, string $rubri
 
     if ($template_slug === '' || $rubrique_slug === '') {
         return true;
+    }
+
+    if ($rubrique_slug === 'header' && function_exists('em_wp_get_header_rubrique_visibility')) {
+        return em_wp_get_header_rubrique_visibility($template_slug);
     }
 
     if (em_wp_rubrique_uses_template_scoped_options($rubrique_slug)) {

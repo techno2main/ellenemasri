@@ -502,10 +502,6 @@ function em_wp_admin_rubrique_enabled_field_name(string $module_slug): string
  */
 function em_wp_admin_rubrique_section_has_toggle(string $module_slug): bool
 {
-    if ($module_slug === 'header') {
-        return true;
-    }
-
     return em_wp_admin_rubrique_enabled_field_name($module_slug) !== '';
 }
 
@@ -516,21 +512,6 @@ function em_wp_admin_rubrique_section_has_toggle(string $module_slug): bool
  */
 function em_wp_admin_rubrique_render_section_toggle(string $module_slug, array $options = []): void
 {
-    if ($module_slug === 'header') {
-        $field_name = em_wp_admin_rubrique_visibility_field_name('header');
-        $visible = function_exists('em_wp_get_site_rubrique_visibility')
-            ? em_wp_get_site_rubrique_visibility('header')
-            : true;
-        ?>
-        <label class="em-wp-rubrique-section-bar__toggle">
-            <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
-            <input type="hidden" name="<?php echo esc_attr($field_name); ?>" value="0">
-            <input type="checkbox" name="<?php echo esc_attr($field_name); ?>" value="1" <?php checked($visible); ?>>
-        </label>
-        <?php
-        return;
-    }
-
     $field = em_wp_admin_rubrique_enabled_field_name($module_slug);
 
     if ($field === '') {
@@ -539,7 +520,7 @@ function em_wp_admin_rubrique_render_section_toggle(string $module_slug, array $
     ?>
     <label class="em-wp-rubrique-section-bar__toggle">
         <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
-        <?php if ($module_slug === 'footer') { ?>
+        <?php if (in_array($module_slug, ['footer', 'header'], true)) { ?>
             <input type="hidden" name="<?php echo esc_attr($field); ?>[enabled]" value="0">
         <?php } ?>
         <input

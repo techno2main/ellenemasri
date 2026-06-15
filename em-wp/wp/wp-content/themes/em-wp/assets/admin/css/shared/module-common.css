@@ -1595,11 +1595,13 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
 }
 
 .em-wp-admin-landing-map__zone.is-rubrique-hidden,
+.em-wp-admin-landing-map__header-group.is-rubrique-hidden,
 .em-wp-rubriques-admin__list-item.is-rubrique-hidden .em-wp-rubriques-admin__list-link {
     opacity: 0.5;
 }
 
-.em-wp-admin-landing-map__zone.is-rubrique-hidden {
+.em-wp-admin-landing-map__zone.is-rubrique-hidden,
+.em-wp-admin-landing-map__header-group.is-rubrique-hidden {
     background: repeating-linear-gradient(
         -45deg,
         #d1d5db,
@@ -1607,6 +1609,24 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
         #e5e7eb 6px,
         #e5e7eb 12px
     );
+}
+
+.em-wp-admin-landing-map__header-group.is-rubrique-hidden .em-wp-admin-landing-map__header-group-link,
+.em-wp-admin-landing-map__header-group.is-rubrique-hidden .em-wp-admin-landing-map__header-part {
+    background: repeating-linear-gradient(
+        -45deg,
+        #d1d5db,
+        #d1d5db 6px,
+        #e5e7eb 6px,
+        #e5e7eb 12px
+    ) !important;
+    color: #6b7280 !important;
+}
+
+.em-wp-admin-landing-map__header-group.is-rubrique-hidden.is-active .em-wp-admin-landing-map__header-group-link,
+.em-wp-admin-landing-map__header-group.is-rubrique-hidden.is-active:not(.is-layout-mode) {
+    border-color: #9ca3af;
+    box-shadow: none;
 }
 
 .em-wp-admin-landing-map__hidden-badge,

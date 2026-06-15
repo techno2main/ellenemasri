@@ -22,7 +22,12 @@ function em_wp_header_sanitize_options($input): array
         return $existing;
     }
 
-    $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
+    // Visibilité sommaire (checkbox « Afficher ») → store template, pas `enabled` contenu HEADER.
+    if (array_key_exists('enabled', $input) && function_exists('em_wp_set_header_rubrique_visibility')) {
+        em_wp_set_header_rubrique_visibility(!empty($input['enabled']), $template_slug);
+    }
+
+    $enabled = !empty($existing['enabled']);
     $hero_slug = sanitize_key((string) ($input['hero_slug'] ?? ($existing['hero_slug'] ?? '')));
     $slider_slug = sanitize_key((string) ($input['slider_slug'] ?? ($existing['slider_slug'] ?? '')));
     $layout = sanitize_key((string) ($input['layout'] ?? ($existing['layout'] ?? 'hero_left')));
@@ -49,10 +54,6 @@ function em_wp_header_sanitize_options($input): array
 
     $background_color = sanitize_hex_color($input['background_color'] ?? '');
     $text_color = sanitize_hex_color($input['text_color'] ?? '');
-
-    if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
-        em_wp_admin_sync_rubrique_visibility_from_post('header');
-    }
 
     return [
         'enabled'                  => $enabled,

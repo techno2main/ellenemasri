@@ -84,7 +84,9 @@ function em_wp_hero_catalog_sync_header_references(string $old_slug, string $new
             continue;
         }
 
-        $options = em_wp_header_get_options($template_slug);
+        $options = function_exists('em_wp_header_get_saved_options')
+            ? em_wp_header_get_saved_options($template_slug)
+            : em_wp_header_get_options($template_slug);
 
         if (sanitize_key((string) ($options['hero_slug'] ?? '')) !== $old_slug) {
             continue;

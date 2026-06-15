@@ -1,4 +1,6 @@
 (function () {
+    'use strict';
+
     var root = document.querySelector('.em-wp-rubriques-admin');
     var map = document.getElementById('em-wp-admin-landing-map');
     var layout = document.querySelector('.em-wp-rubriques-admin__layout');
@@ -10,12 +12,40 @@
     var listLinks = root.querySelectorAll('.em-wp-rubriques-admin__list-link[data-preview-zone]');
     var navLinks = root.querySelectorAll('.em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-link[data-preview-zone]');
     var mapZones = map.querySelectorAll('[data-preview-zone]');
-    var interactiveTargets = root.querySelectorAll('[data-preview-zone]');
     var headerGroups = map.querySelectorAll('.em-wp-admin-landing-map__header-group');
 
+    function normalizeZone(zone) {
+        if (zone === 'header_hero' || zone === 'header_slider') {
+            return 'header';
+        }
+
+        return zone;
+    }
+
+    function resolvePreviewZone(target) {
+        if (!target || typeof target.closest !== 'function') {
+            return '';
+        }
+
+        var el = target.closest('[data-preview-zone]');
+
+        if (!el || !root.contains(el)) {
+            return '';
+        }
+
+        return normalizeZone(el.getAttribute('data-preview-zone') || '');
+    }
+
+    function isInsidePreviewZone(target) {
+        return resolvePreviewZone(target) !== '';
+    }
+
     function setActiveZone(zone) {
+        zone = normalizeZone(zone);
+
         mapZones.forEach(function (el) {
-            el.classList.toggle('is-active', zone !== '' && el.getAttribute('data-preview-zone') === zone);
+            var elZone = normalizeZone(el.getAttribute('data-preview-zone') || '');
+            el.classList.toggle('is-active', zone !== '' && elZone === zone);
         });
 
         headerGroups.forEach(function (group) {
@@ -27,26 +57,51 @@
         });
 
         navLinks.forEach(function (link) {
-            link.classList.toggle('is-preview-active', zone !== '' && link.getAttribute('data-preview-zone') === zone);
+            var linkZone = normalizeZone(link.getAttribute('data-preview-zone') || '');
+            link.classList.toggle('is-preview-active', zone !== '' && linkZone === zone);
         });
 
         map.classList.toggle('has-active-zone', zone !== '');
     }
 
-    interactiveTargets.forEach(function (target) {
-        var zone = target.getAttribute('data-preview-zone') || '';
+    root.addEventListener('mouseover', function (event) {
+        var zone = resolvePreviewZone(event.target);
 
-        target.addEventListener('mouseenter', function () {
+        if (zone !== '') {
             setActiveZone(zone);
-        });
+        }
+    });
 
-        target.addEventListener('focus', function () {
-            setActiveZone(zone);
-        });
+    root.addEventListener('mouseout', function (event) {
+        var fromEl = event.target.closest('[data-preview-zone]');
+
+        if (!fromEl || !root.contains(fromEl)) {
+            return;
+        }
+
+        var related = event.relatedTarget;
+
+        if (related && fromEl.contains(related)) {
+            return;
+        }
+
+        if (isInsidePreviewZone(related)) {
+            return;
+        }
+
+        setActiveZone('');
     });
 
     root.addEventListener('mouseleave', function () {
         setActiveZone('');
+    });
+
+    root.addEventListener('focusin', function (event) {
+        var zone = resolvePreviewZone(event.target);
+
+        if (zone !== '') {
+            setActiveZone(zone);
+        }
     });
 
     root.addEventListener('focusout', function (event) {

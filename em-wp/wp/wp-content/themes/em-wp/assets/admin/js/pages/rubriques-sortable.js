@@ -32,6 +32,18 @@
         var label = listItem ? listItem.querySelector('.em-wp-rubriques-admin__list-label') : null;
         var mapZone = map ? map.querySelector('[data-module-slug="' + moduleSlug + '"]:not([data-header-part])') : null;
         var headerGroup = map ? map.querySelector('.em-wp-admin-landing-map__header-group[data-module-slug="' + moduleSlug + '"]') : null;
+
+        // HEADER : le groupe entier matche aussi data-module-slug — ne pas le traiter comme une zone plate.
+        if (
+            mapZone
+            && (
+                mapZone === headerGroup
+                || mapZone.classList.contains('em-wp-admin-landing-map__header-group')
+                || mapZone.classList.contains('em-wp-admin-landing-map__header-group-link')
+            )
+        ) {
+            mapZone = null;
+        }
         var hiddenLabel = (config.i18n && config.i18n.visibilityHiddenLabel) || 'Masqué';
 
         if (listItem) {
@@ -76,7 +88,8 @@
                 mapBadge.className = 'em-wp-admin-landing-map__hidden-badge';
                 mapBadge.textContent = hiddenLabel;
                 var zoneLabel = mapZone.querySelector('.em-wp-admin-landing-map__zone-label');
-                if (zoneLabel) {
+
+                if (zoneLabel && zoneLabel.parentNode === mapZone) {
                     mapZone.insertBefore(mapBadge, zoneLabel);
                 } else {
                     mapZone.appendChild(mapBadge);
@@ -119,6 +132,10 @@
         body.append('nonce', config.nonce);
         body.append('module_slug', moduleSlug);
         body.append('visible', visible ? '1' : '0');
+
+        if (config.templateSlug) {
+            body.append('template_slug', config.templateSlug);
+        }
 
         window.fetch(config.ajaxUrl, {
             method: 'POST',
@@ -170,7 +187,12 @@
             var previousVisible = !toggle.classList.contains('is-hidden');
             var nextVisible = !previousVisible;
 
-            updateVisibilityUI(moduleSlug, nextVisible);
+            try {
+                updateVisibilityUI(moduleSlug, nextVisible);
+            } catch (error) {
+                window.console.error(error);
+            }
+
             saveVisibility(moduleSlug, nextVisible, toggle, previousVisible);
         });
     }

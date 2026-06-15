@@ -136,6 +136,10 @@ function em_wp_header_get_options(?string $template_slug = null): array
 
     $options = em_wp_header_get_saved_options($template_slug);
 
+    if (function_exists('em_wp_rubrique_sync_enabled_for_admin')) {
+        $options = em_wp_rubrique_sync_enabled_for_admin('header', $options);
+    }
+
     return em_wp_header_migrate_style_from_hero_catalog($options);
 }
 

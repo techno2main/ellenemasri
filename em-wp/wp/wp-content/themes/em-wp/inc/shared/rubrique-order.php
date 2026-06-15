@@ -111,6 +111,10 @@ function em_wp_get_site_rubrique_visibility(string $module_slug, ?string $templa
         return true;
     }
 
+    if ($module_slug === 'header' && function_exists('em_wp_get_header_rubrique_visibility')) {
+        return em_wp_get_header_rubrique_visibility($template_slug);
+    }
+
     if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
         return em_wp_get_rubrique_enabled_for_template($module_slug, $template_slug);
     }
@@ -131,6 +135,10 @@ function em_wp_set_site_rubrique_visibility(string $module_slug, bool $visible, 
 {
     if (!em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
         return false;
+    }
+
+    if ($module_slug === 'header' && function_exists('em_wp_set_header_rubrique_visibility')) {
+        return em_wp_set_header_rubrique_visibility($visible, $template_slug);
     }
 
     if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
@@ -223,10 +231,6 @@ function em_wp_apply_rubrique_visibility_to_module_options(string $module_slug, 
  */
 function em_wp_rubrique_sync_enabled_for_admin(string $module_slug, array $options): array
 {
-    if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
-        return $options;
-    }
-
     if (em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
         $options['enabled'] = em_wp_get_site_rubrique_visibility($module_slug);
     }
@@ -240,10 +244,6 @@ function em_wp_rubrique_sync_enabled_for_admin(string $module_slug, array $optio
 function em_wp_rubrique_sync_visibility_from_module_save(string $module_slug, bool $enabled): void
 {
     if (!em_wp_site_rubrique_is_visibility_toggle($module_slug)) {
-        return;
-    }
-
-    if (em_wp_rubrique_uses_template_scoped_options($module_slug)) {
         return;
     }
 
@@ -367,7 +367,14 @@ if (is_admin()) {
             wp_send_json_error(['message' => __('Rubrique invalide.', 'em-wp')], 400);
         }
 
-        em_wp_set_site_rubrique_visibility($module_slug, $visible);
+        $template_slug = sanitize_key((string) ($_POST['template_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $template_slug = $template_slug !== '' ? $template_slug : null;
+
+        $saved = em_wp_set_site_rubrique_visibility($module_slug, $visible, $template_slug);
+
+        if (!$saved) {
+            wp_send_json_error(['message' => __('Impossible d\'enregistrer la visibilité.', 'em-wp')], 500);
+        }
 
         wp_send_json_success([
             'module_slug' => $module_slug,

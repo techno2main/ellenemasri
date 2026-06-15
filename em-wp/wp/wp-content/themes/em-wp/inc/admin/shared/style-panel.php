@@ -527,17 +527,29 @@ function em_wp_admin_render_variant_active_badge(string $style_slug, string $act
 }
 
 /**
- * Enregistre la visibilité sommaire depuis le champ POST admin.
+ * Lit la visibilité sommaire depuis le champ POST admin (null = absent).
  */
-function em_wp_admin_sync_rubrique_visibility_from_post(string $module_slug): void
+function em_wp_admin_rubrique_visibility_from_post(string $module_slug): ?bool
 {
     $field_name = em_wp_admin_rubrique_visibility_field_name($module_slug);
 
     if (!isset($_POST[$field_name])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        return;
+        return null;
     }
 
-    $visible = (string) wp_unslash($_POST[$field_name]) === '1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    return (string) wp_unslash($_POST[$field_name]) === '1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+}
+
+/**
+ * Enregistre la visibilité sommaire depuis le champ POST admin.
+ */
+function em_wp_admin_sync_rubrique_visibility_from_post(string $module_slug): void
+{
+    $visible = em_wp_admin_rubrique_visibility_from_post($module_slug);
+
+    if ($visible === null) {
+        return;
+    }
 
     if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
         em_wp_rubrique_sync_visibility_from_module_save($module_slug, $visible);
