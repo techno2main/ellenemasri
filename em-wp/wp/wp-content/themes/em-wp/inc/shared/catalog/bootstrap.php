@@ -36,6 +36,10 @@ require_once __DIR__ . '/cta/crud.php';
 require_once __DIR__ . '/footer/registry.php';
 require_once __DIR__ . '/footer/option-names.php';
 require_once __DIR__ . '/footer/crud.php';
+require_once __DIR__ . '/custom-modules/registry.php';
+require_once __DIR__ . '/custom-modules/crud.php';
+require_once __DIR__ . '/custom-modules/entries.php';
+require_once __DIR__ . '/module-overrides.php';
 require_once __DIR__ . '/migrate-v1.php';
 require_once __DIR__ . '/resolve-style.php';
 
