@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  * @param array<string, array{label:string,icon:string,color:string}> $definitions
  * @param array<string, mixed> $item
  */
-function em_wp_stream_render_platform_item(int $list_index, array $item, array $definitions): void
+function em_wp_stream_render_platform_item(int $list_index, array $item, array $definitions, ?string $field = null): void
 {
     $slug = sanitize_key((string) ($item['slug'] ?? ''));
     $platform = $definitions[$slug] ?? null;
@@ -22,7 +22,7 @@ function em_wp_stream_render_platform_item(int $list_index, array $item, array $
         return;
     }
 
-    $field_base = em_wp_stream_form_option_key() . '[platforms][' . $list_index . ']';
+    $field_base = ($field ?? em_wp_stream_form_option_key()) . '[platforms][' . $list_index . ']';
     $label_value = (string) ($item['label'] ?? $platform['label']);
     $href_value = (string) ($item['href'] ?? '');
     $is_active = !empty($item['active']);

@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 /**
  * @param array<string, mixed> $options
  */
-function em_wp_stream_render_content_panel_body(array $options): void
+function em_wp_stream_render_content_panel_body(array $options, ?string $field = null): void
 {
-    $field = em_wp_stream_form_option_key();
+    $field = $field ?? em_wp_stream_form_option_key();
     ?>
     <label>
         <span><?php esc_html_e('Kicker', 'em-wp'); ?></span>

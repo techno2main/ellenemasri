@@ -9,9 +9,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function em_wp_video_render_video_panel_body(array $options): void
+function em_wp_video_render_video_panel_body(array $options, ?string $field = null): void
 {
-    $field = em_wp_video_form_option_key();
+    $field = $field ?? em_wp_video_form_option_key();
     ?>
     <label class="em-wp-admin-field--wide">
         <span><?php esc_html_e('Image de couverture', 'em-wp'); ?></span>

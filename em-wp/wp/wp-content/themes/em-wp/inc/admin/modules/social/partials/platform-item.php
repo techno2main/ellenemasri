@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  * @param array<string, mixed> $item
  * @param array<string, array{label:string,icon:string,default_account:string}> $definitions
  */
-function em_wp_social_render_platform_item(int $list_index, array $item, array $definitions): void
+function em_wp_social_render_platform_item(int $list_index, array $item, array $definitions, ?string $field = null): void
 {
     $slug = sanitize_key((string) ($item['slug'] ?? ''));
     $platform = $definitions[$slug] ?? null;
@@ -22,7 +22,7 @@ function em_wp_social_render_platform_item(int $list_index, array $item, array $
         return;
     }
 
-    $field_base = em_wp_social_form_option_key() . '[platforms][' . $list_index . ']';
+    $field_base = ($field ?? em_wp_social_form_option_key()) . '[platforms][' . $list_index . ']';
     $is_active = !empty($item['active']);
     ?>
     <details class="em-wp-admin-nested-item em-wp-top-bar-platform-item">
@@ -45,4 +45,4 @@ function em_wp_social_render_platform_item(int $list_index, array $item, array $
     </details>
     <?php
 }
-
+

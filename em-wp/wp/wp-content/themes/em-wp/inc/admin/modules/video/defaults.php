@@ -19,12 +19,29 @@ function em_wp_video_form_option_key(): string
     return 'em_wp_video_options';
 }
 
-function em_wp_video_default_options(): array
+/**
+ * Options rubrique VIDEOS par template (pointeur catalogue + style).
+ *
+ * @return array{enabled:bool,video_slug:string,background_color:string,text_color:string}
+ */
+function em_wp_video_rubrique_default_options(): array
 {
     return [
-        'enabled'            => true,
-        'background_color'   => '',
-        'text_color'         => '',
+        'enabled'          => true,
+        'video_slug'       => '',
+        'background_color' => '',
+        'text_color'       => '',
+    ];
+}
+
+/**
+ * Options contenu d'une entrée catalogue Video.
+ *
+ * @return array<string, mixed>
+ */
+function em_wp_video_catalog_default_options(): array
+{
+    return [
         'kicker'             => __('03 / Watch', 'em-wp'),
         'title'              => __('Official Video', 'em-wp'),
         'description'        => __('Describe the official video for this release.', 'em-wp'),

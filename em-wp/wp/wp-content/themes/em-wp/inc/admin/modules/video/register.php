@@ -38,6 +38,14 @@ function em_wp_video_admin_enqueue(string $hook_suffix): void
     }
 
     em_wp_admin_enqueue_shared_assets();
+    em_wp_admin_enqueue_catalog_slug_switch_assets();
+
+    wp_enqueue_style(
+        'em-wp-header-admin',
+        get_template_directory_uri() . '/assets/admin/css/modules/header/header.css',
+        ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
+        em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
+    );
 
     wp_enqueue_script(
         'em-wp-stream-admin',
