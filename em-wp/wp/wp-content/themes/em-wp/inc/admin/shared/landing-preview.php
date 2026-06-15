@@ -247,25 +247,11 @@ function em_wp_admin_landing_zone_active_class(string $zone, string $active_zone
  */
 function em_wp_admin_catalog_entry_url(string $type, string $catalog_slug): string
 {
-    $catalog_slug = sanitize_key($catalog_slug);
-
-    if ($catalog_slug === '') {
-        return '';
+    if (function_exists('em_wp_admin_catalog_entry_edit_url')) {
+        return em_wp_admin_catalog_entry_edit_url($type, $catalog_slug);
     }
 
-    $page_slug = '';
-
-    if ($type === 'hero' && function_exists('em_wp_hero_catalog_edit_page_slug')) {
-        $page_slug = em_wp_hero_catalog_edit_page_slug($catalog_slug);
-    } elseif ($type === 'slider' && function_exists('em_wp_slider_catalog_edit_page_slug')) {
-        $page_slug = em_wp_slider_catalog_edit_page_slug($catalog_slug);
-    }
-
-    if ($page_slug === '') {
-        return '';
-    }
-
-    return add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+    return '';
 }
 
 /**
