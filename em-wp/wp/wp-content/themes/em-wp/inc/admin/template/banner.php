@@ -303,19 +303,24 @@ function em_wp_admin_template_render_banner(): void
                 </form>
             </div>
 
-            <?php if ($differs) { ?>
-                <p class="em-wp-template-banner__alert" role="status">
-                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-                    <?php
-                    printf(
-                        /* translators: 1: editing template label, 2: live template label */
-                        esc_html__('Édition « %1$s » — site public « %2$s »', 'em-wp'),
-                        esc_html(mb_strtoupper($editing_label)),
-                        esc_html(mb_strtoupper($active_label))
-                    );
-                    ?>
-                </p>
-            <?php } ?>
+            <p
+                class="em-wp-template-banner__status<?php echo $differs ? ' is-differs' : ' is-synced'; ?>"
+                role="status"
+            >
+                <?php if ($differs) { ?>
+                    <i class="fa-solid fa-triangle-exclamation em-wp-template-banner__status-icon" aria-hidden="true"></i>
+                <?php } else { ?>
+                    <span class="em-wp-template-banner__status-dot" aria-hidden="true"></span>
+                <?php } ?>
+                <?php
+                printf(
+                    /* translators: 1: editing template label, 2: live template label */
+                    esc_html__('Édition « %1$s » — site public « %2$s »', 'em-wp'),
+                    esc_html(mb_strtoupper($editing_label)),
+                    esc_html(mb_strtoupper($active_label))
+                );
+                ?>
+            </p>
         </div>
     </div>
     <?php
