@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/hub-breadcrumb.php';
+
 /**
  * Enqueue CSS/JS communs aux pages sommaire à cartes.
  */
@@ -53,15 +55,68 @@ function em_wp_admin_hub_greeting_name(): string
 }
 
 /**
+ * Balises HTML autorisées dans l'intro sommaire (fil d'Ariane, nom template…).
+ *
+ * @return array<string, array<string, bool>>
+ */
+function em_wp_admin_hub_intro_html_allowed_tags(): array
+{
+    return [
+        'nav'    => [
+            'class'      => true,
+            'aria-label' => true,
+        ],
+        'div'    => [
+            'class' => true,
+        ],
+        'a'      => [
+            'class' => true,
+            'href'  => true,
+        ],
+        'span'   => [
+            'class'        => true,
+            'aria-hidden'  => true,
+            'aria-current' => true,
+        ],
+        'strong' => [
+            'class'        => true,
+            'aria-current' => true,
+        ],
+    ];
+}
+
+/**
+ * Ouvre la zone sticky (Hello + fil d'Ariane + onglets).
+ */
+function em_wp_admin_hub_sticky_head_open(): void
+{
+    echo '<div class="em-wp-hub__sticky-head">';
+}
+
+/**
+ * Ferme la zone sticky hub.
+ */
+function em_wp_admin_hub_sticky_head_close(): void
+{
+    echo '</div>';
+}
+
+/**
  * En-tête sommaire partagé (Hello + avatar + description + flèche).
  */
 function em_wp_admin_hub_render_sommaire_header(
-    string $description,
+    string $description = '',
     string $icon_class = 'dashicons-dashboard',
     bool $description_allows_html = false,
     bool $show_template_banner = true,
-    ?callable $context_banner_renderer = null
+    ?callable $context_banner_renderer = null,
+    ?array $breadcrumb = null,
+    bool $sticky_head = false
 ): void {
+    if ($sticky_head) {
+        em_wp_admin_hub_sticky_head_open();
+    }
+
     $icon_class = trim($icon_class);
 
     if ($icon_class !== '' && !str_contains($icon_class, 'dashicons ')) {
@@ -69,6 +124,17 @@ function em_wp_admin_hub_render_sommaire_header(
     }
 
     $greeting_name = em_wp_admin_hub_greeting_name();
+
+    $breadcrumb_html = '';
+
+    if ($breadcrumb !== null && $breadcrumb !== []) {
+        $breadcrumb_html = em_wp_admin_hub_breadcrumb_html($breadcrumb);
+    } elseif ($breadcrumb === null) {
+        $auto_crumbs = em_wp_admin_hub_resolve_breadcrumb_crumbs();
+        if ($auto_crumbs !== []) {
+            $breadcrumb_html = em_wp_admin_hub_breadcrumb_html($auto_crumbs);
+        }
+    }
     ?>
     <h1 class="em-wp-hub__greeting">
         <span class="<?php echo esc_attr($icon_class); ?> em-wp-hub__greeting-icon" aria-hidden="true"></span>
@@ -96,6 +162,18 @@ function em_wp_admin_hub_render_sommaire_header(
         ?>
     </h1>
 
+    <?php if ($breadcrumb_html !== '') { ?>
+        <div class="em-wp-hub__breadcrumb"><?php echo wp_kses($breadcrumb_html, em_wp_admin_hub_intro_html_allowed_tags()); ?></div>
+    <?php } elseif ($description !== '') { ?>
+        <p class="description em-wp-hub__intro-text em-wp-hub__breadcrumb"><?php
+            if ($description_allows_html) {
+                echo wp_kses($description, em_wp_admin_hub_intro_html_allowed_tags());
+            } else {
+                echo esc_html($description);
+            }
+        ?></p>
+    <?php } ?>
+
     <?php
     if (is_callable($context_banner_renderer)) {
         $context_banner_renderer();
@@ -103,22 +181,6 @@ function em_wp_admin_hub_render_sommaire_header(
         em_wp_admin_render_template_editing_banner();
     }
     ?>
-
-    <div class="em-wp-hub__intro">
-        <p class="description em-wp-hub__intro-text"><?php
-            if ($description_allows_html) {
-                echo wp_kses($description, ['strong' => ['class' => true]]);
-            } else {
-                echo esc_html($description);
-            }
-        ?></p>
-        <span class="em-wp-hub__intro-arrow" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11 4v11.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <path d="M6 12.5 11 17.5 16 12.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-        </span>
-    </div>
     <?php
 }
 
@@ -141,20 +203,63 @@ function em_wp_admin_hub_render_card_title(string $title, string $icon_class): v
 }
 
 /**
+ * Pastille compacte — nombre d'entrées (cartes sommaire).
+ */
+function em_wp_admin_hub_render_count_badge(int $count): void
+{
+    $count = max(0, $count);
+    ?>
+    <span
+        class="em-wp-hub__count-badge"
+        aria-label="<?php echo esc_attr(sprintf(
+            /* translators: %d: number of catalog items */
+            _n('%d item', '%d items', $count, 'em-wp'),
+            $count
+        )); ?>"
+    ><?php echo esc_html((string) $count); ?></span>
+    <?php
+}
+
+/**
  * Rendu d'un bouton d'action pill (lien).
  */
-function em_wp_admin_hub_render_action_link(string $url, string $label, string $icon_class): void
-{
+function em_wp_admin_hub_render_action_link(
+    string $url,
+    string $label,
+    string $icon_class,
+    bool $compact = false,
+    string $accessible_label = ''
+): void {
     $icon_class = trim($icon_class);
 
     if ($icon_class !== '' && !str_contains($icon_class, 'dashicons ')) {
         $icon_class = 'dashicons ' . $icon_class;
     }
+
+    $action_class = 'em-wp-hub__action';
+    $visible_label = trim($label);
+    $aria_label = trim($accessible_label !== '' ? $accessible_label : $label);
+
+    if ($compact) {
+        $action_class .= ' em-wp-hub__action--compact';
+    }
+
+    if ($visible_label === '' && $icon_class !== '') {
+        $action_class .= ' em-wp-hub__action--icon-only';
+    }
     ?>
-    <a class="em-wp-hub__action" href="<?php echo esc_url($url); ?>">
+    <a
+        class="<?php echo esc_attr($action_class); ?>"
+        href="<?php echo esc_url($url); ?>"
+        <?php echo $aria_label !== '' ? 'aria-label="' . esc_attr($aria_label) . '"' : ''; ?>
+    >
         <span class="em-wp-hub__action-inner">
-            <span class="<?php echo esc_attr($icon_class); ?>" aria-hidden="true"></span>
-            <span class="em-wp-hub__action-label"><?php echo esc_html($label); ?></span>
+            <?php if ($icon_class !== '') { ?>
+                <span class="<?php echo esc_attr($icon_class); ?>" aria-hidden="true"></span>
+            <?php } ?>
+            <?php if ($visible_label !== '') { ?>
+                <span class="em-wp-hub__action-label"><?php echo esc_html($visible_label); ?></span>
+            <?php } ?>
         </span>
     </a>
     <?php
@@ -163,22 +268,86 @@ function em_wp_admin_hub_render_action_link(string $url, string $label, string $
 /**
  * Bouton secondaire désactivé (cartes « Nouveau … », prochaine étape).
  */
-function em_wp_admin_hub_render_disabled_action(string $label, string $icon_class = 'dashicons dashicons-plus-alt2'): void
+function em_wp_admin_hub_render_disabled_action(string $label, string $icon_class = 'dashicons dashicons-plus-alt2', bool $compact = false): void
 {
+    $action_class = 'em-wp-hub__action em-wp-hub__action--secondary';
+    $visible_label = trim($label);
+
+    if ($compact) {
+        $action_class .= ' em-wp-hub__action--compact';
+    }
+
+    if ($visible_label === '' && $icon_class !== '') {
+        $action_class .= ' em-wp-hub__action--icon-only';
+    }
     ?>
-    <button type="button" class="em-wp-hub__action em-wp-hub__action--secondary" disabled title="<?php esc_attr_e('Prochaine étape', 'em-wp'); ?>">
+    <button type="button" class="<?php echo esc_attr($action_class); ?>" disabled title="<?php esc_attr_e('Prochaine étape', 'em-wp'); ?>">
         <span class="em-wp-hub__action-inner">
-            <span class="<?php echo esc_attr($icon_class); ?>" aria-hidden="true"></span>
-            <span class="em-wp-hub__action-label"><?php echo esc_html($label); ?></span>
+            <?php if ($icon_class !== '') { ?>
+                <span class="<?php echo esc_attr($icon_class); ?>" aria-hidden="true"></span>
+            <?php } ?>
+            <?php if ($visible_label !== '') { ?>
+                <span class="em-wp-hub__action-label"><?php echo esc_html($visible_label); ?></span>
+            <?php } ?>
         </span>
     </button>
     <?php
 }
 
 /**
+ * Pastille liste des entrées catalogue cliquables (cartes hub CATALOGUES).
+ *
+ * @param array<int, array{label:string,url:string}> $entries
+ */
+function em_wp_admin_hub_render_catalog_entry_links_badge(
+    array $entries,
+    string $color = '#751820',
+    string $prefix = '',
+    bool $uppercase = false
+): void {
+    if ($entries === []) {
+        return;
+    }
+
+    $classes = 'em-wp-hub__live em-wp-hub__live--in-card em-wp-hub__live--entry-links';
+
+    if ($uppercase) {
+        $classes .= ' em-wp-hub__live--uppercase';
+    }
+    ?>
+    <p
+        class="<?php echo esc_attr($classes); ?>"
+        style="--em-wp-live-color: <?php echo esc_attr($color); ?>;"
+    >
+        <span class="em-wp-hub__catalog-entry-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.5 6h5.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6.25 3.25 9.5 6l-3.25 2.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+        <span class="em-wp-hub__live-text">
+            <?php if ($prefix !== '') { ?>
+                <span class="em-wp-hub__entry-links-prefix"><?php echo esc_html($prefix); ?></span>
+            <?php } ?>
+            <?php foreach ($entries as $index => $entry) {
+                if ($index > 0) {
+                    echo '<span class="em-wp-hub__catalog-entry-sep" aria-hidden="true"></span>';
+                }
+                ?>
+                <a
+                    class="em-wp-hub__catalog-entry-link"
+                    href="<?php echo esc_url((string) ($entry['url'] ?? '')); ?>"
+                ><?php echo esc_html((string) ($entry['label'] ?? '')); ?></a>
+            <?php } ?>
+        </span>
+    </p>
+    <?php
+}
+
+/**
  * Pastille badge générique.
  */
-function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $in_card = false, bool $uppercase = false): void
+function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $in_card = false, bool $uppercase = false, bool $compact = false): void
 {
     $classes = 'em-wp-hub__live';
 
@@ -188,6 +357,10 @@ function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $
 
     if ($in_card) {
         $classes .= ' em-wp-hub__live--in-card';
+    }
+
+    if ($compact) {
+        $classes .= ' em-wp-hub__live--compact-in-card';
     }
     ?>
     <p
@@ -210,6 +383,25 @@ function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $
  */
 function em_wp_admin_hub_render_live_template_badge(string $active_label, string $active_color, bool $in_card = false): void
 {
+    if ($in_card) {
+        $url = function_exists('em_wp_admin_template_choice_admin_url') ? em_wp_admin_template_choice_admin_url() : '';
+
+        if ($url !== '') {
+            em_wp_admin_hub_render_catalog_entry_links_badge(
+                [
+                    [
+                        'label' => $active_label,
+                        'url'   => $url,
+                    ],
+                ],
+                $active_color,
+                __('Ton site utilise actuellement le template :', 'em-wp') . ' ',
+                true
+            );
+            return;
+        }
+    }
+
     $classes = 'em-wp-hub__live em-wp-hub__live--uppercase';
 
     if ($in_card) {
@@ -435,7 +627,12 @@ function em_wp_admin_render_catalog_slug_switcher(
                         continue;
                     }
 
-                    $display_label = em_wp_admin_catalog_choice_switch_label($slug, (string) $label);
+                    $display_label = trim((string) $label);
+                    if ($display_label === '') {
+                        $display_label = $slug;
+                    }
+
+                    $wireframe_label = em_wp_admin_catalog_choice_switch_label($slug, $display_label);
 
                     $is_selected = ($slug === $selected_slug);
                     $switch_id = $switch_group_id . '-' . sanitize_html_class($slug);
@@ -454,6 +651,7 @@ function em_wp_admin_render_catalog_slug_switcher(
                             role="switch"
                             data-choice-slug="<?php echo esc_attr($slug); ?>"
                             data-choice-label="<?php echo esc_attr($display_label); ?>"
+                            data-choice-wireframe-label="<?php echo esc_attr($wireframe_label); ?>"
                             <?php checked($is_selected); ?>
                             aria-checked="<?php echo $is_selected ? 'true' : 'false'; ?>"
                         >
