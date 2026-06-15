@@ -24,12 +24,10 @@ function em_wp_admin_render_dashboard_page(): void
     $active_color = em_wp_get_template_color($active_slug);
     $has_context = em_wp_admin_has_template_context();
     ?>
-    <div class="wrap em-wp-admin-module em-wp-dashboard">
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-dashboard">
         <?php
-        em_wp_admin_hub_render_sommaire_header(
-            __('Que veux-tu faire ? Choisis une action pour commencer.', 'em-wp'),
-            'dashicons-dashboard'
-        );
+        em_wp_admin_hub_render_sommaire_header('', 'dashicons-dashboard', false, true, null, null, true);
+        em_wp_admin_dashboard_render_nav_tabs();
         ?>
 
         <?php if ($has_context) { ?>
