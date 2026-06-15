@@ -107,7 +107,8 @@
             padding-left: 0 !important;
         }
 
-        #adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before {
+        #adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before,
+        #adminmenu li.em-wp-menu-template-editing > a.menu-top .wp-menu-name::before {
             content: '';
             display: inline-block;
             width: 6px;
@@ -134,7 +135,8 @@
             transform: translateY(-1px);
         }
 
-        .folded #adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before {
+        .folded #adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before,
+        .folded #adminmenu li.em-wp-menu-template-editing > a.menu-top .wp-menu-name::before {
             margin-right: 0;
         }
 

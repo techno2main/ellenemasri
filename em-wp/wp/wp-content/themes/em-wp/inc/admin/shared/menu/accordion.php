@@ -208,6 +208,17 @@ function em_wp_admin_apply_menu_accordion_classes(): void
                 if ($template_slug !== '' && $template_slug === em_wp_get_active_template_slug()) {
                     $classes .= ' em-wp-menu-template-live';
                 }
+
+                if (
+                    $template_slug !== ''
+                    && function_exists('em_wp_get_explicit_editing_template_slug')
+                ) {
+                    $editing_slug = em_wp_get_explicit_editing_template_slug();
+
+                    if ($editing_slug !== '' && $template_slug === $editing_slug) {
+                        $classes .= ' em-wp-menu-template-editing';
+                    }
+                }
             }
 
             $menu[$position] = em_wp_admin_menu_item_append_class($item, $classes);
@@ -362,6 +373,11 @@ function em_wp_admin_menu_accordion_body_class($classes)
     }
 
     if (in_array($page_slug, em_wp_admin_menu_accordion_templates_page_slugs(), true)) {
+        $classes .= ' em-wp-accordion-templates-open';
+    } elseif (
+        function_exists('em_wp_admin_has_template_context')
+        && em_wp_admin_has_template_context()
+    ) {
         $classes .= ' em-wp-accordion-templates-open';
     }
 
