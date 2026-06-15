@@ -283,6 +283,10 @@
         body.append('nonce', config.nonce);
         body.append('order', JSON.stringify(getFullOrderFromList()));
 
+        if (config.templateSlug) {
+            body.append('template_slug', config.templateSlug);
+        }
+
         window.fetch(config.ajaxUrl, {
             method: 'POST',
             credentials: 'same-origin',

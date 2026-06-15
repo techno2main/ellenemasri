@@ -17,8 +17,9 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_rubriques_render_list_item(string $module_slug, array $definition): void
 {
-    $label = (string) ($definition['label'] ?? $module_slug);
-    $description = (string) ($definition['description'] ?? '');
+    $label = function_exists('em_wp_admin_rubrique_skeleton_label')
+        ? em_wp_admin_rubrique_skeleton_label($module_slug)
+        : (string) ($definition['label'] ?? $module_slug);
     $preview_zone = (string) ($definition['preview_zone'] ?? '');
     $preview_style = function_exists('em_wp_admin_module_style_colors_for_preview')
         ? em_wp_admin_module_style_colors_for_preview($module_slug)
@@ -32,9 +33,17 @@ function em_wp_admin_rubriques_render_list_item(string $module_slug, array $defi
     $is_visible = em_wp_get_site_rubrique_visibility($module_slug);
     $is_hidden = $can_toggle_visibility && !$is_visible;
     $item_url = em_wp_admin_site_rubrique_entry_url($module_slug);
+    $template_slug = function_exists('em_wp_get_editing_template_slug')
+        ? em_wp_get_editing_template_slug()
+        : '';
+    $can_remove = $template_slug !== ''
+        && function_exists('em_wp_admin_has_template_context')
+        && em_wp_admin_has_template_context()
+        && function_exists('em_wp_template_skeleton_can_remove_rubrique')
+        && em_wp_template_skeleton_can_remove_rubrique($module_slug);
     ?>
     <li
-        class="em-wp-rubriques-admin__list-item<?php echo $is_sortable ? ' is-sortable' : ' is-pinned'; ?><?php echo $is_hidden ? ' is-rubrique-hidden' : ''; ?>"
+        class="em-wp-rubriques-admin__list-item<?php echo $is_sortable ? ' is-sortable' : ' is-pinned'; ?><?php echo $can_remove ? ' has-remove' : ''; ?><?php echo $is_hidden ? ' is-rubrique-hidden' : ''; ?>"
         data-module-slug="<?php echo esc_attr($module_slug); ?>"
     >
         <div class="em-wp-rubriques-admin__list-row">
@@ -79,12 +88,25 @@ function em_wp_admin_rubriques_render_list_item(string $module_slug, array $defi
                             <span class="em-wp-rubriques-admin__hidden-badge"><?php esc_html_e('Masqué', 'em-wp'); ?></span>
                         <?php } ?>
                     </span>
-
-                    <?php if ($description !== '') { ?>
-                        <span class="em-wp-rubriques-admin__list-desc"><?php echo esc_html($description); ?></span>
-                    <?php } ?>
                 </span>
             </a>
+
+            <?php if ($can_remove && $template_slug !== '') { ?>
+                <button
+                    type="button"
+                    class="em-wp-rubriques-admin__remove-button"
+                    data-rubrique-slug="<?php echo esc_attr($module_slug); ?>"
+                    data-template-slug="<?php echo esc_attr($template_slug); ?>"
+                    aria-label="<?php echo esc_attr(sprintf(
+                        /* translators: %s: rubrique label */
+                        __('Retirer %s du template', 'em-wp'),
+                        $label
+                    )); ?>"
+                    title="<?php esc_attr_e('Retirer du squelette', 'em-wp'); ?>"
+                >
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
+            <?php } ?>
         </div>
     </li>
     <?php

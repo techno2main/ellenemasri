@@ -82,6 +82,14 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
         true
     );
 
+    wp_enqueue_script(
+        'em-wp-admin-template-skeleton',
+        $theme_uri . '/assets/admin/js/pages/template-skeleton.js',
+        ['em-wp-admin-confirm-modal'],
+        em_wp_admin_asset_version('assets/admin/js/pages/template-skeleton.js'),
+        true
+    );
+
     wp_localize_script(
         'em-wp-admin-rubriques-sortable',
         'emWpRubriquesSortable',
@@ -103,6 +111,39 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
                 'visibilityHiddenLabel' => __('Masqué', 'em-wp'),
                 'visibilitySaved'       => __('Visibilité enregistrée.', 'em-wp'),
                 'visibilityError'       => __('Impossible d\'enregistrer la visibilité.', 'em-wp'),
+            ],
+        ]
+    );
+
+    wp_localize_script(
+        'em-wp-admin-template-skeleton',
+        'emWpTemplateSkeleton',
+        [
+            'ajaxUrl'        => admin_url('admin-ajax.php'),
+            'nonce'          => wp_create_nonce('em_wp_rubrique_order'),
+            'templateSlug'   => function_exists('em_wp_get_editing_template_slug')
+                ? em_wp_get_editing_template_slug()
+                : '',
+            'templateLabel'  => function_exists('em_wp_get_editing_template_label')
+                ? em_wp_get_editing_template_label()
+                : '',
+            'isLiveTemplate' => function_exists('em_wp_get_editing_template_slug')
+                && function_exists('em_wp_get_active_template_slug')
+                && em_wp_get_editing_template_slug() === em_wp_get_active_template_slug(),
+            'i18n'           => [
+                'saved'                => __('Rubrique mise à jour.', 'em-wp'),
+                'error'                => __('Impossible de mettre à jour le squelette.', 'em-wp'),
+                'confirmRemove'          => __('Retirer « %s » du squelette de ce template ?', 'em-wp'),
+                'confirmRemoveTitle'     => __('Retirer du squelette', 'em-wp'),
+                'confirmRemoveLive'      => __(
+                    "Le template %1\$s est actuellement en ligne.\n\nRetirer « %2\$s » du squelette modifiera le site public immédiatement.",
+                    'em-wp'
+                ),
+                'confirmRemoveLiveTitle' => __('Template en ligne — attention', 'em-wp'),
+                'confirmRemoveLiveAck'   => __('J\'ai bien compris que cette modification sera visible immédiatement sur le site public.', 'em-wp'),
+                'confirmRemoveLabel'     => __('Retirer du squelette', 'em-wp'),
+                'confirmRemoveLiveLabel' => __('Oui, modifier le site', 'em-wp'),
+                'cancelLabel'            => __('Annuler', 'em-wp'),
             ],
         ]
     );
