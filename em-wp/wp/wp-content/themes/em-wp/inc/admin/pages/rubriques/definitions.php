@@ -62,7 +62,7 @@ function em_wp_admin_site_rubrique_definitions(): array
             'label'        => __('VIDEOS', 'em-wp'),
             'menu_title'   => __('VIDEOS', 'em-wp'),
             'description'  => __('Section 03 / WATCH', 'em-wp'),
-            'page_slug'    => function_exists('em_wp_video_hub_menu_slug') ? em_wp_video_hub_menu_slug() : 'em-wp-videos',
+            'page_slug'    => function_exists('em_wp_video_page_slug') ? em_wp_video_page_slug() : 'em-wp-videos',
             'preview_zone' => 'section_video',
             'accent_color' => '#ca8a04',
         ],
@@ -70,7 +70,7 @@ function em_wp_admin_site_rubrique_definitions(): array
             'label'        => __('RELEASES', 'em-wp'),
             'menu_title'   => __('RELEASES', 'em-wp'),
             'description'  => __('Section 04 / RELEASE INFOS', 'em-wp'),
-            'page_slug'    => function_exists('em_wp_release_hub_menu_slug') ? em_wp_release_hub_menu_slug() : 'em-wp-releases',
+            'page_slug'    => function_exists('em_wp_release_page_slug') ? em_wp_release_page_slug() : 'em-wp-releases',
             'preview_zone' => 'section_release',
             'accent_color' => '#b8956a',
         ],
@@ -243,6 +243,214 @@ function em_wp_admin_rubrique_editing_page_description_html(string $module_slug)
 }
 
 /**
+ * Indique si la barre d'onglets Rubriques doit s'afficher (contexte template actif).
+ */
+function em_wp_admin_rubrique_should_show_nav(string $page_slug = ''): bool
+{
+    if (!function_exists('em_wp_admin_has_template_context') || !em_wp_admin_has_template_context()) {
+        return false;
+    }
+
+    if ($page_slug === '') {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+    }
+
+    if ($page_slug === '') {
+        return false;
+    }
+
+    if ($page_slug === em_wp_admin_rubriques_page_slug()) {
+        return true;
+    }
+
+    foreach (em_wp_admin_site_rubrique_definitions() as $module_slug => $definition) {
+        unset($definition);
+
+        if (in_array($page_slug, em_wp_admin_rubrique_module_admin_page_slugs($module_slug), true)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Définitions des onglets Rubriques (slug module => page admin).
+ *
+ * @return array<string, array{menu_title:string,page_slug:string}>
+ */
+function em_wp_admin_rubrique_nav_tab_definitions(): array
+{
+    $tabs = [];
+
+    foreach (em_wp_admin_site_rubrique_definitions() as $module_slug => $definition) {
+        $page_slug = em_wp_admin_site_rubrique_entry_page_slug($module_slug);
+
+        if ($page_slug === '') {
+            continue;
+        }
+
+        $tabs[$module_slug] = [
+            'menu_title' => (string) ($definition['menu_title'] ?? $definition['label'] ?? $module_slug),
+            'page_slug'  => $page_slug,
+        ];
+    }
+
+    return $tabs;
+}
+
+/**
+ * Module rubrique actif pour la page admin courante (vide = sommaire Liste).
+ */
+function em_wp_admin_rubrique_resolve_active_module(string $module_slug = ''): string
+{
+    $module_slug = sanitize_key($module_slug);
+
+    if ($module_slug !== '') {
+        return $module_slug;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+
+    if ($page_slug === '' || $page_slug === em_wp_admin_rubriques_page_slug()) {
+        return '';
+    }
+
+    foreach (em_wp_admin_site_rubrique_definitions() as $slug => $definition) {
+        unset($definition);
+
+        if (in_array($page_slug, em_wp_admin_rubrique_module_admin_page_slugs($slug), true)) {
+            return (string) $slug;
+        }
+    }
+
+    return '';
+}
+
+/**
+ * Charge le CSS des onglets Rubriques (réutilise les pastilles catalogue).
+ */
+function em_wp_admin_rubrique_enqueue_nav_assets(string $page_slug = ''): void
+{
+    if (!em_wp_admin_rubrique_should_show_nav($page_slug)) {
+        return;
+    }
+
+    wp_enqueue_style(
+        'em-wp-admin-rubrique-nav',
+        get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
+        ['em-wp-admin-module-common'],
+        em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
+    );
+}
+
+/**
+ * Variables CSS inline pour un onglet rubrique (Couleurs Rubrique).
+ */
+function em_wp_admin_rubrique_tab_style_attr(string $module_slug): string
+{
+    $colors = function_exists('em_wp_admin_module_style_colors_for_preview')
+        ? em_wp_admin_module_style_colors_for_preview($module_slug)
+        : ['background' => '#100421', 'text' => '#ffffff'];
+
+    return sprintf(
+        '--em-rubrique-accent:%1$s;--em-rubrique-text:%2$s;',
+        esc_attr((string) ($colors['background'] ?? '#100421')),
+        esc_attr((string) ($colors['text'] ?? '#ffffff'))
+    );
+}
+
+/**
+ * Navbar horizontale Rubriques (couleurs par rubrique).
+ *
+ * @param array<string, array{menu_title:string,page_slug:string}> $tabs
+ */
+function em_wp_admin_rubrique_render_edit_navbar(
+    array $tabs,
+    string $active_module_slug,
+    string $list_page_slug
+): void {
+    $active_module_slug = sanitize_key($active_module_slug);
+    $list_page_slug = sanitize_key($list_page_slug);
+    $list_tab_label = __('Liste', 'em-wp');
+
+    if ($tabs === [] && $list_page_slug === '') {
+        return;
+    }
+
+    $rubrique_definitions = em_wp_admin_site_rubrique_definitions();
+    ?>
+    <nav class="em-wp-catalog-edit__nav em-wp-rubrique-edit__nav" aria-label="<?php echo esc_attr__('Navigation Rubriques', 'em-wp'); ?>">
+        <ul class="em-wp-catalog-edit__nav-list">
+            <?php if ($list_page_slug !== '') {
+                $list_url = admin_url('admin.php?page=' . $list_page_slug);
+                $is_list_active = $active_module_slug === '';
+                ?>
+                <li class="em-wp-catalog-edit__nav-item<?php echo $is_list_active ? ' is-active' : ''; ?>">
+                    <a
+                        class="em-wp-catalog-edit__nav-link em-wp-catalog-edit__nav-link--list"
+                        href="<?php echo esc_url($list_url); ?>"
+                        aria-label="<?php echo esc_attr($list_tab_label); ?>"
+                        <?php echo $is_list_active ? ' aria-current="page"' : ''; ?>
+                    >
+                        <i class="fa-solid fa-list-ol em-wp-catalog-edit__nav-icon" aria-hidden="true"></i>
+                    </a>
+                </li>
+            <?php } ?>
+            <?php foreach ($tabs as $module_slug => $definition) {
+                $page_slug = (string) ($definition['page_slug'] ?? '');
+
+                if ($page_slug === '') {
+                    continue;
+                }
+
+                $label = (string) ($definition['menu_title'] ?? $module_slug);
+                $is_active = $active_module_slug === (string) $module_slug;
+                $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+                $preview_zone = (string) ($rubrique_definitions[(string) $module_slug]['preview_zone'] ?? '');
+                ?>
+                <li class="em-wp-catalog-edit__nav-item<?php echo $is_active ? ' is-active' : ''; ?>">
+                    <a
+                        class="em-wp-catalog-edit__nav-link"
+                        href="<?php echo esc_url($item_url); ?>"
+                        style="<?php echo esc_attr(em_wp_admin_rubrique_tab_style_attr((string) $module_slug)); ?>"
+                        <?php if ($preview_zone !== '') { ?>
+                            data-preview-zone="<?php echo esc_attr($preview_zone); ?>"
+                        <?php } ?>
+                        <?php echo $is_active ? ' aria-current="page"' : ''; ?>
+                    >
+                        <?php echo esc_html($label); ?>
+                    </a>
+                </li>
+            <?php } ?>
+        </ul>
+    </nav>
+    <?php
+}
+
+/**
+ * Onglets Liste + rubriques (TOP-BAR, HEADER, STREAM…).
+ */
+function em_wp_admin_rubrique_render_entry_tabs(string $active_module_slug = ''): void
+{
+    $tabs = em_wp_admin_rubrique_nav_tab_definitions();
+
+    if ($tabs === []) {
+        return;
+    }
+
+    em_wp_admin_rubrique_render_edit_navbar(
+        $tabs,
+        em_wp_admin_rubrique_resolve_active_module($active_module_slug),
+        em_wp_admin_rubriques_page_slug()
+    );
+
+    em_wp_admin_hub_sticky_head_close();
+}
+
+/**
  * En-tête hub (Hello + bandeau template + intro) pour une page rubrique en édition.
  */
 function em_wp_admin_rubrique_render_editing_page_header(string $module_slug): void
@@ -252,10 +460,16 @@ function em_wp_admin_rubrique_render_editing_page_header(string $module_slug): v
     }
 
     em_wp_admin_hub_render_sommaire_header(
-        em_wp_admin_rubrique_editing_page_description_html($module_slug),
+        '',
         'dashicons-admin-page',
+        false,
+        true,
+        null,
+        null,
         true
     );
+
+    em_wp_admin_rubrique_render_entry_tabs($module_slug);
 }
 
 /**

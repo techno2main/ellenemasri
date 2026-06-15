@@ -52,6 +52,7 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
     $theme_uri = get_template_directory_uri();
 
     em_wp_admin_hub_cards_enqueue_assets();
+    em_wp_admin_rubrique_enqueue_nav_assets($page_slug);
 
     if (!em_wp_admin_has_template_context()) {
         return;
@@ -107,3 +108,17 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
     );
 }
 add_action('admin_enqueue_scripts', 'em_wp_admin_rubriques_enqueue');
+
+/**
+ * Onglets Rubriques sur les pages d'édition (TOP-BAR, HEADER, STREAM…).
+ */
+function em_wp_admin_rubrique_modules_nav_enqueue(string $hook_suffix): void
+{
+    unset($hook_suffix);
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+
+    em_wp_admin_rubrique_enqueue_nav_assets($page_slug);
+}
+add_action('admin_enqueue_scripts', 'em_wp_admin_rubrique_modules_nav_enqueue', 20);

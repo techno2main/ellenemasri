@@ -28,14 +28,8 @@ function em_wp_admin_render_rubriques_page(): void
     ?>
     <div class="wrap em-wp-rubriques-admin em-wp-admin-module em-wp-hub-sommaire">
         <?php
-        em_wp_admin_hub_render_sommaire_header(
-            sprintf(
-                /* translators: %s: template label */
-                __('Choisis une rubrique à configurer. Tu édites le template %s.', 'em-wp'),
-                $editing_template_label
-            ),
-            'dashicons-admin-page'
-        );
+        em_wp_admin_hub_render_sommaire_header('', 'dashicons-admin-page', false, true, null, null, true);
+        em_wp_admin_rubrique_render_entry_tabs('');
         ?>
 
         <div class="em-wp-rubriques-admin__layout">
@@ -61,9 +55,6 @@ function em_wp_admin_render_rubriques_page(): void
                         ?></p>
                         <p class="em-wp-rubriques-admin__map-hint">
                             <?php esc_html_e('Survole ou clique une zone pour ouvrir la rubrique.', 'em-wp'); ?><br>
-                            <?php esc_html_e('Tu peux afficher ou masquer chaque rubrique via l’icône œil.', 'em-wp'); ?><br>
-                            <?php esc_html_e('Glisse les sections pour changer leur ordre.', 'em-wp'); ?><br>
-                            <?php esc_html_e('HEADER : aperçu structurel du Hero et/ou Slider configurés pour ce template.', 'em-wp'); ?>
                         </p>
                         <p class="em-wp-rubriques-admin__sort-status" id="em-wp-rubriques-sort-status" aria-live="polite" hidden></p>
 

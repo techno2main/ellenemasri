@@ -24,6 +24,7 @@ function em_wp_admin_rubriques_render_list_item(string $module_slug, array $defi
         ? em_wp_admin_module_style_colors_for_preview($module_slug)
         : ['background' => (string) ($definition['accent_color'] ?? '#646970'), 'text' => '#ffffff'];
     $accent_color = (string) $preview_style['background'];
+    $text_color = (string) $preview_style['text'];
 
     $is_coming_soon = !empty($definition['coming_soon']);
     $is_sortable = em_wp_site_rubrique_is_reorderable($module_slug);
@@ -66,7 +67,7 @@ function em_wp_admin_rubriques_render_list_item(string $module_slug, array $defi
             <a
                 class="em-wp-rubriques-admin__list-link<?php echo $is_coming_soon ? ' is-coming-soon' : ''; ?>"
                 href="<?php echo esc_url($item_url); ?>"
-                style="--em-rubrique-accent: <?php echo esc_attr($accent_color); ?>"
+                style="--em-rubrique-accent: <?php echo esc_attr($accent_color); ?>; --em-rubrique-text: <?php echo esc_attr($text_color); ?>"
                 <?php if ($preview_zone !== '') { ?>
                     data-preview-zone="<?php echo esc_attr($preview_zone); ?>"
                 <?php } ?>
@@ -82,10 +83,6 @@ function em_wp_admin_rubriques_render_list_item(string $module_slug, array $defi
                     <?php if ($description !== '') { ?>
                         <span class="em-wp-rubriques-admin__list-desc"><?php echo esc_html($description); ?></span>
                     <?php } ?>
-                </span>
-
-                <span class="em-wp-rubriques-admin__list-icon" aria-hidden="true">
-                    <i class="fa-solid fa-chevron-down"></i>
                 </span>
             </a>
         </div>

@@ -1,14 +1,16 @@
 (function () {
+    var root = document.querySelector('.em-wp-rubriques-admin');
     var map = document.getElementById('em-wp-admin-landing-map');
     var layout = document.querySelector('.em-wp-rubriques-admin__layout');
 
-    if (!map || !layout) {
+    if (!root || !map || !layout) {
         return;
     }
 
-    var listLinks = document.querySelectorAll('.em-wp-rubriques-admin__list-link[data-preview-zone]');
+    var listLinks = root.querySelectorAll('.em-wp-rubriques-admin__list-link[data-preview-zone]');
+    var navLinks = root.querySelectorAll('.em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-link[data-preview-zone]');
     var mapZones = map.querySelectorAll('[data-preview-zone]');
-    var interactiveTargets = layout.querySelectorAll('[data-preview-zone]');
+    var interactiveTargets = root.querySelectorAll('[data-preview-zone]');
     var headerGroups = map.querySelectorAll('.em-wp-admin-landing-map__header-group');
 
     function setActiveZone(zone) {
@@ -21,6 +23,10 @@
         });
 
         listLinks.forEach(function (link) {
+            link.classList.toggle('is-preview-active', zone !== '' && link.getAttribute('data-preview-zone') === zone);
+        });
+
+        navLinks.forEach(function (link) {
             link.classList.toggle('is-preview-active', zone !== '' && link.getAttribute('data-preview-zone') === zone);
         });
 
@@ -39,12 +45,12 @@
         });
     });
 
-    layout.addEventListener('mouseleave', function () {
+    root.addEventListener('mouseleave', function () {
         setActiveZone('');
     });
 
-    layout.addEventListener('focusout', function (event) {
-        if (!layout.contains(event.relatedTarget)) {
+    root.addEventListener('focusout', function (event) {
+        if (!root.contains(event.relatedTarget)) {
             setActiveZone('');
         }
     });
