@@ -295,6 +295,14 @@ function em_wp_admin_templates_enqueue(): void
         ['em-wp-admin-module-common'],
         em_wp_admin_asset_version('assets/admin/css/template/list-page.css')
     );
+
+    wp_enqueue_script(
+        'em-wp-admin-template-create-deeplink',
+        get_template_directory_uri() . '/assets/admin/js/template/template-create-deeplink.js',
+        [],
+        em_wp_admin_asset_version('assets/admin/js/template/template-create-deeplink.js'),
+        true
+    );
 }
 add_action('admin_enqueue_scripts', 'em_wp_admin_templates_enqueue');
 
@@ -452,7 +460,7 @@ function em_wp_admin_render_templates_page(): void
             </section>
 
             <?php if ($can_manage) { ?>
-                <section class="em-wp-templates-admin__panel em-wp-templates-admin__panel--create">
+                <section class="em-wp-templates-admin__panel em-wp-templates-admin__panel--create" id="em-wp-template-create-panel">
                     <h2><?php esc_html_e('Nouveau template', 'em-wp'); ?></h2>
                     <form method="post" class="em-wp-templates-admin__create-form">
                         <?php wp_nonce_field('em_wp_template_create'); ?>

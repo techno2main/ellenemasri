@@ -33,12 +33,17 @@ function em_wp_admin_dashboard_render_row_catalogues(): void
                 <?php em_wp_admin_dashboard_render_catalog_modules_badge(); ?>
             </section>
 
-            <section class="em-wp-hub__card em-wp-hub__card--disabled">
+            <section class="em-wp-hub__card" data-dashboard-section="catalogues-create">
                 <header class="em-wp-hub__card-header">
                     <div class="em-wp-hub__card-heading">
                         <?php em_wp_admin_dashboard_render_card_title(__('Nouveau Catalogue', 'em-wp'), 'catalogues'); ?>
                     </div>
-                    <?php em_wp_admin_dashboard_render_card_disabled_gear(); ?>
+                    <?php
+                    em_wp_admin_dashboard_render_card_create_link(
+                        em_wp_admin_dashboard_new_catalog_admin_url(),
+                        __('Créer un catalogue', 'em-wp')
+                    );
+                    ?>
                 </header>
                 <p class="em-wp-hub__card-desc">
                     <?php esc_html_e('Crée un nouveau catalogue réutilisable (Hero, Slider, Vidéo…).', 'em-wp'); ?>

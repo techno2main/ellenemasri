@@ -10,6 +10,43 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * URL admin — ouvrir le panneau « Nouveau catalogue » sur le hub Catalogues.
+ */
+function em_wp_admin_dashboard_new_catalog_admin_url(): string
+{
+    if (!function_exists('em_wp_catalog_parent_page_url')) {
+        return '';
+    }
+
+    return add_query_arg('em_wp_open', 'catalog-create', em_wp_catalog_parent_page_url());
+}
+
+/**
+ * URL admin — formulaire « Nouveau template ».
+ */
+function em_wp_admin_dashboard_new_template_admin_url(): string
+{
+    if (!function_exists('em_wp_admin_templates_page_url')) {
+        return '';
+    }
+
+    return add_query_arg('em_wp_open', 'template-create', em_wp_admin_templates_page_url());
+}
+
+/**
+ * Bouton + actif (cartes « Nouveau … » Accueil).
+ */
+function em_wp_admin_dashboard_render_card_create_link(string $url, string $accessible_label): void
+{
+    if ($url === '') {
+        em_wp_admin_dashboard_render_card_disabled_gear();
+        return;
+    }
+
+    em_wp_admin_hub_render_action_link($url, '', 'dashicons-plus-alt2', true, $accessible_label);
+}
+
+/**
  * Icônes dashicons des boutons Accueil (alignées sur le menu admin).
  *
  * @return array<string, string>

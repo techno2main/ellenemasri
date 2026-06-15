@@ -41,5 +41,21 @@
         if (cancel) {
             cancel.addEventListener('click', closePanel);
         }
+
+        var params = new URLSearchParams(window.location.search);
+
+        if (params.get('em_wp_open') === 'catalog-create') {
+            openPanel();
+            params.delete('em_wp_open');
+
+            if (window.history && window.history.replaceState) {
+                var query = params.toString();
+                window.history.replaceState(
+                    null,
+                    '',
+                    window.location.pathname + (query ? '?' + query : '') + window.location.hash
+                );
+            }
+        }
     });
 })();
