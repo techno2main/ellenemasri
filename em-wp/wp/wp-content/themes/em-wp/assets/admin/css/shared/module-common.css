@@ -730,30 +730,80 @@
 .em-wp-admin-confirm__backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(16, 4, 33, 0.62);
 }
 
 .em-wp-admin-confirm__dialog {
     position: relative;
-    width: min(420px, 100%);
+    width: min(460px, 100%);
     background: #fff;
-    border: 1px solid #dcdcde;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
-    padding: 20px 22px 18px;
+    border: 1px solid #d8dee6;
+    border-radius: 10px;
+    box-shadow: 0 16px 48px rgba(16, 4, 33, 0.22);
+    overflow: hidden;
+}
+
+.em-wp-admin-confirm__head {
+    padding: 14px 20px;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.em-wp-admin-confirm__title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.em-wp-admin-confirm__body {
+    padding: 20px 22px 0;
 }
 
 .em-wp-admin-confirm__message {
-    margin: 0 0 18px;
+    margin: 0 0 16px;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.55;
     color: #1d2327;
+}
+
+.em-wp-admin-confirm__acknowledge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid color-mix(in srgb, #751820 22%, #dcdcde);
+    border-radius: 8px;
+    background: color-mix(in srgb, #751820 5%, #ffffff);
+    cursor: pointer;
+}
+
+.em-wp-admin-confirm__acknowledge[hidden] {
+    display: none !important;
+}
+
+.em-wp-admin-confirm__ack-checkbox {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #751820;
+}
+
+.em-wp-admin-confirm__ack-text {
+    font-size: 13px;
+    line-height: 1.45;
+    color: #4e080e;
 }
 
 .em-wp-admin-confirm__actions {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
+    padding: 0 22px 18px;
 }
 
 .em-wp-admin-confirm__actions .button {
@@ -764,6 +814,11 @@
     font-weight: 600;
     line-height: 1;
     box-shadow: none;
+}
+
+.em-wp-admin-confirm__actions .button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 .em-wp-admin-confirm__actions .em-wp-admin-confirm__cancel.button-secondary {
@@ -800,19 +855,42 @@
         0 4px 12px rgba(78, 8, 14, 0.34);
 }
 
+.em-wp-admin-confirm__actions .em-wp-admin-confirm__confirm.button-primary:disabled:hover,
+.em-wp-admin-confirm__actions .em-wp-admin-confirm__confirm.button-primary:disabled:focus {
+    border-color: #4e080e;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.18) inset,
+        0 2px 8px rgba(78, 8, 14, 0.28);
+}
+
 .em-wp-admin-confirm__actions .em-wp-admin-confirm__confirm.button-link-delete {
-    border-color: transparent;
-    background: transparent;
-    color: #b32d2e;
-    box-shadow: none;
+    border-color: #4e080e;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.18) inset,
+        0 2px 8px rgba(78, 8, 14, 0.28);
 }
 
 .em-wp-admin-confirm__actions .em-wp-admin-confirm__confirm.button-link-delete:hover,
 .em-wp-admin-confirm__actions .em-wp-admin-confirm__confirm.button-link-delete:focus {
-    border-color: transparent;
-    background: rgba(179, 45, 46, 0.08);
-    color: #8a2424;
-    box-shadow: none;
+    border-color: #3d060b;
+    background: linear-gradient(180deg, #651620 0%, #3d060b 100%);
+    color: #ffffff;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.14) inset,
+        0 4px 12px rgba(78, 8, 14, 0.34);
+}
+
+.em-wp-admin-confirm__dialog.is-danger {
+    border-color: color-mix(in srgb, #751820 40%, #dcdcde);
+    box-shadow: 0 16px 48px rgba(117, 24, 32, 0.22);
+}
+
+.em-wp-admin-confirm__dialog.is-danger .em-wp-admin-confirm__head {
+    background: linear-gradient(180deg, #8b1c26 0%, #4e080e 100%);
 }
 
 body.em-wp-admin-confirm-open {
@@ -1940,6 +2018,47 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
     font-weight: 400;
     color: #646970;
     line-height: 1.4;
+}
+
+.em-wp-rubriques-admin__remove-button {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    align-self: center;
+    margin: 0 0 0 6px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    color: #d63638;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    transition: color 0.15s ease;
+}
+
+.em-wp-rubriques-admin__remove-button:hover,
+.em-wp-rubriques-admin__remove-button:focus {
+    background: transparent;
+    color: #a02828;
+    outline: none;
+}
+
+.em-wp-rubriques-admin__remove-button:focus-visible {
+    outline: 2px solid #d63638;
+    outline-offset: 2px;
+}
+
+.em-wp-rubriques-admin__list-item.has-remove .em-wp-rubriques-admin__list-link {
+    border-radius: 4px;
+}
+
+.em-wp-rubriques-admin__list-item.is-sortable.has-remove .em-wp-rubriques-admin__list-link {
+    border-radius: 0 4px 4px 0;
 }
 
 .em-wp-rubrique-soon__hero {

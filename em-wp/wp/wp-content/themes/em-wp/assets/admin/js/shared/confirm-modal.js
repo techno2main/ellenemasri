@@ -2,7 +2,12 @@
     'use strict';
 
     var modal = null;
+    var titleEl = null;
+    var headEl = null;
     var messageEl = null;
+    var acknowledgeRow = null;
+    var acknowledgeCheckbox = null;
+    var acknowledgeText = null;
     var confirmBtn = null;
     var cancelBtn = null;
     var resolveFn = null;
@@ -17,8 +22,17 @@
         modal.hidden = true;
         modal.innerHTML =
             '<div class="em-wp-admin-confirm__backdrop" data-em-wp-confirm-dismiss></div>' +
-            '<div class="em-wp-admin-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="em-wp-admin-confirm-message">' +
-                '<p id="em-wp-admin-confirm-message" class="em-wp-admin-confirm__message"></p>' +
+            '<div class="em-wp-admin-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="em-wp-admin-confirm-title em-wp-admin-confirm-message">' +
+                '<div class="em-wp-admin-confirm__head" hidden>' +
+                    '<h2 id="em-wp-admin-confirm-title" class="em-wp-admin-confirm__title"></h2>' +
+                '</div>' +
+                '<div class="em-wp-admin-confirm__body">' +
+                    '<p id="em-wp-admin-confirm-message" class="em-wp-admin-confirm__message"></p>' +
+                    '<label class="em-wp-admin-confirm__acknowledge" hidden>' +
+                        '<input type="checkbox" class="em-wp-admin-confirm__ack-checkbox">' +
+                        '<span class="em-wp-admin-confirm__ack-text"></span>' +
+                    '</label>' +
+                '</div>' +
                 '<div class="em-wp-admin-confirm__actions">' +
                     '<button type="button" class="button button-secondary em-wp-admin-confirm__cancel">Annuler</button>' +
                     '<button type="button" class="button button-primary em-wp-admin-confirm__confirm">Confirmer</button>' +
@@ -26,13 +40,36 @@
             '</div>';
 
         document.body.appendChild(modal);
+        modal.dialogEl = modal.querySelector('.em-wp-admin-confirm__dialog');
+        headEl = modal.querySelector('.em-wp-admin-confirm__head');
+        titleEl = modal.querySelector('.em-wp-admin-confirm__title');
         messageEl = modal.querySelector('.em-wp-admin-confirm__message');
+        acknowledgeRow = modal.querySelector('.em-wp-admin-confirm__acknowledge');
+        acknowledgeCheckbox = modal.querySelector('.em-wp-admin-confirm__ack-checkbox');
+        acknowledgeText = modal.querySelector('.em-wp-admin-confirm__ack-text');
         confirmBtn = modal.querySelector('.em-wp-admin-confirm__confirm');
         cancelBtn = modal.querySelector('.em-wp-admin-confirm__cancel');
 
         function close(result) {
             modal.hidden = true;
             document.body.classList.remove('em-wp-admin-confirm-open');
+
+            if (acknowledgeCheckbox) {
+                acknowledgeCheckbox.checked = false;
+            }
+
+            if (confirmBtn) {
+                confirmBtn.disabled = false;
+            }
+
+            if (acknowledgeRow) {
+                acknowledgeRow.hidden = true;
+                acknowledgeRow.removeAttribute('data-require-ack');
+            }
+
+            if (acknowledgeText) {
+                acknowledgeText.textContent = '';
+            }
 
             if (resolveFn) {
                 resolveFn(result);
@@ -45,8 +82,26 @@
         });
 
         confirmBtn.addEventListener('click', function () {
+            if (confirmBtn.disabled) {
+                return;
+            }
+
+            if (acknowledgeRow && acknowledgeRow.getAttribute('data-require-ack') === '1' && acknowledgeCheckbox && !acknowledgeCheckbox.checked) {
+                return;
+            }
+
             close(true);
         });
+
+        if (acknowledgeCheckbox) {
+            acknowledgeCheckbox.addEventListener('change', function () {
+                if (!acknowledgeRow || acknowledgeRow.hidden || acknowledgeRow.getAttribute('data-require-ack') !== '1') {
+                    return;
+                }
+
+                confirmBtn.disabled = !acknowledgeCheckbox.checked;
+            });
+        }
 
         modal.addEventListener('click', function (event) {
             if (event.target.matches('[data-em-wp-confirm-dismiss]')) {
@@ -68,8 +123,37 @@
 
         var config = options || {};
         var isAlert = Boolean(config.alert);
+        var title = typeof config.title === 'string' ? config.title.trim() : '';
+        var acknowledgeLabel = typeof config.acknowledgeLabel === 'string' ? config.acknowledgeLabel.trim() : '';
+        var requireAcknowledge = config.requireAcknowledge === true && acknowledgeLabel !== '';
 
         messageEl.textContent = message;
+        messageEl.style.whiteSpace = config.multiline ? 'pre-line' : '';
+
+        if (title !== '') {
+            titleEl.textContent = title;
+            headEl.hidden = false;
+        } else {
+            titleEl.textContent = '';
+            headEl.hidden = true;
+        }
+
+        if (requireAcknowledge) {
+            acknowledgeText.textContent = acknowledgeLabel;
+            acknowledgeRow.hidden = false;
+            acknowledgeRow.setAttribute('data-require-ack', '1');
+            acknowledgeCheckbox.checked = false;
+            confirmBtn.disabled = true;
+        } else {
+            acknowledgeText.textContent = '';
+            acknowledgeRow.hidden = true;
+            acknowledgeRow.removeAttribute('data-require-ack');
+            acknowledgeCheckbox.checked = false;
+            confirmBtn.disabled = false;
+        }
+
+        modal.dialogEl.classList.toggle('is-danger', Boolean(config.danger));
+        modal.dialogEl.classList.toggle('has-title', title !== '');
         confirmBtn.textContent = config.confirmLabel || (isAlert ? 'OK' : 'Confirmer');
         cancelBtn.textContent = config.cancelLabel || 'Annuler';
         cancelBtn.hidden = isAlert;
@@ -91,17 +175,12 @@
         alert: function (message, options) {
             return openModal(message, Object.assign({}, options || {}, { alert: true }));
         },
-        /**
-         * Confirmation standard avant suppression (tous boutons Supprimer admin).
-         *
-         * @param {Function} callback Exécuté uniquement si l'utilisateur confirme.
-         * @param {{message?:string,confirmLabel?:string,cancelLabel?:string}} options
-         */
         beforeDelete: function (callback, options) {
             var config = options || {};
             var message = config.message || 'Confirmer la suppression ?';
 
             return openModal(message, {
+                title: config.title || '',
                 confirmLabel: config.confirmLabel || 'Supprimer',
                 cancelLabel: config.cancelLabel || 'Annuler',
                 confirmClass: config.confirmClass || 'button-link-delete',
@@ -113,17 +192,12 @@
                 return confirmed;
             });
         },
-        /**
-         * Confirmation avant de quitter l'édition template (navigation menu admin).
-         *
-         * @param {Function} callback Exécuté uniquement si l'utilisateur confirme.
-         * @param {{message?:string,confirmLabel?:string,cancelLabel?:string}} options
-         */
         beforeQuitEditing: function (callback, options) {
             var config = options || {};
             var message = config.message || 'Quitter l’édition en cours ?';
 
             return openModal(message, {
+                title: config.title || '',
                 confirmLabel: config.confirmLabel || 'Quitter l’édition',
                 cancelLabel: config.cancelLabel || 'Rester',
             }).then(function (confirmed) {
