@@ -409,6 +409,16 @@
     transform: translateY(-1px);
 }
 
+.em-wp-hub__catalog-entry-link--see-all {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.em-wp-hub__live--entry-links-trimmed .em-wp-hub__live-text {
+    white-space: normal;
+}
+
 .em-wp-hub__entry-links-prefix {
     font-weight: 400;
     color: #3c434a;
@@ -594,12 +604,114 @@
     gap: 10px;
 }
 
+.em-wp-hub__card-header-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
 .em-wp-hub__card-heading {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     min-width: 0;
     flex: 1;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card-title {
+    gap: 5px;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card-title-icon {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card-name-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    background: transparent;
+    color: #1d2327;
+    cursor: pointer;
+    transition:
+        color 0.15s ease,
+        background 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card-name-edit .fa-solid {
+    font-size: 9px;
+    line-height: 1;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card-name-edit:hover,
+.em-wp-catalog-sommaire .em-wp-hub__card-name-edit:focus-visible {
+    color: #4e080e;
+    background: color-mix(in srgb, #751820 10%, #ffffff);
+    box-shadow: 0 0 0 1px color-mix(in srgb, #751820 18%, transparent);
+    outline: none;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card-name-edit[aria-expanded="true"] {
+    color: #4e080e;
+    background: color-mix(in srgb, #751820 14%, #ffffff);
+    box-shadow: 0 0 0 1px color-mix(in srgb, #751820 24%, transparent);
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__action--catalog-open {
+    min-height: 28px;
+    padding: 4px 10px;
+    border: 1px solid color-mix(in srgb, #751820 28%, #dcdcde);
+    border-radius: 999px;
+    background: color-mix(in srgb, #751820 6%, #ffffff);
+    color: #4e080e;
+    text-decoration: none;
+    box-shadow: none;
+    flex-shrink: 0;
+    transition:
+        color 0.15s ease,
+        background 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__action--catalog-open .em-wp-hub__action-inner {
+    gap: 6px;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__action--catalog-open .fa-solid {
+    font-size: 12px;
+    line-height: 1;
+    color: inherit;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__action--catalog-open .em-wp-hub__action-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: inherit;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__action--catalog-open:hover,
+.em-wp-catalog-sommaire .em-wp-hub__action--catalog-open:focus-visible {
+    color: #ffffff;
+    border-color: #4e080e;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    box-shadow: 0 1px 4px rgba(78, 8, 14, 0.22);
+    transform: none;
+    outline: none;
 }
 
 .em-wp-hub__card-heading .em-wp-hub__card-title {
@@ -720,6 +832,34 @@
 .em-wp-hub__action--compact.em-wp-hub__action--icon-only:hover .dashicons,
 .em-wp-hub__action--compact.em-wp-hub__action--icon-only:focus .dashicons {
     color: #4e080e;
+}
+
+.em-wp-hub__action--compact.em-wp-hub__action--icon-only.em-wp-hub__action--fa {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+}
+
+.em-wp-hub__action--compact.em-wp-hub__action--icon-only.em-wp-hub__action--fa .fa-solid {
+    font-size: 14px;
+    line-height: 1;
+    color: #b61220;
+    transition: color 0.15s ease;
+}
+
+.em-wp-hub__action--compact.em-wp-hub__action--icon-only.em-wp-hub__action--fa:hover .fa-solid,
+.em-wp-hub__action--compact.em-wp-hub__action--icon-only.em-wp-hub__action--fa:focus-visible .fa-solid {
+    color: #4e080e;
+}
+
+.em-wp-hub__action--compact.em-wp-hub__action--icon-only.em-wp-hub__action--fa:focus-visible {
+    outline: 2px solid rgba(78, 8, 14, 0.24);
+    outline-offset: 1px;
+}
+
+.em-wp-hub__card .em-wp-catalog-sommaire__create-panel--module-edit {
+    margin-top: 10px;
+    max-width: none;
 }
 
 .em-wp-hub__action--compact .dashicons {

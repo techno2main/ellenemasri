@@ -90,12 +90,11 @@ function em_wp_admin_dashboard_render_live_template_badge(string $active_label, 
 function em_wp_admin_dashboard_render_catalog_modules_badge(): void
 {
     $entries = [];
-    $module_slugs = ['heros', 'sliders', 'videos', 'streams', 'socials'];
 
-    if (function_exists('em_wp_catalog_menu_definitions')) {
+    if (function_exists('em_wp_admin_catalog_menu_modules') && function_exists('em_wp_catalog_menu_definitions')) {
         $definitions = em_wp_catalog_menu_definitions();
 
-        foreach ($module_slugs as $module_slug) {
+        foreach (em_wp_admin_catalog_menu_modules() as $module_slug) {
             $definition = $definitions[$module_slug] ?? null;
 
             if (!is_array($definition) || empty($definition['available'])) {
@@ -115,7 +114,17 @@ function em_wp_admin_dashboard_render_catalog_modules_badge(): void
         }
     }
 
-    em_wp_admin_hub_render_catalog_entry_links_badge($entries, '#4e080e');
+    $see_all_url = function_exists('em_wp_catalog_parent_page_url') ? em_wp_catalog_parent_page_url() : '';
+
+    em_wp_admin_hub_render_catalog_entry_links_badge(
+        $entries,
+        '#4e080e',
+        '',
+        false,
+        5,
+        $see_all_url,
+        __('Voir tout', 'em-wp')
+    );
 }
 
 /**

@@ -195,7 +195,7 @@ function em_wp_admin_hub_render_sommaire_header(
 /**
  * Rendu du titre d'une carte (icône dashicons + libellé).
  */
-function em_wp_admin_hub_render_card_title(string $title, string $icon_class): void
+function em_wp_admin_hub_render_card_title(string $title, string $icon_class, ?callable $after_icon = null): void
 {
     $icon_class = trim($icon_class);
 
@@ -205,6 +205,11 @@ function em_wp_admin_hub_render_card_title(string $title, string $icon_class): v
     ?>
     <h2 class="em-wp-hub__card-title">
         <span class="<?php echo esc_attr($icon_class); ?> em-wp-hub__card-title-icon" aria-hidden="true"></span>
+        <?php
+        if ($after_icon !== null) {
+            $after_icon();
+        }
+        ?>
         <span class="em-wp-hub__card-title-label"><?php echo esc_html($title); ?></span>
     </h2>
     <?php
@@ -318,6 +323,154 @@ function em_wp_admin_hub_render_action_link(
 }
 
 /**
+ * Bouton renommer — à gauche du titre de carte catalogue.
+ *
+ * @param array<string, string> $attrs
+ */
+function em_wp_admin_hub_render_catalog_name_edit_button(
+    string $button_id,
+    string $accessible_label,
+    array $attrs = []
+): void {
+    $button_id = sanitize_html_class($button_id);
+    $accessible_label = trim($accessible_label);
+
+    if ($button_id === '') {
+        return;
+    }
+
+    $attr_html = '';
+
+    foreach ($attrs as $key => $value) {
+        $key = sanitize_key((string) $key);
+
+        if ($key === '') {
+            continue;
+        }
+
+        $attr_html .= sprintf(' %s="%s"', esc_attr($key), esc_attr((string) $value));
+    }
+    ?>
+    <button
+        type="button"
+        class="em-wp-hub__card-name-edit"
+        id="<?php echo esc_attr($button_id); ?>"
+        title="<?php echo esc_attr($accessible_label); ?>"
+        <?php echo $accessible_label !== '' ? 'aria-label="' . esc_attr($accessible_label) . '"' : ''; ?>
+        <?php echo $attr_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+    >
+        <i class="fa-solid fa-pen" aria-hidden="true"></i>
+    </button>
+    <?php
+}
+
+/**
+ * Action « Ouvrir le catalogue » — libellé visible + icône dossier.
+ */
+function em_wp_admin_hub_render_catalog_open_action(string $url, string $catalog_label = ''): void
+{
+    $url = trim($url);
+    $catalog_label = trim($catalog_label);
+
+    if ($url === '') {
+        return;
+    }
+
+    $accessible_label = $catalog_label !== ''
+        ? sprintf(
+            /* translators: %s: catalog name */
+            __('Ouvrir le catalogue %s', 'em-wp'),
+            $catalog_label
+        )
+        : __('Ouvrir le catalogue', 'em-wp');
+    ?>
+    <a
+        class="em-wp-hub__action em-wp-hub__action--compact em-wp-hub__action--catalog-open em-wp-hub__action--fa"
+        href="<?php echo esc_url($url); ?>"
+        aria-label="<?php echo esc_attr($accessible_label); ?>"
+        title="<?php echo esc_attr($accessible_label); ?>"
+    >
+        <span class="em-wp-hub__action-inner">
+            <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
+            <span class="em-wp-hub__action-label"><?php esc_html_e('Ouvrir', 'em-wp'); ?></span>
+        </span>
+    </a>
+    <?php
+}
+
+/**
+ * Lien icône Font Awesome compact (cartes hub — voir, éditer…).
+ */
+function em_wp_admin_hub_render_card_fa_action_link(
+    string $url,
+    string $fa_class,
+    string $accessible_label
+): void {
+    $fa_class = trim($fa_class);
+    $accessible_label = trim($accessible_label);
+
+    if ($url === '' || $fa_class === '') {
+        return;
+    }
+    ?>
+    <a
+        class="em-wp-hub__action em-wp-hub__action--compact em-wp-hub__action--icon-only em-wp-hub__action--fa"
+        href="<?php echo esc_url($url); ?>"
+        <?php echo $accessible_label !== '' ? 'aria-label="' . esc_attr($accessible_label) . '"' : ''; ?>
+    >
+        <span class="em-wp-hub__action-inner">
+            <i class="<?php echo esc_attr($fa_class); ?>" aria-hidden="true"></i>
+        </span>
+    </a>
+    <?php
+}
+
+/**
+ * Bouton icône Font Awesome compact (panneau inline, toggle…).
+ *
+ * @param array<string, string> $attrs
+ */
+function em_wp_admin_hub_render_card_fa_action_button(
+    string $button_id,
+    string $fa_class,
+    string $accessible_label,
+    array $attrs = []
+): void {
+    $fa_class = trim($fa_class);
+    $button_id = sanitize_html_class($button_id);
+    $accessible_label = trim($accessible_label);
+
+    if ($fa_class === '' || $button_id === '') {
+        return;
+    }
+
+    $attr_html = '';
+
+    foreach ($attrs as $key => $value) {
+        $key = sanitize_key((string) $key);
+
+        if ($key === '') {
+            continue;
+        }
+
+        $attr_html .= sprintf(' %s="%s"', esc_attr($key), esc_attr((string) $value));
+    }
+    ?>
+    <button
+        type="button"
+        class="em-wp-hub__action em-wp-hub__action--compact em-wp-hub__action--icon-only em-wp-hub__action--fa"
+        id="<?php echo esc_attr($button_id); ?>"
+        <?php echo $accessible_label !== '' ? 'aria-label="' . esc_attr($accessible_label) . '"' : ''; ?>
+        <?php echo $attr_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+    >
+        <span class="em-wp-hub__action-inner">
+            <i class="<?php echo esc_attr($fa_class); ?>" aria-hidden="true"></i>
+        </span>
+    </button>
+    <?php
+}
+
+/**
  * Bouton secondaire désactivé (cartes « Nouveau … », prochaine étape).
  */
 function em_wp_admin_hub_render_disabled_action(string $label, string $icon_class = 'dashicons dashicons-plus-alt2', bool $compact = false): void
@@ -355,16 +508,32 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
     array $entries,
     string $color = '#751820',
     string $prefix = '',
-    bool $uppercase = false
+    bool $uppercase = false,
+    int $max_visible = 0,
+    string $see_all_url = '',
+    string $see_all_label = ''
 ): void {
     if ($entries === []) {
         return;
+    }
+
+    $total_count = count($entries);
+    $see_all_url = trim($see_all_url);
+    $see_all_label = trim($see_all_label);
+    $should_trim = $max_visible > 0 && $total_count > $max_visible && $see_all_url !== '';
+
+    if ($should_trim) {
+        $entries = array_slice($entries, 0, $max_visible);
     }
 
     $classes = 'em-wp-hub__live em-wp-hub__live--in-card em-wp-hub__live--entry-links';
 
     if ($uppercase) {
         $classes .= ' em-wp-hub__live--uppercase';
+    }
+
+    if ($should_trim) {
+        $classes .= ' em-wp-hub__live--entry-links-trimmed';
     }
     ?>
     <p
@@ -390,6 +559,13 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
                     class="em-wp-hub__catalog-entry-link"
                     href="<?php echo esc_url((string) ($entry['url'] ?? '')); ?>"
                 ><?php echo esc_html((string) ($entry['label'] ?? '')); ?></a>
+            <?php } ?>
+            <?php if ($should_trim) { ?>
+                <span class="em-wp-hub__catalog-entry-sep" aria-hidden="true"></span>
+                <a
+                    class="em-wp-hub__catalog-entry-link em-wp-hub__catalog-entry-link--see-all"
+                    href="<?php echo esc_url($see_all_url); ?>"
+                ><?php echo esc_html($see_all_label !== '' ? $see_all_label : __('Voir tout', 'em-wp')); ?></a>
             <?php } ?>
         </span>
     </p>

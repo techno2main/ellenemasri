@@ -72,7 +72,7 @@ function em_wp_catalog_extended_menu_definitions(): array
             'label'       => __('FOOTERS', 'em-wp'),
             'menu_title'  => __('FOOTERS', 'em-wp'),
             'slug'        => em_wp_footer_catalog_hub_menu_slug(),
-            'icon'        => 'dashicons-admin-generic',
+            'icon'        => 'dashicons-table-row-after',
             'available'   => true,
             'description_item'     => __('Footers', 'em-wp'),
             'description_rubrique' => __('FOOTER', 'em-wp'),
@@ -184,7 +184,7 @@ function em_wp_catalog_render_footers_page(): void
         'entries_fn'        => 'em_wp_footer_catalog_entries',
         'notices_fn'        => 'em_wp_footer_catalog_render_admin_notices',
         'catalog_label'     => em_wp_catalog_module_label('footers'),
-        'icon'              => 'dashicons-admin-generic',
+        'icon'              => 'dashicons-table-row-after',
         'type'              => 'footer',
         'section_title'     => __('MES FOOTERS', 'em-wp'),
         'hub_menu_slug'     => 'em_wp_footer_catalog_hub_menu_slug',
@@ -203,6 +203,23 @@ function em_wp_catalog_render_footers_page(): void
 
 /**
  * @param array<string, mixed> $config
+ * @return array<string, array{label?:string,layout?:string}>
+ */
+function em_wp_catalog_resolve_hub_entries(array $config): array
+{
+    $entries_fn = $config['entries_fn'] ?? null;
+
+    if (!is_callable($entries_fn)) {
+        return [];
+    }
+
+    $entries = call_user_func($entries_fn);
+
+    return is_array($entries) ? $entries : [];
+}
+
+/**
+ * @param array<string, mixed> $config
  */
 function em_wp_catalog_render_generic_crud_hub_page(array $config): void
 {
@@ -210,8 +227,7 @@ function em_wp_catalog_render_generic_crud_hub_page(array $config): void
         return;
     }
 
-    $entries_fn = (string) ($config['entries_fn'] ?? '');
-    $entries = ($entries_fn !== '' && function_exists($entries_fn)) ? $entries_fn() : [];
+    $entries = em_wp_catalog_resolve_hub_entries($config);
     ?>
     <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
         <?php
