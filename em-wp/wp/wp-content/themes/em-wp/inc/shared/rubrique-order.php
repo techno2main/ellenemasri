@@ -89,6 +89,10 @@ function em_wp_site_rubrique_visibility_toggle_modules(): array
  */
 function em_wp_site_rubrique_is_reorderable(string $module_slug): bool
 {
+    if (function_exists('em_wp_template_skeleton_is_reorderable') && em_wp_admin_rubrique_is_catalog_linked($module_slug)) {
+        return em_wp_template_skeleton_is_reorderable($module_slug);
+    }
+
     return in_array($module_slug, em_wp_site_rubrique_middle_modules(), true);
 }
 
@@ -97,6 +101,10 @@ function em_wp_site_rubrique_is_reorderable(string $module_slug): bool
  */
 function em_wp_site_rubrique_is_visibility_toggle(string $module_slug): bool
 {
+    if (function_exists('em_wp_admin_rubrique_is_catalog_linked') && em_wp_admin_rubrique_is_catalog_linked($module_slug)) {
+        return true;
+    }
+
     return in_array($module_slug, em_wp_site_rubrique_visibility_toggle_modules(), true);
 }
 
@@ -340,6 +348,22 @@ if (is_admin()) {
             wp_send_json_error(['message' => __('Ordre invalide.', 'em-wp')], 400);
         }
 
+        $template_slug = sanitize_key((string) ($_POST['template_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+        if (
+            $template_slug !== ''
+            && function_exists('em_wp_template_exists')
+            && em_wp_template_exists($template_slug)
+            && function_exists('em_wp_save_template_skeleton_order')
+        ) {
+            $order = em_wp_save_template_skeleton_order($template_slug, $decoded);
+
+            wp_send_json_success([
+                'order'   => $order,
+                'message' => __('Ordre enregistré.', 'em-wp'),
+            ]);
+        }
+
         $order = em_wp_save_site_rubrique_order($decoded);
 
         wp_send_json_success([
@@ -385,6 +409,68 @@ if (is_admin()) {
         ]);
     }
     add_action('wp_ajax_em_wp_save_site_rubrique_visibility', 'em_wp_ajax_save_site_rubrique_visibility');
+
+    /**
+     * AJAX : ajoute une rubrique au squelette du template en édition.
+     */
+    function em_wp_ajax_template_skeleton_add_rubrique(): void
+    {
+        check_ajax_referer('em_wp_rubrique_order', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
+        }
+
+        $template_slug = sanitize_key((string) ($_POST['template_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $rubrique_slug = sanitize_key((string) ($_POST['rubrique_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+        if ($template_slug === '' || $rubrique_slug === '') {
+            wp_send_json_error(['message' => __('Rubrique invalide.', 'em-wp')], 400);
+        }
+
+        if (!function_exists('em_wp_template_skeleton_add_rubrique')
+            || !em_wp_template_skeleton_add_rubrique($template_slug, $rubrique_slug)) {
+            wp_send_json_error(['message' => __('Impossible d\'ajouter cette rubrique.', 'em-wp')], 400);
+        }
+
+        wp_send_json_success([
+            'rubrique_slug' => $rubrique_slug,
+            'message'       => __('Rubrique ajoutée au template.', 'em-wp'),
+            'reload'        => true,
+        ]);
+    }
+    add_action('wp_ajax_em_wp_template_skeleton_add_rubrique', 'em_wp_ajax_template_skeleton_add_rubrique');
+
+    /**
+     * AJAX : retire une rubrique du squelette du template en édition.
+     */
+    function em_wp_ajax_template_skeleton_remove_rubrique(): void
+    {
+        check_ajax_referer('em_wp_rubrique_order', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error(['message' => __('Permission refusée.', 'em-wp')], 403);
+        }
+
+        $template_slug = sanitize_key((string) ($_POST['template_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $rubrique_slug = sanitize_key((string) ($_POST['rubrique_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+        if ($template_slug === '' || $rubrique_slug === '') {
+            wp_send_json_error(['message' => __('Rubrique invalide.', 'em-wp')], 400);
+        }
+
+        if (!function_exists('em_wp_template_skeleton_remove_rubrique')
+            || !em_wp_template_skeleton_remove_rubrique($template_slug, $rubrique_slug)) {
+            wp_send_json_error(['message' => __('Impossible de retirer cette rubrique.', 'em-wp')], 400);
+        }
+
+        wp_send_json_success([
+            'rubrique_slug' => $rubrique_slug,
+            'message'       => __('Rubrique retirée du template.', 'em-wp'),
+            'reload'        => true,
+        ]);
+    }
+    add_action('wp_ajax_em_wp_template_skeleton_remove_rubrique', 'em_wp_ajax_template_skeleton_remove_rubrique');
 
     /**
      * AJAX : layout interne HEADER (hero_left / slider_left) depuis le plan du site.

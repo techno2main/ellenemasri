@@ -15,3 +15,4 @@ require_once __DIR__ . '/option-names.php';
 require_once __DIR__ . '/colors.php';
 require_once __DIR__ . '/visibility.php';
 require_once __DIR__ . '/resolve-options.php';
+require_once __DIR__ . '/plan.php';

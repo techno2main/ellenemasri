@@ -292,5 +292,9 @@ function em_wp_template_delete(string $slug)
         em_wp_set_editing_template_slug(em_wp_get_active_template_slug());
     }
 
+    if (function_exists('em_wp_template_skeleton_delete')) {
+        em_wp_template_skeleton_delete($slug);
+    }
+
     return true;
 }
