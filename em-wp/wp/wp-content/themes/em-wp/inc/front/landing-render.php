@@ -20,6 +20,7 @@ function em_wp_landing_section_anchor_id(string $module_slug): string
         'video'   => 'video',
         'release' => 'release',
         'cta'     => 'cta',
+        'contacts' => 'contact',
         'header'  => 'hero',
         'footer'  => 'footer',
     ];
@@ -74,6 +75,16 @@ function em_wp_landing_module_is_enabled(string $module_slug): bool
 
             return !empty(em_wp_cta_get_options_for_front()['enabled']);
         default:
+            if (function_exists('em_wp_custom_catalog_is_module') && em_wp_custom_catalog_is_module($module_slug)) {
+                if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility($module_slug)) {
+                    return false;
+                }
+
+                if (function_exists('em_wp_custom_catalog_rubrique_get_options_for_front')) {
+                    return !empty(em_wp_custom_catalog_rubrique_get_options_for_front($module_slug)['enabled']);
+                }
+            }
+
             return false;
     }
 }
@@ -87,11 +98,11 @@ function em_wp_landing_build_nav_anchors(): array
 {
     $anchors = [];
 
-    if (!function_exists('em_wp_get_site_rubrique_middle_order')) {
+    if (!function_exists('em_wp_front_get_rubrique_middle_order')) {
         return ['hero', 'stream', 'social', 'footer'];
     }
 
-    foreach (em_wp_get_site_rubrique_middle_order() as $module_slug) {
+    foreach (em_wp_front_get_rubrique_middle_order() as $module_slug) {
         $module_slug = sanitize_key((string) $module_slug);
         if ($module_slug === '' || !em_wp_landing_module_is_enabled($module_slug)) {
             continue;
@@ -151,6 +162,7 @@ function em_wp_landing_rubrique_stub_meta(string $module_slug): array
         'video'   => ['label' => 'VIDEOS', 'accent_color' => '#ca8a04'],
         'release' => ['label' => 'RELEASES', 'accent_color' => '#b8956a'],
         'cta'     => ['label' => 'CTA', 'accent_color' => '#0d9488'],
+        'contacts' => ['label' => 'CONTACT', 'accent_color' => '#64748b'],
         'footer'  => ['label' => 'FOOTER', 'accent_color' => '#100421'],
     ];
 
@@ -222,6 +234,14 @@ function em_wp_render_landing_module(string $module_slug): void
                 em_wp_render_cta();
             }
             break;
+
+        default:
+            if (function_exists('em_wp_custom_catalog_is_module')
+                && em_wp_custom_catalog_is_module($module_slug)
+                && function_exists('em_wp_render_custom_catalog_rubrique')) {
+                em_wp_render_custom_catalog_rubrique($module_slug);
+            }
+            break;
     }
 }
 
@@ -230,7 +250,7 @@ function em_wp_render_landing_module(string $module_slug): void
  */
 function em_wp_render_landing_middle_sections(): void
 {
-    if (!function_exists('em_wp_get_site_rubrique_middle_order')) {
+    if (!function_exists('em_wp_front_get_rubrique_middle_order')) {
         if (function_exists('em_wp_render_header')) {
             em_wp_render_header();
         }
@@ -238,7 +258,7 @@ function em_wp_render_landing_middle_sections(): void
         return;
     }
 
-    foreach (em_wp_get_site_rubrique_middle_order() as $module_slug) {
+    foreach (em_wp_front_get_rubrique_middle_order() as $module_slug) {
         em_wp_render_landing_module((string) $module_slug);
     }
 }

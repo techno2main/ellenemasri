@@ -18,6 +18,7 @@ require_once __DIR__ . '/modules/social/render.php';
 require_once __DIR__ . '/modules/video/render.php';
 require_once __DIR__ . '/modules/release/render.php';
 require_once __DIR__ . '/modules/cta/render.php';
+require_once __DIR__ . '/modules/contacts/render.php';
 require_once __DIR__ . '/modules/footer/render.php';
 require_once __DIR__ . '/template-context.php';
 require_once __DIR__ . '/landing-render.php';
@@ -35,6 +36,7 @@ function em_wp_front_module_slugs(): array
         'video',
         'release',
         'cta',
+        'contacts',
         'footer',
     ];
 }
