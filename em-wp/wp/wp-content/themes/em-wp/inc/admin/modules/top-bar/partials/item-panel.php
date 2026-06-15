@@ -14,9 +14,9 @@ if (!defined('ABSPATH')) {
  *
  * @param array<string, mixed> $item
  */
-function em_wp_top_bar_render_item_panel(string $key, string $title, array $item): void
+function em_wp_top_bar_render_item_panel(string $key, string $title, array $item, ?string $field = null): void
 {
-    $field = em_wp_top_bar_form_option_key();
+    $field = $field ?? em_wp_top_bar_form_option_key();
     $is_hidden = !empty($item['hidden']);
     ?>
     <section class="em-wp-top-bar-panel em-wp-admin-module__panel">

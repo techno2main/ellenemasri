@@ -19,16 +19,33 @@ function em_wp_release_form_option_key(): string
     return 'em_wp_release_options';
 }
 
-function em_wp_release_default_options(): array
+/**
+ * Options rubrique RELEASE par template.
+ *
+ * @return array{enabled:bool,release_slug:string,background_color:string,text_color:string}
+ */
+function em_wp_release_rubrique_default_options(): array
 {
     return [
         'enabled'          => true,
+        'release_slug'     => '',
         'background_color' => '',
         'text_color'       => '',
-        'kicker'           => __('04 / Release', 'em-wp'),
-        'title_left'       => __('The', 'em-wp'),
-        'title_highlight'  => __('credits', 'em-wp'),
-        'cover_image'      => '',
-        'rows'             => [],
+    ];
+}
+
+/**
+ * Options contenu catalogue Release.
+ *
+ * @return array<string, mixed>
+ */
+function em_wp_release_catalog_default_options(): array
+{
+    return [
+        'kicker'          => __('04 / Release', 'em-wp'),
+        'title_left'      => __('The', 'em-wp'),
+        'title_highlight' => __('credits', 'em-wp'),
+        'cover_image'     => '',
+        'rows'            => [],
     ];
 }

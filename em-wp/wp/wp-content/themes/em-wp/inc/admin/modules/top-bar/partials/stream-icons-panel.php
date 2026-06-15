@@ -14,9 +14,9 @@ if (!defined('ABSPATH')) {
  *
  * @param array<string, mixed> $options
  */
-function em_wp_top_bar_render_stream_icons_panel(array $options): void
+function em_wp_top_bar_render_stream_icons_panel(array $options, ?string $field = null): void
 {
-    $field = em_wp_top_bar_form_option_key();
+    $field = $field ?? em_wp_top_bar_form_option_key();
     $is_hidden = !empty($options['stream_icons_hidden']);
     $stream_url = admin_url('admin.php?page=' . (function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-wp-stream'));
     ?>

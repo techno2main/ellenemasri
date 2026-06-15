@@ -14,9 +14,9 @@ if (!defined('ABSPATH')) {
  *
  * @param array<string, mixed> $options
  */
-function em_wp_top_bar_render_logo_panel(array $options): void
+function em_wp_top_bar_render_logo_panel(array $options, ?string $field = null): void
 {
-    $field = em_wp_top_bar_form_option_key();
+    $field = $field ?? em_wp_top_bar_form_option_key();
     $is_hidden = !empty($options['logo_hidden']);
     ?>
     <section class="em-wp-top-bar-panel em-wp-admin-module__panel">

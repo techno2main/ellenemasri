@@ -19,12 +19,19 @@ function em_wp_footer_form_option_key(): string
     return 'em_wp_footer_options';
 }
 
-function em_wp_footer_default_options(): array
+function em_wp_footer_rubrique_default_options(): array
 {
     return [
-        'enabled'             => true,
-        'background_color'    => '',
-        'text_color'          => '',
+        'enabled'          => true,
+        'footer_slug'      => '',
+        'background_color' => '',
+        'text_color'       => '',
+    ];
+}
+
+function em_wp_footer_catalog_default_options(): array
+{
+    return [
         'line1'               => __('© Your Artist Name', 'em-wp'),
         'line2'               => __('Your project tagline.', 'em-wp'),
         'sticky_stream_label' => __('▶ Stream', 'em-wp'),

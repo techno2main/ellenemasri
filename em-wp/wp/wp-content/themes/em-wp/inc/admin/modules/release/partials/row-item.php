@@ -12,9 +12,10 @@ if (!defined('ABSPATH')) {
 /**
  * @param array{key:string,value:string,hidden?:bool} $row
  */
-function em_wp_release_render_row_item(int $index, array $row): void
+function em_wp_release_render_row_item(int $index, array $row, ?string $field = null): void
 {
-    $field_base = em_wp_release_form_option_key() . '[rows][' . $index . ']';
+    $field = $field ?? em_wp_release_form_option_key();
+    $field_base = $field . '[rows][' . $index . ']';
     $is_hidden = !empty($row['hidden']);
     ?>
     <div class="em-wp-release-row-item em-wp-admin-panel-body--row<?php echo $is_hidden ? ' is-row-hidden' : ''; ?>" data-release-row-item>

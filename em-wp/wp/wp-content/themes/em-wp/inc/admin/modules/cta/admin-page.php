@@ -1,6 +1,6 @@
 <?php
 /**
- * Page admin CTA (rendu).
+ * Page admin CTA (rubrique template — sélection catalogue).
  *
  * @package em-wp
  */
@@ -15,22 +15,29 @@ function em_wp_cta_render_admin_page(): void
         return;
     }
 
-    $template_slug = em_wp_cta_admin_template_slug();
-    $template_label = function_exists('em_wp_get_editing_template_label')
-        ? em_wp_get_editing_template_label()
-        : $template_slug;
-    $options = em_wp_cta_get_options($template_slug);
+    $options = em_wp_cta_get_options();
+    $choices = function_exists('em_wp_cta_catalog_choices') ? em_wp_cta_catalog_choices() : [];
+    $selected = sanitize_key((string) ($options['cta_slug'] ?? ''));
+
+    if ($selected !== '' && function_exists('em_wp_cta_normalize_catalog_slug')) {
+        $selected = em_wp_cta_normalize_catalog_slug($selected);
+    }
+
     $style_defaults = em_wp_admin_module_default_style_colors('cta');
     $field = em_wp_cta_form_option_key();
-    $texture_image = trim((string) ($options['texture_image'] ?? ''));
     ?>
-    <div class="wrap em-wp-cta-admin em-wp-admin-module em-wp-hub-sommaire em-wp-admin-module--texture-preview" <?php echo em_wp_admin_module_style_data_attributes_for_module('cta', $field, $options); ?> data-em-admin-texture-field="<?php echo esc_attr($field); ?>[texture_image]" style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars_for_module('cta', $options)); ?>">
+    <div class="wrap em-wp-release-admin em-wp-header-admin em-wp-admin-module em-wp-hub-sommaire" <?php echo em_wp_admin_module_style_data_attributes_for_module('cta', $field, $options); ?> style="<?php echo esc_attr(em_wp_admin_module_style_inline_vars_for_module('cta', $options)); ?>">
         <?php em_wp_admin_render_settings_notices(); ?>
         <?php em_wp_admin_rubrique_render_editing_page_header('cta'); ?>
 
-        <form id="em-wp-cta-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action(em_wp_cta_page_slug())); ?>">
-            <?php em_wp_admin_render_form_save_fields('cta', 'em_wp_cta_save'); ?>
-            <input type="hidden" name="em_wp_template_context" value="<?php echo esc_attr($template_slug); ?>">
+        <form id="em-wp-release-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action(em_wp_cta_page_slug())); ?>">
+            <?php
+            em_wp_admin_render_form_save_fields(
+                'cta',
+                'em_wp_cta_save',
+                ['em_wp_template_context' => em_wp_get_editing_template_slug()]
+            );
+            ?>
 
             <?php em_wp_admin_rubrique_open_section('cta', $options); ?>
             <div class="em-wp-admin-module__panels">
@@ -42,35 +49,26 @@ function em_wp_cta_render_admin_page(): void
                         ['name' => 'text_color', 'label' => __('Couleur du texte', 'em-wp'), 'value' => (string) ($options['text_color'] ?? ''), 'placeholder' => $style_defaults['text']],
                     ],
                     $field,
-                    'em-wp-cta-panel'
+                    'em-wp-release-panel'
                 );
 
-                em_wp_admin_render_module_items_section_title('cta');
-
                 em_wp_admin_render_module_panel(
-                    __('Image de fond (texture)', 'em-wp'),
-                    'em-wp-cta-panel em-wp-cta-texture-panel',
-                    static function () use ($options): void {
-                        em_wp_cta_render_texture_panel_body($options);
+                    __('CTA du catalogue', 'em-wp'),
+                    'em-wp-release-panel',
+                    static function () use ($field, $selected, $choices): void {
+                        ?>
+                        <p class="description"><?php esc_html_e('Choisis la release du catalogue à afficher dans la rubrique CTA de ce template. Édite le contenu dans Catalogues → CTAs.', 'em-wp'); ?></p>
+                        <?php
+                        em_wp_admin_render_catalog_slug_switcher(
+                            $field . '[cta_slug]',
+                            $selected,
+                            $choices,
+                            __('CTA du catalogue', 'em-wp'),
+                            'cta'
+                        );
                     },
-                    'em-wp-admin-panel-body--stack'
-                );
-
-                em_wp_admin_render_module_panel(
-                    __('Contenu', 'em-wp'),
-                    'em-wp-cta-panel',
-                    static function () use ($options): void {
-                        em_wp_cta_render_content_panel_body($options);
-                    },
-                    'em-wp-admin-panel-body--stack'
-                );
-
-                em_wp_admin_render_module_panel(
-                    __('Boutons', 'em-wp'),
-                    'em-wp-cta-panel',
-                    static function () use ($options): void {
-                        em_wp_cta_render_buttons_panel_body($options);
-                    }
+                    'em-wp-admin-panel-body--stack em-wp-header-admin__selection',
+                    true
                 );
                 ?>
             </div>
@@ -81,3 +79,4 @@ function em_wp_cta_render_admin_page(): void
     </div>
     <?php
 }
+
