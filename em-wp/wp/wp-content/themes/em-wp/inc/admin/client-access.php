@@ -211,6 +211,21 @@ function em_wp_limit_admin_bar_for_ellene_admin($wp_admin_bar): void
 add_action('admin_bar_menu', 'em_wp_limit_admin_bar_for_ellene_admin', 999);
 
 /**
+ * Barre admin : retirer le préfixe « Howdy, » du menu compte (conserve l'avatar).
+ */
+function em_wp_strip_admin_bar_howdy($wp_admin_bar): void
+{
+    $node = $wp_admin_bar->get_node('my-account');
+    if (!$node || !is_string($node->title) || $node->title === '') {
+        return;
+    }
+
+    $node->title = preg_replace('#^(?:Howdy|Bonjour),\s*#iu', '', $node->title);
+    $wp_admin_bar->add_node($node);
+}
+add_action('admin_bar_menu', 'em_wp_strip_admin_bar_howdy', 9999);
+
+/**
  * Filet CSS admin (menus résiduels + barre du haut).
  */
 function em_wp_ellene_admin_access_fallback_css(): void

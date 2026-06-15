@@ -3,8 +3,8 @@ _sources/
 .copilot-snapshots/
 .github/
 docker/ellene-local/
+em-wp/docker/
 website/
-docker/
 
 # Logs
 logs
