@@ -9,6 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/sommaire-catalog-extensions.php';
+
 /**
  * Slug page admin parent Catalogues.
  */
@@ -94,6 +96,10 @@ function em_wp_catalog_registered_hub_menu_slugs(): array
         em_wp_video_catalog_hub_menu_slug(),
         em_wp_stream_catalog_hub_menu_slug(),
         em_wp_social_catalog_hub_menu_slug(),
+        em_wp_top_bar_catalog_hub_menu_slug(),
+        em_wp_release_catalog_hub_menu_slug(),
+        em_wp_cta_catalog_hub_menu_slug(),
+        em_wp_footer_catalog_hub_menu_slug(),
     ]));
 }
 
@@ -104,14 +110,14 @@ function em_wp_catalog_registered_hub_menu_slugs(): array
  */
 function em_wp_catalog_menu_definitions(): array
 {
-    return [
+    $definitions = [
         'heros' => [
             'label'       => __('HEROS', 'em-wp'),
             'menu_title'  => __('HEROS', 'em-wp'),
             'slug'        => em_wp_hero_hub_menu_slug(),
             'icon'        => 'dashicons-format-gallery',
             'available'   => true,
-            'description' => __('Liste des Heros réutilisables dans tes rubriques HEADER.', 'em-wp'),
+            'description' => __('Liste des Heros réutilisables dans la rubrique HEADER.', 'em-wp'),
             'url'         => em_wp_hero_hub_page_url(),
             'callback'    => 'em_wp_catalog_render_heros_page',
         ],
@@ -121,7 +127,7 @@ function em_wp_catalog_menu_definitions(): array
             'slug'        => em_wp_slider_hub_menu_slug(),
             'icon'        => 'dashicons-slides',
             'available'   => true,
-            'description' => __('Liste des Sliders réutilisables dans tes rubriques HEADER.', 'em-wp'),
+            'description' => __('Liste des Sliders réutilisables dans la rubrique HEADER.', 'em-wp'),
             'url'         => em_wp_slider_hub_page_url(),
             'callback'    => 'em_wp_catalog_render_sliders_page',
         ],
@@ -130,9 +136,9 @@ function em_wp_catalog_menu_definitions(): array
             'menu_title'  => __('VIDÉOS', 'em-wp'),
             'slug'        => em_wp_video_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-video-alt3',
-            'available'   => false,
-            'description' => __('Liste des Vidéos réutilisables dans tes rubriques VIDEOS.', 'em-wp'),
-            'url'         => '',
+            'available'   => true,
+            'description' => __('Liste des Vidéos réutilisables dans la rubrique VIDEOS.', 'em-wp'),
+            'url'         => function_exists('em_wp_video_hub_page_url') ? em_wp_video_hub_page_url() : admin_url('admin.php?page=' . em_wp_video_catalog_hub_menu_slug()),
             'callback'    => 'em_wp_catalog_render_videos_page',
         ],
         'streams' => [
@@ -140,9 +146,9 @@ function em_wp_catalog_menu_definitions(): array
             'menu_title'  => __('STREAMS', 'em-wp'),
             'slug'        => em_wp_stream_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-playlist-audio',
-            'available'   => false,
-            'description' => __('Liste des Streams réutilisables dans tes rubriques STREAM.', 'em-wp'),
-            'url'         => '',
+            'available'   => true,
+            'description' => __('Liste des Streams réutilisables dans la rubrique STREAM.', 'em-wp'),
+            'url'         => function_exists('em_wp_stream_hub_page_url') ? em_wp_stream_hub_page_url() : admin_url('admin.php?page=' . em_wp_stream_catalog_hub_menu_slug()),
             'callback'    => 'em_wp_catalog_render_streams_page',
         ],
         'socials' => [
@@ -150,12 +156,18 @@ function em_wp_catalog_menu_definitions(): array
             'menu_title'  => __('SOCIALS', 'em-wp'),
             'slug'        => em_wp_social_catalog_hub_menu_slug(),
             'icon'        => 'dashicons-share',
-            'available'   => false,
-            'description' => __('Catalogues social réutilisables dans tes rubriques SOCIAL.', 'em-wp'),
-            'url'         => '',
+            'available'   => true,
+            'description' => __('Catalogues social réutilisables dans la rubrique SOCIAL.', 'em-wp'),
+            'url'         => function_exists('em_wp_social_hub_page_url') ? em_wp_social_hub_page_url() : admin_url('admin.php?page=' . em_wp_social_catalog_hub_menu_slug()),
             'callback'    => 'em_wp_catalog_render_socials_page',
         ],
     ];
+
+    if (function_exists('em_wp_catalog_extended_menu_definitions')) {
+        $definitions = array_merge($definitions, em_wp_catalog_extended_menu_definitions());
+    }
+
+    return $definitions;
 }
 
 /**
@@ -199,6 +211,61 @@ function em_wp_catalog_sidebar_entry_definitions(): array
         }
     }
 
+    if (function_exists('em_wp_video_style_definitions')) {
+        foreach (em_wp_video_style_definitions() as $catalog_slug => $definition) {
+            $page_slug = (string) ($definition['page_slug'] ?? '');
+
+            if ($page_slug === '') {
+                continue;
+            }
+
+            $entries[$page_slug] = [
+                'label'     => (string) ($definition['menu_title'] ?? $definition['label'] ?? $catalog_slug),
+                'module'    => 'videos',
+                'page_slug' => $page_slug,
+            ];
+        }
+    }
+
+    if (function_exists('em_wp_stream_style_definitions')) {
+        foreach (em_wp_stream_style_definitions() as $catalog_slug => $definition) {
+            $page_slug = (string) ($definition['page_slug'] ?? '');
+
+            if ($page_slug === '') {
+                continue;
+            }
+
+            $entries[$page_slug] = [
+                'label'     => (string) ($definition['menu_title'] ?? $definition['label'] ?? $catalog_slug),
+                'module'    => 'streams',
+                'page_slug' => $page_slug,
+            ];
+        }
+    }
+
+    if (function_exists('em_wp_social_style_definitions')) {
+        foreach (em_wp_social_style_definitions() as $catalog_slug => $definition) {
+            $page_slug = (string) ($definition['page_slug'] ?? '');
+
+            if ($page_slug === '') {
+                continue;
+            }
+
+            $entries[$page_slug] = [
+                'label'     => (string) ($definition['menu_title'] ?? $definition['label'] ?? $catalog_slug),
+                'module'    => 'socials',
+                'page_slug' => $page_slug,
+            ];
+        }
+    }
+
+    if (function_exists('em_wp_catalog_merge_style_sidebar_entries')) {
+        $entries = em_wp_catalog_merge_style_sidebar_entries($entries, 'em_wp_top_bar_style_definitions', 'top-bars');
+        $entries = em_wp_catalog_merge_style_sidebar_entries($entries, 'em_wp_release_style_definitions', 'releases');
+        $entries = em_wp_catalog_merge_style_sidebar_entries($entries, 'em_wp_cta_style_definitions', 'ctas');
+        $entries = em_wp_catalog_merge_style_sidebar_entries($entries, 'em_wp_footer_style_definitions', 'footers');
+    }
+
     return $entries;
 }
 
@@ -233,6 +300,34 @@ function em_wp_catalog_admin_page_slugs(): array
 
     if (function_exists('em_wp_slider_style_definitions')) {
         $slugs = array_merge($slugs, wp_list_pluck(em_wp_slider_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_video_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_video_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_stream_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_stream_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_social_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_social_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_top_bar_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_top_bar_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_release_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_release_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_cta_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_cta_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_footer_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_footer_style_definitions(), 'page_slug'));
     }
 
     return array_values(array_unique(array_filter($slugs)));
@@ -329,6 +424,90 @@ function em_wp_catalog_enqueue_sommaire_crud_assets(string $catalog_type): void
                 'cancelLabel'   => __('Annuler', 'em-wp'),
             ],
         ],
+        'video' => [
+            'slugPrefix'     => 'video-',
+            'fallbackSlug'   => 'video-item',
+            'createToggleId' => 'em-wp-video-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-video-catalog-create-panel',
+            'createCancelId' => 'em-wp-video-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer la vidéo « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+        'stream' => [
+            'slugPrefix'     => 'stream-',
+            'fallbackSlug'   => 'stream-item',
+            'createToggleId' => 'em-wp-stream-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-stream-catalog-create-panel',
+            'createCancelId' => 'em-wp-stream-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer le stream « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+        'social' => [
+            'slugPrefix'     => 'social-',
+            'fallbackSlug'   => 'social-item',
+            'createToggleId' => 'em-wp-social-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-social-catalog-create-panel',
+            'createCancelId' => 'em-wp-social-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer le social « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+        'top-bar' => [
+            'slugPrefix'     => 'top-bar-',
+            'fallbackSlug'   => 'top-bar-item',
+            'createToggleId' => 'em-wp-top-bar-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-top-bar-catalog-create-panel',
+            'createCancelId' => 'em-wp-top-bar-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer la top-bar « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+        'release' => [
+            'slugPrefix'     => 'release-',
+            'fallbackSlug'   => 'release-item',
+            'createToggleId' => 'em-wp-release-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-release-catalog-create-panel',
+            'createCancelId' => 'em-wp-release-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer la release « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+        'cta' => [
+            'slugPrefix'     => 'cta-',
+            'fallbackSlug'   => 'cta-item',
+            'createToggleId' => 'em-wp-cta-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-cta-catalog-create-panel',
+            'createCancelId' => 'em-wp-cta-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer le CTA « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
+        'footer' => [
+            'slugPrefix'     => 'footer-',
+            'fallbackSlug'   => 'footer-item',
+            'createToggleId' => 'em-wp-footer-catalog-create-toggle',
+            'createPanelId'  => 'em-wp-footer-catalog-create-panel',
+            'createCancelId' => 'em-wp-footer-catalog-create-cancel',
+            'i18n'           => [
+                'deleteConfirm' => __('Supprimer le footer « %s » ? Cette action est irréversible.', 'em-wp'),
+                'deleteLabel'   => __('Supprimer', 'em-wp'),
+                'cancelLabel'   => __('Annuler', 'em-wp'),
+            ],
+        ],
     ];
 
     if (!isset($configs[$catalog_type])) {
@@ -380,16 +559,6 @@ function em_wp_catalog_hub_enqueue(): void
 
     em_wp_admin_hub_cards_enqueue_assets();
 
-    if ($page_slug === em_wp_catalog_parent_menu_slug()) {
-        return;
-    }
-
-    if ($page_slug === em_wp_hero_hub_menu_slug()) {
-        em_wp_catalog_enqueue_sommaire_crud_assets('hero');
-    } elseif ($page_slug === em_wp_slider_hub_menu_slug()) {
-        em_wp_catalog_enqueue_sommaire_crud_assets('slider');
-    }
-
     wp_enqueue_style(
         'font-awesome-6',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
@@ -403,6 +572,38 @@ function em_wp_catalog_hub_enqueue(): void
         ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
         em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
     );
+
+    if ($page_slug === em_wp_catalog_parent_menu_slug()) {
+        wp_enqueue_script(
+            'em-wp-admin-catalog-sommaire-preview',
+            get_template_directory_uri() . '/assets/admin/js/catalog/sommaire-preview.js',
+            [],
+            em_wp_admin_asset_version('assets/admin/js/catalog/sommaire-preview.js'),
+            true
+        );
+
+        return;
+    }
+
+    if ($page_slug === em_wp_hero_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('hero');
+    } elseif ($page_slug === em_wp_slider_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('slider');
+    } elseif ($page_slug === em_wp_video_catalog_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('video');
+    } elseif ($page_slug === em_wp_stream_catalog_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('stream');
+    } elseif ($page_slug === em_wp_social_catalog_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('social');
+    } elseif ($page_slug === em_wp_top_bar_catalog_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('top-bar');
+    } elseif ($page_slug === em_wp_release_catalog_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('release');
+    } elseif ($page_slug === em_wp_cta_catalog_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('cta');
+    } elseif ($page_slug === em_wp_footer_catalog_hub_menu_slug()) {
+        em_wp_catalog_enqueue_sommaire_crud_assets('footer');
+    }
 }
 add_action('admin_enqueue_scripts', 'em_wp_catalog_hub_enqueue');
 
@@ -421,6 +622,34 @@ function em_wp_catalog_edit_page_slugs(): array
 
     if (function_exists('em_wp_slider_style_definitions')) {
         $slugs = array_merge($slugs, wp_list_pluck(em_wp_slider_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_video_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_video_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_stream_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_stream_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_social_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_social_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_top_bar_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_top_bar_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_release_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_release_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_cta_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_cta_style_definitions(), 'page_slug'));
+    }
+
+    if (function_exists('em_wp_footer_style_definitions')) {
+        $slugs = array_merge($slugs, wp_list_pluck(em_wp_footer_style_definitions(), 'page_slug'));
     }
 
     return array_values(array_filter(array_unique($slugs)));
@@ -507,6 +736,69 @@ function em_wp_catalog_edit_enqueue(): void
         }
         $hub_url = add_query_arg(['page' => em_wp_slider_hub_menu_slug()], $hub_url);
         $quit_label = __('Quitter et retourner au sommaire Sliders ?', 'em-wp');
+    } elseif (function_exists('em_wp_video_catalog_slug_from_page') && em_wp_video_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_video_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_video_catalog_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire Vidéos ?', 'em-wp');
+    } elseif (function_exists('em_wp_stream_catalog_slug_from_page') && em_wp_stream_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_stream_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_stream_catalog_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire Streams ?', 'em-wp');
+    } elseif (function_exists('em_wp_social_catalog_slug_from_page') && em_wp_social_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_social_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_social_catalog_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire Socials ?', 'em-wp');
+    } elseif (function_exists('em_wp_top_bar_catalog_slug_from_page') && em_wp_top_bar_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_top_bar_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_top_bar_catalog_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire Top-Bars ?', 'em-wp');
+    } elseif (function_exists('em_wp_release_catalog_slug_from_page') && em_wp_release_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_release_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_release_catalog_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire Releases ?', 'em-wp');
+    } elseif (function_exists('em_wp_cta_catalog_slug_from_page') && em_wp_cta_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_cta_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_cta_catalog_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire CTA ?', 'em-wp');
+    } elseif (function_exists('em_wp_footer_catalog_slug_from_page') && em_wp_footer_catalog_slug_from_page($page_slug) !== '') {
+        foreach (em_wp_footer_style_definitions() as $slug => $definition) {
+            $edit_slug = (string) ($definition['page_slug'] ?? '');
+            if ($edit_slug !== '') {
+                $page_map[$slug] = add_query_arg(['page' => $edit_slug], $hub_url);
+            }
+        }
+        $hub_url = add_query_arg(['page' => em_wp_footer_catalog_hub_menu_slug()], $hub_url);
+        $quit_label = __('Quitter et retourner au sommaire Footers ?', 'em-wp');
     }
 
     wp_localize_script(
@@ -596,6 +888,48 @@ function em_wp_admin_catalog_menu_highlight_slug(string $page_slug): string
                 return $page_slug;
             }
         }
+
+        if ($module_slug === 'videos' && function_exists('em_wp_video_style_from_page_slug')) {
+            if (em_wp_video_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+
+        if ($module_slug === 'streams' && function_exists('em_wp_stream_style_from_page_slug')) {
+            if (em_wp_stream_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+
+        if ($module_slug === 'socials' && function_exists('em_wp_social_style_from_page_slug')) {
+            if (em_wp_social_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+
+        if ($module_slug === 'top-bars' && function_exists('em_wp_top_bar_style_from_page_slug')) {
+            if (em_wp_top_bar_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+
+        if ($module_slug === 'releases' && function_exists('em_wp_release_style_from_page_slug')) {
+            if (em_wp_release_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+
+        if ($module_slug === 'ctas' && function_exists('em_wp_cta_style_from_page_slug')) {
+            if (em_wp_cta_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
+
+        if ($module_slug === 'footers' && function_exists('em_wp_footer_style_from_page_slug')) {
+            if (em_wp_footer_style_from_page_slug($page_slug) !== '') {
+                return $page_slug;
+            }
+        }
     }
 
     return '';
@@ -625,21 +959,69 @@ function em_wp_catalog_redirect_legacy_hubs(): void
 add_action('admin_init', 'em_wp_catalog_redirect_legacy_hubs', 1);
 
 /**
+ * Entrées catalogue brutes pour un module hub.
+ *
+ * @return array<string, array<string, mixed>>
+ */
+function em_wp_catalog_hub_entries(string $module_slug): array
+{
+    $module_slug = sanitize_key($module_slug);
+
+    if ($module_slug === 'heros' && function_exists('em_wp_hero_catalog_entries')) {
+        return em_wp_hero_catalog_entries();
+    }
+
+    if ($module_slug === 'sliders' && function_exists('em_wp_slider_catalog_entries')) {
+        return em_wp_slider_catalog_entries();
+    }
+
+    if ($module_slug === 'videos' && function_exists('em_wp_video_catalog_entries')) {
+        return em_wp_video_catalog_entries();
+    }
+
+    if ($module_slug === 'streams' && function_exists('em_wp_stream_catalog_entries')) {
+        return em_wp_stream_catalog_entries();
+    }
+
+    if ($module_slug === 'socials' && function_exists('em_wp_social_catalog_entries')) {
+        return em_wp_social_catalog_entries();
+    }
+
+    if ($module_slug === 'top-bars' && function_exists('em_wp_top_bar_catalog_entries')) {
+        return em_wp_top_bar_catalog_entries();
+    }
+
+    if ($module_slug === 'releases' && function_exists('em_wp_release_catalog_entries')) {
+        return em_wp_release_catalog_entries();
+    }
+
+    if ($module_slug === 'ctas' && function_exists('em_wp_cta_catalog_entries')) {
+        return em_wp_cta_catalog_entries();
+    }
+
+    if ($module_slug === 'footers' && function_exists('em_wp_footer_catalog_entries')) {
+        return em_wp_footer_catalog_entries();
+    }
+
+    return [];
+}
+
+/**
+ * Nombre d'entrées dans un catalogue hub.
+ */
+function em_wp_catalog_hub_entry_count(string $module_slug): int
+{
+    return count(em_wp_catalog_hub_entries($module_slug));
+}
+
+/**
  * Libellés des entrées catalogue pour pastille hub (HEROS, SLIDERS).
  *
  * @return string[]
  */
 function em_wp_catalog_hub_entry_labels(string $module_slug): array
 {
-    $module_slug = sanitize_key($module_slug);
-    $entries = [];
-
-    if ($module_slug === 'heros' && function_exists('em_wp_hero_catalog_entries')) {
-        $entries = em_wp_hero_catalog_entries();
-    } elseif ($module_slug === 'sliders' && function_exists('em_wp_slider_catalog_entries')) {
-        $entries = em_wp_slider_catalog_entries();
-    }
-
+    $entries = em_wp_catalog_hub_entries($module_slug);
     $labels = [];
 
     foreach ($entries as $entry) {
@@ -658,17 +1040,304 @@ function em_wp_catalog_hub_entry_labels(string $module_slug): array
 }
 
 /**
+ * Fonction de résolution slug page édition pour un module catalogue.
+ */
+function em_wp_catalog_hub_edit_page_slug_fn(string $module_slug): ?string
+{
+    $map = [
+        'heros'     => 'em_wp_hero_catalog_edit_page_slug',
+        'sliders'   => 'em_wp_slider_catalog_edit_page_slug',
+        'videos'    => 'em_wp_video_catalog_edit_page_slug',
+        'streams'   => 'em_wp_stream_catalog_edit_page_slug',
+        'socials'   => 'em_wp_social_catalog_edit_page_slug',
+        'top-bars'  => 'em_wp_top_bar_catalog_edit_page_slug',
+        'releases'  => 'em_wp_release_catalog_edit_page_slug',
+        'ctas'      => 'em_wp_cta_catalog_edit_page_slug',
+        'footers'   => 'em_wp_footer_catalog_edit_page_slug',
+    ];
+
+    $module_slug = sanitize_key($module_slug);
+    $fn = $map[$module_slug] ?? null;
+
+    return ($fn !== null && function_exists($fn)) ? $fn : null;
+}
+
+/**
+ * Liens vers les fiches d'édition des entrées catalogue (carte hub).
+ *
+ * @return array<int, array{label:string,url:string}>
+ */
+function em_wp_catalog_hub_entry_links(string $module_slug): array
+{
+    $slug_fn = em_wp_catalog_hub_edit_page_slug_fn($module_slug);
+
+    if ($slug_fn === null) {
+        return [];
+    }
+
+    $links = [];
+
+    foreach (em_wp_catalog_hub_entries($module_slug) as $catalog_slug => $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+
+        $label = trim(sanitize_text_field((string) ($entry['label'] ?? '')));
+
+        if ($label === '') {
+            continue;
+        }
+
+        $page_slug = sanitize_key((string) call_user_func($slug_fn, (string) $catalog_slug));
+
+        if ($page_slug === '') {
+            continue;
+        }
+
+        $links[] = [
+            'label' => mb_strtoupper($label),
+            'url'   => admin_url('admin.php?page=' . $page_slug),
+        ];
+    }
+
+    return $links;
+}
+
+/**
  * Pastille liste des entrées catalogue (carte hub CATALOGUES).
  */
 function em_wp_catalog_render_entries_badge(string $module_slug): void
 {
-    $labels = em_wp_catalog_hub_entry_labels($module_slug);
+    $links = em_wp_catalog_hub_entry_links($module_slug);
 
-    if ($labels === [] || !function_exists('em_wp_admin_hub_render_status_badge')) {
+    if ($links === [] || !function_exists('em_wp_admin_hub_render_catalog_entry_links_badge')) {
         return;
     }
 
-    em_wp_admin_hub_render_status_badge(implode(', ', $labels) . '.', '#4e080e', true, false);
+    em_wp_admin_hub_render_catalog_entry_links_badge($links, '#4e080e');
+}
+
+/**
+ * Fil d'Ariane catalogue pour une page admin.
+ *
+ * @return array<int, array{label:string,url?:string}>
+ */
+function em_wp_catalog_breadcrumb_crumbs_for_page(string $page_slug): array
+{
+    $page_slug = sanitize_key($page_slug);
+
+    if ($page_slug === '') {
+        return [];
+    }
+
+    if (function_exists('em_wp_catalog_parent_menu_slug') && $page_slug === em_wp_catalog_parent_menu_slug()) {
+        return [
+            em_wp_admin_hub_breadcrumb_crumb(__('CATALOGUES', 'em-wp')),
+        ];
+    }
+
+    if (!function_exists('em_wp_catalog_menu_definitions')) {
+        return [];
+    }
+
+    foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+        if (!is_array($definition)) {
+            continue;
+        }
+
+        $hub_slug = sanitize_key((string) ($definition['slug'] ?? ''));
+
+        if ($hub_slug === '' || $page_slug !== $hub_slug) {
+            continue;
+        }
+
+        return em_wp_catalog_build_breadcrumb_crumbs((string) ($definition['label'] ?? $module_slug));
+    }
+
+    if (!function_exists('em_wp_catalog_sidebar_entry_definitions')) {
+        return [];
+    }
+
+    $entry = em_wp_catalog_sidebar_entry_definitions()[$page_slug] ?? null;
+
+    if (!is_array($entry)) {
+        return [];
+    }
+
+    $module_slug = sanitize_key((string) ($entry['module'] ?? ''));
+    $module_label = em_wp_catalog_module_label($module_slug);
+    $module_definition = em_wp_catalog_menu_definitions()[$module_slug] ?? null;
+    $hub_url = '';
+
+    if (is_array($module_definition)) {
+        $hub_url = trim((string) ($module_definition['url'] ?? ''));
+
+        if ($hub_url === '') {
+            $hub_slug = sanitize_key((string) ($module_definition['slug'] ?? ''));
+
+            if ($hub_slug !== '') {
+                $hub_url = admin_url('admin.php?page=' . $hub_slug);
+            }
+        }
+    }
+
+    return em_wp_catalog_build_breadcrumb_crumbs(
+        $module_label,
+        (string) ($entry['label'] ?? ''),
+        $hub_url
+    );
+}
+
+/**
+ * Construit les miettes catalogue : CATALOGUES / TYPE [/ ITEM].
+ *
+ * @return array<int, array{label:string,url?:string}>
+ */
+function em_wp_catalog_build_breadcrumb_crumbs(
+    string $catalog_label,
+    string $item_label = '',
+    string $hub_page_url = ''
+): array {
+    $parent_url = function_exists('em_wp_catalog_parent_page_url')
+        ? em_wp_catalog_parent_page_url()
+        : admin_url('admin.php?page=' . (function_exists('em_wp_catalog_parent_menu_slug') ? em_wp_catalog_parent_menu_slug() : ''));
+
+    $crumbs = [
+        em_wp_admin_hub_breadcrumb_crumb(__('CATALOGUES', 'em-wp'), $parent_url),
+    ];
+
+    $catalog_label = trim($catalog_label);
+    $item_label = trim($item_label);
+    $hub_page_url = trim($hub_page_url);
+
+    if ($catalog_label === '') {
+        return $crumbs;
+    }
+
+    if ($item_label !== '') {
+        $crumbs[] = $hub_page_url !== ''
+            ? em_wp_admin_hub_breadcrumb_crumb($catalog_label, $hub_page_url)
+            : em_wp_admin_hub_breadcrumb_crumb($catalog_label);
+        $crumbs[] = em_wp_admin_hub_breadcrumb_crumb($item_label);
+
+        return $crumbs;
+    }
+
+    $crumbs[] = em_wp_admin_hub_breadcrumb_crumb($catalog_label);
+
+    return $crumbs;
+}
+
+/**
+ * @deprecated Utiliser em_wp_admin_hub_breadcrumb_html() + em_wp_catalog_build_breadcrumb_crumbs().
+ */
+function em_wp_catalog_header_title_html(
+    string $catalog_label,
+    string $item_label = '',
+    string $hub_page_url = ''
+): string {
+    return em_wp_admin_hub_breadcrumb_html(
+        em_wp_catalog_build_breadcrumb_crumbs($catalog_label, $item_label, $hub_page_url)
+    );
+}
+
+/**
+ * Libellé fil d'Ariane pour l'entrée catalogue en édition.
+ *
+ * @param array<string, mixed> $context
+ * @param array<string, array{label?:string,menu_title?:string}> $definitions
+ */
+function em_wp_catalog_breadcrumb_item_label(array $context, array $definitions, string $style_slug): string
+{
+    $style_slug = sanitize_key($style_slug);
+
+    if ($style_slug === '') {
+        return '';
+    }
+
+    $label = trim((string) ($context['label'] ?? ''));
+
+    if ($label === '') {
+        $definition = $definitions[$style_slug] ?? null;
+
+        if (is_array($definition)) {
+            $label = trim((string) ($definition['menu_title'] ?? $definition['label'] ?? $style_slug));
+        }
+    }
+
+    return $label;
+}
+
+/**
+ * Libellé menu d'un module catalogue (HEROS, TOP-BARS…).
+ */
+function em_wp_catalog_module_label(string $module_slug): string
+{
+    $definition = em_wp_catalog_menu_definitions()[$module_slug] ?? null;
+
+    if (!is_array($definition)) {
+        return '';
+    }
+
+    return trim((string) ($definition['label'] ?? ''));
+}
+
+/**
+ * En-tête sommaire standardisé pour les pages catalogue.
+ */
+function em_wp_catalog_render_sommaire_header(
+    string $catalog_label = '',
+    string $icon_class = 'dashicons-admin-generic',
+    bool $show_template_banner = false,
+    ?callable $context_banner_renderer = null,
+    string $item_label = '',
+    string $hub_page_url = '',
+    ?array $breadcrumb = null,
+    bool $sticky_head = true
+): void {
+    if ($breadcrumb === null && $catalog_label !== '') {
+        $breadcrumb = em_wp_catalog_build_breadcrumb_crumbs($catalog_label, $item_label, $hub_page_url);
+    }
+
+    em_wp_admin_hub_render_sommaire_header(
+        '',
+        $icon_class,
+        false,
+        $show_template_banner,
+        $context_banner_renderer,
+        $breadcrumb,
+        $sticky_head
+    );
+}
+
+/**
+ * En-tête sommaire pour une page d'édition d'entrée catalogue.
+ *
+ * @param array<string, mixed> $context
+ * @param array<string, array{label?:string,menu_title?:string}> $definitions
+ */
+function em_wp_catalog_render_edit_sommaire_header(
+    string $module_slug,
+    string $icon_class,
+    array $context,
+    array $definitions,
+    string $style_slug,
+    string $hub_page_url,
+    ?callable $context_banner_renderer = null
+): void {
+    em_wp_catalog_render_sommaire_header(
+        '',
+        $icon_class,
+        false,
+        $context_banner_renderer,
+        '',
+        '',
+        em_wp_catalog_build_breadcrumb_crumbs(
+            em_wp_catalog_module_label($module_slug),
+            em_wp_catalog_breadcrumb_item_label($context, $definitions, $style_slug),
+            $hub_page_url
+        )
+    );
 }
 
 /**
@@ -682,12 +1351,10 @@ function em_wp_catalog_render_parent_page(): void
 
     $definitions = em_wp_catalog_menu_definitions();
     ?>
-    <div class="wrap em-wp-admin-module em-wp-hub-sommaire">
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
         <?php
-        em_wp_admin_hub_render_sommaire_header(
-            __('Tes bibliothèques de contenus réutilisables, indépendantes des templates. Choisis un type de catalogue à gérer.', 'em-wp'),
-            'dashicons-index-card'
-        );
+        em_wp_admin_hub_render_sommaire_header('', 'dashicons-index-card', false, true, null, null, true);
+        em_wp_catalog_render_module_tabs('');
         ?>
 
         <div class="em-wp-hub__rows">
@@ -706,29 +1373,37 @@ function em_wp_catalog_render_parent_page(): void
                         $is_available = !empty($definition['available']);
                         $url = (string) ($definition['url'] ?? '');
                         ?>
-                        <section class="em-wp-hub__card<?php echo $is_available ? '' : ' em-wp-hub__card--disabled'; ?>">
-                            <?php em_wp_admin_hub_render_card_title($label, $icon); ?>
-                            <p class="em-wp-hub__card-desc"><?php echo esc_html($description); ?></p>
-                            <?php
-                            if ($is_available && in_array($module_slug, ['heros', 'sliders'], true)) {
-                                em_wp_catalog_render_entries_badge($module_slug);
-                            }
-                            ?>
-                            <div class="em-wp-hub__card-actions">
+                        <section
+                            class="em-wp-hub__card<?php echo $is_available ? '' : ' em-wp-hub__card--disabled'; ?>"
+                            data-catalog-module="<?php echo esc_attr($module_slug); ?>"
+                        >
+                            <header class="em-wp-hub__card-header">
+                                <div class="em-wp-hub__card-heading">
+                                    <?php em_wp_admin_hub_render_card_title($label, $icon); ?>
+                                    <?php
+                                    if ($is_available && function_exists('em_wp_admin_hub_render_count_badge')) {
+                                        em_wp_admin_hub_render_count_badge(em_wp_catalog_hub_entry_count($module_slug));
+                                    }
+                                    ?>
+                                </div>
                                 <?php if ($is_available && $url !== '') {
                                     em_wp_admin_hub_render_action_link(
                                         $url,
-                                        sprintf(
-                                            /* translators: %s: catalog type label */
-                                            __('GÉRER %s', 'em-wp'),
-                                            mb_strtoupper($label)
-                                        ),
-                                        $icon
+                                        '',
+                                        'dashicons-admin-generic',
+                                        true,
+                                        __('Gérer', 'em-wp')
                                     );
                                 } else {
-                                    em_wp_admin_hub_render_disabled_action(__('Prochaine étape', 'em-wp'));
+                                    em_wp_admin_hub_render_disabled_action(__('Prochaine étape', 'em-wp'), '', true);
                                 } ?>
-                            </div>
+                            </header>
+                            <p class="em-wp-hub__card-desc"><?php echo esc_html($description); ?></p>
+                            <?php
+                            if ($is_available) {
+                                em_wp_catalog_render_entries_badge($module_slug);
+                            }
+                            ?>
                         </section>
                     <?php } ?>
                 </div>
@@ -753,10 +1428,8 @@ function em_wp_catalog_render_heros_page(): void
         <?php
         em_wp_admin_render_settings_notices();
         em_wp_hero_catalog_render_admin_notices();
-        em_wp_admin_hub_render_sommaire_header(
-            __('Tes Heros réutilisables. Configure-les ici, puis sélectionne-les dans la rubrique HEADER de tes templates.', 'em-wp'),
-            'dashicons-format-gallery'
-        );
+        em_wp_catalog_render_sommaire_header('', 'dashicons-format-gallery');
+        em_wp_catalog_render_module_tabs('heros');
 
         em_wp_catalog_render_hero_sommaire_section($hero_entries);
         ?>
@@ -779,10 +1452,8 @@ function em_wp_catalog_render_sliders_page(): void
         <?php
         em_wp_admin_render_settings_notices();
         em_wp_slider_catalog_render_admin_notices();
-        em_wp_admin_hub_render_sommaire_header(
-            __('Tes catalogues Slider réutilisables. Gère-les ici, puis sélectionne-les dans les rubriques de tes templates.', 'em-wp'),
-            'dashicons-slides'
-        );
+        em_wp_catalog_render_sommaire_header('', 'dashicons-slides');
+        em_wp_catalog_render_module_tabs('sliders');
 
         em_wp_catalog_render_slider_sommaire_section($slider_entries);
         ?>
@@ -801,9 +1472,14 @@ function em_wp_catalog_render_coming_soon_hub_page(string $title, string $icon_c
     ?>
     <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
         <?php
-        em_wp_admin_hub_render_sommaire_header(
-            __('Ce catalogue sera branché prochainement.', 'em-wp'),
-            $icon_class
+        em_wp_catalog_render_sommaire_header(
+            $title,
+            $icon_class,
+            false,
+            null,
+            '',
+            '',
+            em_wp_catalog_build_breadcrumb_crumbs($title)
         );
         ?>
     </div>
@@ -811,27 +1487,141 @@ function em_wp_catalog_render_coming_soon_hub_page(string $title, string $icon_c
 }
 
 /**
- * Rendu hub VIDEOS (placeholder).
+ * Rendu hub VIDEOS.
  */
 function em_wp_catalog_render_videos_page(): void
 {
-    em_wp_catalog_render_coming_soon_hub_page(__('VIDEOS', 'em-wp'), 'dashicons-video-alt3');
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    $entries = function_exists('em_wp_video_catalog_entries') ? em_wp_video_catalog_entries() : [];
+    ?>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
+        <?php
+        em_wp_admin_render_settings_notices();
+        if (function_exists('em_wp_video_catalog_render_admin_notices')) {
+            em_wp_video_catalog_render_admin_notices();
+        }
+        em_wp_catalog_render_sommaire_header('', 'dashicons-video-alt3');
+
+        em_wp_catalog_render_crud_hub_entry_tabs([
+            'section_title'  => __('MES VIDÉOS', 'em-wp'),
+            'hub_menu_slug'  => 'em_wp_video_catalog_hub_menu_slug',
+            'edit_page_slug' => 'em_wp_video_catalog_edit_page_slug',
+        ], $entries);
+
+        em_wp_catalog_render_crud_sommaire_section([
+            'type'              => 'video',
+            'section_title'     => __('MES VIDÉOS', 'em-wp'),
+            'icon'              => 'dashicons-video-alt3',
+            'hub_menu_slug'     => 'em_wp_video_catalog_hub_menu_slug',
+            'nonce_action'      => 'em_wp_video_catalog_actions_nonce_action',
+            'post_prefix'       => 'em_wp_video_catalog',
+            'slug_from_label'   => 'em_wp_video_catalog_slug_from_label',
+            'unique_slug'       => 'em_wp_video_catalog_unique_slug',
+            'edit_page_slug'    => 'em_wp_video_catalog_edit_page_slug',
+            'create_toggle_id'  => 'em-wp-video-catalog-create-toggle',
+            'create_panel_id'   => 'em-wp-video-catalog-create-panel',
+            'create_cancel_id'  => 'em-wp-video-catalog-create-cancel',
+            'name_field_label'  => __('Nom de la vidéo', 'em-wp'),
+            'rename_row_prefix' => 'em-wp-video-rename',
+        ], $entries);
+        ?>
+    </div>
+    <?php
 }
 
 /**
- * Rendu hub STREAMS (placeholder).
+ * Rendu hub STREAMS.
  */
 function em_wp_catalog_render_streams_page(): void
 {
-    em_wp_catalog_render_coming_soon_hub_page(__('STREAMS', 'em-wp'), 'dashicons-playlist-audio');
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    $entries = function_exists('em_wp_stream_catalog_entries') ? em_wp_stream_catalog_entries() : [];
+    ?>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
+        <?php
+        em_wp_admin_render_settings_notices();
+        if (function_exists('em_wp_stream_catalog_render_admin_notices')) {
+            em_wp_stream_catalog_render_admin_notices();
+        }
+        em_wp_catalog_render_sommaire_header('', 'dashicons-playlist-audio');
+
+        em_wp_catalog_render_crud_hub_entry_tabs([
+            'section_title'  => __('MES STREAMS', 'em-wp'),
+            'hub_menu_slug'  => 'em_wp_stream_catalog_hub_menu_slug',
+            'edit_page_slug' => 'em_wp_stream_catalog_edit_page_slug',
+        ], $entries);
+
+        em_wp_catalog_render_crud_sommaire_section([
+            'type'              => 'stream',
+            'section_title'     => __('MES STREAMS', 'em-wp'),
+            'icon'              => 'dashicons-playlist-audio',
+            'hub_menu_slug'     => 'em_wp_stream_catalog_hub_menu_slug',
+            'nonce_action'      => 'em_wp_stream_catalog_actions_nonce_action',
+            'post_prefix'       => 'em_wp_stream_catalog',
+            'slug_from_label'   => 'em_wp_stream_catalog_slug_from_label',
+            'unique_slug'       => 'em_wp_stream_catalog_unique_slug',
+            'edit_page_slug'    => 'em_wp_stream_catalog_edit_page_slug',
+            'create_toggle_id'  => 'em-wp-stream-catalog-create-toggle',
+            'create_panel_id'   => 'em-wp-stream-catalog-create-panel',
+            'create_cancel_id'  => 'em-wp-stream-catalog-create-cancel',
+            'name_field_label'  => __('Nom du stream', 'em-wp'),
+            'rename_row_prefix' => 'em-wp-stream-rename',
+        ], $entries);
+        ?>
+    </div>
+    <?php
 }
 
 /**
- * Rendu hub SOCIALS (placeholder).
+ * Rendu hub SOCIALS.
  */
 function em_wp_catalog_render_socials_page(): void
 {
-    em_wp_catalog_render_coming_soon_hub_page(__('SOCIALS', 'em-wp'), 'dashicons-share');
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    $entries = function_exists('em_wp_social_catalog_entries') ? em_wp_social_catalog_entries() : [];
+    ?>
+    <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-catalog-sommaire">
+        <?php
+        em_wp_admin_render_settings_notices();
+        if (function_exists('em_wp_social_catalog_render_admin_notices')) {
+            em_wp_social_catalog_render_admin_notices();
+        }
+        em_wp_catalog_render_sommaire_header('', 'dashicons-share');
+
+        em_wp_catalog_render_crud_hub_entry_tabs([
+            'section_title'  => __('MES SOCIALS', 'em-wp'),
+            'hub_menu_slug'  => 'em_wp_social_catalog_hub_menu_slug',
+            'edit_page_slug' => 'em_wp_social_catalog_edit_page_slug',
+        ], $entries);
+
+        em_wp_catalog_render_crud_sommaire_section([
+            'type'              => 'social',
+            'section_title'     => __('MES SOCIALS', 'em-wp'),
+            'icon'              => 'dashicons-share',
+            'hub_menu_slug'     => 'em_wp_social_catalog_hub_menu_slug',
+            'nonce_action'      => 'em_wp_social_catalog_actions_nonce_action',
+            'post_prefix'       => 'em_wp_social_catalog',
+            'slug_from_label'   => 'em_wp_social_catalog_slug_from_label',
+            'unique_slug'       => 'em_wp_social_catalog_unique_slug',
+            'edit_page_slug'    => 'em_wp_social_catalog_edit_page_slug',
+            'create_toggle_id'  => 'em-wp-social-catalog-create-toggle',
+            'create_panel_id'   => 'em-wp-social-catalog-create-panel',
+            'create_cancel_id'  => 'em-wp-social-catalog-create-cancel',
+            'name_field_label'  => __('Nom du social', 'em-wp'),
+            'rename_row_prefix' => 'em-wp-social-rename',
+        ], $entries);
+        ?>
+    </div>
+    <?php
 }
 
 /**
@@ -1239,11 +2029,25 @@ function em_wp_catalog_render_edit_banner(string $catalog_type, array $definitio
     $labels = [
         'hero'   => __('Hero en cours d\'édition', 'em-wp'),
         'slider' => __('Slider en cours d\'édition', 'em-wp'),
+        'video'  => __('Vidéo en cours d\'édition', 'em-wp'),
+        'stream' => __('Stream en cours d\'édition', 'em-wp'),
+        'social' => __('Social en cours d\'édition', 'em-wp'),
+        'top-bar' => __('Top-Bar en cours d\'édition', 'em-wp'),
+        'release' => __('Release en cours d\'édition', 'em-wp'),
+        'cta'     => __('CTA en cours d\'édition', 'em-wp'),
+        'footer'  => __('Footer en cours d\'édition', 'em-wp'),
     ];
     $banner_label = $labels[$catalog_type] ?? __('Catalogue en cours d\'édition', 'em-wp');
     $aria_labels = [
         'hero'   => __('Contexte hero catalogue', 'em-wp'),
         'slider' => __('Contexte slider catalogue', 'em-wp'),
+        'video'  => __('Contexte vidéo catalogue', 'em-wp'),
+        'stream' => __('Contexte stream catalogue', 'em-wp'),
+        'social' => __('Contexte social catalogue', 'em-wp'),
+        'top-bar' => __('Contexte top-bar catalogue', 'em-wp'),
+        'release' => __('Contexte release catalogue', 'em-wp'),
+        'cta'     => __('Contexte CTA catalogue', 'em-wp'),
+        'footer'  => __('Contexte footer catalogue', 'em-wp'),
     ];
     $aria_label = $aria_labels[$catalog_type] ?? __('Contexte catalogue', 'em-wp');
     ?>
@@ -1285,18 +2089,284 @@ function em_wp_catalog_render_edit_banner(string $catalog_type, array $definitio
 }
 
 /**
+ * Définitions des onglets catalogue (TOP-BARS, HEROS, SLIDERS…).
+ *
+ * @return array<string, array{menu_title:string,page_slug:string}>
+ */
+function em_wp_catalog_nav_tab_definitions(): array
+{
+    $tabs = [];
+
+    foreach (em_wp_admin_catalog_menu_modules() as $module_slug) {
+        $definition = em_wp_catalog_menu_definitions()[$module_slug] ?? null;
+
+        if (!is_array($definition) || empty($definition['available'])) {
+            continue;
+        }
+
+        $hub_slug = sanitize_key((string) ($definition['slug'] ?? ''));
+
+        if ($hub_slug === '') {
+            continue;
+        }
+
+        $tabs[$module_slug] = [
+            'menu_title' => (string) ($definition['menu_title'] ?? $definition['label'] ?? $module_slug),
+            'page_slug'  => $hub_slug,
+        ];
+    }
+
+    return $tabs;
+}
+
+/**
+ * Module catalogue associé à un slug hub (callable ou slug direct).
+ */
+function em_wp_catalog_module_slug_for_hub(string $hub_menu_slug): string
+{
+    $hub_slug = em_wp_catalog_resolve_hub_menu_slug($hub_menu_slug);
+
+    if ($hub_slug === '') {
+        return '';
+    }
+
+    foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+        if (sanitize_key((string) ($definition['slug'] ?? '')) === $hub_slug) {
+            return (string) $module_slug;
+        }
+    }
+
+    return '';
+}
+
+/**
+ * Indique si une page admin appartient à un module catalogue (hub ou édition).
+ */
+function em_wp_catalog_admin_page_belongs_to_module(string $page_slug, string $module_slug): bool
+{
+    $page_slug = sanitize_key($page_slug);
+    $module_slug = sanitize_key($module_slug);
+
+    if ($page_slug === '' || $module_slug === '') {
+        return false;
+    }
+
+    $style_resolvers = [
+        'heros'     => 'em_wp_hero_style_from_page_slug',
+        'sliders'   => 'em_wp_slider_style_from_page_slug',
+        'videos'    => 'em_wp_video_style_from_page_slug',
+        'streams'   => 'em_wp_stream_style_from_page_slug',
+        'socials'   => 'em_wp_social_style_from_page_slug',
+        'top-bars'  => 'em_wp_top_bar_style_from_page_slug',
+        'releases'  => 'em_wp_release_style_from_page_slug',
+        'ctas'      => 'em_wp_cta_style_from_page_slug',
+        'footers'   => 'em_wp_footer_style_from_page_slug',
+    ];
+
+    $resolver = $style_resolvers[$module_slug] ?? '';
+
+    return $resolver !== '' && function_exists($resolver) && $resolver($page_slug) !== '';
+}
+
+/**
+ * Module catalogue actif pour la page admin courante (vide = sommaire Liste).
+ */
+function em_wp_catalog_module_slug_for_admin_page(string $page_slug = ''): string
+{
+    if ($page_slug === '') {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+    }
+
+    if ($page_slug === '' || $page_slug === em_wp_catalog_parent_menu_slug()) {
+        return '';
+    }
+
+    foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+        if (empty($definition['available'])) {
+            continue;
+        }
+
+        $hub_slug = sanitize_key((string) ($definition['slug'] ?? ''));
+
+        if ($hub_slug !== '' && $page_slug === $hub_slug) {
+            return (string) $module_slug;
+        }
+
+        if (em_wp_catalog_admin_page_belongs_to_module($page_slug, (string) $module_slug)) {
+            return (string) $module_slug;
+        }
+    }
+
+    return '';
+}
+
+/**
+ * Module catalogue actif (paramètre explicite ou page courante).
+ */
+function em_wp_catalog_resolve_active_module(string $module_slug = ''): string
+{
+    $module_slug = sanitize_key($module_slug);
+
+    if ($module_slug !== '') {
+        return $module_slug;
+    }
+
+    return em_wp_catalog_module_slug_for_admin_page();
+}
+
+/**
+ * Onglets Liste + types catalogue (TOP-BARS, HEROS, SLIDERS…).
+ */
+function em_wp_catalog_render_module_tabs(string $active_module_slug = ''): void
+{
+    $tabs = em_wp_catalog_nav_tab_definitions();
+
+    if ($tabs === []) {
+        return;
+    }
+
+    em_wp_catalog_render_edit_navbar(
+        $tabs,
+        em_wp_catalog_resolve_active_module($active_module_slug),
+        __('Navigation Catalogues', 'em-wp'),
+        em_wp_catalog_parent_menu_slug()
+    );
+
+    em_wp_admin_hub_sticky_head_close();
+}
+
+/**
+ * Onglets hub CRUD (liste + entrées) à partir de la config sommaire.
+ *
+ * @param array<string, mixed> $config
+ * @param array<string, array{label?:string,layout?:string}> $entries
+ */
+function em_wp_catalog_render_crud_hub_entry_tabs(array $config, array $entries, string $selected_slug = ''): void
+{
+    unset($entries, $selected_slug);
+
+    $active_module = em_wp_catalog_module_slug_for_hub((string) ($config['hub_menu_slug'] ?? ''));
+
+    em_wp_catalog_render_module_tabs($active_module);
+}
+
+/**
+ * @param array<string, array{label?:string,layout?:string}> $entries
+ * @return array<string, array{label:string,menu_title:string,page_slug:string}>
+ */
+function em_wp_catalog_style_definitions_from_entries(array $entries, string $edit_page_slug_fn): array
+{
+    if ($edit_page_slug_fn === '' || !function_exists($edit_page_slug_fn)) {
+        return [];
+    }
+
+    $definitions = [];
+
+    foreach ($entries as $catalog_slug => $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+
+        $catalog_slug = sanitize_key((string) $catalog_slug);
+
+        if ($catalog_slug === '') {
+            continue;
+        }
+
+        $label = trim(sanitize_text_field((string) ($entry['label'] ?? $catalog_slug)));
+
+        if ($label === '') {
+            continue;
+        }
+
+        $page_slug = sanitize_key((string) call_user_func($edit_page_slug_fn, $catalog_slug));
+
+        if ($page_slug === '') {
+            continue;
+        }
+
+        $definitions[$catalog_slug] = [
+            'label'      => $label,
+            'menu_title' => $label,
+            'page_slug'  => $page_slug,
+        ];
+    }
+
+    return $definitions;
+}
+
+/**
+ * Résout le slug hub catalogue (callable ou slug direct).
+ */
+function em_wp_catalog_resolve_hub_menu_slug(string $hub_menu_slug): string
+{
+    if ($hub_menu_slug !== '' && function_exists($hub_menu_slug)) {
+        return sanitize_key((string) call_user_func($hub_menu_slug));
+    }
+
+    return sanitize_key($hub_menu_slug);
+}
+
+/**
+ * Onglets hub + entrées catalogue (entre la flèche intro et le bloc liste / édition).
+ *
+ * @param array<string, array{label?:string,menu_title?:string,page_slug?:string}> $style_definitions
+ */
+function em_wp_catalog_render_module_entry_tabs(
+    string $hub_menu_slug,
+    array $style_definitions,
+    string $selected_slug,
+    string $nav_label,
+    string $list_tab_label = ''
+): void {
+    unset($style_definitions, $selected_slug, $nav_label, $list_tab_label);
+
+    em_wp_catalog_render_module_tabs(
+        em_wp_catalog_module_slug_for_hub($hub_menu_slug)
+    );
+}
+
+/**
  * Navbar horizontale pour les pages d'édition catalogue.
  *
  * @param array<string, array{label?:string, menu_title?:string, page_slug?:string}> $definitions
  */
-function em_wp_catalog_render_edit_navbar(array $definitions, string $selected_slug, string $nav_label): void
-{
-    if ($definitions === []) {
+function em_wp_catalog_render_edit_navbar(
+    array $definitions,
+    string $selected_slug,
+    string $nav_label,
+    string $hub_menu_slug = '',
+    string $list_tab_label = ''
+): void {
+    $hub_menu_slug = sanitize_key($hub_menu_slug);
+    $list_tab_label = trim($list_tab_label);
+
+    if ($list_tab_label === '') {
+        $list_tab_label = __('Liste', 'em-wp');
+    }
+
+    if ($definitions === [] && $hub_menu_slug === '') {
         return;
     }
     ?>
     <nav class="em-wp-catalog-edit__nav" aria-label="<?php echo esc_attr($nav_label); ?>">
         <ul class="em-wp-catalog-edit__nav-list">
+            <?php if ($hub_menu_slug !== '') {
+                $hub_url = admin_url('admin.php?page=' . $hub_menu_slug);
+                $is_list_active = $selected_slug === '';
+                ?>
+                <li class="em-wp-catalog-edit__nav-item<?php echo $is_list_active ? ' is-active' : ''; ?>">
+                    <a
+                        class="em-wp-catalog-edit__nav-link em-wp-catalog-edit__nav-link--list"
+                        href="<?php echo esc_url($hub_url); ?>"
+                        aria-label="<?php echo esc_attr($list_tab_label); ?>"
+                        <?php echo $is_list_active ? ' aria-current="page"' : ''; ?>
+                    >
+                        <i class="fa-solid fa-list-ol em-wp-catalog-edit__nav-icon" aria-hidden="true"></i>
+                    </a>
+                </li>
+            <?php } ?>
             <?php foreach ($definitions as $slug => $definition) {
                 $page_slug = (string) ($definition['page_slug'] ?? '');
 
@@ -1305,13 +2375,14 @@ function em_wp_catalog_render_edit_navbar(array $definitions, string $selected_s
                 }
 
                 $label = (string) ($definition['menu_title'] ?? $definition['label'] ?? $slug);
-                $is_active = $selected_slug === $slug;
+                $is_active = $selected_slug === (string) $slug;
                 $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
                 ?>
                 <li class="em-wp-catalog-edit__nav-item<?php echo $is_active ? ' is-active' : ''; ?>">
                     <a
                         class="em-wp-catalog-edit__nav-link"
                         href="<?php echo esc_url($item_url); ?>"
+                        data-catalog-module="<?php echo esc_attr((string) $slug); ?>"
                         <?php echo $is_active ? ' aria-current="page"' : ''; ?>
                     >
                         <?php echo esc_html($label); ?>

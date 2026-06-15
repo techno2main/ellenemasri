@@ -221,6 +221,24 @@
 }
 
 /* Pages d'édition catalogue (hero, slider…) */
+.em-wp-catalog-sommaire .em-wp-hub__breadcrumb {
+    margin: 0 0 14px;
+}
+
+.em-wp-hub-sommaire .em-wp-hub__sticky-head + .em-wp-hub__rows,
+.em-wp-hub-sommaire .em-wp-hub__sticky-head + .em-wp-rubriques-admin__layout,
+.em-wp-hub-sommaire .em-wp-hub__sticky-head + .em-wp-catalog-sommaire__section,
+.em-wp-hub-sommaire .em-wp-hub__sticky-head + .em-wp-catalog-edit__body,
+.em-wp-hub-sommaire .em-wp-hub__sticky-head + .em-wp-rubrique-section {
+    margin-top: 16px;
+}
+
+.em-wp-catalog-sommaire .em-wp-catalog-edit__nav,
+.em-wp-hub-sommaire .em-wp-catalog-edit__nav {
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
 .em-wp-catalog-edit__nav {
     max-width: min(100%, 960px);
     margin: 0 0 20px;
@@ -238,6 +256,7 @@
 .em-wp-catalog-edit__nav-link {
     display: inline-flex;
     align-items: center;
+    gap: 7px;
     min-height: 36px;
     padding: 0 14px;
     border: 1px solid #d0d5dd;
@@ -249,27 +268,96 @@
     letter-spacing: 0.02em;
     line-height: 1.2;
     text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
     transition:
         background 0.15s ease,
         color 0.15s ease,
         border-color 0.15s ease;
 }
 
-.em-wp-catalog-edit__nav-link:hover,
-.em-wp-catalog-edit__nav-link:focus {
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+}
+
+.wp-core-ui .em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:focus,
+.wp-core-ui .em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+}
+
+.em-wp-catalog-edit__nav-icon {
+    flex-shrink: 0;
+    font-size: 12px;
+    line-height: 1;
+}
+
+.em-wp-catalog-edit__nav-link--list {
+    justify-content: center;
+    gap: 0;
+    width: 36px;
+    min-width: 36px;
+    padding: 0;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:hover {
     border-color: #4e080e;
     color: #4e080e;
 }
 
-.em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link {
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:focus-visible {
+    border-color: #4e080e;
+    box-shadow: inset 0 0 0 2px rgba(78, 8, 14, 0.28);
+    outline: none;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link {
     border-color: #4e080e;
     background: #4e080e;
     color: #ffffff;
 }
 
-.em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link:hover,
-.em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link:focus {
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):hover {
     color: #ffffff;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:hover,
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:focus-visible {
+    border-color: #4e080e;
+    background: #4e080e;
+    color: #ffffff;
+}
+
+.em-wp-hub-sommaire.has-catalog-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list,
+.em-wp-hub-sommaire.has-template-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list,
+.em-wp-hub-sommaire.has-dashboard-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list {
+    border-color: #d0d5dd;
+    background: #ffffff;
+    color: #111827;
+}
+
+.em-wp-hub-sommaire.has-catalog-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:hover,
+.em-wp-hub-sommaire.has-catalog-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:focus-visible,
+.em-wp-hub-sommaire.has-template-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:hover,
+.em-wp-hub-sommaire.has-template-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:focus-visible,
+.em-wp-hub-sommaire.has-dashboard-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:hover,
+.em-wp-hub-sommaire.has-dashboard-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link--list:focus-visible {
+    border-color: #4e080e;
+    background: #ffffff;
+    color: #4e080e;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link:focus {
+    box-shadow: none;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link:focus-visible {
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
 }
 
 .em-wp-catalog-edit__body {
@@ -442,4 +530,103 @@
 
 .em-wp-catalog-edit .em-wp-rubrique-section-bar__template {
     word-break: break-word;
+}
+
+/* Rubriques — pastilles : focus/clic sans halo rectangulaire WP (inset = forme pill) */
+.em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item {
+    border-radius: 999px;
+}
+
+.em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link {
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):hover,
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):focus,
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):active,
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):focus-visible,
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list).is-preview-active {
+    border-color: var(--em-rubrique-accent, #4e080e);
+    background: var(--em-rubrique-accent, #4e080e);
+    color: var(--em-rubrique-text, #ffffff);
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link--list:hover,
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link--list:focus,
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link--list:active,
+.wp-core-ui .em-wp-rubrique-edit__nav a.em-wp-catalog-edit__nav-link--list:focus-visible {
+    border-color: #4e080e;
+    background: #4e080e;
+    color: #ffffff;
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list),
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):hover,
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):focus,
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):active,
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):focus-visible {
+    border-color: var(--em-rubrique-accent, #4e080e);
+    background: var(--em-rubrique-accent, #4e080e);
+    color: var(--em-rubrique-text, #ffffff);
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link--list,
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link--list:hover,
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link--list:focus,
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link--list:active,
+.wp-core-ui .em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-item.is-active a.em-wp-catalog-edit__nav-link--list:focus-visible {
+    border-color: #4e080e;
+    background: #4e080e;
+    color: #ffffff;
+    outline: none !important;
+    outline-offset: 0 !important;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35) !important;
+}
+
+/* Catalogues — survol synchronisé onglets ↔ cartes hub */
+.em-wp-catalog-sommaire .em-wp-hub__card-header {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card-desc {
+    margin-top: 0;
+    line-height: 1.35;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card[data-catalog-module] {
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.em-wp-catalog-sommaire .em-wp-hub__card.is-preview-active {
+    border-color: #4e080e;
+    box-shadow:
+        0 0 0 2px rgba(78, 8, 14, 0.24),
+        0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.em-wp-catalog-sommaire .em-wp-catalog-edit__nav .em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):hover,
+.em-wp-catalog-sommaire .em-wp-catalog-edit__nav .em-wp-catalog-edit__nav-link.is-preview-active:not(.em-wp-catalog-edit__nav-link--list) {
+    border-color: #4e080e;
+    background: #4e080e;
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.em-wp-catalog-sommaire.has-catalog-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link:not(.is-preview-active):not(.em-wp-catalog-edit__nav-link--list) {
+    border-color: #d0d5dd;
+    background: #ffffff;
+    color: #111827;
 }

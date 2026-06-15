@@ -230,7 +230,7 @@ function em_wp_admin_color_field_display_value(array $color_fields, string $fiel
  */
 function em_wp_admin_rubrique_inline_colors_panel_title(): string
 {
-    return __('Couleurs en ligne', 'em-wp');
+    return __('Couleurs Rubrique', 'em-wp');
 }
 
 /**

@@ -404,22 +404,29 @@ function em_wp_hero_render_admin_page(): void
         em_wp_hero_catalog_render_admin_notices();
         ?>
         <?php
-        em_wp_admin_hub_render_sommaire_header(
-            $style_slug !== ''
-                ? __('Contenu réutilisable dans les rubriques HEADER de tes templates.', 'em-wp')
-                : __('Sélectionnez un hero à éditer.', 'em-wp'),
+        em_wp_catalog_render_edit_sommaire_header(
+            'heros',
             'dashicons-format-gallery',
-            false,
-            false,
+            $context,
+            $definitions,
+            $style_slug,
+            em_wp_hero_hub_page_url(),
             static function () use ($definitions, $style_slug): void {
                 em_wp_catalog_render_edit_banner('hero', $definitions, $style_slug, em_wp_hero_hub_menu_slug());
             }
+        );
+
+        em_wp_catalog_render_module_entry_tabs(
+            em_wp_hero_hub_menu_slug(),
+            $definitions,
+            $style_slug,
+            __('Navigation Hero catalogue', 'em-wp')
         );
         ?>
 
         <div class="em-wp-catalog-edit__body">
             <?php if ($style_slug === '') { ?>
-                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Sélectionnez un hero dans la barre ci-dessus.', 'em-wp'); ?></p>
+                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Sélectionnez un hero dans la liste ci-dessous.', 'em-wp'); ?></p>
             <?php } else {
                 $options = em_wp_hero_get_options($style_slug);
                 em_wp_hero_render_edit_page_layout($context, $options, $style_slug);

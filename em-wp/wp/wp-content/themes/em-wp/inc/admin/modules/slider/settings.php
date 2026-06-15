@@ -414,22 +414,29 @@ function em_wp_slider_render_admin_page(): void
         }
         ?>
         <?php
-        em_wp_admin_hub_render_sommaire_header(
-            $style_slug !== ''
-                ? __('Contenu réutilisable dans les rubriques HEADER de tes templates.', 'em-wp')
-                : __('Sélectionnez un slider à éditer.', 'em-wp'),
+        em_wp_catalog_render_edit_sommaire_header(
+            'sliders',
             'dashicons-slides',
-            false,
-            false,
+            $context,
+            $definitions,
+            $style_slug,
+            em_wp_slider_hub_page_url(),
             static function () use ($definitions, $style_slug): void {
                 em_wp_catalog_render_edit_banner('slider', $definitions, $style_slug, em_wp_slider_hub_menu_slug());
             }
+        );
+
+        em_wp_catalog_render_module_entry_tabs(
+            em_wp_slider_hub_menu_slug(),
+            $definitions,
+            $style_slug,
+            __('Navigation Slider catalogue', 'em-wp')
         );
         ?>
 
         <div class="em-wp-catalog-edit__body">
             <?php if ($style_slug === '') { ?>
-                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Sélectionnez un slider dans la barre ci-dessus.', 'em-wp'); ?></p>
+                <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Sélectionnez un slider dans la liste ci-dessous.', 'em-wp'); ?></p>
             <?php } else {
                 $options = em_wp_slider_get_options($style_slug);
                 em_wp_slider_render_edit_page_layout($context, $options, $style_slug);
