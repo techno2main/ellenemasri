@@ -65,6 +65,10 @@ function em_wp_admin_rubrique_reserved_menu_slugs(): array
         $slugs[] = em_wp_admin_templates_page_slug();
     }
 
+    if (function_exists('em_wp_admin_template_create_page_slug')) {
+        $slugs[] = em_wp_admin_template_create_page_slug();
+    }
+
     if (function_exists('em_wp_admin_dashboard_page_slug')) {
         $slugs[] = em_wp_admin_dashboard_page_slug();
     }

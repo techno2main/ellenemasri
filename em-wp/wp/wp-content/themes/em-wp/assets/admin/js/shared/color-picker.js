@@ -51,5 +51,31 @@
         });
     }
 
+    window.emWpAdminColorFieldApi = {
+        isReady: function (input) {
+            return !!(input && $(input).data('emWpColorPickerReady'));
+        },
+        setValue: function (input, color) {
+            if (!input) {
+                return;
+            }
+
+            var value = String(color || '').trim();
+            input.value = value;
+
+            var $input = $(input);
+            if (!$input.data('emWpColorPickerReady') || !$.fn.wpColorPicker) {
+                return;
+            }
+
+            try {
+                $input.wpColorPicker('color', value);
+            } catch (err) {
+                /* Picker not ready yet — input value is enough until init completes. */
+            }
+        },
+        initAll: initSharedColorPickers,
+    };
+
     $(initSharedColorPickers);
 })(jQuery);

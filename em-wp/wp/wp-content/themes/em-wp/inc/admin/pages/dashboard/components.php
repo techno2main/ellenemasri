@@ -26,11 +26,11 @@ function em_wp_admin_dashboard_new_catalog_admin_url(): string
  */
 function em_wp_admin_dashboard_new_template_admin_url(): string
 {
-    if (!function_exists('em_wp_admin_templates_page_url')) {
+    if (!function_exists('em_wp_admin_template_create_admin_url')) {
         return '';
     }
 
-    return add_query_arg('em_wp_open', 'template-create', em_wp_admin_templates_page_url());
+    return em_wp_admin_template_create_admin_url();
 }
 
 /**

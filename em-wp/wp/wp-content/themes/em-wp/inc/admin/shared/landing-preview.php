@@ -356,13 +356,16 @@ function em_wp_admin_render_landing_map_zone(
     string $zone_tooltip = '',
     bool $is_disabled = false,
     bool $disabled_visual = true,
-    bool $omit_preview_zone = false
+    bool $omit_preview_zone = false,
+    ?array $style_override = null
 ): void {
     $url = $is_disabled ? '' : em_wp_admin_landing_preview_zone_url($zone);
     $label = em_wp_admin_landing_preview_zone_label($zone);
     $title = em_wp_admin_landing_preview_zone_title($zone);
     $tooltip = $zone_tooltip !== '' ? $zone_tooltip : ($inner_html !== '' ? $title : $label);
-    $style = em_wp_admin_landing_preview_zone_style($zone);
+    $style = is_array($style_override)
+        ? wp_parse_args($style_override, ['background' => '#100421', 'text' => '#ffffff'])
+        : em_wp_admin_landing_preview_zone_style($zone);
     $is_inert = $is_disabled && !$disabled_visual;
 
     if ($module_slug === '') {
@@ -456,10 +459,14 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
         ? wp_parse_args($args['header_config'], em_wp_header_default_options())
         : em_wp_admin_header_preview_config();
     $subzones = em_wp_admin_header_preview_subzones($header);
-    $is_hidden = !em_wp_get_site_rubrique_visibility('header');
+    $is_hidden = array_key_exists('is_hidden', $args)
+        ? !empty($args['is_hidden'])
+        : !em_wp_get_site_rubrique_visibility('header');
     $layout = (string) ($header['layout'] ?? 'hero_left');
-    $can_swap = $interactive && count($subzones) === 2;
-    $header_style = em_wp_admin_landing_preview_zone_style('header');
+    $can_swap = $interactive && count($subzones) === 2 && empty($args['disable_swap']);
+    $header_style = is_array($args['zone_style'] ?? null)
+        ? wp_parse_args($args['zone_style'], ['background' => '#100421', 'text' => '#ffffff'])
+        : em_wp_admin_landing_preview_zone_style('header');
     $group_classes = 'em-wp-admin-landing-map__header-group'
         . ($interactive ? ' is-sortable' : ' is-static')
         . ($layout_only ? ' is-layout-mode' : '')
