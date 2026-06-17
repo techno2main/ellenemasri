@@ -539,6 +539,35 @@ function em_wp_admin_menu_layout_purge_out_of_context_rubriques(): void
         return;
     }
 
+    if (function_exists('em_wp_admin_should_show_rubrique_menus') && !em_wp_admin_should_show_rubrique_menus()) {
+        $purge_slugs = array_merge(
+            $known_rubrique_slugs,
+            ['separator-em-wp-site-top', 'separator-em-wp-bottom']
+        );
+
+        if (function_exists('em_wp_admin_rubriques_page_slug')) {
+            $purge_slugs[] = em_wp_admin_rubriques_page_slug();
+        }
+
+        $purge_slugs = array_values(array_unique($purge_slugs));
+
+        foreach ($menu as $position => $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $slug = function_exists('em_wp_admin_menu_item_slug')
+                ? em_wp_admin_menu_item_slug($item)
+                : sanitize_key((string) ($item[2] ?? ''));
+
+            if ($slug !== '' && in_array($slug, $purge_slugs, true)) {
+                unset($menu[$position]);
+            }
+        }
+
+        return;
+    }
+
     foreach ($menu as $position => $item) {
         if (!is_array($item)) {
             continue;

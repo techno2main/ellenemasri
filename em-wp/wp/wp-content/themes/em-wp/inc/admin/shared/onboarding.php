@@ -48,6 +48,10 @@ function em_wp_admin_neutral_page_slugs(): array
         $slugs = array_merge($slugs, em_wp_admin_template_entry_page_slugs());
     }
 
+    if (function_exists('em_wp_admin_template_create_page_slug')) {
+        $slugs[] = em_wp_admin_template_create_page_slug();
+    }
+
     if (function_exists('em_wp_admin_templates_page_slug')) {
         $slugs[] = em_wp_admin_templates_page_slug();
     }
@@ -130,11 +134,53 @@ function em_wp_admin_template_scoped_page_slugs(): array
 }
 
 /**
+ * Slug de la page admin courante (admin.php?page=…).
+ */
+function em_wp_admin_current_admin_page_slug(): string
+{
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return '';
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    return sanitize_key((string) ($_GET['page'] ?? ''));
+}
+
+/**
+ * Page « zone neutre » (sommaire templates, dashboard, catalogues…) — pas en édition rubriques.
+ */
+function em_wp_admin_is_neutral_admin_page(?string $page_slug = null): bool
+{
+    if ($page_slug === null) {
+        $page_slug = em_wp_admin_current_admin_page_slug();
+    }
+
+    $page_slug = sanitize_key((string) $page_slug);
+
+    if ($page_slug === '') {
+        return false;
+    }
+
+    return in_array($page_slug, em_wp_admin_neutral_page_slugs(), true);
+}
+
+/**
  * Indique si le menu Rubriques Template doit être visible.
  */
 function em_wp_admin_should_show_rubrique_menus(): bool
 {
-    return em_wp_admin_has_template_context();
+    if (!em_wp_admin_has_template_context()) {
+        return false;
+    }
+
+    // Sommaire templates, dashboard, etc. : pas de rubriques même si un contexte est mémorisé.
+    if (em_wp_admin_is_neutral_admin_page()) {
+        return false;
+    }
+
+    return true;
 }
 
 /**
@@ -177,6 +223,10 @@ function em_wp_admin_hide_rubrique_chrome_without_context(): void
         'separator-em-wp-site-top',
         'separator-em-wp-bottom',
     ];
+
+    if (function_exists('em_wp_admin_rubriques_page_slug')) {
+        $chrome_slugs[] = em_wp_admin_rubriques_page_slug();
+    }
 
     foreach ($menu as $position => $item) {
         if (!is_array($item)) {

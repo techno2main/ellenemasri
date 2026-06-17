@@ -59,6 +59,10 @@ function em_wp_admin_menu_position_for_site_module(string $module_slug): int
  */
 function em_wp_admin_rubrique_menu_child_slugs(): array
 {
+    if (function_exists('em_wp_admin_should_show_rubrique_menus') && !em_wp_admin_should_show_rubrique_menus()) {
+        return [];
+    }
+
     if (!function_exists('em_wp_admin_site_rubrique_definitions')) {
         return [];
     }
