@@ -55,6 +55,9 @@ function em_wp_admin_template_handle_post_requests(): void
         case 'create':
             em_wp_admin_template_handle_create();
             break;
+        case 'create_wizard':
+            em_wp_admin_template_handle_create_wizard();
+            break;
         case 'rename':
             em_wp_admin_template_handle_rename();
             break;
@@ -69,6 +72,9 @@ function em_wp_admin_template_handle_post_requests(): void
             break;
         case 'quit_to_templates':
             em_wp_admin_template_handle_quit_to_templates();
+            break;
+        case 'duplicate':
+            em_wp_admin_template_handle_duplicate();
             break;
         case 'set_color':
             em_wp_admin_template_handle_set_color();
@@ -148,11 +154,11 @@ function em_wp_admin_template_handle_create(): void
     $result = em_wp_template_create($label, $color);
 
     if (is_wp_error($result)) {
-        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'error', $result->get_error_message());
+        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_manage_admin_url(), 'error', $result->get_error_message());
     }
 
     em_wp_admin_template_redirect_with_notice(
-        em_wp_admin_templates_page_url(),
+        em_wp_admin_templates_manage_admin_url(),
         'success',
         __('Template créé.', 'em-wp')
     );
@@ -170,10 +176,10 @@ function em_wp_admin_template_handle_rename(): void
     $result = em_wp_template_rename($slug, $label);
 
     if (is_wp_error($result)) {
-        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'error', $result->get_error_message());
+        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_manage_admin_url(), 'error', $result->get_error_message());
     }
 
-    em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'success', __('Template renommé.', 'em-wp'));
+    em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_manage_admin_url(), 'success', __('Template renommé.', 'em-wp'));
 }
 
 /**
@@ -187,10 +193,10 @@ function em_wp_admin_template_handle_delete(): void
     $result = em_wp_template_delete($slug);
 
     if (is_wp_error($result)) {
-        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'error', $result->get_error_message());
+        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_manage_admin_url(), 'error', $result->get_error_message());
     }
 
-    em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'success', __('Template supprimé.', 'em-wp'));
+    em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_manage_admin_url(), 'success', __('Template supprimé.', 'em-wp'));
 }
 
 /**
@@ -204,7 +210,7 @@ function em_wp_admin_template_handle_set_active(): void
     $redirect_page = sanitize_key((string) ($_POST['em_wp_template_redirect_page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
     $redirect_url = ($redirect_page !== '' && str_starts_with($redirect_page, 'em-wp-'))
         ? admin_url('admin.php?page=' . $redirect_page)
-        : em_wp_admin_templates_page_url();
+        : em_wp_admin_templates_manage_admin_url();
     $result = em_wp_set_active_template_slug($slug);
 
     if (is_wp_error($result)) {
@@ -215,6 +221,49 @@ function em_wp_admin_template_handle_set_active(): void
         $redirect_url,
         'success',
         __('Template actif sur le site mis à jour.', 'em-wp')
+    );
+}
+
+/**
+ * Duplique un template existant (nom + couleur neufs).
+ */
+function em_wp_admin_template_handle_duplicate(): void
+{
+    check_admin_referer('em_wp_template_duplicate');
+
+    $source_slug = em_wp_template_sanitize_slug((string) ($_POST['em_wp_template_source_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $label = sanitize_text_field((string) ($_POST['em_wp_template_label'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $color = sanitize_text_field((string) ($_POST['em_wp_template_color'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+    $redirect_url = function_exists('em_wp_admin_template_choice_admin_url')
+        ? em_wp_admin_template_choice_admin_url()
+        : em_wp_admin_templates_manage_admin_url();
+
+    if ($label === '') {
+        em_wp_admin_template_redirect_with_notice($redirect_url, 'error', __('Le nom du template est requis.', 'em-wp'));
+    }
+
+    if ($color === '') {
+        em_wp_admin_template_redirect_with_notice($redirect_url, 'error', __('La couleur du template est requise.', 'em-wp'));
+    }
+
+    $result = em_wp_template_duplicate($source_slug, $label, $color);
+
+    if (is_wp_error($result)) {
+        em_wp_admin_template_redirect_with_notice($redirect_url, 'error', $result->get_error_message());
+    }
+
+    if (function_exists('em_wp_set_editing_template_slug')) {
+        $new_slug = em_wp_template_sanitize_slug((string) ($result['slug'] ?? ''));
+
+        if ($new_slug !== '') {
+            em_wp_set_editing_template_slug($new_slug);
+        }
+    }
+
+    em_wp_admin_template_redirect_with_notice(
+        $redirect_url,
+        'success',
+        __('Template dupliqué.', 'em-wp')
     );
 }
 
@@ -230,10 +279,10 @@ function em_wp_admin_template_handle_set_color(): void
     $result = em_wp_template_set_color($slug, $color);
 
     if (is_wp_error($result)) {
-        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'error', $result->get_error_message());
+        em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_manage_admin_url(), 'error', $result->get_error_message());
     }
 
-    em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_page_url(), 'success', __('Couleur du template enregistrée.', 'em-wp'));
+    em_wp_admin_template_redirect_with_notice(em_wp_admin_templates_manage_admin_url(), 'success', __('Couleur du template enregistrée.', 'em-wp'));
 }
 
 /**

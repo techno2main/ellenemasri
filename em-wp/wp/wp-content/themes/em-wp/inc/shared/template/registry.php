@@ -230,6 +230,68 @@ function em_wp_template_create(string $label, string $color = '')
 }
 
 /**
+ * Duplique un template (identité neuve, plan + réglages rubriques copiés).
+ *
+ * @return array{slug:string,label:string,created_at:string,color:string}|WP_Error
+ */
+function em_wp_template_duplicate(string $source_slug, string $label, string $color = '')
+{
+    $source_slug = em_wp_template_sanitize_slug($source_slug);
+
+    if ($source_slug === '' || !em_wp_template_exists($source_slug)) {
+        return new WP_Error('em_wp_template_missing', __('Template source introuvable.', 'em-wp'));
+    }
+
+    $created = em_wp_template_create($label, $color);
+
+    if (is_wp_error($created)) {
+        return $created;
+    }
+
+    $target_slug = em_wp_template_sanitize_slug((string) ($created['slug'] ?? ''));
+
+    if ($target_slug === '') {
+        return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
+    }
+
+    $order = em_wp_get_template_skeleton_order($source_slug);
+
+    if ($order !== []) {
+        em_wp_save_template_skeleton_order($target_slug, $order);
+    }
+
+    $rubrique_slugs = function_exists('em_wp_admin_site_rubrique_all_definitions')
+        ? array_keys(em_wp_admin_site_rubrique_all_definitions())
+        : $order;
+
+    foreach ($rubrique_slugs as $rubrique_slug) {
+        $rubrique_slug = sanitize_key((string) $rubrique_slug);
+
+        if ($rubrique_slug === '') {
+            continue;
+        }
+
+        $options = em_wp_get_template_rubrique_options($rubrique_slug, $source_slug);
+
+        if ($options === []) {
+            continue;
+        }
+
+        $option_name = em_wp_template_resolve_option_name($rubrique_slug, $target_slug);
+        update_option($option_name, $options, false);
+    }
+
+    $visibility = em_wp_template_visibility_store();
+
+    if (isset($visibility[$source_slug]) && is_array($visibility[$source_slug])) {
+        $visibility[$target_slug] = $visibility[$source_slug];
+        update_option(em_wp_template_visibility_option_name(), $visibility, false);
+    }
+
+    return $created;
+}
+
+/**
  * Renomme un template (libellé uniquement).
  *
  * @return true|WP_Error
