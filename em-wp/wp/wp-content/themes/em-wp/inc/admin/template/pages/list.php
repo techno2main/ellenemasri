@@ -70,6 +70,10 @@ function em_wp_admin_template_reserved_menu_slugs(): array
         $slugs[] = em_wp_admin_templates_page_slug();
     }
 
+    if (function_exists('em_wp_admin_template_create_page_slug')) {
+        $slugs[] = em_wp_admin_template_create_page_slug();
+    }
+
     return array_values(array_unique(array_merge($slugs, em_wp_admin_template_entry_page_slugs())));
 }
 
@@ -115,7 +119,15 @@ function em_wp_admin_templates_page_slug(): string
 }
 
 /**
- * URL page admin Templates.
+ * URL page admin Templates (Mes Templates + tableau enregistrés).
+ */
+function em_wp_admin_templates_manage_admin_url(): string
+{
+    return em_wp_admin_template_choice_admin_url() . '#em-wp-templates-registered-title';
+}
+
+/**
+ * URL page admin Templates (legacy CRUD masquée).
  */
 function em_wp_admin_templates_page_url(): string
 {
@@ -158,6 +170,15 @@ function em_wp_admin_templates_register_menu(): void
         'manage_options',
         em_wp_admin_templates_page_slug(),
         'em_wp_admin_render_templates_page'
+    );
+
+    add_submenu_page(
+        null,
+        __('Nouveau template', 'em-wp'),
+        __('Nouveau template', 'em-wp'),
+        'manage_options',
+        em_wp_admin_template_create_page_slug(),
+        'em_wp_admin_render_template_create_page'
     );
 }
 add_action('admin_menu', 'em_wp_admin_templates_register_menu');
@@ -244,6 +265,42 @@ function em_wp_admin_template_redirect_legacy_choice_slug(): void
 add_action('admin_init', 'em_wp_admin_template_redirect_legacy_choice_slug', 1);
 
 /**
+ * Redirige l'ancien deeplink ?em_wp_open=template-create vers la page création.
+ */
+function em_wp_admin_template_redirect_legacy_create_deeplink(): void
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $open = sanitize_key((string) ($_GET['em_wp_open'] ?? ''));
+
+    if ($open !== 'template-create') {
+        return;
+    }
+
+    $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $legacy_pages = [
+        em_wp_admin_templates_page_slug(),
+        em_wp_admin_template_choice_page_slug(),
+    ];
+
+    if (!in_array($page_slug, $legacy_pages, true)) {
+        return;
+    }
+
+    em_wp_admin_safe_redirect(em_wp_admin_template_create_admin_url());
+}
+add_action('admin_init', 'em_wp_admin_template_redirect_legacy_create_deeplink', 1);
+
+/**
  * Callback placeholder pour les entrées template (redirection admin_init).
  */
 function em_wp_admin_render_template_entry_page(): void
@@ -262,11 +319,47 @@ function em_wp_admin_templates_enqueue(): void
 {
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-    if (!in_array($page_slug, [em_wp_admin_templates_page_slug(), em_wp_admin_template_choice_page_slug()], true)) {
+    $template_pages = [
+        em_wp_admin_templates_page_slug(),
+        em_wp_admin_template_choice_page_slug(),
+        em_wp_admin_template_create_page_slug(),
+    ];
+
+    if (!in_array($page_slug, $template_pages, true)) {
         return;
     }
 
     em_wp_admin_enqueue_shared_assets();
+
+    if ($page_slug === em_wp_admin_template_create_page_slug()) {
+        em_wp_admin_hub_cards_enqueue_assets();
+
+        wp_enqueue_style(
+            'font-awesome-6',
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+            [],
+            '6.5.1'
+        );
+
+        wp_enqueue_style(
+            'em-wp-admin-catalog-sommaire',
+            get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
+            ['em-wp-admin-hub-cards'],
+            em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
+        );
+
+        wp_enqueue_style(
+            'em-wp-admin-template-list',
+            get_template_directory_uri() . '/assets/admin/css/template/list-page.css',
+            ['em-wp-admin-catalog-sommaire'],
+            em_wp_admin_asset_version('assets/admin/css/template/list-page.css')
+        );
+
+        em_wp_admin_template_wizard_enqueue();
+        em_wp_admin_template_enqueue_new_template_launcher();
+
+        return;
+    }
 
     if ($page_slug === em_wp_admin_template_choice_page_slug()) {
         em_wp_admin_hub_cards_enqueue_assets();
@@ -286,216 +379,36 @@ function em_wp_admin_templates_enqueue(): void
             em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
         );
 
+        wp_enqueue_style(
+            'em-wp-admin-template-list',
+            get_template_directory_uri() . '/assets/admin/css/template/list-page.css',
+            ['em-wp-admin-catalog-sommaire'],
+            em_wp_admin_asset_version('assets/admin/css/template/list-page.css')
+        );
+
+        wp_enqueue_script(
+            'em-wp-template-list-row-edit',
+            get_template_directory_uri() . '/assets/admin/js/template/list-row-edit.js',
+            ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker'],
+            em_wp_admin_asset_version('assets/admin/js/template/list-row-edit.js'),
+            true
+        );
+
+        wp_enqueue_script(
+            'em-wp-template-list-delete',
+            get_template_directory_uri() . '/assets/admin/js/template/list-delete-confirm.js',
+            ['em-wp-admin-confirm-modal'],
+            em_wp_admin_asset_version('assets/admin/js/template/list-delete-confirm.js'),
+            true
+        );
+
+        em_wp_admin_template_enqueue_new_template_launcher();
+
         return;
     }
-
-    wp_enqueue_style(
-        'em-wp-admin-template-list',
-        get_template_directory_uri() . '/assets/admin/css/template/list-page.css',
-        ['em-wp-admin-module-common'],
-        em_wp_admin_asset_version('assets/admin/css/template/list-page.css')
-    );
-
-    wp_enqueue_script(
-        'em-wp-admin-template-create-deeplink',
-        get_template_directory_uri() . '/assets/admin/js/template/template-create-deeplink.js',
-        [],
-        em_wp_admin_asset_version('assets/admin/js/template/template-create-deeplink.js'),
-        true
-    );
 }
 add_action('admin_enqueue_scripts', 'em_wp_admin_templates_enqueue');
 
-/**
- * Rendu page Templates.
- */
-function em_wp_admin_render_templates_page(): void
-{
-    if (!current_user_can('manage_options')) {
-        return;
-    }
-
-    $registry = em_wp_template_registry();
-    $active_slug = em_wp_get_active_template_slug();
-    $editing_slug = em_wp_get_editing_template_slug();
-    $can_manage = em_wp_admin_can_manage_templates();
-    $suggested_color = em_wp_template_suggest_new_color();
-    ?>
-    <div class="wrap em-wp-admin-module em-wp-templates-admin">
-        <h1><?php esc_html_e('Templates', 'em-wp'); ?></h1>
-
-        <p class="description em-wp-templates-admin__intro">
-            <?php esc_html_e('Un template regroupe tout le contenu des rubriques. Assigne-lui une couleur pour te repérer dans le menu et le bandeau admin.', 'em-wp'); ?>
-        </p>
-
-        <div class="em-wp-templates-admin__grid">
-            <section class="em-wp-templates-admin__panel">
-                <h2><?php esc_html_e('Templates enregistrés', 'em-wp'); ?></h2>
-
-                <table class="widefat striped em-wp-templates-admin__table">
-                    <thead>
-                        <tr>
-                            <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
-                            <th scope="col"><?php esc_html_e('Couleur', 'em-wp'); ?></th>
-                            <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
-                            <th scope="col"><?php esc_html_e('Actif sur le site', 'em-wp'); ?></th>
-                            <th scope="col"><?php esc_html_e('En édition (toi)', 'em-wp'); ?></th>
-                            <?php if ($can_manage) { ?>
-                                <th scope="col"><?php esc_html_e('Actions', 'em-wp'); ?></th>
-                            <?php } ?>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($registry as $slug => $definition) { ?>
-                            <?php
-                            $label = (string) ($definition['label'] ?? $slug);
-                            $color = em_wp_get_template_color($slug);
-                            $is_active = ($slug === $active_slug);
-                            $is_editing = ($slug === $editing_slug);
-                            ?>
-                            <tr>
-                                <td>
-                                    <?php if ($can_manage) { ?>
-                                        <form method="post" class="em-wp-templates-admin__inline-form">
-                                            <?php wp_nonce_field('em_wp_template_rename'); ?>
-                                            <input type="hidden" name="em_wp_template_action" value="rename">
-                                            <input type="hidden" name="em_wp_template_slug" value="<?php echo esc_attr($slug); ?>">
-                                            <input
-                                                type="text"
-                                                name="em_wp_template_label"
-                                                value="<?php echo esc_attr($label); ?>"
-                                                class="regular-text"
-                                                required
-                                            >
-                                            <button type="submit" class="button button-small">
-                                                <?php esc_html_e('Renommer', 'em-wp'); ?>
-                                            </button>
-                                        </form>
-                                    <?php } else { ?>
-                                        <strong><?php echo esc_html($label); ?></strong>
-                                    <?php } ?>
-                                </td>
-                                <td>
-                                    <?php if ($can_manage) { ?>
-                                        <form method="post" class="em-wp-templates-admin__inline-form em-wp-templates-admin__color-form">
-                                            <?php wp_nonce_field('em_wp_template_set_color'); ?>
-                                            <input type="hidden" name="em_wp_template_action" value="set_color">
-                                            <input type="hidden" name="em_wp_template_slug" value="<?php echo esc_attr($slug); ?>">
-                                            <span
-                                                class="em-wp-templates-admin__color-swatch"
-                                                style="--em-template-swatch: <?php echo esc_attr($color); ?>;"
-                                                aria-hidden="true"
-                                            ></span>
-                                            <input
-                                                type="text"
-                                                name="em_wp_template_color"
-                                                value="<?php echo esc_attr($color); ?>"
-                                                class="em-wp-admin-color-field em-wp-templates-admin__color-field"
-                                                data-default-color="<?php echo esc_attr(em_wp_template_default_color_for_slug($slug)); ?>"
-                                            >
-                                            <button type="submit" class="button button-small">
-                                                <?php esc_html_e('Save', 'em-wp'); ?>
-                                            </button>
-                                        </form>
-                                    <?php } else { ?>
-                                        <span
-                                            class="em-wp-templates-admin__color-swatch"
-                                            style="--em-template-swatch: <?php echo esc_attr($color); ?>;"
-                                            title="<?php echo esc_attr($color); ?>"
-                                        ></span>
-                                    <?php } ?>
-                                </td>
-                                <td><code><?php echo esc_html($slug); ?></code></td>
-                                <td>
-                                    <?php if ($is_active) { ?>
-                                        <span class="em-wp-templates-admin__badge em-wp-templates-admin__badge--live">
-                                            <?php esc_html_e('Live', 'em-wp'); ?>
-                                        </span>
-                                    <?php } elseif ($can_manage) { ?>
-                                        <form method="post" class="em-wp-templates-admin__inline-form">
-                                            <?php wp_nonce_field('em_wp_template_set_active'); ?>
-                                            <input type="hidden" name="em_wp_template_action" value="set_active">
-                                            <input type="hidden" name="em_wp_template_active_slug" value="<?php echo esc_attr($slug); ?>">
-                                            <button type="submit" class="button button-secondary button-small">
-                                                <?php esc_html_e('Activer sur le site', 'em-wp'); ?>
-                                            </button>
-                                        </form>
-                                    <?php } else { ?>
-                                        <span aria-hidden="true">—</span>
-                                    <?php } ?>
-                                </td>
-                                <td>
-                                    <?php if ($is_editing) { ?>
-                                        <span class="em-wp-templates-admin__badge">
-                                            <?php esc_html_e('Bandeau', 'em-wp'); ?>
-                                        </span>
-                                    <?php } else { ?>
-                                        <span aria-hidden="true">—</span>
-                                    <?php } ?>
-                                </td>
-                                <?php if ($can_manage) { ?>
-                                    <td>
-                                        <?php if (!$is_active && count($registry) > 1) { ?>
-                                            <form method="post" class="em-wp-templates-admin__inline-form">
-                                                <?php wp_nonce_field('em_wp_template_delete'); ?>
-                                                <input type="hidden" name="em_wp_template_action" value="delete">
-                                                <input type="hidden" name="em_wp_template_slug" value="<?php echo esc_attr($slug); ?>">
-                                                <button
-                                                    type="submit"
-                                                    class="button button-link-delete"
-                                                    onclick="return confirm('<?php echo esc_js(__('Supprimer ce template ?', 'em-wp')); ?>');"
-                                                >
-                                                    <?php esc_html_e('Supprimer', 'em-wp'); ?>
-                                                </button>
-                                            </form>
-                                        <?php } else { ?>
-                                            <span aria-hidden="true">—</span>
-                                        <?php } ?>
-                                    </td>
-                                <?php } ?>
-                            </tr>
-                        <?php } ?>
-                    </tbody>
-                </table>
-            </section>
-
-            <?php if ($can_manage) { ?>
-                <section class="em-wp-templates-admin__panel em-wp-templates-admin__panel--create" id="em-wp-template-create-panel">
-                    <h2><?php esc_html_e('Nouveau template', 'em-wp'); ?></h2>
-                    <form method="post" class="em-wp-templates-admin__create-form">
-                        <?php wp_nonce_field('em_wp_template_create'); ?>
-                        <input type="hidden" name="em_wp_template_action" value="create">
-                        <p>
-                            <label for="em-wp-template-new-label"><?php esc_html_e('Nom du template', 'em-wp'); ?></label>
-                            <input
-                                type="text"
-                                id="em-wp-template-new-label"
-                                name="em_wp_template_label"
-                                class="regular-text"
-                                required
-                                placeholder="<?php esc_attr_e('Ex. Campagne été', 'em-wp'); ?>"
-                            >
-                        </p>
-                        <p>
-                            <label for="em-wp-template-new-color"><?php esc_html_e('Couleur du template', 'em-wp'); ?></label>
-                            <input
-                                type="text"
-                                id="em-wp-template-new-color"
-                                name="em_wp_template_color"
-                                value="<?php echo esc_attr($suggested_color); ?>"
-                                class="em-wp-admin-color-field"
-                                data-default-color="<?php echo esc_attr($suggested_color); ?>"
-                            >
-                        </p>
-                        <p>
-                            <button type="submit" class="button button-primary">
-                                <?php esc_html_e('Créer le template', 'em-wp'); ?>
-                            </button>
-                        </p>
-                    </form>
-                </section>
-            <?php } ?>
-        </div>
-    </div>
-    <?php
-}
+require_once __DIR__ . '/render-templates-page.php';
+require_once __DIR__ . '/new-template-modals.php';
+require_once __DIR__ . '/create-page.php';
