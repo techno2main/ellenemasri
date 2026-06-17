@@ -232,7 +232,7 @@ function em_wp_catalog_render_crud_sommaire_section(array $config, array $entrie
             <?php if ($entries === []) { ?>
                 <p class="em-wp-catalog-sommaire__empty"><?php esc_html_e('Aucune entrée pour le moment.', 'em-wp'); ?></p>
             <?php } else { ?>
-                <table class="widefat striped em-wp-catalog-sommaire__table">
+                <table class="widefat striped em-wp-catalog-sommaire__table em-wp-catalog-sommaire__table--inline-edit">
                     <thead>
                         <tr>
                             <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
@@ -250,79 +250,145 @@ function em_wp_catalog_render_crud_sommaire_section(array $config, array $entrie
                             $edit_url = add_query_arg(['page' => $edit_page_slug], admin_url('admin.php'));
                             $preview_slug = call_user_func($config['unique_slug'], call_user_func($config['slug_from_label'], $label), $catalog_slug);
                             $rename_form_id = (string) ($config['rename_row_prefix'] ?? 'em-wp-rename') . '-' . $catalog_slug;
-                            ?>
-                            <tr>
-                                <td class="em-wp-catalog-sommaire__name">
-                                    <form
-                                        id="<?php echo esc_attr($rename_form_id); ?>"
-                                        method="post"
-                                        action="<?php echo esc_url($hub_url); ?>"
-                                        class="em-wp-catalog-sommaire__rename-form"
-                                    >
-                                        <?php wp_nonce_field((string) call_user_func($config['nonce_action'])); ?>
-                                        <input type="hidden" name="<?php echo esc_attr($post_prefix . '_action'); ?>" value="rename">
-                                        <input type="hidden" name="<?php echo esc_attr($post_prefix . '_slug'); ?>" value="<?php echo esc_attr($catalog_slug); ?>">
-                                        <input
-                                            type="text"
-                                            name="<?php echo esc_attr($post_prefix . '_label'); ?>"
-                                            value="<?php echo esc_attr($label); ?>"
-                                            class="regular-text em-wp-catalog-sommaire__label-input"
-                                            required
-                                            data-em-wp-slug-preview
-                                            data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
-                                        >
-                                    </form>
-                                </td>
-                                <td class="em-wp-catalog-sommaire__slug">
-                                    <code
-                                        class="em-wp-catalog-sommaire__slug-preview"
-                                        data-em-wp-slug-preview-for="<?php echo esc_attr($rename_form_id); ?>"
-                                        data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
-                                    ><?php echo esc_html($preview_slug); ?></code>
-                                </td>
-                                <td class="em-wp-catalog-sommaire__actions">
-                                    <button
-                                        type="submit"
-                                        form="<?php echo esc_attr($rename_form_id); ?>"
-                                        class="em-wp-catalog-sommaire__save"
-                                        title="<?php esc_attr_e('Enregistrer le nom', 'em-wp'); ?>"
-                                        aria-label="<?php echo esc_attr(sprintf(__('Enregistrer le nom de %s', 'em-wp'), $label)); ?>"
-                                    >
-                                        <i class="fa-solid fa-check" aria-hidden="true"></i>
-                                    </button>
-                                    <a
-                                        class="em-wp-catalog-sommaire__edit"
-                                        href="<?php echo esc_url($edit_url); ?>"
-                                        title="<?php esc_attr_e('Éditer le contenu', 'em-wp'); ?>"
-                                        aria-label="<?php echo esc_attr(sprintf(__('Éditer le contenu de %s', 'em-wp'), $label)); ?>"
-                                    >
-                                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-                                    </a>
-                                    <form
-                                        method="post"
-                                        action="<?php echo esc_url($hub_url); ?>"
-                                        class="em-wp-catalog-sommaire__delete-form"
-                                        data-em-wp-delete-label="<?php echo esc_attr($label); ?>"
-                                    >
-                                        <?php wp_nonce_field((string) call_user_func($config['nonce_action'])); ?>
-                                        <input type="hidden" name="<?php echo esc_attr($post_prefix . '_action'); ?>" value="delete">
-                                        <input type="hidden" name="<?php echo esc_attr($post_prefix . '_slug'); ?>" value="<?php echo esc_attr($catalog_slug); ?>">
-                                        <button
-                                            type="submit"
-                                            class="em-wp-catalog-sommaire__delete"
-                                            title="<?php esc_attr_e('Supprimer', 'em-wp'); ?>"
-                                            aria-label="<?php echo esc_attr(sprintf(__('Supprimer %s', 'em-wp'), $label)); ?>"
-                                        >
-                                            <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
-                                        </button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php } ?>
+
+                            em_wp_catalog_render_sommaire_entry_row([
+                                'catalog_slug'   => $catalog_slug,
+                                'label'          => $label,
+                                'preview_slug'   => $preview_slug,
+                                'rename_form_id' => $rename_form_id,
+                                'form_action'    => $hub_url,
+                                'nonce_action'   => (string) call_user_func($config['nonce_action']),
+                                'post_prefix'    => $post_prefix,
+                                'edit_url'       => $edit_url,
+                            ]);
+                        } ?>
                     </tbody>
                 </table>
             <?php } ?>
         </div>
     </section>
+    <?php
+}
+
+/**
+ * Ligne tableau sommaire catalogue (nom en lecture seule + édition inline).
+ *
+ * @param array{
+ *     catalog_slug:string,
+ *     label:string,
+ *     preview_slug:string,
+ *     rename_form_id:string,
+ *     form_action:string,
+ *     nonce_action:string,
+ *     post_prefix:string,
+ *     edit_url:string,
+ * } $args
+ */
+function em_wp_catalog_render_sommaire_entry_row(array $args): void
+{
+    $catalog_slug = sanitize_key((string) ($args['catalog_slug'] ?? ''));
+    $label = sanitize_text_field((string) ($args['label'] ?? $catalog_slug));
+    $preview_slug = sanitize_text_field((string) ($args['preview_slug'] ?? $catalog_slug));
+    $rename_form_id = sanitize_html_class((string) ($args['rename_form_id'] ?? ''));
+    $form_action = esc_url((string) ($args['form_action'] ?? ''));
+    $nonce_action = (string) ($args['nonce_action'] ?? '');
+    $post_prefix = sanitize_key((string) ($args['post_prefix'] ?? ''));
+    $edit_url = trim((string) ($args['edit_url'] ?? ''));
+
+    if ($catalog_slug === '' || $post_prefix === '') {
+        return;
+    }
+    ?>
+    <tr>
+        <td class="em-wp-catalog-sommaire__name">
+            <div class="em-wp-catalog-sommaire__inline-field" data-em-wp-catalog-inline-field="name">
+                <button
+                    type="button"
+                    class="em-wp-catalog-sommaire__edit em-wp-catalog-sommaire__inline-edit"
+                    data-em-wp-catalog-inline-edit="name"
+                    title="<?php esc_attr_e('Modifier le nom', 'em-wp'); ?>"
+                    aria-label="<?php echo esc_attr(sprintf(__('Modifier le nom de %s', 'em-wp'), $label)); ?>"
+                >
+                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                </button>
+                <span class="em-wp-catalog-sommaire__inline-value"><?php echo esc_html($label); ?></span>
+                <form
+                    id="<?php echo esc_attr($rename_form_id); ?>"
+                    method="post"
+                    action="<?php echo esc_url($form_action); ?>"
+                    class="em-wp-catalog-sommaire__rename-form em-wp-catalog-sommaire__inline-rename-form"
+                    hidden
+                >
+                    <?php wp_nonce_field($nonce_action); ?>
+                    <input type="hidden" name="<?php echo esc_attr($post_prefix . '_action'); ?>" value="rename">
+                    <input type="hidden" name="<?php echo esc_attr($post_prefix . '_slug'); ?>" value="<?php echo esc_attr($catalog_slug); ?>">
+                    <input
+                        type="text"
+                        name="<?php echo esc_attr($post_prefix . '_label'); ?>"
+                        value="<?php echo esc_attr($label); ?>"
+                        class="regular-text em-wp-catalog-sommaire__label-input em-wp-catalog-sommaire__inline-input"
+                        required
+                        autocomplete="off"
+                        data-em-wp-slug-preview
+                        data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
+                    >
+                    <button
+                        type="submit"
+                        class="em-wp-catalog-sommaire__save em-wp-catalog-sommaire__inline-save"
+                        title="<?php esc_attr_e('Enregistrer le nom', 'em-wp'); ?>"
+                        aria-label="<?php echo esc_attr(sprintf(__('Enregistrer le nom de %s', 'em-wp'), $label)); ?>"
+                    >
+                        <i class="fa-solid fa-check" aria-hidden="true"></i>
+                    </button>
+                    <button
+                        type="button"
+                        class="em-wp-catalog-sommaire__inline-cancel"
+                        data-em-wp-catalog-inline-cancel="name"
+                        title="<?php esc_attr_e('Annuler', 'em-wp'); ?>"
+                        aria-label="<?php esc_attr_e('Annuler la modification du nom', 'em-wp'); ?>"
+                    >
+                        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                    </button>
+                </form>
+            </div>
+        </td>
+        <td class="em-wp-catalog-sommaire__slug">
+            <code
+                class="em-wp-catalog-sommaire__slug-preview"
+                data-em-wp-slug-preview-for="<?php echo esc_attr($rename_form_id); ?>"
+                data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
+            ><?php echo esc_html($preview_slug); ?></code>
+        </td>
+        <td class="em-wp-catalog-sommaire__actions">
+            <?php if ($edit_url !== '') { ?>
+                <a
+                    class="em-wp-catalog-sommaire__edit em-wp-catalog-sommaire__content-edit"
+                    href="<?php echo esc_url($edit_url); ?>"
+                    title="<?php esc_attr_e('Éditer le contenu', 'em-wp'); ?>"
+                    aria-label="<?php echo esc_attr(sprintf(__('Éditer le contenu de %s', 'em-wp'), $label)); ?>"
+                >
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                </a>
+            <?php } ?>
+            <form
+                method="post"
+                action="<?php echo esc_url($form_action); ?>"
+                class="em-wp-catalog-sommaire__delete-form"
+                data-em-wp-delete-label="<?php echo esc_attr($label); ?>"
+            >
+                <?php wp_nonce_field($nonce_action); ?>
+                <input type="hidden" name="<?php echo esc_attr($post_prefix . '_action'); ?>" value="delete">
+                <input type="hidden" name="<?php echo esc_attr($post_prefix . '_slug'); ?>" value="<?php echo esc_attr($catalog_slug); ?>">
+                <button
+                    type="submit"
+                    class="em-wp-catalog-sommaire__delete"
+                    title="<?php esc_attr_e('Supprimer', 'em-wp'); ?>"
+                    aria-label="<?php echo esc_attr(sprintf(__('Supprimer %s', 'em-wp'), $label)); ?>"
+                >
+                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                </button>
+            </form>
+        </td>
+    </tr>
     <?php
 }

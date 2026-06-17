@@ -220,6 +220,82 @@
     margin: 0;
 }
 
+.em-wp-catalog-sommaire__inline-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 100%;
+}
+
+.em-wp-catalog-sommaire__inline-value {
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.em-wp-catalog-sommaire__inline-field.is-editing .em-wp-catalog-sommaire__inline-value,
+.em-wp-catalog-sommaire__inline-field.is-editing > .em-wp-catalog-sommaire__inline-edit {
+    display: none;
+}
+
+.em-wp-catalog-sommaire__inline-rename-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    max-width: 100%;
+}
+
+.em-wp-catalog-sommaire__inline-rename-form[hidden] {
+    display: none !important;
+}
+
+.em-wp-catalog-sommaire__inline-rename-form .em-wp-catalog-sommaire__label-input {
+    width: min(100%, 220px);
+}
+
+.em-wp-catalog-sommaire__inline-save,
+.em-wp-catalog-sommaire__inline-cancel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    line-height: 1;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding: 0;
+    appearance: none;
+}
+
+.em-wp-catalog-sommaire__inline-save {
+    border: 1px solid #4e080e;
+    background: #ffffff;
+    color: #4e080e;
+}
+
+.em-wp-catalog-sommaire__inline-save:hover,
+.em-wp-catalog-sommaire__inline-save:focus {
+    background: #4e080e;
+    color: #ffffff;
+}
+
+.em-wp-catalog-sommaire__inline-cancel {
+    border: 1px solid #dcdcde;
+    background: #ffffff;
+    color: #50575e;
+}
+
+.em-wp-catalog-sommaire__inline-cancel:hover,
+.em-wp-catalog-sommaire__inline-cancel:focus {
+    border-color: #8c8f94;
+    color: #1d2327;
+}
+
+.em-wp-catalog-sommaire__content-edit {
+    color: #4e080e;
+}
+
 /* Pages d'édition catalogue (hero, slider…) */
 .em-wp-catalog-sommaire .em-wp-hub__breadcrumb {
     margin: 0 0 14px;
@@ -529,11 +605,11 @@ button.em-wp-catalog-edit__nav-link {
     gap: 12px;
 }
 
-.em-wp-rubrique-skeleton-add-panel__color-fields .em-wp-admin-color-control {
+.em-wp-rubrique-skeleton-add-panel__color-fields .em-wp-admin-color-field-row {
     margin: 0;
 }
 
-.em-wp-rubrique-skeleton-add-panel__color-fields .em-wp-admin-color-label {
+.em-wp-rubrique-skeleton-add-panel__color-fields .em-wp-admin-color-field-row__label {
     font-size: 12px;
     font-weight: 600;
     color: #646970;
@@ -583,6 +659,20 @@ button.em-wp-catalog-edit__nav-link {
 .em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:hover {
     border-color: #4e080e;
     color: #4e080e;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link--add:hover,
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link--add.is-preview-active,
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link--add:focus-visible {
+    border-color: #751820;
+    background: #751820;
+    color: #ffffff;
+}
+
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link--add:hover .em-wp-catalog-edit__nav-icon,
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link--add.is-preview-active .em-wp-catalog-edit__nav-icon,
+.em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link--add:focus-visible .em-wp-catalog-edit__nav-icon {
+    color: #ffffff;
 }
 
 .em-wp-catalog-edit__nav:not(.em-wp-rubrique-edit__nav) .em-wp-catalog-edit__nav-link:focus-visible {
@@ -898,6 +988,12 @@ button.em-wp-catalog-edit__nav-link {
     background: #4e080e;
     color: #ffffff;
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.em-wp-catalog-sommaire .em-wp-catalog-edit__nav .em-wp-catalog-edit__nav-link--add:hover .em-wp-catalog-edit__nav-icon,
+.em-wp-catalog-sommaire .em-wp-catalog-edit__nav .em-wp-catalog-edit__nav-link--add.is-preview-active .em-wp-catalog-edit__nav-icon,
+.em-wp-catalog-sommaire .em-wp-catalog-edit__nav .em-wp-catalog-edit__nav-link--add:focus-visible .em-wp-catalog-edit__nav-icon {
+    color: #ffffff;
 }
 
 .em-wp-catalog-sommaire.has-catalog-preview .em-wp-catalog-edit__nav-item.is-active .em-wp-catalog-edit__nav-link:not(.is-preview-active):not(.em-wp-catalog-edit__nav-link--list) {

@@ -108,5 +108,83 @@
                 });
             });
         });
+
+        var inlineTables = document.querySelectorAll('.em-wp-catalog-sommaire__table--inline-edit');
+        var activeNameField = null;
+
+        function closeNameEdit() {
+            if (!activeNameField) {
+                return;
+            }
+
+            var form = activeNameField.querySelector('.em-wp-catalog-sommaire__inline-rename-form');
+            var display = activeNameField.querySelector('.em-wp-catalog-sommaire__inline-value');
+            var input = form ? form.querySelector('.em-wp-catalog-sommaire__inline-input') : null;
+
+            if (input && display) {
+                input.value = display.textContent.trim();
+            }
+
+            if (form) {
+                form.hidden = true;
+            }
+
+            activeNameField.classList.remove('is-editing');
+            activeNameField = null;
+        }
+
+        function startNameEdit(field) {
+            closeNameEdit();
+
+            var form = field.querySelector('.em-wp-catalog-sommaire__inline-rename-form');
+            var input = form ? form.querySelector('.em-wp-catalog-sommaire__inline-input') : null;
+
+            if (!form || !input) {
+                return;
+            }
+
+            activeNameField = field;
+            field.classList.add('is-editing');
+            form.hidden = false;
+            input.focus();
+            input.select();
+        }
+
+        inlineTables.forEach(function (table) {
+            table.addEventListener('click', function (event) {
+                var editButton = event.target.closest('[data-em-wp-catalog-inline-edit="name"]');
+
+                if (!editButton || !table.contains(editButton)) {
+                    return;
+                }
+
+                event.preventDefault();
+                startNameEdit(editButton.closest('[data-em-wp-catalog-inline-field="name"]'));
+            });
+
+            table.addEventListener('click', function (event) {
+                var cancelButton = event.target.closest('[data-em-wp-catalog-inline-cancel="name"]');
+
+                if (!cancelButton || !table.contains(cancelButton)) {
+                    return;
+                }
+
+                event.preventDefault();
+                closeNameEdit();
+            });
+
+            table.addEventListener('keydown', function (event) {
+                if (event.key !== 'Escape' || !activeNameField || !table.contains(activeNameField)) {
+                    return;
+                }
+
+                var input = activeNameField.querySelector('.em-wp-catalog-sommaire__inline-input');
+
+                if (input && (event.target === input || input.contains(event.target))) {
+                    event.preventDefault();
+                    closeNameEdit();
+                }
+            });
+        });
     });
 })();
