@@ -4,7 +4,7 @@
             return;
         }
 
-        $('.em-wp-admin-color-field').each(function () {
+        $('.em-wp-admin-color-field').not('.em-wp-admin-color-value').each(function () {
             const input = $(this);
 
             if (input.data('emWpColorPickerReady')) {
@@ -65,6 +65,9 @@
 
             var $input = $(input);
             if (!$input.data('emWpColorPickerReady') || !$.fn.wpColorPicker) {
+                if (window.emWpAdminColorModal && typeof window.emWpAdminColorModal.syncTriggerDisplay === 'function') {
+                    window.emWpAdminColorModal.syncTriggerDisplay(input);
+                }
                 return;
             }
 
@@ -72,6 +75,10 @@
                 $input.wpColorPicker('color', value);
             } catch (err) {
                 /* Picker not ready yet — input value is enough until init completes. */
+            }
+
+            if (window.emWpAdminColorModal && typeof window.emWpAdminColorModal.syncTriggerDisplay === 'function') {
+                window.emWpAdminColorModal.syncTriggerDisplay(input);
             }
         },
         initAll: initSharedColorPickers,

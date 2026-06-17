@@ -160,7 +160,19 @@ function em_wp_admin_render_color_fields_wrap(array $fields, string $option_name
     }
     ?>
     <div class="em-wp-admin-color-field-wrap">
-        <?php foreach ($fields as $field) {
+        <?php
+        $bg_field_id = '';
+
+        foreach ($fields as $field) {
+            $candidate_name = sanitize_key((string) ($field['name'] ?? ''));
+
+            if ($candidate_name === 'background_color') {
+                $bg_field_id = sanitize_html_class($option_name . '-background_color');
+                break;
+            }
+        }
+
+        foreach ($fields as $field) {
             $name = sanitize_key((string) ($field['name'] ?? ''));
             if ($name === '') {
                 continue;
@@ -168,18 +180,25 @@ function em_wp_admin_render_color_fields_wrap(array $fields, string $option_name
             $label = (string) ($field['label'] ?? '');
             $value = (string) ($field['value'] ?? '');
             $placeholder = (string) ($field['placeholder'] ?? '');
-            ?>
-            <div class="em-wp-admin-color-control">
-                <span class="em-wp-admin-color-label"><?php echo esc_html($label); ?></span>
-                <input
-                    type="text"
-                    class="regular-text em-wp-admin-color-field"
-                    name="<?php echo esc_attr($option_name . '[' . $name . ']'); ?>"
-                    value="<?php echo esc_attr($value); ?>"
-                    <?php if ($placeholder !== '') { ?>placeholder="<?php echo esc_attr($placeholder); ?>"<?php } ?>
-                >
-            </div>
-        <?php } ?>
+            $field_id = sanitize_html_class($option_name . '-' . $name);
+            $field_name = $option_name . '[' . $name . ']';
+            $field_args = [
+                'id'           => $field_id,
+                'name'         => $field_name,
+                'value'        => $value,
+                'default'      => $placeholder,
+                'field_label'  => $label,
+                'preview_label'=> $label,
+                'modal_title'  => $label !== '' ? $label : em_wp_admin_color_modal_default_title(),
+            ];
+
+            if (em_wp_admin_color_field_preview_type(['name' => $field_name], $name) === 'text' && $bg_field_id !== '') {
+                $field_args['preview_type'] = 'text';
+                $field_args['bg_target_id'] = $bg_field_id;
+            }
+
+            em_wp_admin_render_color_field($field_args);
+        } ?>
     </div>
     <?php
     if ($open_group) {
@@ -230,7 +249,7 @@ function em_wp_admin_color_field_display_value(array $color_fields, string $fiel
  */
 function em_wp_admin_rubrique_inline_colors_panel_title(): string
 {
-    return __('Couleurs Rubrique', 'em-wp');
+    return __('COULEURS', 'em-wp');
 }
 
 /**
@@ -246,30 +265,26 @@ function em_wp_admin_render_skeleton_add_rubrique_colors(string $rubrique_slug):
     $text_id = 'em-wp-rubrique-skeleton-text-' . sanitize_html_class($rubrique_slug);
     ?>
     <div class="em-wp-rubrique-skeleton-add-panel__color-fields">
-        <div class="em-wp-admin-color-control">
-            <label class="em-wp-admin-color-label" for="<?php echo esc_attr($bg_id); ?>">
-                <?php esc_html_e('Couleur de fond', 'em-wp'); ?>
-            </label>
-            <input
-                type="text"
-                id="<?php echo esc_attr($bg_id); ?>"
-                class="regular-text em-wp-admin-color-field em-wp-rubrique-skeleton-add-panel__bg"
-                value="<?php echo esc_attr($bg); ?>"
-                data-default="<?php echo esc_attr($bg); ?>"
-            >
-        </div>
-        <div class="em-wp-admin-color-control">
-            <label class="em-wp-admin-color-label" for="<?php echo esc_attr($text_id); ?>">
-                <?php esc_html_e('Couleur du texte', 'em-wp'); ?>
-            </label>
-            <input
-                type="text"
-                id="<?php echo esc_attr($text_id); ?>"
-                class="regular-text em-wp-admin-color-field em-wp-rubrique-skeleton-add-panel__text"
-                value="<?php echo esc_attr($text); ?>"
-                data-default="<?php echo esc_attr($text); ?>"
-            >
-        </div>
+        <?php
+        em_wp_admin_render_color_field([
+            'id'           => $bg_id,
+            'value'        => $bg,
+            'default'      => $bg,
+            'field_label'  => __('Couleur de fond', 'em-wp'),
+            'preview_label'=> __('Couleur de fond', 'em-wp'),
+            'input_class'  => 'em-wp-rubrique-skeleton-add-panel__bg',
+        ]);
+        em_wp_admin_render_color_field([
+            'id'           => $text_id,
+            'value'        => $text,
+            'default'      => $text,
+            'field_label'  => __('Couleur du texte', 'em-wp'),
+            'preview_label'=> __('Couleur du texte', 'em-wp'),
+            'input_class'  => 'em-wp-rubrique-skeleton-add-panel__text',
+            'preview_type' => 'text',
+            'bg_target_id' => $bg_id,
+        ]);
+        ?>
     </div>
     <?php
 }

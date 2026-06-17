@@ -54,128 +54,6 @@ function em_wp_admin_render_templates_page(): void
 
 /**
 
- * Modale couleur template (une seule instance, hors tableau).
-
- */
-
-function em_wp_admin_render_templates_color_modal(): void
-
-{
-
-    ?>
-
-    <div
-
-        id="em-wp-templates-admin-color-modal"
-
-        class="em-wp-templates-admin-color-modal"
-
-        hidden
-
-        aria-hidden="true"
-
-    >
-
-        <div class="em-wp-templates-admin-color-modal__backdrop" data-em-wp-template-color-dismiss></div>
-
-        <div
-
-            class="em-wp-templates-admin-color-modal__dialog"
-
-            role="dialog"
-
-            aria-modal="true"
-
-            aria-labelledby="em-wp-templates-admin-color-modal-title"
-
-        >
-
-            <header class="em-wp-templates-admin-color-modal__head">
-
-                <h2 id="em-wp-templates-admin-color-modal-title" class="em-wp-templates-admin-color-modal__title">
-
-                    <?php esc_html_e('Couleur du template', 'em-wp'); ?>
-
-                </h2>
-
-            </header>
-
-            <div class="em-wp-templates-admin-color-modal__body">
-
-                <div class="em-wp-templates-admin-color-modal__preview-wrap">
-
-                    <span
-
-                        id="em-wp-templates-admin-color-modal-preview"
-
-                        class="em-wp-templates-admin-color-modal__preview"
-
-                        aria-hidden="true"
-
-                    ></span>
-
-                    <p id="em-wp-templates-admin-color-modal-label" class="em-wp-templates-admin-color-modal__template-name"></p>
-
-                </div>
-
-                <div class="em-wp-admin-color-field-wrap em-wp-templates-admin-color-modal__picker-wrap">
-
-                    <div class="em-wp-admin-color-control">
-
-                        <label class="em-wp-admin-color-label" for="em-wp-templates-admin-color-modal-input">
-
-                            <?php esc_html_e('Couleur', 'em-wp'); ?>
-
-                        </label>
-
-                        <input
-
-                            type="text"
-
-                            id="em-wp-templates-admin-color-modal-input"
-
-                            class="em-wp-templates-admin-color-modal__input"
-
-                            value=""
-
-                            autocomplete="off"
-
-                        >
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <footer class="em-wp-templates-admin-color-modal__actions">
-
-                <button type="button" class="button button-secondary" data-em-wp-template-color-dismiss>
-
-                    <?php esc_html_e('Annuler', 'em-wp'); ?>
-
-                </button>
-
-                <button type="button" class="button button-primary" id="em-wp-templates-admin-color-modal-save">
-
-                    <?php esc_html_e('Enregistrer', 'em-wp'); ?>
-
-                </button>
-
-            </footer>
-
-        </div>
-
-    </div>
-
-    <?php
-
-}
-
-
-
-/**
-
  * Tableau des templates enregistrés.
 
  *
@@ -276,12 +154,6 @@ function em_wp_admin_render_templates_registered_table(
 
 
 
-        <?php if ($can_manage) {
-
-            em_wp_admin_render_templates_color_modal();
-
-        } ?>
-
     </section>
 
     <?php
@@ -327,6 +199,8 @@ function em_wp_admin_render_templates_registered_row(
     $rename_form_id = 'em-wp-template-rename-' . $slug;
 
     $color_form_id = 'em-wp-template-color-' . $slug;
+
+    $color_value_id = 'em-wp-template-color-value-' . $slug;
 
     ?>
 
@@ -464,15 +338,19 @@ function em_wp_admin_render_templates_registered_row(
 
                         class="em-wp-catalog-sommaire__edit em-wp-templates-admin__inline-edit"
 
-                        data-em-wp-template-inline-edit="color"
+                        data-em-wp-color-modal-open
 
-                        data-em-wp-template-form="<?php echo esc_attr($color_form_id); ?>"
+                        data-em-wp-color-modal-target="<?php echo esc_attr($color_value_id); ?>"
 
-                        data-em-wp-template-label="<?php echo esc_attr($label); ?>"
+                        data-em-wp-color-modal-form="<?php echo esc_attr($color_form_id); ?>"
 
-                        data-em-wp-template-color="<?php echo esc_attr($color); ?>"
+                        data-em-wp-color-modal-value-name="em_wp_template_color"
 
-                        data-em-wp-template-default-color="<?php echo esc_attr(em_wp_template_default_color_for_slug($slug)); ?>"
+                        data-em-wp-color-modal-label="<?php echo esc_attr($label); ?>"
+
+                        data-em-wp-color-modal-title="<?php echo esc_attr(__('Couleur du template', 'em-wp')); ?>"
+
+                        data-em-wp-color-modal-default="<?php echo esc_attr(em_wp_template_default_color_for_slug($slug)); ?>"
 
                         title="<?php esc_attr_e('Modifier la couleur', 'em-wp'); ?>"
 
@@ -502,7 +380,7 @@ function em_wp_admin_render_templates_registered_row(
 
                         <input type="hidden" name="em_wp_template_slug" value="<?php echo esc_attr($slug); ?>">
 
-                        <input type="hidden" name="em_wp_template_color" value="<?php echo esc_attr($color); ?>">
+                        <input type="hidden" name="em_wp_template_color" id="<?php echo esc_attr($color_value_id); ?>" value="<?php echo esc_attr($color); ?>">
 
                     </form>
 
@@ -522,10 +400,7 @@ function em_wp_admin_render_templates_registered_row(
 
             <?php if ($is_active) { ?>
 
-                <span
-                    class="em-wp-templates-admin__badge em-wp-templates-admin__badge--live"
-                    style="--em-template-accent: <?php echo esc_attr($color); ?>;"
-                ><?php esc_html_e('LIVE', 'em-wp'); ?></span>
+                <?php em_wp_admin_hub_render_template_active_pill($label, $slug); ?>
 
             <?php } elseif ($can_manage) { ?>
 
