@@ -35,10 +35,29 @@
         body.em-wp-admin-sidebar-chrome #adminmenu li.wp-has-current-submenu a.menu-top,
         body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-accordion-parent.wp-has-current-submenu > a.menu-top,
         body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-accordion-child.current > a.menu-top,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-submenu-current > a.menu-top,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-rubrique-current > a.menu-top,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-template-editing > a.menu-top,
         body.em-wp-admin-dashboard-screen #adminmenu li.current a.menu-top,
         body.em-wp-admin-dashboard-screen #adminmenu li.wp-has-current-submenu a.menu-top,
-        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-dashboard-entry.current > a.menu-top {
-            background: rgba(255, 255, 255, 0.16) !important;
+        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-dashboard-entry.current > a.menu-top,
+        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-submenu-current > a.menu-top,
+        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-rubrique-current > a.menu-top,
+        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-template-editing > a.menu-top {
+            background: rgba(255, 255, 255, 0.26) !important;
+            color: #ffffff !important;
+        }
+
+        body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-submenu-current:hover > a.menu-top,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-rubrique-current:hover > a.menu-top,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-template-editing:hover > a.menu-top,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.current:hover > a.menu-top,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.em-wp-menu-accordion-child.current:hover > a.menu-top,
+        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-submenu-current:hover > a.menu-top,
+        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-rubrique-current:hover > a.menu-top,
+        body.em-wp-admin-dashboard-screen #adminmenu li.em-wp-menu-template-editing:hover > a.menu-top,
+        body.em-wp-admin-dashboard-screen #adminmenu li.current:hover > a.menu-top {
+            background: rgba(255, 255, 255, 0.32) !important;
             color: #ffffff !important;
         }
 
