@@ -444,7 +444,7 @@ Catalogue Hero          Catalogue Slider
 - [x] Hub catalogues : modules custom CRUD + renderer mutualisé Release/Stream/Contact
 - [x] Menu latéral : rubriques hors contexte masquées (pas d'intrus CONTACT sur dashboard)
 - [x] Accueil : cartes « Nouveau Catalogue » / « Nouveau Template » → deeplink création
-- [ ] **Wizard onboarding** (session Tyson — demain soir)
+- [ ] **Wizard onboarding** (session Tyson — spec : [WIZARD-NEW-TEMPLATE.md](./WIZARD-NEW-TEMPLATE.md))
 - [ ] Retrait `em_wp_site_rubrique_visibility` global legacy (si encore utilisé)
 - [ ] Tests BACK/FRONT checklist Phase 5
 - [ ] **Maj ce doc** → ✅ après validation Tyson + Wizard
