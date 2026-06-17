@@ -5,12 +5,21 @@
 }
 
 .em-wp-header-admin__selection .em-wp-header-admin__field {
+    padding: 12px 0;
+    border-bottom: 1px solid #dcdcde;
+}
+
+.em-wp-header-admin__selection .em-wp-header-admin__field--catalog {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.em-wp-header-admin__selection .em-wp-header-admin__field--layout {
     display: grid;
     grid-template-columns: minmax(140px, 220px) minmax(0, 1fr);
     align-items: start;
     gap: 8px 16px;
-    padding: 12px 0;
-    border-bottom: 1px solid #dcdcde;
 }
 
 .em-wp-header-admin__selection .em-wp-header-admin__field:last-child {
@@ -19,6 +28,7 @@
 
 .em-wp-header-admin__catalog-switcher-label,
 .em-wp-header-admin__layout-label {
+    flex-shrink: 0;
     font-size: 13px;
     font-weight: 600;
     color: #1d2327;
@@ -31,19 +41,30 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
-    justify-self: start;
     min-width: 0;
+}
+
+.em-wp-header-admin__field--catalog .em-wp-header-admin__catalog-switcher-control {
+    flex: 0 1 auto;
+}
+
+.em-wp-header-admin__field--layout .em-wp-header-admin__layout-control {
+    justify-self: start;
 }
 
 .em-wp-header-admin__catalog-switcher-control .em-wp-hub__live-switches {
     width: fit-content;
     max-width: 100%;
     flex-wrap: nowrap;
-    gap: 10px 14px;
+    gap: 8px 10px;
 }
 
 .em-wp-header-admin__catalog-switcher-control .em-wp-hub__live-switch {
     flex-shrink: 0;
+}
+
+.em-wp-header-admin__catalog-switcher-control .em-wp-hub__live-switch-control {
+    gap: 5px;
 }
 
 .em-wp-header-admin__catalog-switcher-control .em-wp-hub__live-switch-label {
