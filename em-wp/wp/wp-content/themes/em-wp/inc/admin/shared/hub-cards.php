@@ -23,7 +23,7 @@ function em_wp_admin_hub_cards_enqueue_assets(): void
     wp_enqueue_style(
         'em-wp-admin-hub-cards',
         get_template_directory_uri() . '/assets/admin/css/shared/hub-cards.css',
-        ['em-wp-admin-module-common', 'dashicons'],
+        ['em-wp-admin-module-common', 'em-wp-admin-live-badge', 'dashicons'],
         em_wp_admin_asset_version('assets/admin/css/shared/hub-cards.css')
     );
 
@@ -513,7 +513,8 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
     bool $uppercase = false,
     int $max_visible = 0,
     string $see_all_url = '',
-    string $see_all_label = ''
+    string $see_all_label = '',
+    bool $blink_puce = false
 ): void {
     if ($entries === []) {
         return;
@@ -536,6 +537,10 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
 
     if ($should_trim) {
         $classes .= ' em-wp-hub__live--entry-links-trimmed';
+    }
+
+    if ($blink_puce) {
+        $classes .= ' em-wp-hub__live--blink-puce';
     }
     ?>
     <p
@@ -568,6 +573,59 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
                     class="em-wp-hub__catalog-entry-link em-wp-hub__catalog-entry-link--see-all"
                     href="<?php echo esc_url($see_all_url); ?>"
                 ><?php echo esc_html($see_all_label !== '' ? $see_all_label : __('Voir tout', 'em-wp')); ?></a>
+            <?php } ?>
+        </span>
+    </p>
+    <?php
+}
+
+/**
+ * Pastille actions « Nouveau template » (DUPLIQUER + WIZARD).
+ */
+function em_wp_admin_hub_render_template_create_actions_badge(bool $can_duplicate = true): void
+{
+    $entries = [];
+
+    if ($can_duplicate) {
+        $entries[] = [
+            'label'   => __('DUPLIQUER', 'em-wp'),
+            'trigger' => 'duplicate',
+        ];
+    }
+
+    $entries[] = [
+        'label'   => __('WIZARD', 'em-wp'),
+        'trigger' => 'wizard',
+    ];
+
+    $classes = 'em-wp-hub__live em-wp-hub__live--in-card em-wp-hub__live--entry-links em-wp-hub__live--uppercase';
+    ?>
+    <p
+        class="<?php echo esc_attr($classes); ?>"
+        style="--em-wp-live-color: #751820;"
+    >
+        <span class="em-wp-hub__catalog-entry-arrow" aria-hidden="true">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2.5 6h5.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M6.25 3.25 9.5 6l-3.25 2.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+        <span class="em-wp-hub__live-text">
+            <?php foreach ($entries as $index => $entry) {
+                if ($index > 0) {
+                    echo '<span class="em-wp-hub__catalog-entry-sep" aria-hidden="true"></span>';
+                }
+
+                $trigger = (string) ($entry['trigger'] ?? '');
+                $attr = $trigger === 'duplicate'
+                    ? 'data-em-wp-new-template-duplicate'
+                    : 'data-em-wp-new-template-wizard';
+                ?>
+                <button
+                    type="button"
+                    class="em-wp-hub__catalog-entry-link"
+                    <?php echo $attr; ?>
+                ><?php echo esc_html((string) ($entry['label'] ?? '')); ?></button>
             <?php } ?>
         </span>
     </p>
@@ -611,65 +669,113 @@ function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $
 /**
  * Pastille « template actif sur le site ».
  */
-function em_wp_admin_hub_render_live_template_badge(string $active_label, string $active_color, bool $in_card = false): void
+function em_wp_admin_hub_render_live_template_badge(string $active_label, string $active_slug, bool $in_card = false): void
 {
-    if ($in_card) {
-        $url = function_exists('em_wp_admin_template_choice_admin_url') ? em_wp_admin_template_choice_admin_url() : '';
-
-        if ($url !== '') {
-            em_wp_admin_hub_render_catalog_entry_links_badge(
-                [
-                    [
-                        'label' => $active_label,
-                        'url'   => $url,
-                    ],
-                ],
-                $active_color,
-                __('Ton site utilise actuellement le template :', 'em-wp') . ' ',
-                true
-            );
-            return;
-        }
-    }
-
-    $classes = 'em-wp-hub__live em-wp-hub__live--uppercase';
+    $active_slug = sanitize_key($active_slug);
 
     if ($in_card) {
-        $classes .= ' em-wp-hub__live--in-card';
+        ?>
+        <div class="em-wp-hub__card-live-status">
+            <p class="em-wp-hub__card-live-status-prefix">
+                <?php esc_html_e('Ton site utilise actuellement le template :', 'em-wp'); ?>
+            </p>
+            <?php em_wp_admin_hub_render_template_active_pill($active_label, $active_slug); ?>
+        </div>
+        <?php
+        return;
     }
-    ?>
-    <p
-        class="<?php echo esc_attr($classes); ?>"
-        role="status"
-        style="--em-wp-live-color: <?php echo esc_attr($active_color); ?>;"
-    >
-        <span class="em-wp-hub__live-indicator" aria-hidden="true">
-            <span class="em-wp-hub__live-dot"></span>
-        </span>
-        <span class="em-wp-hub__live-text">
-            <?php esc_html_e('Ton site utilise actuellement le template :', 'em-wp'); ?>
-            <strong class="em-wp-hub__live-template"><?php echo esc_html($active_label); ?></strong>
-        </span>
-    </p>
-    <?php
+
+    em_wp_admin_hub_render_template_active_pill($active_label, $active_slug);
 }
 
 /**
  * Pastille « template live » compacte (carte template individuelle).
  */
-function em_wp_admin_hub_render_template_live_badge(string $label, string $color): void
+function em_wp_admin_hub_render_template_live_badge(string $label, string $template_slug): void
 {
-    em_wp_admin_hub_render_status_badge(
-        sprintf(
-            /* translators: %s: template label (uppercase) */
-            __('%s LIVE', 'em-wp'),
-            mb_strtoupper(trim($label))
-        ),
-        $color,
-        true,
-        false,
-        false
+    em_wp_admin_hub_render_template_active_pill($label, $template_slug);
+}
+
+/**
+ * Pastille template actif (fond couleur template, typo blanche, chip LIVE clignotante).
+ */
+function em_wp_admin_hub_render_template_active_pill(string $label, string $template_slug): void
+{
+    $label = trim($label);
+    $template_slug = sanitize_key($template_slug);
+    $style_attr = function_exists('em_wp_admin_template_tab_style_attr')
+        ? em_wp_admin_template_tab_style_attr($template_slug)
+        : '';
+    ?>
+    <div
+        class="em-wp-hub__template-live-pill"
+        role="status"
+        <?php if ($style_attr !== '') { ?>
+            style="<?php echo esc_attr($style_attr); ?>"
+        <?php } ?>
+    >
+        <span class="em-wp-hub__template-live-pill-name"><?php echo esc_html(mb_strtoupper($label)); ?></span>
+        <span class="em-wp-hub__template-live-pill-live">
+            <span class="em-wp-hub__live-indicator" aria-hidden="true">
+                <span class="em-wp-hub__live-dot"></span>
+            </span>
+            <?php esc_html_e('Live', 'em-wp'); ?>
+        </span>
+    </div>
+    <?php
+}
+
+/**
+ * Pastille « Activer » (fond couleur template, chip Activer).
+ *
+ * @param array{compact?:bool,table?:bool,block?:bool,id?:string,class?:string} $args
+ */
+function em_wp_admin_hub_render_template_activate_pill(string $slug, string $display_label, array $args = []): void
+{
+    $slug = sanitize_key($slug);
+    $label_upper = mb_strtoupper(trim($display_label));
+    $compact = !empty($args['compact']);
+    $table = !empty($args['table']);
+    $block = !empty($args['block']);
+    $id = sanitize_html_class((string) ($args['id'] ?? ''));
+    $extra_class = trim((string) ($args['class'] ?? ''));
+
+    $classes = trim(
+        'em-wp-hub__template-live-pill em-wp-hub__template-live-pill--activate em-wp-templates-sommaire__activate-live '
+        . $extra_class
     );
+
+    if ($compact || $table) {
+        $classes .= ' em-wp-hub__template-live-pill--compact';
+    }
+
+    if ($block) {
+        $classes .= ' em-wp-hub__template-live-pill--block';
+    }
+
+    $style_attr = function_exists('em_wp_admin_template_tab_style_attr')
+        ? em_wp_admin_template_tab_style_attr($slug)
+        : '';
+    ?>
+    <button
+        type="button"
+        class="<?php echo esc_attr($classes); ?>"
+        <?php if ($id !== '') { ?>
+            id="<?php echo esc_attr($id); ?>"
+        <?php } ?>
+        <?php if ($style_attr !== '') { ?>
+            style="<?php echo esc_attr($style_attr); ?>"
+        <?php } ?>
+        data-template-slug="<?php echo esc_attr($slug); ?>"
+        data-template-label="<?php echo esc_attr($label_upper); ?>"
+        title="<?php esc_attr_e('Activer sur le site public', 'em-wp'); ?>"
+    >
+        <span class="em-wp-hub__template-live-pill-name"><?php echo esc_html($label_upper); ?></span>
+        <span class="em-wp-hub__template-live-pill-live em-wp-hub__template-live-pill-action">
+            <?php echo esc_html(mb_strtoupper(__('Activer', 'em-wp'))); ?>
+        </span>
+    </button>
+    <?php
 }
 
 /**
@@ -682,48 +788,13 @@ function em_wp_admin_hub_render_template_activate_badge(
     bool $compact = false,
     bool $table = false
 ): void {
-    $label_upper = mb_strtoupper(trim($display_label));
+    unset($color);
 
-    if ($table) {
-        ?>
-        <button
-            type="button"
-            class="em-wp-templates-admin__badge em-wp-templates-admin__badge--activate em-wp-templates-sommaire__activate-live"
-            style="--em-template-accent: <?php echo esc_attr($color); ?>;"
-            data-template-slug="<?php echo esc_attr($slug); ?>"
-            data-template-label="<?php echo esc_attr($label_upper); ?>"
-            title="<?php esc_attr_e('Activer sur le site public', 'em-wp'); ?>"
-        >
-            <?php echo esc_html(mb_strtoupper(__('Activer', 'em-wp'))); ?>
-        </button>
-        <?php
-        return;
-    }
-
-    $classes = 'em-wp-hub__live em-wp-hub__live--activate em-wp-templates-sommaire__activate-live';
-
-    if ($compact) {
-        $classes .= ' em-wp-hub__live--compact-in-card';
-    } else {
-        $classes .= ' em-wp-hub__live--in-card';
-    }
-    ?>
-    <button
-        type="button"
-        class="<?php echo esc_attr($classes); ?>"
-        style="--em-wp-live-color: <?php echo esc_attr($color); ?>;"
-        data-template-slug="<?php echo esc_attr($slug); ?>"
-        data-template-label="<?php echo esc_attr($label_upper); ?>"
-        title="<?php esc_attr_e('Activer sur le site public', 'em-wp'); ?>"
-    >
-        <span class="em-wp-hub__live-indicator" aria-hidden="true">
-            <span class="em-wp-hub__live-dot"></span>
-        </span>
-        <span class="em-wp-hub__live-text">
-            <?php echo esc_html(mb_strtoupper(__('Activer', 'em-wp'))); ?>
-        </span>
-    </button>
-    <?php
+    em_wp_admin_hub_render_template_activate_pill($slug, $display_label, [
+        'compact' => $compact,
+        'table'   => $table,
+        'block'   => !$table,
+    ]);
 }
 
 /**
@@ -737,7 +808,7 @@ function em_wp_admin_hub_render_template_card_live_footer(
     bool $can_manage
 ): void {
     if ($is_live) {
-        em_wp_admin_hub_render_template_live_badge($display_label, $color);
+        em_wp_admin_hub_render_template_live_badge($display_label, $slug);
         return;
     }
 
@@ -812,13 +883,12 @@ function em_wp_admin_hub_render_live_template_switcher(string $redirect_page = '
     $registry = em_wp_template_registry();
     $active_slug = em_wp_get_active_template_slug();
     $active_label = (string) ($registry[$active_slug]['label'] ?? $active_slug);
-    $active_color = em_wp_get_template_color($active_slug);
     ?>
     <div
         class="em-wp-hub__live-bar"
         data-active-slug="<?php echo esc_attr($active_slug); ?>"
     >
-        <?php em_wp_admin_hub_render_live_template_badge($active_label, $active_color, false); ?>
+        <?php em_wp_admin_hub_render_live_template_badge($active_label, $active_slug, false); ?>
     </div>
     <?php
 }
@@ -842,27 +912,22 @@ function em_wp_admin_catalog_choice_switch_label(string $catalog_slug, string $l
 }
 
 /**
- * Couleur d'accent pour un toggle catalogue (hero/slider).
+ * Couleur d'accent admin partagée (catalogues, toggles rubrique template…).
+ */
+function em_wp_admin_hub_brand_accent_color(): string
+{
+    return '#751820';
+}
+
+/**
+ * Couleur d'accent pour un toggle catalogue (hero/slider…) en édition template.
+ * Toujours la couleur catalogues — pas de couleur par entrée.
  */
 function em_wp_admin_catalog_choice_switch_color(string $catalog_slug): string
 {
-    $catalog_slug = sanitize_key($catalog_slug);
+    unset($catalog_slug);
 
-    if ($catalog_slug === '') {
-        return '#7c3aed';
-    }
-
-    if (function_exists('em_wp_get_template_color')) {
-        if (str_contains($catalog_slug, 'mayami')) {
-            return em_wp_get_template_color('mayami');
-        }
-
-        if (str_contains($catalog_slug, 'ellene')) {
-            return em_wp_get_template_color('ellene');
-        }
-    }
-
-    return '#7c3aed';
+    return em_wp_admin_hub_brand_accent_color();
 }
 
 /**
@@ -957,12 +1022,15 @@ function em_wp_admin_render_catalog_slug_switcher(
         <?php if ($choices === []) { ?>
             <p class="description"><?php esc_html_e('Aucune entrée catalogue disponible.', 'em-wp'); ?></p>
             <input type="hidden" name="<?php echo esc_attr($input_name); ?>" value="">
-        <?php } else { ?>
+        <?php } else {
+            $catalog_accent = em_wp_admin_catalog_choice_switch_color('');
+            ?>
             <div
                 id="<?php echo esc_attr($switch_group_id); ?>"
                 class="em-wp-hub__live-switches em-wp-admin-catalog-slug-switches"
                 role="group"
                 aria-label="<?php echo esc_attr($group_label !== '' ? $group_label : __('Sélection catalogue', 'em-wp')); ?>"
+                style="--em-wp-live-color: <?php echo esc_attr($catalog_accent); ?>;"
             >
                 <?php foreach ($choices as $slug => $label) {
                     $slug = sanitize_key((string) $slug);
@@ -979,7 +1047,6 @@ function em_wp_admin_render_catalog_slug_switcher(
 
                     $is_selected = ($slug === $selected_slug);
                     $switch_id = $switch_group_id . '-' . sanitize_html_class($slug);
-                    $accent_color = em_wp_admin_catalog_choice_switch_color($slug);
                     $entry_url = $catalog_part !== ''
                         ? em_wp_admin_catalog_entry_edit_url($catalog_part, $slug)
                         : '';
@@ -989,10 +1056,7 @@ function em_wp_admin_render_catalog_slug_switcher(
                         $display_label
                     );
                     ?>
-                    <div
-                        class="em-wp-hub__live-switch"
-                        style="--em-wp-live-color: <?php echo esc_attr($accent_color); ?>;"
-                    >
+                    <div class="em-wp-hub__live-switch">
                         <?php if ($entry_url !== '') { ?>
                             <a
                                 href="<?php echo esc_url($entry_url); ?>"

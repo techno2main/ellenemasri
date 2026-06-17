@@ -109,6 +109,16 @@
     font-weight: 600;
 }
 
+.em-wp-template-banner__block--live {
+    border-color: rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    color: #111827;
+}
+
+.em-wp-template-banner__block--live .em-wp-hub__live {
+    margin: 0;
+}
+
 .em-wp-template-banner__status {
     display: inline-flex;
     align-items: center;

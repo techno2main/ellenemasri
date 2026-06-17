@@ -139,5 +139,40 @@
                 });
             });
         }
+
+        var activateButton = document.getElementById('em-wp-template-banner-activate-live');
+        var liveForm = document.getElementById('em-wp-hub-set-live-template-form');
+        var slugInput = liveForm ? liveForm.querySelector('[name="em_wp_template_active_slug"]') : null;
+        var bannerRoot = document.querySelector('.em-wp-template-banner');
+
+        if (activateButton && liveForm && slugInput && bannerRoot) {
+            activateButton.addEventListener('click', function () {
+                var slug = activateButton.getAttribute('data-template-slug')
+                    || bannerRoot.getAttribute('data-editing-slug')
+                    || '';
+                var label = activateButton.getAttribute('data-template-label') || slug;
+                var activeSlug = bannerRoot.getAttribute('data-active-slug') || '';
+
+                if (slug === '' || slug === activeSlug) {
+                    return;
+                }
+
+                var messageTemplate = i18n.activateConfirm || 'Activer le template %s sur le site public ?';
+                var message = messageTemplate.replace('%s', label);
+
+                askConfirm(
+                    message,
+                    i18n.activateLabel || 'Activer',
+                    i18n.cancelLabel || 'Annuler'
+                ).then(function (confirmed) {
+                    if (!confirmed) {
+                        return;
+                    }
+
+                    slugInput.value = slug;
+                    liveForm.submit();
+                });
+            });
+        }
     });
 })();

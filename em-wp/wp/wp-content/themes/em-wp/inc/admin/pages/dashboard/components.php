@@ -116,9 +116,9 @@ function em_wp_admin_dashboard_render_status_badge(string $text, string $color, 
 /**
  * Pastille « template actif » (Accueil).
  */
-function em_wp_admin_dashboard_render_live_template_badge(string $active_label, string $active_color, bool $in_card = false): void
+function em_wp_admin_dashboard_render_live_template_badge(string $active_label, string $active_slug, bool $in_card = false): void
 {
-    em_wp_admin_hub_render_live_template_badge($active_label, $active_color, $in_card);
+    em_wp_admin_hub_render_live_template_badge($active_label, $active_slug, $in_card);
 }
 
 /**

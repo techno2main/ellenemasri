@@ -136,7 +136,7 @@ function em_wp_admin_template_banner_enqueue(): void
     wp_enqueue_style(
         'em-wp-admin-template-banner',
         $theme_uri . '/assets/admin/css/template/banner.css',
-        [],
+        ['em-wp-admin-hub-cards'],
         em_wp_admin_asset_version('assets/admin/css/template/banner.css')
     );
 
@@ -190,6 +190,8 @@ function em_wp_admin_template_banner_enqueue(): void
                 'switchConfirmTemplate' => __('Tu vas basculer l\'édition vers le template « %s ».', 'em-wp'),
                 'switchConfirm'         => __('Basculer', 'em-wp'),
                 'switchConfirmSave'     => __('Enregistrer & Basculer', 'em-wp'),
+                'activateConfirm'       => __('Activer le template %s sur le site public ?', 'em-wp'),
+                'activateLabel'         => __('Activer', 'em-wp'),
             ],
         ]
     );
@@ -251,6 +253,7 @@ function em_wp_admin_template_render_banner(): void
     $editing_label = (string) ($registry[$editing_slug]['label'] ?? $editing_slug);
     $active_label = (string) ($registry[$active_slug]['label'] ?? $active_slug);
     $differs = em_wp_template_editing_differs_from_live();
+    $is_live = !$differs;
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $current_page = sanitize_key((string) ($_GET['page'] ?? ''));
@@ -260,9 +263,11 @@ function em_wp_admin_template_render_banner(): void
     $quit_nonce_action = $quit_mode === 'quit_to_templates' ? 'em_wp_template_quit_to_templates' : 'em_wp_template_clear_editing';
     ?>
     <div
-        class="em-wp-template-banner em-wp-template-banner--inline<?php echo $differs ? ' is-editing-differs' : ''; ?>"
+        class="em-wp-template-banner em-wp-template-banner--inline<?php echo $differs ? ' is-editing-differs' : ' is-editing-live'; ?>"
         role="region"
         aria-label="<?php esc_attr_e('Contexte template EM-WP', 'em-wp'); ?>"
+        data-editing-slug="<?php echo esc_attr($editing_slug); ?>"
+        data-active-slug="<?php echo esc_attr($active_slug); ?>"
     >
         <div class="em-wp-template-banner__inner">
             <div class="em-wp-template-banner__block em-wp-template-banner__block--editing">
@@ -303,24 +308,17 @@ function em_wp_admin_template_render_banner(): void
                 </form>
             </div>
 
-            <p
-                class="em-wp-template-banner__status<?php echo $differs ? ' is-differs' : ' is-synced'; ?>"
-                role="status"
-            >
-                <?php if ($differs) { ?>
-                    <i class="fa-solid fa-triangle-exclamation em-wp-template-banner__status-icon" aria-hidden="true"></i>
-                <?php } else { ?>
-                    <span class="em-wp-template-banner__status-dot" aria-hidden="true"></span>
+            <div class="em-wp-template-banner__block em-wp-template-banner__block--live">
+                <?php em_wp_admin_hub_render_template_active_pill($is_live ? $editing_label : $active_label, $is_live ? $editing_slug : $active_slug); ?>
+                <?php if (!$is_live) { ?>
+                    <?php
+                    em_wp_admin_hub_render_template_activate_pill($editing_slug, $editing_label, [
+                        'id' => 'em-wp-template-banner-activate-live',
+                    ]);
+                    ?>
                 <?php } ?>
-                <?php
-                printf(
-                    /* translators: 1: editing template label, 2: live template label */
-                    esc_html__('Édition « %1$s » — site public « %2$s »', 'em-wp'),
-                    esc_html(mb_strtoupper($editing_label)),
-                    esc_html(mb_strtoupper($active_label))
-                );
-                ?>
-            </p>
+            </div>
+            <?php em_wp_admin_hub_render_template_set_live_form($current_page); ?>
         </div>
     </div>
     <?php

@@ -42,7 +42,7 @@ function em_wp_admin_template_render_nav_tabs(): void
             <?php foreach ($registry as $slug => $definition) {
                 $label = mb_strtoupper((string) ($definition['label'] ?? $slug));
                 $is_live = ((string) $slug === $active_slug);
-                $live_color = em_wp_get_template_color((string) $slug);
+                $display_label = (string) ($definition['label'] ?? $slug);
                 $tab_style = function_exists('em_wp_admin_template_tab_style_attr')
                     ? em_wp_admin_template_tab_style_attr((string) $slug)
                     : '';
@@ -53,19 +53,17 @@ function em_wp_admin_template_render_nav_tabs(): void
                 ?>
                 <li class="em-wp-catalog-edit__nav-item">
                     <a
-                        class="em-wp-catalog-edit__nav-link<?php echo $is_live ? ' has-live-badge' : ''; ?>"
+                        class="em-wp-catalog-edit__nav-link<?php echo $is_live ? ' has-live-pill' : ''; ?>"
                         href="<?php echo esc_url($entry_url); ?>"
                         data-template-section="<?php echo esc_attr((string) $slug); ?>"
-                        <?php if ($tab_style !== '') { ?>
+                        <?php if (!$is_live && $tab_style !== '') { ?>
                             style="<?php echo esc_attr($tab_style); ?>"
                         <?php } ?>
                     >
-                        <span class="em-wp-catalog-edit__nav-link-text"><?php echo esc_html($label); ?></span>
                         <?php if ($is_live) { ?>
-                            <span
-                                class="em-wp-catalog-edit__nav-live"
-                                style="--em-wp-live-color: <?php echo esc_attr($live_color); ?>;"
-                            ><?php esc_html_e('Live', 'em-wp'); ?></span>
+                            <?php em_wp_admin_hub_render_template_active_pill($display_label, (string) $slug); ?>
+                        <?php } else { ?>
+                            <span class="em-wp-catalog-edit__nav-link-text"><?php echo esc_html($label); ?></span>
                         <?php } ?>
                     </a>
                 </li>
@@ -172,13 +170,10 @@ function em_wp_admin_render_rubriques_template_picker(): void
                     <?php } ?>
 
                     <?php if ($create_url !== '') { ?>
-                        <button
-                            type="button"
+                        <section
                             class="em-wp-hub__card em-wp-hub__card--template-create"
                             data-template-section="create"
-                            data-em-wp-new-template-open
                             style="--em-wp-template-accent: #751820; --em-wp-template-text: #ffffff;"
-                            aria-label="<?php esc_attr_e('Création d\'un nouveau template', 'em-wp'); ?>"
                         >
                             <header class="em-wp-hub__card-header">
                                 <div class="em-wp-hub__card-heading">
@@ -187,9 +182,14 @@ function em_wp_admin_render_rubriques_template_picker(): void
                                         'dashicons-layout'
                                     ); ?>
                                 </div>
-                                <span class="em-wp-hub__card-create-icon" aria-hidden="true">
-                                    <span class="dashicons dashicons-plus-alt2"></span>
-                                </span>
+                                <button
+                                    type="button"
+                                    class="em-wp-hub__card-create-icon"
+                                    data-em-wp-new-template-open
+                                    aria-label="<?php esc_attr_e('Création d\'un nouveau template', 'em-wp'); ?>"
+                                >
+                                    <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+                                </button>
                             </header>
                             <div class="em-wp-hub__card-desc em-wp-templates-sommaire__card-desc">
                                 <p class="em-wp-templates-sommaire__card-desc-label">
@@ -199,7 +199,10 @@ function em_wp_admin_render_rubriques_template_picker(): void
                                     <?php esc_html_e('Duplique un template existant ou utilise le Wizard de création', 'em-wp'); ?>
                                 </p>
                             </div>
-                        </button>
+                            <div class="em-wp-templates-sommaire__card-live-footer">
+                                <?php em_wp_admin_hub_render_template_create_actions_badge($registry !== []); ?>
+                            </div>
+                        </section>
                     <?php } else { ?>
                         <section class="em-wp-hub__card em-wp-hub__card--disabled">
                             <header class="em-wp-hub__card-header">

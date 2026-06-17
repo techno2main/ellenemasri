@@ -13,9 +13,9 @@ if (!defined('ABSPATH')) {
  * Affiche la rangée « Mes templates » + « Nouveau template ».
  *
  * @param string $active_label Libellé template actif live.
- * @param string $active_color Couleur template actif live.
+ * @param string $active_slug Slug template actif live.
  */
-function em_wp_admin_dashboard_render_row_templates(string $active_label, string $active_color): void
+function em_wp_admin_dashboard_render_row_templates(string $active_label, string $active_slug): void
 {
     ?>
     <section class="em-wp-hub__row em-wp-dashboard__row--hub-cards" aria-label="<?php esc_attr_e('Templates', 'em-wp'); ?>">
@@ -30,7 +30,7 @@ function em_wp_admin_dashboard_render_row_templates(string $active_label, string
                         __('Gérer mes templates', 'em-wp')
                     ); ?>
                 </header>
-                <?php em_wp_admin_dashboard_render_live_template_badge($active_label, $active_color, true); ?>
+                <?php em_wp_admin_dashboard_render_live_template_badge($active_label, $active_slug, true); ?>
             </section>
 
             <section class="em-wp-hub__card" data-dashboard-section="templates-create">

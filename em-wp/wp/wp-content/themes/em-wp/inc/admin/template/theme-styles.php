@@ -62,8 +62,21 @@ function em_wp_admin_template_theme_styles(): void
 
         body.em-wp-has-template-banner #adminmenu li.current a.menu-top,
         body.em-wp-has-template-banner #adminmenu .wp-has-current-submenu a.menu-top,
-        body.em-wp-has-template-banner #adminmenu .wp-has-current-submenu .wp-submenu .current a {
-            background: var(--em-template-editing-color-soft);
+        body.em-wp-has-template-banner #adminmenu .wp-has-current-submenu .wp-submenu .current a,
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-submenu-current > a.menu-top,
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-rubrique-current > a.menu-top,
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-template-editing > a.menu-top,
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-accordion-child.current > a.menu-top {
+            background: rgba(255, 255, 255, 0.24);
+            color: #ffffff;
+        }
+
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-submenu-current:hover > a.menu-top,
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-rubrique-current:hover > a.menu-top,
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-template-editing:hover > a.menu-top,
+        body.em-wp-has-template-banner #adminmenu li.current:hover > a.menu-top,
+        body.em-wp-has-template-banner #adminmenu li.em-wp-menu-accordion-child.current:hover > a.menu-top {
+            background: rgba(255, 255, 255, 0.3);
             color: #ffffff;
         }
 

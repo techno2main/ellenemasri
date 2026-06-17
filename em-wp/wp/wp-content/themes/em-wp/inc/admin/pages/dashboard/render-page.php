@@ -21,7 +21,6 @@ function em_wp_admin_render_dashboard_page(): void
     $registry = em_wp_template_registry();
     $active_slug = em_wp_get_active_template_slug();
     $active_label = (string) ($registry[$active_slug]['label'] ?? $active_slug);
-    $active_color = em_wp_get_template_color($active_slug);
     $has_context = em_wp_admin_has_template_context();
     ?>
     <div class="wrap em-wp-admin-module em-wp-hub-sommaire em-wp-dashboard">
@@ -47,7 +46,7 @@ function em_wp_admin_render_dashboard_page(): void
         <div class="em-wp-hub__rows">
             <?php
             em_wp_admin_dashboard_render_row_catalogues();
-            em_wp_admin_dashboard_render_row_templates($active_label, $active_color);
+            em_wp_admin_dashboard_render_row_templates($active_label, $active_slug);
             em_wp_admin_dashboard_render_row_medias_settings();
             ?>
         </div>

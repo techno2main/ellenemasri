@@ -424,6 +424,10 @@ function em_wp_admin_enqueue_menu_accordion(): void
         return;
     }
 
+    if (function_exists('em_wp_admin_enqueue_shared_assets')) {
+        em_wp_admin_enqueue_shared_assets();
+    }
+
     wp_enqueue_script(
         'em-wp-admin-menu-accordion',
         get_template_directory_uri() . '/assets/admin/js/shared/menu-accordion.js',
