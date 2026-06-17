@@ -195,16 +195,17 @@ function em_wp_admin_hub_render_sommaire_header(
 /**
  * Rendu du titre d'une carte (icône dashicons + libellé).
  */
-function em_wp_admin_hub_render_card_title(string $title, string $icon_class, ?callable $after_icon = null): void
+function em_wp_admin_hub_render_card_title(string $title, string $icon_class, ?callable $after_icon = null, string $icon_color = ''): void
 {
     $icon_class = trim($icon_class);
+    $icon_style = $icon_color !== '' ? ' style="--em-wp-card-accent: ' . esc_attr($icon_color) . ';"' : '';
 
     if ($icon_class !== '' && !str_contains($icon_class, 'dashicons ')) {
         $icon_class = 'dashicons ' . $icon_class;
     }
     ?>
     <h2 class="em-wp-hub__card-title">
-        <span class="<?php echo esc_attr($icon_class); ?> em-wp-hub__card-title-icon" aria-hidden="true"></span>
+        <span class="<?php echo esc_attr($icon_class); ?> em-wp-hub__card-title-icon"<?php echo $icon_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> aria-hidden="true"></span>
         <?php
         if ($after_icon !== null) {
             $after_icon();
@@ -309,6 +310,7 @@ function em_wp_admin_hub_render_action_link(
         class="<?php echo esc_attr($action_class); ?>"
         href="<?php echo esc_url($url); ?>"
         <?php echo $aria_label !== '' ? 'aria-label="' . esc_attr($aria_label) . '"' : ''; ?>
+        <?php echo $aria_label !== '' ? 'title="' . esc_attr($aria_label) . '"' : ''; ?>
     >
         <span class="em-wp-hub__action-inner">
             <?php if ($icon_class !== '') { ?>
@@ -591,7 +593,7 @@ function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $
         $classes .= ' em-wp-hub__live--compact-in-card';
     }
     ?>
-    <p
+    <div
         class="<?php echo esc_attr($classes); ?>"
         <?php echo $in_card ? 'role="status"' : ''; ?>
         style="--em-wp-live-color: <?php echo esc_attr($color); ?>;"
@@ -602,7 +604,7 @@ function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $
         <span class="em-wp-hub__live-text">
             <strong class="em-wp-hub__live-template"><?php echo esc_html($text); ?></strong>
         </span>
-    </p>
+    </div>
     <?php
 }
 
@@ -659,14 +661,117 @@ function em_wp_admin_hub_render_template_live_badge(string $label, string $color
 {
     em_wp_admin_hub_render_status_badge(
         sprintf(
-            /* translators: %s: template label */
-            __('Live sur le site : %s', 'em-wp'),
-            $label
+            /* translators: %s: template label (uppercase) */
+            __('%s LIVE', 'em-wp'),
+            mb_strtoupper(trim($label))
         ),
         $color,
         true,
-        true
+        false,
+        false
     );
+}
+
+/**
+ * Badge « Activer sur le site » (carte ou tableau).
+ */
+function em_wp_admin_hub_render_template_activate_badge(
+    string $slug,
+    string $display_label,
+    string $color,
+    bool $compact = false,
+    bool $table = false
+): void {
+    $label_upper = mb_strtoupper(trim($display_label));
+
+    if ($table) {
+        ?>
+        <button
+            type="button"
+            class="em-wp-templates-admin__badge em-wp-templates-admin__badge--activate em-wp-templates-sommaire__activate-live"
+            style="--em-template-accent: <?php echo esc_attr($color); ?>;"
+            data-template-slug="<?php echo esc_attr($slug); ?>"
+            data-template-label="<?php echo esc_attr($label_upper); ?>"
+            title="<?php esc_attr_e('Activer sur le site public', 'em-wp'); ?>"
+        >
+            <?php echo esc_html(mb_strtoupper(__('Activer', 'em-wp'))); ?>
+        </button>
+        <?php
+        return;
+    }
+
+    $classes = 'em-wp-hub__live em-wp-hub__live--activate em-wp-templates-sommaire__activate-live';
+
+    if ($compact) {
+        $classes .= ' em-wp-hub__live--compact-in-card';
+    } else {
+        $classes .= ' em-wp-hub__live--in-card';
+    }
+    ?>
+    <button
+        type="button"
+        class="<?php echo esc_attr($classes); ?>"
+        style="--em-wp-live-color: <?php echo esc_attr($color); ?>;"
+        data-template-slug="<?php echo esc_attr($slug); ?>"
+        data-template-label="<?php echo esc_attr($label_upper); ?>"
+        title="<?php esc_attr_e('Activer sur le site public', 'em-wp'); ?>"
+    >
+        <span class="em-wp-hub__live-indicator" aria-hidden="true">
+            <span class="em-wp-hub__live-dot"></span>
+        </span>
+        <span class="em-wp-hub__live-text">
+            <?php echo esc_html(mb_strtoupper(__('Activer', 'em-wp'))); ?>
+        </span>
+    </button>
+    <?php
+}
+
+/**
+ * Pied de carte template : badge live ou action d’activation.
+ */
+function em_wp_admin_hub_render_template_card_live_footer(
+    string $slug,
+    string $display_label,
+    string $color,
+    bool $is_live,
+    bool $can_manage
+): void {
+    if ($is_live) {
+        em_wp_admin_hub_render_template_live_badge($display_label, $color);
+        return;
+    }
+
+    if (!$can_manage) {
+        return;
+    }
+
+    em_wp_admin_hub_render_template_activate_badge($slug, $display_label, $color, false);
+}
+
+/**
+ * Formulaire POST — bascule template live (sommaire Templates).
+ */
+function em_wp_admin_hub_render_template_set_live_form(string $redirect_page = ''): void
+{
+    if ($redirect_page === '' && function_exists('em_wp_admin_template_choice_page_slug')) {
+        $redirect_page = em_wp_admin_template_choice_page_slug();
+    }
+
+    $active_slug = em_wp_get_active_template_slug();
+    ?>
+    <form
+        id="em-wp-hub-set-live-template-form"
+        class="em-wp-hub__live-switch-form"
+        method="post"
+        action=""
+        hidden
+    >
+        <?php wp_nonce_field('em_wp_template_set_active'); ?>
+        <input type="hidden" name="em_wp_template_action" value="set_active">
+        <input type="hidden" name="em_wp_template_redirect_page" value="<?php echo esc_attr($redirect_page); ?>">
+        <input type="hidden" name="em_wp_template_active_slug" value="<?php echo esc_attr($active_slug); ?>">
+    </form>
+    <?php
 }
 
 /**
@@ -696,7 +801,7 @@ function em_wp_admin_hub_enqueue_template_live_switcher(): void
 }
 
 /**
- * Bandeau template live + switches pour changer le template actif sur le site.
+ * Bandeau template actif sur le site public.
  */
 function em_wp_admin_hub_render_live_template_switcher(string $redirect_page = ''): void
 {
@@ -708,62 +813,12 @@ function em_wp_admin_hub_render_live_template_switcher(string $redirect_page = '
     $active_slug = em_wp_get_active_template_slug();
     $active_label = (string) ($registry[$active_slug]['label'] ?? $active_slug);
     $active_color = em_wp_get_template_color($active_slug);
-
-    if ($redirect_page === '' && function_exists('em_wp_admin_template_choice_page_slug')) {
-        $redirect_page = em_wp_admin_template_choice_page_slug();
-    }
     ?>
     <div
         class="em-wp-hub__live-bar"
         data-active-slug="<?php echo esc_attr($active_slug); ?>"
     >
         <?php em_wp_admin_hub_render_live_template_badge($active_label, $active_color, false); ?>
-
-        <?php if (count($registry) > 1) { ?>
-            <div
-                class="em-wp-hub__live-switches"
-                role="group"
-                aria-label="<?php esc_attr_e('Template actif sur le site', 'em-wp'); ?>"
-            >
-                <?php foreach ($registry as $slug => $definition) {
-                    $label = mb_strtoupper((string) ($definition['label'] ?? $slug));
-                    $color = em_wp_get_template_color($slug);
-                    $is_active = ($slug === $active_slug);
-                    $switch_id = 'em-wp-hub-live-switch-' . sanitize_html_class($slug);
-                    ?>
-                    <label
-                        class="em-wp-hub__live-switch"
-                        for="<?php echo esc_attr($switch_id); ?>"
-                        style="--em-wp-live-color: <?php echo esc_attr($color); ?>;"
-                    >
-                        <span class="em-wp-hub__live-switch-label"><?php echo esc_html($label); ?></span>
-                        <input
-                            type="checkbox"
-                            class="em-wp-hub__live-switch-input"
-                            id="<?php echo esc_attr($switch_id); ?>"
-                            role="switch"
-                            data-template-slug="<?php echo esc_attr($slug); ?>"
-                            data-template-label="<?php echo esc_attr($label); ?>"
-                            <?php checked($is_active); ?>
-                            aria-checked="<?php echo $is_active ? 'true' : 'false'; ?>"
-                        >
-                        <span class="em-wp-hub__live-switch-ui" aria-hidden="true"></span>
-                    </label>
-                <?php } ?>
-            </div>
-
-            <form
-                id="em-wp-hub-set-live-template-form"
-                class="em-wp-hub__live-switch-form"
-                method="post"
-                action=""
-            >
-                <?php wp_nonce_field('em_wp_template_set_active'); ?>
-                <input type="hidden" name="em_wp_template_action" value="set_active">
-                <input type="hidden" name="em_wp_template_redirect_page" value="<?php echo esc_attr($redirect_page); ?>">
-                <input type="hidden" name="em_wp_template_active_slug" value="<?php echo esc_attr($active_slug); ?>">
-            </form>
-        <?php } ?>
     </div>
     <?php
 }

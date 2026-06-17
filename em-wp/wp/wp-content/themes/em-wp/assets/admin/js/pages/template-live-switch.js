@@ -2,60 +2,41 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
-        var bar = document.querySelector('.em-wp-hub__live-bar');
+        var root = document.querySelector('.em-wp-templates-sommaire');
 
-        if (!bar) {
+        if (!root) {
             return;
         }
 
-        var activeSlug = bar.getAttribute('data-active-slug') || '';
+        var bar = root.querySelector('.em-wp-hub__live-bar');
+        var activeSlug = root.getAttribute('data-active-slug') || '';
+
+        if (activeSlug === '' && bar) {
+            activeSlug = bar.getAttribute('data-active-slug') || '';
+        }
         var form = document.getElementById('em-wp-hub-set-live-template-form');
         var slugInput = form ? form.querySelector('[name="em_wp_template_active_slug"]') : null;
-        var switches = bar.querySelectorAll('.em-wp-hub__live-switch-input');
+        var activateButtons = root.querySelectorAll('.em-wp-templates-sommaire__activate-live');
         var i18n = (window.emWpTemplateLiveSwitch && window.emWpTemplateLiveSwitch.i18n) || {};
 
-        function syncFromActive() {
-            switches.forEach(function (input) {
-                var isOn = input.getAttribute('data-template-slug') === activeSlug;
-
-                input.checked = isOn;
-                input.setAttribute('aria-checked', isOn ? 'true' : 'false');
-            });
+        if (!activateButtons.length || !form || !slugInput) {
+            return;
         }
 
-        switches.forEach(function (input) {
-            input.addEventListener('change', function () {
-                var slug = input.getAttribute('data-template-slug') || '';
-                var label = input.getAttribute('data-template-label') || slug;
+        activateButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var slug = button.getAttribute('data-template-slug') || '';
+                var label = button.getAttribute('data-template-label') || slug;
 
-                if (slug === activeSlug) {
-                    input.checked = true;
-                    input.setAttribute('aria-checked', 'true');
+                if (slug === '' || slug === activeSlug) {
                     return;
                 }
-
-                if (!input.checked) {
-                    syncFromActive();
-                    return;
-                }
-
-                switches.forEach(function (otherInput) {
-                    if (otherInput !== input) {
-                        otherInput.checked = false;
-                        otherInput.setAttribute('aria-checked', 'false');
-                    }
-                });
 
                 var messageTemplate = i18n.confirm || 'Activer le template %s sur le site public ?';
                 var message = messageTemplate.replace('%s', label);
                 var confirmApi = window.EmWpAdminConfirm;
 
                 function submitChoice() {
-                    if (!form || !slugInput) {
-                        syncFromActive();
-                        return;
-                    }
-
                     slugInput.value = slug;
                     form.submit();
                 }
@@ -67,10 +48,7 @@
                     }).then(function (confirmed) {
                         if (confirmed) {
                             submitChoice();
-                            return;
                         }
-
-                        syncFromActive();
                     });
 
                     return;
@@ -78,8 +56,6 @@
 
                 if (window.confirm(message)) {
                     submitChoice();
-                } else {
-                    syncFromActive();
                 }
             });
         });

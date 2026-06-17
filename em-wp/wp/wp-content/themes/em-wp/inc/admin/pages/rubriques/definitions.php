@@ -406,13 +406,13 @@ function em_wp_admin_site_rubrique_entry_url(string $module_slug): string
  */
 function em_wp_admin_template_active_rubrique_labels(string $template_slug): array
 {
-    if (!function_exists('em_wp_is_template_rubrique_visible')) {
-        return [];
-    }
-
     $template_slug = em_wp_template_sanitize_slug($template_slug);
 
     if ($template_slug === '') {
+        return [];
+    }
+
+    if (!function_exists('em_wp_template_has_skeleton') || !em_wp_template_has_skeleton($template_slug)) {
         return [];
     }
 
@@ -423,32 +423,45 @@ function em_wp_admin_template_active_rubrique_labels(string $template_slug): arr
             continue;
         }
 
-        if (!em_wp_is_template_rubrique_visible($template_slug, $module_slug)) {
-            continue;
-        }
-
-        $labels[] = mb_strtoupper((string) ($definition['label'] ?? $module_slug));
+        $labels[] = function_exists('em_wp_admin_rubrique_skeleton_label')
+            ? em_wp_admin_rubrique_skeleton_label($module_slug)
+            : mb_strtoupper((string) ($definition['label'] ?? $module_slug));
     }
 
     return $labels;
 }
 
 /**
- * Résumé texte « Rubriques actives : TOP-BAR, HEADER, … ».
+ * Parties label + liste pour la description carte template (2 lignes).
+ *
+ * @return array{label: string, list: string}
+ */
+function em_wp_admin_template_site_rubriques_summary_parts(string $template_slug): array
+{
+    $labels = em_wp_admin_template_active_rubrique_labels($template_slug);
+    $heading = __('Rubriques du site :', 'em-wp');
+
+    if ($labels === []) {
+        return [
+            'label' => $heading,
+            'list'  => __('plan non configuré', 'em-wp'),
+        ];
+    }
+
+    return [
+        'label' => $heading,
+        'list'  => implode(', ', $labels) . '.',
+    ];
+}
+
+/**
+ * Résumé texte « Rubriques du site : TOP-BAR, HEADER, … ».
  */
 function em_wp_admin_template_active_rubriques_summary(string $template_slug): string
 {
-    $labels = em_wp_admin_template_active_rubrique_labels($template_slug);
+    $parts = em_wp_admin_template_site_rubriques_summary_parts($template_slug);
 
-    if ($labels === []) {
-        return __('Rubriques actives : aucune.', 'em-wp');
-    }
-
-    return sprintf(
-        /* translators: %s: comma-separated rubrique labels */
-        __('Rubriques actives : %s.', 'em-wp'),
-        implode(', ', $labels)
-    );
+    return trim($parts['label'] . ' ' . $parts['list']);
 }
 
 /**
