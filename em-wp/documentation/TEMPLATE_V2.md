@@ -2,8 +2,8 @@
 
 > **Branche :** `feature/em-wp-v2-templates`  
 > **V1 (gelée) :** `feature/theme-em-wp`  
-> **Dernière maj doc :** 2026-06-14 (soir — pause avant Wizard)  
-> **Statut global :** Phases 0–4 ✅ ; Phase 5 🔄 WIP avancée (squelette template, CONTACT, hub catalogues) — **Wizard demain soir**
+> **Dernière maj doc :** 2026-06-14 (fin de session — implémentation V2 quasi terminée)  
+> **Statut global :** Phases **0–5 ✅** (implémentation livrée et poussée) ; Phase **6 🔄** — QA Tyson + checklist finale
 
 Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phase / commit significatif** (statuts, fichiers créés, dette restante).
 
@@ -12,34 +12,27 @@ Ce fichier est le **doc de suivi unique** V2. Le mettre à jour **à chaque phas
 ## Prompt reprise (copier-coller en début de session)
 
 ```text
-Contexte em-wp V2 — reprise Phase 5 (squelette template + CONTACT + hub).
+Contexte em-wp V2 — Phase 6 (QA + validation finale).
 
 Branche : feature/em-wp-v2-templates
-Dernier commit poussé : 21fbde7 — docs(v2): maj suivi Phase 5
+Dernier commit poussé : 5fb63ec — feat(dashboard): carte Nouveau Template alignée sommaire
 Doc suivi : em-wp/documentation/TEMPLATE_V2.md
+Spec wizard : em-wp/documentation/WIZARD-NEW-TEMPLATE.md
 Local : http://localhost:8190/wp-admin (Docker em-wp-local)
 
-État Phase 5 (WIP, poussé) :
-- Squelette rubriques par template : ordre, ajout/retrait, insertion positionnée, couleurs initiales, masquée par défaut
-- UI sommaire : onglet +, panneau ajout, toast auto-dismiss 3s, wireframe / fil d'Ariane
-- Module catalogue CONTACT (custom) : hub, entrées Mayami/Ellene, Label/Valeur/Masquer, slugs canoniques
-- Rubrique template CONTACT : sélection catalogue mutualisée (Release/Stream/Contact), menu latéral, case Afficher, front #contact
-- Hub catalogues : modules custom CRUD, renommage, panneau mutualisé catalog-rubrique-page
-- Bandeau : pastille édition vs live, modale confirmation hub, double validation template live
+Implémentation V2 livrée (Phases 0–5, poussé) :
+- Templates : sommaire cartes + onglets colorés, pastilles LIVE/ACTIVER, tableau CRUD inline
+- Wizard 2 étapes (Identité + Plan interactif) + modales vierge/duplication
+- Accueil : carte Nouveau Template = sommaire (DUPLIQUER • WIZARD + modales)
+- Squelette rubriques par template, CONTACT, hub catalogues custom, renderer mutualisé
+- Modale couleur partagée, rename inline sommaire catalogues, chrome ellene-admin
 
-Livré et poussé (soir 14/06) :
-- CONTACT retiré du menu principal hors contexte template (cce73f7)
-- Accueil : cartes « Nouveau Catalogue » et « Nouveau Template » actives (e2c4c5a)
+Reste Phase 6 :
+- Checklist QA BACK/FRONT (tableaux ci-dessous) — Tyson
+- Validation finale « OK V2 » → dernier Flow GH doc si besoin
+- Dette optionnelle : hero/slider settings.php, variant-hub, legacy visibility global
 
-Prochaine session : **Wizard** (demain soir) — ne pas entamer sans Tyson.
-
-Reste Phase 5 :
-- Wizard onboarding (session dédiée)
-- CTA / Video / autres rubriques catalogue sur renderer mutualisé (optionnel)
-- Tests BACK/FRONT checklist Phase 5
-- Validation Tyson → Flow GH
-
-Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Tyson.
+Commencer par : lire ce doc + git status ; priorité = tests Tyson ou corrections signalées.
 ```
 
 ---
@@ -84,9 +77,9 @@ Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Ty
 | **1** | STREAM par template | ✅ | 589b3cb | Validée — options par template, migration Mayami, module découpé |
 | **2** | VIDEOS + RELEASES par template | ✅ | 99d9b71 | |
 | **3** | TOP-BAR, SOCIAL, CTA, FOOTER par template | ✅ | 4ca7251 | |
-| **4** | HEADER + Catalogues Hero/Slider + sélection par template | ✅ | 64b0ea0 + lots intermédiaires | Hub catalogues, CRUD heros/sliders, HEADER live |
-| **5** | Sommaire + visibilité par template + squelette + CONTACT | 🔄 | f8b6be8 → 21fbde7 | Squelette template, module CONTACT, hub custom, correctifs menu/Accueil — Wizard demain soir |
-| **6** | Migration Mayami + tests front | ⬜ | — | |
+| **4** | HEADER + Catalogues Hero/Slider + sélection par template | ✅ | 64b0ea0 + lots intermédiaires | Hub catalogues, CRUD heros/sliders, HEADER live — dette hero/slider settings |
+| **5** | Sommaire + squelette + CONTACT + Wizard + polish admin | ✅ | f8b6be8 → 5fb63ec | Wizard, modales création, sommaire/table CRUD, pastilles LIVE, Accueil aligné — **validation Tyson QA** |
+| **6** | Migration Mayami + tests front + clôture V2 | 🔄 | — | Checklist QA ci-dessous |
 
 ### Dette V1 à traiter pendant V2 (fichiers > 350 lignes)
 
@@ -97,6 +90,7 @@ Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Ty
 | `inc/admin/pages/rubriques.php` | ~448 | Extraire rendu / helpers | ⬜ |
 | `inc/admin/shared/style-panel.php` | ~406 | OK proche limite ; pas d’ajout massif | ⬜ |
 | `inc/admin/shared/menu.php` | ~720 | Extraire bandeau template → module dédié ; dette accrue Phase 4 | 🔄 |
+| `inc/admin/shared/hub-cards.php` | ~1240 | Extraire pastilles template / cartes create | 🔄 Phase 5 |
 | `inc/admin/shared/variant-hub.php` | ~396 | Remplacer progressivement par template-hub | ⬜ |
 | `inc/shared/rubrique-order.php` | ~309 | Ajouter visibilité template sans gonfler | ⬜ |
 
@@ -104,6 +98,10 @@ Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Ty
 
 | Date | Auteur | Entrée |
 |------|--------|--------|
+| 2026-06-14 | Agent | Doc : Phases 0–5 ✅ implémentation ; Phase 6 QA — dernier push 5fb63ec |
+| 2026-06-14 | Agent | Flow GH session polish : modale couleur, LIVE/ACTIVER, wizard/modales, chrome ellene-admin, Accueil Nouveau Template (2972260 → 5fb63ec) |
+| 2026-06-14 | Agent | Wizard V1 : page dédiée, 2 étapes Identité + Plan interactif, brouillon (9370271 → b1a0d24) |
+| 2026-06-14 | Agent | Sommaire Templates : cartes colorées, tableau enregistrés CRUD inline, modales vierge/duplication (3eaaf3d → 769c4d0) |
 | 2026-06-14 | Tyson | Pause — **Wizard demain soir** |
 | 2026-06-14 | Agent | Flow GH soir : fix menu CONTACT (cce73f7), Accueil Nouveau … (e2c4c5a), doc (21fbde7) |
 | 2026-06-14 | Agent | Flow GH : 5 commits CONTACT + squelette (56f47cb → f8b6be8) |
@@ -128,6 +126,26 @@ Commencer par : lire ce doc + git status ; si reprise dev, demander priorité Ty
 | 2026-06-13 | Tyson | Phase 0 validée — Flow GH + push, pause avant Phase 1 |
 | 2026-06-13 | Agent | Phase 0 : bandeau compact, ellene-admin CRUD templates, titres rubriques dynamiques |
 | 2026-06-13 | — | Workflow par phase validé : tests BACK/FRONT → validation Tyson → Flow GH + push → phase suivante |
+
+---
+
+## Récap commits Phase 5 (session 14/06, poussés)
+
+| Commit | Sujet |
+|--------|--------|
+| `9370271` | Wizard : page dédiée, Identité + Plan interactif |
+| `3eaaf3d` | Sommaire Mes Templates : cartes, onglets, badges LIVE/ACTIVER |
+| `769c4d0` | Tableau templates enregistrés — CRUD inline, suppression |
+| `b7f78ec` | Modales nouveau template (vierge / duplication) + backend duplicate |
+| `2972260` | Modale couleur partagée |
+| `e43411f` | Pastilles LIVE/ACTIVER unifiées (bandeau, sommaire, dashboard, menu) |
+| `abc7e5d` | Toasts auto-dismiss 3 s |
+| `62104ed` | Menu latéral : fond sélection item actif |
+| `771b7ed` | Rename inline sommaire catalogues |
+| `14cf9fd` | Libellés rubriques + pages catalogue mutualisées |
+| `776ab0f` | Chrome admin + restrictions ellene-admin |
+| `b1a0d24` | Wizard/modales — entrées vierge vs duplication |
+| `5fb63ec` | Accueil : carte Nouveau Template = sommaire |
 
 ---
 
@@ -221,12 +239,17 @@ em-wp/wp/wp-content/themes/em-wp/
 │   │   ├── template/                    # UI Templates transverse
 │   │   │   ├── bootstrap.php
 │   │   │   ├── banner.php               # bandeau sélecteur (toutes pages em-wp)
-│   │   │   ├── banner.css               # ou sous assets/admin/css/template/
 │   │   │   ├── pages/
-│   │   │   │   └── list.php             # page Templates (CRUD, actif live)
+│   │   │   │   ├── list.php             # sommaire + tableau CRUD
+│   │   │   │   ├── create-page.php      # hub brouillons + workspace wizard
+│   │   │   │   └── new-template-modals.php
+│   │   │   ├── wizard/                  # wizard 2 étapes (Identité + Plan)
+│   │   │   │   ├── config-data.php
+│   │   │   │   ├── render-wizard-ui.php
+│   │   │   │   └── bootstrap.php
 │   │   │   ├── ajax/
 │   │   │   │   └── save-editing.php
-│   │   │   └── register-saves.php       # handlers save template / live
+│   │   │   └── register-saves.php       # handlers save template / live / wizard
 │   │   ├── modules/
 │   │   │   ├── stream/
 │   │   │   │   ├── bootstrap.php
@@ -430,11 +453,12 @@ Catalogue Hero          Catalogue Slider
 - [x] Bandeau template masqué sur écrans catalogues (`em_wp_admin_is_catalog_screen`)
 - [x] Menu : séparateurs em-wp uniformes, purge `separator-last` / WP natifs
 - [ ] **Revue Tyson** — remarques et corrections sur l'existant (priorité reprise)
-- [ ] CRUD catalogue complet (créer, dupliquer, supprimer)
+- [x] CRUD templates : créer (wizard/duplication), renommer inline, supprimer
+- [ ] CRUD catalogue hero/slider complet (créer, dupliquer, supprimer) — partiellement livré
 - [ ] Suppression complète options V1 `em_wp_hero_active_style` / UI radio
 - [ ] Découper `hero/settings.php` et `slider/settings.php`
 - [ ] Tests BACK/FRONT checklist ci-dessous
-- [ ] **Maj ce doc** → ✅ après validation Tyson
+- [ ] **Maj ce doc** → ✅ après validation Tyson globale
 
 ### Phase 5 — Sommaire
 - [x] Squelette rubriques **par template** : ordre persisté, AJAX add/remove/reorder
@@ -444,15 +468,41 @@ Catalogue Hero          Catalogue Slider
 - [x] Hub catalogues : modules custom CRUD + renderer mutualisé Release/Stream/Contact
 - [x] Menu latéral : rubriques hors contexte masquées (pas d'intrus CONTACT sur dashboard)
 - [x] Accueil : cartes « Nouveau Catalogue » / « Nouveau Template » → deeplink création
-- [ ] **Wizard onboarding** (session Tyson — spec : [WIZARD-NEW-TEMPLATE.md](./WIZARD-NEW-TEMPLATE.md))
+- [x] **Wizard onboarding** — 2 étapes (Identité + Plan interactif) — spec : [WIZARD-NEW-TEMPLATE.md](./WIZARD-NEW-TEMPLATE.md)
+- [x] Modales « Nouveau template » : vierge (wizard) / duplication (hub + sommaire + Accueil)
+- [x] Sommaire Templates : cartes par template, onglets colorés, pastilles LIVE/ACTIVER unifiées
+- [x] Tableau templates enregistrés : édition inline (nom, couleur), suppression confirmée
+- [x] Accueil : carte « Nouveau Template » identique au sommaire (DUPLIQUER • WIZARD)
+- [x] Modale couleur partagée (aperçu texte sur fond réel)
+- [x] Hub catalogues : rename inline sommaire, libellés COULEURS/Importer, pages catalogue mutualisées
+- [x] Chrome admin : Visit site prod, Apparence FR, restrictions compte `ellene-admin`
+- [x] Toasts auto-dismiss 3 s ; menu latéral fond sélection item actif
 - [ ] Retrait `em_wp_site_rubrique_visibility` global legacy (si encore utilisé)
-- [ ] Tests BACK/FRONT checklist Phase 5
-- [ ] **Maj ce doc** → ✅ après validation Tyson + Wizard
+- [ ] Tests BACK/FRONT checklist Phase 5 + Phase 6
+- [ ] **Validation Tyson « OK V2 »** → clôture doc
 
 ### Phase 6 — Migration & QA
-- [ ] Script migrate-v1.php idempotent
-- [ ] Checklist manuelle (tableau ci-dessous)
+- [ ] Revue Tyson globale BACK (admin em-wp complet)
+- [ ] Revue Tyson globale FRONT (landing, templates Mayami/Ellene)
+- [ ] Script migrate-v1.php idempotent (si pas déjà couvert par migrations par rubrique)
+- [ ] Checklist manuelle (tableaux ci-dessous)
 - [ ] **Maj ce doc** → statut global Terminé
+
+### Checklist QA Phase 5 (avant clôture V2)
+
+| Test | OK |
+|------|-----|
+| Sommaire Templates : cartes colorées, pastille LIVE sur template actif | ⬜ |
+| Sommaire : pastille ACTIVER sur templates non live | ⬜ |
+| Carte « Nouveau template » : + ouvre modale ; DUPLIQUER / WIZARD fonctionnels | ⬜ |
+| Accueil : carte Nouveau Template identique au sommaire (modales + pastille) | ⬜ |
+| Wizard : création vierge (Identité → Plan → submit) | ⬜ |
+| Wizard : duplication template existant | ⬜ |
+| Tableau templates : rename inline, couleur, suppression | ⬜ |
+| Squelette : add/remove/reorder rubriques par template | ⬜ |
+| Modale couleur : aperçu texte sur fond sélectionné | ⬜ |
+| Compte ellene-admin : restrictions profil / apparence / Ctrl+K | ⬜ |
+| Toasts admin : auto-dismiss ~3 s | ⬜ |
 
 ### Checklist QA Phase 4 (avant validation)
 
@@ -499,9 +549,9 @@ Catalogue Hero          Catalogue Slider
 
 - Ordre des sections par template (squelette **par template** livré ; ordre global inchangé)
 - ~~Rubrique Contact~~ → **livré Phase 5** (module catalogue `contacts`)
+- ~~Wizard onboarding~~ → **livré Phase 5** (2 étapes + modales vierge/duplication)
 - Layouts hero/slider multiples par entité (un layout type « default » suffit en V2 ; renommage slug ajustable)
 - **Playlist hero** : plusieurs heros affichés en rotation / par intervalle (1 hero par template en V2)
-- **Wizard onboarding** : prévu session dédiée (2026-06-15 soir)
 
 ---
 
