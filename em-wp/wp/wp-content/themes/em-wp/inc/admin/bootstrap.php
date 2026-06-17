@@ -15,6 +15,7 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/shared/style-panel.php';
 require_once __DIR__ . '/shared/catalog-rubrique-page.php';
 require_once __DIR__ . '/shared/assets.php';
+require_once __DIR__ . '/shared/color-modal.php';
 require_once __DIR__ . '/shared/hub-cards.php';
 require_once __DIR__ . '/shared/settings-api.php';
 require_once __DIR__ . '/shared/register-module-saves.php';
@@ -25,6 +26,7 @@ require_once __DIR__ . '/shared/landing-preview.php';
 require_once __DIR__ . '/shared/landing-structure-preview.php';
 require_once __DIR__ . '/shared/variant-hub.php';
 require_once __DIR__ . '/client-access.php';
+require_once __DIR__ . '/admin-chrome.php';
 require_once __DIR__ . '/themes-preview.php';
 require_once __DIR__ . '/modules/top-bar/settings.php';
 require_once __DIR__ . '/modules/header/settings.php';

@@ -149,6 +149,7 @@ function em_wp_redirect_blocked_admin_pages_for_ellene_admin(): void
         'plugins.php',
         'plugin-install.php',
         'plugin-editor.php',
+        'theme-install.php',
         'options-writing.php',
         'options-reading.php',
         'options-discussion.php',
@@ -202,6 +203,7 @@ function em_wp_limit_admin_bar_for_ellene_admin($wp_admin_bar): void
         'new-media',
         'comments',
         'customize',
+        'command-palette',
     ];
 
     foreach ($remove as $node_id) {
@@ -226,6 +228,45 @@ function em_wp_strip_admin_bar_howdy($wp_admin_bar): void
 add_action('admin_bar_menu', 'em_wp_strip_admin_bar_howdy', 9999);
 
 /**
+ * ellene-admin : désactiver la recherche Ctrl+K (Command Palette).
+ *
+ * @param mixed $load
+ * @return mixed
+ */
+function em_wp_ellene_admin_disable_command_palette($load)
+{
+    if (em_wp_admin_should_limit_ellene_client()) {
+        return false;
+    }
+
+    return $load;
+}
+add_filter('should_load_command_palette', 'em_wp_ellene_admin_disable_command_palette');
+
+/**
+ * ellene-admin : retirer les onglets Help (profil, apparence…).
+ */
+function em_wp_ellene_admin_remove_help_tabs(): void
+{
+    if (!em_wp_admin_should_limit_ellene_client()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if (!in_array((string) $pagenow, ['profile.php', 'themes.php'], true)) {
+        return;
+    }
+
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+
+    if ($screen instanceof WP_Screen) {
+        $screen->remove_help_tabs();
+    }
+}
+add_action('admin_head', 'em_wp_ellene_admin_remove_help_tabs', 999);
+
+/**
  * Filet CSS admin (menus résiduels + barre du haut).
  */
 function em_wp_ellene_admin_access_fallback_css(): void
@@ -240,7 +281,8 @@ function em_wp_ellene_admin_access_fallback_css(): void
         #wpadminbar #wp-admin-bar-new-post,
         #wpadminbar #wp-admin-bar-new-page,
         #wpadminbar #wp-admin-bar-new-user,
-        #wpadminbar #wp-admin-bar-new-media {
+        #wpadminbar #wp-admin-bar-new-media,
+        #wpadminbar #wp-admin-bar-command-palette {
             display: none !important;
         }
 
@@ -270,3 +312,105 @@ function em_wp_ellene_admin_access_fallback_css(): void
 }
 add_action('admin_head', 'em_wp_ellene_admin_access_fallback_css', 100);
 add_action('wp_head', 'em_wp_ellene_admin_access_fallback_css', 100);
+
+/**
+ * Profil ellene-admin : retirer Application Passwords (PHP).
+ */
+function em_wp_ellene_admin_remove_profile_sections(): void
+{
+    if (!em_wp_admin_should_limit_ellene_client()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'profile.php') {
+        return;
+    }
+
+    remove_action('show_user_profile', 'wp_application_passwords_profile_section');
+    remove_action('edit_user_profile', 'wp_application_passwords_profile_section');
+}
+add_action('admin_init', 'em_wp_ellene_admin_remove_profile_sections');
+
+/**
+ * Profil ellene-admin : masquer options personnelles avancées (CSS).
+ */
+function em_wp_ellene_admin_profile_page_css(): void
+{
+    if (!em_wp_admin_should_limit_ellene_client()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'profile.php') {
+        return;
+    }
+    ?>
+    <style id="em-wp-ellene-admin-profile">
+        .user-syntax-highlighting-wrap,
+        .user-admin-color-wrap,
+        .user-comment-shortcuts-wrap,
+        .user-admin-bar-front-wrap,
+        #application-passwords-section,
+        .application-passwords,
+        #contextual-help-link-wrap {
+            display: none !important;
+        }
+    </style>
+    <?php
+}
+add_action('admin_head', 'em_wp_ellene_admin_profile_page_css', 100);
+
+/**
+ * ellene-admin : Apparence (themes.php) — sans Add Theme ni Help.
+ */
+function em_wp_ellene_admin_themes_page_css(): void
+{
+    if (!em_wp_admin_should_limit_ellene_client()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'themes.php') {
+        return;
+    }
+    ?>
+    <style id="em-wp-ellene-admin-themes">
+        .themes-php .page-title-action,
+        .themes-php .wrap .page-title-action,
+        #contextual-help-link-wrap,
+        #screen-meta-links {
+            display: none !important;
+        }
+    </style>
+    <?php
+}
+add_action('admin_head', 'em_wp_ellene_admin_themes_page_css', 100);
+
+/**
+ * ellene-admin : Réglages généraux — masquer Membership et New User Default Role.
+ */
+function em_wp_ellene_admin_settings_page_css(): void
+{
+    if (!em_wp_admin_should_limit_ellene_client()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'options-general.php') {
+        return;
+    }
+    ?>
+    <style id="em-wp-ellene-admin-settings">
+        .options-general-php tr:has(#users_can_register),
+        .options-general-php tr:has(#default_role) {
+            display: none !important;
+        }
+    </style>
+    <?php
+}
+add_action('admin_head', 'em_wp_ellene_admin_settings_page_css', 100);

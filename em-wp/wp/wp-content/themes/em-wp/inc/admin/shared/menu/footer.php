@@ -1,6 +1,6 @@
 <?php
 /**
- * Pied de page admin écrans Rubriques.
+ * Pied de page admin (tous les écrans).
  *
  * @package em-wp
  */
@@ -31,25 +31,25 @@ function em_wp_admin_is_rubrique_screen(): bool
 }
 
 /**
- * Texte pied de page admin des écrans Rubriques du site.
+ * Texte pied de page admin.
  */
-function em_wp_admin_rubrique_footer_text(): string
+function em_wp_admin_footer_text(): string
 {
     return 'Made with ❤️ for Ellene Masri - © Tyson - 2026';
 }
 
 /**
- * Remplace « Thank you for creating with WordPress. » sur les écrans Rubriques.
+ * Remplace « Thank you for creating with WordPress. » sur tous les écrans admin.
  */
-function em_wp_admin_filter_rubrique_footer_text(string $text): string
+function em_wp_admin_filter_footer_text(string $text): string
 {
-    if (!em_wp_admin_is_rubrique_screen()) {
+    if (!is_admin()) {
         return $text;
     }
 
-    return em_wp_admin_rubrique_footer_text();
+    return em_wp_admin_footer_text();
 }
-add_filter('admin_footer_text', 'em_wp_admin_filter_rubrique_footer_text');
+add_filter('admin_footer_text', 'em_wp_admin_filter_footer_text');
 
 /**
  * Masque « Version X.X » à droite du pied de page sur les écrans Rubriques.
