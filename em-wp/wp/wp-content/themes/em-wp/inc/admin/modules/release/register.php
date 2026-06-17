@@ -12,8 +12,8 @@ if (!defined('ABSPATH')) {
 function em_wp_release_register_admin(): void
 {
     add_menu_page(
-        __('RELEASES', 'em-wp'),
-        __('RELEASES', 'em-wp'),
+        __('RELEASE', 'em-wp'),
+        __('RELEASE', 'em-wp'),
         'manage_options',
         em_wp_release_page_slug(),
         'em_wp_release_render_admin_page',

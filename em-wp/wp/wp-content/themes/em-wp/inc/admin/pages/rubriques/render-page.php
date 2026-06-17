@@ -107,7 +107,7 @@ function em_wp_admin_render_template_skeleton_add_panel(): void
                                 </label>
 
                                 <div class="em-wp-catalog-sommaire__field em-wp-rubrique-skeleton-add-panel__colors-field">
-                                    <span class="em-wp-catalog-sommaire__field-label"><?php esc_html_e('Couleurs rubrique', 'em-wp'); ?></span>
+                                    <span class="em-wp-catalog-sommaire__field-label"><?php esc_html_e('COULEURS', 'em-wp'); ?></span>
                                     <?php
                                     if (function_exists('em_wp_admin_render_skeleton_add_rubrique_colors')) {
                                         em_wp_admin_render_skeleton_add_rubrique_colors((string) $rubrique_slug);

@@ -159,8 +159,8 @@ function em_wp_landing_rubrique_stub_meta(string $module_slug): array
     $fallbacks = [
         'stream'  => ['label' => 'STREAM', 'accent_color' => '#7c3aed'],
         'social'  => ['label' => 'SOCIAL', 'accent_color' => '#db2777'],
-        'video'   => ['label' => 'VIDEOS', 'accent_color' => '#ca8a04'],
-        'release' => ['label' => 'RELEASES', 'accent_color' => '#b8956a'],
+        'video'   => ['label' => 'VIDEO', 'accent_color' => '#ca8a04'],
+        'release' => ['label' => 'RELEASE', 'accent_color' => '#b8956a'],
         'cta'     => ['label' => 'CTA', 'accent_color' => '#0d9488'],
         'contacts' => ['label' => 'CONTACT', 'accent_color' => '#64748b'],
         'footer'  => ['label' => 'FOOTER', 'accent_color' => '#100421'],

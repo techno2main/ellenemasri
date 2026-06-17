@@ -53,7 +53,7 @@ function em_wp_catalog_extended_menu_definitions(): array
             'icon'        => 'dashicons-album',
             'available'   => true,
             'description_item'     => __('Releases', 'em-wp'),
-            'description_rubrique' => __('RELEASES', 'em-wp'),
+            'description_rubrique' => __('RELEASE', 'em-wp'),
             'url'         => function_exists('em_wp_release_hub_page_url') ? em_wp_release_hub_page_url() : admin_url('admin.php?page=' . em_wp_release_catalog_hub_menu_slug()),
             'callback'    => 'em_wp_catalog_render_releases_page',
         ],

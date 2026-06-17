@@ -123,7 +123,7 @@ function em_wp_header_render_admin_page(): void
 
                 em_wp_admin_render_module_panel(
 
-                    __('Hero et Slider', 'em-wp'),
+                    em_wp_admin_rubrique_label('header'),
 
                     'em-wp-header-admin__panel',
 
@@ -131,7 +131,7 @@ function em_wp_header_render_admin_page(): void
 
                         ?>
 
-                        <p class="description"><?php esc_html_e('Choisis le Hero et/ou le Slider du catalogue à afficher dans le HEADER de ce template. Édite le contenu dans Catalogues → Heros / Sliders.', 'em-wp'); ?></p>
+                        <p class="description"><?php echo esc_html(em_wp_admin_header_catalog_selection_description()); ?></p>
 
 
 
@@ -140,7 +140,7 @@ function em_wp_header_render_admin_page(): void
                             $field . '[hero_slug]',
                             $hero_selected,
                             $hero_choices,
-                            __('Hero du catalogue', 'em-wp'),
+                            em_wp_admin_catalog_module_import_switcher_label('hero'),
                             'hero'
                         );
 
@@ -148,7 +148,7 @@ function em_wp_header_render_admin_page(): void
                             $field . '[slider_slug]',
                             $slider_selected,
                             $slider_choices,
-                            __('Slider du catalogue', 'em-wp'),
+                            em_wp_admin_catalog_module_import_switcher_label('slider'),
                             'slider'
                         );
 

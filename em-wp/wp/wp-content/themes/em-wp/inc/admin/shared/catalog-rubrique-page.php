@@ -1,6 +1,6 @@
 <?php
 /**
- * Panneau mutualisé « X du catalogue » (Release, Stream, Contact…).
+ * Panneau mutualisé d’import catalogue (Release, Stream, Top-Bar…).
  *
  * @package em-wp
  */
@@ -82,14 +82,43 @@ function em_wp_admin_rubrique_catalog_item_label(string $module_slug): string
 }
 
 /**
- * Titre panneau : « Release du catalogue », « Contact du catalogue »…
+ * Titre panneau import catalogue : TOP-BAR, STREAM, RELEASE…
  */
 function em_wp_admin_rubrique_catalog_panel_title(string $module_slug): string
 {
+    return em_wp_admin_rubrique_label($module_slug);
+}
+
+/**
+ * Libellé switcher : « Importer TOP-BAR », « Importer STREAM »…
+ */
+function em_wp_admin_rubrique_catalog_import_switcher_label(string $module_slug): string
+{
     return sprintf(
-        /* translators: %s: catalog entry type (Release, Contact, …) */
-        __('%s du catalogue', 'em-wp'),
-        em_wp_admin_rubrique_catalog_item_label($module_slug)
+        /* translators: %s: rubrique label (TOP-BAR, STREAM, …) */
+        __('Importer %s', 'em-wp'),
+        em_wp_admin_rubrique_label($module_slug)
+    );
+}
+
+/**
+ * Libellé switcher pour un module catalogue (HERO, SLIDER…).
+ */
+function em_wp_admin_catalog_module_import_switcher_label(string $catalog_module_slug): string
+{
+    $catalog_module_slug = sanitize_key($catalog_module_slug);
+
+    $labels = [
+        'hero'   => 'HERO',
+        'slider' => 'SLIDER',
+    ];
+
+    $label = $labels[$catalog_module_slug] ?? mb_strtoupper($catalog_module_slug);
+
+    return sprintf(
+        /* translators: %s: catalog module label (HERO, SLIDER, …) */
+        __('Importer %s', 'em-wp'),
+        $label
     );
 }
 
@@ -155,20 +184,23 @@ function em_wp_admin_rubrique_catalog_selection_phrase(string $module_slug): str
 }
 
 /**
- * Description sous le panneau catalogue (alignée Release / Stream).
+ * Description sous le panneau import catalogue.
  */
 function em_wp_admin_rubrique_catalog_selection_description(string $module_slug): string
 {
     return sprintf(
-        /* translators: 1: catalog item phrase, 2: rubrique label, 3: hub menu label */
-        __(
-            'Choisis %1$s du catalogue à afficher dans la rubrique %2$s de ce template. Édite le contenu dans Catalogues → %3$s.',
-            'em-wp'
-        ),
-        em_wp_admin_rubrique_catalog_selection_phrase($module_slug),
-        em_wp_admin_rubrique_label($module_slug),
-        em_wp_admin_rubrique_catalog_hub_menu_label($module_slug)
+        /* translators: %s: rubrique label (TOP-BAR, STREAM, …) */
+        __('Choisis la rubrique %s à afficher depuis le Catalogue.', 'em-wp'),
+        em_wp_admin_rubrique_label($module_slug)
     );
+}
+
+/**
+ * Description panneau HEADER (hero + slider).
+ */
+function em_wp_admin_header_catalog_selection_description(): string
+{
+    return __('Choisis le HERO et/ou le SLIDER à afficher depuis le Catalogue.', 'em-wp');
 }
 
 /**
@@ -186,7 +218,7 @@ function em_wp_admin_render_catalog_rubrique_selection_panel(
 ): void {
     $module_slug = sanitize_key($module_slug);
     $panel_title = em_wp_admin_rubrique_catalog_panel_title($module_slug);
-    $switcher_label = $panel_title;
+    $switcher_label = em_wp_admin_rubrique_catalog_import_switcher_label($module_slug);
 
     em_wp_admin_render_module_panel(
         $panel_title,

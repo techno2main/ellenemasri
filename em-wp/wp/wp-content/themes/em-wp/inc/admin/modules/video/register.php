@@ -12,8 +12,8 @@ if (!defined('ABSPATH')) {
 function em_wp_video_register_admin(): void
 {
     add_menu_page(
-        __('VIDEOS', 'em-wp'),
-        __('VIDEOS', 'em-wp'),
+        __('VIDEO', 'em-wp'),
+        __('VIDEO', 'em-wp'),
         'manage_options',
         em_wp_video_page_slug(),
         'em_wp_video_render_admin_page',
