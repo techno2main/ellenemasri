@@ -50,6 +50,11 @@ function em_wp_admin_render_dashboard_page(): void
             em_wp_admin_dashboard_render_row_medias_settings();
             ?>
         </div>
+        <?php
+        if (function_exists('em_wp_admin_render_new_template_modals')) {
+            em_wp_admin_render_new_template_modals();
+        }
+        ?>
     </div>
     <?php
 }

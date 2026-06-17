@@ -633,6 +633,83 @@ function em_wp_admin_hub_render_template_create_actions_badge(bool $can_duplicat
 }
 
 /**
+ * Carte « Nouveau template » (sommaire Templates + Accueil).
+ *
+ * @param array{
+ *     enabled?: bool,
+ *     can_duplicate?: bool,
+ *     section_attr?: string,
+ *     section_value?: string,
+ * } $args
+ */
+function em_wp_admin_hub_render_template_create_card(array $args = []): void
+{
+    $enabled = (bool) ($args['enabled'] ?? true);
+    $can_duplicate = (bool) ($args['can_duplicate'] ?? true);
+    $section_attr = sanitize_key((string) ($args['section_attr'] ?? 'data-template-section'));
+    $section_value = sanitize_key((string) ($args['section_value'] ?? 'create'));
+
+    if ($section_attr === '') {
+        $section_attr = 'data-template-section';
+    }
+
+    $card_classes = 'em-wp-hub__card em-wp-hub__card--template-create';
+
+    if (!$enabled) {
+        $card_classes .= ' em-wp-hub__card--disabled';
+    }
+
+    $section_attr_html = sprintf(
+        '%s="%s"',
+        esc_attr($section_attr),
+        esc_attr($section_value)
+    );
+    ?>
+    <section
+        class="<?php echo esc_attr($card_classes); ?>"
+        <?php echo $section_attr_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+        style="--em-wp-template-accent: #751820; --em-wp-template-text: #ffffff;"
+    >
+        <header class="em-wp-hub__card-header">
+            <div class="em-wp-hub__card-heading">
+                <?php
+                em_wp_admin_hub_render_card_title(
+                    mb_strtoupper(__('Nouveau template', 'em-wp')),
+                    'dashicons-layout'
+                );
+                ?>
+            </div>
+            <?php if ($enabled) { ?>
+                <button
+                    type="button"
+                    class="em-wp-hub__card-create-icon"
+                    data-em-wp-new-template-open
+                    aria-label="<?php esc_attr_e('Création d\'un nouveau template', 'em-wp'); ?>"
+                >
+                    <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+                </button>
+            <?php } else { ?>
+                <?php em_wp_admin_hub_render_disabled_action('', 'dashicons dashicons-plus-alt2', true); ?>
+            <?php } ?>
+        </header>
+        <div class="em-wp-hub__card-desc em-wp-templates-sommaire__card-desc">
+            <p class="em-wp-templates-sommaire__card-desc-label">
+                <?php esc_html_e('Création d\'un nouveau Template', 'em-wp'); ?>
+            </p>
+            <p class="em-wp-templates-sommaire__card-desc-list">
+                <?php esc_html_e('Duplique un template existant ou utilise le Wizard de création', 'em-wp'); ?>
+            </p>
+        </div>
+        <?php if ($enabled) { ?>
+            <div class="em-wp-templates-sommaire__card-live-footer">
+                <?php em_wp_admin_hub_render_template_create_actions_badge($can_duplicate); ?>
+            </div>
+        <?php } ?>
+    </section>
+    <?php
+}
+
+/**
  * Pastille badge générique.
  */
 function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $in_card = false, bool $uppercase = false, bool $compact = false): void

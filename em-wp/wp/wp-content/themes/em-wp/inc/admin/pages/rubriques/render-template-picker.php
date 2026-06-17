@@ -169,61 +169,12 @@ function em_wp_admin_render_rubriques_template_picker(): void
                         </section>
                     <?php } ?>
 
-                    <?php if ($create_url !== '') { ?>
-                        <section
-                            class="em-wp-hub__card em-wp-hub__card--template-create"
-                            data-template-section="create"
-                            style="--em-wp-template-accent: #751820; --em-wp-template-text: #ffffff;"
-                        >
-                            <header class="em-wp-hub__card-header">
-                                <div class="em-wp-hub__card-heading">
-                                    <?php em_wp_admin_hub_render_card_title(
-                                        mb_strtoupper(__('Nouveau template', 'em-wp')),
-                                        'dashicons-layout'
-                                    ); ?>
-                                </div>
-                                <button
-                                    type="button"
-                                    class="em-wp-hub__card-create-icon"
-                                    data-em-wp-new-template-open
-                                    aria-label="<?php esc_attr_e('Création d\'un nouveau template', 'em-wp'); ?>"
-                                >
-                                    <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
-                                </button>
-                            </header>
-                            <div class="em-wp-hub__card-desc em-wp-templates-sommaire__card-desc">
-                                <p class="em-wp-templates-sommaire__card-desc-label">
-                                    <?php esc_html_e('Création d\'un nouveau Template', 'em-wp'); ?>
-                                </p>
-                                <p class="em-wp-templates-sommaire__card-desc-list">
-                                    <?php esc_html_e('Duplique un template existant ou utilise le Wizard de création', 'em-wp'); ?>
-                                </p>
-                            </div>
-                            <div class="em-wp-templates-sommaire__card-live-footer">
-                                <?php em_wp_admin_hub_render_template_create_actions_badge($registry !== []); ?>
-                            </div>
-                        </section>
-                    <?php } else { ?>
-                        <section class="em-wp-hub__card em-wp-hub__card--disabled">
-                            <header class="em-wp-hub__card-header">
-                                <div class="em-wp-hub__card-heading">
-                                    <?php em_wp_admin_hub_render_card_title(
-                                        mb_strtoupper(__('Nouveau template', 'em-wp')),
-                                        'dashicons-layout'
-                                    ); ?>
-                                </div>
-                                <?php em_wp_admin_hub_render_disabled_action('', 'dashicons dashicons-plus-alt2', true); ?>
-                            </header>
-                            <div class="em-wp-hub__card-desc em-wp-templates-sommaire__card-desc">
-                                <p class="em-wp-templates-sommaire__card-desc-label">
-                                    <?php esc_html_e('Création d\'un nouveau Template', 'em-wp'); ?>
-                                </p>
-                                <p class="em-wp-templates-sommaire__card-desc-list">
-                                    <?php esc_html_e('Duplique un template existant ou utilise le Wizard de création', 'em-wp'); ?>
-                                </p>
-                            </div>
-                        </section>
-                    <?php } ?>
+                    <?php
+                    em_wp_admin_hub_render_template_create_card([
+                        'enabled'       => ($create_url !== ''),
+                        'can_duplicate' => ($registry !== []),
+                    ]);
+                    ?>
                 </div>
                 <?php
                 if ($can_manage && count($registry) > 1) {

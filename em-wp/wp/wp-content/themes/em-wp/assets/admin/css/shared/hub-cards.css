@@ -1290,27 +1290,32 @@ button.em-wp-hub__catalog-entry-link {
     display: none;
 }
 
-.em-wp-templates-sommaire .em-wp-hub__card--template-create > .em-wp-hub__card-desc {
+.em-wp-templates-sommaire .em-wp-hub__card--template-create > .em-wp-hub__card-desc,
+.em-wp-dashboard .em-wp-hub__card--template-create > .em-wp-hub__card-desc {
     flex: 1;
 }
 
-.em-wp-templates-sommaire .em-wp-hub__card--template-create {
+.em-wp-templates-sommaire .em-wp-hub__card--template-create,
+.em-wp-dashboard .em-wp-hub__card--template-create {
     align-content: start;
 }
 
-.em-wp-templates-sommaire .em-wp-hub__card[data-template-section] > .em-wp-hub__card-header {
+.em-wp-templates-sommaire .em-wp-hub__card[data-template-section] > .em-wp-hub__card-header,
+.em-wp-dashboard .em-wp-hub__card--template-create > .em-wp-hub__card-header {
     min-height: 42px;
     align-items: center;
 }
 
-.em-wp-templates-sommaire .em-wp-hub__card-create-icon .dashicons {
+.em-wp-templates-sommaire .em-wp-hub__card-create-icon .dashicons,
+.em-wp-dashboard .em-wp-hub__card-create-icon .dashicons {
     width: 18px;
     height: 18px;
     font-size: 18px;
     line-height: 18px;
 }
 
-.em-wp-templates-sommaire .em-wp-hub__card-create-icon {
+.em-wp-templates-sommaire .em-wp-hub__card-create-icon,
+.em-wp-dashboard .em-wp-hub__card-create-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1333,7 +1338,10 @@ button.em-wp-hub__catalog-entry-link {
 
 .em-wp-templates-sommaire .em-wp-hub__card--template-create:hover .em-wp-hub__card-create-icon,
 .em-wp-templates-sommaire .em-wp-hub__card--template-create:focus-within .em-wp-hub__card-create-icon,
-.em-wp-templates-sommaire .em-wp-hub__card--template-create.is-preview-active .em-wp-hub__card-create-icon {
+.em-wp-templates-sommaire .em-wp-hub__card--template-create.is-preview-active .em-wp-hub__card-create-icon,
+.em-wp-dashboard .em-wp-hub__card--template-create:hover .em-wp-hub__card-create-icon,
+.em-wp-dashboard .em-wp-hub__card--template-create:focus-within .em-wp-hub__card-create-icon,
+.em-wp-dashboard .em-wp-hub__card--template-create.is-preview-active .em-wp-hub__card-create-icon {
     border-color: #751820;
     background: #751820;
     color: #ffffff;
@@ -1341,8 +1349,24 @@ button.em-wp-hub__catalog-entry-link {
 
 .em-wp-templates-sommaire .em-wp-hub__card--template-create:hover .em-wp-hub__card-create-icon .dashicons,
 .em-wp-templates-sommaire .em-wp-hub__card--template-create:focus-within .em-wp-hub__card-create-icon .dashicons,
-.em-wp-templates-sommaire .em-wp-hub__card--template-create.is-preview-active .em-wp-hub__card-create-icon .dashicons {
+.em-wp-templates-sommaire .em-wp-hub__card--template-create.is-preview-active .em-wp-hub__card-create-icon .dashicons,
+.em-wp-dashboard .em-wp-hub__card--template-create:hover .em-wp-hub__card-create-icon .dashicons,
+.em-wp-dashboard .em-wp-hub__card--template-create:focus-within .em-wp-hub__card-create-icon .dashicons,
+.em-wp-dashboard .em-wp-hub__card--template-create.is-preview-active .em-wp-hub__card-create-icon .dashicons {
     color: #ffffff;
+}
+
+.em-wp-dashboard .em-wp-hub__card--template-create {
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.em-wp-dashboard .em-wp-hub__card--template-create.is-preview-active {
+    border-color: var(--em-wp-template-accent, #751820);
+    box-shadow:
+        0 0 0 2px color-mix(in srgb, var(--em-wp-template-accent, #751820) 24%, transparent),
+        0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .em-wp-templates-sommaire .em-wp-hub__sticky-head + .em-wp-hub__live-bar {
