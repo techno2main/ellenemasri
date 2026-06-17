@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var DELAY_MS = 5000;
+    var DELAY_MS = 3000;
     var FADE_MS = 300;
     var NOTICE_SELECTOR = '#wpbody-content .notice:not(.inline)';
 

@@ -12,7 +12,7 @@
 
     var statusDismissTimer = null;
     var lastStatusEl = null;
-    var STATUS_DISMISS_MS = 5000;
+    var STATUS_DISMISS_MS = 3000;
 
     function setStatus(message, isError) {
         var statusEl = document.getElementById('em-wp-rubrique-skeleton-add-status')

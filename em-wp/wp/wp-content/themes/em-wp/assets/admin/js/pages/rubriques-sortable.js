@@ -12,7 +12,7 @@
     var visibilitySaving = false;
     var layoutSaving = false;
     var statusDismissTimer = null;
-    var STATUS_DISMISS_MS = 5000;
+    var STATUS_DISMISS_MS = 3000;
 
     function setStatus(message, isError) {
         if (!statusEl) {

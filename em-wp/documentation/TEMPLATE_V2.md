@@ -21,7 +21,7 @@ Local : http://localhost:8190/wp-admin (Docker em-wp-local)
 
 État Phase 5 (WIP, poussé) :
 - Squelette rubriques par template : ordre, ajout/retrait, insertion positionnée, couleurs initiales, masquée par défaut
-- UI sommaire : onglet +, panneau ajout, toast auto-dismiss 5s, wireframe / fil d'Ariane
+- UI sommaire : onglet +, panneau ajout, toast auto-dismiss 3s, wireframe / fil d'Ariane
 - Module catalogue CONTACT (custom) : hub, entrées Mayami/Ellene, Label/Valeur/Masquer, slugs canoniques
 - Rubrique template CONTACT : sélection catalogue mutualisée (Release/Stream/Contact), menu latéral, case Afficher, front #contact
 - Hub catalogues : modules custom CRUD, renommage, panneau mutualisé catalog-rubrique-page
