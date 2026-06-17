@@ -31,7 +31,7 @@ function em_wp_admin_template_wizard_render_ui(bool $page_mode = false, bool $co
         ? ''
         : ' role="dialog" aria-modal="true" aria-labelledby="em-wp-template-wizard-title"';
 
-    $initially_hidden = $page_mode ? !$compact_mode : true;
+    $initially_hidden = !$page_mode || $compact_mode;
     ?>
     <div
         id="em-wp-template-create-wizard"
@@ -69,7 +69,7 @@ function em_wp_admin_template_wizard_render_ui(bool $page_mode = false, bool $co
                 <div
                     class="em-wp-template-wizard__panel em-wp-template-wizard__panel--plan"
                     data-wizard-panel="1"
-                    <?php echo $compact_mode ? '' : ' hidden'; ?>
+                    hidden
                 >
                     <p class="em-wp-template-wizard__helper">
                         <?php esc_html_e('Compose la structure de ta page directement sur le wireframe : réordonne les rubriques, retire celles dont tu n’as pas besoin, ou ajoute-en depuis la colonne de droite.', 'em-wp'); ?>

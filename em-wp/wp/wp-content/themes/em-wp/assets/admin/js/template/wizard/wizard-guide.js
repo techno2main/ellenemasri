@@ -474,7 +474,8 @@
 
             if (this.isProgressMode) {
                 if (this.progressBadge) {
-                    this.progressBadge.textContent = String(step + 1) + '/' + String(total)
+                    this.progressBadge.textContent = 'ÉTAPE '
+                        + String(step + 1) + '/' + String(total)
                         + ' - '
                         + String(label || '').toUpperCase();
                 }
@@ -988,6 +989,7 @@
 
             this.syncWizardFooter(step);
             this.syncWireframeActions(step);
+            this.syncWizardPlanWorkspace(step);
 
             if (this.isProgressMode && EmWpTemplateWizard.Draft && EmWpTemplateWizard.Draft.syncDraftContextStep) {
                 EmWpTemplateWizard.Draft.syncDraftContextStep(step);
@@ -1002,12 +1004,38 @@
                 return;
             }
 
-            if (!this.isProgressMode) {
-                footer.hidden = false;
+            if (this.isProgressMode) {
+                footer.hidden = true;
                 return;
             }
 
-            footer.hidden = step === 1;
+            footer.hidden = false;
+        },
+
+        syncWizardPlanWorkspace: function (step) {
+            var wizard = document.getElementById('em-wp-template-create-wizard');
+            var body = wizard ? wizard.querySelector('.em-wp-template-wizard__body') : null;
+            var planSection = document.querySelector('.em-wp-templates-create-page--edit .em-wp-catalog-sommaire__section');
+
+            if (this.isProgressMode && planSection) {
+                planSection.hidden = step !== 1;
+            }
+
+            if (!wizard || !body) {
+                return;
+            }
+
+            if (!this.isProgressMode) {
+                body.hidden = false;
+                wizard.hidden = false;
+                if (planSection) {
+                    planSection.hidden = false;
+                }
+                return;
+            }
+
+            body.hidden = step !== 1;
+            wizard.hidden = step !== 1;
         },
 
         syncWireframeActions: function (step) {
@@ -1474,13 +1502,11 @@
 
             this.syncProgressActionCounter(0);
 
-            if (which === 'color' && window.jQuery && input) {
-                var picker = window.jQuery(input).closest('.wp-picker-container');
-                if (picker.length) {
-                    var button = picker.find('.wp-color-result')[0];
-                    if (button && typeof button.focus === 'function') {
-                        button.focus({ preventScroll: true });
-                    }
+            if (which === 'color') {
+                var editButton = target ? target.querySelector('[data-em-wp-color-modal-open]') : null;
+
+                if (editButton && typeof editButton.focus === 'function') {
+                    editButton.focus({ preventScroll: true });
                 }
             }
         },

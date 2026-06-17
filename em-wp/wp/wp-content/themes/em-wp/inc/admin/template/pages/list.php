@@ -389,7 +389,7 @@ function em_wp_admin_templates_enqueue(): void
         wp_enqueue_script(
             'em-wp-template-list-row-edit',
             get_template_directory_uri() . '/assets/admin/js/template/list-row-edit.js',
-            ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker'],
+            ['em-wp-admin-color-modal'],
             em_wp_admin_asset_version('assets/admin/js/template/list-row-edit.js'),
             true
         );

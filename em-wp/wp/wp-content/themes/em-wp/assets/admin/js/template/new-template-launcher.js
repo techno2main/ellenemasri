@@ -96,6 +96,31 @@
             });
         });
 
+        document.querySelectorAll('[data-em-wp-new-template-wizard]').forEach(function (trigger) {
+            trigger.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                grantWorkspaceLaunch();
+
+                if (cfg.blankWizardUrl) {
+                    window.location.href = cfg.blankWizardUrl;
+                }
+            });
+        });
+
+        document.querySelectorAll('[data-em-wp-new-template-duplicate]').forEach(function (trigger) {
+            trigger.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                openModal();
+                showPanel('duplicate');
+
+                if (sourceSelect) {
+                    sourceSelect.focus();
+                }
+            });
+        });
+
         modal.querySelectorAll('[data-em-wp-new-template-dismiss]').forEach(function (el) {
             el.addEventListener('click', closeModal);
         });

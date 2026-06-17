@@ -238,8 +238,8 @@ function em_wp_admin_template_wizard_get_config(): array
                 'actionsStepCompleteLast' => __('Tu as terminé l\'étape %1$s.', 'em-wp'),
                 'actionsLeadByStep' => [
                     0 => [
-                        'initialOne'   => __('Pour définir l\'identité, tu dois valider %s action', 'em-wp'),
-                        'initialMany'  => __('Pour définir l\'identité, tu dois valider %s actions', 'em-wp'),
+                        'initialOne'   => __('Tu dois choisir un nom et une couleur pour le nouveau template', 'em-wp'),
+                        'initialMany'  => __('Tu dois choisir un nom et une couleur pour le nouveau template', 'em-wp'),
                         'remainingOne' => __('Pour définir l\'identité, il te reste %s action à valider', 'em-wp'),
                         'remainingMany'=> __('Pour définir l\'identité, il te reste %s actions à valider', 'em-wp'),
                     ],
@@ -260,13 +260,13 @@ function em_wp_admin_template_wizard_get_config(): array
                             'id'      => 'a',
                             'key'     => 'label',
                             'label'   => __('Nom', 'em-wp'),
-                            'summary' => __('Nom du template à définir', 'em-wp'),
+                            'summary' => __('Choisis un nom', 'em-wp'),
                         ],
                         [
                             'id'      => 'b',
                             'key'     => 'color',
                             'label'   => __('Couleur', 'em-wp'),
-                            'summary' => __('Couleur d\'identification à choisir', 'em-wp'),
+                            'summary' => __('Choisis une couleur', 'em-wp'),
                         ],
                     ],
                     1 => [],

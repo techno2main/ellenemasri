@@ -24,7 +24,7 @@ function em_wp_admin_template_enqueue_new_template_launcher(): void
     wp_enqueue_script(
         'em-wp-admin-new-template-launcher',
         get_template_directory_uri() . '/assets/admin/js/template/new-template-launcher.js',
-        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker'],
+        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-color-modal'],
         em_wp_admin_asset_version('assets/admin/js/template/new-template-launcher.js'),
         true
     );
@@ -80,7 +80,7 @@ function em_wp_admin_render_new_template_modals(): void
                         <?php esc_html_e('Nouveau template', 'em-wp'); ?>
                     </h2>
                     <p class="em-wp-new-template-modal__lead">
-                        <?php esc_html_e('Choisissez comment créer votre template. Vous pourrez ensuite le personnaliser rubrique par rubrique.', 'em-wp'); ?>
+                        <?php esc_html_e('Choisis comment tu veux créer ton template.', 'em-wp'); ?>
                     </p>
                 </header>
 
@@ -211,20 +211,17 @@ function em_wp_admin_render_new_template_modals(): void
                         </p>
 
                         <div class="em-wp-new-template-modal__field em-wp-new-template-modal__field--color">
-                            <div class="em-wp-admin-color-field-wrap">
-                                <label class="em-wp-admin-color-label" for="em-wp-new-template-color">
-                                    <?php esc_html_e('Couleur', 'em-wp'); ?>
-                                </label>
-                                <input
-                                    type="text"
-                                    id="em-wp-new-template-color"
-                                    name="em_wp_template_color"
-                                    class="em-wp-admin-color-field em-wp-new-template-modal__color-input"
-                                    value=""
-                                    required
-                                    data-default-color=""
-                                >
-                            </div>
+                            <?php
+                            em_wp_admin_render_color_field([
+                                'id'           => 'em-wp-new-template-color',
+                                'name'         => 'em_wp_template_color',
+                                'value'        => '',
+                                'field_label'  => __('Couleur', 'em-wp'),
+                                'modal_title'  => __('Couleur du template', 'em-wp'),
+                                'input_class'  => 'em-wp-new-template-modal__color-input',
+                                'required'     => true,
+                            ]);
+                            ?>
                         </div>
 
                         <footer class="em-wp-new-template-modal__actions">

@@ -16,7 +16,7 @@ function em_wp_admin_template_wizard_enqueue(): void
 {
     $theme_uri = get_template_directory_uri();
     $base = 'assets/admin/js/template/wizard/';
-    $deps = ['em-wp-admin-confirm-modal', 'jquery', 'em-wp-admin-color-picker'];
+    $deps = ['em-wp-admin-confirm-modal', 'jquery', 'em-wp-admin-color-picker', 'em-wp-admin-color-modal'];
     $ver = static function (string $rel): string {
         return em_wp_admin_asset_version($rel);
     };

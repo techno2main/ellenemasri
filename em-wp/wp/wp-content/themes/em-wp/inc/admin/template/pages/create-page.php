@@ -188,7 +188,7 @@ function em_wp_admin_template_create_render_progress_header(): void
         data-wizard-progress
     >
         <div class="em-wp-template-wizard-progress__inner">
-            <span class="em-wp-template-wizard-progress__badge" data-wizard-progress-badge>1/2</span>
+            <span class="em-wp-template-wizard-progress__badge" data-wizard-progress-badge><?php esc_html_e('ÉTAPE 1/2 - IDENTITÉ', 'em-wp'); ?></span>
             <div class="em-wp-template-wizard-progress__body">
                 <p class="em-wp-template-wizard-progress__title" data-wizard-progress-title></p>
                 <p class="em-wp-template-wizard-progress__checklist" data-wizard-progress-checklist hidden></p>
@@ -348,7 +348,7 @@ function em_wp_admin_render_template_create_page(): void
         <?php } ?>
     >
         <?php
-        em_wp_admin_hub_render_sommaire_header('', 'dashicons-plus-alt2', false, true, null, null, true);
+        em_wp_admin_hub_render_sommaire_header('', 'dashicons-layout', false, true, null, null, true);
 
         em_wp_admin_template_create_render_nav_tabs($view_mode, !$is_edit);
 
@@ -364,6 +364,7 @@ function em_wp_admin_render_template_create_page(): void
         <section
             class="em-wp-catalog-sommaire__section"
             aria-labelledby="<?php echo $is_edit ? 'em-wp-template-wizard-context-name' : 'em-wp-template-create-page-title'; ?>"
+            <?php echo $is_edit ? ' hidden' : ''; ?>
         >
             <?php if (!$is_edit) { ?>
             <header class="em-wp-catalog-sommaire__section-header">
@@ -428,8 +429,17 @@ function em_wp_admin_render_template_create_page(): void
                                 <input type="text" id="em-wp-template-new-label" name="em_wp_template_label" class="regular-text em-wp-templates-admin__create-input" required autocomplete="off" placeholder="<?php esc_attr_e('Nom à définir', 'em-wp'); ?>">
                             </div>
                             <div class="em-wp-templates-admin__create-field" data-wizard-guide-target="color">
-                                <label class="em-wp-templates-admin__create-label" for="em-wp-template-new-color"><?php esc_html_e('Couleur', 'em-wp'); ?></label>
-                                <input type="text" id="em-wp-template-new-color" name="em_wp_template_color" value="" class="em-wp-admin-color-field em-wp-templates-admin__create-color" data-default-color="">
+                                <?php
+                                em_wp_admin_render_color_field([
+                                    'id'           => 'em-wp-template-new-color',
+                                    'name'         => 'em_wp_template_color',
+                                    'value'        => '',
+                                    'field_label'  => __('Couleur', 'em-wp'),
+                                    'modal_title'  => __('Couleur du template', 'em-wp'),
+                                    'input_class'  => 'em-wp-templates-admin__create-color',
+                                    'required'     => true,
+                                ]);
+                                ?>
                             </div>
                             <div class="em-wp-templates-admin__create-actions">
                                 <?php if (!$is_edit) { ?>
