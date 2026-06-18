@@ -33,6 +33,7 @@ function em_wp_admin_dashboard_render_row_templates(string $active_label, string
                     ); ?>
                 </header>
                 <?php em_wp_admin_dashboard_render_live_template_badge($active_label, $active_slug, true); ?>
+                <?php em_wp_admin_dashboard_render_templates_badge(); ?>
             </section>
 
             <?php

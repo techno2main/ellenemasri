@@ -209,7 +209,7 @@ function em_wp_admin_hub_resolve_breadcrumb_crumbs(string $page_slug = ''): arra
         && $page_slug === em_wp_admin_dashboard_page_slug()
     ) {
         return [
-            em_wp_admin_hub_breadcrumb_crumb(__('Dashboard', 'em-wp')),
+            em_wp_admin_hub_breadcrumb_crumb(__('Mon Dashboard', 'em-wp')),
         ];
     }
 

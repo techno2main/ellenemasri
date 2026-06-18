@@ -455,6 +455,51 @@ function em_wp_admin_template_site_rubriques_summary_parts(string $template_slug
 }
 
 /**
+ * Liste des rubriques d'un template sous forme d'entrées cliquables (label + url).
+ *
+ * @return array<int, array{label:string,url:string}>
+ */
+function em_wp_admin_template_site_rubriques_entry_links(string $template_slug): array
+{
+    $template_slug = em_wp_template_sanitize_slug($template_slug);
+
+    if ($template_slug === '') {
+        return [];
+    }
+
+    if (!function_exists('em_wp_template_has_skeleton') || !em_wp_template_has_skeleton($template_slug)) {
+        return [];
+    }
+
+    $links = [];
+
+    foreach (em_wp_admin_site_rubrique_definitions_for_template($template_slug) as $module_slug => $definition) {
+        if (!empty($definition['coming_soon'])) {
+            continue;
+        }
+
+        $label = function_exists('em_wp_admin_rubrique_skeleton_label')
+            ? em_wp_admin_rubrique_skeleton_label((string) $module_slug)
+            : mb_strtoupper((string) ($definition['label'] ?? $module_slug));
+
+        $url = function_exists('em_wp_admin_site_rubrique_entry_url')
+            ? em_wp_admin_site_rubrique_entry_url((string) $module_slug)
+            : '';
+
+        if ($url === '') {
+            continue;
+        }
+
+        $links[] = [
+            'label' => $label,
+            'url'   => $url,
+        ];
+    }
+
+    return $links;
+}
+
+/**
  * Résumé texte « Rubriques du site : TOP-BAR, HEADER, … ».
  */
 function em_wp_admin_template_active_rubriques_summary(string $template_slug): string
@@ -785,7 +830,7 @@ function em_wp_admin_rubrique_render_entry_tabs(string $active_module_slug = '')
 }
 
 /**
- * En-tête hub (Hello + bandeau template + intro) pour une page rubrique en édition.
+ * En-tête hub (bandeau template + intro) pour une page rubrique en édition.
  */
 function em_wp_admin_rubrique_render_editing_page_header(string $module_slug): void
 {

@@ -94,7 +94,7 @@ function em_wp_admin_hub_intro_html_allowed_tags(): array
 }
 
 /**
- * Ouvre la zone sticky (Hello + fil d'Ariane + onglets).
+ * Ouvre la zone sticky (fil d'Ariane + onglets).
  */
 function em_wp_admin_hub_sticky_head_open(): void
 {
@@ -110,7 +110,7 @@ function em_wp_admin_hub_sticky_head_close(): void
 }
 
 /**
- * En-tête sommaire partagé (Hello + avatar + description + flèche).
+ * En-tête sommaire partagé (avatar + description + flèche).
  */
 function em_wp_admin_hub_render_sommaire_header(
     string $description = '',
@@ -151,11 +151,11 @@ function em_wp_admin_hub_render_sommaire_header(
             if ($greeting_name !== '') {
                 printf(
                     /* translators: %s: admin first name */
-                    esc_html__('Hello %s', 'em-wp'),
+                    esc_html__('%s', 'em-wp'),
                     esc_html($greeting_name)
                 );
             } else {
-                esc_html_e('Hello', 'em-wp');
+                esc_html_e('em-wp');
             }
             ?>
         </span>
@@ -514,7 +514,8 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
     int $max_visible = 0,
     string $see_all_url = '',
     string $see_all_label = '',
-    bool $blink_puce = false
+    bool $blink_puce = false,
+    bool $always_see_all = false
 ): void {
     if ($entries === []) {
         return;
@@ -524,6 +525,7 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
     $see_all_url = trim($see_all_url);
     $see_all_label = trim($see_all_label);
     $should_trim = $max_visible > 0 && $total_count > $max_visible && $see_all_url !== '';
+    $show_see_all = $should_trim || ($always_see_all && $see_all_url !== '');
 
     if ($should_trim) {
         $entries = array_slice($entries, 0, $max_visible);
@@ -535,7 +537,7 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
         $classes .= ' em-wp-hub__live--uppercase';
     }
 
-    if ($should_trim) {
+    if ($show_see_all) {
         $classes .= ' em-wp-hub__live--entry-links-trimmed';
     }
 
@@ -567,7 +569,7 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
                     href="<?php echo esc_url((string) ($entry['url'] ?? '')); ?>"
                 ><?php echo esc_html((string) ($entry['label'] ?? '')); ?></a>
             <?php } ?>
-            <?php if ($should_trim) { ?>
+            <?php if ($show_see_all) { ?>
                 <span class="em-wp-hub__catalog-entry-sep" aria-hidden="true"></span>
                 <a
                     class="em-wp-hub__catalog-entry-link em-wp-hub__catalog-entry-link--see-all"

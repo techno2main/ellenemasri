@@ -122,6 +122,45 @@ function em_wp_admin_dashboard_render_live_template_badge(string $active_label, 
 }
 
 /**
+ * Pastille liste des templates existants (MAYAMI, ELLENE, …).
+ */
+function em_wp_admin_dashboard_render_templates_badge(): void
+{
+    $entries = [];
+
+    if (function_exists('em_wp_template_registry') && function_exists('em_wp_admin_template_entry_page_slug')) {
+        foreach (em_wp_template_registry() as $slug => $definition) {
+            $slug = (string) $slug;
+            $label = (string) ($definition['label'] ?? $slug);
+
+            $entries[] = [
+                'label' => $label,
+                'url'   => add_query_arg(
+                    ['page' => em_wp_admin_template_entry_page_slug($slug)],
+                    admin_url('admin.php')
+                ),
+            ];
+        }
+    }
+
+    $see_all_url = function_exists('em_wp_admin_template_choice_admin_url')
+        ? em_wp_admin_template_choice_admin_url()
+        : '';
+
+    em_wp_admin_hub_render_catalog_entry_links_badge(
+        $entries,
+        '#4e080e',
+        '',
+        true,
+        5,
+        $see_all_url,
+        __('Voir tout', 'em-wp'),
+        false,
+        true
+    );
+}
+
+/**
  * Pastille modules catalogues (HEROS, SLIDERS, …).
  */
 function em_wp_admin_dashboard_render_catalog_modules_badge(): void

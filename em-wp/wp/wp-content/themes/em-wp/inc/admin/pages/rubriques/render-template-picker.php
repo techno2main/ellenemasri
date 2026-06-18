@@ -151,9 +151,26 @@ function em_wp_admin_render_rubriques_template_picker(): void
                             <div class="em-wp-hub__card-desc em-wp-templates-sommaire__card-desc">
                                 <?php
                                 $summary_parts = em_wp_admin_template_site_rubriques_summary_parts($slug);
+                                $rubrique_links = function_exists('em_wp_admin_template_site_rubriques_entry_links')
+                                    ? em_wp_admin_template_site_rubriques_entry_links((string) $slug)
+                                    : [];
                                 ?>
                                 <p class="em-wp-templates-sommaire__card-desc-label"><?php echo esc_html($summary_parts['label']); ?></p>
-                                <p class="em-wp-templates-sommaire__card-desc-list"><?php echo esc_html($summary_parts['list']); ?></p>
+                                <?php if ($rubrique_links !== []) {
+                                    em_wp_admin_hub_render_catalog_entry_links_badge(
+                                        $rubrique_links,
+                                        '#4e080e',
+                                        '',
+                                        true,
+                                        5,
+                                        $entry_url,
+                                        __('Voir tout', 'em-wp'),
+                                        false,
+                                        true
+                                    );
+                                } else { ?>
+                                    <p class="em-wp-templates-sommaire__card-desc-list"><?php echo esc_html($summary_parts['list']); ?></p>
+                                <?php } ?>
                             </div>
                             <div class="em-wp-templates-sommaire__card-live-footer">
                                 <?php
