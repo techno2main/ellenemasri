@@ -196,6 +196,29 @@ function em_wp_slider_group_name(string $style_slug): string
 }
 
 /**
+ * Résout le dossier d'assets admin (vue) pour une variante Slider.
+ *
+ * Les slugs catalogue (ex. slider-mayami-default) ne correspondent pas aux
+ * dossiers d'assets (mayami/ellene) : on retombe sur une vue existante.
+ */
+function em_wp_slider_admin_asset_view_slug(string $style_slug): string
+{
+    $style_slug = sanitize_key($style_slug);
+    $theme_dir = get_template_directory();
+    $base = $theme_dir . '/assets/admin/js/modules/slider/';
+
+    if ($style_slug !== '' && is_dir($base . $style_slug)) {
+        return $style_slug;
+    }
+
+    if (strpos($style_slug, 'ellene') !== false && is_dir($base . 'ellene')) {
+        return 'ellene';
+    }
+
+    return 'mayami';
+}
+
+/**
  * Charge les assets admin du module Slider.
  */
 function em_wp_slider_admin_enqueue(string $hook_suffix): void
@@ -214,6 +237,7 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
         return;
     }
 
+    $view_slug = em_wp_slider_admin_asset_view_slug($style_slug);
     $theme_uri = get_template_directory_uri();
 
     wp_enqueue_script(
@@ -226,16 +250,16 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_style(
         'em-wp-slider-admin',
-        $theme_uri . '/assets/admin/css/modules/slider/' . $style_slug . '/slider.css',
+        $theme_uri . '/assets/admin/css/modules/slider/' . $view_slug . '/slider.css',
         ['em-wp-admin-color-picker', 'em-wp-admin-module-common'],
-        em_wp_admin_asset_version('assets/admin/css/modules/slider/' . $style_slug . '/slider.css')
+        em_wp_admin_asset_version('assets/admin/css/modules/slider/' . $view_slug . '/slider.css')
     );
 
     wp_enqueue_script(
         'em-wp-slider-admin',
-        $theme_uri . '/assets/admin/js/modules/slider/' . $style_slug . '/slider.js',
+        $theme_uri . '/assets/admin/js/modules/slider/' . $view_slug . '/slider.js',
         ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-accordion', 'em-wp-admin-confirm-modal', 'em-wp-admin-slide-sortable', 'em-wp-admin-module-style-preview'],
-        em_wp_admin_asset_version('assets/admin/js/modules/slider/' . $style_slug . '/slider.js'),
+        em_wp_admin_asset_version('assets/admin/js/modules/slider/' . $view_slug . '/slider.js'),
         true
     );
 }
@@ -454,46 +478,11 @@ function em_wp_slider_render_admin_page(): void
  */
 function em_wp_slider_render_edit_page_layout(array $context, array $options, string $style_slug): void
 {
-    $entry_label = trim((string) ($context['label'] ?? ''));
-    $header_config = function_exists('em_wp_header_get_options')
-        ? em_wp_header_get_options()
-        : em_wp_header_default_options();
-    $header_config['slider_slug'] = sanitize_key($style_slug);
     ?>
     <div class="em-wp-catalog-edit__layout">
         <div class="em-wp-catalog-edit__main">
             <?php em_wp_slider_render_style_setup($context, $options, $style_slug); ?>
         </div>
-
-        <?php if (function_exists('em_wp_admin_render_header_structure_preview')) { ?>
-            <aside class="em-wp-catalog-edit__aside">
-                <div class="em-wp-catalog-edit__preview-wrap">
-                    <p class="em-wp-catalog-edit__preview-label">
-                        <?php
-                        if ($entry_label !== '') {
-                            printf(
-                                /* translators: %s: slider catalog entry label */
-                                esc_html__('Placement SLIDER %s', 'em-wp'),
-                                esc_html($entry_label)
-                            );
-                        } else {
-                            esc_html_e('Placement SLIDER', 'em-wp');
-                        }
-                        ?>
-                    </p>
-                    <p class="em-wp-catalog-edit__preview-hint">
-                        <?php esc_html_e('Le slider en cours est actif. Le hero est affiché en contexte (non cliquable).', 'em-wp'); ?>
-                    </p>
-                    <?php
-                    em_wp_admin_render_header_structure_preview('header_slider', [
-                        'header_config'       => $header_config,
-                        'editing_part'        => 'slider',
-                        'editing_entry_label' => $entry_label,
-                    ]);
-                    ?>
-                </div>
-            </aside>
-        <?php } ?>
     </div>
     <?php
 }
@@ -511,7 +500,7 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
     $page_slug = (string) ($context['page_slug'] ?? 'em-wp-slider-mayami');
     ?>
     <div class="em-wp-slider-admin__setup">
-        <?php em_wp_catalog_render_edit_section_open(__('Slider', 'em-wp'), $slider_label); ?>
+        <?php em_wp_catalog_render_edit_section_open(__('Catalogue', 'em-wp'), $slider_label); ?>
 
         <form id="em-wp-slider-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($page_slug)); ?>">
             <input type="hidden" name="<?php echo esc_attr(em_wp_admin_rubrique_visibility_field_name('slider')); ?>" value="0">
@@ -527,8 +516,8 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
                 <?php
                 em_wp_admin_render_module_items_section_title(
                     'slider',
-                    __('Slides', 'em-wp'),
-                    sprintf(__('Slider %s', 'em-wp'), (string) ($context['label'] ?? 'Mayami'))
+                    __('Items', 'em-wp'),
+                    (string) ($context['label'] ?? 'Slider Mayami')
                 );
                 ?>
 
@@ -537,7 +526,7 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
                         <?php em_wp_admin_render_panel_edit_trigger(); ?>
                         <span class="em-wp-admin-module__item-header-line">
                             <span class="em-wp-admin-module__item-visibility<?php echo !empty($options['slider_title_hidden']) ? ' is-hidden' : ''; ?>" aria-hidden="true"><i class="fa-solid <?php echo !empty($options['slider_title_hidden']) ? 'fa-eye-slash' : 'fa-eye'; ?>"></i></span>
-                            <span><?php esc_html_e('Slider Title', 'em-wp'); ?></span>
+                            <span><?php esc_html_e('Titre Slider', 'em-wp'); ?></span>
                         </span>
                     </button>
                     <div class="em-wp-admin-module__panel-body em-wp-admin-panel-body--row">
@@ -587,6 +576,22 @@ function em_wp_slider_render_slides_panel(array $context, array $options): void
 }
 
 /**
+ * Classes Font Awesome de l'icône d'un slide selon son type.
+ */
+function em_wp_slider_slide_type_icon_classes(string $type): string
+{
+    switch (sanitize_key($type)) {
+        case 'video':
+            return 'fa-brands fa-youtube';
+        case 'tiktok':
+            return 'fa-brands fa-tiktok';
+        case 'image':
+        default:
+            return 'fa-solid fa-image';
+    }
+}
+
+/**
  * Rendu d'un item slide (liste dynamique).
  *
  * @param int|string $list_index Index dans slides[] ou __INDEX__ pour le template JS.
@@ -629,21 +634,27 @@ function em_wp_slider_render_slide_item($list_index, array $context, array $slid
                     <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--down" aria-label="<?php esc_attr_e('Descendre', 'em-wp'); ?>" title="<?php esc_attr_e('Descendre', 'em-wp'); ?>"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
                     <span class="em-wp-slide-sortable__handle em-wp-slider-slide-item__drag" role="button" tabindex="0" aria-label="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>" title="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
                 </span>
+                <span class="em-wp-slider-slide-item__sep" aria-hidden="true">|</span>
                 <span class="em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-hidden="true"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>"></i></span>
+                <span class="em-wp-slider-slide-item__sep" aria-hidden="true">|</span>
                 <button type="button" class="em-wp-slider-slide-item__delete" aria-label="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>" title="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-                <i class="fa-solid fa-photo-film" aria-hidden="true"></i>
+                <span class="em-wp-slider-slide-item__sep" aria-hidden="true">|</span>
+                <i class="em-wp-slider-slide-item__type-icon <?php echo esc_attr(em_wp_slider_slide_type_icon_classes($slide_type)); ?>" aria-hidden="true"></i>
                 <span class="em-wp-slider-slide-item__title"><?php echo esc_html($display_name); ?></span>
             </span>
         </summary>
         <div class="em-wp-admin-nested-item__body em-wp-slider-slide-item__body">
-            <div class="em-wp-admin-field-row">
+            <div class="em-wp-admin-field-row em-wp-slider-head-row">
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Nom du slide', 'em-wp'); ?></span>
-                    <input type="text" class="regular-text em-wp-admin-field-input--wide em-wp-slider-slide-item__name-input" name="<?php echo esc_attr($field_base . '[name]'); ?>" value="<?php echo esc_attr($name_value); ?>">
+                    <span class="em-wp-slider-name-field">
+                        <i class="fa-solid fa-pen-to-square em-wp-slider-name-field__icon" aria-hidden="true"></i>
+                        <input type="text" class="em-wp-slider-text-input em-wp-slider-name-field__input em-wp-slider-slide-item__name-input" name="<?php echo esc_attr($field_base . '[name]'); ?>" value="<?php echo esc_attr($name_value); ?>">
+                    </span>
                 </span>
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Type', 'em-wp'); ?></span>
-                    <select class="em-wp-admin-field-select em-wp-slider-item-panel__type" name="<?php echo esc_attr($field_base . '[type]'); ?>">
+                    <select class="em-wp-slider-select em-wp-slider-item-panel__type" name="<?php echo esc_attr($field_base . '[type]'); ?>">
                         <option value="image" <?php selected($slide_type, 'image'); ?>><?php esc_html_e('Image', 'em-wp'); ?></option>
                         <option value="video" <?php selected($slide_type, 'video'); ?>><?php esc_html_e('Vidéo YouTube', 'em-wp'); ?></option>
                         <option value="tiktok" <?php selected($slide_type, 'tiktok'); ?>><?php esc_html_e('Vidéo TikTok', 'em-wp'); ?></option>
@@ -652,43 +663,46 @@ function em_wp_slider_render_slide_item($list_index, array $context, array $slid
                 <label class="em-wp-admin-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($field_base . '[hidden]'); ?>" value="1" <?php checked($is_hidden); ?>></label>
             </div>
 
-            <div class="em-wp-admin-field-row em-wp-admin-field-row--media em-wp-admin-media-picker" data-slide-field="image">
-                <input type="text" id="<?php echo esc_attr($image_input_id); ?>" name="<?php echo esc_attr($field_base . '[image]'); ?>" value="<?php echo esc_attr($image_value); ?>" class="regular-text em-wp-admin-field-input--wide">
-                <button type="button" class="button button-secondary em-wp-admin-media-button em-wp-slider-media-button" data-target="<?php echo esc_attr($image_input_id); ?>" data-preview="<?php echo esc_attr($image_preview_id); ?>" data-modal-title="<?php echo esc_attr(sprintf(__('Choisir media pour %s', 'em-wp'), $display_name)); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce media', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
+            <div class="em-wp-admin-field-row" data-slide-field="image">
+                <span class="em-wp-admin-field-group em-wp-slider-field--grow">
+                    <span class="em-wp-admin-field-group__label"><?php esc_html_e('Image', 'em-wp'); ?></span>
+                    <input type="text" id="<?php echo esc_attr($image_input_id); ?>" name="<?php echo esc_attr($field_base . '[image]'); ?>" value="<?php echo esc_attr($image_value); ?>" class="em-wp-slider-text-input">
+                    <button type="button" class="button em-wp-admin-media-button em-wp-slider-media-button" data-target="<?php echo esc_attr($image_input_id); ?>" data-preview="<?php echo esc_attr($image_preview_id); ?>" data-modal-title="<?php echo esc_attr(sprintf(__('Choisir media pour %s', 'em-wp'), $display_name)); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce media', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
+                </span>
             </div>
             <div id="<?php echo esc_attr($image_preview_id); ?>" class="em-wp-admin-media-preview em-wp-slider-preview<?php echo $image_value === '' ? ' is-empty' : ''; ?>"><?php if ($image_value !== '') { ?><img src="<?php echo esc_url($image_value); ?>" alt=""><?php } ?></div>
 
             <div class="em-wp-admin-field-row" data-slide-field="video">
-                <span class="em-wp-admin-field-group">
+                <span class="em-wp-admin-field-group em-wp-slider-field--grow">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('URL YouTube', 'em-wp'); ?></span>
-                    <input type="url" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($field_base . '[video_url]'); ?>" value="<?php echo esc_attr($video_url_value); ?>" placeholder="https://www.youtube.com/watch?v=...">
+                    <input type="url" class="em-wp-slider-text-input" name="<?php echo esc_attr($field_base . '[video_url]'); ?>" value="<?php echo esc_attr($video_url_value); ?>" placeholder="https://www.youtube.com/watch?v=...">
                 </span>
             </div>
 
-            <div class="em-wp-admin-field-row" data-slide-field="tiktok-url">
-                <span class="em-wp-admin-field-group">
+            <div class="em-wp-admin-field-row em-wp-slider-inline-row" data-slide-field="tiktok">
+                <span class="em-wp-admin-field-group em-wp-slider-field--grow">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('URL TikTok', 'em-wp'); ?></span>
-                    <input type="url" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($field_base . '[tiktok_url]'); ?>" value="<?php echo esc_attr($tiktok_url_value); ?>" placeholder="https://www.tiktok.com/@artist/video/...">
+                    <input type="url" class="em-wp-slider-text-input" name="<?php echo esc_attr($field_base . '[tiktok_url]'); ?>" value="<?php echo esc_attr($tiktok_url_value); ?>" placeholder="https://www.tiktok.com/@artist/video/...">
                 </span>
-            </div>
-
-            <div class="em-wp-admin-field-row em-wp-admin-field-row--media em-wp-admin-media-picker" data-slide-field="tiktok-mp4">
-                <input type="text" id="<?php echo esc_attr($tiktok_video_input_id); ?>" name="<?php echo esc_attr($field_base . '[tiktok_video_url]'); ?>" value="<?php echo esc_attr($tiktok_video_value); ?>" class="regular-text em-wp-admin-field-input--wide">
-                <button type="button" class="button button-secondary em-wp-admin-media-button em-wp-slider-media-button" data-target="<?php echo esc_attr($tiktok_video_input_id); ?>" data-preview="<?php echo esc_attr($tiktok_video_preview_id); ?>" data-modal-title="<?php echo esc_attr(sprintf(__('Choisir MP4 TikTok pour %s', 'em-wp'), $display_name)); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce media', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
+                <span class="em-wp-admin-field-group em-wp-slider-field--grow">
+                    <span class="em-wp-admin-field-group__label"><?php esc_html_e('Vidéo MP4', 'em-wp'); ?></span>
+                    <input type="text" id="<?php echo esc_attr($tiktok_video_input_id); ?>" name="<?php echo esc_attr($field_base . '[tiktok_video_url]'); ?>" value="<?php echo esc_attr($tiktok_video_value); ?>" class="em-wp-slider-text-input">
+                    <button type="button" class="button em-wp-admin-media-button em-wp-slider-media-button" data-target="<?php echo esc_attr($tiktok_video_input_id); ?>" data-preview="<?php echo esc_attr($tiktok_video_preview_id); ?>" data-modal-title="<?php echo esc_attr(sprintf(__('Choisir MP4 TikTok pour %s', 'em-wp'), $display_name)); ?>" data-modal-button="<?php echo esc_attr__('Utiliser ce media', 'em-wp'); ?>"><?php esc_html_e('Modifier', 'em-wp'); ?></button>
+                </span>
             </div>
             <div id="<?php echo esc_attr($tiktok_video_preview_id); ?>" class="em-wp-admin-media-preview em-wp-slider-preview<?php echo $tiktok_video_value === '' ? ' is-empty' : ''; ?>"><?php if ($tiktok_video_value !== '') { ?><video src="<?php echo esc_url($tiktok_video_value); ?>" controls muted preload="metadata"></video><?php } ?></div>
 
             <div class="em-wp-admin-field-row" data-slide-field="alt">
-                <span class="em-wp-admin-field-group">
+                <span class="em-wp-admin-field-group em-wp-slider-field--grow">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Texte Alt', 'em-wp'); ?></span>
-                    <input type="text" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($field_base . '[alt_text]'); ?>" value="<?php echo esc_attr($alt_text_value); ?>">
+                    <input type="text" class="em-wp-slider-text-input" name="<?php echo esc_attr($field_base . '[alt_text]'); ?>" value="<?php echo esc_attr($alt_text_value); ?>">
                 </span>
             </div>
 
             <div class="em-wp-admin-field-row" data-slide-field="duration">
                 <span class="em-wp-admin-field-group">
                     <span class="em-wp-admin-field-group__label"><?php esc_html_e('Durée (secondes)', 'em-wp'); ?></span>
-                    <input type="number" min="1" step="1" class="regular-text em-wp-admin-field-input--narrow" name="<?php echo esc_attr($field_base . '[duration]'); ?>" value="<?php echo esc_attr($duration_value); ?>">
+                    <input type="number" min="1" step="1" class="em-wp-slider-text-input em-wp-slider-text-input--narrow" name="<?php echo esc_attr($field_base . '[duration]'); ?>" value="<?php echo esc_attr($duration_value); ?>">
                 </span>
             </div>
         </div>

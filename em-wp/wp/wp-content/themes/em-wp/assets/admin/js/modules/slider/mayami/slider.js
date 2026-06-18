@@ -18,9 +18,34 @@
         preview.html('<img src="' + url + '" alt="">').removeClass('is-empty');
     }
 
-    function setRowVisibility(row, isVisible) {
-        if (row) {
-            row.classList.toggle('is-hidden', !isVisible);
+    function setFieldVisibility(panel, fieldKey, isVisible) {
+        var row = panel.querySelector('[data-slide-field="' + fieldKey + '"]');
+        if (!row) {
+            return;
+        }
+
+        row.classList.toggle('is-hidden', !isVisible);
+
+        var preview = row.nextElementSibling;
+        if (preview && preview.classList.contains('em-wp-slider-preview')) {
+            preview.classList.toggle('is-hidden', !isVisible);
+        }
+    }
+
+    function slideTypeIconClasses(slideType) {
+        if (slideType === 'video') {
+            return 'fa-brands fa-youtube';
+        }
+        if (slideType === 'tiktok') {
+            return 'fa-brands fa-tiktok';
+        }
+        return 'fa-solid fa-image';
+    }
+
+    function updateSlideTypeIcon(panel, slideType) {
+        var icon = panel.querySelector('.em-wp-slider-slide-item__type-icon');
+        if (icon) {
+            icon.className = 'em-wp-slider-slide-item__type-icon ' + slideTypeIconClasses(slideType);
         }
     }
 
@@ -31,11 +56,12 @@
         }
 
         var slideType = String(typeSelect.value || 'image').toLowerCase();
-        setRowVisibility(panel.querySelector('[data-slide-field="image"]'), slideType === 'image');
-        setRowVisibility(panel.querySelector('[data-slide-field="video"]'), slideType === 'video');
-        setRowVisibility(panel.querySelector('[data-slide-field="tiktok-url"]'), slideType === 'tiktok');
-        setRowVisibility(panel.querySelector('[data-slide-field="tiktok-mp4"]'), slideType === 'tiktok');
-        setRowVisibility(panel.querySelector('[data-slide-field="duration"]'), slideType === 'image');
+        setFieldVisibility(panel, 'image', slideType === 'image');
+        setFieldVisibility(panel, 'video', slideType === 'video');
+        setFieldVisibility(panel, 'tiktok', slideType === 'tiktok');
+        setFieldVisibility(panel, 'alt', true);
+        setFieldVisibility(panel, 'duration', slideType === 'image');
+        updateSlideTypeIcon(panel, slideType);
     }
 
     function syncAllSlideTypeVisibility() {
