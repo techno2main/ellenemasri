@@ -251,6 +251,14 @@
     text-overflow: ellipsis;
 }
 
+/* Mutualise : tous les titres des panneaux d'items en majuscules */
+.em-wp-admin-module__panel-header .em-wp-admin-module__item-header-line,
+.em-wp-admin-module__panel-header .em-wp-admin-module__panel-header-title,
+.em-wp-admin-module__panel-header-title {
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
 .em-wp-admin-module__item-visibility {
     font-size: 13px;
     color: #6b9e6b;
@@ -469,7 +477,8 @@
     align-items: flex-start;
 }
 
-.em-wp-admin-field-row.is-hidden {
+.em-wp-admin-field-row.is-hidden,
+.em-wp-slider-preview.is-hidden {
     display: none !important;
 }
 
@@ -710,6 +719,26 @@
     color: #ffffff;
     box-shadow: none;
     transform: none;
+}
+
+/* Boutons media "Modifier" — thème marron global */
+.wp-core-ui .em-wp-admin-module .em-wp-admin-media-button.button,
+.wp-core-ui .em-wp-admin-module .em-wp-admin-media-button.button-secondary {
+    border: 1px solid #751820;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #751820;
+    font-weight: 600;
+    box-shadow: none;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.wp-core-ui .em-wp-admin-module .em-wp-admin-media-button.button:hover,
+.wp-core-ui .em-wp-admin-module .em-wp-admin-media-button.button:focus {
+    border-color: #4e080e;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(78, 8, 14, 0.22);
 }
 
 /* Modale de confirmation admin */
