@@ -175,16 +175,17 @@ function em_wp_save_template_skeleton_order(string $template_slug, array $order)
         return [];
     }
 
-    $pool = em_wp_template_has_skeleton($template_slug)
-        ? (em_wp_template_plans_store()[$template_slug]['order'] ?? em_wp_get_site_rubrique_order())
-        : em_wp_get_template_skeleton_order($template_slug);
+    // L'ordre soumis est la liste complète et autoritaire du squelette.
+    // Le pool autorisé = cet ordre + les rubriques épinglées obligatoires
+    // (TOP-BAR / FOOTER). On ne réinjecte volontairement PAS l'ancien ordre
+    // complet : sinon une rubrique retirée serait systématiquement remise par
+    // la normalisation (le retrait n'aurait alors aucun effet).
+    $pinned = function_exists('em_wp_template_skeleton_pinned_slugs')
+        ? em_wp_template_skeleton_pinned_slugs()
+        : ['top-bar', 'footer'];
 
-    if (!is_array($pool)) {
-        $pool = [];
-    }
-
-    $merged_pool = array_values(array_unique(array_merge($pool, $order)));
-    $normalized = em_wp_template_skeleton_normalize_order($order, $merged_pool);
+    $pool = array_values(array_unique(array_merge($order, $pinned)));
+    $normalized = em_wp_template_skeleton_normalize_order($order, $pool);
 
     $store = em_wp_template_plans_store();
     $store[$template_slug] = ['order' => $normalized];
