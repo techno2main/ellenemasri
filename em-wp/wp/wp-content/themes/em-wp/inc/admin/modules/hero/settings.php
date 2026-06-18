@@ -444,46 +444,11 @@ function em_wp_hero_render_admin_page(): void
  */
 function em_wp_hero_render_edit_page_layout(array $context, array $options, string $style_slug): void
 {
-    $entry_label = trim((string) ($context['label'] ?? ''));
-    $header_config = function_exists('em_wp_header_get_options')
-        ? em_wp_header_get_options()
-        : em_wp_header_default_options();
-    $header_config['hero_slug'] = sanitize_key($style_slug);
     ?>
     <div class="em-wp-catalog-edit__layout">
         <div class="em-wp-catalog-edit__main">
             <?php em_wp_hero_render_style_setup($context, $options, $style_slug); ?>
         </div>
-
-        <?php if (function_exists('em_wp_admin_render_header_structure_preview')) { ?>
-            <aside class="em-wp-catalog-edit__aside">
-                <div class="em-wp-catalog-edit__preview-wrap">
-                    <p class="em-wp-catalog-edit__preview-label">
-                        <?php
-                        if ($entry_label !== '') {
-                            printf(
-                                /* translators: %s: hero catalog entry label */
-                                esc_html__('Placement HERO %s', 'em-wp'),
-                                esc_html($entry_label)
-                            );
-                        } else {
-                            esc_html_e('Placement HERO', 'em-wp');
-                        }
-                        ?>
-                    </p>
-                    <p class="em-wp-catalog-edit__preview-hint">
-                        <?php esc_html_e('Le hero en cours est actif. Le slider est affiché en contexte (non cliquable).', 'em-wp'); ?>
-                    </p>
-                    <?php
-                    em_wp_admin_render_header_structure_preview('header_hero', [
-                        'header_config'      => $header_config,
-                        'editing_part'       => 'hero',
-                        'editing_entry_label' => $entry_label,
-                    ]);
-                    ?>
-                </div>
-            </aside>
-        <?php } ?>
     </div>
     <?php
 }
@@ -533,7 +498,7 @@ function em_wp_hero_render_mayami_admin_layout(array $context, array $options): 
     em_wp_admin_render_module_items_section_title(
         'hero',
         '',
-        sprintf(__('Hero %s', 'em-wp'), (string) ($context['label'] ?? 'Mayami'))
+        (string) ($context['label'] ?? 'Hero Mayami')
     );
 
     em_wp_hero_render_mayami_item_panel('badge_text', __('Badge Text', 'em-wp'), 'text', $context, $options, 'badge_text_hidden');

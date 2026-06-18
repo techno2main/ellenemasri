@@ -324,6 +324,18 @@
     scrollbar-width: thin;
 }
 
+/* 2e rangée : items disponibles du module actif (accès direct) */
+.em-wp-catalog-sommaire .em-wp-catalog-edit__nav--entries,
+.em-wp-hub-sommaire .em-wp-catalog-edit__nav--entries {
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px dashed #e2d6da;
+}
+
+.em-wp-catalog-edit__nav--entries .em-wp-catalog-edit__nav-link {
+    font-weight: 600;
+}
+
 .em-wp-catalog-edit__nav-list {
     display: flex;
     flex-wrap: nowrap;
@@ -336,6 +348,65 @@
 
 .em-wp-catalog-edit__nav-item {
     flex-shrink: 0;
+}
+
+/* Menu déroulant des items au survol/focus d'un onglet de module */
+.em-wp-catalog-edit__flyout {
+    display: none;
+    position: fixed;
+    z-index: 100000;
+    min-width: 180px;
+    max-width: 280px;
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #d0d5dd;
+    border-radius: 10px;
+    box-shadow: 0 14px 30px rgba(17, 24, 39, 0.18);
+}
+
+.em-wp-catalog-edit__flyout.is-open {
+    display: block;
+}
+
+.em-wp-catalog-edit__flyout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.em-wp-catalog-edit__flyout-item {
+    margin: 0;
+}
+
+.em-wp-catalog-edit__flyout-link {
+    display: block;
+    padding: 7px 12px;
+    border-radius: 7px;
+    color: #111827;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.em-wp-catalog-edit__flyout-link:hover,
+.em-wp-catalog-edit__flyout-link:focus,
+.em-wp-catalog-edit__flyout-link:focus-visible {
+    background: #f3eef0;
+    color: #6d132e;
+    outline: none;
+    box-shadow: none;
+}
+
+.em-wp-catalog-edit__flyout-link.is-active {
+    background: #6d132e;
+    color: #ffffff;
 }
 
 .em-wp-catalog-edit__nav-link {
@@ -725,26 +796,20 @@ button.em-wp-catalog-edit__nav-link {
     box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.55);
 }
 
-.em-wp-catalog-edit__body {
+/* Largeur mutualisée : identique aux onglets, fil d'ariane et bannière. */
+.em-wp-catalog-edit__body,
+.em-wp-catalog-edit__layout {
+    width: 100%;
     max-width: min(100%, 960px);
 }
 
-.em-wp-catalog-edit__body:has(.em-wp-catalog-edit__layout) {
-    max-width: none;
-}
-
 .em-wp-catalog-edit__layout {
-    display: grid;
-    grid-template-columns: minmax(0, 960px) 300px;
-    gap: 24px;
-    align-items: start;
-    width: fit-content;
-    max-width: 100%;
+    display: block;
 }
 
 .em-wp-catalog-edit__main {
     min-width: 0;
-    max-width: 960px;
+    max-width: 100%;
 }
 
 .em-wp-catalog-edit__aside {
@@ -832,17 +897,6 @@ button.em-wp-catalog-edit__nav-link {
 .em-wp-admin-landing-map--edit-hero.em-wp-admin-landing-map--header-only .em-wp-admin-landing-map__header-hero.is-active,
 .em-wp-admin-landing-map--edit-slider.em-wp-admin-landing-map--header-only .em-wp-admin-landing-map__header-slider.is-active {
     box-shadow: inset 0 0 0 2px #2271b1;
-}
-
-@media (max-width: 1100px) {
-    .em-wp-catalog-edit__layout {
-        grid-template-columns: 1fr;
-    }
-
-    .em-wp-catalog-edit__aside {
-        position: static;
-        max-width: min(100%, 360px);
-    }
 }
 
 .em-wp-catalog-edit__section {

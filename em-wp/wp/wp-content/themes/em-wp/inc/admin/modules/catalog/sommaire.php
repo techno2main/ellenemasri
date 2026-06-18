@@ -1234,8 +1234,11 @@ function em_wp_catalog_hub_entry_links(string $module_slug): array
 
 /**
  * Pastille liste des entrées catalogue (carte hub CATALOGUES).
+ *
+ * @param string $module_slug Slug du catalogue.
+ * @param string $see_all_url URL « Voir tout » (liste des entrées du catalogue).
  */
-function em_wp_catalog_render_entries_badge(string $module_slug): void
+function em_wp_catalog_render_entries_badge(string $module_slug, string $see_all_url = ''): void
 {
     $links = em_wp_catalog_hub_entry_links($module_slug);
 
@@ -1243,7 +1246,17 @@ function em_wp_catalog_render_entries_badge(string $module_slug): void
         return;
     }
 
-    em_wp_admin_hub_render_catalog_entry_links_badge($links, '#4e080e');
+    em_wp_admin_hub_render_catalog_entry_links_badge(
+        $links,
+        '#4e080e',
+        '',
+        false,
+        5,
+        $see_all_url,
+        __('Voir tout', 'em-wp'),
+        false,
+        true
+    );
 }
 
 /**
@@ -1565,7 +1578,7 @@ function em_wp_catalog_render_parent_page(): void
                             ?>
                             <?php
                             if ($is_available) {
-                                em_wp_catalog_render_entries_badge($module_slug);
+                                em_wp_catalog_render_entries_badge($module_slug, $url);
                             }
                             ?>
                         </section>
@@ -1593,7 +1606,14 @@ function em_wp_catalog_render_heros_page(): void
         em_wp_admin_render_settings_notices();
         em_wp_hero_catalog_render_admin_notices();
         em_wp_catalog_render_sommaire_header('', 'dashicons-format-gallery');
-        em_wp_catalog_render_module_tabs('heros');
+        em_wp_catalog_render_module_tabs(
+            'heros',
+            false,
+            function_exists('em_wp_hero_style_definitions') ? em_wp_hero_style_definitions() : [],
+            '',
+            function_exists('em_wp_hero_hub_menu_slug') ? em_wp_hero_hub_menu_slug() : '',
+            __('Navigation Hero catalogue', 'em-wp')
+        );
 
         em_wp_catalog_render_hero_sommaire_section($hero_entries);
         ?>
@@ -1617,7 +1637,14 @@ function em_wp_catalog_render_sliders_page(): void
         em_wp_admin_render_settings_notices();
         em_wp_slider_catalog_render_admin_notices();
         em_wp_catalog_render_sommaire_header('', 'dashicons-slides');
-        em_wp_catalog_render_module_tabs('sliders');
+        em_wp_catalog_render_module_tabs(
+            'sliders',
+            false,
+            function_exists('em_wp_slider_style_definitions') ? em_wp_slider_style_definitions() : [],
+            '',
+            function_exists('em_wp_slider_hub_menu_slug') ? em_wp_slider_hub_menu_slug() : '',
+            __('Navigation Slider catalogue', 'em-wp')
+        );
 
         em_wp_catalog_render_slider_sommaire_section($slider_entries);
         ?>
@@ -1670,14 +1697,14 @@ function em_wp_catalog_render_videos_page(): void
         em_wp_catalog_render_sommaire_header('', 'dashicons-video-alt3');
 
         em_wp_catalog_render_crud_hub_entry_tabs([
-            'section_title'  => __('MES VIDÉOS', 'em-wp'),
+            'section_title'  => __('VIDÉOS DU CATALOGUE', 'em-wp'),
             'hub_menu_slug'  => 'em_wp_video_catalog_hub_menu_slug',
             'edit_page_slug' => 'em_wp_video_catalog_edit_page_slug',
         ], $entries);
 
         em_wp_catalog_render_crud_sommaire_section([
             'type'              => 'video',
-            'section_title'     => __('MES VIDÉOS', 'em-wp'),
+            'section_title'     => __('VIDÉOS DU CATALOGUE', 'em-wp'),
             'icon'              => 'dashicons-video-alt3',
             'hub_menu_slug'     => 'em_wp_video_catalog_hub_menu_slug',
             'nonce_action'      => 'em_wp_video_catalog_actions_nonce_action',
@@ -1716,14 +1743,14 @@ function em_wp_catalog_render_streams_page(): void
         em_wp_catalog_render_sommaire_header('', 'dashicons-playlist-audio');
 
         em_wp_catalog_render_crud_hub_entry_tabs([
-            'section_title'  => __('MES STREAMS', 'em-wp'),
+            'section_title'  => __('STREAMS DU CATALOGUE', 'em-wp'),
             'hub_menu_slug'  => 'em_wp_stream_catalog_hub_menu_slug',
             'edit_page_slug' => 'em_wp_stream_catalog_edit_page_slug',
         ], $entries);
 
         em_wp_catalog_render_crud_sommaire_section([
             'type'              => 'stream',
-            'section_title'     => __('MES STREAMS', 'em-wp'),
+            'section_title'     => __('STREAMS DU CATALOGUE', 'em-wp'),
             'icon'              => 'dashicons-playlist-audio',
             'hub_menu_slug'     => 'em_wp_stream_catalog_hub_menu_slug',
             'nonce_action'      => 'em_wp_stream_catalog_actions_nonce_action',
@@ -1762,14 +1789,14 @@ function em_wp_catalog_render_socials_page(): void
         em_wp_catalog_render_sommaire_header('', 'dashicons-share');
 
         em_wp_catalog_render_crud_hub_entry_tabs([
-            'section_title'  => __('MES SOCIALS', 'em-wp'),
+            'section_title'  => __('SOCIALS DU CATALOGUE', 'em-wp'),
             'hub_menu_slug'  => 'em_wp_social_catalog_hub_menu_slug',
             'edit_page_slug' => 'em_wp_social_catalog_edit_page_slug',
         ], $entries);
 
         em_wp_catalog_render_crud_sommaire_section([
             'type'              => 'social',
-            'section_title'     => __('MES SOCIALS', 'em-wp'),
+            'section_title'     => __('SOCIALS DU CATALOGUE', 'em-wp'),
             'icon'              => 'dashicons-share',
             'hub_menu_slug'     => 'em_wp_social_catalog_hub_menu_slug',
             'nonce_action'      => 'em_wp_social_catalog_actions_nonce_action',
@@ -1800,7 +1827,7 @@ function em_wp_catalog_render_hero_sommaire_section(array $entries): void
     <section class="em-wp-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($title_id); ?>">
         <header class="em-wp-catalog-sommaire__section-header">
             <div id="<?php echo esc_attr($title_id); ?>" class="em-wp-catalog-sommaire__section-title">
-                <?php em_wp_admin_hub_render_card_title(__('MES HEROS', 'em-wp'), 'dashicons-format-gallery'); ?>
+                <?php em_wp_admin_hub_render_card_title(__('HEROS DU CATALOGUE', 'em-wp'), 'dashicons-format-gallery'); ?>
             </div>
             <button
                 type="button"
@@ -1898,7 +1925,7 @@ function em_wp_catalog_render_slider_sommaire_section(array $entries): void
     <section class="em-wp-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($title_id); ?>">
         <header class="em-wp-catalog-sommaire__section-header">
             <div id="<?php echo esc_attr($title_id); ?>" class="em-wp-catalog-sommaire__section-title">
-                <?php em_wp_admin_hub_render_card_title(__('MES SLIDERS', 'em-wp'), 'dashicons-slides'); ?>
+                <?php em_wp_admin_hub_render_card_title(__('SLIDERS DU CATALOGUE', 'em-wp'), 'dashicons-slides'); ?>
             </div>
             <button
                 type="button"
@@ -2170,6 +2197,46 @@ function em_wp_catalog_nav_tab_definitions(): array
 }
 
 /**
+ * Items (entrées) d'un module catalogue donné, pour les menus déroulants d'onglets.
+ *
+ * @return array<string, array{label?:string,menu_title?:string,page_slug?:string}>
+ */
+function em_wp_catalog_module_entry_definitions(string $module_slug): array
+{
+    $module_slug = sanitize_key($module_slug);
+
+    if ($module_slug === '') {
+        return [];
+    }
+
+    $resolvers = [
+        'heros'    => 'em_wp_hero_style_definitions',
+        'sliders'  => 'em_wp_slider_style_definitions',
+        'videos'   => 'em_wp_video_style_definitions',
+        'streams'  => 'em_wp_stream_style_definitions',
+        'socials'  => 'em_wp_social_style_definitions',
+        'top-bars' => 'em_wp_top_bar_style_definitions',
+        'releases' => 'em_wp_release_style_definitions',
+        'ctas'     => 'em_wp_cta_style_definitions',
+        'footers'  => 'em_wp_footer_style_definitions',
+    ];
+
+    if (isset($resolvers[$module_slug]) && function_exists($resolvers[$module_slug])) {
+        return (array) call_user_func($resolvers[$module_slug]);
+    }
+
+    if (
+        function_exists('em_wp_custom_catalog_is_module')
+        && em_wp_custom_catalog_is_module($module_slug)
+        && function_exists('em_wp_custom_catalog_style_definitions')
+    ) {
+        return (array) em_wp_custom_catalog_style_definitions($module_slug);
+    }
+
+    return [];
+}
+
+/**
  * Module catalogue associé à un slug hub (callable ou slug direct).
  */
 function em_wp_catalog_module_slug_for_hub(string $hub_menu_slug): string
@@ -2280,8 +2347,14 @@ function em_wp_catalog_resolve_active_module(string $module_slug = ''): string
  *
  * @param bool $show_new_module_toggle Afficher le bouton « + » (sommaire parent uniquement).
  */
-function em_wp_catalog_render_module_tabs(string $active_module_slug = '', bool $show_new_module_toggle = false): void
-{
+function em_wp_catalog_render_module_tabs(
+    string $active_module_slug = '',
+    bool $show_new_module_toggle = false,
+    array $entry_definitions = [],
+    string $entry_selected_slug = '',
+    string $entry_hub_menu_slug = '',
+    string $entry_nav_label = ''
+): void {
     $tabs = em_wp_catalog_nav_tab_definitions();
 
     if ($tabs === []) {
@@ -2294,14 +2367,48 @@ function em_wp_catalog_render_module_tabs(string $active_module_slug = '', bool 
         __('Navigation Catalogues', 'em-wp'),
         em_wp_catalog_parent_menu_slug(),
         '',
-        $show_new_module_toggle
+        $show_new_module_toggle,
+        '',
+        true
     );
 
     if ($show_new_module_toggle && function_exists('em_wp_catalog_render_new_catalog_module_panel')) {
         em_wp_catalog_render_new_catalog_module_panel();
     }
 
+    // La 2e rangée d'onglets (items) est remplacée par les menus déroulants au survol.
+    unset($entry_definitions, $entry_selected_slug, $entry_hub_menu_slug, $entry_nav_label);
+
     em_wp_admin_hub_sticky_head_close();
+}
+
+/**
+ * Sous-navigation des items (entrées) du module actif, sous les onglets de modules.
+ * Permet d'accéder directement à un item sans passer par la liste.
+ *
+ * @param array<string, array{label?:string,menu_title?:string,page_slug?:string}> $style_definitions
+ */
+function em_wp_catalog_render_module_entries_subnav(
+    array $style_definitions,
+    string $selected_slug,
+    string $hub_menu_slug,
+    string $nav_label = ''
+): void {
+    if ($style_definitions === []) {
+        return;
+    }
+
+    $hub_slug = em_wp_catalog_resolve_hub_menu_slug($hub_menu_slug);
+
+    em_wp_catalog_render_edit_navbar(
+        $style_definitions,
+        $selected_slug,
+        $nav_label !== '' ? $nav_label : __('Navigation items catalogue', 'em-wp'),
+        $hub_slug,
+        __('Liste', 'em-wp'),
+        false,
+        'em-wp-catalog-edit__nav--entries'
+    );
 }
 
 /**
@@ -2312,11 +2419,22 @@ function em_wp_catalog_render_module_tabs(string $active_module_slug = '', bool 
  */
 function em_wp_catalog_render_crud_hub_entry_tabs(array $config, array $entries, string $selected_slug = ''): void
 {
-    unset($entries, $selected_slug);
+    $hub_menu_slug = (string) ($config['hub_menu_slug'] ?? '');
+    $active_module = em_wp_catalog_module_slug_for_hub($hub_menu_slug);
 
-    $active_module = em_wp_catalog_module_slug_for_hub((string) ($config['hub_menu_slug'] ?? ''));
+    $style_definitions = em_wp_catalog_style_definitions_from_entries(
+        $entries,
+        (string) ($config['edit_page_slug'] ?? '')
+    );
 
-    em_wp_catalog_render_module_tabs($active_module);
+    em_wp_catalog_render_module_tabs(
+        $active_module,
+        false,
+        $style_definitions,
+        sanitize_key($selected_slug),
+        $hub_menu_slug,
+        (string) ($config['nav_label'] ?? '')
+    );
 }
 
 /**
@@ -2388,10 +2506,15 @@ function em_wp_catalog_render_module_entry_tabs(
     string $nav_label,
     string $list_tab_label = ''
 ): void {
-    unset($style_definitions, $selected_slug, $nav_label, $list_tab_label);
+    unset($list_tab_label);
 
     em_wp_catalog_render_module_tabs(
-        em_wp_catalog_module_slug_for_hub($hub_menu_slug)
+        em_wp_catalog_module_slug_for_hub($hub_menu_slug),
+        false,
+        $style_definitions,
+        $selected_slug,
+        $hub_menu_slug,
+        $nav_label
     );
 }
 
@@ -2406,7 +2529,9 @@ function em_wp_catalog_render_edit_navbar(
     string $nav_label,
     string $hub_menu_slug = '',
     string $list_tab_label = '',
-    bool $show_new_module_toggle = false
+    bool $show_new_module_toggle = false,
+    string $extra_nav_class = '',
+    bool $with_entry_flyouts = false
 ): void {
     $hub_menu_slug = sanitize_key($hub_menu_slug);
     $list_tab_label = trim($list_tab_label);
@@ -2418,8 +2543,14 @@ function em_wp_catalog_render_edit_navbar(
     if ($definitions === [] && $hub_menu_slug === '') {
         return;
     }
+
+    $nav_class = 'em-wp-catalog-edit__nav';
+
+    if ($extra_nav_class !== '') {
+        $nav_class .= ' ' . $extra_nav_class;
+    }
     ?>
-    <nav class="em-wp-catalog-edit__nav" aria-label="<?php echo esc_attr($nav_label); ?>">
+    <nav class="<?php echo esc_attr($nav_class); ?>" aria-label="<?php echo esc_attr($nav_label); ?>">
         <ul class="em-wp-catalog-edit__nav-list">
             <?php if ($hub_menu_slug !== '') {
                 $hub_url = admin_url('admin.php?page=' . $hub_menu_slug);
@@ -2447,15 +2578,49 @@ function em_wp_catalog_render_edit_navbar(
                 $is_active = $selected_slug === (string) $slug;
                 $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
                 ?>
-                <li class="em-wp-catalog-edit__nav-item<?php echo $is_active ? ' is-active' : ''; ?>">
+                <?php
+                $entry_flyout = $with_entry_flyouts
+                    ? em_wp_catalog_module_entry_definitions((string) $slug)
+                    : [];
+                $has_flyout = $entry_flyout !== [];
+                ?>
+                <li class="em-wp-catalog-edit__nav-item<?php echo $is_active ? ' is-active' : ''; ?><?php echo $has_flyout ? ' em-wp-catalog-edit__nav-item--has-flyout' : ''; ?>">
                     <a
                         class="em-wp-catalog-edit__nav-link"
                         href="<?php echo esc_url($item_url); ?>"
                         data-catalog-module="<?php echo esc_attr((string) $slug); ?>"
                         <?php echo $is_active ? ' aria-current="page"' : ''; ?>
+                        <?php echo $has_flyout ? ' aria-haspopup="true"' : ''; ?>
                     >
                         <?php echo esc_html($label); ?>
                     </a>
+                    <?php if ($has_flyout) { ?>
+                        <div class="em-wp-catalog-edit__flyout" role="menu" aria-label="<?php echo esc_attr($label); ?>">
+                            <ul class="em-wp-catalog-edit__flyout-list">
+                                <?php foreach ($entry_flyout as $entry_slug => $entry_def) {
+                                    $entry_page = (string) ($entry_def['page_slug'] ?? '');
+
+                                    if ($entry_page === '') {
+                                        continue;
+                                    }
+
+                                    $entry_label = (string) ($entry_def['menu_title'] ?? $entry_def['label'] ?? $entry_slug);
+                                    $entry_url = add_query_arg(['page' => $entry_page], admin_url('admin.php'));
+                                    $entry_is_active = $is_active && $selected_slug === (string) $entry_slug;
+                                    ?>
+                                    <li class="em-wp-catalog-edit__flyout-item">
+                                        <a
+                                            class="em-wp-catalog-edit__flyout-link<?php echo $entry_is_active ? ' is-active' : ''; ?>"
+                                            href="<?php echo esc_url($entry_url); ?>"
+                                            role="menuitem"
+                                        >
+                                            <?php echo esc_html($entry_label); ?>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        </div>
+                    <?php } ?>
                 </li>
             <?php } ?>
             <?php if ($show_new_module_toggle && current_user_can('manage_options')) { ?>
@@ -2482,12 +2647,14 @@ function em_wp_catalog_render_edit_navbar(
  */
 function em_wp_catalog_render_edit_section_open(string $module_label, string $entry_label): void
 {
+    // Pastille uniformisée pour toutes les sections catalogue.
+    unset($module_label);
     ?>
     <div class="em-wp-rubrique-section em-wp-catalog-edit__section">
         <div class="em-wp-rubrique-section-bar">
             <div class="em-wp-rubrique-section-bar__heading">
                 <h2 class="em-wp-rubrique-section-bar__title">
-                    <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html(mb_strtoupper($module_label)); ?></span>
+                    <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html(mb_strtoupper(__('Catalogue', 'em-wp'))); ?></span>
                     <span class="em-wp-rubrique-section-bar__template"><?php echo esc_html(mb_strtoupper($entry_label)); ?></span>
                 </h2>
             </div>
