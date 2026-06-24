@@ -532,6 +532,27 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
                     <div class="em-wp-admin-module__panel-body em-wp-admin-panel-body--row">
                         <input type="text" class="regular-text em-wp-admin-field-input--wide" name="<?php echo esc_attr($context['option_name']); ?>[footer_title]" value="<?php echo esc_attr((string) ($options['footer_title'] ?? '')); ?>">
                         <label class="em-wp-admin-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($context['option_name']); ?>[slider_title_hidden]" value="1" <?php checked(!empty($options['slider_title_hidden'])); ?>></label>
+                        <?php
+                        $slider_color_base = sanitize_html_class((string) $context['option_name']);
+                        em_wp_admin_render_color_field([
+                            'id'            => $slider_color_base . '-footer-bg',
+                            'name'          => $context['option_name'] . '[footer_bg_color]',
+                            'value'         => (string) ($options['footer_bg_color'] ?? ''),
+                            'default'       => '#f2ebd1',
+                            'field_label'   => __('Fond du bandeau titre', 'em-wp'),
+                            'preview_label' => __('Fond du bandeau titre', 'em-wp'),
+                        ]);
+                        em_wp_admin_render_color_field([
+                            'id'            => $slider_color_base . '-footer-text',
+                            'name'          => $context['option_name'] . '[footer_text]',
+                            'value'         => (string) ($options['footer_text'] ?? ''),
+                            'default'       => '#100421',
+                            'field_label'   => __('Couleur du titre', 'em-wp'),
+                            'preview_label' => __('Couleur du titre', 'em-wp'),
+                            'preview_type'  => 'text',
+                            'bg_target_id'  => $slider_color_base . '-footer-bg',
+                        ]);
+                        ?>
                     </div>
                 </section>
 
