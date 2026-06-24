@@ -33,6 +33,19 @@ $build_item = static function (array $item): ?array {
     ];
 };
 
+$line_1_right_style = '';
+$line_1_right_color = trim((string) ($line_1_right['text_color'] ?? ''));
+$line_1_right_font = function_exists('em_wp_top_bar_font_stack')
+    ? em_wp_top_bar_font_stack((string) ($line_1_right['font'] ?? ''))
+    : '';
+
+if ($line_1_right_color !== '') {
+    $line_1_right_style .= 'color: ' . esc_attr($line_1_right_color) . ';';
+}
+if ($line_1_right_font !== '') {
+    $line_1_right_style .= 'font-family: ' . esc_attr($line_1_right_font) . ';';
+}
+
 $line_1_center = $build_item($line_1_center);
 $line_1_right = $build_item($line_1_right);
 $cta = $build_item($cta);
@@ -65,8 +78,13 @@ if (!$bg_image_hidden && $bg_image_url !== '') {
     <div class="em-top-bar__inner">
         <div class="em-top-bar__row em-top-bar__row--primary">
             <div class="em-top-bar__slot em-top-bar__slot--left em-top-bar__logo-slot">
-                <?php if (!$logo_hidden && $logo_url !== '') { ?>
-                    <a class="em-top-bar__logo-link" href="<?php echo esc_url(home_url('/')); ?>">
+                <?php if (!$logo_hidden && $logo_url !== '') {
+                    $logo_link = home_url('/');
+                    if (function_exists('em_wp_front_preview_aware_url')) {
+                        $logo_link = em_wp_front_preview_aware_url($logo_link);
+                    }
+                    ?>
+                    <a class="em-top-bar__logo-link" href="<?php echo esc_url($logo_link); ?>">
                         <img class="em-top-bar__logo-image" src="<?php echo esc_url($logo_url); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
                     </a>
                 <?php } ?>
@@ -75,7 +93,7 @@ if (!$bg_image_hidden && $bg_image_url !== '') {
                 <?php if ($line_1_center) { ?><a class="em-top-bar__link" href="<?php echo esc_url($line_1_center['href']); ?>"><?php echo esc_html($line_1_center['label']); ?></a><?php } ?>
             </div>
             <div class="em-top-bar__slot em-top-bar__slot--right">
-                <?php if ($line_1_right) { ?><a class="em-top-bar__link" href="<?php echo esc_url($line_1_right['href']); ?>"><?php echo esc_html($line_1_right['label']); ?></a><?php } ?>
+                <?php if ($line_1_right) { ?><a class="em-top-bar__link" href="<?php echo esc_url($line_1_right['href']); ?>"<?php echo $line_1_right_style !== '' ? ' style="' . esc_attr($line_1_right_style) . '"' : ''; ?>><?php echo esc_html($line_1_right['label']); ?></a><?php } ?>
             </div>
         </div>
         <div class="em-top-bar__row em-top-bar__row--secondary">

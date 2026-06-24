@@ -209,6 +209,69 @@
         reindexStreamPlatformFields();
     }
 
+    function refreshTypoPreview(preview) {
+        const panel = preview.closest('.em-wp-admin-module__panel-body') || preview.parentNode;
+        if (!panel) {
+            return;
+        }
+
+        const select = panel.querySelector('[data-em-wp-topbar-font]');
+        const labelInput = panel.querySelector('input[name$="[label]"]');
+        const colorInput = panel.querySelector('input[name$="[text_color]"]');
+
+        const text = labelInput ? String(labelInput.value || '').trim() : '';
+        preview.textContent = text !== '' ? text : 'Aperçu';
+
+        if (select) {
+            const option = select.options[select.selectedIndex];
+            const stack = option ? option.getAttribute('data-stack') || '' : '';
+            preview.style.fontFamily = stack;
+        }
+
+        if (colorInput) {
+            const color = String(colorInput.value || '').trim();
+            preview.style.color = color;
+        }
+    }
+
+    function initTypoPreview() {
+        const previews = Array.prototype.slice.call(
+            document.querySelectorAll('[data-em-wp-topbar-typo-preview]')
+        );
+
+        if (!previews.length) {
+            return;
+        }
+
+        previews.forEach(function (preview) {
+            const panel = preview.closest('.em-wp-admin-module__panel-body') || preview.parentNode;
+            if (!panel) {
+                return;
+            }
+
+            const select = panel.querySelector('[data-em-wp-topbar-font]');
+            const labelInput = panel.querySelector('input[name$="[label]"]');
+
+            if (select) {
+                select.addEventListener('change', function () {
+                    refreshTypoPreview(preview);
+                });
+            }
+
+            if (labelInput) {
+                labelInput.addEventListener('input', function () {
+                    refreshTypoPreview(preview);
+                });
+            }
+
+            refreshTypoPreview(preview);
+        });
+
+        $(document).on('emWpAdminColorFieldChanged', function () {
+            previews.forEach(refreshTypoPreview);
+        });
+    }
+
     $(function () {
         bindMediaPicker();
         initImagePreviews();
@@ -216,6 +279,7 @@
         initBackgroundImageToggle();
         bindStreamPlatformListManager();
         applyAdminColorPreview();
+        initTypoPreview();
 
         $(document).on('emWpAdminColorFieldChanged', function () {
             applyAdminColorPreview();

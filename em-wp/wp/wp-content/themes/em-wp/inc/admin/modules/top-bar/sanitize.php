@@ -67,6 +67,14 @@ function em_wp_top_bar_sanitize_catalog_options($input): array
             'href'   => esc_url_raw($source['href'] ?? $defaults['items'][$key]['href']),
             'hidden' => !empty($source['hidden']),
         ];
+
+        if (em_wp_top_bar_item_supports_style($key)) {
+            $text_color = sanitize_hex_color($source['text_color'] ?? '');
+            $items[$key]['text_color'] = $text_color !== null && $text_color !== false ? $text_color : '';
+
+            $font = sanitize_key((string) ($source['font'] ?? ''));
+            $items[$key]['font'] = array_key_exists($font, em_wp_top_bar_font_choices()) ? $font : '';
+        }
     }
 
     return [
