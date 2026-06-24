@@ -26,11 +26,107 @@ function em_wp_editing_template_user_meta_key(): string
 }
 
 /**
+ * Action du nonce utilisé pour l'aperçu d'un template (front).
+ */
+function em_wp_template_preview_nonce_action(): string
+{
+    return 'em_wp_preview_template';
+}
+
+/**
+ * Slug du template demandé en aperçu sur le front.
+ *
+ * Permet de prévisualiser un template sans le passer en live. N'est honoré que
+ * sur le front, pour un utilisateur autorisé (manage_options) et avec un nonce
+ * valide. Retourne '' si aucun aperçu valide n'est demandé.
+ */
+function em_wp_get_preview_template_slug(): string
+{
+    static $resolved = null;
+
+    if ($resolved !== null) {
+        return $resolved;
+    }
+
+    // Tant que les fonctions « pluggable » ne sont pas disponibles, on ne met
+    // pas en cache : la résolution sera retentée plus tard dans la requête.
+    if (is_admin()
+        || !function_exists('current_user_can')
+        || !function_exists('wp_verify_nonce')
+    ) {
+        return '';
+    }
+
+    $resolved = '';
+
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended
+    if (empty($_GET['em_wp_preview_template']) || empty($_GET['em_wp_preview_nonce'])) {
+        return $resolved;
+    }
+
+    if (!current_user_can('manage_options')) {
+        return $resolved;
+    }
+
+    $nonce = sanitize_text_field(wp_unslash($_GET['em_wp_preview_nonce']));
+
+    if (!wp_verify_nonce($nonce, em_wp_template_preview_nonce_action())) {
+        return $resolved;
+    }
+
+    $preview = em_wp_template_sanitize_slug((string) wp_unslash($_GET['em_wp_preview_template']));
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+    if ($preview !== '' && em_wp_template_exists($preview)) {
+        $resolved = $preview;
+    }
+
+    return $resolved;
+}
+
+/**
+ * Indique si la requête front courante est un aperçu de template.
+ */
+function em_wp_front_is_template_preview(): bool
+{
+    return em_wp_get_preview_template_slug() !== '';
+}
+
+/**
+ * Retourne une URL en conservant le contexte d'aperçu (slug + nonce) si actif.
+ *
+ * Permet aux liens internes (ex. logo top-bar) de rester dans l'aperçu plutôt
+ * que de renvoyer vers le site live.
+ */
+function em_wp_front_preview_aware_url(string $url): string
+{
+    $preview_slug = em_wp_get_preview_template_slug();
+
+    if ($preview_slug === '') {
+        return $url;
+    }
+
+    return add_query_arg(
+        [
+            'em_wp_preview_template' => $preview_slug,
+            'em_wp_preview_nonce'    => wp_create_nonce(em_wp_template_preview_nonce_action()),
+        ],
+        $url
+    );
+}
+
+/**
  * Slug du template actif sur le site (front live).
  */
 function em_wp_get_active_template_slug(): string
 {
     em_wp_template_maybe_bootstrap_options();
+
+    $preview = em_wp_get_preview_template_slug();
+
+    if ($preview !== '') {
+        return $preview;
+    }
 
     $slug = em_wp_template_sanitize_slug((string) get_option(em_wp_active_template_option_name(), ''));
 

@@ -295,6 +295,26 @@ function em_wp_admin_template_render_banner(): void
                     </select>
                 </form>
                 <div class="em-wp-template-banner__actions">
+                    <a
+                        class="em-wp-template-banner__preview"
+                        href="<?php echo esc_url(add_query_arg(
+                            [
+                                'em_wp_preview_template' => $editing_slug,
+                                'em_wp_preview_nonce'    => wp_create_nonce(em_wp_template_preview_nonce_action()),
+                            ],
+                            home_url('/')
+                        )); ?>"
+                        target="_blank"
+                        rel="noopener"
+                        title="<?php echo esc_attr(sprintf(
+                            /* translators: %s: template label */
+                            __('Prévisualiser le template %s dans un nouvel onglet', 'em-wp'),
+                            $editing_label
+                        )); ?>"
+                    >
+                        <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                        <?php esc_html_e('Aperçu', 'em-wp'); ?>
+                    </a>
                     <button type="button" class="em-wp-template-banner__save" id="em-wp-template-banner-save" disabled aria-disabled="true">
                         <?php esc_html_e('Enregistrer', 'em-wp'); ?>
                     </button>

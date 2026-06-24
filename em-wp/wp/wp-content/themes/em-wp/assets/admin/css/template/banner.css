@@ -193,10 +193,12 @@
 }
 
 .em-wp-template-banner__save,
-.em-wp-template-banner__quit {
+.em-wp-template-banner__quit,
+.em-wp-template-banner__preview {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
     min-height: 32px;
     margin: 0;
     padding: 6px 14px;
@@ -208,6 +210,24 @@
     white-space: nowrap;
     cursor: pointer;
     line-height: 1.3;
+}
+
+.em-wp-template-banner__preview {
+    border: 1px solid rgba(117, 24, 32, 0.35);
+    background: #ffffff;
+    color: #751820;
+    text-decoration: none;
+}
+
+.em-wp-template-banner__preview:hover,
+.em-wp-template-banner__preview:focus {
+    border-color: #751820;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+}
+
+.em-wp-template-banner__preview .fa-eye {
+    font-size: 12px;
 }
 
 .em-wp-template-banner__save {
