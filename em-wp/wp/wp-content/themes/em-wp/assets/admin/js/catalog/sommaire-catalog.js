@@ -89,7 +89,7 @@
                 var template = i18n.deleteConfirm || 'Supprimer « %s » ?';
                 var message = template.replace('%s', label);
 
-                if (!confirmApi || typeof confirmApi.ask !== 'function') {
+                if (!confirmApi || typeof confirmApi.confirmDelete !== 'function') {
                     if (!window.confirm(message)) {
                         event.preventDefault();
                     }
@@ -98,13 +98,14 @@
 
                 event.preventDefault();
 
-                confirmApi.ask(message, {
-                    confirmLabel: i18n.deleteLabel || 'Supprimer',
+                confirmApi.confirmDelete(function () {
+                    form.submit();
+                }, {
+                    message: message,
+                    secondMessage: 'La suppression de « ' + label + ' » est définitive et irréversible.',
+                    acknowledgeLabel: 'Je confirme vouloir supprimer définitivement « ' + label + ' ».',
+                    confirmLabel: i18n.deleteLabel || 'Supprimer définitivement',
                     cancelLabel: i18n.cancelLabel || 'Annuler',
-                }).then(function (confirmed) {
-                    if (confirmed) {
-                        form.submit();
-                    }
                 });
             });
         });

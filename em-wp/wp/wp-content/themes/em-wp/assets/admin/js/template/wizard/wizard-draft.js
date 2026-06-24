@@ -1120,14 +1120,25 @@
             var label = item ? item.label : '';
             var msg = (i18n.draftDeleteConfirm || 'Supprimer le brouillon « %s » ?').replace('%s', label);
 
-            Confirm.ask(msg, {
-                title: i18n.draftDelete || 'Supprimer',
-                confirmLabel: i18n.draftDelete || 'Supprimer',
-            }).then(function (ok) {
-                if (!ok) {
-                    return;
-                }
+            if (!Confirm || typeof Confirm.confirmDelete !== 'function') {
+                Confirm.ask(msg, {
+                    title: i18n.draftDelete || 'Supprimer',
+                    confirmLabel: i18n.draftDelete || 'Supprimer',
+                }).then(function (ok) {
+                    if (ok) {
+                        self.removeById(id);
+                    }
+                });
+                return;
+            }
+
+            Confirm.confirmDelete(function () {
                 self.removeById(id);
+            }, {
+                message: msg,
+                secondMessage: 'La suppression du brouillon « ' + label + ' » est définitive.',
+                acknowledgeLabel: 'Je confirme vouloir supprimer définitivement ce brouillon.',
+                confirmLabel: i18n.draftDelete || 'Supprimer définitivement',
             });
         },
 

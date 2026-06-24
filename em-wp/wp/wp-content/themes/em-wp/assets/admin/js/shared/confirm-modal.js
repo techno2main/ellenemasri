@@ -168,6 +168,40 @@
         });
     }
 
+    // Flux de suppression à deux étapes : confirmation simple puis
+    // confirmation définitive avec case à cocher obligatoire.
+    function runDeleteConfirm(options) {
+        var config = options || {};
+        var firstMessage = config.message || 'Confirmer la suppression ?';
+        var secondMessage = config.secondMessage
+            || 'Confirme définitivement la suppression de cet élément.';
+        var acknowledgeLabel = config.acknowledgeLabel
+            || 'Je confirme vouloir supprimer cet élément.';
+
+        return openModal(firstMessage, {
+            title: config.title || 'Supprimer',
+            confirmLabel: config.firstConfirmLabel || 'Continuer',
+            cancelLabel: config.cancelLabel || 'Annuler',
+            danger: true,
+            confirmClass: config.confirmClass || 'button-link-delete',
+        }).then(function (ok) {
+            if (!ok) {
+                return false;
+            }
+
+            return openModal(secondMessage, {
+                title: config.secondTitle || 'Confirmation définitive',
+                confirmLabel: config.confirmLabel || 'Supprimer définitivement',
+                cancelLabel: config.cancelLabel || 'Annuler',
+                danger: true,
+                multiline: config.multiline === true,
+                confirmClass: config.confirmClass || 'button-link-delete',
+                requireAcknowledge: true,
+                acknowledgeLabel: acknowledgeLabel,
+            });
+        });
+    }
+
     window.EmWpAdminConfirm = {
         ask: function (message, options) {
             return openModal(message, options || {});
@@ -175,16 +209,17 @@
         alert: function (message, options) {
             return openModal(message, Object.assign({}, options || {}, { alert: true }));
         },
-        beforeDelete: function (callback, options) {
-            var config = options || {};
-            var message = config.message || 'Confirmer la suppression ?';
+        confirmDelete: function (callback, options) {
+            return runDeleteConfirm(options).then(function (confirmed) {
+                if (confirmed && typeof callback === 'function') {
+                    callback();
+                }
 
-            return openModal(message, {
-                title: config.title || '',
-                confirmLabel: config.confirmLabel || 'Supprimer',
-                cancelLabel: config.cancelLabel || 'Annuler',
-                confirmClass: config.confirmClass || 'button-link-delete',
-            }).then(function (confirmed) {
+                return confirmed;
+            });
+        },
+        beforeDelete: function (callback, options) {
+            return runDeleteConfirm(options).then(function (confirmed) {
                 if (confirmed && typeof callback === 'function') {
                     callback();
                 }
