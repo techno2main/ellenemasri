@@ -104,6 +104,8 @@ function em_wp_render_header(): void
         return;
     }
 
+    // hero_slug / slider_slug sont déjà résolus (repli Default inclus) en amont
+    // par em_wp_header_get_options(), comme les autres rubriques.
     $hero_slug = sanitize_key((string) ($header['hero_slug'] ?? ''));
     $slider_slug = sanitize_key((string) ($header['slider_slug'] ?? ''));
     $layout = (string) ($header['layout'] ?? 'hero_left');

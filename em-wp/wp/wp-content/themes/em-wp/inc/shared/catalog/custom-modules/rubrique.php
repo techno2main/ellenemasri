@@ -137,8 +137,13 @@ function em_wp_custom_catalog_rubrique_resolve_entry_slug(string $module_slug, ?
         $template_slug = em_wp_custom_catalog_rubrique_resolve_template_slug();
     }
 
-    if (function_exists('em_wp_admin_rubrique_guess_catalog_entry_for_template')) {
-        return em_wp_admin_rubrique_guess_catalog_entry_for_template($module_slug, $template_slug);
+    // Aucun item sélectionné : on retombe sur l'item Default du catalogue s'il existe.
+    if (function_exists('em_wp_catalog_default_entry_slug_if_present') && function_exists('em_wp_custom_catalog_entries')) {
+        $default = em_wp_catalog_default_entry_slug_if_present(em_wp_custom_catalog_entries($module_slug));
+
+        if ($default !== '' && em_wp_custom_catalog_rubrique_catalog_has($module_slug, $default)) {
+            return $default;
+        }
     }
 
     return '';

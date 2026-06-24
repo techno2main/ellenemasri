@@ -107,6 +107,41 @@ function em_wp_header_migrate_style_from_hero_catalog(array $options): array
 }
 
 /**
+ * Résout le slug catalogue d'une sous-rubrique HEADER (hero ou slider).
+ *
+ * Reprend la logique des autres rubriques : si aucun item n'est choisi (ou si
+ * le slug enregistré n'existe plus), on retombe sur l'item Default du catalogue
+ * correspondant. Retourne '' si aucun défaut n'est disponible.
+ */
+function em_wp_header_resolve_catalog_entry_slug(string $part, string $slug): string
+{
+    $part = $part === 'slider' ? 'slider' : 'hero';
+    $slug = sanitize_key($slug);
+
+    $normalize = 'em_wp_' . $part . '_normalize_catalog_slug';
+    $has = 'em_wp_' . $part . '_catalog_has';
+    $entries = 'em_wp_' . $part . '_catalog_entries';
+
+    if ($slug !== '') {
+        if (function_exists($normalize)) {
+            $slug = call_user_func($normalize, $slug);
+        }
+
+        // Slug valide → on le garde tel quel.
+        if (!function_exists($has) || call_user_func($has, $slug)) {
+            return $slug;
+        }
+    }
+
+    // Aucun item (ou item disparu) : repli sur le Default du catalogue.
+    if (function_exists('em_wp_catalog_default_entry_slug_if_present') && function_exists($entries)) {
+        return em_wp_catalog_default_entry_slug_if_present(call_user_func($entries));
+    }
+
+    return '';
+}
+
+/**
  * Options HEADER brutes enregistrées (sans migration runtime).
  *
  * @return array<string, mixed>
@@ -138,6 +173,17 @@ function em_wp_header_get_options(?string $template_slug = null): array
 
     if (function_exists('em_wp_rubrique_sync_enabled_for_admin')) {
         $options = em_wp_rubrique_sync_enabled_for_admin('header', $options);
+    }
+
+    // Repli Default (comme les autres rubriques) : quand AUCUN hero ni slider
+    // n'est choisi, on affiche le hero Default ET le slider Default du catalogue.
+    // On ne touche pas les templates qui ont déjà un choix explicite (ex. live).
+    $hero_slug = sanitize_key((string) ($options['hero_slug'] ?? ''));
+    $slider_slug = sanitize_key((string) ($options['slider_slug'] ?? ''));
+
+    if ($hero_slug === '' && $slider_slug === '') {
+        $options['hero_slug'] = em_wp_header_resolve_catalog_entry_slug('hero', '');
+        $options['slider_slug'] = em_wp_header_resolve_catalog_entry_slug('slider', '');
     }
 
     return em_wp_header_migrate_style_from_hero_catalog($options);

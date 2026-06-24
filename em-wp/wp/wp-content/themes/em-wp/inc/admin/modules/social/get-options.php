@@ -152,9 +152,17 @@ function em_wp_social_resolve_catalog_slug(?string $template_slug, array $rubriq
 
     $map = function_exists('em_wp_social_v1_slug_map') ? em_wp_social_v1_slug_map() : [];
 
+    $mapped = sanitize_key((string) ($map[sanitize_key($template_slug)] ?? ''));
 
+    if ($mapped !== '') {
 
-    return sanitize_key((string) ($map[sanitize_key($template_slug)] ?? ''));
+        return $mapped;
+
+    }
+
+    return function_exists('em_wp_catalog_default_entry_slug_if_present')
+        ? em_wp_catalog_default_entry_slug_if_present(em_wp_social_catalog_entries())
+        : '';
 
 }
 
