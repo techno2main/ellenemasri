@@ -70,7 +70,7 @@ function em_wp_hero_catalog_entries(): array
     $saved = get_option(em_wp_hero_catalog_option_name(), []);
 
     if (!is_array($saved) || $saved === []) {
-        return em_wp_hero_catalog_default_entries();
+        return em_wp_catalog_apply_default_entry(em_wp_hero_catalog_default_entries());
     }
 
     $normalized = [];
@@ -87,7 +87,9 @@ function em_wp_hero_catalog_entries(): array
         ];
     }
 
-    return $normalized !== [] ? $normalized : em_wp_hero_catalog_default_entries();
+    $entries = $normalized !== [] ? $normalized : em_wp_hero_catalog_default_entries();
+
+    return em_wp_catalog_apply_default_entry($entries);
 }
 
 /**

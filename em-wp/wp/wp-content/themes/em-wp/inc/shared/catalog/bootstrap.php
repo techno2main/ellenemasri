@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/default-entry.php';
 require_once __DIR__ . '/hero/registry.php';
 require_once __DIR__ . '/hero/option-names.php';
 require_once __DIR__ . '/hero/crud.php';

@@ -108,6 +108,16 @@ function em_wp_catalog_handle_registry_actions(array $config): void
     } elseif ($action === 'delete') {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $slug = sanitize_key((string) ($_POST[$slug_key] ?? ''));
+
+        if (function_exists('em_wp_catalog_entry_is_default') && em_wp_catalog_entry_is_default($slug)) {
+            $redirect_args[$notice_prefix . '_error'] = 'default_protected';
+            $redirect_args[$notice_prefix . '_message'] = rawurlencode(
+                __('L\'item par défaut ne peut pas être supprimé.', 'em-wp')
+            );
+            wp_safe_redirect(add_query_arg($redirect_args, admin_url('admin.php')));
+            exit;
+        }
+
         $deleted = call_user_func($config['delete'], $slug);
 
         if (is_wp_error($deleted)) {
@@ -358,6 +368,16 @@ function em_wp_catalog_render_sommaire_entry_row(array $args): void
                 data-em-wp-slug-preview-for="<?php echo esc_attr($rename_form_id); ?>"
                 data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
             ><?php echo esc_html($preview_slug); ?></code>
+            <?php $is_default_entry = function_exists('em_wp_catalog_entry_is_default') && em_wp_catalog_entry_is_default($catalog_slug); ?>
+            <?php if ($is_default_entry) { ?>
+                <span
+                    class="em-wp-catalog-sommaire__default-badge"
+                    title="<?php esc_attr_e('Item par défaut : utilisé quand aucun item n\'est sélectionné dans une rubrique.', 'em-wp'); ?>"
+                >
+                    <i class="fa-solid fa-star" aria-hidden="true"></i>
+                    <span class="screen-reader-text"><?php esc_html_e('Item par défaut', 'em-wp'); ?></span>
+                </span>
+            <?php } ?>
         </td>
         <td class="em-wp-catalog-sommaire__actions">
             <?php if ($edit_url !== '') { ?>
@@ -370,24 +390,26 @@ function em_wp_catalog_render_sommaire_entry_row(array $args): void
                     <i class="fa-solid fa-gear" aria-hidden="true"></i>
                 </a>
             <?php } ?>
-            <form
-                method="post"
-                action="<?php echo esc_url($form_action); ?>"
-                class="em-wp-catalog-sommaire__delete-form"
-                data-em-wp-delete-label="<?php echo esc_attr($label); ?>"
-            >
-                <?php wp_nonce_field($nonce_action); ?>
-                <input type="hidden" name="<?php echo esc_attr($post_prefix . '_action'); ?>" value="delete">
-                <input type="hidden" name="<?php echo esc_attr($post_prefix . '_slug'); ?>" value="<?php echo esc_attr($catalog_slug); ?>">
-                <button
-                    type="submit"
-                    class="em-wp-catalog-sommaire__delete"
-                    title="<?php esc_attr_e('Supprimer', 'em-wp'); ?>"
-                    aria-label="<?php echo esc_attr(sprintf(__('Supprimer %s', 'em-wp'), $label)); ?>"
+            <?php if (!$is_default_entry) { ?>
+                <form
+                    method="post"
+                    action="<?php echo esc_url($form_action); ?>"
+                    class="em-wp-catalog-sommaire__delete-form"
+                    data-em-wp-delete-label="<?php echo esc_attr($label); ?>"
                 >
-                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
-                </button>
-            </form>
+                    <?php wp_nonce_field($nonce_action); ?>
+                    <input type="hidden" name="<?php echo esc_attr($post_prefix . '_action'); ?>" value="delete">
+                    <input type="hidden" name="<?php echo esc_attr($post_prefix . '_slug'); ?>" value="<?php echo esc_attr($catalog_slug); ?>">
+                    <button
+                        type="submit"
+                        class="em-wp-catalog-sommaire__delete"
+                        title="<?php esc_attr_e('Supprimer', 'em-wp'); ?>"
+                        aria-label="<?php echo esc_attr(sprintf(__('Supprimer %s', 'em-wp'), $label)); ?>"
+                    >
+                        <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                    </button>
+                </form>
+            <?php } ?>
         </td>
     </tr>
     <?php

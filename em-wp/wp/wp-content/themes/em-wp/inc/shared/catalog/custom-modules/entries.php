@@ -117,7 +117,7 @@ function em_wp_custom_catalog_entries(string $module_slug): array
         ];
     }
 
-    return em_wp_custom_catalog_sort_entries_by_template($entries);
+    return em_wp_catalog_apply_default_entry(em_wp_custom_catalog_sort_entries_by_template($entries));
 }
 
 function em_wp_custom_catalog_edit_page_slug(string $module_slug, string $entry_slug): string

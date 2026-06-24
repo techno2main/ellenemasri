@@ -66,32 +66,37 @@ function em_wp_custom_catalog_maybe_bootstrap_contacts(): void
         $entries = [];
     }
 
+    // Le seed initial ne doit s'exécuter qu'UNE seule fois. Sans ce garde-fou,
+    // un item renommé (ex. « Contact Ellene » → « Contact Default ») n'est plus
+    // trouvé par label et serait recréé à chaque chargement.
+    $seed_flag_option = 'em_wp_contacts_catalog_seeded';
+
+    if ((bool) get_option($seed_flag_option, false)) {
+        if (function_exists('em_wp_custom_catalog_maybe_normalize_all_entry_slugs')) {
+            em_wp_custom_catalog_maybe_normalize_all_entry_slugs();
+        }
+
+        return;
+    }
+
+    // Install antérieure : des entrées existent déjà. On les conserve telles
+    // quelles (renommages/suppressions de l'utilisateur) et on marque comme seedé.
+    if (!empty($entries)) {
+        update_option($seed_flag_option, '1', false);
+
+        if (function_exists('em_wp_custom_catalog_maybe_normalize_all_entry_slugs')) {
+            em_wp_custom_catalog_maybe_normalize_all_entry_slugs();
+        }
+
+        return;
+    }
+
     $seed_labels = [
         'Contact Mayami',
         'Contact Ellene',
     ];
 
-    $entries_changed = false;
-
     foreach ($seed_labels as $label) {
-        $existing_slug = '';
-
-        foreach ($entries as $slug => $entry) {
-            if (!is_array($entry)) {
-                continue;
-            }
-
-            if (strcasecmp(trim((string) ($entry['label'] ?? '')), $label) === 0) {
-                $existing_slug = sanitize_key((string) $slug);
-                break;
-            }
-        }
-
-        if ($existing_slug !== '') {
-            em_wp_custom_catalog_init_entry_options($module_slug, $existing_slug);
-            continue;
-        }
-
         $slug = em_wp_custom_catalog_unique_entry_slug(
             $module_slug,
             em_wp_custom_catalog_entry_slug_from_label($module_slug, $label)
@@ -101,14 +106,12 @@ function em_wp_custom_catalog_maybe_bootstrap_contacts(): void
             'label'  => $label,
             'layout' => 'default',
         ];
-        $entries_changed = true;
 
         em_wp_custom_catalog_init_entry_options($module_slug, $slug);
     }
 
-    if ($entries_changed) {
-        update_option($entries_option, $entries, false);
-    }
+    update_option($entries_option, $entries, false);
+    update_option($seed_flag_option, '1', false);
 
     if (function_exists('em_wp_custom_catalog_maybe_normalize_all_entry_slugs')) {
         em_wp_custom_catalog_maybe_normalize_all_entry_slugs();

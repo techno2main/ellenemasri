@@ -97,6 +97,16 @@ function em_wp_hero_catalog_handle_registry_actions(): void
     } elseif ($action === 'delete') {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $slug = sanitize_key((string) ($_POST['em_wp_hero_catalog_slug'] ?? ''));
+
+        if (function_exists('em_wp_catalog_entry_is_default') && em_wp_catalog_entry_is_default($slug)) {
+            $redirect_args['hero_catalog_error'] = 'default_protected';
+            $redirect_args['hero_catalog_message'] = rawurlencode(
+                __('L\'item par défaut ne peut pas être supprimé.', 'em-wp')
+            );
+            wp_safe_redirect(add_query_arg($redirect_args, admin_url('admin.php')));
+            exit;
+        }
+
         $deleted = em_wp_hero_catalog_delete($slug);
 
         if (is_wp_error($deleted)) {
