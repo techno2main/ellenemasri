@@ -423,6 +423,13 @@ function em_wp_admin_template_active_rubrique_labels(string $template_slug): arr
             continue;
         }
 
+        if (
+            function_exists('em_wp_is_template_rubrique_visible')
+            && !em_wp_is_template_rubrique_visible($template_slug, (string) $module_slug)
+        ) {
+            continue;
+        }
+
         $labels[] = function_exists('em_wp_admin_rubrique_skeleton_label')
             ? em_wp_admin_rubrique_skeleton_label($module_slug)
             : mb_strtoupper((string) ($definition['label'] ?? $module_slug));
@@ -475,6 +482,13 @@ function em_wp_admin_template_site_rubriques_entry_links(string $template_slug):
 
     foreach (em_wp_admin_site_rubrique_definitions_for_template($template_slug) as $module_slug => $definition) {
         if (!empty($definition['coming_soon'])) {
+            continue;
+        }
+
+        if (
+            function_exists('em_wp_is_template_rubrique_visible')
+            && !em_wp_is_template_rubrique_visible($template_slug, (string) $module_slug)
+        ) {
             continue;
         }
 
