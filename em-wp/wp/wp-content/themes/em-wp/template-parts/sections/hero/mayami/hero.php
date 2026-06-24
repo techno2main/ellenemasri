@@ -64,8 +64,23 @@ $hero_nav = function_exists('em_wp_landing_get_section_nav_hrefs')
     ? em_wp_landing_get_section_nav_hrefs('hero')
     : ['prev' => '', 'next' => '#stream'];
 $hero_nav_next_href = (string) ($hero_nav['next'] ?? '#stream');
+
+$hero_color_vars = [
+    '--em-hero-badge-bg'    => trim((string) ($hero['badge_bg_color'] ?? '')),
+    '--em-hero-badge-text'  => trim((string) ($hero['badge_text_color'] ?? '')),
+    '--em-hero-stream-bg'   => trim((string) ($hero['stream_bg_color'] ?? '')),
+    '--em-hero-stream-text' => trim((string) ($hero['stream_text_color'] ?? '')),
+    '--em-hero-watch-bg'    => trim((string) ($hero['watch_bg_color'] ?? '')),
+    '--em-hero-watch-text'  => trim((string) ($hero['watch_text_color'] ?? '')),
+];
+$hero_style = '';
+foreach ($hero_color_vars as $var => $color) {
+    if ($color !== '') {
+        $hero_style .= $var . ':' . $color . ';';
+    }
+}
 ?>
-<section id="hero" class="<?php echo esc_attr($hero_classes); ?>">
+<section id="hero" class="<?php echo esc_attr($hero_classes); ?>"<?php echo $hero_style !== '' ? ' style="' . esc_attr($hero_style) . '"' : ''; ?>>
     <div class="em-hero__inner">
         <div class="em-hero__left">
             <?php if ($hero_nav_next_href !== '') { ?>

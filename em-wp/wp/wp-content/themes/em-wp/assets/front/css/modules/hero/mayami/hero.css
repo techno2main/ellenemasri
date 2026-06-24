@@ -94,8 +94,8 @@
     gap: 8px;
     border: 2px solid var(--em-hero-ink);
     border-radius: 999px;
-    background: var(--em-hero-yellow);
-    color: var(--em-hero-ink);
+    background: var(--em-hero-badge-bg, var(--em-hero-yellow));
+    color: var(--em-hero-badge-text, var(--em-hero-ink));
     padding: 7px 18px;
     font-family: "Archivo Black", sans-serif;
     font-size: 12px;
@@ -143,6 +143,13 @@
     max-width: min(520px, 100%);
     height: auto;
     margin-left: -18px;
+}
+
+/* En colonne (HEADER hero + slider), le padding interne du hero passe à 0 :
+   on annule le débord négatif du logo, sinon il est tronqué par overflow:hidden. */
+.em-hero--mayami.em-hero--pair-column .em-hero__logo,
+.em-hero--mayami.em-hero--in-header .em-hero__logo {
+    margin-left: 0;
 }
 
 .em-hero--mayami .em-hero__main-title-fallback {
@@ -196,11 +203,13 @@
 }
 
 .em-hero--mayami .em-hero__btn--stream {
-    background: var(--em-hero-yellow);
+    background: var(--em-hero-stream-bg, var(--em-hero-yellow));
+    color: var(--em-hero-stream-text, var(--em-hero-ink));
 }
 
 .em-hero--mayami .em-hero__btn--watch {
-    background: var(--em-hero-aqua);
+    background: var(--em-hero-watch-bg, var(--em-hero-aqua));
+    color: var(--em-hero-watch-text, var(--em-hero-ink));
 }
 
 .em-hero--mayami .em-hero__btn-icon {
@@ -214,7 +223,7 @@
 .em-hero--mayami .em-hero__btn--stream .em-hero__btn-icon {
     width: 14px;
     height: 14px;
-    border: 2px solid var(--em-hero-ink);
+    border: 2px solid var(--em-hero-stream-text, var(--em-hero-ink));
     border-radius: 999px;
     position: relative;
 }
@@ -224,12 +233,12 @@
     width: 4px;
     height: 4px;
     border-radius: 999px;
-    background: var(--em-hero-ink);
+    background: var(--em-hero-stream-text, var(--em-hero-ink));
 }
 
 .em-hero--mayami .em-hero__btn-icon--watch {
     background: transparent;
-    color: var(--em-hero-ink);
+    color: var(--em-hero-watch-text, var(--em-hero-ink));
     border-radius: 0;
     padding: 0;
     font-size: 0;
@@ -244,7 +253,7 @@
     height: 0;
     border-top: 6px solid transparent;
     border-bottom: 6px solid transparent;
-    border-left: 10px solid var(--em-hero-ink);
+    border-left: 10px solid var(--em-hero-watch-text, var(--em-hero-ink));
 }
 
 .em-hero--mayami .em-hero__slider-slot {

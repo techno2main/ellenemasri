@@ -71,9 +71,45 @@
         badgeInput.addEventListener('change', syncBadgePreview);
     }
 
+    function initBadgeColorPreview() {
+        const badge = document.querySelector('[data-em-hero-badge-preview]');
+
+        if (!badge) {
+            return;
+        }
+
+        const panel = badge.closest('.em-wp-hero-item-panel') || document;
+        const bgInput = panel.querySelector('input[name$="[badge_bg_color]"]');
+        const textInput = panel.querySelector('input[name$="[badge_text_color]"]');
+
+        function applyColors() {
+            if (bgInput) {
+                const bg = String(bgInput.value || '').trim();
+                badge.style.background = bg !== '' ? bg : '';
+            }
+
+            if (textInput) {
+                const text = String(textInput.value || '').trim();
+                badge.style.color = text !== '' ? text : '';
+            }
+        }
+
+        applyColors();
+
+        [bgInput, textInput].forEach(function (input) {
+            if (!input) {
+                return;
+            }
+
+            input.addEventListener('input', applyColors);
+            input.addEventListener('change', applyColors);
+        });
+    }
+
     $(function () {
         bindMediaPicker();
         initImagePreviews();
         initBadgePreview();
+        initBadgeColorPreview();
     });
 })(jQuery);

@@ -302,6 +302,8 @@ function em_wp_hero_default_options(): array
         'enabled'                  => true,
         'badge_text'               => __('New Single · Available!', 'em-wp'),
         'badge_text_hidden'        => false,
+        'badge_bg_color'           => '',
+        'badge_text_color'         => '',
         'subtitle'                 => __('Mayami, My Miami', 'em-wp'),
         'subtitle_hidden'          => false,
         'main_title'               => __('Mayami, My Miami', 'em-wp'),
@@ -313,9 +315,13 @@ function em_wp_hero_default_options(): array
         'stream_label'             => __('◉ Stream', 'em-wp'),
         'stream_hidden'            => false,
         'stream_href'              => '#stream',
+        'stream_bg_color'          => '',
+        'stream_text_color'        => '',
         'watch_label'              => __('▶ Watch', 'em-wp'),
         'watch_hidden'             => false,
         'watch_href'               => '#video',
+        'watch_bg_color'           => '',
+        'watch_text_color'         => '',
     ];
 }
 
@@ -364,10 +370,27 @@ function em_wp_hero_sanitize_options_for_style($input, string $style_slug): arra
         // Catalogue : pas de visibilité rubrique hero.
     }
 
+    $sanitize_color = static function (string $key) use ($input, $existing): string {
+        $color = sanitize_hex_color($input[$key] ?? '');
+
+        if ($color !== null && $color !== false && $color !== '') {
+            return $color;
+        }
+
+        // Champ vidé explicitement → on enregistre vide (retour au défaut design).
+        if (array_key_exists($key, $input) && trim((string) $input[$key]) === '') {
+            return '';
+        }
+
+        return (string) ($existing[$key] ?? '');
+    };
+
     return [
         'enabled'                  => $enabled,
         'badge_text'               => sanitize_text_field($input['badge_text'] ?? ($existing['badge_text'] ?? '')),
         'badge_text_hidden'        => !empty($input['badge_text_hidden']),
+        'badge_bg_color'           => $sanitize_color('badge_bg_color'),
+        'badge_text_color'         => $sanitize_color('badge_text_color'),
         'subtitle'                 => sanitize_text_field($input['subtitle'] ?? ($existing['subtitle'] ?? '')),
         'subtitle_hidden'          => !empty($input['subtitle_hidden']),
         'main_title'               => sanitize_text_field($input['main_title'] ?? ($existing['main_title'] ?? '')),
@@ -379,9 +402,13 @@ function em_wp_hero_sanitize_options_for_style($input, string $style_slug): arra
         'stream_label'             => sanitize_text_field($input['stream_label'] ?? ($existing['stream_label'] ?? '')),
         'stream_hidden'            => !empty($input['stream_hidden']),
         'stream_href'              => esc_url_raw($input['stream_href'] ?? ($existing['stream_href'] ?? '')),
+        'stream_bg_color'          => $sanitize_color('stream_bg_color'),
+        'stream_text_color'        => $sanitize_color('stream_text_color'),
         'watch_label'              => sanitize_text_field($input['watch_label'] ?? ($existing['watch_label'] ?? '')),
         'watch_hidden'             => !empty($input['watch_hidden']),
         'watch_href'               => esc_url_raw($input['watch_href'] ?? ($existing['watch_href'] ?? '')),
+        'watch_bg_color'           => $sanitize_color('watch_bg_color'),
+        'watch_text_color'         => $sanitize_color('watch_text_color'),
     ];
 }
 
@@ -561,11 +588,35 @@ function em_wp_hero_render_mayami_item_panel(string $key, string $label, string 
                 <label class="em-wp-hero-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($context['option_name'] . '[' . $hidden_key . ']'); ?>" value="1" <?php checked($is_hidden); ?>></label>
             <?php } ?>
             </div>
-            <?php if ($key === 'badge_text') { ?>
-                <div class="em-wp-hero-badge-preview" aria-hidden="true">
-                    <div class="em-wp-hero-badge-preview__badge em-wiggle" data-em-hero-badge-preview>
-                        <span class="em-wp-hero-badge-preview__dot"></span>
-                        <span data-em-hero-badge-preview-text><?php echo esc_html((string) $value !== '' ? (string) $value : __('New Single · Available!', 'em-wp')); ?></span>
+            <?php if ($key === 'badge_text') {
+                $badge_color_base = sanitize_html_class((string) $context['option_name'] . '-badge');
+                ?>
+                <div class="em-wp-hero-item-panel__row">
+                    <?php
+                    em_wp_admin_render_color_field([
+                        'id'            => $badge_color_base . '-bg',
+                        'name'          => $context['option_name'] . '[badge_bg_color]',
+                        'value'         => (string) ($options['badge_bg_color'] ?? ''),
+                        'default'       => '#f4d03f',
+                        'field_label'   => __('Fond', 'em-wp'),
+                        'preview_label' => __('Fond du badge', 'em-wp'),
+                    ]);
+                    em_wp_admin_render_color_field([
+                        'id'            => $badge_color_base . '-text',
+                        'name'          => $context['option_name'] . '[badge_text_color]',
+                        'value'         => (string) ($options['badge_text_color'] ?? ''),
+                        'default'       => '#100421',
+                        'field_label'   => __('Texte', 'em-wp'),
+                        'preview_label' => __('Couleur du texte du badge', 'em-wp'),
+                        'preview_type'  => 'text',
+                        'bg_target_id'  => $badge_color_base . '-bg',
+                    ]);
+                    ?>
+                    <div class="em-wp-hero-badge-preview" aria-hidden="true">
+                        <div class="em-wp-hero-badge-preview__badge em-wiggle" data-em-hero-badge-preview>
+                            <span class="em-wp-hero-badge-preview__dot"></span>
+                            <span data-em-hero-badge-preview-text><?php echo esc_html((string) $value !== '' ? (string) $value : __('New Single · Available!', 'em-wp')); ?></span>
+                        </div>
                     </div>
                 </div>
             <?php } ?>
@@ -583,6 +634,10 @@ function em_wp_hero_render_mayami_button_row(string $prefix, string $legend, arr
     $label_key = $prefix . '_label';
     $href_key = $prefix . '_href';
     $hidden_key = $prefix . '_hidden';
+    $bg_key = $prefix . '_bg_color';
+    $text_key = $prefix . '_text_color';
+    $color_base = sanitize_html_class((string) $context['option_name'] . '-' . $prefix);
+    $bg_default = $prefix === 'watch' ? '#1fcdd5' : '#f4d03f';
     ?>
     <div class="em-wp-hero-item-panel__row">
         <span class="em-wp-hero-item-panel__group">
@@ -593,6 +648,26 @@ function em_wp_hero_render_mayami_button_row(string $prefix, string $legend, arr
             <span class="em-wp-hero-item-panel__group-label"><?php esc_html_e('Link', 'em-wp'); ?></span>
             <input type="text" class="regular-text em-wp-hero-item-panel__text" name="<?php echo esc_attr($context['option_name'] . '[' . $href_key . ']'); ?>" value="<?php echo esc_attr((string) ($options[$href_key] ?? '')); ?>">
         </span>
+        <?php
+        em_wp_admin_render_color_field([
+            'id'            => $color_base . '-bg',
+            'name'          => $context['option_name'] . '[' . $bg_key . ']',
+            'value'         => (string) ($options[$bg_key] ?? ''),
+            'default'       => $bg_default,
+            'field_label'   => __('Fond', 'em-wp'),
+            'preview_label' => __('Fond du bouton', 'em-wp'),
+        ]);
+        em_wp_admin_render_color_field([
+            'id'            => $color_base . '-text',
+            'name'          => $context['option_name'] . '[' . $text_key . ']',
+            'value'         => (string) ($options[$text_key] ?? ''),
+            'default'       => '#100421',
+            'field_label'   => __('Texte', 'em-wp'),
+            'preview_label' => __('Couleur du texte', 'em-wp'),
+            'preview_type'  => 'text',
+            'bg_target_id'  => $color_base . '-bg',
+        ]);
+        ?>
         <label class="em-wp-hero-inline-check"><span><?php esc_html_e('Masquer', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($context['option_name'] . '[' . $hidden_key . ']'); ?>" value="1" <?php checked(!empty($options[$hidden_key])); ?>></label>
     </div>
     <?php

@@ -30,6 +30,8 @@ function em_wp_get_hero_options_for_front(string $style_slug = ''): array
         'enabled'                  => true,
         'badge_text'               => __('New Single · Available!', 'em-wp'),
         'badge_text_hidden'        => false,
+        'badge_bg_color'           => '',
+        'badge_text_color'         => '',
         'subtitle'                 => __('Mayami, My Miami', 'em-wp'),
         'subtitle_hidden'          => false,
         'main_title'               => __('Mayami, My Miami', 'em-wp'),
@@ -41,9 +43,13 @@ function em_wp_get_hero_options_for_front(string $style_slug = ''): array
         'stream_label'             => __('◉ Stream', 'em-wp'),
         'stream_hidden'            => false,
         'stream_href'              => '#stream',
+        'stream_bg_color'          => '',
+        'stream_text_color'        => '',
         'watch_label'              => __('▶ Watch', 'em-wp'),
         'watch_hidden'             => false,
         'watch_href'               => '#video',
+        'watch_bg_color'           => '',
+        'watch_text_color'         => '',
     ];
 
     $saved = get_option('em_wp_hero_options', []);
