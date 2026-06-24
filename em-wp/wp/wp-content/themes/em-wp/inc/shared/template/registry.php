@@ -292,7 +292,181 @@ function em_wp_template_duplicate(string $source_slug, string $label, string $co
 }
 
 /**
- * Renomme un template (libellé uniquement).
+ * Génère un slug de template unique à partir d'une base (exclut un slug donné).
+ */
+function em_wp_template_unique_slug(string $base_slug, string $exclude_slug = ''): string
+{
+    $base_slug = em_wp_template_sanitize_slug($base_slug);
+
+    if ($base_slug === '') {
+        return '';
+    }
+
+    $registry = em_wp_template_registry();
+    $exclude_slug = em_wp_template_sanitize_slug($exclude_slug);
+    $slug = $base_slug;
+    $suffix = 2;
+
+    while (isset($registry[$slug]) && $slug !== $exclude_slug) {
+        $slug = $base_slug . '-' . $suffix;
+        $suffix++;
+    }
+
+    return $slug;
+}
+
+/**
+ * Migre l'identifiant (slug) d'un template et toutes ses données associées.
+ *
+ * Périmètre : registre, option du template actif, méta « template en édition »
+ * de chaque utilisateur, options de rubriques par template, squelette, visibilité.
+ *
+ * @return true|WP_Error
+ */
+function em_wp_template_change_slug(string $old_slug, string $new_slug)
+{
+    $old_slug = em_wp_template_sanitize_slug($old_slug);
+    $new_slug = em_wp_template_sanitize_slug($new_slug);
+
+    if ($old_slug === '') {
+        return new WP_Error('em_wp_template_missing', __('Template introuvable.', 'em-wp'));
+    }
+
+    if ($new_slug === '') {
+        return new WP_Error('em_wp_template_invalid_slug', __('Identifiant de template invalide.', 'em-wp'));
+    }
+
+    if ($old_slug === $new_slug) {
+        return true;
+    }
+
+    $registry = em_wp_template_registry();
+
+    if (!isset($registry[$old_slug])) {
+        return new WP_Error('em_wp_template_missing', __('Template introuvable.', 'em-wp'));
+    }
+
+    if (isset($registry[$new_slug])) {
+        return new WP_Error('em_wp_template_duplicate_slug', __('Cet identifiant de template est déjà utilisé.', 'em-wp'));
+    }
+
+    // 1. Registre (on préserve l'ordre des entrées).
+    $migrated_registry = [];
+    foreach ($registry as $slug => $entry) {
+        if ($slug === $old_slug) {
+            if (is_array($entry)) {
+                $entry['slug'] = $new_slug;
+            }
+            $migrated_registry[$new_slug] = $entry;
+        } else {
+            $migrated_registry[$slug] = $entry;
+        }
+    }
+
+    if (!em_wp_template_save_registry($migrated_registry)) {
+        return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
+    }
+
+    // 2. Options de rubriques par template (em_wp_{rubrique}_{template}_options).
+    $rubrique_slugs = function_exists('em_wp_admin_site_rubrique_all_definitions')
+        ? array_keys(em_wp_admin_site_rubrique_all_definitions())
+        : [];
+
+    foreach ($rubrique_slugs as $rubrique_slug) {
+        $rubrique_slug = sanitize_key((string) $rubrique_slug);
+
+        if ($rubrique_slug === '' || !function_exists('em_wp_template_option_name')) {
+            continue;
+        }
+
+        $options = em_wp_get_template_rubrique_options($rubrique_slug, $old_slug);
+
+        if ($options !== []) {
+            update_option(em_wp_template_option_name($rubrique_slug, $new_slug), $options, false);
+        }
+
+        delete_option(em_wp_template_option_name($rubrique_slug, $old_slug));
+    }
+
+    // 3. Squelette / plan.
+    if (function_exists('em_wp_template_plans_store')) {
+        $plans = em_wp_template_plans_store();
+
+        if (isset($plans[$old_slug])) {
+            $plans[$new_slug] = $plans[$old_slug];
+            unset($plans[$old_slug]);
+            update_option(em_wp_template_plans_option_name(), $plans, false);
+        }
+    }
+
+    // 4. Visibilité.
+    if (function_exists('em_wp_template_visibility_store')) {
+        $visibility = em_wp_template_visibility_store();
+
+        if (isset($visibility[$old_slug])) {
+            $visibility[$new_slug] = $visibility[$old_slug];
+            unset($visibility[$old_slug]);
+            update_option(em_wp_template_visibility_option_name(), $visibility, false);
+        }
+    }
+
+    // 5. Template actif sur le site.
+    if (get_option(em_wp_active_template_option_name(), '') === $old_slug) {
+        update_option(em_wp_active_template_option_name(), $new_slug, false);
+    }
+
+    // 6. Méta « template en édition » de chaque utilisateur.
+    $meta_key = em_wp_editing_template_user_meta_key();
+    $editing_users = get_users([
+        'meta_key'   => $meta_key,
+        'meta_value' => $old_slug,
+        'fields'     => 'ID',
+    ]);
+
+    foreach ($editing_users as $user_id) {
+        update_user_meta((int) $user_id, $meta_key, $new_slug);
+    }
+
+    return true;
+}
+
+/**
+ * Rattrapage unique : aligne l'identifiant des templates existants sur leur
+ * libellé (ex. un template renommé « Default » mais resté en slug « ellene »).
+ * Ne s'exécute qu'une seule fois grâce à un flag d'option.
+ */
+function em_wp_template_maybe_reconcile_slugs(): void
+{
+    if (get_option('em_wp_template_slugs_reconciled', false)) {
+        return;
+    }
+
+    $registry = em_wp_template_registry();
+
+    foreach ($registry as $slug => $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+
+        $label = sanitize_text_field((string) ($entry['label'] ?? ''));
+
+        if ($label === '') {
+            continue;
+        }
+
+        $desired = em_wp_template_unique_slug(sanitize_title($label), (string) $slug);
+
+        if ($desired !== '' && $desired !== (string) $slug) {
+            em_wp_template_change_slug((string) $slug, $desired);
+        }
+    }
+
+    update_option('em_wp_template_slugs_reconciled', '1', false);
+}
+add_action('admin_init', 'em_wp_template_maybe_reconcile_slugs', 4);
+
+/**
+ * Renomme un template : met à jour le libellé ET régénère l'identifiant.
  *
  * @return true|WP_Error
  */
@@ -314,6 +488,17 @@ function em_wp_template_rename(string $slug, string $label)
 
     if (!em_wp_template_save_registry($registry)) {
         return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
+    }
+
+    // L'identifiant suit le libellé (comme les items de catalogue).
+    $new_slug = em_wp_template_unique_slug(sanitize_title($label), $slug);
+
+    if ($new_slug !== '' && $new_slug !== $slug) {
+        $migrated = em_wp_template_change_slug($slug, $new_slug);
+
+        if (is_wp_error($migrated)) {
+            return $migrated;
+        }
     }
 
     return true;
