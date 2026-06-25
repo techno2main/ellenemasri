@@ -120,10 +120,20 @@
 
 .em-wp-rubrique-section-bar__template {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.02em;
     color: #111827;
     text-transform: uppercase;
+}
+
+.em-wp-rubrique-section-bar__template strong {
+    font-weight: 700;
+}
+
+.em-wp-rubrique-section-bar__sep {
+    margin: 0 4px;
+    color: #9ca3af;
+    font-weight: 400;
 }
 
 .em-wp-hub__intro-text .em-wp-hub__template-name {
@@ -398,12 +408,26 @@ button.em-wp-hub__template-live-pill--activate {
         box-shadow 0.15s ease;
 }
 
+/* Badge « Activer » (template non actif) : contour couleur template, sans fond */
+.em-wp-hub__template-live-pill--activate {
+    background: transparent;
+    color: var(--em-wp-template-accent, #751820);
+    box-shadow: inset 0 0 0 1px var(--em-wp-template-accent, #751820);
+}
+
+.em-wp-hub__template-live-pill--activate .em-wp-hub__template-live-pill-live {
+    color: var(--em-wp-template-accent, #751820);
+    background: color-mix(in srgb, var(--em-wp-template-accent, #751820) 12%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--em-wp-template-accent, #751820) 40%, transparent);
+}
+
 button.em-wp-hub__template-live-pill--activate:hover,
 button.em-wp-hub__template-live-pill--activate:focus-visible {
-    filter: brightness(1.06);
+    filter: none;
     outline: none;
+    background: color-mix(in srgb, var(--em-wp-template-accent, #751820) 10%, transparent);
     box-shadow:
-        inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+        inset 0 0 0 1px var(--em-wp-template-accent, #751820),
         0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
@@ -499,6 +523,35 @@ button.em-wp-hub__template-live-pill--activate:focus-visible {
     color: var(--em-wp-live-color, #751820);
     background: color-mix(in srgb, var(--em-wp-live-color, #751820) 10%, #ffffff);
     box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-wp-live-color, #751820) 14%, transparent);
+}
+
+.em-wp-hub__catalog-entry-live-dot {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    margin-left: 5px;
+    border-radius: 999px;
+    background: var(--em-live-color, #22c55e);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--em-live-color, #22c55e) 26%, transparent);
+    vertical-align: middle;
+    animation: em-wp-hub-entry-live-blink 1.35s ease-in-out infinite;
+}
+
+@keyframes em-wp-hub-entry-live-blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.35;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .em-wp-hub__catalog-entry-live-dot {
+        animation: none;
+    }
 }
 
 .em-wp-hub__catalog-entry-arrow svg {
@@ -1018,6 +1071,11 @@ button.em-wp-hub__catalog-entry-link {
     transition: color 0.15s ease;
 }
 
+/* OEIL centré verticalement par rapport au badge dans le pied de carte */
+.em-wp-templates-sommaire__card-live-footer .em-wp-templates-admin__template-preview {
+    align-self: center;
+}
+
 .em-wp-hub__action--compact.em-wp-hub__action--icon-only.em-wp-hub__action--fa:hover .fa-solid,
 .em-wp-hub__action--compact.em-wp-hub__action--icon-only.em-wp-hub__action--fa:focus-visible .fa-solid {
     color: #4e080e;
@@ -1431,6 +1489,10 @@ button.em-wp-hub__catalog-entry-link {
     flex: 0 0 auto;
     width: 100%;
     align-self: stretch;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .em-wp-templates-sommaire__card-live-footer:empty {

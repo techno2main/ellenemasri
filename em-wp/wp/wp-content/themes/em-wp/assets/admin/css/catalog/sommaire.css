@@ -6,8 +6,8 @@
 .em-wp-catalog-sommaire__section {
     max-width: min(100%, 960px);
     margin-bottom: 24px;
-    background: #f0f0f1;
-    border: 1px solid #d0d5dd;
+    background: transparent;
+    border: 0;
 }
 
 .em-wp-catalog-sommaire__section-header {
@@ -28,10 +28,10 @@
 }
 
 .em-wp-catalog-sommaire__section-body {
-    margin: 0 8px 8px;
-    padding: 12px 14px 14px;
-    background: #ffffff;
-    border: 1px solid #d0d5dd;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
 }
 
 .em-wp-catalog-sommaire__table {
@@ -80,6 +80,49 @@
     color: #b8860b;
     font-size: 12px;
     vertical-align: middle;
+}
+
+.em-wp-catalog-sommaire__live-badge {
+    --em-live-color: #22c55e;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--em-live-color) 16%, #ffffff);
+    color: color-mix(in srgb, var(--em-live-color) 78%, #1d2327);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--em-live-color) 50%, transparent);
+}
+
+.em-wp-catalog-sommaire__live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--em-live-color, #22c55e);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--em-live-color) 26%, transparent);
+    animation: em-wp-catalog-live-blink 1.35s ease-in-out infinite;
+}
+
+@keyframes em-wp-catalog-live-blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.35;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .em-wp-catalog-sommaire__live-dot {
+        animation: none;
+    }
 }
 
 .em-wp-catalog-sommaire__actions {
@@ -239,6 +282,13 @@
 .em-wp-catalog-sommaire__inline-value {
     font-weight: 600;
     color: #1d2327;
+}
+
+.em-wp-catalog-sommaire__edit-placeholder {
+    display: inline-block;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
 }
 
 .em-wp-catalog-sommaire__inline-field.is-editing .em-wp-catalog-sommaire__inline-value,

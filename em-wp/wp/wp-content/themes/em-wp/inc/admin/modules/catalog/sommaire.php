@@ -1223,9 +1223,16 @@ function em_wp_catalog_hub_entry_links(string $module_slug): array
             continue;
         }
 
+        $is_live = function_exists('em_wp_catalog_entry_is_live')
+            && em_wp_catalog_entry_is_live((string) $catalog_slug);
+
         $links[] = [
-            'label' => mb_strtoupper($label),
-            'url'   => admin_url('admin.php?page=' . $page_slug),
+            'label'      => mb_strtoupper($label),
+            'url'        => admin_url('admin.php?page=' . $page_slug),
+            'live'       => $is_live,
+            'live_color' => $is_live && function_exists('em_wp_catalog_live_template_color')
+                ? em_wp_catalog_live_template_color()
+                : '',
         ];
     }
 
@@ -1697,14 +1704,14 @@ function em_wp_catalog_render_videos_page(): void
         em_wp_catalog_render_sommaire_header('', 'dashicons-video-alt3');
 
         em_wp_catalog_render_crud_hub_entry_tabs([
-            'section_title'  => __('VIDÉOS DU CATALOGUE', 'em-wp'),
+            'section_title'  => __('VIDÉOS DISPONIBLES', 'em-wp'),
             'hub_menu_slug'  => 'em_wp_video_catalog_hub_menu_slug',
             'edit_page_slug' => 'em_wp_video_catalog_edit_page_slug',
         ], $entries);
 
         em_wp_catalog_render_crud_sommaire_section([
             'type'              => 'video',
-            'section_title'     => __('VIDÉOS DU CATALOGUE', 'em-wp'),
+            'section_title'     => __('VIDÉOS DISPONIBLES', 'em-wp'),
             'icon'              => 'dashicons-video-alt3',
             'hub_menu_slug'     => 'em_wp_video_catalog_hub_menu_slug',
             'nonce_action'      => 'em_wp_video_catalog_actions_nonce_action',
@@ -1743,14 +1750,14 @@ function em_wp_catalog_render_streams_page(): void
         em_wp_catalog_render_sommaire_header('', 'dashicons-playlist-audio');
 
         em_wp_catalog_render_crud_hub_entry_tabs([
-            'section_title'  => __('STREAMS DU CATALOGUE', 'em-wp'),
+            'section_title'  => __('STREAMS DISPONIBLES', 'em-wp'),
             'hub_menu_slug'  => 'em_wp_stream_catalog_hub_menu_slug',
             'edit_page_slug' => 'em_wp_stream_catalog_edit_page_slug',
         ], $entries);
 
         em_wp_catalog_render_crud_sommaire_section([
             'type'              => 'stream',
-            'section_title'     => __('STREAMS DU CATALOGUE', 'em-wp'),
+            'section_title'     => __('STREAMS DISPONIBLES', 'em-wp'),
             'icon'              => 'dashicons-playlist-audio',
             'hub_menu_slug'     => 'em_wp_stream_catalog_hub_menu_slug',
             'nonce_action'      => 'em_wp_stream_catalog_actions_nonce_action',
@@ -1789,14 +1796,14 @@ function em_wp_catalog_render_socials_page(): void
         em_wp_catalog_render_sommaire_header('', 'dashicons-share');
 
         em_wp_catalog_render_crud_hub_entry_tabs([
-            'section_title'  => __('SOCIALS DU CATALOGUE', 'em-wp'),
+            'section_title'  => __('SOCIALS DISPONIBLES', 'em-wp'),
             'hub_menu_slug'  => 'em_wp_social_catalog_hub_menu_slug',
             'edit_page_slug' => 'em_wp_social_catalog_edit_page_slug',
         ], $entries);
 
         em_wp_catalog_render_crud_sommaire_section([
             'type'              => 'social',
-            'section_title'     => __('SOCIALS DU CATALOGUE', 'em-wp'),
+            'section_title'     => __('SOCIALS DISPONIBLES', 'em-wp'),
             'icon'              => 'dashicons-share',
             'hub_menu_slug'     => 'em_wp_social_catalog_hub_menu_slug',
             'nonce_action'      => 'em_wp_social_catalog_actions_nonce_action',
@@ -1827,7 +1834,7 @@ function em_wp_catalog_render_hero_sommaire_section(array $entries): void
     <section class="em-wp-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($title_id); ?>">
         <header class="em-wp-catalog-sommaire__section-header">
             <div id="<?php echo esc_attr($title_id); ?>" class="em-wp-catalog-sommaire__section-title">
-                <?php em_wp_admin_hub_render_card_title(__('HEROS DU CATALOGUE', 'em-wp'), 'dashicons-format-gallery'); ?>
+                <?php em_wp_admin_hub_render_card_title(__('HEROS DISPONIBLES', 'em-wp'), 'dashicons-format-gallery'); ?>
             </div>
             <button
                 type="button"
@@ -1879,7 +1886,7 @@ function em_wp_catalog_render_hero_sommaire_section(array $entries): void
                             <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
                             <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
                             <th scope="col" class="em-wp-catalog-sommaire__actions-col">
-                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                                <?php esc_html_e('Actions', 'em-wp'); ?>
                             </th>
                         </tr>
                     </thead>
@@ -1925,7 +1932,7 @@ function em_wp_catalog_render_slider_sommaire_section(array $entries): void
     <section class="em-wp-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($title_id); ?>">
         <header class="em-wp-catalog-sommaire__section-header">
             <div id="<?php echo esc_attr($title_id); ?>" class="em-wp-catalog-sommaire__section-title">
-                <?php em_wp_admin_hub_render_card_title(__('SLIDERS DU CATALOGUE', 'em-wp'), 'dashicons-slides'); ?>
+                <?php em_wp_admin_hub_render_card_title(__('SLIDERS DISPONIBLES', 'em-wp'), 'dashicons-slides'); ?>
             </div>
             <button
                 type="button"
@@ -1977,7 +1984,7 @@ function em_wp_catalog_render_slider_sommaire_section(array $entries): void
                             <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
                             <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
                             <th scope="col" class="em-wp-catalog-sommaire__actions-col">
-                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                                <?php esc_html_e('Actions', 'em-wp'); ?>
                             </th>
                         </tr>
                     </thead>
@@ -2052,7 +2059,7 @@ function em_wp_catalog_render_sommaire_section(
                             <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
                             <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
                             <th scope="col" class="em-wp-catalog-sommaire__actions-col">
-                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                                <?php esc_html_e('Actions', 'em-wp'); ?>
                             </th>
                         </tr>
                     </thead>
@@ -2151,6 +2158,26 @@ function em_wp_catalog_render_edit_banner(string $catalog_type, array $definitio
                         </option>
                     <?php } ?>
                 </select>
+                <?php if (function_exists('em_wp_catalog_entry_is_live') && em_wp_catalog_entry_is_live($selected_slug)) {
+                    $banner_live_label = function_exists('em_wp_catalog_live_template_label')
+                        ? em_wp_catalog_live_template_label()
+                        : '';
+                    $banner_live_title = $banner_live_label !== ''
+                        ? sprintf(__('Actuellement actif sur %s Live.', 'em-wp'), $banner_live_label)
+                        : __('Actuellement actif sur le template live.', 'em-wp');
+                    $banner_live_color = function_exists('em_wp_catalog_live_template_color')
+                        ? em_wp_catalog_live_template_color()
+                        : '';
+                    ?>
+                    <span
+                        class="em-wp-catalog-sommaire__live-badge"
+                        title="<?php echo esc_attr($banner_live_title); ?>"
+                        <?php if ($banner_live_color !== '') { ?>style="--em-live-color: <?php echo esc_attr($banner_live_color); ?>;"<?php } ?>
+                    >
+                        <span class="em-wp-catalog-sommaire__live-dot" aria-hidden="true"></span>
+                        <?php esc_html_e('Live', 'em-wp'); ?>
+                    </span>
+                <?php } ?>
                 <div class="em-wp-template-banner__actions">
                     <button type="button" class="em-wp-template-banner__save" id="em-wp-catalog-banner-save" disabled aria-disabled="true">
                         <?php esc_html_e('Enregistrer', 'em-wp'); ?>
@@ -2648,14 +2675,26 @@ function em_wp_catalog_render_edit_navbar(
 function em_wp_catalog_render_edit_section_open(string $module_label, string $entry_label): void
 {
     // Pastille uniformisée pour toutes les sections catalogue.
-    unset($module_label);
+    $rubrique = mb_strtoupper(trim($module_label));
+    $entry = mb_strtoupper(trim($entry_label));
+
+    // Le libellé d'item suit la convention « {RUBRIQUE} {TEMPLATE} ».
+    // On isole la partie « template » en retirant le préfixe rubrique si présent.
+    $template = $entry;
+    if ($rubrique !== '' && mb_substr($entry, 0, mb_strlen($rubrique) + 1) === $rubrique . ' ') {
+        $template = trim(mb_substr($entry, mb_strlen($rubrique) + 1));
+    }
     ?>
     <div class="em-wp-rubrique-section em-wp-catalog-edit__section">
         <div class="em-wp-rubrique-section-bar">
             <div class="em-wp-rubrique-section-bar__heading">
                 <h2 class="em-wp-rubrique-section-bar__title">
                     <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html(mb_strtoupper(__('Catalogue', 'em-wp'))); ?></span>
-                    <span class="em-wp-rubrique-section-bar__template"><?php echo esc_html(mb_strtoupper($entry_label)); ?></span>
+                    <span class="em-wp-rubrique-section-bar__template">
+                        <?php esc_html_e('Rubrique', 'em-wp'); ?>
+                        <strong><?php echo esc_html($rubrique); ?></strong>
+                        <strong><?php echo esc_html($template); ?></strong>
+                    </span>
                 </h2>
             </div>
         </div>

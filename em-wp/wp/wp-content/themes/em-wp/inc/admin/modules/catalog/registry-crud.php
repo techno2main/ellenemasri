@@ -97,6 +97,16 @@ function em_wp_catalog_handle_registry_actions(array $config): void
         $old_slug = sanitize_key((string) ($_POST[$slug_key] ?? ''));
         // phpcs:ignore WordPress.Security.NonceVerification.Missing
         $label = sanitize_text_field((string) ($_POST[$label_key] ?? ''));
+
+        if (function_exists('em_wp_catalog_entry_is_default') && em_wp_catalog_entry_is_default($old_slug)) {
+            $redirect_args[$notice_prefix . '_error'] = 'default_protected';
+            $redirect_args[$notice_prefix . '_message'] = rawurlencode(
+                __('Le nom de l\'item par défaut ne peut pas être modifié.', 'em-wp')
+            );
+            wp_safe_redirect(add_query_arg($redirect_args, admin_url('admin.php')));
+            exit;
+        }
+
         $renamed = call_user_func($config['rename'], $old_slug, $label);
 
         if (is_wp_error($renamed)) {
@@ -248,7 +258,7 @@ function em_wp_catalog_render_crud_sommaire_section(array $config, array $entrie
                             <th scope="col"><?php esc_html_e('Nom', 'em-wp'); ?></th>
                             <th scope="col"><?php esc_html_e('Identifiant', 'em-wp'); ?></th>
                             <th scope="col" class="em-wp-catalog-sommaire__actions-col">
-                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                                <?php esc_html_e('Actions', 'em-wp'); ?>
                             </th>
                         </tr>
                     </thead>
@@ -308,9 +318,17 @@ function em_wp_catalog_render_sommaire_entry_row(array $args): void
     if ($catalog_slug === '' || $post_prefix === '') {
         return;
     }
+
+    $is_default_entry = function_exists('em_wp_catalog_entry_is_default') && em_wp_catalog_entry_is_default($catalog_slug);
     ?>
     <tr>
         <td class="em-wp-catalog-sommaire__name">
+            <?php if ($is_default_entry) { ?>
+                <div class="em-wp-catalog-sommaire__inline-field">
+                    <span class="em-wp-catalog-sommaire__edit-placeholder" aria-hidden="true"></span>
+                    <span class="em-wp-catalog-sommaire__inline-value"><?php echo esc_html($label); ?></span>
+                </div>
+            <?php } else { ?>
             <div class="em-wp-catalog-sommaire__inline-field" data-em-wp-catalog-inline-field="name">
                 <button
                     type="button"
@@ -361,6 +379,7 @@ function em_wp_catalog_render_sommaire_entry_row(array $args): void
                     </button>
                 </form>
             </div>
+            <?php } ?>
         </td>
         <td class="em-wp-catalog-sommaire__slug">
             <code
@@ -368,14 +387,24 @@ function em_wp_catalog_render_sommaire_entry_row(array $args): void
                 data-em-wp-slug-preview-for="<?php echo esc_attr($rename_form_id); ?>"
                 data-em-wp-slug-current="<?php echo esc_attr($catalog_slug); ?>"
             ><?php echo esc_html($preview_slug); ?></code>
-            <?php $is_default_entry = function_exists('em_wp_catalog_entry_is_default') && em_wp_catalog_entry_is_default($catalog_slug); ?>
-            <?php if ($is_default_entry) { ?>
+            <?php if (function_exists('em_wp_catalog_entry_is_live') && em_wp_catalog_entry_is_live($catalog_slug)) {
+                $live_template_label = function_exists('em_wp_catalog_live_template_label')
+                    ? em_wp_catalog_live_template_label()
+                    : '';
+                $live_badge_title = $live_template_label !== ''
+                    ? sprintf(__('Actuellement actif sur %s Live.', 'em-wp'), $live_template_label)
+                    : __('Actuellement actif sur le template live.', 'em-wp');
+                $live_badge_color = function_exists('em_wp_catalog_live_template_color')
+                    ? em_wp_catalog_live_template_color()
+                    : '';
+                ?>
                 <span
-                    class="em-wp-catalog-sommaire__default-badge"
-                    title="<?php esc_attr_e('Item par défaut : utilisé quand aucun item n\'est sélectionné dans une rubrique.', 'em-wp'); ?>"
+                    class="em-wp-catalog-sommaire__live-badge"
+                    title="<?php echo esc_attr($live_badge_title); ?>"
+                    <?php if ($live_badge_color !== '') { ?>style="--em-live-color: <?php echo esc_attr($live_badge_color); ?>;"<?php } ?>
                 >
-                    <i class="fa-solid fa-star" aria-hidden="true"></i>
-                    <span class="screen-reader-text"><?php esc_html_e('Item par défaut', 'em-wp'); ?></span>
+                    <span class="em-wp-catalog-sommaire__live-dot" aria-hidden="true"></span>
+                    <?php esc_html_e('Live', 'em-wp'); ?>
                 </span>
             <?php } ?>
         </td>
@@ -387,7 +416,7 @@ function em_wp_catalog_render_sommaire_entry_row(array $args): void
                     title="<?php esc_attr_e('Éditer le contenu', 'em-wp'); ?>"
                     aria-label="<?php echo esc_attr(sprintf(__('Éditer le contenu de %s', 'em-wp'), $label)); ?>"
                 >
-                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
+                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                 </a>
             <?php } ?>
             <?php if (!$is_default_entry) { ?>

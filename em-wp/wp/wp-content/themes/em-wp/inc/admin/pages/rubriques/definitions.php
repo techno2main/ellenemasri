@@ -504,6 +504,10 @@ function em_wp_admin_template_site_rubriques_entry_links(string $template_slug):
             continue;
         }
 
+        // Conserve le template de la carte : la page rubrique s'ouvrira en édition
+        // de CE template (évite le message « choisis d'abord un template »).
+        $url = add_query_arg('em_wp_edit_template', $template_slug, $url);
+
         $links[] = [
             'label' => $label,
             'url'   => $url,

@@ -65,7 +65,7 @@ function em_wp_catalog_render_custom_module_hub_page(): void
     $type = 'custom-' . $module_slug;
     $section_title = sprintf(
         /* translators: %s: custom catalog label */
-        __('%s DU CATALOGUE', 'em-wp'),
+        __('%s DISPONIBLES', 'em-wp'),
         mb_strtoupper((string) ($module['label'] ?? $module_slug))
     );
 
