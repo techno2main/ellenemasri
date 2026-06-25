@@ -108,15 +108,9 @@ function em_wp_admin_render_templates_registered_table(
 
                         <?php if ($can_manage) { ?>
 
-                            <th scope="col" class="em-wp-templates-admin__edit-col">
-
-                                <span class="screen-reader-text"><?php esc_html_e('Édition', 'em-wp'); ?></span>
-
-                            </th>
-
                             <th scope="col" class="em-wp-catalog-sommaire__actions-col">
 
-                                <span class="screen-reader-text"><?php esc_html_e('Actions', 'em-wp'); ?></span>
+                                <?php esc_html_e('Actions', 'em-wp'); ?>
 
                             </th>
 
@@ -188,6 +182,12 @@ function em_wp_admin_render_templates_registered_row(
 
     $is_active = ($slug === $active_slug);
 
+    $preview_url = function_exists('em_wp_template_preview_url')
+
+        ? em_wp_template_preview_url($slug)
+
+        : '';
+
     $entry_url = add_query_arg(
 
         ['page' => em_wp_admin_template_entry_page_slug($slug)],
@@ -208,7 +208,7 @@ function em_wp_admin_render_templates_registered_row(
 
         <td class="em-wp-catalog-sommaire__name">
 
-            <?php if ($can_manage) { ?>
+            <?php if ($can_manage && !em_wp_template_is_default($slug)) { ?>
 
                 <div class="em-wp-templates-admin__inline-field" data-em-wp-template-inline-field="name">
 
@@ -308,7 +308,13 @@ function em_wp_admin_render_templates_registered_row(
 
             <?php } else { ?>
 
-                <strong><?php echo esc_html($label); ?></strong>
+                <div class="em-wp-templates-admin__inline-field">
+
+                    <span class="em-wp-templates-admin__edit-placeholder" aria-hidden="true"></span>
+
+                    <span class="em-wp-templates-admin__inline-value"><?php echo esc_html($label); ?></span>
+
+                </div>
 
             <?php } ?>
 
@@ -416,31 +422,51 @@ function em_wp_admin_render_templates_registered_row(
 
         <?php if ($can_manage) { ?>
 
-            <td class="em-wp-templates-admin__edit-col">
-
-                <a
-
-                    class="em-wp-catalog-sommaire__edit em-wp-templates-admin__template-edit"
-
-                    href="<?php echo esc_url($entry_url); ?>"
-
-                    title="<?php esc_attr_e('Éditer le template', 'em-wp'); ?>"
-
-                    aria-label="<?php echo esc_attr(sprintf(__('Éditer %s', 'em-wp'), $label)); ?>"
-
-                >
-
-                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
-
-                </a>
-
-            </td>
-
             <td class="em-wp-catalog-sommaire__actions">
 
                 <div class="em-wp-templates-admin__row-actions">
 
-                    <?php if (!$is_active && $registry_count > 1) { ?>
+                    <?php if ($preview_url !== '') { ?>
+
+                        <button
+
+                            type="button"
+
+                            class="em-wp-catalog-sommaire__edit em-wp-templates-admin__template-preview"
+
+                            data-em-wp-template-preview-url="<?php echo esc_url($preview_url); ?>"
+
+                            data-em-wp-template-preview-label="<?php echo esc_attr($label); ?>"
+
+                            title="<?php esc_attr_e('Prévisualiser le template', 'em-wp'); ?>"
+
+                            aria-label="<?php echo esc_attr(sprintf(__('Prévisualiser %s', 'em-wp'), $label)); ?>"
+
+                        >
+
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+
+                        </button>
+
+                    <?php } ?>
+
+                    <a
+
+                        class="em-wp-catalog-sommaire__edit em-wp-templates-admin__template-edit"
+
+                        href="<?php echo esc_url($entry_url); ?>"
+
+                        title="<?php esc_attr_e('Éditer le template', 'em-wp'); ?>"
+
+                        aria-label="<?php echo esc_attr(sprintf(__('Éditer %s', 'em-wp'), $label)); ?>"
+
+                    >
+
+                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+
+                    </a>
+
+                    <?php if (!$is_active && $registry_count > 1 && !em_wp_template_is_default($slug)) { ?>
 
                         <form method="post" class="em-wp-templates-admin__delete-form" data-delete-label="<?php echo esc_attr($label); ?>">
 
@@ -457,10 +483,6 @@ function em_wp_admin_render_templates_registered_row(
                             </button>
 
                         </form>
-
-                    <?php } else { ?>
-
-                        <span class="em-wp-templates-admin__status-empty" aria-hidden="true">—</span>
 
                     <?php } ?>
 

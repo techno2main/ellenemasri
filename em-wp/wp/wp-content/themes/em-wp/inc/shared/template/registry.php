@@ -74,7 +74,7 @@ function em_wp_template_registry(): array
     $saved = get_option(em_wp_template_definitions_option_name(), []);
 
     if (!is_array($saved) || $saved === []) {
-        return em_wp_template_default_definitions();
+        return em_wp_template_sort_default_first(em_wp_template_default_definitions());
     }
 
     $normalized = [];
@@ -103,10 +103,48 @@ function em_wp_template_registry(): array
     }
 
     if ($normalized === []) {
-        return em_wp_template_default_definitions();
+        return em_wp_template_sort_default_first(em_wp_template_default_definitions());
     }
 
-    return $normalized;
+    return em_wp_template_sort_default_first($normalized);
+}
+
+/**
+ * Indique si une définition de template correspond au template « Default ».
+ *
+ * @param array{slug?:string,label?:string} $definition
+ */
+function em_wp_template_is_default(string $slug, array $definition = []): bool
+{
+    if ($slug === 'default') {
+        return true;
+    }
+
+    $label = strtolower(trim((string) ($definition['label'] ?? '')));
+
+    return $label === 'default';
+}
+
+/**
+ * Réordonne un registre de templates pour placer « Default » en premier.
+ *
+ * @param array<string, array<string, mixed>> $registry
+ * @return array<string, array<string, mixed>>
+ */
+function em_wp_template_sort_default_first(array $registry): array
+{
+    $default = [];
+    $others  = [];
+
+    foreach ($registry as $slug => $definition) {
+        if (em_wp_template_is_default((string) $slug, is_array($definition) ? $definition : [])) {
+            $default[$slug] = $definition;
+        } else {
+            $others[$slug] = $definition;
+        }
+    }
+
+    return $default + $others;
 }
 
 /**
@@ -480,6 +518,10 @@ function em_wp_template_rename(string $slug, string $label)
         return new WP_Error('em_wp_template_missing', __('Template introuvable.', 'em-wp'));
     }
 
+    if (em_wp_template_is_default($slug, $registry[$slug])) {
+        return new WP_Error('em_wp_template_default', __('Impossible de modifier le nom du template Default.', 'em-wp'));
+    }
+
     if ($label === '') {
         return new WP_Error('em_wp_template_empty_label', __('Le nom du template est requis.', 'em-wp'));
     }
@@ -524,6 +566,10 @@ function em_wp_template_delete(string $slug)
 
     if ($slug === em_wp_get_active_template_slug()) {
         return new WP_Error('em_wp_template_active', __('Impossible de supprimer le template actif sur le site.', 'em-wp'));
+    }
+
+    if (em_wp_template_is_default($slug, $registry[$slug])) {
+        return new WP_Error('em_wp_template_default', __('Impossible de supprimer le template Default.', 'em-wp'));
     }
 
     unset($registry[$slug]);

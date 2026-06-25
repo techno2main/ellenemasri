@@ -126,6 +126,9 @@ function em_wp_admin_render_rubriques_template_picker(): void
                             ['page' => em_wp_admin_template_entry_page_slug($slug)],
                             admin_url('admin.php')
                         );
+                        $preview_url = function_exists('em_wp_template_preview_url')
+                            ? em_wp_template_preview_url((string) $slug)
+                            : '';
                         ?>
                         <section
                             class="em-wp-hub__card"
@@ -136,17 +139,16 @@ function em_wp_admin_render_rubriques_template_picker(): void
                                 <div class="em-wp-hub__card-heading">
                                     <?php em_wp_admin_hub_render_card_title($card_title, 'dashicons-layout', null, $color); ?>
                                 </div>
-                                <?php em_wp_admin_hub_render_action_link(
-                                    $entry_url,
-                                    '',
-                                    'dashicons-admin-generic',
-                                    true,
-                                    sprintf(
-                                        /* translators: %s: template label */
-                                        __('Éditer %s', 'em-wp'),
-                                        $display_label
-                                    )
-                                ); ?>
+                                <div class="em-wp-hub__card-header-actions">
+                                    <a
+                                        class="em-wp-catalog-sommaire__edit em-wp-templates-admin__template-edit"
+                                        href="<?php echo esc_url($entry_url); ?>"
+                                        title="<?php echo esc_attr(sprintf(__('Éditer %s', 'em-wp'), $display_label)); ?>"
+                                        aria-label="<?php echo esc_attr(sprintf(__('Éditer %s', 'em-wp'), $display_label)); ?>"
+                                    >
+                                        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+                                    </a>
+                                </div>
                             </header>
                             <div class="em-wp-hub__card-desc em-wp-templates-sommaire__card-desc">
                                 <?php
@@ -182,6 +184,18 @@ function em_wp_admin_render_rubriques_template_picker(): void
                                     $can_manage
                                 );
                                 ?>
+                                <?php if ($preview_url !== '') { ?>
+                                    <button
+                                        type="button"
+                                        class="em-wp-catalog-sommaire__edit em-wp-templates-admin__template-preview"
+                                        data-em-wp-template-preview-url="<?php echo esc_url($preview_url); ?>"
+                                        data-em-wp-template-preview-label="<?php echo esc_attr($display_label); ?>"
+                                        title="<?php echo esc_attr(sprintf(__('Prévisualiser %s', 'em-wp'), $display_label)); ?>"
+                                        aria-label="<?php echo esc_attr(sprintf(__('Prévisualiser %s', 'em-wp'), $display_label)); ?>"
+                                    >
+                                        <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                                    </button>
+                                <?php } ?>
                             </div>
                         </section>
                     <?php } ?>
