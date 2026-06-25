@@ -73,6 +73,13 @@
         var dirty = formDirty && typeof formDirty.isDirty === 'function' && formDirty.isDirty();
         var message = quitMessage();
 
+        // Aucune modification en cours (bouton Enregistrer inactif) : on quitte
+        // directement, sans message de confirmation.
+        if (!dirty) {
+            window.location.href = buildQuitUrl(targetHref);
+            return;
+        }
+
         if (!confirmApi || typeof confirmApi.ask !== 'function') {
             if (dirty && formDirty && typeof formDirty.saveSilentlyThen === 'function') {
                 formDirty.saveSilentlyThen(function () {

@@ -240,6 +240,40 @@ function em_wp_admin_template_entry_start_editing(): void
 add_action('admin_init', 'em_wp_admin_template_entry_start_editing', 1);
 
 /**
+ * Définit le template à éditer depuis un lien rubrique de carte (em_wp_edit_template).
+ *
+ * Permet d'ouvrir directement la bonne rubrique du bon template depuis les blocs
+ * Templates, sans passer par la sélection préalable d'un template.
+ */
+function em_wp_admin_rubrique_set_editing_from_query(): void
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $requested = isset($_GET['em_wp_edit_template'])
+        ? em_wp_template_sanitize_slug((string) wp_unslash($_GET['em_wp_edit_template']))
+        : '';
+
+    if ($requested === '' || !em_wp_template_exists($requested)) {
+        return;
+    }
+
+    em_wp_set_editing_template_slug($requested);
+
+    // Redirige vers l'URL nettoyée (sans le paramètre) pour ne pas le rejouer.
+    em_wp_admin_safe_redirect(remove_query_arg('em_wp_edit_template'));
+}
+add_action('admin_init', 'em_wp_admin_rubrique_set_editing_from_query', 1);
+
+/**
  * Redirige l'ancien slug em-wp-template-choice vers le parent TEMPLATES.
  */
 function em_wp_admin_template_redirect_legacy_choice_slug(): void
@@ -399,6 +433,14 @@ function em_wp_admin_templates_enqueue(): void
             get_template_directory_uri() . '/assets/admin/js/template/list-delete-confirm.js',
             ['em-wp-admin-confirm-modal'],
             em_wp_admin_asset_version('assets/admin/js/template/list-delete-confirm.js'),
+            true
+        );
+
+        wp_enqueue_script(
+            'em-wp-template-preview-thumb',
+            get_template_directory_uri() . '/assets/admin/js/template/preview-thumb.js',
+            [],
+            em_wp_admin_asset_version('assets/admin/js/template/preview-thumb.js'),
             true
         );
 
