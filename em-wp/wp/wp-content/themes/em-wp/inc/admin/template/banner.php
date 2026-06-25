@@ -297,15 +297,8 @@ function em_wp_admin_template_render_banner(): void
                 <div class="em-wp-template-banner__actions">
                     <a
                         class="em-wp-template-banner__preview"
-                        href="<?php echo esc_url(add_query_arg(
-                            [
-                                'em_wp_preview_template' => $editing_slug,
-                                'em_wp_preview_nonce'    => wp_create_nonce(em_wp_template_preview_nonce_action()),
-                            ],
-                            home_url('/')
-                        )); ?>"
+                        href="<?php echo esc_url(em_wp_template_preview_url($editing_slug)); ?>"
                         target="_blank"
-                        rel="noopener"
                         title="<?php echo esc_attr(sprintf(
                             /* translators: %s: template label */
                             __('Prévisualiser le template %s dans un nouvel onglet', 'em-wp'),

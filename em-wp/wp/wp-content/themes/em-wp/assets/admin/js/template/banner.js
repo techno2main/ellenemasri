@@ -11,6 +11,20 @@
         var quitForm = document.getElementById('em-wp-template-banner-quit-form');
         var formDirty = window.EmWpModuleFormDirty;
 
+        // Aperçu : ouverture par script (window.open) pour que l'onglet d'aperçu
+        // puisse se refermer lui-même (window.close) via le bouton « Fermer l'aperçu ».
+        var previewLink = document.querySelector('.em-wp-template-banner__preview');
+        if (previewLink) {
+            previewLink.addEventListener('click', function (event) {
+                var url = previewLink.getAttribute('href');
+                if (!url) {
+                    return;
+                }
+                event.preventDefault();
+                window.open(url, '_blank');
+            });
+        }
+
         if (editingSelect) {
             var editingForm = editingSelect.closest('.em-wp-template-banner__form--editing');
             var previousEditingSlug = editingSelect.value;
@@ -115,6 +129,26 @@
         if (quitBtn) {
             quitBtn.addEventListener('click', function () {
                 var quitMode = config.quitMode || 'redirect';
+
+                function doQuit() {
+                    if (quitMode === 'quit_to_templates' && quitForm) {
+                        quitForm.submit();
+                        return;
+                    }
+
+                    if (config.quitUrl) {
+                        window.location.href = config.quitUrl;
+                    }
+                }
+
+                var dirty = formDirty && typeof formDirty.isDirty === 'function' && formDirty.isDirty();
+
+                // Aucune modification (bouton Enregistrer inactif) : on quitte sans confirmation.
+                if (!dirty) {
+                    doQuit();
+                    return;
+                }
+
                 var quitMessage = quitMode === 'quit_to_templates'
                     ? (i18n.quitExitConfirm || 'Quitter et retourner au sommaire Templates ?')
                     : (i18n.quitConfirm || 'Quitter et retourner au sommaire Rubriques ?');
@@ -128,14 +162,7 @@
                         return;
                     }
 
-                    if (quitMode === 'quit_to_templates' && quitForm) {
-                        quitForm.submit();
-                        return;
-                    }
-
-                    if (config.quitUrl) {
-                        window.location.href = config.quitUrl;
-                    }
+                    doQuit();
                 });
             });
         }
