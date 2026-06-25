@@ -280,7 +280,7 @@ function em_wp_cta_render_catalog_edit_layout(array $context, array $options): v
                 ?>
                 <div class="em-wp-admin-module__panels em-wp-admin-module--texture-preview" data-em-admin-texture-field="<?php echo esc_attr($option_name); ?>[texture_image]">
                     <?php
-                    em_wp_admin_render_module_items_section_title('cta');
+                    em_wp_admin_render_module_items_section_title('cta', '', $entry_label);
 
                     em_wp_admin_render_module_panel(
                         __('Image de fond (texture)', 'em-wp'),

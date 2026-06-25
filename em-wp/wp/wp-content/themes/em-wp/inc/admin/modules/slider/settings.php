@@ -500,7 +500,7 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
     $page_slug = (string) ($context['page_slug'] ?? 'em-wp-slider-mayami');
     ?>
     <div class="em-wp-slider-admin__setup">
-        <?php em_wp_catalog_render_edit_section_open(__('Catalogue', 'em-wp'), $slider_label); ?>
+        <?php em_wp_catalog_render_edit_section_open(__('Slider', 'em-wp'), $slider_label); ?>
 
         <form id="em-wp-slider-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($page_slug)); ?>">
             <input type="hidden" name="<?php echo esc_attr(em_wp_admin_rubrique_visibility_field_name('slider')); ?>" value="0">

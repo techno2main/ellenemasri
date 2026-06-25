@@ -291,7 +291,7 @@ function em_wp_release_render_catalog_edit_layout(array $context, array $options
                 ?>
                 <div class="em-wp-admin-module__panels">
                     <?php
-                    em_wp_admin_render_module_items_section_title('release');
+                    em_wp_admin_render_module_items_section_title('release', '', $entry_label);
 
                     em_wp_admin_render_module_panel(
                         __('Contenu', 'em-wp'),

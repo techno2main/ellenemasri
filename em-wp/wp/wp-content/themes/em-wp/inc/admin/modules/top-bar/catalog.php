@@ -286,7 +286,7 @@ function em_wp_top_bar_render_catalog_edit_layout(array $context, array $options
                 ?>
                 <div class="em-wp-top-bar-admin__panels em-wp-admin-module__panels">
                     <?php
-                    em_wp_admin_render_module_items_section_title('top-bar', '', __('Top-Bar', 'em-wp'));
+                    em_wp_admin_render_module_items_section_title('top-bar', '', $entry_label);
                     em_wp_top_bar_render_style_panel_bg_image($options, $option_name);
                     em_wp_top_bar_render_logo_panel($options, $option_name);
                     foreach (em_wp_top_bar_item_definitions() as $key => $title) {

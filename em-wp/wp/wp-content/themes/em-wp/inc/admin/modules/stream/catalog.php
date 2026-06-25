@@ -277,7 +277,7 @@ function em_wp_stream_render_catalog_edit_layout(array $context, array $options)
                 ?>
                 <div class="em-wp-stream-admin__panels em-wp-admin-module__panels">
                     <?php
-                    em_wp_admin_render_module_items_section_title('stream');
+                    em_wp_admin_render_module_items_section_title('stream', '', $entry_label);
 
                     em_wp_admin_render_module_panel(
                         __('Contenu', 'em-wp'),

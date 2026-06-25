@@ -247,13 +247,12 @@ function em_wp_admin_hub_render_count_badge(int $count): void
  */
 function em_wp_admin_hub_catalog_card_description_text(string $item_name, string $rubrique_name, string $module_slug = ''): string
 {
-    $item = mb_strtoupper(trim($item_name));
     $rubrique = mb_strtoupper(trim($rubrique_name));
 
     return (string) sprintf(
-        /* translators: 1: catalog item name, 2: rubrique name */
-        __('Liste des %1$s réutilisables dans la rubrique %2$s.', 'em-wp'),
-        $item,
+        /* translators: 1: literal "items", 2: rubrique name */
+        __('Liste des %1$s disponibles pour la rubrique %2$s.', 'em-wp'),
+        __('items', 'em-wp'),
         $rubrique
     );
 }
@@ -263,14 +262,14 @@ function em_wp_admin_hub_catalog_card_description_text(string $item_name, string
  */
 function em_wp_admin_hub_render_catalog_card_description(string $item_name, string $rubrique_name, string $module_slug = ''): void
 {
-    $item_html = '<strong class="em-wp-hub__card-desc-item">' . esc_html(mb_strtoupper(trim($item_name))) . '</strong>';
-    $rubrique = esc_html(mb_strtoupper(trim($rubrique_name)));
+    $item_html = '<strong class="em-wp-hub__card-desc-item">' . esc_html(__('items', 'em-wp')) . '</strong>';
+    $rubrique_html = '<strong class="em-wp-hub__card-desc-rubrique">' . esc_html(mb_strtoupper(trim($rubrique_name))) . '</strong>';
 
     $text = sprintf(
-        /* translators: 1: catalog item name, 2: rubrique name */
-        __('Liste des %1$s réutilisables dans la rubrique %2$s.', 'em-wp'),
+        /* translators: 1: literal "items", 2: rubrique name */
+        __('Liste des %1$s disponibles pour la rubrique %2$s.', 'em-wp'),
         $item_html,
-        $rubrique
+        $rubrique_html
     );
     ?>
     <p class="em-wp-hub__card-desc">
@@ -573,9 +572,19 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
                 }
                 ?>
                 <a
-                    class="em-wp-hub__catalog-entry-link"
+                    class="em-wp-hub__catalog-entry-link<?php echo !empty($entry['live']) ? ' is-live' : ''; ?>"
                     href="<?php echo esc_url((string) ($entry['url'] ?? '')); ?>"
                 ><?php echo esc_html((string) ($entry['label'] ?? '')); ?></a>
+                <?php if (!empty($entry['live'])) {
+                    $entry_live_color = (string) ($entry['live_color'] ?? '');
+                    ?>
+                    <span
+                        class="em-wp-hub__catalog-entry-live-dot"
+                        aria-hidden="true"
+                        title="<?php esc_attr_e('Actif sur le template live', 'em-wp'); ?>"
+                        <?php if ($entry_live_color !== '') { ?>style="--em-live-color: <?php echo esc_attr($entry_live_color); ?>;"<?php } ?>
+                    ></span>
+                <?php } ?>
             <?php } ?>
             <?php if ($show_see_all) { ?>
                 <span class="em-wp-hub__catalog-entry-sep" aria-hidden="true"></span>

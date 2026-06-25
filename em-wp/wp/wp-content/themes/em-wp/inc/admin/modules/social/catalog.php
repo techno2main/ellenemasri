@@ -268,7 +268,7 @@ function em_wp_social_render_catalog_edit_layout(array $context, array $options)
                 ?>
                 <div class="em-wp-admin-module__panels">
                     <?php
-                    em_wp_admin_render_module_items_section_title('social');
+                    em_wp_admin_render_module_items_section_title('social', '', $entry_label);
 
                     em_wp_admin_render_module_panel(
                         __('Contenu', 'em-wp'),
