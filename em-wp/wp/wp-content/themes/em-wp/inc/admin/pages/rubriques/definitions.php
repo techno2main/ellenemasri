@@ -565,7 +565,24 @@ function em_wp_admin_rubrique_skeleton_label(string $module_slug): string
         return (string) $static[$module_slug];
     }
 
-    $definition = em_wp_admin_site_rubrique_all_definitions()[$module_slug] ?? null;
+    // Modules catalogue personnalisés : lire le libellé du module directement.
+    // NE PAS passer par em_wp_admin_site_rubrique_all_definitions() ici : cette
+    // fonction reconstruit les rubriques custom en rappelant skeleton_label(),
+    // ce qui provoquerait une récursion infinie pour tout slug non statique.
+    if (function_exists('em_wp_custom_catalog_module')) {
+        $module = em_wp_custom_catalog_module($module_slug);
+
+        if (is_array($module)) {
+            $label = trim((string) ($module['label'] ?? ''));
+
+            if ($label !== '') {
+                return mb_strtoupper($label);
+            }
+        }
+    }
+
+    // Rubriques intégrées uniquement (pas de modules custom ici → pas de récursion).
+    $definition = em_wp_admin_site_rubrique_static_definitions()[$module_slug] ?? null;
 
     if (is_array($definition)) {
         return (string) ($definition['label'] ?? mb_strtoupper($module_slug));
