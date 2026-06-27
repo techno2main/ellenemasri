@@ -19,10 +19,11 @@ function em_wp_v4_render_items_section(string $type_slug): void
 {
     $items = em_wp_v4_get_items($type_slug);
     $open_item = sanitize_key((string) ($_GET['item'] ?? ''));
+    $n = em_wp_rubrique_type_nouns($type_slug);
     ?>
     <div class="em-v4-items">
         <?php if ($items === []) : ?>
-            <p class="description"><?php esc_html_e('Aucun footer pour le moment. Créez-en un ci-dessous.', 'em-wp'); ?></p>
+            <p class="description"><?php echo esc_html(sprintf(__('%1$s %2$s pour le moment. Crée ta première Section ci-dessous.', 'em-wp'), $n['none'], $n['singular'])); ?></p>
         <?php else : ?>
             <?php foreach ($items as $slug => $label) : ?>
                 <?php em_wp_v4_render_footer_item($type_slug, (string) $slug, (string) $label, $open_item === $slug); ?>
@@ -54,7 +55,7 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
             <button type="button" class="em-v4-item__edit" data-target="<?php echo esc_attr($target); ?>" title="<?php esc_attr_e('Renommer', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Renommer', 'em-wp'); ?>">
                 <span class="dashicons dashicons-edit"></span>
             </button>
-            <input type="text" class="em-v4-item__nameinput" data-target="<?php echo esc_attr($target); ?>" value="<?php echo esc_attr($label); ?>" hidden>
+            <input type="text" class="em-v4-item__nameinput" data-target="<?php echo esc_attr($target); ?>" data-type="<?php echo esc_attr($type_slug); ?>" data-item="<?php echo esc_attr($item_slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
             <?php if ($is_default) : ?>
                 <span class="em-v4-badge em-v4-badge--default"><?php esc_html_e('Default', 'em-wp'); ?></span>
             <?php endif; ?>
@@ -91,7 +92,35 @@ function em_wp_v4_render_rename_script(): void
     ?>
     <script>
     (function () {
+        var NONCE = '<?php echo esc_js(wp_create_nonce('em_wp_v4_rename_item')); ?>';
         function stop(e) { e.preventDefault(); e.stopPropagation(); }
+
+        function persist(input) {
+            var val = input.value.trim();
+            if (val === '' || val === input.getAttribute('data-original')) { return; }
+            var summary = input.closest('summary');
+            var name = summary ? summary.querySelector('.em-v4-item__name') : null;
+            var body = new URLSearchParams();
+            body.set('action', 'em_wp_v4_rename_item');
+            body.set('_ajax_nonce', NONCE);
+            body.set('type', input.getAttribute('data-type') || '');
+            body.set('item', input.getAttribute('data-item') || '');
+            body.set('label', val);
+            fetch(window.ajaxurl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (res && res.success && res.data && res.data.label) {
+                    input.value = res.data.label;
+                    input.setAttribute('data-original', res.data.label);
+                    if (name) { name.textContent = res.data.label; }
+                    var target = document.getElementById(input.getAttribute('data-target'));
+                    if (target) { target.value = res.data.label; }
+                }
+            }).catch(function () {});
+        }
 
         document.addEventListener('click', function (e) {
             var pen = e.target.closest('.em-v4-item__edit');
@@ -131,6 +160,7 @@ function em_wp_v4_render_rename_script(): void
             var summary = input.closest('summary');
             var name = summary.querySelector('.em-v4-item__name');
             if (name) { name.hidden = false; }
+            persist(input);
         }, true);
 
         document.addEventListener('mousedown', function (e) {
@@ -168,14 +198,17 @@ function em_wp_v4_render_duplicate_footer(string $type_slug, string $item_slug, 
  */
 function em_wp_v4_render_delete_footer(string $type_slug, string $item_slug, string $label): void
 {
+    $n = em_wp_rubrique_type_nouns($type_slug);
+    $title = sprintf(__('Supprimer %1$s %2$s', 'em-wp'), $n['def'], $n['singular']);
+    $ack = sprintf(__('Je confirme la suppression de %1$s %2$s.', 'em-wp'), $n['dem'], $n['singular']);
     ?>
     <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-v4-deleteform">
         <?php wp_nonce_field('em_wp_v4_delete_item'); ?>
         <input type="hidden" name="action" value="em_wp_v4_delete_item">
         <input type="hidden" name="type" value="<?php echo esc_attr($type_slug); ?>">
         <input type="hidden" name="item" value="<?php echo esc_attr($item_slug); ?>">
-        <button type="button" class="button-link-delete em-v4-delete" data-label="<?php echo esc_attr($label); ?>">
-            <span class="dashicons dashicons-trash"></span> <?php esc_html_e('Supprimer ce footer', 'em-wp'); ?>
+        <button type="button" class="button-link-delete em-v4-delete" data-label="<?php echo esc_attr($label); ?>" data-title="<?php echo esc_attr($title); ?>" data-ack="<?php echo esc_attr($ack); ?>">
+            <span class="dashicons dashicons-trash"></span> <?php echo esc_html(sprintf(__('Supprimer %1$s %2$s', 'em-wp'), $n['dem'], $n['singular'])); ?>
         </button>
     </form>
     <?php
@@ -202,9 +235,9 @@ function em_wp_v4_render_delete_script(): void
         e.preventDefault();
         var form = btn.closest('form');
         window.EmWpAdminConfirm.confirmDelete(function () { form.submit(); }, {
-            title: '<?php echo esc_js(__('Supprimer le footer', 'em-wp')); ?>',
+            title: btn.getAttribute('data-title') || '<?php echo esc_js(__('Supprimer', 'em-wp')); ?>',
             message: '<?php echo esc_js(__('Supprimer définitivement « ', 'em-wp')); ?>' + (btn.getAttribute('data-label') || '') + ' » ?',
-            acknowledgeLabel: '<?php echo esc_js(__('Je confirme la suppression de ce footer.', 'em-wp')); ?>',
+            acknowledgeLabel: btn.getAttribute('data-ack') || '<?php echo esc_js(__('Je confirme la suppression.', 'em-wp')); ?>',
             confirmLabel: '<?php echo esc_js(__('Supprimer définitivement', 'em-wp')); ?>'
         });
     });
@@ -217,12 +250,14 @@ function em_wp_v4_render_delete_script(): void
  */
 function em_wp_v4_render_create_footer_form(string $type_slug): void
 {
+    $n = em_wp_rubrique_type_nouns($type_slug);
+    $label_uc = (string) (em_wp_rubrique_type_get($type_slug)['label'] ?? mb_strtoupper($type_slug));
     ?>
     <details class="em-v4-collapse em-v4-create">
         <summary class="em-v4-collapse__summary">
             <span class="em-v4-collapse__chevron" aria-hidden="true"></span>
             <span class="dashicons dashicons-plus-alt2"></span>
-            <strong><?php esc_html_e('Ajouter un footer', 'em-wp'); ?></strong>
+            <strong><?php echo esc_html(sprintf(__('Ajouter %1$s %2$s', 'em-wp'), $n['indef'], $n['singular'])); ?></strong>
         </summary>
         <div class="em-v4-collapse__body">
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-v4-form">
@@ -230,11 +265,11 @@ function em_wp_v4_render_create_footer_form(string $type_slug): void
                 <input type="hidden" name="action" value="em_wp_v4_create_item">
                 <input type="hidden" name="type" value="<?php echo esc_attr($type_slug); ?>">
                 <p>
-                    <label><?php esc_html_e('Nom du footer', 'em-wp'); ?><br>
-                        <input type="text" name="item_label" class="regular-text" placeholder="<?php esc_attr_e('Ex. Footer Default', 'em-wp'); ?>" required>
+                    <label><?php echo esc_html(sprintf(__('Nom %1$s %2$s', 'em-wp'), $n['of'], $n['singular'])); ?><br>
+                        <input type="text" name="item_label" class="regular-text" placeholder="<?php echo esc_attr(sprintf(__('Ex. %s Default', 'em-wp'), $label_uc)); ?>" required>
                     </label>
                 </p>
-                <p><button type="submit" class="button"><?php esc_html_e('Créer le footer', 'em-wp'); ?></button></p>
+                <p><button type="submit" class="button"><?php echo esc_html(sprintf(__('Créer %1$s %2$s', 'em-wp'), $n['def'], $n['singular'])); ?></button></p>
             </form>
         </div>
     </details>

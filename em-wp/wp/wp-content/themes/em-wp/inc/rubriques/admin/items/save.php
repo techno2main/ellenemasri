@@ -39,11 +39,37 @@ function em_wp_v4_handle_create_item(): void
 add_action('admin_post_em_wp_v4_create_item', 'em_wp_v4_handle_create_item');
 
 /**
+ * Renomme un item à la volée (AJAX) : persiste immédiatement le nom saisi via le
+ * crayon, sans attendre l'enregistrement du builder.
+ */
+function em_wp_v4_handle_ajax_rename_item(): void
+{
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('forbidden', 403);
+    }
+
+    check_ajax_referer('em_wp_v4_rename_item');
+
+    $type = sanitize_key((string) ($_POST['type'] ?? ''));
+    $item = sanitize_key((string) ($_POST['item'] ?? ''));
+    $label = sanitize_text_field(wp_unslash((string) ($_POST['label'] ?? '')));
+    $label = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
+
+    if (!em_wp_rubrique_type_exists($type) || $item === '' || $label === '') {
+        wp_send_json_error('invalid', 400);
+    }
+
+    em_wp_v4_rename_item($type, $item, $label);
+    wp_send_json_success(['label' => $label]);
+}
+add_action('wp_ajax_em_wp_v4_rename_item', 'em_wp_v4_handle_ajax_rename_item');
+
+/**
  * Slug d'item unique pour un type (suffixe -2, -3… si déjà pris).
  */
 function em_wp_v4_unique_item_slug(string $type, string $base): string
 {
-    $base = $base !== '' ? $base : 'footer';
+    $base = $base !== '' ? $base : 'item';
     $items = em_wp_v4_get_items($type);
     $slug = $base;
     $i = 2;
