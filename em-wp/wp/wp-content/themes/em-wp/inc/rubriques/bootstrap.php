@@ -17,14 +17,20 @@ if (!defined('ABSPATH')) {
 // Cœur : types de champ.
 require_once __DIR__ . '/core/field-types/registry.php';
 require_once __DIR__ . '/core/field-types/builtin.php';
+require_once __DIR__ . '/core/field-types/platforms.php';
 require_once __DIR__ . '/core/field-types/decorative.php';
+require_once __DIR__ . '/core/field-types/media.php';
+require_once __DIR__ . '/core/field-types/text.php';
 
 // Cœur : schéma des champs (colonnes, normalisation), types, stockage.
+require_once __DIR__ . '/core/schema/layout.php';
 require_once __DIR__ . '/core/schema/fields.php';
+require_once __DIR__ . '/core/schema/style.php';
 require_once __DIR__ . '/core/registry.php';
 require_once __DIR__ . '/core/storage.php';
 
 // Moteur de rendu (item par lignes/colonnes).
+require_once __DIR__ . '/renderer/fields.php';
 require_once __DIR__ . '/renderer/item.php';
 require_once __DIR__ . '/renderer/engine.php';
 
@@ -39,6 +45,7 @@ if (is_admin()) {
     require_once __DIR__ . '/admin/assets.php';
     require_once __DIR__ . '/admin/builder/preview.php';
     require_once __DIR__ . '/admin/builder/save.php';
+    require_once __DIR__ . '/admin/builder/chip-media.php';
     require_once __DIR__ . '/admin/builder/chip.php';
     require_once __DIR__ . '/admin/builder/appearance.php';
     require_once __DIR__ . '/admin/builder/structure.php';

@@ -73,13 +73,51 @@ function em_wp_field_type_normalize(string $key, array $definition): array
         $sanitize = 'sanitize_text_field';
     }
 
+    $icon = (string) ($definition['icon'] ?? '');
+
     return [
         'label'        => (string) ($definition['label'] ?? $key),
         'default'      => $definition['default'] ?? '',
         'sanitize'     => $sanitize,
+        'icon'         => $icon !== '' ? $icon : em_wp_field_type_default_icon($key),
         'render_admin' => is_callable($definition['render_admin'] ?? null) ? $definition['render_admin'] : null,
         'render_front' => is_callable($definition['render_front'] ?? null) ? $definition['render_front'] : null,
     ];
+}
+
+/**
+ * Icône Dashicon par défaut associée à un type de champ (pour la palette/builder).
+ */
+function em_wp_field_type_default_icon(string $key): string
+{
+    $map = [
+        'text'           => 'dashicons-editor-textcolor',
+        'textarea'       => 'dashicons-editor-paragraph',
+        'url'            => 'dashicons-admin-links',
+        'email'          => 'dashicons-email',
+        'image'          => 'dashicons-format-image',
+        'text_image'     => 'dashicons-align-pull-left',
+        'text_text'      => 'dashicons-editor-paragraph',
+        'icon'           => 'dashicons-share-alt',
+        'platform_block' => 'dashicons-album',
+        'video_url'      => 'dashicons-video-alt3',
+        'video_file'     => 'dashicons-format-video',
+        'audio_file'     => 'dashicons-format-audio',
+        'audio_url'      => 'dashicons-controls-volumeon',
+        'network_block'  => 'dashicons-networking',
+        'slider'         => 'dashicons-images-alt2',
+        'sep_line'       => 'dashicons-minus',
+        'sep_blank'      => 'dashicons-editor-expand',
+        'arrow_up'       => 'dashicons-arrow-up-alt',
+        'arrow_down'     => 'dashicons-arrow-down-alt',
+        'color'          => 'dashicons-art',
+        'toggle'         => 'dashicons-visibility',
+        'number'         => 'dashicons-editor-ol',
+        'select'         => 'dashicons-list-view',
+        'repeater'       => 'dashicons-controls-repeat',
+    ];
+
+    return $map[$key] ?? 'dashicons-marker';
 }
 
 /**
