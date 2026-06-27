@@ -1,0 +1,210 @@
+<?php
+/**
+ * Builder de STRUCTURE d'un item (admin-post) — V4.
+ *
+ * Enregistre en un seul appel la structure complète d'un footer composée côté
+ * client : champs (type + libellé) positionnés en lignes × colonnes + nom du
+ * footer (forcé en MAJUSCULES). Les couleurs globales (fond/texte) ne sont pas
+ * dans la grille : elles sont conservées telles quelles. `manage_options`.
+ *
+ * @package em-wp
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * URL retour vers la page V4 (avec ancre type/item).
+ *
+ * @param array<string, string> $args
+ */
+function em_wp_v4_overview_redirect_url(array $args = []): string
+{
+    return add_query_arg($args, admin_url('admin.php?page=em-wp-v4-overview'));
+}
+
+/**
+ * Vérifie capacité + nonce.
+ */
+function em_wp_v4_items_guard(string $nonce_action): void
+{
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('Accès refusé.', 'em-wp'));
+    }
+
+    check_admin_referer($nonce_action);
+}
+
+/**
+ * Redirection retour.
+ *
+ * @param array<string, string> $args
+ */
+function em_wp_v4_builder_redirect(array $args): void
+{
+    wp_safe_redirect(em_wp_v4_overview_redirect_url($args));
+    exit;
+}
+
+/**
+ * Génère une clé de champ unique.
+ *
+ * @param array<int, array<string, mixed>> $fields
+ */
+function em_wp_v4_unique_field_key(array $fields, string $label): string
+{
+    $base = sanitize_key(str_replace('-', '_', sanitize_title($label)));
+    $base = $base !== '' ? $base : 'champ';
+
+    $existing = array_column($fields, 'key');
+    $key = $base;
+    $i = 2;
+
+    while (in_array($key, $existing, true)) {
+        $key = $base . '_' . $i;
+        $i++;
+    }
+
+    return $key;
+}
+
+/**
+ * Enregistre un item complet : lay-out (colonnes + alignement) + structure
+ * (champs positionnés) + contenu (valeurs) + couleurs globales + nom (forcé
+ * MAJUSCULES), en un seul appel.
+ */
+function em_wp_v4_handle_save_item(): void
+{
+    em_wp_v4_items_guard('em_wp_v4_save_item');
+
+    $type = sanitize_key((string) ($_POST['type'] ?? ''));
+    $item = sanitize_key((string) ($_POST['item'] ?? ''));
+
+    if (!em_wp_rubrique_type_exists($type) || $item === '') {
+        em_wp_v4_builder_redirect(['v4_error' => 'save']);
+    }
+
+    $payload = em_wp_v4_decode_payload();
+    $columns = (int) ($payload['columns'] ?? 0);
+    $clamp = $columns > 0 ? $columns : em_wp_rubrique_max_columns();
+
+    [$global] = em_wp_rubrique_split_global_fields(em_wp_v4_get_item_fields($type, $item));
+
+    $current = [];
+    foreach (em_wp_v4_get_item_fields($type, $item) as $field) {
+        $current[(string) $field['key']] = $field;
+    }
+
+    $fields = $global;
+    $raw_content = [];
+
+    foreach (is_array($payload['fields'] ?? null) ? $payload['fields'] : [] as $entry) {
+        $built = em_wp_v4_build_structure_field((array) $entry, $current, $fields, $clamp);
+
+        if ($built === null) {
+            continue;
+        }
+
+        $fields[] = $built;
+        $raw_content[$built['key']] = is_array($entry) ? ($entry['value'] ?? '') : '';
+    }
+
+    $layout = em_wp_rubrique_normalize_layout(
+        ['columns' => $columns, 'align' => is_array($payload['align'] ?? null) ? $payload['align'] : []],
+        $fields
+    );
+
+    $posted = isset($_POST['fields']) && is_array($_POST['fields']) ? wp_unslash($_POST['fields']) : [];
+    $content = em_wp_rubrique_sanitize_content($fields, array_merge($posted, $raw_content));
+
+    $data = em_wp_v4_get_item($type, $item);
+    $data['fields'] = $fields;
+    $data['layout'] = $layout;
+    $data['content'] = $content;
+    em_wp_v4_save_item($type, $item, $data);
+
+    $label = sanitize_text_field(wp_unslash((string) ($_POST['item_label'] ?? '')));
+    em_wp_v4_rename_item($type, $item, function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label));
+
+    em_wp_v4_builder_redirect(['v4_updated' => 'saved', 'type' => $type, 'item' => $item]);
+}
+add_action('admin_post_em_wp_v4_save_item', 'em_wp_v4_handle_save_item');
+
+/**
+ * Décode le payload JSON du builder : { columns, align, fields }.
+ *
+ * @return array<string, mixed>
+ */
+function em_wp_v4_decode_payload(): array
+{
+    $json = (string) wp_unslash($_POST['structure'] ?? '');
+    $decoded = json_decode($json, true);
+
+    return is_array($decoded) ? $decoded : [];
+}
+
+/**
+ * Construit un champ de contenu depuis une entrée du builder.
+ *
+ * @param array<string, mixed> $entry
+ * @param array<string, array<string, mixed>> $current
+ * @param array<int, array<string, mixed>> $fields déjà placés (pour clé unique)
+ * @return array<string, mixed>|null
+ */
+function em_wp_v4_build_structure_field(array $entry, array $current, array $fields, int $columns): ?array
+{
+    $ftype = sanitize_key((string) ($entry['type'] ?? ''));
+    $label = sanitize_text_field((string) ($entry['label'] ?? ''));
+    $is_decor = em_wp_rubrique_field_is_decorative($ftype);
+
+    // Les couleurs (fond/texte) sont globales : jamais insérées dans la grille.
+    // Les champs décoratifs (séparateurs, flèches) sont admis sans libellé.
+    if ((!$is_decor && $label === '') || !em_wp_field_type_exists($ftype) || $ftype === 'color') {
+        return null;
+    }
+
+    $row = max(1, (int) ($entry['row'] ?? 1));
+    $col = em_wp_rubrique_valid_col((int) ($entry['col'] ?? 1), $columns);
+    $key = sanitize_key((string) ($entry['key'] ?? ''));
+
+    if ($key !== '' && isset($current[$key]) && (string) ($current[$key]['type'] ?? '') === $ftype) {
+        $field = $current[$key];
+        $field['label'] = $label;
+    } else {
+        $field = [
+            'key'     => em_wp_v4_unique_field_key($fields, $label !== '' ? $label : $ftype),
+            'type'    => $ftype,
+            'label'   => $label,
+            'default' => em_wp_field_type_default($ftype),
+            'options' => [],
+        ];
+    }
+
+    $field['row'] = $row;
+    $field['col'] = $col;
+    $field['hidden'] = !empty($entry['hidden']);
+
+    return $field;
+}
+
+/**
+ * Renomme un item (liste + item) si un libellé non vide est fourni.
+ */
+function em_wp_v4_rename_item(string $type, string $item, string $label): void
+{
+    if ($label === '') {
+        return;
+    }
+
+    $items = em_wp_v4_get_items($type);
+
+    if (isset($items[$item])) {
+        $items[$item] = $label;
+        em_wp_v4_save_items($type, $items);
+    }
+
+    $data = em_wp_v4_get_item($type, $item);
+    $data['label'] = $label;
+    em_wp_v4_save_item($type, $item, $data);
+}
