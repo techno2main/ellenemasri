@@ -86,8 +86,7 @@ function em_wp_v4_handle_save_item(): void
     }
 
     $payload = em_wp_v4_decode_payload();
-    $columns = (int) ($payload['columns'] ?? 0);
-    $clamp = $columns > 0 ? $columns : em_wp_rubrique_max_columns();
+    $rows_raw = is_array($payload['rows'] ?? null) ? array_values($payload['rows']) : [];
 
     [$global] = em_wp_rubrique_split_global_fields(em_wp_v4_get_item_fields($type, $item));
 
@@ -100,6 +99,8 @@ function em_wp_v4_handle_save_item(): void
     $raw_content = [];
 
     foreach (is_array($payload['fields'] ?? null) ? $payload['fields'] : [] as $entry) {
+        $erow = max(1, (int) (is_array($entry) ? ($entry['row'] ?? 1) : 1));
+        $clamp = em_wp_v4_payload_row_columns($rows_raw, $erow);
         $built = em_wp_v4_build_structure_field((array) $entry, $current, $fields, $clamp);
 
         if ($built === null) {
@@ -110,10 +111,7 @@ function em_wp_v4_handle_save_item(): void
         $raw_content[$built['key']] = is_array($entry) ? ($entry['value'] ?? '') : '';
     }
 
-    $layout = em_wp_rubrique_normalize_layout(
-        ['columns' => $columns, 'align' => is_array($payload['align'] ?? null) ? $payload['align'] : []],
-        $fields
-    );
+    $layout = em_wp_rubrique_normalize_layout(['rows' => $rows_raw], $fields);
 
     $posted = isset($_POST['fields']) && is_array($_POST['fields']) ? wp_unslash($_POST['fields']) : [];
     $content = em_wp_rubrique_sanitize_content($fields, array_merge($posted, $raw_content));
@@ -132,7 +130,7 @@ function em_wp_v4_handle_save_item(): void
 add_action('admin_post_em_wp_v4_save_item', 'em_wp_v4_handle_save_item');
 
 /**
- * Décode le payload JSON du builder : { columns, align, fields }.
+ * Décode le payload JSON du builder : { rows:[{columns,align}], fields }.
  *
  * @return array<string, mixed>
  */
@@ -142,6 +140,19 @@ function em_wp_v4_decode_payload(): array
     $decoded = json_decode($json, true);
 
     return is_array($decoded) ? $decoded : [];
+}
+
+/**
+ * Nombre de colonnes d'une ligne dans un payload brut (repli = max).
+ *
+ * @param array<int, mixed> $rows_raw
+ */
+function em_wp_v4_payload_row_columns(array $rows_raw, int $row): int
+{
+    $entry = $rows_raw[$row - 1] ?? null;
+    $cols = is_array($entry) ? (int) ($entry['columns'] ?? 0) : 0;
+
+    return $cols > 0 ? min(em_wp_rubrique_max_columns(), max(1, $cols)) : em_wp_rubrique_max_columns();
 }
 
 /**
@@ -156,11 +167,11 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
 {
     $ftype = sanitize_key((string) ($entry['type'] ?? ''));
     $label = sanitize_text_field((string) ($entry['label'] ?? ''));
-    $is_decor = em_wp_rubrique_field_is_decorative($ftype);
+    $label_optional = em_wp_rubrique_field_label_optional($ftype);
 
     // Les couleurs (fond/texte) sont globales : jamais insérées dans la grille.
-    // Les champs décoratifs (séparateurs, flèches) sont admis sans libellé.
-    if ((!$is_decor && $label === '') || !em_wp_field_type_exists($ftype) || $ftype === 'color') {
+    // Décoratifs (séparateurs/flèches) et Bloc Plateforme sont admis sans libellé.
+    if ((!$label_optional && $label === '') || !em_wp_field_type_exists($ftype) || $ftype === 'color') {
         return null;
     }
 
@@ -184,6 +195,12 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
     $field['row'] = $row;
     $field['col'] = $col;
     $field['hidden'] = !empty($entry['hidden']);
+
+    // Style de texte propre au champ (taille/typo/couleur) conservé dans options.
+    $field['options'] = is_array($field['options'] ?? null) ? $field['options'] : [];
+    if (em_wp_rubrique_field_supports_text_style($ftype)) {
+        $field['options']['style'] = em_wp_rubrique_normalize_text_style((array) ($entry['style'] ?? []));
+    }
 
     return $field;
 }
