@@ -19,5 +19,6 @@ require_once __DIR__ . '/shared/social-platforms.php';
 require_once __DIR__ . '/shared/stream-embed.php';
 require_once __DIR__ . '/shared/stream-platform-items.php';
 require_once __DIR__ . '/shared/stream-platforms.php';
+require_once __DIR__ . '/rubriques/bootstrap.php';
 require_once __DIR__ . '/admin/bootstrap.php';
 require_once __DIR__ . '/front/bootstrap.php';
