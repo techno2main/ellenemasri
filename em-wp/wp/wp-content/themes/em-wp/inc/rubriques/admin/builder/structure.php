@@ -31,7 +31,8 @@ function em_wp_v4_render_item_builder(string $type, string $item): void
     [$global_fields, $content_fields] = em_wp_rubrique_split_global_fields($data['fields']);
     $content = em_wp_v4_get_item_content($type, $item);
     $layout = $data['layout'];
-    $row_count = em_wp_rubrique_fields_row_count($content_fields);
+    // Aucune ligne tant qu'il n'y a aucun champ de contenu (item vierge).
+    $row_count = $content_fields === [] ? 0 : em_wp_rubrique_layout_row_count($layout);
     $form_id = em_wp_v4_item_form_id($type, $item);
 
     $grid = [];
@@ -46,8 +47,16 @@ function em_wp_v4_render_item_builder(string $type, string $item): void
                 <button type="submit" form="<?php echo esc_attr($form_id); ?>" class="button button-primary em-v4-savebar__btn"><?php esc_html_e('Enregistrer', 'em-wp'); ?></button>
             </div>
             <div class="em-v4-preview">
-                <div class="em-v4-preview__label"><?php esc_html_e('Aperçu (temps réel)', 'em-wp'); ?></div>
-                <div class="em-v4-livepreview"></div>
+                <div class="em-v4-preview__head">
+                    <button type="button" class="em-v4-preview__toggle" aria-pressed="false" title="<?php esc_attr_e('Afficher / masquer l’aperçu', 'em-wp'); ?>">
+                        <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
+                        <span class="em-v4-preview__label"><?php echo esc_html(sprintf(__('Aperçu (%s)', 'em-wp'), $data['label'])); ?></span>
+                    </button>
+                    <button type="button" class="em-v4-preview__popout" title="<?php esc_attr_e('Ouvrir l’aperçu dans une nouvelle fenêtre', 'em-wp'); ?>">
+                        <span class="dashicons dashicons-external" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <div class="em-v4-livepreview" hidden></div>
             </div>
         </div>
 
@@ -74,17 +83,15 @@ function em_wp_v4_render_item_builder(string $type, string $item): void
             <?php endif; ?>
         </form>
 
-        <details class="em-v4-collapse em-v4-builder__section" open>
+        <details class="em-v4-collapse em-v4-builder__section">
             <summary class="em-v4-collapse__summary">
                 <span class="em-v4-collapse__chevron"></span>
                 <strong><?php esc_html_e('Contenu', 'em-wp'); ?></strong>
             </summary>
             <div class="em-v4-collapse__body">
-                <?php em_wp_v4_render_layout_bar($layout); ?>
-
                 <div class="em-v4-rows">
                     <?php for ($row = 1; $row <= $row_count; $row++) : ?>
-                        <?php em_wp_v4_render_row((int) $layout['columns'], $grid[$row] ?? [], $content); ?>
+                        <?php em_wp_v4_render_row($row, $layout, $grid[$row] ?? [], $content); ?>
                     <?php endfor; ?>
                 </div>
 
@@ -105,26 +112,29 @@ function em_wp_v4_render_item_builder(string $type, string $item): void
 }
 
 /**
- * Barre lay-out : nombre de colonnes + alignement par colonne.
+ * En-tête de ligne : nombre de colonnes + alignement de chaque colonne.
  *
- * @param array{columns:int, align:array<int,string>} $layout
+ * Placé dans le résumé de la ligne ; les interactions n'ouvrent/ferment pas la
+ * ligne (géré côté JS).
+ *
+ * @param array<string, mixed> $layout
  */
-function em_wp_v4_render_layout_bar(array $layout): void
+function em_wp_v4_render_row_layout(int $row, array $layout): void
 {
-    $columns = (int) $layout['columns'];
+    $columns = em_wp_rubrique_layout_columns_for($layout, $row);
     ?>
-    <div class="em-v4-layout">
-        <label class="em-v4-layout__count">
+    <div class="em-v4-row__layout">
+        <label class="em-v4-rowcols-label">
             <span><?php esc_html_e('Colonnes', 'em-wp'); ?></span>
-            <select class="em-v4-colcount">
+            <select class="em-v4-rowcols">
                 <?php for ($n = 1; $n <= em_wp_rubrique_max_columns(); $n++) : ?>
                     <option value="<?php echo (int) $n; ?>" <?php selected($columns, $n); ?>><?php echo (int) $n; ?></option>
                 <?php endfor; ?>
             </select>
         </label>
-        <div class="em-v4-aligns">
+        <div class="em-v4-row__aligns">
             <?php for ($i = 1; $i <= $columns; $i++) : ?>
-                <?php em_wp_v4_render_align_select($i, (string) ($layout['align'][$i] ?? 'left')); ?>
+                <?php em_wp_v4_render_align_select($i, em_wp_rubrique_layout_align_for($layout, $row, $i)); ?>
             <?php endfor; ?>
         </div>
     </div>
@@ -162,18 +172,23 @@ function em_wp_v4_render_align_select(int $index, string $value): void
 }
 
 /**
- * Une ligne avec N colonnes.
+ * Une ligne : en-tête (colonnes + alignement) + N colonnes.
  *
+ * @param array<string, mixed> $layout
  * @param array<int, array<int, array<string,mixed>>> $row_grid
  * @param array<string, mixed> $content
  */
-function em_wp_v4_render_row(int $columns, array $row_grid, array $content = []): void
+function em_wp_v4_render_row(int $row, array $layout, array $row_grid, array $content = []): void
 {
+    $columns = em_wp_rubrique_layout_columns_for($layout, $row);
     ?>
     <details class="em-v4-row">
         <summary class="em-v4-row__summary">
+            <span class="em-v4-row__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour déplacer la ligne', 'em-wp'); ?>" aria-hidden="true"></span>
             <span class="em-v4-collapse__chevron"></span>
             <span class="em-v4-row__label" aria-hidden="true"></span>
+            <?php em_wp_v4_render_row_layout($row, $layout); ?>
+            <button type="button" class="em-v4-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-wp'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
             <button type="button" class="em-v4-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-wp'); ?>">&times;</button>
         </summary>
         <div class="em-v4-row__cols">
@@ -236,16 +251,20 @@ function em_wp_v4_render_templates(): void
 {
     ?>
     <template class="em-v4-row-template">
-        <details class="em-v4-row">
+        <details class="em-v4-row" open>
             <summary class="em-v4-row__summary">
+                <span class="em-v4-row__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour déplacer la ligne', 'em-wp'); ?>" aria-hidden="true"></span>
                 <span class="em-v4-collapse__chevron"></span>
                 <span class="em-v4-row__label" aria-hidden="true"></span>
+                <?php em_wp_v4_render_row_layout(1, ['rows' => [['columns' => 1, 'align' => [1 => 'center']]]]); ?>
+                <button type="button" class="em-v4-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-wp'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
                 <button type="button" class="em-v4-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-wp'); ?>">&times;</button>
             </summary>
             <div class="em-v4-row__cols"></div>
         </details>
     </template>
     <template class="em-v4-cell-template"><?php em_wp_v4_render_col(1, []); ?></template>
+    <template class="em-v4-align-template"><?php em_wp_v4_render_align_select(1, 'center'); ?></template>
     <?php
 }
 

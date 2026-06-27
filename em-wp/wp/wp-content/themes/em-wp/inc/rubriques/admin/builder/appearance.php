@@ -192,7 +192,7 @@ function em_wp_v4_render_appearance_preview(): void
         <span class="em-v4-appearance__preview-label"><?php esc_html_e('Aperçu', 'em-wp'); ?></span>
         <span class="em-v4-appearance__preview-box">
             <span class="ap-text"><?php esc_html_e('Texte', 'em-wp'); ?></span>
-            <a class="ap-link" href="#" onclick="return false;" title="<?php esc_attr_e('Cliquez pour tester l’état visité', 'em-wp'); ?>"><?php esc_html_e('lien', 'em-wp'); ?></a>
+            <a class="ap-link" href="#" onclick="return false;" title="<?php esc_attr_e('Clique pour tester l’état visité', 'em-wp'); ?>"><?php esc_html_e('lien', 'em-wp'); ?></a>
         </span>
     </span>
     <?php

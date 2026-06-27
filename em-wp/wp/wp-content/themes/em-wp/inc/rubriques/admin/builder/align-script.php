@@ -2,8 +2,8 @@
 /**
  * Logique client des boutons d'alignement de colonne (V4) — EmWpV4Align.
  *
- * mark(group, value) : applique la valeur à l'input caché « em-v4-align__sel »
- * et bascule le bouton actif (façon barre d'alignement Word).
+ * Replié, le groupe n'affiche que l'alignement choisi. Un clic l'ouvre (4
+ * options) ; le clic suivant choisit et referme.
  *
  * @package em-wp
  */
@@ -23,7 +23,22 @@ window.EmWpV4Align = (function () {
         });
     }
 
-    return { mark: mark };
+    // Ouvre le groupe (replié) ou choisit puis referme. true si une valeur a changé.
+    function toggle(group, btn) {
+        if (!group) { return false; }
+        if (!group.classList.contains('is-open')) { group.classList.add('is-open'); return false; }
+        mark(group, btn.getAttribute('data-align'));
+        group.classList.remove('is-open');
+        return true;
+    }
+
+    function closeAll(scope, except) {
+        (scope || document).querySelectorAll('.em-v4-align__group.is-open').forEach(function (g) {
+            if (g !== except) { g.classList.remove('is-open'); }
+        });
+    }
+
+    return { mark: mark, toggle: toggle, closeAll: closeAll };
 })();
 </script>
 <?php
