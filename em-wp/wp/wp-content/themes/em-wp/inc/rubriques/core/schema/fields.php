@@ -15,29 +15,6 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Nombre maximal de colonnes d'un lay-out.
- */
-function em_wp_rubrique_max_columns(): int
-{
-    return 4;
-}
-
-/**
- * Alignements de contenu possibles d'une colonne.
- *
- * @return array<string, string>
- */
-function em_wp_rubrique_alignments(): array
-{
-    return [
-        'left'    => __('Aligné à gauche', 'em-wp'),
-        'center'  => __('Centré', 'em-wp'),
-        'right'   => __('Aligné à droite', 'em-wp'),
-        'justify' => __('Justifié', 'em-wp'),
-    ];
-}
-
-/**
  * Types de champ décoratifs : ni libellé ni valeur (séparateurs, flèches).
  *
  * @return array<int, string>
@@ -93,100 +70,6 @@ function em_wp_rubrique_font_stack(string $key): string
     $choices = em_wp_rubrique_font_choices();
 
     return isset($choices[$key]) ? $choices[$key]['stack'] : '';
-}
-
-/**
- * Alignement valide (repli « left »).
- */
-function em_wp_rubrique_valid_align(string $align): string
-{
-    return isset(em_wp_rubrique_alignments()[$align]) ? $align : 'left';
-}
-
-/**
- * Alignement par défaut d'une colonne selon sa position.
- */
-function em_wp_rubrique_default_align(int $index, int $columns): string
-{
-    if ($columns <= 1) {
-        return 'center';
-    }
-
-    if ($index <= 1) {
-        return 'left';
-    }
-
-    return $index >= $columns ? 'right' : 'center';
-}
-
-/**
- * Convertit une colonne en index entier (migre l'ancien left/center/right).
- *
- * @param mixed $col
- */
-function em_wp_rubrique_col_to_int($col): int
-{
-    if (is_string($col)) {
-        $map = ['left' => 1, 'center' => 2, 'right' => 3];
-
-        return $map[$col] ?? max(1, (int) $col);
-    }
-
-    return max(1, (int) $col);
-}
-
-/**
- * Index de colonne valide (1..columns).
- */
-function em_wp_rubrique_valid_col(int $col, int $columns): int
-{
-    $columns = max(1, $columns);
-
-    return $col < 1 ? 1 : ($col > $columns ? $columns : $col);
-}
-
-/**
- * Nombre de colonnes utilisées par une liste de champs (1..max).
- *
- * @param array<int, array<string, mixed>> $fields
- */
-function em_wp_rubrique_fields_columns(array $fields): int
-{
-    $max = 1;
-
-    foreach ($fields as $field) {
-        $max = max($max, (int) ($field['col'] ?? 1));
-    }
-
-    return min(em_wp_rubrique_max_columns(), max(1, $max));
-}
-
-/**
- * Normalise un lay-out : nombre de colonnes + alignement par colonne.
- *
- * @param mixed                            $raw
- * @param array<int, array<string, mixed>> $fields champs (pour déduire le nombre)
- * @return array{columns:int, align:array<int,string>}
- */
-function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
-{
-    $raw = is_array($raw) ? $raw : [];
-    $columns = (int) ($raw['columns'] ?? 0);
-
-    if ($columns < 1) {
-        $columns = em_wp_rubrique_fields_columns($fields);
-    }
-
-    $columns = min(em_wp_rubrique_max_columns(), max(1, $columns));
-    $align_raw = is_array($raw['align'] ?? null) ? $raw['align'] : [];
-    $align = [];
-
-    for ($i = 1; $i <= $columns; $i++) {
-        $value = isset($align_raw[$i]) ? (string) $align_raw[$i] : '';
-        $align[$i] = $value !== '' ? em_wp_rubrique_valid_align($value) : em_wp_rubrique_default_align($i, $columns);
-    }
-
-    return ['columns' => $columns, 'align' => $align];
 }
 
 /**
@@ -313,20 +196,4 @@ function em_wp_rubrique_split_global_fields(array $fields): array
     }
 
     return [$global, $content];
-}
-
-/**
- * Nombre de lignes utilisées par une liste de champs (>= 1).
- *
- * @param array<int, array<string, mixed>> $fields
- */
-function em_wp_rubrique_fields_row_count(array $fields): int
-{
-    $max = 1;
-
-    foreach ($fields as $field) {
-        $max = max($max, (int) ($field['row'] ?? 1));
-    }
-
-    return $max;
 }
