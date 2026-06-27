@@ -80,10 +80,12 @@ function em_wp_v4_get_item(string $type_slug, string $item_slug): array
 
     $fields = em_wp_rubrique_normalize_fields(is_array($data['fields'] ?? null) ? $data['fields'] : []);
 
-    // Repli : un footer sans structure démarre sur la structure de départ du type.
+    // Repli : un item sans structure démarre VIDE côté contenu (aucune ligne,
+    // aucun champ) ; seuls les champs d'apparence (globaux) du type sont conservés.
     if ($fields === []) {
-        $fields = em_wp_rubrique_type_starter_fields($type_slug);
-        $layout = em_wp_rubrique_type_starter_layout($type_slug);
+        [$starter_global] = em_wp_rubrique_split_global_fields(em_wp_rubrique_type_starter_fields($type_slug));
+        $fields = $starter_global;
+        $layout = em_wp_rubrique_normalize_layout([], $starter_global);
     } else {
         $fields = em_wp_v4_ensure_global_fields($type_slug, $fields);
         $layout = em_wp_rubrique_normalize_layout($data['layout'] ?? [], $fields);
