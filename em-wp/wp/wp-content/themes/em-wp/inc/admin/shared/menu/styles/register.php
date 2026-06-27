@@ -22,6 +22,7 @@ function em_wp_admin_menu_chrome_styles(): void
         require __DIR__ . '/dashboard-arrow.php';
         require __DIR__ . '/accordion.php';
         require __DIR__ . '/separators.php';
+        require __DIR__ . '/rubriques-submenu.php';
         ?>
     </style>
     <?php
