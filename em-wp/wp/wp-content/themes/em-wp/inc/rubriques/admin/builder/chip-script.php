@@ -76,6 +76,10 @@ window.EmWpV4Chip = (function () {
         return d.innerHTML;
     }
 
+    function isTextFamily(type) {
+        return ['text', 'textarea', 'text_image', 'text_text'].indexOf(type) !== -1;
+    }
+
     function toggleHtml() {
         return '<button type="button" class="em-v4-chip__toggle" aria-pressed="false" title="' + esc(TXT.hide) + '">' +
             '<span class="dashicons dashicons-visibility" aria-hidden="true"></span></button>';
@@ -132,19 +136,14 @@ window.EmWpV4Chip = (function () {
 
     function imageHtml() {
         return '<span class="em-v4-chip__media" data-url="">' +
-            '<span class="em-v4-chip__focal" title="' + esc(TXT.focal) + '">' +
             '<img class="em-v4-chip__thumb" alt="" hidden>' +
-            '<span class="em-v4-chip__focaldot" style="left:50%;top:50%" hidden></span></span>' +
             '<button type="button" class="button button-small em-v4-chip__pick">' + esc(TXT.image) + '</button>' +
             '<input type="hidden" class="em-v4-chip__value">' +
-            '<input type="hidden" class="em-v4-chip__fx" value="50">' +
-            '<input type="hidden" class="em-v4-chip__fy" value="50">' +
             '</span>' +
             '<span class="em-v4-chip__size">' +
             '<label class="em-v4-chip__sizelabel">' + esc(TXT.sizeW) +
             '<input type="range" class="em-v4-chip__w" min="0" max="600" step="5" value="0" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+\'px\':\'auto\')">' +
-            '<output class="em-v4-chip__wout">auto</output></label>' +
-            '<input type="number" min="0" class="em-v4-chip__h" placeholder="' + esc(TXT.sizeH) + '"></span>' +
+            '<output class="em-v4-chip__wout">auto</output></label></span>' +
             '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
     }
 
@@ -170,12 +169,13 @@ window.EmWpV4Chip = (function () {
         }
         if (type === 'text_image') {
             return '<input type="text" class="em-v4-chip__titext" placeholder="' + esc(TXT.content) + '">' +
+                '<input type="url" class="em-v4-chip__tlink" placeholder="' + esc(TXT.link) + '">' +
                 textStyleHtml(key) +
                 '<span class="em-v4-chip__ti-image">' + imageHtml() + '</span>';
         }
         if (type === 'text_text') {
-            return '<span class="em-v4-chip__tt-part"><input type="text" class="em-v4-chip__titext" placeholder="' + esc(TXT.text1) + '">' + textStyleHtml(key) + '</span>' +
-                '<span class="em-v4-chip__tt-part"><input type="text" class="em-v4-chip__titext2" placeholder="' + esc(TXT.text2) + '">' + textStyleHtml(key) + '</span>';
+            return '<span class="em-v4-chip__tt-part"><input type="text" class="em-v4-chip__titext" placeholder="' + esc(TXT.text1) + '"><input type="url" class="em-v4-chip__tlink" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>' +
+                '<span class="em-v4-chip__tt-part"><input type="text" class="em-v4-chip__titext2" placeholder="' + esc(TXT.text2) + '"><input type="url" class="em-v4-chip__tlink2" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>';
         }
         if (type === 'image') {
             return imageHtml();
@@ -190,6 +190,9 @@ window.EmWpV4Chip = (function () {
                 '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
         var input = '<input type="text" class="em-v4-chip__value" placeholder="' + esc(TXT.content) + '">';
+        if (type === 'text' || type === 'textarea') {
+            input += '<input type="url" class="em-v4-chip__tlink" placeholder="' + esc(TXT.link) + '">';
+        }
         if (TEXT_STYLE.indexOf(type) !== -1) { input += textStyleHtml(key); }
         return input;
     }
@@ -217,7 +220,7 @@ window.EmWpV4Chip = (function () {
             return chip;
         }
 
-        var labelInput = (type === 'platform_block' || type === 'network_block')
+        var labelInput = (type === 'platform_block' || type === 'network_block' || isTextFamily(type))
             ? '<input type="hidden" class="em-v4-chip__label">'
             : '<input type="text" class="em-v4-chip__label" placeholder="' + esc(TXT.label) + '">';
         chip.innerHTML =
@@ -292,7 +295,7 @@ window.EmWpV4Chip = (function () {
         hasTextStyle: function (type) { return TEXT_STYLE.indexOf(type) !== -1; },
         decorative: function (type) { return DECOR[type] !== undefined; },
         labelOptional: function (type) {
-            return DECOR[type] !== undefined || ['platform_block', 'network_block', 'video_url', 'video_file', 'audio_file', 'audio_url', 'slider'].indexOf(type) !== -1;
+            return DECOR[type] !== undefined || isTextFamily(type) || ['platform_block', 'network_block', 'video_url', 'video_file', 'audio_file', 'audio_url', 'slider'].indexOf(type) !== -1;
         }
     };
 })();

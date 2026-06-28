@@ -73,7 +73,7 @@ function em_wp_v4_render_chip(array $field, array $content = []): void
         <span class="em-v4-chip__drag dashicons dashicons-move" aria-hidden="true"></span>
         <span class="em-v4-chip__type"><span class="em-v4-chip__typeicon dashicons <?php echo esc_attr(em_wp_v4_field_type_icon($type)); ?>" aria-hidden="true"></span><?php echo esc_html($type_label); ?></span>
         <span class="em-v4-chip__fields">
-            <?php if ($type === 'platform_block' || $type === 'network_block') : ?>
+            <?php if ($type === 'platform_block' || $type === 'network_block' || em_wp_rubrique_field_is_text_family($type)) : ?>
                 <input type="hidden" class="em-v4-chip__label" value="<?php echo esc_attr((string) $field['label']); ?>">
             <?php else : ?>
                 <input type="text" class="em-v4-chip__label" value="<?php echo esc_attr((string) $field['label']); ?>" placeholder="<?php esc_attr_e('Libellé', 'em-wp'); ?>">
@@ -187,10 +187,20 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
         return;
     }
 
+    if ($type === 'text' || $type === 'textarea') {
+        $tv = em_wp_rubrique_text_value($value);
+        ?>
+        <input type="text" class="em-v4-chip__value" value="<?php echo esc_attr($tv['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-wp'); ?>">
+        <input type="url" class="em-v4-chip__tlink" value="<?php echo esc_url($tv['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+        <?php
+        return;
+    }
+
     if ($type === 'text_image') {
         $ti = em_wp_rubrique_text_image_value($value);
         ?>
-        <input type="text" class="em-v4-chip__titext" value="<?php echo esc_attr($ti['text']); ?>" placeholder="<?php esc_attr_e('Texte…', 'em-wp'); ?>">
+        <input type="text" class="em-v4-chip__titext" value="<?php echo esc_attr($ti['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-wp'); ?>">
+        <input type="url" class="em-v4-chip__tlink" value="<?php echo esc_url($ti['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
         <?php em_wp_v4_render_chip_textstyle($key, $ti['style']); ?>
         <?php em_wp_v4_render_chip_value('image', (string) wp_json_encode($ti['image'])); ?>
         <?php
@@ -201,11 +211,13 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
         $tt = em_wp_rubrique_text_text_value($value);
         ?>
         <span class="em-v4-chip__tt-part">
-            <input type="text" class="em-v4-chip__titext" value="<?php echo esc_attr($tt['text']); ?>" placeholder="<?php esc_attr_e('Texte 1…', 'em-wp'); ?>">
+            <input type="text" class="em-v4-chip__titext" value="<?php echo esc_attr($tt['text']); ?>" placeholder="<?php esc_attr_e('Contenu 1…', 'em-wp'); ?>">
+            <input type="url" class="em-v4-chip__tlink" value="<?php echo esc_url($tt['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
             <?php em_wp_v4_render_chip_textstyle($key, $tt['style']); ?>
         </span>
         <span class="em-v4-chip__tt-part">
-            <input type="text" class="em-v4-chip__titext2" value="<?php echo esc_attr($tt['text2']); ?>" placeholder="<?php esc_attr_e('Texte 2…', 'em-wp'); ?>">
+            <input type="text" class="em-v4-chip__titext2" value="<?php echo esc_attr($tt['text2']); ?>" placeholder="<?php esc_attr_e('Contenu 2…', 'em-wp'); ?>">
+            <input type="url" class="em-v4-chip__tlink2" value="<?php echo esc_url($tt['link2']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
             <?php em_wp_v4_render_chip_textstyle($key . '-2', $tt['style2']); ?>
         </span>
         <?php
@@ -219,21 +231,15 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
         $full = $id ? wp_get_attachment_image_url($id, 'large') : '';
         ?>
         <span class="em-v4-chip__media" data-url="<?php echo esc_attr((string) $full); ?>">
-            <span class="em-v4-chip__focal" title="<?php esc_attr_e('Clique pour définir le point focal (recadrage)', 'em-wp'); ?>">
-                <img class="em-v4-chip__thumb" src="<?php echo esc_url((string) $thumb); ?>" alt="" <?php echo $thumb ? '' : 'hidden'; ?>>
-                <span class="em-v4-chip__focaldot" style="left:<?php echo (int) $img['fx']; ?>%;top:<?php echo (int) $img['fy']; ?>%" <?php echo $thumb ? '' : 'hidden'; ?>></span>
-            </span>
+            <img class="em-v4-chip__thumb" src="<?php echo esc_url((string) $thumb); ?>" alt="" <?php echo $thumb ? '' : 'hidden'; ?>>
             <button type="button" class="button button-small em-v4-chip__pick"><?php esc_html_e('Choisir une image', 'em-wp'); ?></button>
             <input type="hidden" class="em-v4-chip__value" value="<?php echo esc_attr((string) $id); ?>">
-            <input type="hidden" class="em-v4-chip__fx" value="<?php echo (int) $img['fx']; ?>">
-            <input type="hidden" class="em-v4-chip__fy" value="<?php echo (int) $img['fy']; ?>">
         </span>
         <span class="em-v4-chip__size">
             <label class="em-v4-chip__sizelabel"><?php esc_html_e('Taille', 'em-wp'); ?>
                 <input type="range" class="em-v4-chip__w" min="0" max="600" step="5" value="<?php echo (int) $img['w']; ?>" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+'px':'auto')">
                 <output class="em-v4-chip__wout"><?php echo $img['w'] ? (int) $img['w'] . 'px' : esc_html__('auto', 'em-wp'); ?></output>
             </label>
-            <input type="number" min="0" class="em-v4-chip__h" value="<?php echo $img['h'] ? (int) $img['h'] : ''; ?>" placeholder="<?php esc_attr_e('Recadrer H px', 'em-wp'); ?>" title="<?php esc_attr_e('Hauteur de recadrage (optionnel)', 'em-wp'); ?>">
         </span>
         <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($img['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
         <?php

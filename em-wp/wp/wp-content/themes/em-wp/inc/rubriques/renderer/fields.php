@@ -87,11 +87,13 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
 
         case 'textarea':
         case 'text':
-            if ($value === '') {
+            $tv = em_wp_rubrique_text_value($value);
+            if ($tv['text'] === '') {
                 return '';
             }
             $text_style = em_wp_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
-            return '<p class="em-rubrique__field em-rubrique__field--' . esc_attr($key) . '"' . ($text_style !== '' ? ' style="' . esc_attr($text_style) . '"' : '') . '>' . esc_html((string) $value) . '</p>';
+            $text_inner = em_wp_rubrique_text_link_wrap($tv['text'], $tv['link']);
+            return '<p class="em-rubrique__field em-rubrique__field--' . esc_attr($key) . '"' . ($text_style !== '' ? ' style="' . esc_attr($text_style) . '"' : '') . '>' . $text_inner . '</p>';
 
         case 'url':
             if ($value === '') {
@@ -112,7 +114,7 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             $ti_text = (string) $ti['text'];
             $ti_style = em_wp_rubrique_text_style_css($ti['style']);
             $ti_text_html = $ti_text !== ''
-                ? '<p class="em-rubrique__field"' . ($ti_style !== '' ? ' style="' . esc_attr($ti_style) . '"' : '') . '>' . esc_html($ti_text) . '</p>'
+                ? '<p class="em-rubrique__field"' . ($ti_style !== '' ? ' style="' . esc_attr($ti_style) . '"' : '') . '>' . em_wp_rubrique_text_link_wrap($ti_text, (string) $ti['link']) . '</p>'
                 : '';
             $ti_img_html = em_wp_rubrique_image_html($ti['image'], $label);
             if ($ti_text_html === '' && $ti_img_html === '') {
@@ -126,8 +128,8 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             $tt2 = (string) $tt['text2'];
             $tt1_style = em_wp_rubrique_text_style_css($tt['style']);
             $tt2_style = em_wp_rubrique_text_style_css($tt['style2']);
-            $tt1_html = $tt1 !== '' ? '<p class="em-rubrique__field"' . ($tt1_style !== '' ? ' style="' . esc_attr($tt1_style) . '"' : '') . '>' . esc_html($tt1) . '</p>' : '';
-            $tt2_html = $tt2 !== '' ? '<p class="em-rubrique__field"' . ($tt2_style !== '' ? ' style="' . esc_attr($tt2_style) . '"' : '') . '>' . esc_html($tt2) . '</p>' : '';
+            $tt1_html = $tt1 !== '' ? '<p class="em-rubrique__field"' . ($tt1_style !== '' ? ' style="' . esc_attr($tt1_style) . '"' : '') . '>' . em_wp_rubrique_text_link_wrap($tt1, (string) $tt['link']) . '</p>' : '';
+            $tt2_html = $tt2 !== '' ? '<p class="em-rubrique__field"' . ($tt2_style !== '' ? ' style="' . esc_attr($tt2_style) . '"' : '') . '>' . em_wp_rubrique_text_link_wrap($tt2, (string) $tt['link2']) . '</p>' : '';
             if ($tt1_html === '' && $tt2_html === '') {
                 return '';
             }

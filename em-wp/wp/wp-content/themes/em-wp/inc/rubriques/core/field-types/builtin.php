@@ -25,12 +25,12 @@ function em_wp_field_types_builtin(array $types): array
         'text' => [
             'label'    => __('Texte', 'em-wp'),
             'default'  => '',
-            'sanitize' => 'sanitize_text_field',
+            'sanitize' => 'em_wp_field_sanitize_text',
         ],
         'textarea' => [
             'label'    => __('Texte long', 'em-wp'),
             'default'  => '',
-            'sanitize' => 'sanitize_textarea_field',
+            'sanitize' => 'em_wp_field_sanitize_textarea',
         ],
         'url' => [
             'label'    => __('Lien (URL)', 'em-wp'),

@@ -109,6 +109,7 @@ function em_wp_rubrique_icon_value($value): array
 function em_wp_rubrique_field_label_optional(string $type): bool
 {
     return em_wp_rubrique_field_is_decorative($type)
+        || em_wp_rubrique_field_is_text_family($type)
         || $type === 'platform_block'
         || $type === 'network_block'
         || $type === 'video_url'

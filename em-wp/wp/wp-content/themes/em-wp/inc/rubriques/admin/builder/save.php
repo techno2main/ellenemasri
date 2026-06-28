@@ -167,11 +167,11 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
 {
     $ftype = sanitize_key((string) ($entry['type'] ?? ''));
     $label = sanitize_text_field((string) ($entry['label'] ?? ''));
-    $label_optional = em_wp_rubrique_field_label_optional($ftype);
 
     // Les couleurs (fond/texte) sont globales : jamais insérées dans la grille.
-    // Décoratifs (séparateurs/flèches) et Bloc Plateforme sont admis sans libellé.
-    if ((!$label_optional && $label === '') || !em_wp_field_type_exists($ftype) || $ftype === 'color') {
+    // Le libellé n'est plus requis : un champ inséré est conservé tel quel, on le
+    // personnalise (libellé, contenu, lien…) ensuite, même sur plusieurs passages.
+    if (!em_wp_field_type_exists($ftype) || $ftype === 'color') {
         return null;
     }
 

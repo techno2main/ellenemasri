@@ -29,11 +29,18 @@ function em_wp_v4_render_preview_script(): void
     <script>
     window.EmWpV4Preview = (function () {
         var FONTS = <?php echo wp_json_encode(em_wp_rubrique_font_choices()); ?>;
+        var MASKED = '<?php echo esc_js(__('Masqué', 'em-wp')); ?>';
 
         function esc(value) {
             var d = document.createElement('div');
             d.textContent = value == null ? '' : String(value);
             return d.innerHTML;
+        }
+
+        // Texte échappé, enveloppé d'un lien factice (preview) si un lien existe.
+        function textLink(text, link) {
+            var html = esc(text);
+            return link ? '<a class="em-rubrique__link" href="#" onclick="return false;">' + html + '</a>' : html;
         }
 
         function color(value) {
@@ -107,7 +114,7 @@ function em_wp_v4_render_preview_script(): void
                 var ti = {}; try { ti = JSON.parse(item.value || '{}'); } catch (e) { ti = {}; }
                 var tiText = ti.text || '';
                 var tiStyle = textStyleCss(ti.style);
-                var tiTextHtml = tiText ? '<p class="em-rubrique__field"' + (tiStyle ? ' style="' + tiStyle + '"' : '') + '>' + esc(tiText) + '</p>' : '';
+                var tiTextHtml = tiText ? '<p class="em-rubrique__field"' + (tiStyle ? ' style="' + tiStyle + '"' : '') + '>' + textLink(tiText, ti.link) + '</p>' : '';
                 var tiImg = ti.image || {};
                 var tiImgHtml = imageMarkup(item.imageUrl, tiImg, item.label, !!tiImg.link);
                 if (!tiTextHtml && !tiImgHtml) { return '<span class="em-rubrique__field">[' + esc('texte + image') + ']</span>'; }
@@ -116,8 +123,8 @@ function em_wp_v4_render_preview_script(): void
             if (item.type === 'text_text') {
                 var tt = {}; try { tt = JSON.parse(item.value || '{}'); } catch (e) { tt = {}; }
                 var s1 = textStyleCss(tt.style), s2 = textStyleCss(tt.style2);
-                var t1 = tt.text ? '<p class="em-rubrique__field"' + (s1 ? ' style="' + s1 + '"' : '') + '>' + esc(tt.text) + '</p>' : '';
-                var t2 = tt.text2 ? '<p class="em-rubrique__field"' + (s2 ? ' style="' + s2 + '"' : '') + '>' + esc(tt.text2) + '</p>' : '';
+                var t1 = tt.text ? '<p class="em-rubrique__field"' + (s1 ? ' style="' + s1 + '"' : '') + '>' + textLink(tt.text, tt.link) + '</p>' : '';
+                var t2 = tt.text2 ? '<p class="em-rubrique__field"' + (s2 ? ' style="' + s2 + '"' : '') + '>' + textLink(tt.text2, tt.link2) + '</p>' : '';
                 if (!t1 && !t2) { return '<span class="em-rubrique__field">[' + esc('texte + texte') + ']</span>'; }
                 return '<div class="em-rubrique__texttext">' + t1 + t2 + '</div>';
             }
@@ -158,7 +165,10 @@ function em_wp_v4_render_preview_script(): void
                     return '<a class="em-rubrique__link" href="#" onclick="return false;">' + esc(item.label || v) + '</a>';
                 default:
                     var ts = textStyleCss(item.style);
-                    return '<p class="em-rubrique__field"' + (ts ? ' style="' + ts + '"' : '') + '>' + esc(v) + '</p>';
+                    var tv = v, tlink = '';
+                    try { var pd = JSON.parse(v); if (pd && typeof pd === 'object' && 'text' in pd) { tv = pd.text || ''; tlink = pd.link || ''; } } catch (e) {}
+                    if (tv === '') { return ''; }
+                    return '<p class="em-rubrique__field"' + (ts ? ' style="' + ts + '"' : '') + '>' + textLink(tv, tlink) + '</p>';
             }
         }
 
@@ -192,8 +202,8 @@ function em_wp_v4_render_preview_script(): void
                 for (var c = 1; c <= columns; c++) {
                     rows += '<div class="em-rubrique__col em-rubrique__col--' + (align[c] || 'left') + '">';
                     items.forEach(function (it) {
-                        if (it.hidden) { return; }
-                        if (it.row === r && Math.min(columns, Math.max(1, it.col)) === c) { rows += fieldHtml(it); }
+                        if (it.row !== r || Math.min(columns, Math.max(1, it.col)) !== c) { return; }
+                        rows += it.hidden ? ('<span class="em-rubrique__masked" title="' + esc(MASKED) + '"><span class="dashicons dashicons-hidden" aria-hidden="true"></span>' + esc(MASKED) + '</span>') : fieldHtml(it);
                     });
                     rows += '</div>';
                 }
@@ -230,16 +240,20 @@ function em_wp_v4_render_preview_script(): void
             target.appendChild(footer);
         }
 
-        // Ouvre/ferme la pastille d'aperçu (sticky). Toute la barre est cliquable.
+        // Élément de rubrique contenant l'aperçu lié à un bouton (œil/popout).
+        function ownerItem(btn) { return btn.closest('.em-v4-item') || btn.closest('.em-v4-builder'); }
+
+        // Ouvre/ferme l'aperçu pleine taille (sticky). Ouvre l'item si activé.
         function toggle(btn) {
-            var wrap = btn.closest('.em-v4-preview');
-            var body = wrap ? wrap.querySelector('.em-v4-livepreview') : null;
+            var item = ownerItem(btn);
+            var body = item ? item.querySelector('.em-v4-livepreview') : null;
             if (!body) { return; }
             var wasOpen = !body.hidden;
             body.hidden = wasOpen;
             btn.setAttribute('aria-pressed', wasOpen ? 'false' : 'true');
             var i = btn.querySelector('.dashicons');
             if (i) { i.className = 'dashicons dashicons-' + (wasOpen ? 'visibility' : 'hidden'); }
+            if (!wasOpen && item && item.tagName === 'DETAILS') { item.open = true; }
         }
 
         // Fenêtre détachée (onglet) — recopie les feuilles de style de la page.
@@ -247,9 +261,7 @@ function em_wp_v4_render_preview_script(): void
 
         function popoutStyles() {
             var css = '';
-            document.querySelectorAll('link[rel="stylesheet"], style').forEach(function (node) {
-                css += node.outerHTML;
-            });
+            document.querySelectorAll('link[rel="stylesheet"], style').forEach(function (node) { css += node.outerHTML; });
             return css;
         }
 
@@ -271,9 +283,7 @@ function em_wp_v4_render_preview_script(): void
 
         function openWindow(previewNode) {
             winRef = window.open('', 'emWpV4PreviewWin');
-            if (!winRef) { return; }
-            writeWindow(winRef, previewNode);
-            winRef.focus();
+            if (winRef) { writeWindow(winRef, previewNode); winRef.focus(); }
         }
 
         // Rafraîchit la fenêtre détachée si elle est ouverte (sync temps réel).
@@ -282,6 +292,13 @@ function em_wp_v4_render_preview_script(): void
             var stage = winRef.document.querySelector('.em-rubrique-popout .em-v4-livepreview');
             if (stage) { stage.innerHTML = previewNode ? previewNode.innerHTML : ''; }
         }
+
+        // Contrôles d'aperçu dans l'en-tête de l'item (hors builder) : délégation globale.
+        document.addEventListener('click', function (e) {
+            var tg = e.target.closest('.em-v4-preview__toggle'), po = e.target.closest('.em-v4-preview__popout');
+            if (tg) { e.preventDefault(); e.stopPropagation(); toggle(tg); }
+            else if (po) { e.preventDefault(); e.stopPropagation(); var it = ownerItem(po); openWindow(it ? it.querySelector('.em-v4-livepreview') : null); }
+        });
 
         return { render: render, toggle: toggle, openWindow: openWindow, syncWindow: syncWindow };
     })();
