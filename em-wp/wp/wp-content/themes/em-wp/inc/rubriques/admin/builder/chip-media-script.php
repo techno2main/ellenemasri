@@ -26,10 +26,36 @@ if (!defined('ABSPATH')) {
             '<input type="hidden" class="em-v4-chip__value"></span>';
     }
 
+    function slidesOptsHtml() {
+        return '<span class="em-v4-slides__opts">' +
+            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slTitle) + '</span><input type="text" class="em-v4-slides__title" placeholder="' + esc(TXT.slTitlePh) + '"></label>' +
+            '<label class="em-v4-slides__opt em-v4-slides__opt--check"><input type="checkbox" class="em-v4-slides__title-hidden"> ' + esc(TXT.slTitleHide) + '</label>' +
+            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slFrame) + '</span><input type="color" class="em-v4-slides__frame" value="#12338f"></label>' +
+            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slBand) + '</span><input type="color" class="em-v4-slides__footerbg" value="#f2ebd1"></label>' +
+            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slBandText) + '</span><input type="color" class="em-v4-slides__footertext" value="#100421"></label>' +
+            '</span>';
+    }
+
+    // Miroir JS de em_wp_v4_slide_row_html (PHP) — nouvelle ligne vierge (image).
+    function slideRowHtml() {
+        return '<span class="em-v4-slide" data-type="image">' +
+            '<span class="em-v4-slide__move"><button type="button" class="em-v4-slide__up" title="' + esc(TXT.slUp) + '">&#9650;</button><button type="button" class="em-v4-slide__down" title="' + esc(TXT.slDown) + '">&#9660;</button></span>' +
+            '<select class="em-v4-slide__type"><option value="image">' + esc(TXT.slImage) + '</option><option value="tiktok">TikTok</option><option value="video">' + esc(TXT.slVideo) + '</option></select>' +
+            '<span class="em-v4-slide__media em-v4-slide__media--image"><img class="em-v4-slide__thumb" alt="" hidden><button type="button" class="button button-small em-v4-slide__pick" data-target="image">' + esc(TXT.slImage) + '</button><input type="hidden" class="em-v4-slide__image"></span>' +
+            '<input type="url" class="em-v4-slide__videourl" placeholder="' + esc(TXT.slYoutube) + '">' +
+            '<input type="url" class="em-v4-slide__tiktokurl" placeholder="' + esc(TXT.slTiktok) + '">' +
+            '<span class="em-v4-slide__media em-v4-slide__media--ttvid"><button type="button" class="button button-small em-v4-slide__pick" data-target="ttvid">' + esc(TXT.slVideoFile) + '</button><span class="em-v4-slide__medianame"></span><input type="hidden" class="em-v4-slide__tiktokvideo"></span>' +
+            '<input type="text" class="em-v4-slide__name" placeholder="' + esc(TXT.slName) + '">' +
+            '<input type="number" class="em-v4-slide__duration" min="1" value="5" title="' + esc(TXT.slDuration) + '">' +
+            '<button type="button" class="em-v4-slide__eye" data-hidden="0"><span class="dashicons dashicons-visibility" aria-hidden="true"></span></button>' +
+            '<button type="button" class="em-v4-slide__del" title="' + esc(TXT.remove) + '">&times;</button>' +
+            '</span>';
+    }
+
     function sliderHtml() {
-        return '<span class="em-v4-chip__slider">' +
-            '<button type="button" class="button button-small em-v4-chip__pick">' + esc(TXT.addImages) + '</button>' +
-            '<span class="em-v4-chip__slides"></span>' +
+        return '<span class="em-v4-slides">' + slidesOptsHtml() +
+            '<span class="em-v4-slides__list"></span>' +
+            '<button type="button" class="button button-small em-v4-slides__add">' + esc(TXT.slAdd) + '</button>' +
             '<input type="hidden" class="em-v4-chip__value"></span>';
     }
 
@@ -57,9 +83,9 @@ if (!defined('ABSPATH')) {
             var vu = chip.querySelector('.em-v4-chip__vurl'), vt = chip.querySelector('.em-v4-chip__vthumb'), vtid = chip.querySelector('.em-v4-chip__thumbid'), vck = chip.querySelector('.em-v4-chip__clickable');
             item.url = vu ? vu.value : ''; item.thumbUrl = vt ? vt.getAttribute('data-url') : ''; item.clickable = vck ? !!vck.checked : false;
             item.value = JSON.stringify({ url: item.url, thumb: vtid && vtid.value ? parseInt(vtid.value, 10) : 0, clickable: item.clickable ? 1 : 0 });
-        } else if (type === 'slider') {
-            var u = []; chip.querySelectorAll('.em-v4-chip__slide img').forEach(function (im) { u.push(im.getAttribute('src')); }); item.sliderUrls = u;
         }
+        // type 'slider' : la valeur (config JSON complète) est déjà lue par readChip
+        // via .em-v4-chip__value ; EmWpV4Slides la tient à jour.
     }
 
     function openThumb(chip, update) {

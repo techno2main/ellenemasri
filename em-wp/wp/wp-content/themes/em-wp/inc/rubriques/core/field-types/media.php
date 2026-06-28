@@ -74,6 +74,272 @@ function em_wp_field_sanitize_slider($value): string
 }
 
 /**
+ * Structure d'un slide V4 (vide).
+ *
+ * @return array<string, mixed>
+ */
+function em_wp_rubrique_slide_defaults(): array
+{
+    return [
+        'type'             => 'image',
+        'name'             => '',
+        'image'            => '',
+        'video_url'        => '',
+        'tiktok_url'       => '',
+        'tiktok_video_url' => '',
+        'alt_text'         => '',
+        'duration'         => 5,
+        'hidden'           => false,
+    ];
+}
+
+/**
+ * Normalise un slide V4 (types autorisés, champs complets).
+ *
+ * @param array<string, mixed> $item
+ * @return array<string, mixed>
+ */
+function em_wp_rubrique_slide_normalize(array $item): array
+{
+    $type = sanitize_key((string) ($item['type'] ?? 'image'));
+    if (!in_array($type, ['image', 'video', 'tiktok'], true)) {
+        $type = 'image';
+    }
+
+    return [
+        'type'             => $type,
+        'name'             => sanitize_text_field((string) ($item['name'] ?? '')),
+        'image'            => esc_url_raw((string) ($item['image'] ?? '')),
+        'video_url'        => esc_url_raw((string) ($item['video_url'] ?? '')),
+        'tiktok_url'       => esc_url_raw((string) ($item['tiktok_url'] ?? '')),
+        'tiktok_video_url' => esc_url_raw((string) ($item['tiktok_video_url'] ?? '')),
+        'alt_text'         => sanitize_text_field((string) ($item['alt_text'] ?? '')),
+        'duration'         => max(1, (int) ($item['duration'] ?? 5)),
+        'hidden'           => !empty($item['hidden']),
+    ];
+}
+
+/**
+ * Décode la valeur d'un champ « Slider » V4 en configuration complète :
+ * bandeau titre (texte + couleurs) + liste de slides riches.
+ *
+ * Rétrocompat : une ancienne valeur galerie (liste d'IDs d'images) est convertie
+ * en slides image.
+ *
+ * @param mixed $value
+ * @return array<string, mixed>
+ */
+function em_wp_rubrique_slides_config($value): array
+{
+    $decoded = is_array($value) ? $value : json_decode((string) $value, true);
+
+    $config = [
+        'title'        => '',
+        'title_hidden' => false,
+        'frame_bg'     => '',
+        'footer_bg'    => '',
+        'footer_text'  => '',
+        'slides'       => [],
+    ];
+
+    if (!is_array($decoded)) {
+        return $config;
+    }
+
+    // Ancien format galerie : liste d'IDs d'images → slides image.
+    $is_list = $decoded === array_values($decoded);
+    if ($is_list && !isset($decoded['slides'])) {
+        foreach ($decoded as $id) {
+            $att_id = absint(is_array($id) ? ($id['id'] ?? 0) : $id);
+            $url = $att_id > 0 ? (string) wp_get_attachment_image_url($att_id, 'large') : '';
+            if ($url !== '') {
+                $slide = em_wp_rubrique_slide_defaults();
+                $slide['image'] = $url;
+                $config['slides'][] = $slide;
+            }
+        }
+
+        return $config;
+    }
+
+    $config['title']        = sanitize_text_field((string) ($decoded['title'] ?? ''));
+    $config['title_hidden'] = !empty($decoded['title_hidden']);
+    $config['frame_bg']     = sanitize_hex_color((string) ($decoded['frame_bg'] ?? '')) ?: '';
+    $config['footer_bg']    = sanitize_hex_color((string) ($decoded['footer_bg'] ?? '')) ?: '';
+    $config['footer_text']  = sanitize_hex_color((string) ($decoded['footer_text'] ?? '')) ?: '';
+
+    $slides = is_array($decoded['slides'] ?? null) ? $decoded['slides'] : [];
+    foreach ($slides as $slide) {
+        if (is_array($slide)) {
+            $config['slides'][] = em_wp_rubrique_slide_normalize($slide);
+        }
+    }
+
+    return $config;
+}
+
+/**
+ * Sanitise un champ « Slider » V4 : configuration encodée en JSON ('' si vide).
+ *
+ * @param mixed $value
+ */
+function em_wp_field_sanitize_slides($value): string
+{
+    $config = em_wp_rubrique_slides_config($value);
+
+    if (
+        $config['slides'] === []
+        && $config['title'] === ''
+        && $config['frame_bg'] === ''
+        && $config['footer_bg'] === ''
+        && $config['footer_text'] === ''
+    ) {
+        return '';
+    }
+
+    return (string) wp_json_encode($config);
+}
+
+/**
+ * Identifiant YouTube depuis une URL (autonome, dispo admin + front).
+ */
+function em_wp_rubrique_slide_youtube_id(string $url): string
+{
+    if ($url !== '' && preg_match('~(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{11})~', $url, $m)) {
+        return (string) ($m[1] ?? '');
+    }
+
+    return '';
+}
+
+/**
+ * Identifiant vidéo TikTok depuis une URL.
+ */
+function em_wp_rubrique_slide_tiktok_id(string $url): string
+{
+    if ($url !== '' && preg_match('~/video/(\d+)~', $url, $m)) {
+        return (string) ($m[1] ?? '');
+    }
+
+    return '';
+}
+
+/**
+ * Transforme les slides bruts (config) en slides « collectés » attendus par le
+ * template-part mayami (avec video_id, delay_ms, etc.). Ignore les slides vides
+ * ou masqués.
+ *
+ * @param array<int, array<string, mixed>> $slides
+ * @return array<int, array<string, mixed>>
+ */
+function em_wp_rubrique_slides_collect(array $slides): array
+{
+    $out = [];
+
+    foreach ($slides as $index => $slide) {
+        if (!is_array($slide) || !empty($slide['hidden'])) {
+            continue;
+        }
+
+        $slide = em_wp_rubrique_slide_normalize($slide);
+        $position = (int) $index + 1;
+        $name = $slide['name'] !== '' ? $slide['name'] : sprintf(__('Slide %d', 'em-wp'), $position);
+        $delay_ms = max(1, (int) $slide['duration']) * 1000;
+
+        if ($slide['type'] === 'video') {
+            $video_id = em_wp_rubrique_slide_youtube_id($slide['video_url']);
+            if ($video_id === '') {
+                continue;
+            }
+
+            $out[] = ['type' => 'video', 'name' => $name, 'delay_ms' => $delay_ms, 'video_id' => $video_id];
+            continue;
+        }
+
+        if ($slide['type'] === 'tiktok') {
+            if ($slide['tiktok_url'] === '' && $slide['tiktok_video_url'] === '') {
+                continue;
+            }
+
+            $out[] = [
+                'type'             => 'tiktok',
+                'name'             => $name,
+                'delay_ms'         => $delay_ms,
+                'tiktok_url'       => $slide['tiktok_url'],
+                'tiktok_video_url' => $slide['tiktok_video_url'],
+                'tiktok_video_id'  => em_wp_rubrique_slide_tiktok_id($slide['tiktok_url']),
+                'image'            => $slide['image'],
+                'alt'              => $slide['alt_text'],
+            ];
+            continue;
+        }
+
+        if ($slide['image'] === '') {
+            continue;
+        }
+
+        $out[] = [
+            'type'     => 'image',
+            'image'    => $slide['image'],
+            'name'     => $name,
+            'alt'      => $slide['alt_text'] !== '' ? $slide['alt_text'] : $name,
+            'delay_ms' => $delay_ms,
+        ];
+    }
+
+    return $out;
+}
+
+/**
+ * HTML front d'un champ « Slider » V4 : réutilise le template-part mayami
+ * (cadre + slides + bandeau titre + contrôles) pour un rendu identique au site.
+ *
+ * @param array<string, mixed> $config
+ */
+function em_wp_rubrique_slides_front_html(array $config): string
+{
+    $slides = em_wp_rubrique_slides_collect(is_array($config['slides'] ?? null) ? $config['slides'] : []);
+
+    if ($slides === [] && trim((string) ($config['title'] ?? '')) === '') {
+        return '';
+    }
+
+    $slider = [
+        'footer_title'        => (string) ($config['title'] ?? ''),
+        'slider_title_hidden' => !empty($config['title_hidden']),
+        'frame_bg_color'      => (string) ($config['frame_bg'] ?? ''),
+        'footer_bg_color'     => (string) ($config['footer_bg'] ?? ''),
+        'footer_text'         => (string) ($config['footer_text'] ?? ''),
+    ];
+
+    // Le champ « Slider » V4 rend TOUJOURS le template mayami : on garantit le
+    // chargement du CSS mayami partout où il est rendu (front, wireframe du
+    // squelette, aperçu builder) — sinon les slides s'empilent en pleine hauteur
+    // au lieu d'occuper le cadre du slider. WP imprime les styles tardifs en
+    // pied de page (front comme admin), donc l'appel reste valide pendant le rendu.
+    if (function_exists('wp_enqueue_style')) {
+        $slider_css_rel = 'assets/front/css/modules/slider/mayami/slider.css';
+        $slider_css_path = get_template_directory() . '/' . $slider_css_rel;
+        if (file_exists($slider_css_path)) {
+            wp_enqueue_style(
+                'em-wp-slider-mayami',
+                get_template_directory_uri() . '/' . $slider_css_rel,
+                [],
+                (string) filemtime($slider_css_path)
+            );
+        }
+    }
+
+    ob_start();
+    get_template_part('template-parts/sections/slider/mayami/slider', null, [
+        'slider' => $slider,
+        'slides' => $slides,
+    ]);
+
+    return (string) ob_get_clean();
+}
+
+/**
  * Détecte le fournisseur d'une URL vidéo (youtube/tiktok) + son ID.
  *
  * @return array{provider:string, id:string}

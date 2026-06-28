@@ -121,26 +121,94 @@ function em_wp_v4_render_network_select(string $selected): void
 }
 
 /**
- * Slider : bouton d'ajout d'images + vignettes + IDs cachés (JSON).
+ * Slider V4 : bandeau titre (texte + couleurs) + liste de slides riches
+ * (image / TikTok / vidéo YouTube). La valeur complète est sérialisée en JSON
+ * dans l'input caché par EmWpV4Slides.
  */
 function em_wp_v4_render_slider_value(string $value): void
 {
-    $ids = em_wp_rubrique_slider_value($value);
+    $cfg = em_wp_rubrique_slides_config($value);
+    $frame = $cfg['frame_bg'] !== '' ? $cfg['frame_bg'] : '#12338f';
+    $footer_bg = $cfg['footer_bg'] !== '' ? $cfg['footer_bg'] : '#f2ebd1';
+    $footer_text = $cfg['footer_text'] !== '' ? $cfg['footer_text'] : '#100421';
     ?>
-    <span class="em-v4-chip__slider">
-        <button type="button" class="button button-small em-v4-chip__pick"><?php esc_html_e('Ajouter des images', 'em-wp'); ?></button>
-        <span class="em-v4-chip__slides">
-            <?php foreach ($ids as $id) : ?>
-                <?php $thumb = wp_get_attachment_image_url((int) $id, 'thumbnail'); ?>
-                <?php if ($thumb) : ?>
-                    <span class="em-v4-chip__slide" data-id="<?php echo (int) $id; ?>">
-                        <img src="<?php echo esc_url($thumb); ?>" alt="">
-                        <button type="button" class="em-v4-chip__slide-del" title="<?php esc_attr_e('Retirer', 'em-wp'); ?>">&times;</button>
-                    </span>
-                <?php endif; ?>
-            <?php endforeach; ?>
+    <span class="em-v4-slides">
+        <span class="em-v4-slides__opts">
+            <label class="em-v4-slides__opt">
+                <span><?php esc_html_e('Titre du bandeau', 'em-wp'); ?></span>
+                <input type="text" class="em-v4-slides__title" value="<?php echo esc_attr($cfg['title']); ?>" placeholder="<?php esc_attr_e('Mayami, My Miami', 'em-wp'); ?>">
+            </label>
+            <label class="em-v4-slides__opt em-v4-slides__opt--check">
+                <input type="checkbox" class="em-v4-slides__title-hidden" <?php checked($cfg['title_hidden']); ?>>
+                <?php esc_html_e('Masquer le titre', 'em-wp'); ?>
+            </label>
+            <label class="em-v4-slides__opt">
+                <span><?php esc_html_e('Cadre', 'em-wp'); ?></span>
+                <input type="color" class="em-v4-slides__frame" value="<?php echo esc_attr($frame); ?>">
+            </label>
+            <label class="em-v4-slides__opt">
+                <span><?php esc_html_e('Bandeau', 'em-wp'); ?></span>
+                <input type="color" class="em-v4-slides__footerbg" value="<?php echo esc_attr($footer_bg); ?>">
+            </label>
+            <label class="em-v4-slides__opt">
+                <span><?php esc_html_e('Texte titre', 'em-wp'); ?></span>
+                <input type="color" class="em-v4-slides__footertext" value="<?php echo esc_attr($footer_text); ?>">
+            </label>
         </span>
-        <input type="hidden" class="em-v4-chip__value" value="<?php echo esc_attr($ids === [] ? '' : (string) wp_json_encode($ids)); ?>">
+        <span class="em-v4-slides__list">
+            <?php foreach ($cfg['slides'] as $slide) {
+                echo em_wp_v4_slide_row_html($slide); // déjà échappé
+            } ?>
+        </span>
+        <button type="button" class="button button-small em-v4-slides__add"><?php esc_html_e('+ Ajouter un slide', 'em-wp'); ?></button>
+        <input type="hidden" class="em-v4-chip__value" value="<?php echo esc_attr($value); ?>">
     </span>
     <?php
+}
+
+/**
+ * Une ligne de slide dans l'éditeur (miroir HTML de EmWpV4Chip.slideRowHtml).
+ *
+ * @param array<string, mixed> $slide
+ */
+function em_wp_v4_slide_row_html(array $slide): string
+{
+    $slide = em_wp_rubrique_slide_normalize($slide);
+    $type = $slide['type'];
+    $thumb = $slide['image'];
+    $ttvid_name = $slide['tiktok_video_url'] !== '' ? wp_basename($slide['tiktok_video_url']) : '';
+
+    ob_start();
+    ?>
+    <span class="em-v4-slide<?php echo $slide['hidden'] ? ' is-hidden' : ''; ?>" data-type="<?php echo esc_attr($type); ?>">
+        <span class="em-v4-slide__move">
+            <button type="button" class="em-v4-slide__up" title="<?php esc_attr_e('Monter', 'em-wp'); ?>">&#9650;</button>
+            <button type="button" class="em-v4-slide__down" title="<?php esc_attr_e('Descendre', 'em-wp'); ?>">&#9660;</button>
+        </span>
+        <select class="em-v4-slide__type">
+            <option value="image" <?php selected($type, 'image'); ?>><?php esc_html_e('Image', 'em-wp'); ?></option>
+            <option value="tiktok" <?php selected($type, 'tiktok'); ?>>TikTok</option>
+            <option value="video" <?php selected($type, 'video'); ?>><?php esc_html_e('Vidéo YouTube', 'em-wp'); ?></option>
+        </select>
+        <span class="em-v4-slide__media em-v4-slide__media--image">
+            <img class="em-v4-slide__thumb" src="<?php echo esc_url($thumb); ?>" alt="" <?php echo $thumb === '' ? 'hidden' : ''; ?>>
+            <button type="button" class="button button-small em-v4-slide__pick" data-target="image"><?php esc_html_e('Image', 'em-wp'); ?></button>
+            <input type="hidden" class="em-v4-slide__image" value="<?php echo esc_url($slide['image']); ?>">
+        </span>
+        <input type="url" class="em-v4-slide__videourl" value="<?php echo esc_url($slide['video_url']); ?>" placeholder="<?php esc_attr_e('URL YouTube', 'em-wp'); ?>">
+        <input type="url" class="em-v4-slide__tiktokurl" value="<?php echo esc_url($slide['tiktok_url']); ?>" placeholder="<?php esc_attr_e('URL TikTok', 'em-wp'); ?>">
+        <span class="em-v4-slide__media em-v4-slide__media--ttvid">
+            <button type="button" class="button button-small em-v4-slide__pick" data-target="ttvid"><?php esc_html_e('Vidéo fichier', 'em-wp'); ?></button>
+            <span class="em-v4-slide__medianame"><?php echo esc_html($ttvid_name); ?></span>
+            <input type="hidden" class="em-v4-slide__tiktokvideo" value="<?php echo esc_url($slide['tiktok_video_url']); ?>">
+        </span>
+        <input type="text" class="em-v4-slide__name" value="<?php echo esc_attr($slide['name']); ?>" placeholder="<?php esc_attr_e('Nom', 'em-wp'); ?>">
+        <input type="number" class="em-v4-slide__duration" min="1" value="<?php echo (int) $slide['duration']; ?>" title="<?php esc_attr_e('Durée (s)', 'em-wp'); ?>">
+        <button type="button" class="em-v4-slide__eye" data-hidden="<?php echo $slide['hidden'] ? '1' : '0'; ?>" title="<?php esc_attr_e('Afficher / masquer le slide', 'em-wp'); ?>">
+            <span class="dashicons dashicons-<?php echo $slide['hidden'] ? 'hidden' : 'visibility'; ?>" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="em-v4-slide__del" title="<?php esc_attr_e('Supprimer le slide', 'em-wp'); ?>">&times;</button>
+    </span>
+    <?php
+    return (string) ob_get_clean();
 }
