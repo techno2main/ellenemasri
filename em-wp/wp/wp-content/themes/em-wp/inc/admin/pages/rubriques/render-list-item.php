@@ -17,9 +17,11 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_rubriques_render_list_item(string $module_slug, array $definition): void
 {
-    $label = function_exists('em_wp_admin_rubrique_skeleton_label')
-        ? em_wp_admin_rubrique_skeleton_label($module_slug)
-        : (string) ($definition['label'] ?? $module_slug);
+    $label = function_exists('em_wp_admin_rubrique_skeleton_label_with_item')
+        ? em_wp_admin_rubrique_skeleton_label_with_item($module_slug)
+        : (function_exists('em_wp_admin_rubrique_skeleton_label')
+            ? em_wp_admin_rubrique_skeleton_label($module_slug)
+            : (string) ($definition['label'] ?? $module_slug));
     $preview_zone = (string) ($definition['preview_zone'] ?? '');
     $preview_style = function_exists('em_wp_admin_module_style_colors_for_preview')
         ? em_wp_admin_module_style_colors_for_preview($module_slug)
@@ -32,7 +34,18 @@ function em_wp_admin_rubriques_render_list_item(string $module_slug, array $defi
     $can_toggle_visibility = em_wp_site_rubrique_is_visibility_toggle($module_slug);
     $is_visible = em_wp_get_site_rubrique_visibility($module_slug);
     $is_hidden = $can_toggle_visibility && !$is_visible;
-    $item_url = em_wp_admin_site_rubrique_entry_url($module_slug);
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $open_module = sanitize_key((string) ($_GET['open'] ?? ''));
+    $is_open = ($open_module === $module_slug);
+
+    if ($is_open && function_exists('em_wp_admin_rubrique_close_url')) {
+        // Reclic sur le titre d'une rubrique ouverte → on la referme.
+        $item_url = em_wp_admin_rubrique_close_url();
+    } elseif (function_exists('em_wp_admin_rubrique_open_url')) {
+        $item_url = em_wp_admin_rubrique_open_url($module_slug);
+    } else {
+        $item_url = em_wp_admin_site_rubrique_entry_url($module_slug);
+    }
     $template_slug = function_exists('em_wp_get_editing_template_slug')
         ? em_wp_get_editing_template_slug()
         : '';
@@ -43,7 +56,7 @@ function em_wp_admin_rubriques_render_list_item(string $module_slug, array $defi
         && em_wp_template_skeleton_can_remove_rubrique($module_slug);
     ?>
     <li
-        class="em-wp-rubriques-admin__list-item<?php echo $is_sortable ? ' is-sortable' : ' is-pinned'; ?><?php echo $can_remove ? ' has-remove' : ''; ?><?php echo $is_hidden ? ' is-rubrique-hidden' : ''; ?>"
+        class="em-wp-rubriques-admin__list-item<?php echo $is_sortable ? ' is-sortable' : ' is-pinned'; ?><?php echo $can_remove ? ' has-remove' : ''; ?><?php echo $is_hidden ? ' is-rubrique-hidden' : ''; ?><?php echo $is_open ? ' is-open' : ''; ?>"
         data-module-slug="<?php echo esc_attr($module_slug); ?>"
     >
         <div class="em-wp-rubriques-admin__list-row">

@@ -400,6 +400,91 @@ function em_wp_admin_site_rubrique_entry_url(string $module_slug): string
 }
 
 /**
+ * URL « rester sur le squelette » : ouvre la gestion V4 de la rubrique en dessous
+ * du squelette (?page=em-wp-rubriques&open=<slug>) au lieu des anciennes pages par
+ * module. Conserve le contexte template courant.
+ */
+function em_wp_admin_rubrique_open_url(string $module_slug): string
+{
+    $module_slug = sanitize_key($module_slug);
+
+    if ($module_slug === '') {
+        return '';
+    }
+
+    $args = [
+        'page' => em_wp_admin_rubriques_page_slug(),
+        'open' => $module_slug,
+    ];
+
+    $template_slug = function_exists('em_wp_get_editing_template_slug')
+        ? (string) em_wp_get_editing_template_slug()
+        : '';
+
+    if ($template_slug !== '') {
+        $args['em_wp_edit_template'] = $template_slug;
+    }
+
+    return add_query_arg($args, admin_url('admin.php'));
+}
+
+/**
+ * URL squelette « rubrique refermée » (sans paramètre open). Conserve le template.
+ */
+function em_wp_admin_rubrique_close_url(): string
+{
+    $args = ['page' => em_wp_admin_rubriques_page_slug()];
+
+    $template_slug = function_exists('em_wp_get_editing_template_slug')
+        ? (string) em_wp_get_editing_template_slug()
+        : '';
+
+    if ($template_slug !== '') {
+        $args['em_wp_edit_template'] = $template_slug;
+    }
+
+    return add_query_arg($args, admin_url('admin.php'));
+}
+
+/**
+ * Libellé rubrique squelette + nom de la section branchée au template courant.
+ * Ex. « TOP-BAR MAYAMI ». Repli sur le libellé seul si aucune section/instance.
+ */
+function em_wp_admin_rubrique_skeleton_label_with_item(string $module_slug): string
+{
+    $module_slug = sanitize_key($module_slug);
+    $base = em_wp_admin_rubrique_skeleton_label($module_slug);
+
+    if (!function_exists('em_wp_rubrique_type_exists') || !em_wp_rubrique_type_exists($module_slug)) {
+        return $base;
+    }
+
+    $template = function_exists('em_wp_get_editing_template_slug')
+        ? sanitize_key((string) em_wp_get_editing_template_slug())
+        : '';
+
+    if ($template === '') {
+        return $base;
+    }
+
+    $items = em_wp_v4_get_items($module_slug);
+
+    if ($items === []) {
+        return $base;
+    }
+
+    $instance = em_wp_v4_get_instance($template, $module_slug);
+    $selected = sanitize_key((string) ($instance['item'] ?? ''));
+    $effective = $selected !== '' ? $selected : em_wp_rubrique_default_item_slug($module_slug);
+
+    if ($effective === '' || !isset($items[$effective])) {
+        return $base;
+    }
+
+    return $base . ' ' . (string) $items[$effective];
+}
+
+/**
  * Libellés des rubriques visibles pour un template (ordre sommaire).
  *
  * @return string[]
@@ -701,7 +786,13 @@ function em_wp_admin_rubrique_resolve_active_module(string $module_slug = ''): s
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
 
-    if ($page_slug === '' || $page_slug === em_wp_admin_rubriques_page_slug()) {
+    if ($page_slug === em_wp_admin_rubriques_page_slug()) {
+        // Sur le squelette, l'onglet actif suit la rubrique ouverte en dessous.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        return sanitize_key((string) ($_GET['open'] ?? ''));
+    }
+
+    if ($page_slug === '') {
         return '';
     }
 
@@ -798,7 +889,7 @@ function em_wp_admin_rubrique_render_edit_navbar(
                     ? em_wp_admin_rubrique_skeleton_label((string) $module_slug)
                     : (string) ($definition['menu_title'] ?? $module_slug);
                 $is_active = $active_module_slug === (string) $module_slug;
-                $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
+                $item_url = em_wp_admin_rubrique_open_url((string) $module_slug);
                 $preview_zone = (string) ($rubrique_definitions[(string) $module_slug]['preview_zone'] ?? '');
                 ?>
                 <li class="em-wp-catalog-edit__nav-item<?php echo $is_active ? ' is-active' : ''; ?>">

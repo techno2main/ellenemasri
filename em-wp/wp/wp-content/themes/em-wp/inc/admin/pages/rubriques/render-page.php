@@ -157,37 +157,121 @@ function em_wp_admin_render_rubriques_page(): void
     $definitions = em_wp_admin_site_rubrique_definitions();
     $editing_template_label = em_wp_get_editing_template_label();
     $template_slug = em_wp_get_editing_template_slug();
+    $is_template_live = function_exists('em_wp_get_active_template_slug')
+        && $template_slug !== ''
+        && em_wp_get_active_template_slug() === $template_slug;
+    // Couleur d'accent du template (violet pour Mayami…) pour le badge LIVE.
+    $template_accent = function_exists('em_wp_get_template_color')
+        ? em_wp_get_template_color($template_slug)
+        : '';
     ?>
     <div class="wrap em-wp-rubriques-admin em-wp-admin-module em-wp-hub-sommaire" data-template-slug="<?php echo esc_attr($template_slug); ?>">
         <?php
-        em_wp_admin_hub_render_sommaire_header('', 'dashicons-admin-page', false, true, null, null, true);
-        em_wp_admin_rubrique_render_entry_tabs('');
+        // Bandeau « template en cours d'édition » et barre d'onglets retirés : la
+        // navigation se fait par la liste + le wireframe. L'état LIVE est rappelé à
+        // côté du titre du squelette (voir plus bas).
+        em_wp_admin_hub_render_sommaire_header('', 'dashicons-admin-page', false, false, null, null, true);
         ?>
 
+        <?php
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $open_module = sanitize_key((string) ($_GET['open'] ?? ''));
+        ?>
         <div class="em-wp-rubriques-admin__layout">
             <div class="em-wp-rubriques-admin__main">
                 <ul class="em-wp-rubriques-admin__list">
                     <?php
                     foreach ($definitions as $module_slug => $definition) {
                         em_wp_admin_rubriques_render_list_item($module_slug, $definition);
+
+                        if ($open_module === (string) $module_slug) {
+                            em_wp_admin_render_rubrique_items_picker((string) $module_slug);
+                        }
                     }
                     ?>
                 </ul>
+
+                <?php if (current_user_can('manage_options')) { ?>
+                    <button
+                        type="button"
+                        class="button em-wp-rubriques-admin__add-rubrique-toggle"
+                        id="em-wp-rubrique-skeleton-add-toggle"
+                        aria-controls="em-wp-rubrique-skeleton-add-panel"
+                        aria-expanded="false"
+                    >
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                        <?php esc_html_e('Ajouter une rubrique', 'em-wp'); ?>
+                    </button>
+
+                    <?php
+                    if (function_exists('em_wp_admin_render_template_skeleton_add_panel')) {
+                        em_wp_admin_render_template_skeleton_add_panel();
+                    }
+                    ?>
+                <?php } ?>
             </div>
 
             <?php if (function_exists('em_wp_admin_render_landing_map')) { ?>
                 <aside class="em-wp-rubriques-admin__aside">
                     <div class="em-wp-rubriques-admin__map-wrap">
-                        <p class="em-wp-rubriques-admin__map-label"><?php
-                        printf(
-                            /* translators: %s: template label */
-                            esc_html__('Squelette du template %s', 'em-wp'),
-                            esc_html($editing_template_label)
-                        );
-                        ?></p>
-                        <p class="em-wp-rubriques-admin__map-hint">
-                            <?php esc_html_e('Survole ou clique une zone pour ouvrir la rubrique.', 'em-wp'); ?><br>
-                        </p>
+                        <div class="em-wp-rubriques-admin__map-head">
+                            <span class="em-wp-rubriques-admin__map-title">
+                                <span
+                                    class="em-wp-rubriques-admin__map-label"
+                                    data-title-default="<?php echo esc_attr(sprintf(
+                                        /* translators: %s: template label */
+                                        __('Squelette %s', 'em-wp'),
+                                        $editing_template_label
+                                    )); ?>"
+                                    data-title-preview="<?php echo esc_attr(sprintf(
+                                        /* translators: %s: template label */
+                                        __('Aperçu %s', 'em-wp'),
+                                        $editing_template_label
+                                    )); ?>"
+                                ><?php
+                                printf(
+                                    /* translators: %s: template label */
+                                    esc_html__('Squelette %s', 'em-wp'),
+                                    esc_html($editing_template_label)
+                                );
+                                ?></span>
+                                <?php if ($is_template_live) { ?>
+                                    <span
+                                        class="em-wp-rubriques-admin__live-badge"
+                                        title="<?php esc_attr_e('Template actif sur le site', 'em-wp'); ?>"
+                                        <?php if ($template_accent !== '') { ?>style="--em-wp-live-color: <?php echo esc_attr($template_accent); ?>;"<?php } ?>
+                                    >
+                                        <span class="em-wp-rubriques-admin__live-dot" aria-hidden="true"></span><?php esc_html_e('LIVE', 'em-wp'); ?>
+                                    </span>
+                                <?php } ?>
+                                <?php
+                                $em_wp_site_preview_url = function_exists('em_wp_template_preview_url')
+                                    ? (string) em_wp_template_preview_url((string) $template_slug)
+                                    : '';
+                                if ($em_wp_site_preview_url !== '') {
+                                    ?>
+                                    <a
+                                        class="em-wp-rubriques-admin__site-preview"
+                                        href="<?php echo esc_url($em_wp_site_preview_url); ?>"
+                                        target="_blank"
+                                        rel="noopener"
+                                        title="<?php echo esc_attr(sprintf(
+                                            /* translators: %s: template label */
+                                            __('Prévisualiser le site (%s) dans un nouvel onglet', 'em-wp'),
+                                            $editing_template_label
+                                        )); ?>"
+                                    >
+                                        <span class="dashicons dashicons-external" aria-hidden="true"></span>
+                                        <span><?php esc_html_e('APERÇU', 'em-wp'); ?></span>
+                                    </a>
+                                <?php } ?>
+                            </span>
+                            <?php
+                            if (function_exists('em_wp_admin_render_skeleton_full_preview')) {
+                                em_wp_admin_render_skeleton_full_preview($definitions, (string) $template_slug);
+                            }
+                            ?>
+                        </div>
                         <p class="em-wp-rubriques-admin__sort-status" id="em-wp-rubriques-sort-status" aria-live="polite" hidden></p>
 
                         <?php em_wp_admin_render_landing_map(); ?>
