@@ -32,6 +32,7 @@ require __DIR__ . '/chip-script.php';
         var dragged = null;
         var draggedRow = null;
         var ready = false;
+        var baseline = null;
 
         function collect() {
             var items = [];
@@ -53,20 +54,32 @@ require __DIR__ . '/chip-script.php';
         }
 
         function update() {
-            if (ready) { var sb = builder.querySelector('.em-v4-savebar'); if (sb) { sb.hidden = false; } }
             var items = collect();
             var layout = collectLayout();
             var colors = EmWpV4Appearance.collect(builder);
             if (structureInput) {
                 structureInput.value = JSON.stringify({ rows: layout.rows, fields: items });
             }
+            // Signature de l'état (structure + apparence). La savebar n'apparaît que
+            // si l'état diffère du dernier enregistré (revenir à la valeur d'origine
+            // fait disparaître Enregistrer / Annuler).
+            var sig = (structureInput ? structureInput.value : '') + '|' + JSON.stringify(colors);
+            if (baseline === null) { baseline = sig; }
+            var sb = builder.querySelector('.em-v4-savebar');
+            if (sb) { sb.hidden = !ready || sig === baseline; }
             EmWpV4Appearance.updatePill(builder, colors);
+            var card = builder.closest('.em-v4-item');
+            if (card) { card.style.setProperty('--em-v4-item-bg', colors && colors.bg ? colors.bg : ''); }
+            var mapped = items.map(function (it) {
+                return { row: it.row, col: it.col, type: it.type, label: it.label, value: it.value || it.label, url: it.url, imageUrl: it.imageUrl, icon: it.icon, color: it.color, name: it.name, link: it.link, hidden: it.hidden, style: it.style, sliderUrls: it.sliderUrls, thumbUrl: it.thumbUrl, clickable: it.clickable };
+            });
+            builder.emv4Data = { layout: layout, items: mapped, colors: colors };
             if (preview) {
-                EmWpV4Preview.render(preview, layout, items.map(function (it) {
-                    return { row: it.row, col: it.col, type: it.type, label: it.label, value: it.value || it.label, url: it.url, imageUrl: it.imageUrl, icon: it.icon, color: it.color, name: it.name, link: it.link, hidden: it.hidden, style: it.style, sliderUrls: it.sliderUrls, thumbUrl: it.thumbUrl, clickable: it.clickable };
-                }), colors);
+                EmWpV4Preview.render(preview, layout, mapped, colors);
                 EmWpV4Preview.syncWindow(preview);
             }
+            if (window.EmWpV4Rows) { window.EmWpV4Rows.renderMap(builder); }
+            if (window.EmWpV4Mini) { window.EmWpV4Mini.refresh(builder); }
         }
 
         // Drag chip coupé dans les champs de saisie ; ligne déplaçable via poignée.
@@ -87,19 +100,17 @@ require __DIR__ . '/chip-script.php';
         });
 
         builder.addEventListener('click', function (e) {
-            // Interagir avec l'en-tête de ligne ne doit pas ouvrir/fermer la ligne.
-            if (e.target.closest('.em-v4-row__layout')) { e.preventDefault(); }
+            // Œil « Contenu » → aperçu réduit persistant (ne bascule pas la section).
+            var eye = e.target.closest('.em-v4-gridmap__eye');
+            if (eye) { e.preventDefault(); if (window.EmWpV4Mini) { window.EmWpV4Mini.toggle(builder, eye); } return; }
+            if (e.target.closest('.em-v4-row__layout') || e.target.closest('.em-v4-gridmap') || e.target.closest('.em-v4-miniprev')) { e.preventDefault(); }
             window.EmWpV4Align.closeAll(builder, e.target.closest('.em-v4-align__group'));
             onClick(e, builder, update);
         });
+        builder.addEventListener('mouseover', function (e) { var c = e.target.closest('.em-v4-gridmap__cell'); if (c) { window.EmWpV4Rows.showCellPreview(builder, c); } });
+        builder.addEventListener('mouseout', function (e) { if (e.target.closest('.em-v4-gridmap__cell')) { window.EmWpV4Rows.hideCellPreview(); } });
         builder.addEventListener('input', update);
-        builder.addEventListener('change', function (e) {
-            if (e.target.classList.contains('em-v4-rowcols')) {
-                window.EmWpV4Rows.requestColumns(builder, e.target.closest('.em-v4-row'), update);
-                return;
-            }
-            update();
-        });
+        builder.addEventListener('change', update);
         builder.addEventListener('dragstart', function (e) {
             var chip = e.target.closest('.em-v4-chip');
             if (chip) { dragged = chip; chip.classList.add('is-dragging'); e.dataTransfer.effectAllowed = 'move'; return; }
@@ -174,14 +185,21 @@ require __DIR__ . '/chip-script.php';
             }
         }
         window.EmWpV4Chip.readMedia(chip, type, item);
+        if (type === 'text' || type === 'textarea') {
+            var tlk = chip.querySelector('.em-v4-chip__tlink');
+            item.link = tlk ? tlk.value : '';
+            item.value = item.link ? JSON.stringify({ text: item.value, link: item.link }) : item.value;
+        }
         if (type === 'text_image') {
             var tmd = chip.querySelector('.em-v4-chip__media');
+            var tilk = chip.querySelector('.em-v4-chip__tlink');
             item.imageUrl = tmd ? tmd.getAttribute('data-url') : '';
-            item.value = JSON.stringify({ text: val(chip, '.em-v4-chip__titext'), style: window.EmWpV4Chip.readStyle(chip), image: readImage(chip) });
+            item.value = JSON.stringify({ text: val(chip, '.em-v4-chip__titext'), link: tilk ? tilk.value : '', style: window.EmWpV4Chip.readStyle(chip), image: readImage(chip) });
         }
         if (type === 'text_text') {
             var ttp = chip.querySelectorAll('.em-v4-chip__tt-part');
-            item.value = JSON.stringify({ text: val(chip, '.em-v4-chip__titext'), style: ttp[0] ? window.EmWpV4Chip.readStyle(ttp[0]) : {}, text2: val(chip, '.em-v4-chip__titext2'), style2: ttp[1] ? window.EmWpV4Chip.readStyle(ttp[1]) : {} });
+            var l1 = chip.querySelector('.em-v4-chip__tlink'), l2 = chip.querySelector('.em-v4-chip__tlink2');
+            item.value = JSON.stringify({ text: val(chip, '.em-v4-chip__titext'), link: l1 ? l1.value : '', style: ttp[0] ? window.EmWpV4Chip.readStyle(ttp[0]) : {}, text2: val(chip, '.em-v4-chip__titext2'), link2: l2 ? l2.value : '', style2: ttp[1] ? window.EmWpV4Chip.readStyle(ttp[1]) : {} });
         }
         if (type === 'arrow_up' || type === 'arrow_down') {
             var aUrl = chip.querySelector('.em-v4-chip__url');
@@ -210,8 +228,8 @@ require __DIR__ . '/chip-script.php';
 
     function onClick(e, builder, update) {
         var t = e.target;
-        if (t.closest('.em-v4-preview__popout')) { e.preventDefault(); window.EmWpV4Preview.openWindow(builder.querySelector('.em-v4-livepreview')); return; }
-        if (t.closest('.em-v4-preview__toggle')) { e.preventDefault(); window.EmWpV4Preview.toggle(t.closest('.em-v4-preview__toggle')); return; }
+        var mc = t.closest('.em-v4-gridmap__cell');
+        if (mc) { e.preventDefault(); window.EmWpV4Rows.openCell(builder, parseInt(mc.getAttribute('data-row-index'), 10) || 0, parseInt(mc.getAttribute('data-col'), 10) || 1); return; }
         if (t.closest('.em-v4-row__drag')) { e.preventDefault(); return; }
         if (t.closest('.em-v4-row__add')) { e.preventDefault(); window.EmWpV4Rows.addRow(builder, update, t.closest('.em-v4-row')); return; }
         if (t.closest('.em-v4-addrow')) { e.preventDefault(); window.EmWpV4Rows.addRow(builder, update); return; }
@@ -220,6 +238,12 @@ require __DIR__ . '/chip-script.php';
         if (t.closest('.em-v4-celladd__confirm')) { e.preventDefault(); confirmCellAdd(t.closest('.em-v4-col'), t.closest('.em-v4-celladd'), update); return; }
         var ab = t.closest('.em-v4-align__btn');
         if (ab) { e.preventDefault(); if (window.EmWpV4Align.toggle(ab.closest('.em-v4-align__group'), ab)) { update(); } return; }
+        var cadd = t.closest('.em-v4-col-tab__add');
+        if (cadd) { e.preventDefault(); window.EmWpV4Rows.addColumn(builder, cadd.closest('.em-v4-row'), update); return; }
+        var cdel = t.closest('.em-v4-col-tab__del');
+        if (cdel) { e.preventDefault(); var ctb = cdel.closest('.em-v4-col-tab'); window.EmWpV4Rows.removeColumnAt(builder, ctb.closest('.em-v4-row'), parseInt(ctb.getAttribute('data-col'), 10) || 1, update); return; }
+        var tab = t.closest('.em-v4-col-tab');
+        if (tab) { e.preventDefault(); window.EmWpV4Rows.activateTab(tab); return; }
         var sdel = t.closest('.em-v4-chip__slide-del');
         if (sdel) { e.preventDefault(); window.EmWpV4Chip.removeSlide(sdel, update); return; }
         var pick = t.closest('.em-v4-chip__pick');
@@ -239,15 +263,18 @@ require __DIR__ . '/chip-script.php';
         var btn = cell.querySelector('.em-v4-celladd__btn');
         if (form) { form.hidden = !show; }
         if (btn) { btn.hidden = show; }
-        if (show && form) { form.querySelector('.em-v4-celladd__label').focus(); }
+        if (show && form) {
+            var sel = form.querySelector('.em-v4-celladd__type');
+            if (sel) { sel.focus(); }
+        }
     }
 
+    // Insertion d'un champ : on choisit juste le type et on valide ;
+    // la personnalisation (libellé, contenu, lien, style…) se fait ensuite
+    // directement dans la chip ajoutée.
     function confirmCellAdd(col, cell, update) {
-        var label = cell.querySelector('.em-v4-celladd__label').value.trim();
         var type = cell.querySelector('.em-v4-celladd__type').value;
-        if (label === '' && !window.EmWpV4Chip.labelOptional(type)) { return; }
-        col.querySelector('.em-v4-col__drop').appendChild(window.EmWpV4Chip.build(type, label));
-        cell.querySelector('.em-v4-celladd__label').value = '';
+        col.querySelector('.em-v4-col__drop').appendChild(window.EmWpV4Chip.build(type, ''));
         toggleCellForm(cell, false);
         update();
     }
@@ -272,22 +299,12 @@ require __DIR__ . '/chip-script.php';
 
     function removeRow(btn, update) {
         var row = btn.closest('.em-v4-row');
-        ask(
-            '<?php echo esc_js(__('Supprimer cette ligne et ses champs ?', 'em-wp')); ?>',
-            '<?php echo esc_js(__('Je confirme vouloir supprimer cette ligne.', 'em-wp')); ?>',
-            function () { row.remove(); update(); }
-        );
+        ask('<?php echo esc_js(__('Supprimer cette ligne et ses champs ?', 'em-wp')); ?>', '<?php echo esc_js(__('Je confirme vouloir supprimer cette ligne.', 'em-wp')); ?>', function () { row.remove(); update(); });
     }
 
     function ask(message, ackText, onConfirm) {
-        if (window.EmWpAdminConfirm && window.EmWpAdminConfirm.confirmDelete) {
-            window.EmWpAdminConfirm.confirmDelete(onConfirm, {
-                title: '<?php echo esc_js(__('Supprimer', 'em-wp')); ?>',
-                message: message,
-                acknowledgeLabel: ackText,
-                confirmLabel: '<?php echo esc_js(__('Supprimer définitivement', 'em-wp')); ?>'
-            });
-        }
+        if (!window.EmWpAdminConfirm || !window.EmWpAdminConfirm.confirmDelete) { return; }
+        window.EmWpAdminConfirm.confirmDelete(onConfirm, { title: '<?php echo esc_js(__('Supprimer', 'em-wp')); ?>', message: message, acknowledgeLabel: ackText, confirmLabel: '<?php echo esc_js(__('Supprimer définitivement', 'em-wp')); ?>' });
     }
 
     if (document.readyState === 'loading') {
