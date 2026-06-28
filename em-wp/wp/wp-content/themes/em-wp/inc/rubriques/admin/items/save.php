@@ -117,7 +117,46 @@ function em_wp_v4_handle_duplicate_item(): void
 add_action('admin_post_em_wp_v4_duplicate_item', 'em_wp_v4_handle_duplicate_item');
 
 /**
- * Supprime un footer (item). L'item « default » n'est pas supprimable.
+ * Crée une nouvelle RUBRIQUE (type) personnalisée, stockée en option.
+ *
+ * La rubrique démarre avec les champs d'apparence mutualisés (section
+ * « Apparence ») et aucun contenu. Elle apparaît ensuite dans la liste et le
+ * sous-menu comme les types intégrés.
+ */
+function em_wp_v4_handle_create_type(): void
+{
+    em_wp_v4_items_guard('em_wp_v4_create_type');
+
+    $label = sanitize_text_field(wp_unslash((string) ($_POST['type_label'] ?? '')));
+    $icon = sanitize_html_class((string) ($_POST['type_icon'] ?? ''));
+    $slug = sanitize_key(sanitize_title($label));
+
+    if ($label === '' || $slug === '') {
+        em_wp_v4_builder_redirect(['v4_error' => 'type_create']);
+    }
+
+    if (em_wp_rubrique_type_exists($slug)) {
+        em_wp_v4_builder_redirect(['v4_error' => 'type_exists']);
+    }
+
+    $label_uc = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
+    $types = get_option(em_wp_rubrique_types_option_name(), []);
+    $types = is_array($types) ? $types : [];
+    $types[$slug] = [
+        'label'        => $label_uc,
+        'label_plural' => $label_uc,
+        'icon'         => $icon !== '' ? $icon : 'dashicons-screenoptions',
+        'starter'      => em_wp_rubrique_default_appearance_fields(),
+        'layout'       => [],
+    ];
+    update_option(em_wp_rubrique_types_option_name(), $types);
+
+    em_wp_v4_builder_redirect(['v4_updated' => 'type_created', 'type' => $slug]);
+}
+add_action('admin_post_em_wp_v4_create_type', 'em_wp_v4_handle_create_type');
+
+/**
+ * Supprime un footer (item).
  */
 function em_wp_v4_handle_delete_item(): void
 {
@@ -126,7 +165,7 @@ function em_wp_v4_handle_delete_item(): void
     $type = sanitize_key((string) ($_POST['type'] ?? ''));
     $item = sanitize_key((string) ($_POST['item'] ?? ''));
 
-    if (!em_wp_rubrique_type_exists($type) || $item === '' || $item === 'default') {
+    if (!em_wp_rubrique_type_exists($type) || $item === '') {
         em_wp_v4_builder_redirect(['v4_error' => 'delete', 'type' => $type]);
     }
 

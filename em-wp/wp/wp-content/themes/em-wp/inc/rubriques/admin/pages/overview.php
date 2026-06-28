@@ -73,19 +73,27 @@ add_action('admin_menu', 'em_wp_v4_overview_menu', 100);
 function em_wp_v4_ordered_types(): array
 {
     $types = em_wp_rubrique_type_registry();
-
-    if (!function_exists('em_wp_get_site_rubrique_order')) {
-        return $types;
-    }
-
     $ordered = [];
-    foreach (em_wp_get_site_rubrique_order() as $slug) {
+
+    // 1) Ordre personnalisé enregistré (glisser-déposer de l'aperçu) — prioritaire.
+    foreach (em_wp_v4_get_rubrique_order() as $slug) {
         if (isset($types[$slug])) {
             $ordered[$slug] = $types[$slug];
             unset($types[$slug]);
         }
     }
 
+    // 2) Repli : ordre des rubriques du site pour les non classées.
+    if (function_exists('em_wp_get_site_rubrique_order')) {
+        foreach (em_wp_get_site_rubrique_order() as $slug) {
+            if (isset($types[$slug])) {
+                $ordered[$slug] = $types[$slug];
+                unset($types[$slug]);
+            }
+        }
+    }
+
+    // 3) Reste éventuel (types personnalisés non classés) en fin.
     return $ordered + $types;
 }
 
@@ -111,11 +119,43 @@ function em_wp_v4_overview_render(): void
         <?php if ($types === []) : ?>
             <p><?php esc_html_e('Aucune rubrique déclarée pour le moment.', 'em-wp'); ?></p>
         <?php else : ?>
-            <?php foreach ($types as $slug => $type) : ?>
-                <?php em_wp_v4_overview_render_type((string) $slug, $type, $open_type === (string) $slug); ?>
-            <?php endforeach; ?>
+            <div class="em-v4-cards" id="em-v4-cards">
+                <?php foreach ($types as $slug => $type) : ?>
+                    <?php em_wp_v4_overview_render_type((string) $slug, $type, $open_type === (string) $slug); ?>
+                <?php endforeach; ?>
+            </div>
         <?php endif; ?>
+
+        <?php em_wp_v4_overview_render_create_type(); ?>
     </div>
+    <?php em_wp_v4_overview_render_reorder_script(); ?>
+    <?php em_wp_v4_overview_render_rename_script(); ?>
+    <script>
+    (function () {
+        // Accordéon : une seule rubrique ouverte à la fois (focus sur l'édition).
+        var cards = document.querySelectorAll('.em-v4-card');
+        cards.forEach(function (card) {
+            card.addEventListener('toggle', function () {
+                if (!card.open) { return; }
+                cards.forEach(function (other) {
+                    if (other !== card && other.open) { other.open = false; }
+                });
+            });
+        });
+        // Accordéon : une seule section (item) ouverte à la fois, par rubrique.
+        document.querySelectorAll('.em-v4-items').forEach(function (group) {
+            var items = group.querySelectorAll(':scope > .em-v4-item');
+            items.forEach(function (item) {
+                item.addEventListener('toggle', function () {
+                    if (!item.open) { return; }
+                    items.forEach(function (other) {
+                        if (other !== item && other.open) { other.open = false; }
+                    });
+                });
+            });
+        });
+    })();
+    </script>
     <?php if ($open_type !== '' && isset($types[$open_type])) : ?>
         <script>
         (function () {
@@ -146,10 +186,13 @@ function em_wp_v4_overview_notice(): void
         'deleted'    => sprintf(__('%1$s supprimé%2$s.', 'em-wp'), $noun, $e),
         'duplicated' => sprintf(__('%1$s dupliqué%2$s.', 'em-wp'), $noun, $e),
         'structure'  => __('Structure enregistrée.', 'em-wp'),
+        'type_created' => __('Rubrique créée.', 'em-wp'),
     ];
 
     if (isset($messages[$updated])) {
         echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($messages[$updated]) . '</p></div>';
+    } elseif ($error === 'type_exists') {
+        echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Cette rubrique existe déjà.', 'em-wp') . '</p></div>';
     } elseif ($error !== '') {
         echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__('Action impossible (données invalides).', 'em-wp') . '</p></div>';
     }
@@ -162,15 +205,70 @@ function em_wp_v4_overview_notice(): void
  */
 function em_wp_v4_overview_render_type(string $slug, array $type, bool $open): void
 {
+    $count = count(em_wp_v4_get_items($slug));
+    $label = (string) ($type['label_plural'] ?? $type['label']);
     ?>
-    <details class="em-v4-collapse em-v4-card" id="em-v4-card-<?php echo esc_attr($slug); ?>" <?php echo $open ? 'open' : ''; ?>>
+    <details class="em-v4-collapse em-v4-card" id="em-v4-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-v4-collapse__summary em-v4-card__head">
+            <span class="em-v4-card__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>" aria-hidden="true"></span>
             <span class="em-v4-collapse__chevron" aria-hidden="true"></span>
-            <span class="dashicons <?php echo esc_attr((string) ($type['icon'] ?? 'dashicons-screenoptions')); ?>"></span>
-            <strong><?php echo esc_html((string) ($type['label_plural'] ?? $type['label'])); ?></strong>
+            <span class="em-v4-card__icon dashicons <?php echo esc_attr((string) ($type['icon'] ?? 'dashicons-screenoptions')); ?>"></span>
+            <strong class="em-v4-card__name"><?php echo esc_html($label); ?></strong>
+            <input type="text" class="em-v4-card__nameinput" data-slug="<?php echo esc_attr($slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
+            <button type="button" class="em-v4-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-wp'); ?>">
+                <span class="dashicons dashicons-edit" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="em-v4-card__confirm" title="<?php esc_attr_e('Valider', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-wp'); ?>" hidden>
+                <span class="dashicons dashicons-yes" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="em-v4-card__cancel" title="<?php esc_attr_e('Annuler', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Annuler', 'em-wp'); ?>" hidden>
+                <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
+            </button>
+            <span class="em-v4-card__count" title="<?php echo esc_attr(sprintf(_n('%d section', '%d sections', $count, 'em-wp'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
         </summary>
         <div class="em-v4-collapse__body">
             <?php em_wp_v4_render_items_section($slug); ?>
+        </div>
+    </details>
+    <?php
+}
+
+/**
+ * Bouton/formulaire « + Nouvelle Rubrique » (fin de liste).
+ *
+ * Permet de créer une rubrique personnalisée (nom + icône) sans code. La
+ * rubrique démarre vide (apparence par défaut) et apparaît dans la liste.
+ */
+function em_wp_v4_overview_render_create_type(): void
+{
+    $icons = [
+        'dashicons-screenoptions', 'dashicons-menu-alt3', 'dashicons-format-audio',
+        'dashicons-share', 'dashicons-video-alt3', 'dashicons-album', 'dashicons-megaphone',
+        'dashicons-star-filled', 'dashicons-heart', 'dashicons-images-alt2',
+        'dashicons-list-view', 'dashicons-admin-links',
+    ];
+    ?>
+    <details class="em-v4-collapse em-v4-create em-v4-create--nochevron em-v4-createtype">
+        <summary class="em-v4-collapse__summary">
+            <span class="dashicons dashicons-plus-alt2"></span>
+            <strong><?php esc_html_e('Nouvelle Rubrique', 'em-wp'); ?></strong>
+        </summary>
+        <div class="em-v4-collapse__body em-v4-create__options">
+            <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-v4-form em-v4-create__row">
+                <?php wp_nonce_field('em_wp_v4_create_type'); ?>
+                <input type="hidden" name="action" value="em_wp_v4_create_type">
+                <span class="em-v4-create__label"><span class="dashicons dashicons-screenoptions" aria-hidden="true"></span> <?php esc_html_e('Nom de la rubrique', 'em-wp'); ?></span>
+                <input type="text" name="type_label" class="regular-text em-v4-create__name" placeholder="<?php esc_attr_e('Ex. PARTENAIRES', 'em-wp'); ?>" required>
+                <span class="em-v4-iconpick" role="radiogroup" aria-label="<?php esc_attr_e('Icône de la rubrique', 'em-wp'); ?>">
+                    <?php foreach ($icons as $i => $ic) : ?>
+                        <label class="em-v4-iconpick__opt" title="<?php echo esc_attr($ic); ?>">
+                            <input type="radio" name="type_icon" value="<?php echo esc_attr($ic); ?>" <?php checked($i, 0); ?>>
+                            <span class="dashicons <?php echo esc_attr($ic); ?>" aria-hidden="true"></span>
+                        </label>
+                    <?php endforeach; ?>
+                </span>
+                <button type="submit" class="button button-primary"><span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e('Créer la rubrique', 'em-wp'); ?></button>
+            </form>
         </div>
     </details>
     <?php

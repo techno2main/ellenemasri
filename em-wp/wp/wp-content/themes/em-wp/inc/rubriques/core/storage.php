@@ -55,7 +55,25 @@ function em_wp_v4_get_items(string $type_slug): array
 {
     $items = get_option(em_wp_v4_items_option_name($type_slug), []);
 
-    return is_array($items) ? $items : [];
+    return em_wp_v4_sort_items(is_array($items) ? $items : []);
+}
+
+/**
+ * Trie les items : ceux nommés « DEFAULT » d'abord, puis ordre alphabétique.
+ *
+ * @param array<string, string> $items slug => label
+ * @return array<string, string>
+ */
+function em_wp_v4_sort_items(array $items): array
+{
+    uasort($items, static function ($a, $b): int {
+        $da = preg_match('/\bdefault\b/i', (string) $a) ? 0 : 1;
+        $db = preg_match('/\bdefault\b/i', (string) $b) ? 0 : 1;
+
+        return $da !== $db ? $da - $db : strcasecmp((string) $a, (string) $b);
+    });
+
+    return $items;
 }
 
 /**
@@ -235,10 +253,15 @@ function em_wp_v4_register_item(string $type_slug, string $item_slug, string $la
 
     if (get_option(em_wp_v4_item_option_name($type_slug, $item_slug), null) === null) {
         $fields = em_wp_rubrique_type_starter_fields($type_slug);
+        // On ne fige QUE les valeurs des champs de contenu. Les valeurs globales
+        // (apparence) ne sont pas persistées à la création : elles suivent ainsi
+        // toujours les défauts courants (mutualisation), tant que l'utilisateur
+        // ne les modifie pas explicitement via le builder.
+        [, $content_fields] = em_wp_rubrique_split_global_fields($fields);
         em_wp_v4_save_item($type_slug, $item_slug, [
             'label'   => $items[$item_slug],
             'fields'  => $fields,
-            'content' => em_wp_rubrique_fields_defaults($fields),
+            'content' => em_wp_rubrique_fields_defaults($content_fields),
             'layout'  => em_wp_rubrique_type_starter_layout($type_slug),
         ]);
     }

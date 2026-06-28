@@ -51,5 +51,8 @@ if (is_admin()) {
     require_once __DIR__ . '/admin/builder/structure.php';
     require_once __DIR__ . '/admin/items/save.php';
     require_once __DIR__ . '/admin/items/list.php';
+    require_once __DIR__ . '/admin/items/create-form.php';
+    require_once __DIR__ . '/admin/pages/overview-reorder.php';
+    require_once __DIR__ . '/admin/pages/overview-rename.php';
     require_once __DIR__ . '/admin/pages/overview.php';
 }

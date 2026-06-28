@@ -26,6 +26,63 @@ function em_wp_rubrique_types_option_name(): string
 }
 
 /**
+ * Nom d'option des libellés personnalisés (renommage des rubriques).
+ *
+ * Map slug => libellé d'affichage. S'applique aussi bien aux types intégrés
+ * (code) qu'aux types créés via l'admin, sans toucher leur structure.
+ */
+function em_wp_rubrique_labels_option_name(): string
+{
+    return 'em_wp_v4_rubrique_labels';
+}
+
+/**
+ * Libellés personnalisés enregistrés (map slug => libellé).
+ *
+ * @return array<string, string>
+ */
+function em_wp_rubrique_labels(): array
+{
+    $labels = get_option(em_wp_rubrique_labels_option_name(), []);
+
+    return is_array($labels) ? $labels : [];
+}
+
+/**
+ * Dérive le singulier d'un libellé pluriel (heuristique simple, FR/EN).
+ *
+ * Retire un « S » final (ex. NAVBARS -> NAVBAR, TOP-BARS -> TOP-BAR). Sert au
+ * renommage : l'utilisateur saisit le nom pluriel affiché, on en déduit le
+ * singulier pour le préfixe des items et le nom « Section <…> ».
+ */
+function em_wp_rubrique_singularize(string $plural): string
+{
+    $plural = trim($plural);
+    $len = function_exists('mb_strlen') ? mb_strlen($plural, 'UTF-8') : strlen($plural);
+
+    if ($len > 1) {
+        $last = function_exists('mb_substr') ? mb_substr($plural, -1, 1, 'UTF-8') : substr($plural, -1);
+        if (in_array($last, ['s', 'S'], true)) {
+            return function_exists('mb_substr') ? mb_substr($plural, 0, $len - 1, 'UTF-8') : substr($plural, 0, -1);
+        }
+    }
+
+    return $plural;
+}
+
+/**
+ * Met « Casse de Titre » à un libellé (pour le noun « Section <…> »).
+ */
+function em_wp_rubrique_title_case(string $text): string
+{
+    $text = trim($text);
+
+    return function_exists('mb_convert_case')
+        ? mb_convert_case(mb_strtolower($text, 'UTF-8'), MB_CASE_TITLE, 'UTF-8')
+        : ucwords(strtolower($text));
+}
+
+/**
  * Registre complet des types (mémoïsé par requête).
  *
  * @return array<string, array<string, mixed>>
@@ -55,6 +112,7 @@ function em_wp_rubrique_type_registry(): array
     }
 
     $normalized = [];
+    $overrides = em_wp_rubrique_labels();
 
     foreach ($merged as $slug => $definition) {
         $slug = sanitize_key((string) $slug);
@@ -63,7 +121,21 @@ function em_wp_rubrique_type_registry(): array
             continue;
         }
 
-        $normalized[$slug] = em_wp_rubrique_type_normalize($slug, $definition);
+        $type = em_wp_rubrique_type_normalize($slug, $definition);
+
+        // Renommage : un libellé personnalisé (nom pluriel saisi) remplace le nom
+        // de la rubrique PARTOUT — carte + sous-menu (pluriel), préfixe des items
+        // (singulier dérivé) et nom « Section <…> » (noun). La structure (champs)
+        // n'est pas touchée.
+        if (isset($overrides[$slug]) && is_string($overrides[$slug]) && $overrides[$slug] !== '') {
+            $plural = $overrides[$slug];
+            $singular = em_wp_rubrique_singularize($plural);
+            $type['label_plural'] = $plural;
+            $type['label'] = $singular;
+            $type['noun'] = em_wp_rubrique_title_case($singular);
+        }
+
+        $normalized[$slug] = $type;
     }
 
     $cache = $normalized;
@@ -86,12 +158,11 @@ function em_wp_rubrique_default_appearance_fields(): array
         ['key' => 'text_color', 'type' => 'color', 'label' => __('Texte', 'em-wp'), 'default' => '#e2e8f0', 'options' => ['role' => 'text'], 'row' => 1, 'col' => 1],
         ['key' => 'link_color', 'type' => 'color', 'label' => __('Liens', 'em-wp'), 'default' => '#38bdf8', 'options' => ['role' => 'link'], 'row' => 1, 'col' => 1],
         ['key' => 'link_hover_color', 'type' => 'color', 'label' => __('Survol', 'em-wp'), 'default' => '#7dd3fc', 'options' => ['role' => 'link_hover'], 'row' => 1, 'col' => 1],
-        ['key' => 'link_visited_color', 'type' => 'color', 'label' => __('Cliqués', 'em-wp'), 'default' => '#818cf8', 'options' => ['role' => 'link_visited'], 'row' => 1, 'col' => 1],
-        ['key' => 'link_underline', 'type' => 'toggle', 'label' => __('Soulignés', 'em-wp'), 'default' => true, 'options' => ['role' => 'link_underline'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_top', 'type' => 'number', 'label' => __('Haut', 'em-wp'), 'default' => 18, 'options' => ['role' => 'space_top'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_bottom', 'type' => 'number', 'label' => __('Bas', 'em-wp'), 'default' => 18, 'options' => ['role' => 'space_bottom'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_left', 'type' => 'number', 'label' => __('Gauche', 'em-wp'), 'default' => 20, 'options' => ['role' => 'space_left'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_right', 'type' => 'number', 'label' => __('Droite', 'em-wp'), 'default' => 20, 'options' => ['role' => 'space_right'], 'row' => 1, 'col' => 1],
+        ['key' => 'link_underline', 'type' => 'toggle', 'label' => __('Soulignés', 'em-wp'), 'default' => false, 'options' => ['role' => 'link_underline'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_top', 'type' => 'number', 'label' => __('Haut', 'em-wp'), 'default' => 40, 'options' => ['role' => 'space_top'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_bottom', 'type' => 'number', 'label' => __('Bas', 'em-wp'), 'default' => 40, 'options' => ['role' => 'space_bottom'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_left', 'type' => 'number', 'label' => __('Gauche', 'em-wp'), 'default' => 180, 'options' => ['role' => 'space_left'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_right', 'type' => 'number', 'label' => __('Droite', 'em-wp'), 'default' => 180, 'options' => ['role' => 'space_right'], 'row' => 1, 'col' => 1],
         ['key' => 'font_family', 'type' => 'select', 'label' => __('Police', 'em-wp'), 'default' => 'archivo_black', 'options' => ['role' => 'font'], 'row' => 1, 'col' => 1],
     ];
 }
@@ -104,8 +175,17 @@ function em_wp_rubrique_default_appearance_fields(): array
  */
 function em_wp_rubrique_type_normalize(string $slug, array $definition): array
 {
+    // Mutualisation forte : on impose TOUJOURS les champs d'apparence COURANTS et
+    // on ne conserve du starter déclaré/stocké que les champs de CONTENU. Ainsi un
+    // type personnalisé (instantané en option) suit les évolutions des réglages
+    // globaux comme les types intégrés.
+    $raw_starter = is_array($definition['starter'] ?? null) ? $definition['starter'] : [];
+    $content_only = array_values(array_filter(
+        $raw_starter,
+        static fn($field): bool => is_array($field) && !em_wp_rubrique_field_is_global($field)
+    ));
     $starter = em_wp_rubrique_normalize_fields(
-        is_array($definition['starter'] ?? null) ? $definition['starter'] : []
+        array_merge(em_wp_rubrique_default_appearance_fields(), $content_only)
     );
 
     $label = (string) ($definition['label'] ?? mb_strtoupper($slug));
