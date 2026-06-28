@@ -1337,6 +1337,15 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
     pointer-events: none;
 }
 
+/* HERO seul : SLIDER masqué, HERO en pleine largeur (matrice du sélecteur HEADER). */
+.em-wp-admin-landing-map__header-group.is-hero-only .em-wp-admin-landing-map__header-slider {
+    display: none !important;
+}
+
+.em-wp-admin-landing-map__header-group.is-hero-only .em-wp-admin-landing-map__header-part + .em-wp-admin-landing-map__header-part {
+    box-shadow: none !important;
+}
+
 .em-wp-admin-landing-map__header-group.is-layout-mode .em-wp-admin-landing-map__header-slider {
     flex-direction: column;
     gap: 3px;
@@ -1868,6 +1877,24 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
 
 .em-wp-rubriques-admin__list-item {
     margin: 0;
+}
+
+.em-wp-rubriques-admin__add-rubrique-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    font-weight: 600;
+}
+
+.em-wp-rubriques-admin__add-rubrique-toggle[aria-expanded="true"] {
+    background: #751820;
+    border-color: #751820;
+    color: #fff;
+}
+
+.em-wp-rubriques-admin__add-rubrique-toggle .fa-plus {
+    font-size: 12px;
 }
 
 .em-wp-rubriques-admin__list-row {

@@ -167,20 +167,17 @@ function em_wp_admin_is_neutral_admin_page(?string $page_slug = null): bool
 }
 
 /**
- * Indique si le menu Rubriques Template doit être visible.
+ * Indique si l'ancien bloc « Rubriques du site » (entrées par module : TOP-BAR,
+ * HEADER, STREAM…) doit être visible dans le menu latéral.
+ *
+ * Déprécié : l'édition des rubriques se fait désormais sous le squelette via la
+ * nouvelle gestion (V4, menu « RUBRIQUES » dédié). On masque donc toujours
+ * l'ancien bloc par module dans la sidebar. La page squelette reste accessible
+ * depuis les cartes TEMPLATES.
  */
 function em_wp_admin_should_show_rubrique_menus(): bool
 {
-    if (!em_wp_admin_has_template_context()) {
-        return false;
-    }
-
-    // Sommaire templates, dashboard, etc. : pas de rubriques même si un contexte est mémorisé.
-    if (em_wp_admin_is_neutral_admin_page()) {
-        return false;
-    }
-
-    return true;
+    return false;
 }
 
 /**
