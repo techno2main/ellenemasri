@@ -155,6 +155,7 @@ function em_wp_rubrique_default_appearance_fields(): array
 {
     return [
         ['key' => 'bg_color', 'type' => 'color', 'label' => __('Fond', 'em-wp'), 'default' => '#0f172a', 'options' => ['role' => 'background'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_transparent', 'type' => 'toggle', 'label' => __('Transparent', 'em-wp'), 'default' => false, 'options' => ['role' => 'background_transparent'], 'row' => 1, 'col' => 1],
         ['key' => 'text_color', 'type' => 'color', 'label' => __('Texte', 'em-wp'), 'default' => '#e2e8f0', 'options' => ['role' => 'text'], 'row' => 1, 'col' => 1],
         ['key' => 'link_color', 'type' => 'color', 'label' => __('Liens', 'em-wp'), 'default' => '#38bdf8', 'options' => ['role' => 'link'], 'row' => 1, 'col' => 1],
         ['key' => 'link_hover_color', 'type' => 'color', 'label' => __('Survol', 'em-wp'), 'default' => '#7dd3fc', 'options' => ['role' => 'link_hover'], 'row' => 1, 'col' => 1],
@@ -164,6 +165,10 @@ function em_wp_rubrique_default_appearance_fields(): array
         ['key' => 'space_left', 'type' => 'number', 'label' => __('Gauche', 'em-wp'), 'default' => 180, 'options' => ['role' => 'space_left'], 'row' => 1, 'col' => 1],
         ['key' => 'space_right', 'type' => 'number', 'label' => __('Droite', 'em-wp'), 'default' => 180, 'options' => ['role' => 'space_right'], 'row' => 1, 'col' => 1],
         ['key' => 'font_family', 'type' => 'select', 'label' => __('Police', 'em-wp'), 'default' => 'archivo_black', 'options' => ['role' => 'font'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image', 'type' => 'image', 'label' => __('Image de fond', 'em-wp'), 'default' => '', 'options' => ['role' => 'background_image'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image_pos', 'type' => 'select', 'label' => __('Position', 'em-wp'), 'default' => 'cover', 'options' => ['role' => 'background_pos'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image_opacity', 'type' => 'number', 'label' => __('Opacité', 'em-wp'), 'default' => 100, 'options' => ['role' => 'background_opacity'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image_mirror', 'type' => 'toggle', 'label' => __('Miroir', 'em-wp'), 'default' => false, 'options' => ['role' => 'background_mirror'], 'row' => 1, 'col' => 1],
     ];
 }
 
@@ -189,15 +194,29 @@ function em_wp_rubrique_type_normalize(string $slug, array $definition): array
     );
 
     $label = (string) ($definition['label'] ?? mb_strtoupper($slug));
+    $label_plural = (string) ($definition['label_plural'] ?? $label);
+    $noun = (string) ($definition['noun'] ?? '');
+
+    // Rubrique créée via l'admin : le nom saisi fait office de PLURIEL (titre de
+    // la carte + sous-menu). On en dérive le SINGULIER pour les sous-libellés
+    // (« Nouvelle Section <singulier> », « Ex. <singulier> Default », « Aucune
+    // Section <singulier> »…), exactement comme les types intégrés
+    // (TOP-BAR / TOP-BARS). Sans distinction stockée (label == pluriel, pas de
+    // noun), le pluriel fuiterait partout (ex. « Nouvelle Section SLIDERS »).
+    if ($noun === '' && $label === $label_plural) {
+        $singular = em_wp_rubrique_singularize($label_plural);
+        $label = $singular;
+        $noun = em_wp_rubrique_title_case($singular);
+    }
 
     return [
         'slug'         => $slug,
         'label'        => $label,
-        'label_plural' => (string) ($definition['label_plural'] ?? $label),
+        'label_plural' => $label_plural,
         'icon'         => (string) ($definition['icon'] ?? 'dashicons-screenoptions'),
         // Nom d'affichage de la rubrique dans le nom d'item « Section <nom> »
         // (ex. « Section Top-Bar »). Défaut : libellé en Casse de Titre.
-        'noun'         => (string) ($definition['noun'] ?? ''),
+        'noun'         => $noun,
         'starter'      => $starter,
         'layout'       => em_wp_rubrique_normalize_layout($definition['layout'] ?? [], $starter),
     ];

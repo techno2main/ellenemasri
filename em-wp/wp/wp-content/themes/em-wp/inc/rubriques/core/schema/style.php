@@ -82,6 +82,47 @@ function em_wp_rubrique_text_style_css(array $style): string
 }
 
 /**
+ * Modes de POSITION d'une image de fond de rubrique (clé => libellé).
+ *
+ * @return array<string, string>
+ */
+function em_wp_rubrique_bg_position_choices(): array
+{
+    return [
+        'cover'    => __('Étirée (remplir le cadre)', 'em-wp'),
+        'contain'  => __('Adaptée (entière visible)', 'em-wp'),
+        'center'   => __('Centrée (taille réelle)', 'em-wp'),
+        'repeat'   => __('Mosaïque (répétée)', 'em-wp'),
+        'repeat-x' => __('Répétée horizontalement', 'em-wp'),
+        'repeat-y' => __('Répétée verticalement', 'em-wp'),
+    ];
+}
+
+/**
+ * Traduit un mode de position en propriétés CSS de fond.
+ *
+ * @return array{size:string, repeat:string, position:string}
+ */
+function em_wp_rubrique_bg_position_css(string $pos): array
+{
+    switch ($pos) {
+        case 'contain':
+            return ['size' => 'contain', 'repeat' => 'no-repeat', 'position' => 'center'];
+        case 'center':
+            return ['size' => 'auto', 'repeat' => 'no-repeat', 'position' => 'center'];
+        case 'repeat':
+            return ['size' => 'auto', 'repeat' => 'repeat', 'position' => 'top left'];
+        case 'repeat-x':
+            return ['size' => 'auto', 'repeat' => 'repeat-x', 'position' => 'top center'];
+        case 'repeat-y':
+            return ['size' => 'auto', 'repeat' => 'repeat-y', 'position' => 'center left'];
+        case 'cover':
+        default:
+            return ['size' => 'cover', 'repeat' => 'no-repeat', 'position' => 'center'];
+    }
+}
+
+/**
  * Hauteur d'un séparateur vide en px (clampée 0..400).
  *
  * @param mixed $value

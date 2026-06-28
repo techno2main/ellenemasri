@@ -26,13 +26,59 @@ window.EmWpV4Appearance = (function () {
             var tg = it.querySelector('.em-v4-appearance__toggle-input');
             var nb = it.querySelector('.em-v4-appearance__num-input');
             var fn = it.querySelector('.em-v4-appearance__font-input');
+            var bgp = it.querySelector('.em-v4-appearance__bgpos-input');
+            var bgm = it.querySelector('.em-v4-appearance__bgmedia');
+            var bgo = it.querySelector('.em-v4-appearance__bgopacity-input');
             if (col && COLOR[role]) { c[COLOR[role]] = col.value; }
             if (tg && role === 'link_underline') { c.underline = tg.checked; }
+            if (tg && role === 'background_mirror') { c.bgMirror = tg.checked; }
+            if (tg && role === 'background_transparent') { c.bgTransparent = tg.checked; }
             if (nb && NUM[role]) { c[NUM[role]] = nb.value; }
             if (fn && role === 'font') { var o = fn.options[fn.selectedIndex]; c.font = o ? (o.getAttribute('data-stack') || '') : ''; }
+            if (bgp && role === 'background_pos') { c.bgPos = bgp.value; }
+            if (bgm && role === 'background_image') { c.bgImage = bgm.getAttribute('data-url') || ''; }
+            if (bgo && role === 'background_opacity') { c.bgOpacity = bgo.value; }
         });
         return c;
     }
+
+    // Sélecteur d'image de fond (bibliothèque média). Met à jour l'ID caché,
+    // l'URL pleine taille et la vignette, puis notifie le builder (change bubble).
+    function openBgImage(media) {
+        if (!window.wp || !window.wp.media) { return; }
+        var frame = window.wp.media({ title: '<?php echo esc_js(__('Image de fond', 'em-wp')); ?>', multiple: false, library: { type: 'image' } });
+        frame.on('select', function () {
+            var att = frame.state().get('selection').first().toJSON();
+            var sizes = att.sizes || {};
+            var hidden = media.querySelector('.em-v4-appearance__bgid');
+            var thumb = media.querySelector('.em-v4-appearance__bgthumb');
+            var clear = media.querySelector('.em-v4-appearance__bgclear');
+            media.setAttribute('data-url', att.url || '');
+            if (hidden) { hidden.value = att.id; }
+            if (thumb) { thumb.src = (sizes.medium ? sizes.medium.url : att.url); thumb.hidden = false; }
+            if (clear) { clear.hidden = false; }
+            if (hidden) { hidden.dispatchEvent(new Event('change', { bubbles: true })); }
+        });
+        frame.open();
+    }
+
+    function clearBgImage(media) {
+        var hidden = media.querySelector('.em-v4-appearance__bgid');
+        var thumb = media.querySelector('.em-v4-appearance__bgthumb');
+        var clear = media.querySelector('.em-v4-appearance__bgclear');
+        media.setAttribute('data-url', '');
+        if (hidden) { hidden.value = ''; }
+        if (thumb) { thumb.src = ''; thumb.hidden = true; }
+        if (clear) { clear.hidden = true; }
+        if (hidden) { hidden.dispatchEvent(new Event('change', { bubbles: true })); }
+    }
+
+    document.addEventListener('click', function (e) {
+        var pick = e.target.closest('.em-v4-appearance__bgpick');
+        if (pick) { e.preventDefault(); var m = pick.closest('.em-v4-appearance__bgmedia'); if (m) { openBgImage(m); } return; }
+        var clr = e.target.closest('.em-v4-appearance__bgclear');
+        if (clr) { e.preventDefault(); var m2 = clr.closest('.em-v4-appearance__bgmedia'); if (m2) { clearBgImage(m2); } return; }
+    });
 
     function updatePill(builder, c) {
         var box = builder.querySelector('.em-v4-appearance__preview-box');

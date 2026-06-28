@@ -33,7 +33,14 @@ function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array
 
     $layout = $item['layout'];
     [$style, $grid, $visited] = em_wp_rubrique_item_grid($fields, $content, $layout);
+    // On rend AU MOINS toutes les lignes du layout, mais aussi les lignes qui
+    // contiennent des champs au-delà du layout déclaré (sinon ces champs — souvent
+    // des textes secondaires — seraient silencieusement omis, contrairement à
+    // l'aperçu JS qui étend déjà le nombre de lignes au max présent).
     $row_count = em_wp_rubrique_layout_row_count($layout);
+    if ($grid !== []) {
+        $row_count = max($row_count, (int) max(array_keys($grid)));
+    }
     $uid = 'em-rubrique-' . sanitize_html_class($type_slug . '-' . $item_slug);
     // ":visited" ignore var() : on émet une couleur littérale scopée à cet item.
     $visited_css = $visited !== '' ? sanitize_hex_color($visited) : null;
@@ -89,10 +96,46 @@ function em_wp_rubrique_item_grid(array $fields, array $content, array $layout):
     $style = '';
     $grid = [];
     $visited = '';
+    $bg_image_url = '';
+    $bg_image_pos = 'cover';
+    $bg_image_opacity = 100;
+    $bg_image_mirror = false;
+    $bg_transparent = false;
 
     foreach ($fields as $field) {
         $value = $content[$field['key']] ?? ($field['default'] ?? '');
         $role = (string) ($field['options']['role'] ?? '');
+
+        if ($field['type'] === 'image' && $role === 'background_image') {
+            $img = em_wp_rubrique_image_value($value);
+            if ((int) $img['id'] > 0) {
+                $url = (string) wp_get_attachment_image_url((int) $img['id'], 'full');
+                if ($url !== '') {
+                    $bg_image_url = $url;
+                }
+            }
+            continue;
+        }
+
+        if ($field['type'] === 'select' && $role === 'background_pos') {
+            $bg_image_pos = (string) $value;
+            continue;
+        }
+
+        if ($field['type'] === 'number' && $role === 'background_opacity') {
+            $bg_image_opacity = max(0, min(100, (int) $value));
+            continue;
+        }
+
+        if ($field['type'] === 'toggle' && $role === 'background_mirror') {
+            $bg_image_mirror = (bool) $value;
+            continue;
+        }
+
+        if ($field['type'] === 'toggle' && $role === 'background_transparent') {
+            $bg_transparent = (bool) $value;
+            continue;
+        }
 
         if ($field['type'] === 'color' && isset(em_wp_rubrique_color_role_vars()[$role])) {
             if ($value !== '') {
@@ -134,6 +177,22 @@ function em_wp_rubrique_item_grid(array $fields, array $content, array $layout):
             $col = em_wp_rubrique_valid_col((int) $field['col'], em_wp_rubrique_layout_columns_for($layout, $row));
             $grid[$row][$col][] = $html;
         }
+    }
+
+    // Fond transparent : laisse voir le fond parent (ex. fond partagé du HEADER).
+    // Déclaré après la couleur de fond pour gagner en cascade (dernière valeur).
+    if ($bg_transparent) {
+        $style .= '--em-rubrique-bg:transparent;';
+    }
+
+    if ($bg_image_url !== '') {
+        $bp = em_wp_rubrique_bg_position_css($bg_image_pos);
+        $style .= "--em-rubrique-bg-image:url('" . str_replace("'", '%27', esc_url($bg_image_url)) . "');";
+        $style .= '--em-rubrique-bg-size:' . $bp['size'] . ';';
+        $style .= '--em-rubrique-bg-repeat:' . $bp['repeat'] . ';';
+        $style .= '--em-rubrique-bg-position:' . $bp['position'] . ';';
+        $style .= '--em-rubrique-bg-opacity:' . round($bg_image_opacity / 100, 2) . ';';
+        $style .= '--em-rubrique-bg-transform:' . ($bg_image_mirror ? 'scaleX(-1)' : 'none') . ';';
     }
 
     return [$style, $grid, $visited];

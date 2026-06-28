@@ -162,15 +162,19 @@ function em_wp_rubrique_field_is_global(array $field): bool
     }
 
     if ($type === 'toggle') {
-        return $role === 'link_underline';
+        return in_array($role, ['link_underline', 'background_mirror', 'background_transparent'], true);
+    }
+
+    if ($type === 'image') {
+        return $role === 'background_image';
     }
 
     if ($type === 'select') {
-        return $role === 'font';
+        return in_array($role, ['font', 'background_pos'], true);
     }
 
     if ($type === 'number') {
-        return in_array($role, ['space_top', 'space_bottom', 'space_left', 'space_right'], true);
+        return in_array($role, ['space_top', 'space_bottom', 'space_left', 'space_right', 'background_opacity'], true);
     }
 
     return false;
