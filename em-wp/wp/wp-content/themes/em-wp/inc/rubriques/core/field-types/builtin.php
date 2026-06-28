@@ -67,6 +67,11 @@ function em_wp_field_types_builtin(array $types): array
             'default'  => '',
             'sanitize' => 'em_wp_field_sanitize_platform_block',
         ],
+        'button' => [
+            'label'    => __('Bouton', 'em-wp'),
+            'default'  => '',
+            'sanitize' => 'em_wp_field_sanitize_button',
+        ],
         'color' => [
             'label'    => __('Couleur', 'em-wp'),
             'default'  => '',
@@ -121,7 +126,7 @@ function em_wp_field_types_builtin(array $types): array
         'slider' => [
             'label'    => __('Slider', 'em-wp'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_slider',
+            'sanitize' => 'em_wp_field_sanitize_slides',
         ],
         // Champs décoratifs : pas de libellé. Filet et flèches portent une couleur.
         'sep_line' => [
@@ -199,6 +204,51 @@ function em_wp_field_sanitize_image($value): string
         'h'    => max(0, (int) $parsed['h']),
         'fx'   => max(0, min(100, (int) $parsed['fx'])),
         'fy'   => max(0, min(100, (int) $parsed['fy'])),
+    ]);
+}
+
+/**
+ * Décode la valeur d'un champ « Bouton » en { link, bg, text }.
+ *
+ * Le LIBELLÉ du champ porte le texte du bouton ; la valeur ne stocke que le lien
+ * et les couleurs (fond + texte).
+ *
+ * @param mixed $value
+ * @return array{link:string, bg:string, text:string}
+ */
+function em_wp_rubrique_button_value($value): array
+{
+    $decoded = is_array($value) ? $value : json_decode((string) $value, true);
+
+    if (!is_array($decoded)) {
+        $decoded = [];
+    }
+
+    return [
+        'link' => (string) ($decoded['link'] ?? ''),
+        'bg'   => em_wp_field_sanitize_color((string) ($decoded['bg'] ?? '')),
+        'text' => em_wp_field_sanitize_color((string) ($decoded['text'] ?? '')),
+    ];
+}
+
+/**
+ * Sanitise un champ « Bouton » : lien (URL/ancre) + couleurs, encodé en JSON.
+ *
+ * @param mixed $value
+ */
+function em_wp_field_sanitize_button($value): string
+{
+    $parsed = em_wp_rubrique_button_value($value);
+    $link = esc_url_raw($parsed['link']);
+
+    if ($link === '' && $parsed['bg'] === '' && $parsed['text'] === '') {
+        return '';
+    }
+
+    return (string) wp_json_encode([
+        'link' => $link,
+        'bg'   => $parsed['bg'],
+        'text' => $parsed['text'],
     ]);
 }
 

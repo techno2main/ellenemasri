@@ -100,6 +100,7 @@ function em_wp_field_type_default_icon(string $key): string
         'text_text'      => 'dashicons-editor-paragraph',
         'icon'           => 'dashicons-share-alt',
         'platform_block' => 'dashicons-album',
+        'button'         => 'dashicons-button',
         'video_url'      => 'dashicons-video-alt3',
         'video_file'     => 'dashicons-format-video',
         'audio_file'     => 'dashicons-format-audio',

@@ -89,6 +89,15 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
         case 'text':
             $tv = em_wp_rubrique_text_value($value);
             if ($tv['text'] === '') {
+                // Repli « valeur || libellé » (identique à l'aperçu builder JS) :
+                // les anciens champs texte stockaient leur contenu dans le libellé
+                // (avant le champ « Contenu » unique). Sans ce repli, ces textes
+                // — titres « 01 / LISTEN », « AVAILABLE EVERYWHERE »… — disparaissent
+                // du rendu PHP (front + aperçu squelette) alors qu'ils s'affichent
+                // dans le builder. Les champs neufs ont un libellé vide : pas d'effet.
+                $tv['text'] = $label;
+            }
+            if ($tv['text'] === '') {
                 return '';
             }
             $text_style = em_wp_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
@@ -150,6 +159,22 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
         case 'network_block':
             return em_wp_rubrique_platform_card_html(em_wp_rubrique_platform_block_value($value));
 
+        case 'button':
+            if ($label === '') {
+                return '';
+            }
+            $btn = em_wp_rubrique_button_value($value);
+            $btn_style = '';
+            if ($btn['bg'] !== '') {
+                $btn_style .= 'background:' . $btn['bg'] . ';border-color:' . $btn['bg'] . ';';
+            }
+            if ($btn['text'] !== '') {
+                $btn_style .= 'color:' . $btn['text'] . ';';
+            }
+            $btn_href = $btn['link'] !== '' ? $btn['link'] : '#';
+            $btn_target = ($btn['link'] !== '' && strpos($btn['link'], '#') !== 0) ? ' target="_blank" rel="noopener noreferrer"' : '';
+            return '<a class="em-rubrique__button" href="' . esc_url($btn_href) . '"' . $btn_target . ($btn_style !== '' ? ' style="' . esc_attr($btn_style) . '"' : '') . '>' . esc_html($label) . '</a>';
+
         case 'video_url':
             return em_wp_rubrique_video_url_html(em_wp_rubrique_video_url_value($value));
 
@@ -164,7 +189,7 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             return em_wp_rubrique_audio_html((string) $value);
 
         case 'slider':
-            return em_wp_rubrique_slider_html(em_wp_rubrique_slider_value($value), $label);
+            return em_wp_rubrique_slides_front_html(em_wp_rubrique_slides_config($value));
 
         case 'toggle':
             return '<span class="em-rubrique__chip">' . esc_html($label) . ' : ' . ($value ? esc_html__('oui', 'em-wp') : esc_html__('non', 'em-wp')) . '</span>';
