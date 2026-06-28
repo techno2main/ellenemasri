@@ -54,6 +54,39 @@ window.EmWpV4Appearance = (function () {
         }
     }
 
+    // Espacements liés : la chaîne synchronise les deux valeurs d'une paire.
+    function syncPair(group, source) {
+        var inputs = group.querySelectorAll('.em-v4-appearance__num-input');
+        if (inputs.length < 2) { return; }
+        var other = inputs[0] === source ? inputs[1] : inputs[0];
+        if (other.value !== source.value) {
+            other.value = source.value;
+            other.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.em-v4-appearance__chain');
+        if (!btn) { return; }
+        e.preventDefault();
+        var group = btn.closest('.em-v4-appearance__group');
+        if (!group) { return; }
+        var on = btn.getAttribute('aria-pressed') !== 'true';
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        group.classList.toggle('is-linked', on);
+        var icon = btn.querySelector('.dashicons');
+        if (icon) { icon.className = 'dashicons dashicons-' + (on ? 'admin-links' : 'editor-unlink'); }
+        if (on) {
+            var first = group.querySelector('.em-v4-appearance__num-input');
+            if (first) { syncPair(group, first); }
+        }
+    });
+    document.addEventListener('input', function (e) {
+        var inp = e.target.closest('.em-v4-appearance__num-input');
+        if (!inp) { return; }
+        var group = inp.closest('.em-v4-appearance__group');
+        if (group && group.classList.contains('is-linked')) { syncPair(group, inp); }
+    });
+
     return { collect: collect, updatePill: updatePill };
 })();
 </script>

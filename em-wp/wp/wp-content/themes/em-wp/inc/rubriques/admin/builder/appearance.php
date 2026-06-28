@@ -51,15 +51,12 @@ function em_wp_v4_render_appearance_lines(string $type, string $item, array $glo
         <?php foreach ($colors as $field) : ?>
             <?php em_wp_v4_render_appearance_field($type, $item, $field, $form_id, $content); ?>
         <?php endforeach; ?>
-        <?php em_wp_v4_render_appearance_preview(); ?>
     </div>
     <?php if ($spaces !== [] || $fonts !== []) : ?>
         <div class="em-v4-appearance__line">
             <?php if ($spaces !== []) : ?>
                 <span class="em-v4-appearance__title"><?php esc_html_e('Espacements', 'em-wp'); ?></span>
-                <?php foreach ($spaces as $field) : ?>
-                    <?php em_wp_v4_render_appearance_field($type, $item, $field, $form_id, $content); ?>
-                <?php endforeach; ?>
+                <?php em_wp_v4_render_spacing_pairs($type, $item, $spaces, $form_id, $content); ?>
             <?php endif; ?>
             <?php if ($fonts !== []) : ?>
                 <span class="em-v4-appearance__title"><?php esc_html_e('Typos', 'em-wp'); ?></span>
@@ -70,6 +67,47 @@ function em_wp_v4_render_appearance_lines(string $type, string $item, array $glo
         </div>
     <?php endif; ?>
     <?php
+}
+
+/**
+ * Espacements par paires liables : haut/bas et gauche/droite, séparés par une
+ * icône « chaîne » qui synchronise les deux valeurs quand elle est active.
+ *
+ * @param array<int, array<string, mixed>> $spaces
+ * @param array<string, mixed>             $content
+ */
+function em_wp_v4_render_spacing_pairs(string $type, string $item, array $spaces, string $form_id, array $content): void
+{
+    $by_role = [];
+    foreach ($spaces as $f) {
+        $by_role[(string) ($f['options']['role'] ?? '')] = $f;
+    }
+
+    $pairs = [
+        'vertical'   => ['space_top', 'space_bottom', __('Lier haut et bas', 'em-wp')],
+        'horizontal' => ['space_left', 'space_right', __('Lier gauche et droite', 'em-wp')],
+    ];
+
+    foreach ($pairs as $axis => $pair) {
+        [$a, $b, $tip] = $pair;
+        if (!isset($by_role[$a], $by_role[$b])) {
+            continue;
+        }
+        ?>
+        <span class="em-v4-appearance__group" data-axis="<?php echo esc_attr($axis); ?>">
+            <?php em_wp_v4_render_appearance_field($type, $item, $by_role[$a], $form_id, $content); ?>
+            <button type="button" class="em-v4-appearance__chain" aria-pressed="false" title="<?php echo esc_attr($tip); ?>" aria-label="<?php echo esc_attr($tip); ?>">
+                <span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span>
+            </button>
+            <?php em_wp_v4_render_appearance_field($type, $item, $by_role[$b], $form_id, $content); ?>
+        </span>
+        <?php
+        unset($by_role[$a], $by_role[$b]);
+    }
+
+    foreach ($by_role as $field) {
+        em_wp_v4_render_appearance_field($type, $item, $field, $form_id, $content);
+    }
 }
 
 /**
@@ -98,17 +136,22 @@ function em_wp_v4_render_appearance_field(string $type, string $item, array $fie
     $key = (string) $field['key'];
     $role = (string) ($field['options']['role'] ?? 'content');
     $value = (string) ($content[$key] ?? $field['default'] ?? '');
+    $args = [
+        'id'            => 'emv4c-' . sanitize_html_class($type . '-' . $item . '-' . $key),
+        'name'          => 'fields[' . $key . ']',
+        'value'         => $value,
+        'default'       => (string) ($field['default'] ?? ''),
+        'preview_label' => (string) $field['label'],
+        'preview_type'  => $role === 'text' ? 'text' : 'swatch',
+    ];
+    // La pastille « Texte » s'affiche sur le fond choisi (couleur de fond du bloc).
+    if ($role === 'text') {
+        $args['bg_target_id'] = 'emv4c-' . sanitize_html_class($type . '-' . $item . '-bg_color');
+    }
     ?>
     <div class="em-v4-appearance__item" data-role="<?php echo esc_attr($role); ?>">
         <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
-        <?php em_wp_admin_render_color_field([
-            'id'            => 'emv4c-' . sanitize_html_class($type . '-' . $item . '-' . $key),
-            'name'          => 'fields[' . $key . ']',
-            'value'         => $value,
-            'default'       => (string) ($field['default'] ?? ''),
-            'preview_label' => (string) $field['label'],
-            'preview_type'  => $role === 'text' ? 'text' : 'swatch',
-        ]); ?>
+        <?php em_wp_admin_render_color_field($args); ?>
     </div>
     <?php
 }
@@ -182,18 +225,3 @@ function em_wp_v4_render_appearance_select(array $field, array $content): void
     <?php
 }
 
-/**
- * Pastille « Aperçu » : fond + texte + lien (mise à jour live par le script).
- */
-function em_wp_v4_render_appearance_preview(): void
-{
-    ?>
-    <span class="em-v4-appearance__preview">
-        <span class="em-v4-appearance__preview-label"><?php esc_html_e('Aperçu', 'em-wp'); ?></span>
-        <span class="em-v4-appearance__preview-box">
-            <span class="ap-text"><?php esc_html_e('Texte', 'em-wp'); ?></span>
-            <a class="ap-link" href="#" onclick="return false;" title="<?php esc_attr_e('Clique pour tester l’état visité', 'em-wp'); ?>"><?php esc_html_e('lien', 'em-wp'); ?></a>
-        </span>
-    </span>
-    <?php
-}
