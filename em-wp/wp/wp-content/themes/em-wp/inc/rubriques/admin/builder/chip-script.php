@@ -67,7 +67,25 @@ window.EmWpV4Chip = (function () {
         text1: '<?php echo esc_js(__('Texte 1…', 'em-wp')); ?>',
         text2: '<?php echo esc_js(__('Texte 2…', 'em-wp')); ?>',
         pickThumb: '<?php echo esc_js(__('Choisir une miniature', 'em-wp')); ?>',
-        clickable: '<?php echo esc_js(__('Lien cliquable', 'em-wp')); ?>'
+        clickable: '<?php echo esc_js(__('Lien cliquable', 'em-wp')); ?>',
+        btnBg: '<?php echo esc_js(__('Fond', 'em-wp')); ?>',
+        btnText: '<?php echo esc_js(__('Texte', 'em-wp')); ?>',
+        slTitle: '<?php echo esc_js(__('Titre du bandeau', 'em-wp')); ?>',
+        slTitlePh: '<?php echo esc_js(__('Mayami, My Miami', 'em-wp')); ?>',
+        slTitleHide: '<?php echo esc_js(__('Masquer le titre', 'em-wp')); ?>',
+        slFrame: '<?php echo esc_js(__('Cadre', 'em-wp')); ?>',
+        slBand: '<?php echo esc_js(__('Bandeau', 'em-wp')); ?>',
+        slBandText: '<?php echo esc_js(__('Texte titre', 'em-wp')); ?>',
+        slImage: '<?php echo esc_js(__('Image', 'em-wp')); ?>',
+        slVideo: '<?php echo esc_js(__('Vidéo YouTube', 'em-wp')); ?>',
+        slYoutube: '<?php echo esc_js(__('URL YouTube', 'em-wp')); ?>',
+        slTiktok: '<?php echo esc_js(__('URL TikTok', 'em-wp')); ?>',
+        slVideoFile: '<?php echo esc_js(__('Vidéo fichier', 'em-wp')); ?>',
+        slName: '<?php echo esc_js(__('Nom', 'em-wp')); ?>',
+        slDuration: '<?php echo esc_js(__('Durée (s)', 'em-wp')); ?>',
+        slAdd: '<?php echo esc_js(__('+ Ajouter un slide', 'em-wp')); ?>',
+        slUp: '<?php echo esc_js(__('Monter', 'em-wp')); ?>',
+        slDown: '<?php echo esc_js(__('Descendre', 'em-wp')); ?>'
     };
 
     function esc(s) {
@@ -185,6 +203,11 @@ window.EmWpV4Chip = (function () {
                 platformSelectHtml() +
                 '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
+        if (type === 'button') {
+            return '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
+                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('emv4bbg-'), 'em-v4-chip__btnbg', TXT.btnBg) + '</span>' +
+                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4btx-'), 'em-v4-chip__btntext', TXT.btnText) + '</span>';
+        }
         if (type === 'icon') {
             return platformSelectHtml() +
                 '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
@@ -240,7 +263,6 @@ window.EmWpV4Chip = (function () {
         if (!window.wp || !window.wp.media) { return; }
         var chip = btn.closest('.em-v4-chip');
         var type = chip.getAttribute('data-type');
-        if (type === 'slider') { return openSlider(chip, update); }
         if (type === 'video_url') { return openThumb(chip, update); }
         if (type === 'video_file' || type === 'audio_file') { return openAv(chip, type, update); }
         var frame = window.wp.media({ title: TXT.image, multiple: false, library: { type: 'image' } });
@@ -288,6 +310,7 @@ window.EmWpV4Chip = (function () {
         build: build,
         openMedia: openMedia,
         removeSlide: removeSlide,
+        slideRowHtml: slideRowHtml,
         readMedia: readMedia,
         setFocal: setFocal,
         readStyle: readStyle,

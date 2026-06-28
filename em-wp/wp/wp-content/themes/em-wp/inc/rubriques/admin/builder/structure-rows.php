@@ -70,6 +70,10 @@ function em_wp_v4_render_col_tab(int $index, string $align, bool $active): void
     ?>
     <div class="em-v4-col-tab<?php echo $active ? ' is-active' : ''; ?>" data-col="<?php echo (int) $index; ?>" role="tab">
         <span class="em-v4-col-tab__name"><?php printf(esc_html__('Colonne %d', 'em-wp'), $index); ?></span>
+        <span class="em-v4-col-tab__move-group" aria-hidden="false">
+            <button type="button" class="em-v4-col-tab__move em-v4-col-tab__move--left" data-dir="-1" title="<?php esc_attr_e('Déplacer la colonne vers la gauche', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Déplacer la colonne vers la gauche', 'em-wp'); ?>"><span class="dashicons dashicons-arrow-left-alt2" aria-hidden="true"></span></button>
+            <button type="button" class="em-v4-col-tab__move em-v4-col-tab__move--right" data-dir="1" title="<?php esc_attr_e('Déplacer la colonne vers la droite', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Déplacer la colonne vers la droite', 'em-wp'); ?>"><span class="dashicons dashicons-arrow-right-alt2" aria-hidden="true"></span></button>
+        </span>
         <?php em_wp_v4_render_align_select($index, $align); ?>
         <button type="button" class="em-v4-col-tab__del" title="<?php esc_attr_e('Supprimer la colonne', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Supprimer la colonne', 'em-wp'); ?>">&times;</button>
     </div>

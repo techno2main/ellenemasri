@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_v4_builder_field_types(): array
 {
-    return ['text', 'textarea', 'url', 'email', 'image', 'text_image', 'text_text', 'icon', 'platform_block', 'video_url', 'video_file', 'audio_file', 'audio_url', 'network_block', 'slider', 'sep_line', 'sep_blank', 'arrow_up', 'arrow_down'];
+    return ['text', 'textarea', 'url', 'email', 'image', 'text_image', 'text_text', 'icon', 'platform_block', 'button', 'video_url', 'video_file', 'audio_file', 'audio_url', 'network_block', 'slider', 'sep_line', 'sep_blank', 'arrow_up', 'arrow_down'];
 }
 
 /**
@@ -242,6 +242,32 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
             </label>
         </span>
         <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($img['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+        <?php
+        return;
+    }
+
+    if ($type === 'button') {
+        $btn = em_wp_rubrique_button_value($value);
+        ?>
+        <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($btn['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+        <span class="em-v4-chip__btncolor">
+            <span class="em-v4-chip__btncolor-label"><?php esc_html_e('Fond', 'em-wp'); ?></span>
+            <?php em_wp_admin_render_color_field([
+                'id'            => em_wp_v4_chip_color_id('emv4bbg-', $key),
+                'value'         => $btn['bg'],
+                'input_class'   => 'em-v4-chip__btnbg',
+                'preview_label' => __('Fond du bouton', 'em-wp'),
+            ]); ?>
+        </span>
+        <span class="em-v4-chip__btncolor">
+            <span class="em-v4-chip__btncolor-label"><?php esc_html_e('Texte', 'em-wp'); ?></span>
+            <?php em_wp_admin_render_color_field([
+                'id'            => em_wp_v4_chip_color_id('emv4btx-', $key),
+                'value'         => $btn['text'],
+                'input_class'   => 'em-v4-chip__btntext',
+                'preview_label' => __('Texte du bouton', 'em-wp'),
+            ]); ?>
+        </span>
         <?php
         return;
     }

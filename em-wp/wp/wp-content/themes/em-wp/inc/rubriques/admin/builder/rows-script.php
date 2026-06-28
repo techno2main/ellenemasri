@@ -187,16 +187,47 @@ window.EmWpV4Rows = (function () {
 
     // Renumérote onglets + panneaux (data-col + libellé) et met à jour l'indicateur.
     function renumber(row) {
-        tabsEl(row).querySelectorAll('.em-v4-col-tab').forEach(function (t, idx) {
+        var tabs = tabsEl(row).querySelectorAll('.em-v4-col-tab');
+        var n = tabs.length;
+        tabs.forEach(function (t, idx) {
             t.setAttribute('data-col', idx + 1);
             t.querySelector('.em-v4-col-tab__name').textContent = COL + ' ' + (idx + 1);
             var sel = t.querySelector('.em-v4-align__sel');
             if (sel) { sel.setAttribute('data-col', idx + 1); }
+            // Flèches « déplacer » : désactivées aux extrémités.
+            var ml = t.querySelector('.em-v4-col-tab__move--left');
+            var mr = t.querySelector('.em-v4-col-tab__move--right');
+            if (ml) { ml.disabled = (idx === 0); }
+            if (mr) { mr.disabled = (idx === n - 1); }
         });
         panelsEl(row).querySelectorAll('.em-v4-col').forEach(function (p, idx) { p.setAttribute('data-col', idx + 1); });
         var add = tabsEl(row).querySelector('.em-v4-col-tab__add');
         if (add) { add.style.display = currentColumns(row) >= MAXCOL ? 'none' : ''; }
         updateColcount(row);
+    }
+
+    // Déplace une colonne (onglet + panneau, donc ses champs ET son alignement)
+    // d'un cran vers la gauche (dir=-1) ou la droite (dir=+1).
+    function moveColumn(builder, row, col, dir, update) {
+        var n = currentColumns(row);
+        var target = col + dir;
+        if (target < 1 || target > n) { return; }
+        var panels = panelsEl(row), tabs = tabsEl(row);
+        var pl = panels.querySelectorAll('.em-v4-col');
+        var tl = tabs.querySelectorAll('.em-v4-col-tab');
+        var pSrc = pl[col - 1], pDst = pl[target - 1];
+        var tSrc = tl[col - 1], tDst = tl[target - 1];
+        if (!pSrc || !pDst || !tSrc || !tDst) { return; }
+        if (dir < 0) {
+            panels.insertBefore(pSrc, pDst);
+            tabs.insertBefore(tSrc, tDst);
+        } else {
+            panels.insertBefore(pSrc, pDst.nextSibling);
+            tabs.insertBefore(tSrc, tDst.nextSibling);
+        }
+        renumber(row);
+        activate(row, target);
+        update();
     }
 
     // Ajuste le nombre d'onglets + panneaux et renumérote ; champs en trop → dernière colonne.
@@ -291,8 +322,8 @@ window.EmWpV4Rows = (function () {
     // Une seule ligne ouverte ; l'ouverture referme les autres et revient à la colonne 1.
     function singleOpen(builder) {
         builder.querySelectorAll('.em-v4-rows > .em-v4-row').forEach(function (r) {
-            var add = tabsEl(r).querySelector('.em-v4-col-tab__add');
-            if (add) { add.style.display = currentColumns(r) >= MAXCOL ? 'none' : ''; }
+            // renumber pose aussi l'état des flèches « déplacer » (désactivées aux bords).
+            renumber(r);
         });
         builder.addEventListener('toggle', function (e) {
             var row = e.target;
@@ -313,7 +344,7 @@ window.EmWpV4Rows = (function () {
     }
 
     return {
-        setColumns: setColumns, addColumn: addColumn, removeColumnAt: removeColumnAt, addRow: addRow,
+        setColumns: setColumns, addColumn: addColumn, removeColumnAt: removeColumnAt, moveColumn: moveColumn, addRow: addRow,
         rowLayout: rowLayout, singleOpen: singleOpen, activate: activate,
         activateTab: activateTab, updateColcount: updateColcount,
         renderMap: renderMap, openCell: openCell,
