@@ -89,15 +89,23 @@ function em_wp_admin_header_ratio_choices(): array
 
 /**
  * Colonnes CSS (grid-template-columns) selon le ratio et la position.
+ *
+ * EXACTEMENT comme la hero-row du SITE (landing.css :
+ * minmax(0,640px) minmax(320px,430px)) : le SLIDER (téléphone) garde sa largeur
+ * native bornée (320–430px) et sa hauteur native (610px), le HERO prend le reste
+ * (plafond variant selon le ratio). Le front de l'aperçu V4 = le vrai site.
  */
 function em_wp_admin_header_ratio_columns(string $ratio, bool $slider_left): string
 {
-    $map = ['75-25' => [3, 1], '70-30' => [7, 3], '60-40' => [3, 2], '50-50' => [1, 1]];
-    [$hero, $slider] = $map[$ratio] ?? [3, 1];
+    $hero_max = ['75-25' => 1000, '70-30' => 860, '60-40' => 640, '50-50' => 430];
+    $hmax = $hero_max[$ratio] ?? 640;
+
+    $hero = 'minmax(0, ' . $hmax . 'px)';
+    $slider = 'minmax(320px, 430px)';
 
     return $slider_left
-        ? $slider . 'fr ' . $hero . 'fr'
-        : $hero . 'fr ' . $slider . 'fr';
+        ? $slider . ' ' . $hero
+        : $hero . ' ' . $slider;
 }
 
 /**
@@ -107,12 +115,15 @@ function em_wp_admin_header_ratio_columns(string $ratio, bool $slider_left): str
  */
 function em_wp_admin_header_appearance_defaults(): array
 {
+    // Valeurs par défaut calquées sur le rendu du site (modules/header/header.css) :
+    // fond orange via le repli CSS (.em-header-shell, FOND laissé vide), image de
+    // fond faible (opacité 32 %) et miroir activé → fidèle sans réglage manuel.
     return [
         'bg'               => '',
         'bg_image_id'      => 0,
         'bg_image_pos'     => 'cover',
-        'bg_image_opacity' => 100,
-        'bg_image_mirror'  => false,
+        'bg_image_opacity' => 32,
+        'bg_image_mirror'  => true,
         'pt'               => 0,
         'pb'               => 0,
         'pl'               => 0,
@@ -134,8 +145,9 @@ function em_wp_admin_header_appearance_normalize(array $raw): array
         'bg'               => is_string($bg) ? $bg : '',
         'bg_image_id'      => max(0, (int) ($raw['bg_image_id'] ?? 0)),
         'bg_image_pos'     => sanitize_key((string) ($raw['bg_image_pos'] ?? 'cover')),
-        'bg_image_opacity' => max(0, min(100, (int) ($raw['bg_image_opacity'] ?? 100))),
-        'bg_image_mirror'  => !empty($raw['bg_image_mirror']),
+        // Repli = rendu du site : image faible (32 %) + miroir, quand non défini.
+        'bg_image_opacity' => max(0, min(100, (int) ($raw['bg_image_opacity'] ?? 32))),
+        'bg_image_mirror'  => array_key_exists('bg_image_mirror', $raw) ? !empty($raw['bg_image_mirror']) : true,
         'pt'               => max(0, (int) ($raw['pt'] ?? 0)),
         'pb'               => max(0, (int) ($raw['pb'] ?? 0)),
         'pl'               => max(0, (int) ($raw['pl'] ?? 0)),
@@ -414,7 +426,7 @@ function em_wp_admin_render_header_part_items(string $template, string $part, st
                         >
                         <span class="em-wp-instance-picker__name"><?php echo esc_html($part_label . ' ' . $item_label); ?></span>
                         <?php if ($slug === $effective) : ?>
-                            <span class="em-wp-instance-picker__badge"><?php esc_html_e('Utilisée', 'em-wp'); ?></span>
+                            <span class="em-wp-instance-picker__badge"><?php esc_html_e('Item en ligne actuellement', 'em-wp'); ?></span>
                         <?php endif; ?>
                     </label>
                     <span class="em-wp-instance-picker__actions">
@@ -459,10 +471,15 @@ function em_wp_admin_render_header_appearance(array $appearance, string $ratio):
     <div class="em-wp-header-picker__appearance">
         <p class="em-wp-header-picker__subhead"><?php esc_html_e('Apparence du HEADER (fond partagé)', 'em-wp'); ?></p>
         <div class="em-wp-header-appr">
-            <label class="em-wp-header-appr__field">
+            <span class="em-wp-header-appr__field">
                 <span><?php esc_html_e('Fond', 'em-wp'); ?></span>
-                <input type="color" class="em-wp-header-appr__bg" value="<?php echo esc_attr($bg !== '' ? $bg : '#100421'); ?>">
-            </label>
+                <?php em_wp_admin_render_color_field([
+                    'id'            => 'em-wp-header-appr-bg',
+                    'value'         => $bg,
+                    'input_class'   => 'em-wp-header-appr__bg',
+                    'preview_label' => __('Fond du HEADER', 'em-wp'),
+                ]); ?>
+            </span>
             <span class="em-wp-header-appr__field em-wp-header-appr__field--image">
                 <span><?php esc_html_e('Image de fond', 'em-wp'); ?></span>
                 <span class="em-wp-header-appr__media" data-id="<?php echo esc_attr((string) $bg_image_id); ?>">
