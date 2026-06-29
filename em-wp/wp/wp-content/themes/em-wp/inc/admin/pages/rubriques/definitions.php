@@ -133,7 +133,90 @@ function em_wp_admin_catalog_rubrique_definitions(): array
 }
 
 /**
- * Toutes les rubriques connues (intégrées + catalogues).
+ * Rubriques dérivées des types V4 créés dans l'admin (ABOUT, …) absentes des
+ * définitions statiques.
+ *
+ * Les sous-types consommés par le composite HEADER (HERO / SLIDER) sont exclus :
+ * ils ne s'ajoutent pas seuls au squelette, ils se règlent dans la rubrique
+ * HEADER. Sans cela une rubrique V4 créée par le client (ex. ABOUT) n'apparaît
+ * jamais dans la liste « Ajouter une rubrique ».
+ *
+ * @return array<string, array<string, mixed>>
+ */
+function em_wp_admin_v4_extra_rubrique_definitions(): array
+{
+    if (!function_exists('em_wp_rubrique_type_registry')) {
+        return [];
+    }
+
+    // Définitions déjà connues (statiques + catalogues). On ne réinjecte un type
+    // V4 QUE s'il n'est pas déjà couvert : sinon une entrée synthétique
+    // écraserait la définition existante (ex. le type V4 « contacts » écrasait le
+    // module catalogue « contacts » et son page_slug « em-wp-contacts », ce qui
+    // empêchait le purge de retirer le lien isolé CONTACT du menu).
+    $existing = array_merge(
+        em_wp_admin_site_rubrique_static_definitions(),
+        em_wp_admin_catalog_rubrique_definitions()
+    );
+
+    // Sous-types du composite HEADER à ne pas proposer seuls.
+    $excluded = [];
+
+    if (function_exists('em_wp_admin_header_part_type_slug')) {
+        foreach (['hero', 'slider'] as $part) {
+            $part_slug = em_wp_admin_header_part_type_slug($part);
+
+            if ($part_slug !== '') {
+                $excluded[$part_slug] = true;
+            }
+        }
+    }
+
+    $definitions = [];
+
+    foreach (em_wp_rubrique_type_registry() as $slug => $type) {
+        $slug = sanitize_key((string) $slug);
+
+        if ($slug === '' || isset($existing[$slug]) || isset($excluded[$slug])) {
+            continue;
+        }
+
+        // Filet de sécurité : exclure tout type « hero »/« slider » même si la
+        // détection ci-dessus n'a pas pu tourner (header-section.php non chargé).
+        $label_raw = strtolower((string) ($type['label'] ?? '') . ' ' . (string) ($type['label_plural'] ?? ''));
+
+        if (strpos($slug, 'hero') !== false || strpos($slug, 'slider') !== false
+            || strpos($label_raw, 'hero') !== false || strpos($label_raw, 'slider') !== false) {
+            continue;
+        }
+
+        $label = function_exists('em_wp_admin_rubrique_skeleton_label')
+            ? em_wp_admin_rubrique_skeleton_label($slug)
+            : mb_strtoupper((string) ($type['label_plural'] ?? $type['label'] ?? $slug));
+
+        $definitions[$slug] = [
+            'label'        => $label,
+            'menu_title'   => $label,
+            'description'  => sprintf(
+                /* translators: %s: rubrique label */
+                __('Section %s', 'em-wp'),
+                (string) ($type['label'] ?? $slug)
+            ),
+            // IMPORTANT : pas de page_slug. Un page_slug 'em-wp-v4-overview'
+            // entrerait en collision avec le menu top-level RUBRIQUES et le ferait
+            // PURGER par em_wp_admin_menu_layout_purge_out_of_context_rubriques().
+            // La carte « Ajouter une rubrique » n'utilise que le slug + le label.
+            'page_slug'    => '',
+            'preview_zone' => 'section_' . $slug,
+            'accent_color' => '#751820',
+        ];
+    }
+
+    return $definitions;
+}
+
+/**
+ * Toutes les rubriques connues (intégrées + catalogues + types V4 custom).
  *
  * @return array<string, array<string, mixed>>
  */
@@ -141,7 +224,8 @@ function em_wp_admin_site_rubrique_all_definitions(): array
 {
     return array_merge(
         em_wp_admin_site_rubrique_static_definitions(),
-        em_wp_admin_catalog_rubrique_definitions()
+        em_wp_admin_catalog_rubrique_definitions(),
+        em_wp_admin_v4_extra_rubrique_definitions()
     );
 }
 
@@ -185,6 +269,13 @@ function em_wp_admin_template_proposable_rubrique_definitions(?string $template_
     $proposable = [];
 
     foreach (em_wp_admin_site_rubrique_all_definitions() as $rubrique_slug => $definition) {
+        // V4 uniquement : ne proposer que les rubriques disposant d'un type V4
+        // (exclut les rubriques legacy absentes de la V4, ex. « contact »).
+        if (!function_exists('em_wp_rubrique_type_exists')
+            || !em_wp_rubrique_type_exists((string) $rubrique_slug)) {
+            continue;
+        }
+
         if (em_wp_rubrique_is_proposable_for_template($rubrique_slug, $template_slug)) {
             $proposable[$rubrique_slug] = $definition;
         }

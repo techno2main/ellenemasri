@@ -85,6 +85,31 @@ function em_wp_site_rubrique_visibility_toggle_modules(): array
 }
 
 /**
+ * Rubrique V4 custom autonome (ex. ABOUT) absente des listes intégrées.
+ *
+ * Une telle rubrique se comporte comme une rubrique du milieu : réordonnable et
+ * masquable. On exclut les modules épinglés (TOP-BAR / FOOTER), les rubriques
+ * intégrées, et les sous-types du composite HEADER (HERO / SLIDER) qui ne
+ * s'ajoutent pas seuls au squelette.
+ */
+function em_wp_site_rubrique_is_extra_v4_module(string $module_slug): bool
+{
+    $module_slug = sanitize_key($module_slug);
+
+    if ($module_slug === ''
+        || in_array($module_slug, em_wp_site_rubrique_pinned_modules(), true)
+        || in_array($module_slug, em_wp_site_rubrique_default_order(), true)) {
+        return false;
+    }
+
+    if (strpos($module_slug, 'hero') !== false || strpos($module_slug, 'slider') !== false) {
+        return false;
+    }
+
+    return function_exists('em_wp_rubrique_type_exists') && em_wp_rubrique_type_exists($module_slug);
+}
+
+/**
  * Indique si une rubrique peut être réordonnée.
  */
 function em_wp_site_rubrique_is_reorderable(string $module_slug): bool
@@ -93,7 +118,11 @@ function em_wp_site_rubrique_is_reorderable(string $module_slug): bool
         return em_wp_template_skeleton_is_reorderable($module_slug);
     }
 
-    return in_array($module_slug, em_wp_site_rubrique_middle_modules(), true);
+    if (in_array($module_slug, em_wp_site_rubrique_middle_modules(), true)) {
+        return true;
+    }
+
+    return em_wp_site_rubrique_is_extra_v4_module($module_slug);
 }
 
 /**
@@ -105,7 +134,11 @@ function em_wp_site_rubrique_is_visibility_toggle(string $module_slug): bool
         return true;
     }
 
-    return in_array($module_slug, em_wp_site_rubrique_visibility_toggle_modules(), true);
+    if (in_array($module_slug, em_wp_site_rubrique_visibility_toggle_modules(), true)) {
+        return true;
+    }
+
+    return em_wp_site_rubrique_is_extra_v4_module($module_slug);
 }
 
 /**
