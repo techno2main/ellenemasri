@@ -22,6 +22,7 @@ require_once __DIR__ . '/modules/contacts/render.php';
 require_once __DIR__ . '/modules/footer/render.php';
 require_once __DIR__ . '/template-context.php';
 require_once __DIR__ . '/landing-render.php';
+require_once __DIR__ . '/v4-preview.php';
 
 /**
  * Slugs modules gérés côté front.

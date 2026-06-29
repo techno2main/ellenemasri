@@ -198,6 +198,10 @@ function em_wp_render_landing_section_placeholder(string $module_slug): void
  */
 function em_wp_render_landing_module(string $module_slug): void
 {
+    if (function_exists('em_wp_front_v4_render_module') && em_wp_front_v4_render_module($module_slug)) {
+        return;
+    }
+
     switch ($module_slug) {
         case 'header':
             if (function_exists('em_wp_render_header')) {

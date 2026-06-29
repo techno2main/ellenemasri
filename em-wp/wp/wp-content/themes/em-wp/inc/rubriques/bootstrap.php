@@ -18,6 +18,9 @@ if (!defined('ABSPATH')) {
 require_once __DIR__ . '/core/field-types/registry.php';
 require_once __DIR__ . '/core/field-types/builtin.php';
 require_once __DIR__ . '/core/field-types/platforms.php';
+require_once __DIR__ . '/core/field-types/platform-cards.php';
+require_once __DIR__ . '/core/field-types/badge.php';
+require_once __DIR__ . '/core/field-types/button.php';
 require_once __DIR__ . '/core/field-types/decorative.php';
 require_once __DIR__ . '/core/field-types/media.php';
 require_once __DIR__ . '/core/field-types/text.php';
@@ -30,6 +33,7 @@ require_once __DIR__ . '/core/registry.php';
 require_once __DIR__ . '/core/storage.php';
 
 // Moteur de rendu (item par lignes/colonnes).
+require_once __DIR__ . '/renderer/platform-players.php';
 require_once __DIR__ . '/renderer/fields.php';
 require_once __DIR__ . '/renderer/item.php';
 require_once __DIR__ . '/renderer/engine.php';
@@ -47,10 +51,12 @@ if (is_admin()) {
     require_once __DIR__ . '/admin/builder/save.php';
     require_once __DIR__ . '/admin/builder/chip-media.php';
     require_once __DIR__ . '/admin/builder/chip.php';
+    require_once __DIR__ . '/admin/builder/chip-value.php';
     require_once __DIR__ . '/admin/builder/appearance.php';
     require_once __DIR__ . '/admin/builder/structure.php';
     require_once __DIR__ . '/admin/items/save.php';
     require_once __DIR__ . '/admin/items/list.php';
+    require_once __DIR__ . '/admin/items/list-scripts.php';
     require_once __DIR__ . '/admin/items/create-form.php';
     require_once __DIR__ . '/admin/pages/overview-reorder.php';
     require_once __DIR__ . '/admin/pages/overview-rename.php';

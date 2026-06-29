@@ -36,6 +36,10 @@ function em_wp_footer_enqueue_front_assets(): void
 
 function em_wp_render_landing_footer(): void
 {
+    if (function_exists('em_wp_front_v4_render_module') && em_wp_front_v4_render_module('footer')) {
+        return;
+    }
+
     if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('footer')) {
         return;
     }

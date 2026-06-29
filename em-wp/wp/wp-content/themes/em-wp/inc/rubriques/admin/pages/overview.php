@@ -279,5 +279,40 @@ function em_wp_v4_overview_render_create_type(): void
  */
 function em_wp_v4_overview_render_styles(): void
 {
+    // Styles globaux : une seule émission par requête (plusieurs contextes les
+    // demandent sur la page squelette : aperçu complet, instance-picker, header).
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $done = true;
+
     require __DIR__ . '/overview-styles.php';
+}
+
+/**
+ * CSS de RENDU front V4 (.em-rubrique…) lu depuis les fichiers du front, pour
+ * que TOUS les aperçus admin (builder, squelette, instance-picker, header)
+ * partagent la MÊME source de style que le site → aucun écart back/front.
+ *
+ * @return string CSS concaténé (sans balise <style>).
+ */
+function em_wp_v4_front_render_css(): string
+{
+    static $css = null;
+
+    if ($css !== null) {
+        return $css;
+    }
+
+    $css = '';
+    $base = get_template_directory() . '/assets/front/css/rubriques-v4/';
+    foreach (['render.css', 'media.css', 'components.css', 'header.css'] as $file) {
+        $path = $base . $file;
+        if (is_readable($path)) {
+            $css .= (string) file_get_contents($path) . "\n";
+        }
+    }
+
+    return $css;
 }

@@ -37,6 +37,10 @@ function em_wp_front_top_bar_options(): array
  */
 function em_wp_render_top_bar(): void
 {
+    if (function_exists('em_wp_front_v4_render_module') && em_wp_front_v4_render_module('top-bar')) {
+        return;
+    }
+
     if (function_exists('em_wp_get_site_rubrique_visibility') && !em_wp_get_site_rubrique_visibility('top-bar')) {
         return;
     }

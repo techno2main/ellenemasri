@@ -61,6 +61,12 @@ function em_wp_v4_enqueue_assets(): void
         );
     }
 
+    // NB : le CSS de rendu front V4 (.em-rubrique… : base, grille, champs,
+    // médias, cartes plateforme/réseau, cadre vidéo + scotchs) est inliné par
+    // em_wp_v4_overview_render_styles() / em_wp_v4_front_render_css() depuis les
+    // fichiers du front → source UNIQUE partagée par tous les aperçus admin
+    // (builder, squelette, instance-picker, header). Pas d'enqueue ici.
+
     // Médiathèque WordPress pour le choix d'image dans le builder.
     wp_enqueue_media();
 }
