@@ -194,7 +194,7 @@ function em_wp_admin_render_rubriques_page(): void
                 <?php if (current_user_can('manage_options')) { ?>
                     <button
                         type="button"
-                        class="button em-wp-rubriques-admin__add-rubrique-toggle"
+                        class="button button-primary em-v4-savebar__btn em-wp-rubriques-admin__add-rubrique-toggle"
                         id="em-wp-rubrique-skeleton-add-toggle"
                         aria-controls="em-wp-rubrique-skeleton-add-panel"
                         aria-expanded="false"

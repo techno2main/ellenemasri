@@ -62,7 +62,6 @@ function em_wp_admin_render_header_section_assets(): void
     .em-wp-header-appr { display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px; }
     .em-wp-header-appr__field { display:flex; flex-direction:column; gap:4px; font-size:11px; color:#6b7280; }
     .em-wp-header-appr__field > span { text-transform:uppercase; letter-spacing:.03em; }
-    .em-wp-header-appr__field input[type="color"] { width:42px; height:28px; padding:0; border:1px solid #d3c3c6; border-radius:6px; cursor:pointer; }
     .em-wp-header-appr__field select { min-width:120px; }
     .em-wp-header-appr__field--range { flex-direction:row; align-items:center; gap:8px; }
     .em-wp-header-appr__field--range output { font-weight:600; color:#1d2327; min-width:34px; }
@@ -80,7 +79,7 @@ function em_wp_admin_render_header_section_assets(): void
         var NONCE = '<?php echo esc_js(wp_create_nonce('em_wp_v4_set_header')); ?>';
         var SAVED = '<?php echo esc_js(__('Composition du HEADER enregistrée.', 'em-wp')); ?>';
         var ERR = '<?php echo esc_js(__('Échec de l’enregistrement.', 'em-wp')); ?>';
-        var BADGE = '<?php echo esc_js(__('Utilisée', 'em-wp')); ?>';
+        var BADGE = '<?php echo esc_js(__('Item en ligne actuellement', 'em-wp')); ?>';
         var ASK_TITLE = '<?php echo esc_js(__('Modifier la composition du HEADER', 'em-wp')); ?>';
         var ASK_MSG = '<?php echo esc_js(__('Appliquer cette composition du HEADER à %s ?', 'em-wp')); ?>';
         var ASK_LIVE = '<?php echo esc_js(__('⚠ Ce template est EN LIGNE (LIVE) : le changement sera visible immédiatement sur le site public. ', 'em-wp')); ?>';

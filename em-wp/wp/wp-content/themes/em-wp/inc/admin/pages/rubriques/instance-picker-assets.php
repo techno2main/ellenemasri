@@ -57,7 +57,7 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
         var NONCE = '<?php echo esc_js(wp_create_nonce('em_wp_v4_set_instance')); ?>';
         var SAVED = '<?php echo esc_js(__('Section branchée enregistrée.', 'em-wp')); ?>';
         var ERR = '<?php echo esc_js(__('Échec de l’enregistrement.', 'em-wp')); ?>';
-        var BADGE = '<?php echo esc_js(__('Utilisée', 'em-wp')); ?>';
+        var BADGE = '<?php echo esc_js(__('Item en ligne actuellement', 'em-wp')); ?>';
         var ASK_TITLE = '<?php echo esc_js(__('Changer la section branchée', 'em-wp')); ?>';
         var ASK_MSG = '<?php echo esc_js(__('Brancher « %1$s » à %2$s ?', 'em-wp')); ?>';
         var ASK_LIVE = '<?php echo esc_js(__('⚠ Ce template est EN LIGNE (LIVE) : le changement sera visible immédiatement sur le site public. ', 'em-wp')); ?>';

@@ -82,7 +82,7 @@ function em_wp_admin_render_skeleton_full_preview(array $definitions, string $te
         return;
     }
 
-    $label_off = __('APERÇU', 'em-wp');
+    $label_off = __('PREVIEW', 'em-wp');
     $label_on = __('SQUELETTE', 'em-wp');
     ?>
     <div class="em-wp-skeleton-fullprev">

@@ -124,7 +124,7 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug): void
                                     >
                                     <span class="em-wp-instance-picker__name"><?php echo esc_html($label . ' ' . $item_label); ?></span>
                                     <?php if ($slug === $effective) : ?>
-                                        <span class="em-wp-instance-picker__badge"><?php esc_html_e('Utilisée', 'em-wp'); ?></span>
+                                        <span class="em-wp-instance-picker__badge"><?php esc_html_e('Item en ligne actuellement', 'em-wp'); ?></span>
                                     <?php endif; ?>
                                 </label>
                                 <span class="em-wp-instance-picker__actions">
