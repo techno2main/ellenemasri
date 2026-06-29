@@ -63,60 +63,6 @@
         addToggle.setAttribute('aria-expanded', 'true');
     }
 
-    function readColorInput(input) {
-        if (!input) {
-            return '';
-        }
-
-        return String(input.value || '').trim();
-    }
-
-    function updateAddPanelColorPreview(colorsWrap) {
-        if (!colorsWrap) {
-            return;
-        }
-
-        var bgInput = colorsWrap.querySelector('.em-wp-rubrique-skeleton-add-panel__bg');
-        var textInput = colorsWrap.querySelector('.em-wp-rubrique-skeleton-add-panel__text');
-        var surface = colorsWrap.querySelector('.em-wp-rubrique-skeleton-add-panel__preview-surface');
-        var previewText = colorsWrap.querySelector('.em-wp-rubrique-skeleton-add-panel__preview-text');
-        var bg = readColorInput(bgInput) || (bgInput ? bgInput.getAttribute('data-default') : '') || '#100421';
-        var text = readColorInput(textInput) || (textInput ? textInput.getAttribute('data-default') : '') || '#ffffff';
-
-        if (surface) {
-            surface.style.backgroundColor = bg;
-        }
-
-        if (previewText) {
-            previewText.style.color = text;
-        }
-    }
-
-    if (addPanel) {
-        addPanel.querySelectorAll('[data-em-rubrique-colors]').forEach(function (colorsWrap) {
-            updateAddPanelColorPreview(colorsWrap);
-        });
-
-        addPanel.addEventListener('input', function (event) {
-            var target = event.target;
-
-            if (!target || !target.classList
-                || (!target.classList.contains('em-wp-rubrique-skeleton-add-panel__bg')
-                    && !target.classList.contains('em-wp-rubrique-skeleton-add-panel__text'))) {
-                return;
-            }
-
-            var colorsWrap = target.closest('[data-em-rubrique-colors]');
-            updateAddPanelColorPreview(colorsWrap);
-        });
-
-        document.addEventListener('emWpAdminColorFieldChanged', function () {
-            addPanel.querySelectorAll('[data-em-rubrique-colors]').forEach(function (colorsWrap) {
-                updateAddPanelColorPreview(colorsWrap);
-            });
-        });
-    }
-
     function postSkeletonAction(action, templateSlug, rubriqueSlug, button, options) {
         options = options || {};
 
@@ -132,14 +78,6 @@
 
         if (options.insertAfter) {
             body.append('insert_after', options.insertAfter);
-        }
-
-        if (options.backgroundColor) {
-            body.append('background_color', options.backgroundColor);
-        }
-
-        if (options.textColor) {
-            body.append('text_color', options.textColor);
         }
 
         return window.fetch(config.ajaxUrl, {
@@ -283,12 +221,6 @@
                 ? panelItem.querySelector('.em-wp-rubrique-skeleton-add-panel__position')
                 : null;
             var insertAfter = positionSelect ? positionSelect.value : '';
-            var bgInput = panelItem
-                ? panelItem.querySelector('.em-wp-rubrique-skeleton-add-panel__bg')
-                : null;
-            var textInput = panelItem
-                ? panelItem.querySelector('.em-wp-rubrique-skeleton-add-panel__text')
-                : null;
 
             postSkeletonAction(
                 'em_wp_template_skeleton_add_rubrique',
@@ -297,8 +229,6 @@
                 addButton,
                 {
                     insertAfter: insertAfter,
-                    backgroundColor: readColorInput(bgInput) || (bgInput ? bgInput.getAttribute('data-default') : ''),
-                    textColor: readColorInput(textInput) || (textInput ? textInput.getAttribute('data-default') : ''),
                 }
             );
             return;

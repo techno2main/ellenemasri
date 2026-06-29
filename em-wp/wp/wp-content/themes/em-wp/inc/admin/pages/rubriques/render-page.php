@@ -56,29 +56,10 @@ function em_wp_admin_render_template_skeleton_add_panel(): void
                             ? em_wp_admin_rubrique_skeleton_label((string) $rubrique_slug)
                             : (string) ($definition['label'] ?? $rubrique_slug);
                         $field_id = 'em-wp-rubrique-skeleton-insert-after-' . sanitize_html_class((string) $rubrique_slug);
-                        $style_defaults = function_exists('em_wp_admin_module_default_style_colors')
-                            ? em_wp_admin_module_default_style_colors((string) $rubrique_slug)
-                            : ['background' => '#100421', 'text' => '#ffffff'];
-                        $preview_bg = sanitize_hex_color((string) ($style_defaults['background'] ?? '#100421')) ?: '#100421';
-                        $preview_text = sanitize_hex_color((string) ($style_defaults['text'] ?? '#ffffff')) ?: '#ffffff';
                         ?>
-                        <li
-                            class="em-wp-rubrique-skeleton-add-panel__item"
-                            data-em-rubrique-colors
-                        >
+                        <li class="em-wp-rubrique-skeleton-add-panel__item">
                             <header class="em-wp-rubrique-skeleton-add-panel__item-head">
                                 <h4 class="em-wp-rubrique-skeleton-add-panel__item-title"><?php echo esc_html($label); ?></h4>
-                                <span class="em-wp-rubrique-skeleton-add-panel__preview" aria-hidden="true">
-                                    <span
-                                        class="em-wp-rubrique-skeleton-add-panel__preview-surface"
-                                        style="<?php echo esc_attr('background-color:' . $preview_bg . ';'); ?>"
-                                    >
-                                        <span
-                                            class="em-wp-rubrique-skeleton-add-panel__preview-text"
-                                            style="<?php echo esc_attr('color:' . $preview_text . ';'); ?>"
-                                        >Aa</span>
-                                    </span>
-                                </span>
                             </header>
 
                             <div class="em-wp-catalog-sommaire__create-panel-fields em-wp-rubrique-skeleton-add-panel__fields">
@@ -106,18 +87,9 @@ function em_wp_admin_render_template_skeleton_add_panel(): void
                                     </select>
                                 </label>
 
-                                <div class="em-wp-catalog-sommaire__field em-wp-rubrique-skeleton-add-panel__colors-field">
-                                    <span class="em-wp-catalog-sommaire__field-label"><?php esc_html_e('COULEURS', 'em-wp'); ?></span>
-                                    <?php
-                                    if (function_exists('em_wp_admin_render_skeleton_add_rubrique_colors')) {
-                                        em_wp_admin_render_skeleton_add_rubrique_colors((string) $rubrique_slug);
-                                    }
-                                    ?>
-                                </div>
-
                                 <p class="em-wp-rubrique-skeleton-add-panel__note">
                                     <i class="fa-regular fa-eye-slash" aria-hidden="true"></i>
-                                    <?php esc_html_e('Ajoutée masquée sur le site — réactivez-la depuis la liste une fois prête.', 'em-wp'); ?>
+                                    <?php esc_html_e('Ajoutée masquée sur le site — à réactiver une fois configurée.', 'em-wp'); ?>
                                 </p>
                             </div>
 

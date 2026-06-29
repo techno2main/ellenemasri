@@ -1879,11 +1879,14 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
     margin: 0;
 }
 
-.em-wp-rubriques-admin__add-rubrique-toggle {
+/* Spécificité > `.wp-core-ui .button` (0,2,0) de WordPress, sinon son
+   `margin:0; display:inline-block;` écrase l'espacement et le flex du bouton. */
+.wp-core-ui .em-wp-admin-module .em-wp-rubriques-admin__add-rubrique-toggle,
+.wp-core-ui .em-wp-hub-sommaire .em-wp-rubriques-admin__add-rubrique-toggle {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 28px;
     font-weight: 600;
 }
 
