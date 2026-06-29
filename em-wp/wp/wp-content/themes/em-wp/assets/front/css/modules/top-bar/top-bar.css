@@ -12,10 +12,15 @@
 
 :root {
     --em-sticky-top-bar-offset: 112px;
+    /* Décalage d'arrivée sur une ancre (FALLBACK no-JS uniquement). Le vrai
+       réglage est `stickyScrollGap` dans assets/js/theme.js : la navigation par
+       ancre est gérée en JS (preventDefault + scrollTo), donc scroll-padding/
+       scroll-margin ci-dessous ne s'appliquent QUE si le JS est désactivé. */
+    --em-section-scroll-offset: calc(var(--em-sticky-top-bar-offset) + 24px);
 }
 
 html {
-    scroll-padding-top: var(--em-sticky-top-bar-offset);
+    scroll-padding-top: var(--em-section-scroll-offset);
 }
 
 #hero,
@@ -26,8 +31,9 @@ html {
 #release,
 #cta,
 #footer,
-.em-landing-section {
-    scroll-margin-top: var(--em-sticky-top-bar-offset);
+.em-landing-section,
+.emv4-section {
+    scroll-margin-top: var(--em-section-scroll-offset);
 }
 
 body.admin-bar .em-top-bar {

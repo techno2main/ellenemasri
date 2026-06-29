@@ -65,6 +65,37 @@ function em_wp_v4_handle_ajax_rename_item(): void
 add_action('wp_ajax_em_wp_v4_rename_item', 'em_wp_v4_handle_ajax_rename_item');
 
 /**
+ * Définit l'ancre (#section) d'un item à la volée (AJAX) depuis l'en-tête.
+ *
+ * L'ancre sert d'attribut id="" de la section au rendu (aperçu V4) et de cible
+ * pour les liens #ancre (flèches de navigation). Persistée immédiatement, sans
+ * attendre l'enregistrement du builder.
+ */
+function em_wp_v4_handle_ajax_set_anchor(): void
+{
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('forbidden', 403);
+    }
+
+    check_ajax_referer('em_wp_v4_set_anchor');
+
+    $type = sanitize_key((string) ($_POST['type'] ?? ''));
+    $item = sanitize_key((string) ($_POST['item'] ?? ''));
+    $anchor = em_wp_v4_sanitize_anchor((string) wp_unslash($_POST['anchor'] ?? ''));
+
+    if (!em_wp_rubrique_type_exists($type) || $item === '') {
+        wp_send_json_error('invalid', 400);
+    }
+
+    $data = em_wp_v4_get_item($type, $item);
+    $data['anchor'] = $anchor;
+    em_wp_v4_save_item($type, $item, $data);
+
+    wp_send_json_success(['anchor' => $anchor]);
+}
+add_action('wp_ajax_em_wp_v4_set_anchor', 'em_wp_v4_handle_ajax_set_anchor');
+
+/**
  * Slug d'item unique pour un type (suffixe -2, -3… si déjà pris).
  */
 function em_wp_v4_unique_item_slug(string $type, string $base): string

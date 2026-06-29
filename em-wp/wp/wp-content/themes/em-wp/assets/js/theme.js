@@ -6,7 +6,18 @@
     var stickyScrollGap = 24;
 
     function getTopBarElement() {
-        return document.querySelector('.em-top-bar');
+        // Barre collante du site (legacy) OU de l'aperçu/front V4 : sans ça, sur
+        // les pages V4 (où .em-top-bar n'existe pas) on retombait sur le fallback
+        // 96px, plus petit que la vraie barre → la rubrique se calait SOUS la
+        // barre (tronquage). On mesure la 1re barre réellement collante en haut.
+        var candidates = document.querySelectorAll('.em-top-bar, .emv4-section--top-bar');
+        for (var i = 0; i < candidates.length; i++) {
+            var rect = candidates[i].getBoundingClientRect();
+            if (rect.height > 0) {
+                return candidates[i];
+            }
+        }
+        return null;
     }
 
     function getStickyScrollOffset() {

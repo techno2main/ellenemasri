@@ -114,7 +114,19 @@ function em_wp_v4_get_item(string $type_slug, string $item_slug): array
         'fields'  => $fields,
         'content' => is_array($data['content'] ?? null) ? $data['content'] : [],
         'layout'  => $layout,
+        'anchor'  => em_wp_v4_sanitize_anchor((string) ($data['anchor'] ?? '')),
     ];
+}
+
+/**
+ * Normalise une ancre (#section) en identifiant HTML sûr, SANS le « # ».
+ *
+ * Accepte « #stream », « Stream », « mon-ancre »… et renvoie un slug réutilisable
+ * à la fois comme attribut id="" de la section et comme cible d'un lien #ancre.
+ */
+function em_wp_v4_sanitize_anchor(string $anchor): string
+{
+    return sanitize_title(ltrim(trim($anchor), '#'));
 }
 
 /**
