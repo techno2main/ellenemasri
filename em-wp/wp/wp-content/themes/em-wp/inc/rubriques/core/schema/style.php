@@ -64,7 +64,16 @@ function em_wp_rubrique_text_style_css(array $style): string
     $css = '';
 
     if ($style['size'] > 0) {
-        $css .= 'font-size:' . $style['size'] . 'px;';
+        $size = (int) $style['size'];
+        if ($size >= 28) {
+            // Grands titres : taille FLUIDE. On garde la taille choisie comme
+            // plafond (desktop) et on réduit progressivement jusqu'à un plancher
+            // en mobile (interpolation linéaire entre 360px et 1100px de large).
+            $min = max(20, (int) round($size * 0.5));
+            $css .= 'font-size:clamp(' . $min . 'px, calc(' . $min . 'px + (' . $size . ' - ' . $min . ') * ((100vw - 360px) / 740)), ' . $size . 'px);';
+        } else {
+            $css .= 'font-size:' . $size . 'px;';
+        }
     }
 
     if ($style['font'] !== '') {

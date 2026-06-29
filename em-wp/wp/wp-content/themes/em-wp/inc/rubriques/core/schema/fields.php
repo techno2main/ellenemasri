@@ -57,6 +57,7 @@ function em_wp_rubrique_font_choices(): array
         'oswald'        => ['label' => 'Oswald', 'stack' => 'Oswald, system-ui, sans-serif'],
         'roboto'        => ['label' => 'Roboto', 'stack' => 'Roboto, system-ui, sans-serif'],
         'playfair'      => ['label' => 'Playfair Display', 'stack' => '"Playfair Display", Georgia, serif'],
+        'brush_script'  => ['label' => __('Script cursif (site)', 'em-wp'), 'stack' => '"Brush Script MT", "Segoe Script", cursive'],
         'serif'         => ['label' => __('Serif', 'em-wp'), 'stack' => 'Georgia, "Times New Roman", serif'],
         'mono'          => ['label' => __('Monospace', 'em-wp'), 'stack' => 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'],
     ];

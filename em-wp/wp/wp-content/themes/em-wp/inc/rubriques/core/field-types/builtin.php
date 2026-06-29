@@ -169,7 +169,7 @@ function em_wp_rubrique_image_value($value): array
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['id' => absint($value), 'link' => '', 'w' => 0, 'h' => 0, 'fx' => 50, 'fy' => 50];
+        return ['id' => absint($value), 'link' => '', 'w' => 0, 'h' => 0, 'fx' => 50, 'fy' => 50, 'tape' => false];
     }
 
     return [
@@ -179,6 +179,7 @@ function em_wp_rubrique_image_value($value): array
         'h'    => max(0, (int) ($decoded['h'] ?? 0)),
         'fx'   => max(0, min(100, (int) ($decoded['fx'] ?? 50))),
         'fy'   => max(0, min(100, (int) ($decoded['fy'] ?? 50))),
+        'tape' => !empty($decoded['tape']),
     ];
 }
 
@@ -204,51 +205,7 @@ function em_wp_field_sanitize_image($value): string
         'h'    => max(0, (int) $parsed['h']),
         'fx'   => max(0, min(100, (int) $parsed['fx'])),
         'fy'   => max(0, min(100, (int) $parsed['fy'])),
-    ]);
-}
-
-/**
- * Décode la valeur d'un champ « Bouton » en { link, bg, text }.
- *
- * Le LIBELLÉ du champ porte le texte du bouton ; la valeur ne stocke que le lien
- * et les couleurs (fond + texte).
- *
- * @param mixed $value
- * @return array{link:string, bg:string, text:string}
- */
-function em_wp_rubrique_button_value($value): array
-{
-    $decoded = is_array($value) ? $value : json_decode((string) $value, true);
-
-    if (!is_array($decoded)) {
-        $decoded = [];
-    }
-
-    return [
-        'link' => (string) ($decoded['link'] ?? ''),
-        'bg'   => em_wp_field_sanitize_color((string) ($decoded['bg'] ?? '')),
-        'text' => em_wp_field_sanitize_color((string) ($decoded['text'] ?? '')),
-    ];
-}
-
-/**
- * Sanitise un champ « Bouton » : lien (URL/ancre) + couleurs, encodé en JSON.
- *
- * @param mixed $value
- */
-function em_wp_field_sanitize_button($value): string
-{
-    $parsed = em_wp_rubrique_button_value($value);
-    $link = esc_url_raw($parsed['link']);
-
-    if ($link === '' && $parsed['bg'] === '' && $parsed['text'] === '') {
-        return '';
-    }
-
-    return (string) wp_json_encode([
-        'link' => $link,
-        'bg'   => $parsed['bg'],
-        'text' => $parsed['text'],
+        'tape' => !empty($parsed['tape']),
     ]);
 }
 

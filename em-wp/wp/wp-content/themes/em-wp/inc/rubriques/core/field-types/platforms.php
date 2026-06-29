@@ -112,6 +112,7 @@ function em_wp_rubrique_field_label_optional(string $type): bool
         || em_wp_rubrique_field_is_text_family($type)
         || $type === 'platform_block'
         || $type === 'network_block'
+        || $type === 'animated_badge'
         || $type === 'video_url'
         || $type === 'video_file'
         || $type === 'audio_file'
@@ -132,18 +133,20 @@ function em_wp_rubrique_platform_block_value($value): array
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['platform' => (string) $value, 'url' => '', 'label' => ''];
+        return ['platform' => (string) $value, 'url' => '', 'label' => '', 'account' => ''];
     }
 
     return [
         'platform' => (string) ($decoded['platform'] ?? ''),
         'url'      => (string) ($decoded['url'] ?? ''),
         'label'    => (string) ($decoded['label'] ?? ''),
+        'account'  => (string) ($decoded['account'] ?? ''),
     ];
 }
 
 /**
- * Sanitise un Bloc Plateforme : plateforme + lien + sur-titre, encodé en JSON.
+ * Sanitise un Bloc Plateforme / Réseau : plateforme + lien + sur-titre (+ pseudo
+ * pour les réseaux), encodé en JSON. Le pseudo est ignoré côté Bloc Plateforme.
  *
  * @param mixed $value
  */
@@ -153,48 +156,18 @@ function em_wp_field_sanitize_platform_block($value): string
     $platform = sanitize_text_field($parsed['platform']);
     $url = esc_url_raw($parsed['url']);
     $label = sanitize_text_field($parsed['label']);
+    $account = sanitize_text_field($parsed['account']);
 
-    if ($platform === '' && $url === '' && $label === '') {
+    if ($platform === '' && $url === '' && $label === '' && $account === '') {
         return '';
     }
 
-    return (string) wp_json_encode(['platform' => $platform, 'url' => $url, 'label' => $label]);
-}
-
-/**
- * HTML d'une carte « Bloc Plateforme », rendu identique à la section Stream du
- * site : sur-titre, icône colorée + nom de la plateforme, flèche, ombre portée.
- *
- * @param array{platform:string, url:string, label:string} $block
- */
-function em_wp_rubrique_platform_card_html(array $block): string
-{
-    $platform = (string) ($block['platform'] ?? '');
-    $url = (string) ($block['url'] ?? '');
-    $top_label = (string) ($block['label'] ?? '');
-
-    if ($platform === '' && $top_label === '') {
-        return '';
+    $data = ['platform' => $platform, 'url' => $url, 'label' => $label];
+    if ($account !== '') {
+        $data['account'] = $account;
     }
 
-    $name = em_wp_rubrique_platform_label($platform);
-    $icon = em_wp_rubrique_platform_icon($platform);
-    $color = em_wp_rubrique_platform_color($platform);
-
-    $icon_html = $icon !== ''
-        ? '<span class="em-rubrique__platform-card-icon"' . ($color !== '' ? ' style="color:' . esc_attr($color) . '"' : '') . '><i class="fa-brands ' . esc_attr($icon) . '" aria-hidden="true"></i></span>'
-        : '';
-    $label_html = $top_label !== '' ? '<span class="em-rubrique__platform-card-label">' . esc_html($top_label) . '</span>' : '';
-    $inner = '<span class="em-rubrique__platform-card-body">' . $label_html . '<span class="em-rubrique__platform-card-title">' . $icon_html . '<span>' . esc_html($name) . '</span></span></span>'
-        . '<span class="em-rubrique__platform-card-arrow" aria-hidden="true">&rarr;</span>';
-
-    if ($url === '') {
-        return '<span class="em-rubrique__platform-card">' . $inner . '</span>';
-    }
-
-    $target = strpos($url, '#') === 0 ? '' : ' target="_blank" rel="noopener noreferrer"';
-
-    return '<a class="em-rubrique__platform-card" href="' . esc_url($url) . '"' . $target . '>' . $inner . '</a>';
+    return (string) wp_json_encode($data);
 }
 
 /**

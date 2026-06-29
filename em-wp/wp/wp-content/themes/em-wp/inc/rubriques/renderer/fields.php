@@ -49,13 +49,18 @@ function em_wp_rubrique_image_html(array $img_data, string $alt): string
     $img_style = em_wp_rubrique_image_style((int) $img_data['w'], (int) $img_data['h'], (int) $img_data['fx'], (int) $img_data['fy']);
     $img = '<img class="em-rubrique__image" src="' . esc_url($url) . '" alt="' . esc_attr($alt) . '"' . ($img_style !== '' ? ' style="' . esc_attr($img_style) . '"' : '') . '>';
 
-    if ($img_data['link'] === '') {
-        return $img;
+    if ($img_data['link'] !== '') {
+        $img_target = strpos($img_data['link'], '#') === 0 ? '' : ' target="_blank" rel="noopener noreferrer"';
+        $img = '<a class="em-rubrique__link em-rubrique__link--media" href="' . esc_url($img_data['link']) . '"' . $img_target . '>' . $img . '</a>';
     }
 
-    $img_target = strpos($img_data['link'], '#') === 0 ? '' : ' target="_blank" rel="noopener noreferrer"';
+    if (!empty($img_data['tape'])) {
+        return '<span class="em-rubrique__imgwrap">'
+            . '<span class="em-rubrique__tape em-rubrique__tape--left" aria-hidden="true"></span>'
+            . $img . '</span>';
+    }
 
-    return '<a class="em-rubrique__link em-rubrique__link--media" href="' . esc_url($img_data['link']) . '"' . $img_target . '>' . $img . '</a>';
+    return $img;
 }
 
 /**
@@ -151,13 +156,27 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
                 return '';
             }
             $glyph = '<i class="em-rubrique__icon fa-brands ' . esc_attr($icon) . '" title="' . esc_attr($label) . '" aria-hidden="true"></i>';
-            return $icon_data['url'] === ''
-                ? $glyph
-                : '<a class="em-rubrique__link em-rubrique__link--media" href="' . esc_url($icon_data['url']) . '" target="_blank" rel="noopener noreferrer">' . $glyph . '</a>';
+            if ($icon_data['url'] === '') {
+                return $glyph;
+            }
+            // Icône d'une plateforme STREAM (top-bar / footer) : système du site réel
+            // — scroll vers #stream puis ouverture du player (stream.js). Sinon, lien
+            // externe classique (réseaux sociaux, liens divers).
+            if (strpos($icon_data['platform'], 'stream:') === 0) {
+                $open_slug = function_exists('em_wp_v4_platform_stream_slug')
+                    ? em_wp_v4_platform_stream_slug($icon_data['platform'])
+                    : '';
+                if ($open_slug !== '') {
+                    return '<a class="em-rubrique__link em-rubrique__link--media top-bar-platform-link" href="' . esc_url($icon_data['url']) . '" data-open-platform="' . esc_attr($open_slug) . '">' . $glyph . '</a>';
+                }
+            }
+            return '<a class="em-rubrique__link em-rubrique__link--media" href="' . esc_url($icon_data['url']) . '" target="_blank" rel="noopener noreferrer">' . $glyph . '</a>';
 
         case 'platform_block':
-        case 'network_block':
             return em_wp_rubrique_platform_card_html(em_wp_rubrique_platform_block_value($value));
+
+        case 'network_block':
+            return em_wp_rubrique_network_card_html(em_wp_rubrique_platform_block_value($value));
 
         case 'button':
             if ($label === '') {
@@ -171,12 +190,35 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             if ($btn['text'] !== '') {
                 $btn_style .= 'color:' . $btn['text'] . ';';
             }
+            if ($btn['ml'] > 0) {
+                $btn_style .= 'margin-left:' . $btn['ml'] . 'px;';
+            }
+            if ($btn['mr'] > 0) {
+                $btn_style .= 'margin-right:' . $btn['mr'] . 'px;';
+            }
+            if ($btn['shape'] === 'square') {
+                $btn_style .= '--em-rubrique-button-radius:' . $btn['radius'] . 'px;';
+            }
+            $btn_classes = ['em-rubrique__button', 'em-rubrique__button--shape-' . $btn['shape']];
+            if ($btn['anim'] !== 'none') {
+                $btn_classes[] = 'em-rubrique__button--anim-' . $btn['anim'];
+            }
             $btn_href = $btn['link'] !== '' ? $btn['link'] : '#';
             $btn_target = ($btn['link'] !== '' && strpos($btn['link'], '#') !== 0) ? ' target="_blank" rel="noopener noreferrer"' : '';
-            return '<a class="em-rubrique__button" href="' . esc_url($btn_href) . '"' . $btn_target . ($btn_style !== '' ? ' style="' . esc_attr($btn_style) . '"' : '') . '>' . esc_html($label) . '</a>';
+            return '<a class="' . esc_attr(implode(' ', $btn_classes)) . '" href="' . esc_url($btn_href) . '"' . $btn_target . ($btn_style !== '' ? ' style="' . esc_attr($btn_style) . '"' : '') . '>' . esc_html($label) . '</a>';
+
+        case 'animated_badge':
+            return em_wp_rubrique_animated_badge_html(em_wp_rubrique_animated_badge_value($value));
 
         case 'video_url':
-            return em_wp_rubrique_video_url_html(em_wp_rubrique_video_url_value($value));
+            $video_html = em_wp_rubrique_video_url_html(em_wp_rubrique_video_url_value($value));
+            if ($video_html === '') {
+                return '';
+            }
+            return '<span class="em-rubrique__videowrap">'
+                . '<span class="em-rubrique__tape em-rubrique__tape--left" aria-hidden="true"></span>'
+                . '<span class="em-rubrique__tape em-rubrique__tape--right" aria-hidden="true"></span>'
+                . $video_html . '</span>';
 
         case 'video_file':
             return em_wp_rubrique_video_file_html(em_wp_rubrique_media_id_value($value));
