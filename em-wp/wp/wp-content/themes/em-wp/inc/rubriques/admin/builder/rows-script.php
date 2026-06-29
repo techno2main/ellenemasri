@@ -83,7 +83,10 @@ window.EmWpV4Rows = (function () {
             p.classList.toggle('is-active', (parseInt(p.getAttribute('data-col'), 10) || 1) === col);
         });
         var builder = row.closest('.em-v4-builder');
-        if (builder) { renderMap(builder); }
+        if (builder) {
+            renderMap(builder);
+            if (window.EmWpV4Mini && window.EmWpV4Mini.refreshPart) { window.EmWpV4Mini.refreshPart(builder); }
+        }
     }
 
     function activateTab(tab) {

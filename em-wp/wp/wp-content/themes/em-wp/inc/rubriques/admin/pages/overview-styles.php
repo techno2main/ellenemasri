@@ -13,8 +13,16 @@ if (!defined('ABSPATH')) {
     .em-v4-overview h2 { margin-top: 26px; text-transform: uppercase; }
 
     .em-v4-collapse { background:#fff; border:1px solid #dcdcde; border-radius:6px; margin:0 0 10px; }
-    /* Item en cours d'édition : cadre 2px à la couleur de fond choisie */
-    .em-v4-item[open] { border-width:2px; border-color:var(--em-v4-item-bg, #2271b1); }
+    /* Item replié : neutre (cf. .em-v4-item plus bas). Item déplié : mis en
+       avant avec la teinte de sa section « Apparence » (--em-v4-item-bg posée
+       en JS). --item-open-bg factorise un fond clair dérivé via color-mix. */
+    .em-v4-item { transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
+    .em-v4-item[open] {
+        --item-open-bg: color-mix(in srgb, var(--em-v4-item-bg, #2271b1) 7%, #fff);
+        border-width:2px; border-color:var(--em-v4-item-bg, #2271b1);
+        background:var(--item-open-bg);
+        box-shadow:0 6px 18px -10px color-mix(in srgb, var(--em-v4-item-bg, #2271b1) 50%, transparent);
+    }
     .em-v4-collapse__summary { list-style:none; cursor:pointer; display:flex; align-items:center; gap:8px; padding:12px 14px; user-select:none; }
     .em-v4-collapse__summary::-webkit-details-marker { display:none; }
     .em-v4-collapse__chevron { width:0; height:0; border-left:6px solid #6b7280; border-top:5px solid transparent; border-bottom:5px solid transparent; transition:transform .15s ease; flex:0 0 auto; }
@@ -22,8 +30,15 @@ if (!defined('ABSPATH')) {
     .em-v4-collapse__summary code { background:#f0f0f1; padding:1px 6px; border-radius:3px; font-size:12px; }
     .em-v4-collapse__body { padding:0 14px 14px; border-top:1px solid #f0f0f1; }
 
-    .em-v4-card { border-color:#c3c4c7; }
+    .em-v4-card { border-color:#c3c4c7; transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
     .em-v4-card > .em-v4-card__head { font-size:15px; }
+    /* Rubrique fermée : léger feedback au survol, reste neutre */
+    .em-v4-card:not([open]):hover { border-color:#a7aaae; }
+    /* Rubrique ouverte : encadrement accentué (anneau couleur marque), fond
+       légèrement teinté et ombre discrète pour créer une hiérarchie visuelle.
+       L'anneau via box-shadow évite tout décalage de mise en page. */
+    .em-v4-card[open] { border-color:#751820; background:#fdf7f7; box-shadow:0 0 0 1px #751820, 0 8px 20px -8px rgba(78,8,14,.22); }
+    .em-v4-card[open] > .em-v4-card__head { background:#fbf1f1; border-radius:6px 6px 0 0; }
     .em-v4-item, .em-v4-step, .em-v4-create { background:#fbfbfc; }
     /* Ligne « Nouvelle Section » : 2 lignes empilées (créer / dupliquer) */
     .em-v4-create__options { display:flex; flex-direction:column; gap:12px; padding:14px; }
@@ -69,10 +84,22 @@ if (!defined('ABSPATH')) {
     .em-v4-item__delete { background:none !important; border:0 !important; box-shadow:none !important; outline:0; cursor:pointer; color:#b32d2e; padding:0 2px; margin-left:6px; display:inline-flex; align-items:center; }
     .em-v4-item__delete:hover, .em-v4-item__delete:focus, .em-v4-item__delete:active { background:none !important; box-shadow:none !important; color:#8a2424; }
     .em-v4-item__delete .dashicons { font-size:18px; width:18px; height:18px; }
-    .em-v4-item__anchor { display:inline-flex; align-items:center; gap:3px; margin-left:8px; padding:2px 6px; background:#f1f5f9; border:1px solid #e2e8f0; border-radius:6px; }
-    .em-v4-item__anchor-hash { color:#94a3b8; font-weight:700; line-height:1; }
-    .em-v4-item__anchorinput { width:120px; font-size:12px; border:0; background:transparent; box-shadow:none; padding:2px 0; }
-    .em-v4-item__anchorinput:focus { outline:0; box-shadow:none; }
+    /* Champ #ancre : mini chip inline unifié. Tout le rendu visuel (fond,
+       bordure, focus) est porté par le wrapper ; l'input interne est rendu
+       totalement neutre/transparent. Spécificité renforcée pour neutraliser le
+       style natif des inputs admin WordPress (.wp-core-ui input[type=text]). */
+    .em-v4-item__anchor { display:inline-flex; align-items:center; gap:4px; margin-left:8px; padding:0 9px; height:24px; line-height:1; background:#eef1f4; border:1px solid transparent; border-radius:7px; transition:background-color .15s ease, border-color .15s ease, box-shadow .15s ease; }
+    .em-v4-item__anchor:hover { background:#e7ebef; }
+    .em-v4-item__anchor:focus-within { background:#fff; border-color:#c7ced6; box-shadow:0 0 0 1px rgba(120,134,150,.25); }
+    .em-v4-item__anchor-hash { color:#9aa4b1; font-weight:600; font-size:12px; line-height:1; flex:0 0 auto; }
+    .em-v4-item__anchor input.em-v4-item__anchorinput,
+    .em-v4-item__anchor input.em-v4-item__anchorinput:focus,
+    .em-v4-item__anchor input.em-v4-item__anchorinput:hover {
+        width:92px; height:22px; min-height:0; margin:0; padding:0; box-sizing:border-box;
+        font-size:12px; line-height:22px; color:#1d2327;
+        border:0; border-radius:0; background:transparent; outline:0; box-shadow:none; appearance:none;
+    }
+    .em-v4-item__anchorinput::placeholder { color:#aeb6bf; opacity:1; }
     .em-v4-item__nameinput { text-transform:uppercase; font-weight:600; min-width:200px; }
     /* Boutons valider / annuler du renommage inline (items + rubriques) */
     .em-v4-item__confirm, .em-v4-item__cancel, .em-v4-card__confirm, .em-v4-card__cancel { background:#fff; border:1px solid #c3c4c7; border-radius:4px; cursor:pointer; padding:2px 4px; margin-left:4px; display:inline-flex; align-items:center; line-height:1; }
@@ -87,6 +114,22 @@ if (!defined('ABSPATH')) {
     .em-v4-appearance { display:flex; flex-direction:column; gap:10px; margin:0 0 14px; padding:10px 12px; background:#fff; border:1px solid #dcdcde; border-radius:6px; }
     .em-v4-builder__section > .em-v4-collapse__summary strong { font-size:13px; text-transform:uppercase; letter-spacing:.04em; }
     .em-v4-collapse__body .em-v4-appearance { border:0; background:transparent; padding:0; margin:0 0 10px; border-radius:0; }
+
+    /* Bloc interne ouvert (Apparence / Contenu / Ligne N) : encadrement net pour
+       repérer la partie de l'item en cours d'édition. On reprend la teinte de
+       l'item (--em-v4-item-bg) pour rester cohérent ; le corps reste blanc afin
+       de ressortir sur le fond teinté de l'item ouvert. Bloc fermé = neutre. */
+    .em-v4-builder__section, .em-v4-row { transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
+    .em-v4-builder__section[open], .em-v4-row[open] {
+        border-color:color-mix(in srgb, var(--em-v4-item-bg, #2271b1) 60%, #c3c4c7);
+        box-shadow:0 0 0 1px color-mix(in srgb, var(--em-v4-item-bg, #2271b1) 32%, transparent),
+                   0 6px 16px -10px color-mix(in srgb, var(--em-v4-item-bg, #2271b1) 45%, transparent);
+    }
+    .em-v4-builder__section[open] > .em-v4-collapse__summary,
+    .em-v4-row[open] > .em-v4-row__summary {
+        background:color-mix(in srgb, var(--em-v4-item-bg, #2271b1) 10%, #fff);
+        border-radius:6px 6px 0 0;
+    }
     .em-v4-appearance__line { display:flex; flex-wrap:wrap; gap:18px; align-items:center; }
     .em-v4-appearance__title { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; min-width:90px; }
     .em-v4-appearance__item { display:flex; align-items:center; gap:10px; }
@@ -152,6 +195,12 @@ if (!defined('ABSPATH')) {
     /* Vignette d'aperçu RÉDUIT, INTÉGRÉE à la ligne « Contenu » (à droite de l'œil), temps réel */
     .em-v4-miniprev { display:inline-block; margin-left:8px; vertical-align:middle; background:#fff; border:1px solid #c3c4c7; border-radius:6px; box-shadow:0 1px 4px rgba(16,24,40,.12); overflow:hidden; }
     .em-v4-miniprev[hidden] { display:none; }
+    .em-v4-miniprev { cursor:zoom-in; }
+    /* Aperçu de la PARTIE en édition (colonne de la ligne ouverte), à droite du
+       total : même gabarit, bordure pointillée pour signaler le focus colonne. */
+    .em-v4-partprev { border-style:dashed; border-color:#b9c0c9; }
+    /* Loupe : popover flottant agrandissant l'aperçu survolé (total ou partie). */
+    .em-v4-miniprev__zoom { position:absolute; z-index:100001; display:none; overflow:hidden; background:#fff; border:1px solid #c3c4c7; border-radius:8px; box-shadow:0 12px 34px rgba(16,24,40,.26); pointer-events:none; }
     .em-v4-miniprev__stage { overflow:hidden; width:100%; height:100%; }
     .em-v4-miniprev__stage .em-v4-livepreview { border:0; margin:0; }
     .em-v4-gridmap__pop-empty { font-size:12px; color:#6b7280; padding:4px 6px; font-style:italic; }

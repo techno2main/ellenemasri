@@ -83,6 +83,7 @@ function em_wp_v4_render_item_builder(string $type, string $item): void
                     <span class="dashicons dashicons-hidden" aria-hidden="true"></span>
                 </button>
                 <span class="em-v4-miniprev"><span class="em-v4-miniprev__stage"></span></span>
+                <span class="em-v4-miniprev em-v4-partprev" hidden title="<?php esc_attr_e('Aperçu de la colonne en cours d’édition', 'em-wp'); ?>"><span class="em-v4-miniprev__stage"></span></span>
             </summary>
             <div class="em-v4-collapse__body">
                 <div class="em-v4-rows">

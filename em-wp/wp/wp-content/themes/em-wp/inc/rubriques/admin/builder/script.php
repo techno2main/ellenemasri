@@ -35,6 +35,17 @@ require __DIR__ . '/slides-editor-script.php';
         var ready = false;
         var baseline = null;
 
+        // Accordéon des sections de l'item : ouvrir Apparence referme Contenu (et
+        // inversement), comme les lignes de Contenu entre elles. Capture car
+        // l'événement « toggle » ne bouillonne pas.
+        builder.addEventListener('toggle', function (e) {
+            var sec = e.target;
+            if (!sec.classList || !sec.classList.contains('em-v4-builder__section') || !sec.open) { return; }
+            builder.querySelectorAll('.em-v4-builder__section[open]').forEach(function (s) {
+                if (s !== sec) { s.open = false; }
+            });
+        }, true);
+
         function collect() {
             var items = [];
             rows.querySelectorAll('.em-v4-row').forEach(function (row, index) {

@@ -287,6 +287,9 @@ function em_wp_v4_overview_render_styles(): void
     }
     $done = true;
 
+    // Couche de base mutualisée des champs/contrôles (tokens + reset WP), puis
+    // les styles spécifiques de la page (qui peuvent surcharger ponctuellement).
+    require __DIR__ . '/overview-fields.php';
     require __DIR__ . '/overview-styles.php';
 }
 
