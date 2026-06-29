@@ -28,7 +28,11 @@ function em_wp_rubrique_type_stream(array $types): array
         'icon'         => 'dashicons-format-audio',
         'layout'       => ['columns' => 1, 'align' => [1 => 'center']],
         'starter'      => array_merge(em_wp_rubrique_default_appearance_fields(), [
-            ['key' => 'platform', 'type' => 'icon', 'label' => __('Plateforme', 'em-wp'), 'default' => '', 'row' => 1, 'col' => 1],
+            ['key' => 'kicker', 'type' => 'text', 'label' => __('Sur-titre', 'em-wp'), 'default' => __('Listen', 'em-wp'), 'row' => 1, 'col' => 1],
+            ['key' => 'title', 'type' => 'text', 'label' => __('Titre', 'em-wp'), 'default' => __('Stream', 'em-wp'), 'row' => 2, 'col' => 1],
+            ['key' => 'card_1', 'type' => 'platform_block', 'label' => __('Carte plateforme', 'em-wp'), 'default' => '', 'row' => 3, 'col' => 1],
+            ['key' => 'card_2', 'type' => 'platform_block', 'label' => __('Carte plateforme', 'em-wp'), 'default' => '', 'row' => 3, 'col' => 2],
+            ['key' => 'card_3', 'type' => 'platform_block', 'label' => __('Carte plateforme', 'em-wp'), 'default' => '', 'row' => 3, 'col' => 3],
         ]),
     ];
 

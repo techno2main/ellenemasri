@@ -28,8 +28,10 @@ function em_wp_rubrique_type_video(array $types): array
         'icon'         => 'dashicons-video-alt3',
         'layout'       => ['columns' => 1, 'align' => [1 => 'center']],
         'starter'      => array_merge(em_wp_rubrique_default_appearance_fields(), [
-            ['key' => 'title', 'type' => 'text', 'label' => __('Titre', 'em-wp'), 'default' => '', 'row' => 1, 'col' => 1],
-            ['key' => 'video_url', 'type' => 'url', 'label' => __('Lien vidéo', 'em-wp'), 'default' => '', 'row' => 1, 'col' => 1],
+            ['key' => 'kicker', 'type' => 'text', 'label' => __('Sur-titre', 'em-wp'), 'default' => __('Watch', 'em-wp'), 'row' => 1, 'col' => 1],
+            ['key' => 'title', 'type' => 'text', 'label' => __('Titre', 'em-wp'), 'default' => __('Official Video', 'em-wp'), 'row' => 2, 'col' => 1],
+            ['key' => 'description', 'type' => 'textarea', 'label' => __('Description', 'em-wp'), 'default' => '', 'row' => 3, 'col' => 1],
+            ['key' => 'video', 'type' => 'video_url', 'label' => __('Vidéo (YouTube / TikTok)', 'em-wp'), 'default' => '', 'row' => 4, 'col' => 1],
         ]),
     ];
 
