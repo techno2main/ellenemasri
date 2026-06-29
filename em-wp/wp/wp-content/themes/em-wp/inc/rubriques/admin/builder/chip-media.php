@@ -102,6 +102,7 @@ function em_wp_v4_render_network_value(string $value): void
     <input type="text" class="em-v4-chip__ptitle" value="<?php echo esc_attr($block['label']); ?>" placeholder="<?php esc_attr_e('Titre (ex. FOLLOW)', 'em-wp'); ?>" title="<?php esc_attr_e('Sur-titre de la carte', 'em-wp'); ?>">
     <?php em_wp_v4_render_network_select($block['platform']); ?>
     <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($block['url']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+    <input type="text" class="em-v4-chip__paccount" value="<?php echo esc_attr($block['account']); ?>" placeholder="<?php esc_attr_e('Pseudo (ex. @ellenemasri)', 'em-wp'); ?>" title="<?php esc_attr_e('Pseudo affiché sur la carte', 'em-wp'); ?>">
     <?php
 }
 

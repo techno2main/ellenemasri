@@ -79,7 +79,11 @@ function em_wp_v4_render_preview_script(): void
             if (h) { st += 'height:' + h + 'px;'; }
             if (w && h) { st += 'object-fit:cover;object-position:' + (iv.fx == null ? 50 : iv.fx) + '% ' + (iv.fy == null ? 50 : iv.fy) + '%;'; }
             var img = '<img class="em-rubrique__image" src="' + esc(url) + '"' + (st ? ' style="' + st + '"' : '') + ' alt="' + esc(alt) + '">';
-            return hasLink ? '<a class="em-rubrique__link em-rubrique__link--media" href="#" onclick="return false;">' + img + '</a>' : img;
+            if (hasLink) { img = '<a class="em-rubrique__link em-rubrique__link--media" href="#" onclick="return false;">' + img + '</a>'; }
+            if (iv.tape) {
+                img = '<span class="em-rubrique__imgwrap"><span class="em-rubrique__tape em-rubrique__tape--left" aria-hidden="true"></span>' + img + '</span>';
+            }
+            return img;
         }
 
         // Détecte le fournisseur d'une URL vidéo (youtube/tiktok) + ID.
@@ -163,7 +167,7 @@ function em_wp_v4_render_preview_script(): void
                 '<span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>' +
                 '<div class="em-slider__frame">' +
                 '<div class="em-slider__media">' + figs + nav + audio + '</div>' +
-                '<div class="em-slider__footer"><button class="em-slider__play" type="button"></button>' + titleHtml + '</div>' +
+                '<div class="em-slider__footer">' + titleHtml + '</div>' +
                 '</div></div>' + dots + '</div>';
         }
 
@@ -206,7 +210,8 @@ function em_wp_v4_render_preview_script(): void
                 var ic = '<i class="em-rubrique__icon fa-brands ' + esc(item.icon) + '" title="' + esc(item.label) + '"></i>';
                 return item.link ? '<a class="em-rubrique__link em-rubrique__link--media" href="#" onclick="return false;">' + ic + '</a>' : ic;
             }
-            if (item.type === 'platform_block' || item.type === 'network_block') { return platformCardHtml(item); }
+            if (item.type === 'platform_block') { return platformCardHtml(item); }
+            if (item.type === 'network_block') { return networkCardHtml(item); }
             if (item.type === 'button') {
                 var btd = {}; try { btd = JSON.parse(item.value || '{}'); } catch (e) { btd = {}; }
                 var blabel = item.label || '';
@@ -215,7 +220,31 @@ function em_wp_v4_render_preview_script(): void
                 var bbg = color(btd.bg), btx = color(btd.text);
                 if (bbg) { bst += 'background:' + bbg + ';border-color:' + bbg + ';'; }
                 if (btx) { bst += 'color:' + btx + ';'; }
-                return '<a class="em-rubrique__button" href="#" onclick="return false;"' + (bst ? ' style="' + bst + '"' : '') + '>' + esc(blabel) + '</a>';
+                var bml = parseInt(btd.ml, 10) || 0, bmr = parseInt(btd.mr, 10) || 0;
+                if (bml) { bst += 'margin-left:' + bml + 'px;'; }
+                if (bmr) { bst += 'margin-right:' + bmr + 'px;'; }
+                var btShp = (['pill', 'square', 'triangle'].indexOf(btd.shape) !== -1) ? btd.shape : 'pill';
+                var btAnm = (['wiggle', 'pulse', 'bounce', 'none'].indexOf(btd.anim) !== -1) ? btd.anim : 'none';
+                var btRad = parseInt(btd.radius, 10) || 0;
+                var btCls = 'em-rubrique__button em-rubrique__button--shape-' + btShp;
+                if (btAnm !== 'none') { btCls += ' em-rubrique__button--anim-' + btAnm; }
+                if (btShp === 'square') { bst += '--em-rubrique-button-radius:' + btRad + 'px;'; }
+                return '<a class="' + btCls + '" href="#" onclick="return false;"' + (bst ? ' style="' + bst + '"' : '') + '>' + esc(blabel) + '</a>';
+            }
+            if (item.type === 'animated_badge') {
+                var bd = {}; try { bd = JSON.parse(item.value || '{}'); } catch (e) { bd = {}; }
+                if (!bd.text) { return '<span class="em-rubrique__field">[' + esc('badge') + ']</span>'; }
+                var bShape = (['pill', 'square', 'triangle'].indexOf(bd.shape) !== -1) ? bd.shape : 'pill';
+                var bAnim = (['wiggle', 'pulse', 'bounce', 'none'].indexOf(bd.anim) !== -1) ? bd.anim : 'wiggle';
+                var bRad = parseInt(bd.radius, 10) || 0;
+                var bCls = 'em-rubrique__badge em-rubrique__badge--shape-' + bShape;
+                if (bAnim !== 'none') { bCls += ' em-rubrique__badge--anim-' + bAnim; }
+                var bast = '';
+                var babg = color(bd.bg), baink = color(bd.ink);
+                if (babg) { bast += '--em-rubrique-badge-bg:' + babg + ';'; }
+                if (baink) { bast += '--em-rubrique-badge-ink:' + baink + ';'; }
+                if (bShape === 'square') { bast += '--em-rubrique-badge-radius:' + bRad + 'px;'; }
+                return '<span class="' + bCls + '"' + (bast ? ' style="' + bast + '"' : '') + '><span class="em-rubrique__badge-dot" aria-hidden="true"></span>' + esc(bd.text) + '</span>';
             }
             if (item.type === 'video_url') {
                 var vd = {}; try { vd = JSON.parse(item.value || '{}'); } catch (e) { vd = {}; }
@@ -225,8 +254,13 @@ function em_wp_v4_render_preview_script(): void
                 var poster = clickable ? (custom || autoThumb(vurl)) : custom;
                 if (!poster) { return videoEmbed(vurl); }
                 var facade = '<span class="em-rubrique__video-facade"><img class="em-rubrique__video-poster" src="' + esc(poster) + '" alt=""><span class="em-rubrique__video-play" aria-hidden="true"></span></span>';
-                if (clickable && vurl) { return '<a class="em-rubrique__videourl em-rubrique__link--media" href="#" onclick="return false;">' + facade + '</a>'; }
-                return '<span class="em-rubrique__videourl">' + facade + '</span>';
+                var frame = (clickable && vurl)
+                    ? '<a class="em-rubrique__videourl em-rubrique__link--media" href="#" onclick="return false;">' + facade + '</a>'
+                    : '<span class="em-rubrique__videourl">' + facade + '</span>';
+                return '<span class="em-rubrique__videowrap">'
+                    + '<span class="em-rubrique__videotape em-rubrique__videotape--left" aria-hidden="true"></span>'
+                    + '<span class="em-rubrique__videotape em-rubrique__videotape--right" aria-hidden="true"></span>'
+                    + frame + '</span>';
             }
             if (item.type === 'video_file') { return item.url ? '<video class="em-rubrique__video" controls preload="metadata" src="' + esc(item.url) + '"></video>' : '<span class="em-rubrique__field">[' + esc('vidéo') + ']</span>'; }
             if (item.type === 'audio_file') { return item.url ? '<audio class="em-rubrique__audio" controls preload="none" src="' + esc(item.url) + '"></audio>' : '<span class="em-rubrique__field">[' + esc('son') + ']</span>'; }
@@ -264,6 +298,32 @@ function em_wp_v4_render_preview_script(): void
             return '<a class="em-rubrique__platform-card" href="#" onclick="return false;"><span class="em-rubrique__platform-card-body">' + topLabel +
                 '<span class="em-rubrique__platform-card-title">' + iconHtml + '<span>' + esc(item.name) + '</span></span></span>' +
                 '<span class="em-rubrique__platform-card-arrow" aria-hidden="true">\u2192</span></a>';
+        }
+
+        // Carte « Bloc Réseau » (rendu identique à la section Social du site).
+        function networkBrand(slug) {
+            if (slug === 'tiktok') { return { bg: 'linear-gradient(135deg,#0f0f13 0%,#1a1a22 62%,#22152d 100%)', shadow: '#25f4ee' }; }
+            if (slug === 'instagram') { return { bg: '#c13584', shadow: '#833ab4' }; }
+            if (slug === 'youtube') { return { bg: '#ff0033', shadow: '#78000d' }; }
+            return { bg: '#1a1a22', shadow: 'rgba(16,4,33,.55)' };
+        }
+
+        var NET_DEFAULT_ACCOUNT = { tiktok: '@ellenemasri', instagram: '@ellenemasri', youtube: '@ELLENEMASRI' };
+
+        function networkCardHtml(item) {
+            var pv = {}; try { pv = JSON.parse(item.value || '{}'); } catch (e) { pv = {}; }
+            var badge = pv.label || '';
+            if (!pv.platform && !badge) { return '<span class="em-rubrique__field">[' + esc('réseau') + ']</span>'; }
+            var slug = (pv.platform && pv.platform.indexOf(':') !== -1) ? pv.platform.split(':')[1] : (pv.platform || '');
+            var brand = networkBrand(slug);
+            var account = pv.account || NET_DEFAULT_ACCOUNT[slug] || '';
+            var badgeHtml = badge ? '<span class="em-rubrique__network-card-badge">' + esc(badge) + '</span>' : '';
+            var iconHtml = item.icon ? '<i class="fa-brands ' + esc(item.icon) + '"></i>' : '';
+            var nameHtml = item.name ? '<span>' + esc(item.name) + '</span>' : '';
+            var accountHtml = account ? '<span class="em-rubrique__network-card-account">' + esc(account) + '</span>' : '';
+            var style = 'background:' + brand.bg + ';box-shadow:8px 8px 0 ' + brand.shadow + ';';
+            return '<a class="em-rubrique__network-card em-rubrique__network-card--' + esc(slug) + '" href="#" onclick="return false;" style="' + style + '">' +
+                badgeHtml + '<span class="em-rubrique__network-card-label">' + iconHtml + nameHtml + '</span>' + accountHtml + '</a>';
         }
 
         function render(target, layout, items, colors) {

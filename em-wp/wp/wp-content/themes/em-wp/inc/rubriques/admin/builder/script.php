@@ -180,7 +180,12 @@ require __DIR__ . '/slides-editor-script.php';
             if (type === 'platform_block' || type === 'network_block') {
                 var ti = chip.querySelector('.em-v4-chip__ptitle');
                 item.label = ti ? ti.value : '';
-                item.value = JSON.stringify({ platform: sel ? sel.value : '', url: item.link, label: item.label });
+                var blockVal = { platform: sel ? sel.value : '', url: item.link, label: item.label };
+                if (type === 'network_block') {
+                    var ac = chip.querySelector('.em-v4-chip__paccount');
+                    if (ac && ac.value) { blockVal.account = ac.value; }
+                }
+                item.value = JSON.stringify(blockVal);
             } else {
                 item.value = JSON.stringify({ platform: sel ? sel.value : '', url: item.link });
             }
@@ -189,8 +194,38 @@ require __DIR__ . '/slides-editor-script.php';
             var btnUrl = chip.querySelector('.em-v4-chip__url');
             var btnBg = chip.querySelector('.em-v4-chip__btnbg');
             var btnTx = chip.querySelector('.em-v4-chip__btntext');
+            var btnMl = chip.querySelector('.em-v4-chip__btnml');
+            var btnMr = chip.querySelector('.em-v4-chip__btnmr');
+            var btnShape = chip.querySelector('.em-v4-chip__btnshape');
+            var btnAnim = chip.querySelector('.em-v4-chip__btnanim');
+            var btnRadius = chip.querySelector('.em-v4-chip__btnradius');
             item.link = btnUrl ? btnUrl.value : '';
-            item.value = JSON.stringify({ link: item.link, bg: btnBg ? btnBg.value : '', text: btnTx ? btnTx.value : '' });
+            item.value = JSON.stringify({
+                link: item.link,
+                bg: btnBg ? btnBg.value : '',
+                text: btnTx ? btnTx.value : '',
+                ml: btnMl ? (parseInt(btnMl.value, 10) || 0) : 0,
+                mr: btnMr ? (parseInt(btnMr.value, 10) || 0) : 0,
+                shape: btnShape ? btnShape.value : 'pill',
+                anim: btnAnim ? btnAnim.value : 'none',
+                radius: btnRadius ? (parseInt(btnRadius.value, 10) || 0) : 0
+            });
+        }
+        if (type === 'animated_badge') {
+            var baText = chip.querySelector('.em-v4-chip__btext');
+            var baBg = chip.querySelector('.em-v4-chip__badgebg');
+            var baInk = chip.querySelector('.em-v4-chip__badgeink');
+            var baShape = chip.querySelector('.em-v4-chip__badgeshape');
+            var baAnim = chip.querySelector('.em-v4-chip__badgeanim');
+            var baRadius = chip.querySelector('.em-v4-chip__badgeradius');
+            item.value = JSON.stringify({
+                text: baText ? baText.value : '',
+                bg: baBg ? baBg.value : '',
+                ink: baInk ? baInk.value : '',
+                shape: baShape ? baShape.value : 'pill',
+                anim: baAnim ? baAnim.value : 'wiggle',
+                radius: baRadius ? (parseInt(baRadius.value, 10) || 0) : 0
+            });
         }
         window.EmWpV4Chip.readMedia(chip, type, item);
         if (type === 'text' || type === 'textarea') {
@@ -222,10 +257,12 @@ require __DIR__ . '/slides-editor-script.php';
     function readImage(chip) {
         var hid = chip.querySelector('.em-v4-chip__value');
         var lnk = chip.querySelector('.em-v4-chip__url');
+        var tape = chip.querySelector('.em-v4-chip__itape');
         return {
             id: hid ? hid.value : '', link: lnk ? lnk.value : '',
             w: parseInt(val(chip, '.em-v4-chip__w'), 10) || 0, h: parseInt(val(chip, '.em-v4-chip__h'), 10) || 0,
-            fx: parseInt(val(chip, '.em-v4-chip__fx'), 10) || 50, fy: parseInt(val(chip, '.em-v4-chip__fy'), 10) || 50
+            fx: parseInt(val(chip, '.em-v4-chip__fx'), 10) || 50, fy: parseInt(val(chip, '.em-v4-chip__fy'), 10) || 50,
+            tape: !!(tape && tape.checked)
         };
     }
 

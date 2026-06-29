@@ -39,6 +39,7 @@ window.EmWpV4Chip = (function () {
     var NETWORKS = <?php echo wp_json_encode(em_wp_rubrique_network_choices()); ?>;
     var TXT = {
         image: '<?php echo esc_js(__('Choisir une image', 'em-wp')); ?>',
+        tape: '<?php echo esc_js(__('Scotch', 'em-wp')); ?>',
         pick: '<?php echo esc_js(__('— Choisir —', 'em-wp')); ?>',
         content: '<?php echo esc_js(__('Contenu…', 'em-wp')); ?>',
         link: '<?php echo esc_js(__('Lien (https://… ou #ancre)', 'em-wp')); ?>',
@@ -63,6 +64,7 @@ window.EmWpV4Chip = (function () {
         pickAudio: '<?php echo esc_js(__('Choisir un son', 'em-wp')); ?>',
         addImages: '<?php echo esc_js(__('Ajouter des images', 'em-wp')); ?>',
         netTitle: '<?php echo esc_js(__('Titre (ex. FOLLOW)', 'em-wp')); ?>',
+        netAccount: '<?php echo esc_js(__('Pseudo (ex. @ellenemasri)', 'em-wp')); ?>',
         slideDel: '<?php echo esc_js(__('Retirer', 'em-wp')); ?>',
         text1: '<?php echo esc_js(__('Texte 1…', 'em-wp')); ?>',
         text2: '<?php echo esc_js(__('Texte 2…', 'em-wp')); ?>',
@@ -70,6 +72,19 @@ window.EmWpV4Chip = (function () {
         clickable: '<?php echo esc_js(__('Lien cliquable', 'em-wp')); ?>',
         btnBg: '<?php echo esc_js(__('Fond', 'em-wp')); ?>',
         btnText: '<?php echo esc_js(__('Texte', 'em-wp')); ?>',
+        btnMargBefore: '<?php echo esc_js(__('Marge avant', 'em-wp')); ?>',
+        btnMargAfter: '<?php echo esc_js(__('Marge après', 'em-wp')); ?>',
+        badgeText: '<?php echo esc_js(__('Texte du badge…', 'em-wp')); ?>',
+        badgeShape: '<?php echo esc_js(__('Forme', 'em-wp')); ?>',
+        badgeAnim: '<?php echo esc_js(__('Animation', 'em-wp')); ?>',
+        badgeRadius: '<?php echo esc_js(__('Arrondi', 'em-wp')); ?>',
+        bsPill: '<?php echo esc_js(__('Pastille (arrondi total)', 'em-wp')); ?>',
+        bsSquare: '<?php echo esc_js(__('Carré / rectangle', 'em-wp')); ?>',
+        bsTriangle: '<?php echo esc_js(__('Triangle', 'em-wp')); ?>',
+        baWiggle: '<?php echo esc_js(__('Balancement', 'em-wp')); ?>',
+        baPulse: '<?php echo esc_js(__('Pulsation', 'em-wp')); ?>',
+        baBounce: '<?php echo esc_js(__('Rebond', 'em-wp')); ?>',
+        baNone: '<?php echo esc_js(__('Aucune', 'em-wp')); ?>',
         slTitle: '<?php echo esc_js(__('Titre du bandeau', 'em-wp')); ?>',
         slTitlePh: '<?php echo esc_js(__('Mayami, My Miami', 'em-wp')); ?>',
         slTitleHide: '<?php echo esc_js(__('Masquer le titre', 'em-wp')); ?>',
@@ -162,7 +177,8 @@ window.EmWpV4Chip = (function () {
             '<label class="em-v4-chip__sizelabel">' + esc(TXT.sizeW) +
             '<input type="range" class="em-v4-chip__w" min="0" max="600" step="5" value="0" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+\'px\':\'auto\')">' +
             '<output class="em-v4-chip__wout">auto</output></label></span>' +
-            '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
+            '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
+            '<label class="em-v4-chip__check"><input type="checkbox" class="em-v4-chip__itape"> ' + esc(TXT.tape) + '</label>';
     }
 
 <?php require __DIR__ . '/chip-media-script.php'; ?>
@@ -183,7 +199,8 @@ window.EmWpV4Chip = (function () {
         if (type === 'network_block') {
             return '<input type="text" class="em-v4-chip__ptitle" placeholder="' + esc(TXT.netTitle) + '">' +
                 networkSelectHtml() +
-                '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
+                '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
+                '<input type="text" class="em-v4-chip__paccount" placeholder="' + esc(TXT.netAccount) + '">';
         }
         if (type === 'text_image') {
             return '<input type="text" class="em-v4-chip__titext" placeholder="' + esc(TXT.content) + '">' +
@@ -204,9 +221,40 @@ window.EmWpV4Chip = (function () {
                 '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
         if (type === 'button') {
+            var btShape = '<select class="em-v4-chip__btnshape">'
+                + '<option value="pill">' + esc(TXT.bsPill) + '</option>'
+                + '<option value="square">' + esc(TXT.bsSquare) + '</option>'
+                + '<option value="triangle">' + esc(TXT.bsTriangle) + '</option></select>';
+            var btAnim = '<select class="em-v4-chip__btnanim">'
+                + '<option value="none">' + esc(TXT.baNone) + '</option>'
+                + '<option value="wiggle">' + esc(TXT.baWiggle) + '</option>'
+                + '<option value="pulse">' + esc(TXT.baPulse) + '</option>'
+                + '<option value="bounce">' + esc(TXT.baBounce) + '</option></select>';
             return '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
                 '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('emv4bbg-'), 'em-v4-chip__btnbg', TXT.btnBg) + '</span>' +
-                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4btx-'), 'em-v4-chip__btntext', TXT.btnText) + '</span>';
+                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4btx-'), 'em-v4-chip__btntext', TXT.btnText) + '</span>' +
+                '<label class="em-v4-chip__btnmargin"><span>' + esc(TXT.btnMargBefore) + '</span><input type="number" class="em-v4-chip__btnml" min="0" max="200" value="0"></label>' +
+                '<label class="em-v4-chip__btnmargin"><span>' + esc(TXT.btnMargAfter) + '</span><input type="number" class="em-v4-chip__btnmr" min="0" max="200" value="0"></label>' +
+                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + btShape + '</label>' +
+                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeAnim) + '</span>' + btAnim + '</label>' +
+                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeRadius) + '</span><input type="number" class="em-v4-chip__btnradius" min="0" max="40" value="6"></label>';
+        }
+        if (type === 'animated_badge') {
+            var bShape = '<select class="em-v4-chip__badgeshape">'
+                + '<option value="pill">' + esc(TXT.bsPill) + '</option>'
+                + '<option value="square">' + esc(TXT.bsSquare) + '</option>'
+                + '<option value="triangle">' + esc(TXT.bsTriangle) + '</option></select>';
+            var bAnim = '<select class="em-v4-chip__badgeanim">'
+                + '<option value="wiggle">' + esc(TXT.baWiggle) + '</option>'
+                + '<option value="pulse">' + esc(TXT.baPulse) + '</option>'
+                + '<option value="bounce">' + esc(TXT.baBounce) + '</option>'
+                + '<option value="none">' + esc(TXT.baNone) + '</option></select>';
+            return '<input type="text" class="em-v4-chip__btext" placeholder="' + esc(TXT.badgeText) + '">' +
+                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('emv4babg-'), 'em-v4-chip__badgebg', TXT.btnBg) + '</span>' +
+                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4baink-'), 'em-v4-chip__badgeink', TXT.btnText) + '</span>' +
+                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + bShape + '</label>' +
+                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeAnim) + '</span>' + bAnim + '</label>' +
+                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeRadius) + '</span><input type="number" class="em-v4-chip__badgeradius" min="0" max="40" value="6"></label>';
         }
         if (type === 'icon') {
             return platformSelectHtml() +
@@ -243,7 +291,7 @@ window.EmWpV4Chip = (function () {
             return chip;
         }
 
-        var labelInput = (type === 'platform_block' || type === 'network_block' || isTextFamily(type))
+        var labelInput = (type === 'platform_block' || type === 'network_block' || type === 'animated_badge' || isTextFamily(type))
             ? '<input type="hidden" class="em-v4-chip__label">'
             : '<input type="text" class="em-v4-chip__label" placeholder="' + esc(TXT.label) + '">';
         chip.innerHTML =
@@ -318,7 +366,7 @@ window.EmWpV4Chip = (function () {
         hasTextStyle: function (type) { return TEXT_STYLE.indexOf(type) !== -1; },
         decorative: function (type) { return DECOR[type] !== undefined; },
         labelOptional: function (type) {
-            return DECOR[type] !== undefined || isTextFamily(type) || ['platform_block', 'network_block', 'video_url', 'video_file', 'audio_file', 'audio_url', 'slider'].indexOf(type) !== -1;
+            return DECOR[type] !== undefined || isTextFamily(type) || ['platform_block', 'network_block', 'animated_badge', 'video_url', 'video_file', 'audio_file', 'audio_url', 'slider'].indexOf(type) !== -1;
         }
     };
 })();
