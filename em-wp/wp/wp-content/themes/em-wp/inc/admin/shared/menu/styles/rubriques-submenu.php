@@ -24,9 +24,12 @@
             display: none;
         }
 
-        /* Pas de sous-menu en flyout à droite : il n'apparaît qu'en inline quand
-           la rubrique RUBRIQUES est active (menu déplié uniquement). */
-        body:not(.folded) #adminmenu #toplevel_page_em-wp-v4-overview:not(.wp-has-current-submenu):not(.wp-menu-open):hover > .wp-submenu,
-        body:not(.folded) #adminmenu #toplevel_page_em-wp-v4-overview:not(.wp-has-current-submenu):not(.wp-menu-open).opensub > .wp-submenu {
-            left: -999em !important;
+        /* Aucun flyout en menu DÉPLIÉ : le sous-menu RUBRIQUES ne doit pas
+           apparaître en survol (popover qui « s'ouvre aléatoirement » à droite).
+           Il reste affiché inline quand la rubrique est la page courante.
+           On garde `body:not(.folded)` pour NE PAS casser le mode réduit, où le
+           flyout au survol est le seul moyen d'accéder aux types (sinon RUBRIQUES
+           devient inaccessible une fois le menu replié). */
+        body:not(.folded) #adminmenu #toplevel_page_em-wp-v4-overview:not(.wp-menu-open):not(.wp-has-current-submenu) > .wp-submenu {
+            display: none !important;
         }
