@@ -37,7 +37,7 @@ function em_wp_admin_render_header_section_assets(): void
     .em-wp-rubriques-admin__picker-head { margin:0 0 8px; font-weight:600; color:#4e080e; }
     .em-wp-rubriques-admin__picker-empty { margin:0; color:#666; }
     /* Lignes d'items (mêmes visuels que le sélecteur d'instance). */
-    .em-wp-header-picker .em-wp-instance-picker { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; }
+    .em-wp-header-picker .em-wp-instance-picker { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; max-width:560px; }
     .em-wp-header-picker .em-wp-instance-picker__row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 10px; background:#fff; border:1px solid #e6d9dc; border-radius:6px; }
     .em-wp-header-picker .em-wp-instance-picker__row:has(input:checked) { border-color:#751820; box-shadow:inset 0 0 0 1px #751820; }
     .em-wp-header-picker .em-wp-instance-picker__label { display:flex; align-items:center; gap:8px; cursor:pointer; flex:1 1 auto; margin:0; }
@@ -50,8 +50,10 @@ function em_wp_admin_render_header_section_assets(): void
     .em-wp-header-picker .em-wp-instance-picker__edit .dashicons { width:18px; height:18px; font-size:18px; }
     .em-wp-header-picker .em-wp-instance-picker__edit { color:#751820; text-decoration:none; line-height:1; }
     .em-wp-header-picker .em-wp-instance-picker__previews { display:none; }
-    /* Bloc HEADER : matrice + position. */
-    .em-wp-header-picker__matrix, .em-wp-header-picker__position { display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:0 0 12px; }
+    /* Bloc HEADER : matrice + position sur la MÊME ligne. */
+    .em-wp-header-picker__compo { display:flex; flex-wrap:wrap; align-items:center; gap:10px 28px; margin:0 0 12px; }
+    .em-wp-header-picker__matrix, .em-wp-header-picker__position { display:flex; flex-wrap:wrap; align-items:center; gap:14px; margin:0; }
+    .em-wp-header-picker__position { padding-left:28px; border-left:1px solid #e6d9dc; }
     .em-wp-header-picker__poslabel { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; }
     .em-wp-header-picker__opt { display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-weight:600; color:#1d2327; }
     .em-wp-header-picker__subhead { margin:10px 0 6px; font-weight:600; color:#4e080e; }
@@ -59,7 +61,8 @@ function em_wp_admin_render_header_section_assets(): void
     .em-wp-header-picker .em-wp-instance-picker__status { margin:8px 0 0; font-size:12px; color:#2f7a37; }
     /* Apparence partagée du HEADER. */
     .em-wp-header-picker__appearance { margin:12px 0 0; padding:12px; background:#fff; border:1px solid #e6d9dc; border-radius:8px; }
-    .em-wp-header-appr { display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px; }
+    .em-wp-header-appr { display:flex; flex-direction:column; gap:14px; }
+    .em-wp-header-appr__row { display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px 18px; }
     .em-wp-header-appr__field { display:flex; flex-direction:column; gap:4px; font-size:11px; color:#6b7280; }
     .em-wp-header-appr__field > span { text-transform:uppercase; letter-spacing:.03em; }
     .em-wp-header-appr__field select { min-width:120px; }
@@ -73,6 +76,10 @@ function em_wp_admin_render_header_section_assets(): void
     .em-wp-header-appr__media { display:inline-flex; align-items:center; gap:6px; }
     .em-wp-header-appr__thumb { width:46px; height:30px; object-fit:cover; border:1px solid #d3c3c6; border-radius:6px; display:block; }
     .em-wp-header-appr__clear { background:none; border:none; padding:0 2px; margin:0; cursor:pointer; color:#b32d2e; font-size:18px; line-height:1; }
+    /* Barre « Sauvegarder » : enregistrement groupé (pas de save à chaque changement). */
+    .em-wp-header-picker__savebar { display:flex; align-items:center; gap:14px; margin-top:14px; }
+    .em-wp-header-picker__savebar .em-wp-instance-picker__status { margin:0; }
+    .em-wp-header-picker__save:disabled { opacity:.55; cursor:default; }
     </style>
     <script>
     (function () {
@@ -86,6 +93,7 @@ function em_wp_admin_render_header_section_assets(): void
         var ASK_OK = '<?php echo esc_js(__('Confirmer', 'em-wp')); ?>';
         var ASK_CANCEL = '<?php echo esc_js(__('Annuler', 'em-wp')); ?>';
         var TPL_FALLBACK = '<?php echo esc_js(__('ce template', 'em-wp')); ?>';
+        var NOCHANGE = '<?php echo esc_js(__('Aucune modification.', 'em-wp')); ?>';
 
         function partList(root, part) { return root.querySelector('.em-wp-header-picker__items[data-part="' + part + '"]'); }
         function partVal(root, part) {
@@ -261,33 +269,47 @@ function em_wp_admin_render_header_section_assets(): void
             }).catch(function () { revert(root); setStatus(root, ERR, '#b32d2e'); });
         }
 
+        // Active/désactive le bouton « Sauvegarder » selon qu'il y a des changements.
+        function markDirty(root) {
+            var btn = root.querySelector('.em-wp-header-picker__save');
+            if (!btn) { return; }
+            btn.disabled = sameConfig(collectConfig(root), prevConfig(root));
+        }
+
+        // Changement d'un contrôle = MAJ visuelle du wireframe + état « à enregistrer ».
+        // RIEN n'est enregistré tant que l'utilisateur n'a pas cliqué « Sauvegarder ».
         document.addEventListener('change', function (e) {
             var ctrl = e.target.closest('.em-wp-header-picker input, .em-wp-header-picker select');
             if (!ctrl) { return; }
             var root = ctrl.closest('.em-wp-header-picker'); if (!root) { return; }
-            var name = ctrl.getAttribute('name') || '';
-            if (name === 'em-wp-header-matrix') { toggleBoth(root, ctrl.value === 'hero_slider'); }
-
-            var cfg = collectConfig(root);
-            updateWireframeHeader(cfg.matrix, cfg.position); // retour visuel immédiat
-            if (sameConfig(cfg, prevConfig(root))) { return; }
-
-            // Confirmation seulement pour les changements STRUCTURELS (matrice + item
-            // branché) ; l'apparence/ratio/position s'enregistrent directement.
-            var needsConfirm = (name === 'em-wp-header-matrix' || name === 'em-wp-header-hero' || name === 'em-wp-header-slider');
-            if (!needsConfirm) { saveHeader(root, cfg); return; }
-
-            var isLive = root.getAttribute('data-live') === '1';
-            var tplLabel = root.getAttribute('data-template-label') || TPL_FALLBACK;
-            var message = (isLive ? ASK_LIVE : '') + ASK_MSG.replace('%s', tplLabel);
-
-            function onChoice(ok) { if (ok) { saveHeader(root, cfg); } else { revert(root); } }
-
-            if (window.EmWpAdminConfirm && typeof window.EmWpAdminConfirm.ask === 'function') {
-                window.EmWpAdminConfirm.ask(message, { title: ASK_TITLE, confirmLabel: ASK_OK, cancelLabel: ASK_CANCEL, danger: isLive }).then(onChoice);
-            } else {
-                onChoice(window.confirm(message));
+            if ((ctrl.getAttribute('name') || '') === 'em-wp-header-matrix') {
+                toggleBoth(root, ctrl.value === 'hero_slider');
             }
+            var cfg = collectConfig(root);
+            updateWireframeHeader(cfg.matrix, cfg.position);
+            markDirty(root);
+        });
+
+        // Le composant couleur mutualisé notifie via un événement custom (input caché).
+        document.addEventListener('emWpAdminColorFieldChanged', function () {
+            document.querySelectorAll('.em-wp-header-picker').forEach(markDirty);
+        });
+
+        // Bouton « Sauvegarder » : enregistre TOUTE la composition d'un coup.
+        // Confirmation uniquement si le template est EN LIGNE (LIVE).
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.em-wp-header-picker__save');
+            if (!btn) { return; }
+            var root = btn.closest('.em-wp-header-picker'); if (!root) { return; }
+            var cfg = collectConfig(root);
+            if (sameConfig(cfg, prevConfig(root))) { setStatus(root, NOCHANGE, '#6b7280'); return; }
+            if (root.getAttribute('data-live') !== '1') { saveHeader(root, cfg); return; }
+            var tplLabel = root.getAttribute('data-template-label') || TPL_FALLBACK;
+            var message = ASK_LIVE + ASK_MSG.replace('%s', tplLabel);
+            function onChoice(ok) { if (ok) { saveHeader(root, cfg); } }
+            if (window.EmWpAdminConfirm && typeof window.EmWpAdminConfirm.ask === 'function') {
+                window.EmWpAdminConfirm.ask(message, { title: ASK_TITLE, confirmLabel: ASK_OK, cancelLabel: ASK_CANCEL, danger: true }).then(onChoice);
+            } else { onChoice(window.confirm(message)); }
         });
 
         // Image de fond HEADER : choix via la médiathèque + retrait.
@@ -300,7 +322,7 @@ function em_wp_admin_render_header_section_assets(): void
             var media = root.querySelector('.em-wp-header-appr__media');
             if (clear) {
                 setMediaThumb(media, 0, '');
-                saveHeader(root, collectConfig(root));
+                markDirty(root);
                 return;
             }
             if (!window.wp || !window.wp.media) { return; }
@@ -310,7 +332,7 @@ function em_wp_admin_render_header_section_assets(): void
                 var sizes = att.sizes || {};
                 var url = sizes.medium ? sizes.medium.url : att.url;
                 setMediaThumb(media, parseInt(att.id, 10) || 0, url);
-                saveHeader(root, collectConfig(root));
+                markDirty(root);
             });
             frame.open();
         });
@@ -331,9 +353,23 @@ function em_wp_admin_render_header_section_assets(): void
             if (aside && aside.scrollIntoView) { aside.scrollIntoView({ block: 'nearest' }); }
         });
 
-        // NB : pas d'aperçu d'office ici — on garde visible la STRUCTURE du HEADER
-        // (placeholders HERO/SLIDE) qui reflète la matrice/position, mise à jour en
-        // direct. L'aperçu d'un item HERO/SLIDER reste disponible via l'œil.
+        // Init de l'état « à enregistrer » (bouton désactivé tant que rien ne change).
+        document.querySelectorAll('.em-wp-header-picker').forEach(markDirty);
+
+        // À l'ouverture du HEADER : aperçu d'office, dans le wireframe, de l'item HERO
+        // branché (comme les autres rubriques) — au lieu de la simple structure.
+        // L'aperçu d'un autre item HERO/SLIDER reste accessible via l'œil.
+        function showHeaderUsedPreview() {
+            if (!window.EmWpSkeletonPreview) { return; }
+            var root = document.querySelector('.em-wp-header-picker'); if (!root) { return; }
+            var list = root.querySelector('.em-wp-header-picker__items[data-part="hero"]'); if (!list) { return; }
+            var current = list.getAttribute('data-current') || '';
+            var eye = root.querySelector('.em-wp-instance-picker__eye[data-part="hero"][data-item="' + current + '"]');
+            var source = root.querySelector('.em-wp-header-picker__previews[data-part="hero"] .em-wp-instance-picker__preview[data-item="' + current + '"] .em-wp-instance-picker__stage');
+            if (eye && source) { window.EmWpSkeletonPreview.showSingle('header', source, eye); }
+        }
+        if (document.readyState !== 'loading') { showHeaderUsedPreview(); }
+        else { document.addEventListener('DOMContentLoaded', showHeaderUsedPreview); }
     })();
     </script>
     <?php

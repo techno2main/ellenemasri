@@ -471,55 +471,59 @@ function em_wp_admin_render_header_appearance(array $appearance, string $ratio):
     <div class="em-wp-header-picker__appearance">
         <p class="em-wp-header-picker__subhead"><?php esc_html_e('Apparence du HEADER (fond partagé)', 'em-wp'); ?></p>
         <div class="em-wp-header-appr">
-            <span class="em-wp-header-appr__field">
-                <span><?php esc_html_e('Fond', 'em-wp'); ?></span>
-                <?php em_wp_admin_render_color_field([
-                    'id'            => 'em-wp-header-appr-bg',
-                    'value'         => $bg,
-                    'input_class'   => 'em-wp-header-appr__bg',
-                    'preview_label' => __('Fond du HEADER', 'em-wp'),
-                ]); ?>
-            </span>
-            <span class="em-wp-header-appr__field em-wp-header-appr__field--image">
-                <span><?php esc_html_e('Image de fond', 'em-wp'); ?></span>
-                <span class="em-wp-header-appr__media" data-id="<?php echo esc_attr((string) $bg_image_id); ?>">
-                    <img class="em-wp-header-appr__thumb" src="<?php echo esc_url($bg_thumb); ?>" alt=""<?php echo $bg_thumb === '' ? ' hidden' : ''; ?>>
-                    <button type="button" class="button button-small em-wp-header-appr__pick"><?php esc_html_e('Choisir', 'em-wp'); ?></button>
-                    <button type="button" class="em-wp-header-appr__clear" title="<?php esc_attr_e('Retirer l’image (revenir à celle du HERO)', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Retirer l’image', 'em-wp'); ?>"<?php echo $bg_image_id > 0 ? '' : ' hidden'; ?>>&times;</button>
+            <div class="em-wp-header-appr__row">
+                <span class="em-wp-header-appr__field">
+                    <span><?php esc_html_e('Fond', 'em-wp'); ?></span>
+                    <?php em_wp_admin_render_color_field([
+                        'id'            => 'em-wp-header-appr-bg',
+                        'value'         => $bg,
+                        'input_class'   => 'em-wp-header-appr__bg',
+                        'preview_label' => __('Fond du HEADER', 'em-wp'),
+                    ]); ?>
                 </span>
-            </span>
-            <label class="em-wp-header-appr__field">
-                <span><?php esc_html_e('Position image', 'em-wp'); ?></span>
-                <select class="em-wp-header-appr__pos">
-                    <?php foreach (em_wp_rubrique_bg_position_choices() as $key => $label) : ?>
-                        <option value="<?php echo esc_attr($key); ?>" <?php selected($pos, $key); ?>><?php echo esc_html($label); ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-            <label class="em-wp-header-appr__field em-wp-header-appr__field--range">
-                <span><?php esc_html_e('Opacité', 'em-wp'); ?></span>
-                <input type="range" class="em-wp-header-appr__op" min="0" max="100" step="1" value="<?php echo esc_attr((string) $op); ?>" oninput="this.nextElementSibling.textContent=this.value+'%'">
-                <output><?php echo esc_html($op . '%'); ?></output>
-            </label>
-            <label class="em-wp-header-appr__field em-wp-header-appr__field--check">
-                <input type="checkbox" class="em-wp-header-appr__mirror" <?php checked(!empty($appearance['bg_image_mirror'])); ?>>
-                <span><?php esc_html_e('Miroir', 'em-wp'); ?></span>
-            </label>
-            <label class="em-wp-header-appr__field">
-                <span><?php esc_html_e('Ratio HERO/SLIDER', 'em-wp'); ?></span>
-                <select class="em-wp-header-appr__ratio">
-                    <?php foreach (em_wp_admin_header_ratio_choices() as $key => $label) : ?>
-                        <option value="<?php echo esc_attr($key); ?>" <?php selected($ratio, $key); ?>><?php echo esc_html($label); ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </label>
-            <span class="em-wp-header-appr__pads">
-                <span class="em-wp-header-appr__padlabel"><?php esc_html_e('Marges', 'em-wp'); ?></span>
-                <input type="number" class="em-wp-header-appr__pt" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pt'] ?? 0)); ?>" title="<?php esc_attr_e('Haut', 'em-wp'); ?>">
-                <input type="number" class="em-wp-header-appr__pb" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pb'] ?? 0)); ?>" title="<?php esc_attr_e('Bas', 'em-wp'); ?>">
-                <input type="number" class="em-wp-header-appr__pl" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pl'] ?? 0)); ?>" title="<?php esc_attr_e('Gauche', 'em-wp'); ?>">
-                <input type="number" class="em-wp-header-appr__pr" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pr'] ?? 0)); ?>" title="<?php esc_attr_e('Droite', 'em-wp'); ?>">
-            </span>
+                <span class="em-wp-header-appr__field em-wp-header-appr__field--image">
+                    <span><?php esc_html_e('Image de fond', 'em-wp'); ?></span>
+                    <span class="em-wp-header-appr__media" data-id="<?php echo esc_attr((string) $bg_image_id); ?>">
+                        <img class="em-wp-header-appr__thumb" src="<?php echo esc_url($bg_thumb); ?>" alt=""<?php echo $bg_thumb === '' ? ' hidden' : ''; ?>>
+                        <button type="button" class="button button-small em-wp-header-appr__pick"><?php esc_html_e('Choisir', 'em-wp'); ?></button>
+                        <button type="button" class="em-wp-header-appr__clear" title="<?php esc_attr_e('Retirer l’image (revenir à celle du HERO)', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Retirer l’image', 'em-wp'); ?>"<?php echo $bg_image_id > 0 ? '' : ' hidden'; ?>>&times;</button>
+                    </span>
+                </span>
+                <label class="em-wp-header-appr__field">
+                    <span><?php esc_html_e('Position image', 'em-wp'); ?></span>
+                    <select class="em-wp-header-appr__pos">
+                        <?php foreach (em_wp_rubrique_bg_position_choices() as $key => $label) : ?>
+                            <option value="<?php echo esc_attr($key); ?>" <?php selected($pos, $key); ?>><?php echo esc_html($label); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+                <label class="em-wp-header-appr__field">
+                    <span><?php esc_html_e('Ratio HERO/SLIDER', 'em-wp'); ?></span>
+                    <select class="em-wp-header-appr__ratio">
+                        <?php foreach (em_wp_admin_header_ratio_choices() as $key => $label) : ?>
+                            <option value="<?php echo esc_attr($key); ?>" <?php selected($ratio, $key); ?>><?php echo esc_html($label); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </label>
+            </div>
+            <div class="em-wp-header-appr__row">
+                <label class="em-wp-header-appr__field em-wp-header-appr__field--range">
+                    <span><?php esc_html_e('Opacité', 'em-wp'); ?></span>
+                    <input type="range" class="em-wp-header-appr__op" min="0" max="100" step="1" value="<?php echo esc_attr((string) $op); ?>" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                    <output><?php echo esc_html($op . '%'); ?></output>
+                </label>
+                <label class="em-wp-header-appr__field em-wp-header-appr__field--check">
+                    <input type="checkbox" class="em-wp-header-appr__mirror" <?php checked(!empty($appearance['bg_image_mirror'])); ?>>
+                    <span><?php esc_html_e('Miroir', 'em-wp'); ?></span>
+                </label>
+                <span class="em-wp-header-appr__pads">
+                    <span class="em-wp-header-appr__padlabel"><?php esc_html_e('Marges', 'em-wp'); ?></span>
+                    <input type="number" class="em-wp-header-appr__pt" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pt'] ?? 0)); ?>" title="<?php esc_attr_e('Haut', 'em-wp'); ?>">
+                    <input type="number" class="em-wp-header-appr__pb" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pb'] ?? 0)); ?>" title="<?php esc_attr_e('Bas', 'em-wp'); ?>">
+                    <input type="number" class="em-wp-header-appr__pl" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pl'] ?? 0)); ?>" title="<?php esc_attr_e('Gauche', 'em-wp'); ?>">
+                    <input type="number" class="em-wp-header-appr__pr" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pr'] ?? 0)); ?>" title="<?php esc_attr_e('Droite', 'em-wp'); ?>">
+                </span>
+            </div>
         </div>
     </div>
     <?php
@@ -552,27 +556,29 @@ function em_wp_admin_render_header_section_picker(string $template): void
     >
         <p class="em-wp-rubriques-admin__picker-head"><?php esc_html_e('Composition du HEADER', 'em-wp'); ?></p>
 
-        <div class="em-wp-header-picker__matrix" role="radiogroup">
-            <label class="em-wp-header-picker__opt">
-                <input type="radio" name="em-wp-header-matrix" value="hero" <?php checked(!$both); ?>>
-                <span><?php esc_html_e('HERO seul', 'em-wp'); ?></span>
-            </label>
-            <label class="em-wp-header-picker__opt">
-                <input type="radio" name="em-wp-header-matrix" value="hero_slider" <?php checked($both); ?>>
-                <span><?php esc_html_e('HERO + SLIDER', 'em-wp'); ?></span>
-            </label>
-        </div>
+        <div class="em-wp-header-picker__compo">
+            <div class="em-wp-header-picker__matrix" role="radiogroup">
+                <label class="em-wp-header-picker__opt">
+                    <input type="radio" name="em-wp-header-matrix" value="hero" <?php checked(!$both); ?>>
+                    <span><?php esc_html_e('HERO seul', 'em-wp'); ?></span>
+                </label>
+                <label class="em-wp-header-picker__opt">
+                    <input type="radio" name="em-wp-header-matrix" value="hero_slider" <?php checked($both); ?>>
+                    <span><?php esc_html_e('HERO + SLIDER', 'em-wp'); ?></span>
+                </label>
+            </div>
 
-        <div class="em-wp-header-picker__position"<?php echo $both ? '' : ' hidden'; ?>>
-            <span class="em-wp-header-picker__poslabel"><?php esc_html_e('Position', 'em-wp'); ?></span>
-            <label class="em-wp-header-picker__opt">
-                <input type="radio" name="em-wp-header-position" value="hero_left" <?php checked($cfg['position'] !== 'slider_left'); ?>>
-                <span><?php esc_html_e('HERO à gauche', 'em-wp'); ?></span>
-            </label>
-            <label class="em-wp-header-picker__opt">
-                <input type="radio" name="em-wp-header-position" value="slider_left" <?php checked($cfg['position'] === 'slider_left'); ?>>
-                <span><?php esc_html_e('SLIDER à gauche', 'em-wp'); ?></span>
-            </label>
+            <div class="em-wp-header-picker__position"<?php echo $both ? '' : ' hidden'; ?>>
+                <span class="em-wp-header-picker__poslabel"><?php esc_html_e('Position', 'em-wp'); ?></span>
+                <label class="em-wp-header-picker__opt">
+                    <input type="radio" name="em-wp-header-position" value="hero_left" <?php checked($cfg['position'] !== 'slider_left'); ?>>
+                    <span><?php esc_html_e('HERO à gauche', 'em-wp'); ?></span>
+                </label>
+                <label class="em-wp-header-picker__opt">
+                    <input type="radio" name="em-wp-header-position" value="slider_left" <?php checked($cfg['position'] === 'slider_left'); ?>>
+                    <span><?php esc_html_e('SLIDER à gauche', 'em-wp'); ?></span>
+                </label>
+            </div>
         </div>
 
         <?php em_wp_admin_render_header_part_items($template, 'hero', $hero_type); ?>
@@ -583,7 +589,10 @@ function em_wp_admin_render_header_section_picker(string $template): void
 
         <?php em_wp_admin_render_header_appearance($cfg['appearance'], $cfg['ratio']); ?>
 
-        <p class="em-wp-instance-picker__status" aria-live="polite" hidden></p>
+        <div class="em-wp-header-picker__savebar">
+            <button type="button" class="button button-primary em-wp-header-picker__save" disabled><?php esc_html_e('Sauvegarder', 'em-wp'); ?></button>
+            <p class="em-wp-instance-picker__status" aria-live="polite" hidden></p>
+        </div>
     </div>
     <?php
 }
