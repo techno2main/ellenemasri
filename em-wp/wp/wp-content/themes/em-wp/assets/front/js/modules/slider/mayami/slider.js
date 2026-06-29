@@ -10,7 +10,6 @@ window.emWpInitMayamiSlider = function (root) {
     const prevButton = root.querySelector('.em-slider__nav--prev');
     const nextButton = root.querySelector('.em-slider__nav--next');
     const audioBtn = root.querySelector('.em-slider__audio-btn');
-    const playBtn = root.querySelector('.em-slider__play');
 
     if (slides.length === 0) {
         return;
@@ -246,11 +245,38 @@ window.emWpInitMayamiSlider = function (root) {
         });
     }
 
-    if (playBtn) {
-        playBtn.addEventListener('click', function () {
-            goToSlide((currentIndex + 1) % slides.length);
-        });
+    // Les navigateurs bloquent la lecture audible tant qu'aucune interaction
+    // utilisateur n'a eu lieu : à l'init la vidéo retombe en muet. On rétablit le
+    // son dès le premier geste (clic, touche, toucher) sur la page, comme attendu.
+    let soundUnlocked = false;
+    function unlockActiveSound() {
+        if (soundUnlocked) {
+            return;
+        }
+        soundUnlocked = true;
+
+        const activeVideo = getActiveVideo(currentIndex);
+        if (activeVideo) {
+            activeVideo.muted = false;
+            activeVideo.volume = 1;
+            const playPromise = activeVideo.play();
+            if (playPromise && typeof playPromise.catch === 'function') {
+                playPromise.catch(function () {});
+            }
+            updateAudioButtonState(activeVideo);
+        }
+
+        const activeSlide = slides[currentIndex];
+        const iframe = activeSlide ? activeSlide.querySelector('iframe') : null;
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'unMute', args: [] }), '*');
+            iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func: 'setVolume', args: [100] }), '*');
+        }
     }
+
+    ['pointerdown', 'keydown', 'touchstart'].forEach(function (evt) {
+        document.addEventListener(evt, unlockActiveSound, { once: true });
+    });
 
     initVideoEndedHandlers();
     syncActiveVideoPlayback(currentIndex);

@@ -147,12 +147,6 @@ foreach ($slides as $slide_item) {
             </div>
 
             <div class="em-slider__footer">
-                <button
-                    class="em-slider__play"
-                    type="button"
-                    aria-label="Lire la video"
-                ></button>
-
                 <?php if (!$slider_title_hidden): ?>
                     <span class="em-slider__title">
                         <?php echo esc_html($footer_title !== '' ? $footer_title : 'MAYAMI, MY MIAMI'); ?>
