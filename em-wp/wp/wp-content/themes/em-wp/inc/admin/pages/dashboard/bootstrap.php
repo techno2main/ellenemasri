@@ -10,7 +10,7 @@
  *   helpers.php           → prénom admin, détection écran Accueil
  *   components.php        → titres cartes, boutons, badges
  *   render-page.php       → assemblage page Accueil
- *   rows/catalogues.php   → rangée cartes Catalogues
+ *   rows/rubriques.php    → rangée carte Rubriques (V4)
  *   rows/templates.php    → rangée cartes Templates
  *   rows/medias-settings.php → rangée Médias + Settings
  *
@@ -29,7 +29,7 @@ require_once $dashboard_dir . '/redirects.php';
 require_once $dashboard_dir . '/menu-sidebar.php';
 require_once $dashboard_dir . '/helpers.php';
 require_once $dashboard_dir . '/components.php';
-require_once $dashboard_dir . '/rows/catalogues.php';
+require_once $dashboard_dir . '/rows/rubriques.php';
 require_once $dashboard_dir . '/rows/templates.php';
 require_once $dashboard_dir . '/rows/medias-settings.php';
 require_once $dashboard_dir . '/render-page.php';

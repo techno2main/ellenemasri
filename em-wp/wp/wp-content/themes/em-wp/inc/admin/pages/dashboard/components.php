@@ -56,6 +56,7 @@ function em_wp_admin_dashboard_action_icons(): array
     return [
         'templates'  => 'dashicons dashicons-layout',
         'catalogues' => 'dashicons dashicons-index-card',
+        'rubriques'  => 'dashicons dashicons-screenoptions',
         'medias'     => 'dashicons dashicons-admin-media',
         'settings'   => 'dashicons dashicons-admin-settings',
     ];
@@ -161,36 +162,42 @@ function em_wp_admin_dashboard_render_templates_badge(): void
 }
 
 /**
- * Pastille modules catalogues (HEROS, SLIDERS, …).
+ * URL admin du hub RUBRIQUES (V4).
  */
-function em_wp_admin_dashboard_render_catalog_modules_badge(): void
+function em_wp_admin_dashboard_rubriques_overview_url(): string
+{
+    return add_query_arg(['page' => 'em-wp-v4-overview'], admin_url('admin.php'));
+}
+
+/**
+ * Pastille des rubriques V4 (TOP-BARS, HEROS, SLIDERS, …).
+ *
+ * Remplace l'ancienne pastille « modules catalogues » : on liste désormais les
+ * types de rubriques V4 (registre), chaque entrée ouvre la carte correspondante
+ * du hub RUBRIQUES.
+ */
+function em_wp_admin_dashboard_render_rubriques_badge(): void
 {
     $entries = [];
 
-    if (function_exists('em_wp_admin_catalog_menu_modules') && function_exists('em_wp_catalog_menu_definitions')) {
-        $definitions = em_wp_catalog_menu_definitions();
+    if (function_exists('em_wp_v4_ordered_types')) {
+        foreach (em_wp_v4_ordered_types() as $slug => $type) {
+            $slug = (string) $slug;
+            $label = (string) ($type['label_plural'] ?? $type['label'] ?? $slug);
 
-        foreach (em_wp_admin_catalog_menu_modules() as $module_slug) {
-            $definition = $definitions[$module_slug] ?? null;
-
-            if (!is_array($definition) || empty($definition['available'])) {
-                continue;
-            }
-
-            $url = trim((string) ($definition['url'] ?? ''));
-
-            if ($url === '') {
+            if ($slug === '' || $label === '') {
                 continue;
             }
 
             $entries[] = [
-                'label' => (string) ($definition['label'] ?? $module_slug),
-                'url'   => $url,
+                'label' => $label,
+                'url'   => add_query_arg(
+                    ['page' => 'em-wp-v4-overview', 'type' => $slug],
+                    admin_url('admin.php')
+                ),
             ];
         }
     }
-
-    $see_all_url = function_exists('em_wp_catalog_parent_page_url') ? em_wp_catalog_parent_page_url() : '';
 
     em_wp_admin_hub_render_catalog_entry_links_badge(
         $entries,
@@ -198,7 +205,7 @@ function em_wp_admin_dashboard_render_catalog_modules_badge(): void
         '',
         false,
         5,
-        $see_all_url,
+        em_wp_admin_dashboard_rubriques_overview_url(),
         __('Voir tout', 'em-wp')
     );
 }
