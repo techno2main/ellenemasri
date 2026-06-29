@@ -43,6 +43,26 @@ function em_wp_v4_render_preview_script(): void
             return link ? '<a class="em-rubrique__link" href="#" onclick="return false;">' + html + '</a>' : html;
         }
 
+        // Rendu preview du texte enrichi: HTML simple autorisé, fallback nl2br.
+        function richTextHtml(raw) {
+            var str = String(raw || '');
+            if (!str) { return ''; }
+            if (!/[<][^>]+[>]/.test(str)) {
+                return esc(str).replace(/\n/g, '<br>');
+            }
+            var tpl = document.createElement('template');
+            tpl.innerHTML = str;
+            tpl.content.querySelectorAll('script,style').forEach(function (node) { node.remove(); });
+            tpl.content.querySelectorAll('*').forEach(function (el) {
+                Array.prototype.slice.call(el.attributes).forEach(function (attr) {
+                    if (/^on/i.test(attr.name)) {
+                        el.removeAttribute(attr.name);
+                    }
+                });
+            });
+            return tpl.innerHTML;
+        }
+
         function color(value) {
             return /^#[0-9a-fA-F]{3,8}$/.test(value || '') ? value : '';
         }
@@ -269,6 +289,25 @@ function em_wp_v4_render_preview_script(): void
                 var cfg = {};
                 try { cfg = JSON.parse(item.value || '{}') || {}; } catch (e) { cfg = {}; }
                 return sliderMayamiHtml(cfg);
+            }
+
+            if (item.type === 'textarea') {
+                var tv = item.value, tlnk = '';
+                try {
+                    var tp = JSON.parse(item.value || '{}');
+                    if (tp && typeof tp === 'object' && 'text' in tp) {
+                        tv = tp.text || '';
+                        tlnk = tp.link || '';
+                    }
+                } catch (e) {}
+                if (!tv) { return ''; }
+                var rich = richTextHtml(tv);
+                if (!rich) { return ''; }
+                var richBody = '<div class="em-rubrique__field em-rubrique__field--rich">' + rich + '</div>';
+                if (tlnk && !/[<][^>]+[>]/.test(String(tv || ''))) {
+                    richBody = '<div class="em-rubrique__field em-rubrique__field--rich">' + textLink(String(tv), tlnk).replace(/\n/g, '<br>') + '</div>';
+                }
+                return richBody;
             }
 
             var v = item.value;

@@ -4,7 +4,7 @@
  *
  * Chaque ligne définit son propre nombre de colonnes (1 à 4) et l'alignement de
  * chacune. Le lay-out est donc une liste de lignes :
- *   { rows: [ { columns:int, align:{1:str,2:str,…} }, … ] }
+ *   { rows: [ { columns:int, align:{1:str,2:str,…}, title:str }, … ] }
  *
  * Les champs se positionnent par `row` (index de ligne) et `col` (colonne de la
  * ligne). Le rendu final utilise une grille CSS (repeat(columns, 1fr)) par ligne.
@@ -113,7 +113,7 @@ function em_wp_rubrique_fields_row_count(array $fields): int
  *
  * @param mixed                            $raw
  * @param array<int, array<string, mixed>> $fields champs (pour déduire le nombre de lignes)
- * @return array{rows:array<int,array{columns:int,align:array<int,string>}>}
+ * @return array{rows:array<int,array{columns:int,align:array<int,string>,title:string}>}
  */
 function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
 {
@@ -134,9 +134,11 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
         if ($entry !== null) {
             $cols = (int) ($entry['columns'] ?? 0);
             $align_src = is_array($entry['align'] ?? null) ? $entry['align'] : [];
+            $title = sanitize_text_field((string) ($entry['title'] ?? ''));
         } else {
             $cols = $legacy_cols;
             $align_src = $legacy_align;
+            $title = '';
         }
 
         $cols = min(em_wp_rubrique_max_columns(), max(1, $cols));
@@ -147,7 +149,7 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
             $align[$c] = $value !== '' ? em_wp_rubrique_valid_align($value) : em_wp_rubrique_default_align($c, $cols);
         }
 
-        $rows[] = ['columns' => $cols, 'align' => $align];
+        $rows[] = ['columns' => $cols, 'align' => $align, 'title' => $title];
     }
 
     return ['rows' => $rows];
@@ -157,11 +159,24 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
  * Lignes d'un lay-out normalisé.
  *
  * @param array<string, mixed> $layout
- * @return array<int, array{columns:int, align:array<int,string>}>
+ * @return array<int, array{columns:int, align:array<int,string>, title:string}>
  */
 function em_wp_rubrique_layout_rows(array $layout): array
 {
     return is_array($layout['rows'] ?? null) ? array_values($layout['rows']) : [];
+}
+
+/**
+ * Titre d'une ligne (1-indexee).
+ *
+ * @param array<string, mixed> $layout
+ */
+function em_wp_rubrique_layout_title_for(array $layout, int $row): string
+{
+    $rows = em_wp_rubrique_layout_rows($layout);
+    $entry = $rows[$row - 1] ?? null;
+
+    return is_array($entry) ? sanitize_text_field((string) ($entry['title'] ?? '')) : '';
 }
 
 /**

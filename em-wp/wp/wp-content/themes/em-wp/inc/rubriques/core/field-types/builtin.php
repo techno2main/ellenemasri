@@ -28,7 +28,7 @@ function em_wp_field_types_builtin(array $types): array
             'sanitize' => 'em_wp_field_sanitize_text',
         ],
         'textarea' => [
-            'label'    => __('Texte long', 'em-wp'),
+            'label'    => __('Texte enrichi', 'em-wp'),
             'default'  => '',
             'sanitize' => 'em_wp_field_sanitize_textarea',
         ],

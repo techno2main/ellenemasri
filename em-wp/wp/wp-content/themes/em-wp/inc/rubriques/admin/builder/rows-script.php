@@ -96,9 +96,15 @@ window.EmWpV4Rows = (function () {
 
     function pipsHtml(n) { var s = ''; for (var i = 0; i < n; i++) { s += '<span class="em-v4-colpip"></span>'; } return s; }
 
+    function colsText(n) {
+        n = Math.max(1, parseInt(n || 1, 10));
+        return n + ' ' + (n > 1 ? '<?php echo esc_js(__('colonnes', 'em-wp')); ?>' : '<?php echo esc_js(__('colonne', 'em-wp')); ?>');
+    }
+
     function updateColcount(row) {
         var n = currentColumns(row);
         row.querySelectorAll('.em-v4-colpips').forEach(function (box) { box.innerHTML = pipsHtml(n); });
+        row.querySelectorAll('.em-v4-row__colsnum').forEach(function (txt) { txt.textContent = colsText(n); });
     }
 
     // Mini-carte de la grille (à côté de « Contenu ») : 1 ligne de cellules par
@@ -154,12 +160,18 @@ window.EmWpV4Rows = (function () {
     }
 
     // Vide : on rend quand même la section (fond/marges) et on y pose le message.
-    function renderPreviewInto(layout, items, colors, emptyMsg) {
+    function renderPreviewInto(layout, items, colors, emptyMsg, rowTitle) {
         var inner = document.createElement('div');
         inner.className = 'em-v4-livepreview';
         window.EmWpV4Preview.render(inner, layout, items, colors);
         if (!items.length) { (inner.querySelector('.em-rubrique') || inner).insertAdjacentHTML('beforeend', '<div class="em-v4-gridmap__pop-empty">' + emptyMsg + '</div>'); }
         hoverPop.innerHTML = '';
+        if (rowTitle) {
+            var title = document.createElement('div');
+            title.className = 'em-v4-gridmap__pop-title';
+            title.textContent = rowTitle;
+            hoverPop.appendChild(title);
+        }
         hoverPop.appendChild(inner);
     }
 
@@ -174,12 +186,13 @@ window.EmWpV4Rows = (function () {
         var rl = (data.layout.rows || [])[rIdx] || {};
         var columns = clampCols(rl.columns);
         var align = (rl.align || {})[col] || 'left';
+        var rowTitle = (rl.title || '').toString().trim();
         var rowNum = rIdx + 1;
         var cellItems = data.items.filter(function (it) {
             return it.row === rowNum && Math.min(columns, Math.max(1, it.col)) === col;
         }).map(function (it) { var o = {}; for (var k in it) { o[k] = it[k]; } o.row = 1; o.col = 1; return o; });
         ensurePop();
-        renderPreviewInto({ rows: [{ columns: 1, align: { 1: align } }] }, cellItems, data.colors, EMPTY);
+        renderPreviewInto({ rows: [{ columns: 1, align: { 1: align } }] }, cellItems, data.colors, EMPTY, rowTitle);
         placePop(cell);
     }
 
@@ -343,7 +356,10 @@ window.EmWpV4Rows = (function () {
         row.querySelectorAll('.em-v4-align__sel').forEach(function (sel) {
             align[parseInt(sel.getAttribute('data-col'), 10)] = sel.value;
         });
-        return { columns: rowColumns(row), align: align };
+        var title = '';
+        var input = row.querySelector('.em-v4-row__titleinput');
+        if (input) { title = (input.value || '').trim(); }
+        return { columns: rowColumns(row), align: align, title: title };
     }
 
     return {

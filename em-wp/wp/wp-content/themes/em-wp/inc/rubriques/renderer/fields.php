@@ -90,7 +90,6 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
         case 'arrow_down':
             return em_wp_rubrique_arrow_html($value, 'down', '&darr;');
 
-        case 'textarea':
         case 'text':
             $tv = em_wp_rubrique_text_value($value);
             if ($tv['text'] === '') {
@@ -108,6 +107,18 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             $text_style = em_wp_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
             $text_inner = em_wp_rubrique_text_link_wrap($tv['text'], $tv['link']);
             return '<p class="em-rubrique__field em-rubrique__field--' . esc_attr($key) . '"' . ($text_style !== '' ? ' style="' . esc_attr($text_style) . '"' : '') . '>' . $text_inner . '</p>';
+
+        case 'textarea':
+            $tv = em_wp_rubrique_text_value($value);
+            if ($tv['text'] === '') {
+                return '';
+            }
+            $text_style = em_wp_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
+            $rich_html = em_wp_rubrique_textarea_render_html((string) $tv['text']);
+            if ($rich_html === '') {
+                return '';
+            }
+            return '<div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--' . esc_attr($key) . '"' . ($text_style !== '' ? ' style="' . esc_attr($text_style) . '"' : '') . '>' . $rich_html . '</div>';
 
         case 'url':
             if ($value === '') {

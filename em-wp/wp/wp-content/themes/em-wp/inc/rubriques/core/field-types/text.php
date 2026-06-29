@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Famille des champs « texte » (un seul champ de saisie = le contenu affiché,
- * avec lien URL/ancre optionnel) : texte, texte long, texte+image, texte+texte.
+ * avec lien URL/ancre optionnel) : texte, texte enrichi, texte+image, texte+texte.
  */
 function em_wp_rubrique_field_is_text_family(string $type): bool
 {
@@ -37,7 +37,7 @@ function em_wp_rubrique_text_link_wrap(string $text, string $link): string
 }
 
 /**
- * Décode la valeur d'un champ « Texte » (ou « Texte long ») en { text, link }.
+ * Décode la valeur d'un champ « Texte » (ou « Texte enrichi ») en { text, link }.
  *
  * Rétro-compatible : une valeur en chaîne simple (ancien format) est traitée
  * comme le texte sans lien.
@@ -62,6 +62,41 @@ function em_wp_rubrique_text_value($value): array
 }
 
 /**
+ * Détermine si un texte contient déjà du HTML.
+ */
+function em_wp_rubrique_text_has_html(string $text): bool
+{
+    return (bool) preg_match('/<[^>]+>/', $text);
+}
+
+/**
+ * Nettoie/rend un texte enrichi pour affichage front.
+ *
+ * - Si HTML détecté: conserve uniquement les balises autorisées (wp_kses_post)
+ * - Sinon: convertit les retours ligne en <br>
+ */
+function em_wp_rubrique_textarea_render_html(string $text): string
+{
+    if ($text === '') {
+        return '';
+    }
+
+    if (em_wp_rubrique_text_has_html($text)) {
+        return wp_kses_post($text);
+    }
+
+    return nl2br(esc_html($text));
+}
+
+/**
+ * Prépare la valeur d'un textarea riche pour l'éditeur admin (contenteditable).
+ */
+function em_wp_rubrique_textarea_editor_html(string $text): string
+{
+    return em_wp_rubrique_textarea_render_html($text);
+}
+
+/**
  * Sanitise un champ « Texte » : texte + lien (URL/ancre). Stocké en chaîne
  * simple s'il n'y a pas de lien, sinon en JSON { text, link }.
  *
@@ -81,14 +116,14 @@ function em_wp_field_sanitize_text($value): string
 }
 
 /**
- * Sanitise un champ « Texte long » (idem text, sanitize multi-lignes).
+ * Sanitise un champ « Texte enrichi » (HTML autorisé via wp_kses_post).
  *
  * @param mixed $value
  */
 function em_wp_field_sanitize_textarea($value): string
 {
     $v = em_wp_rubrique_text_value($value);
-    $text = sanitize_textarea_field($v['text']);
+    $text = wp_kses_post($v['text']);
     $link = esc_url_raw($v['link']);
 
     if ($text === '' && $link === '') {

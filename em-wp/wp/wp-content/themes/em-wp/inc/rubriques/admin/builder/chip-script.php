@@ -100,7 +100,28 @@ window.EmWpV4Chip = (function () {
         slDuration: '<?php echo esc_js(__('Durée (s)', 'em-wp')); ?>',
         slAdd: '<?php echo esc_js(__('+ Ajouter un slide', 'em-wp')); ?>',
         slUp: '<?php echo esc_js(__('Monter', 'em-wp')); ?>',
-        slDown: '<?php echo esc_js(__('Descendre', 'em-wp')); ?>'
+        slDown: '<?php echo esc_js(__('Descendre', 'em-wp')); ?>',
+        richBold: '<?php echo esc_js(__('Gras', 'em-wp')); ?>',
+        richItalic: '<?php echo esc_js(__('Italique', 'em-wp')); ?>',
+        richUnderline: '<?php echo esc_js(__('Souligné', 'em-wp')); ?>',
+        richList: '<?php echo esc_js(__('Liste', 'em-wp')); ?>',
+        richAlignLeft: '<?php echo esc_js(__('Aligner à gauche', 'em-wp')); ?>',
+        richAlignCenter: '<?php echo esc_js(__('Centrer', 'em-wp')); ?>',
+        richAlignRight: '<?php echo esc_js(__('Aligner à droite', 'em-wp')); ?>',
+        richAlignJustify: '<?php echo esc_js(__('Justifier', 'em-wp')); ?>',
+        richInlineLink: '<?php echo esc_js(__('Ajouter un lien sur la sélection', 'em-wp')); ?>',
+        richUnlink: '<?php echo esc_js(__('Retirer le lien', 'em-wp')); ?>',
+        richAnchor: '<?php echo esc_js(__('Ajouter une ancre sur la sélection', 'em-wp')); ?>',
+        richPromptLink: '<?php echo esc_js(__('URL du lien (https://... ou #ancre)', 'em-wp')); ?>',
+        richPromptAnchor: '<?php echo esc_js(__('Nom de l\'ancre (sans #)', 'em-wp')); ?>',
+        richPlaceholder: '<?php echo esc_js(__('Contenu enrichi…', 'em-wp')); ?>',
+        richLink: '<?php echo esc_js(__('Lien global (optionnel)', 'em-wp')); ?>',
+        talign: '<?php echo esc_js(__('Alignement du texte', 'em-wp')); ?>',
+        talignInherit: '<?php echo esc_js(__('Alignement hérité', 'em-wp')); ?>',
+        left: '<?php echo esc_js(__('Gauche', 'em-wp')); ?>',
+        center: '<?php echo esc_js(__('Centre', 'em-wp')); ?>',
+        right: '<?php echo esc_js(__('Droite', 'em-wp')); ?>',
+        justify: '<?php echo esc_js(__('Justifié', 'em-wp')); ?>'
     };
 
     function esc(s) {
@@ -160,9 +181,15 @@ window.EmWpV4Chip = (function () {
         Object.keys(FONTS).forEach(function (k) {
             fopts += '<option value="' + esc(k) + '" data-stack="' + esc(FONTS[k].stack) + '">' + esc(FONTS[k].label) + '</option>';
         });
+        var aopts = '<option value="">' + esc(TXT.talignInherit) + '</option>'
+            + '<option value="left">' + esc(TXT.left) + '</option>'
+            + '<option value="center">' + esc(TXT.center) + '</option>'
+            + '<option value="right">' + esc(TXT.right) + '</option>'
+            + '<option value="justify">' + esc(TXT.justify) + '</option>';
         return '<span class="em-v4-chip__tstyle">' +
             '<input type="number" class="em-v4-chip__tsize" min="0" max="200" placeholder="' + esc(TXT.px) + '" title="' + esc(TXT.tsize) + '">' +
             '<select class="em-v4-chip__tfont" title="' + esc(TXT.tfont) + '">' + fopts + '</select>' +
+            '<select class="em-v4-chip__talign" title="' + esc(TXT.talign) + '">' + aopts + '</select>' +
             colorField(colorId('emv4ts-'), 'em-v4-chip__tcolor', TXT.tcolor) +
             '</span>';
     }
@@ -184,6 +211,27 @@ window.EmWpV4Chip = (function () {
 <?php require __DIR__ . '/chip-media-script.php'; ?>
 
     function valueHtml(type, key) {
+        if (type === 'textarea') {
+            return '<span class="em-v4-chip__rich">'
+                + '<span class="em-v4-chip__richbar">'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="bold" title="' + esc(TXT.richBold) + '"><strong>B</strong></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="italic" title="' + esc(TXT.richItalic) + '"><em>I</em></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="underline" title="' + esc(TXT.richUnderline) + '"><span style="text-decoration:underline;">U</span></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="insertUnorderedList" title="' + esc(TXT.richList) + '">•</button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyLeft" title="' + esc(TXT.richAlignLeft) + '"><span class="dashicons dashicons-editor-alignleft" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyCenter" title="' + esc(TXT.richAlignCenter) + '"><span class="dashicons dashicons-editor-aligncenter" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyRight" title="' + esc(TXT.richAlignRight) + '"><span class="dashicons dashicons-editor-alignright" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyFull" title="' + esc(TXT.richAlignJustify) + '"><span class="dashicons dashicons-editor-justify" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-action="link" title="' + esc(TXT.richInlineLink) + '"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="unlink" title="' + esc(TXT.richUnlink) + '"><span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-v4-richbtn" data-action="anchor" title="' + esc(TXT.richAnchor) + '">#</button>'
+                + '<span class="em-v4-chip__richcolor" title="' + esc(TXT.tcolor) + '">' + colorField(colorId('emv4rc-'), 'em-v4-richcolor', TXT.tcolor) + '</span>'
+                + '</span>'
+                + '<div class="em-v4-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="' + esc(TXT.richPlaceholder) + '"></div>'
+                + '<input type="hidden" class="em-v4-chip__value">'
+                + '</span>';
+        }
+
         if (type === 'video_url') {
             return '<input type="url" class="em-v4-chip__vurl" placeholder="' + esc(TXT.videoUrl) + '">' +
                 '<span class="em-v4-chip__media em-v4-chip__media--av em-v4-chip__vthumb" data-url="" data-mtype="image">' +
@@ -261,7 +309,7 @@ window.EmWpV4Chip = (function () {
                 '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
         var input = '<input type="text" class="em-v4-chip__value" placeholder="' + esc(TXT.content) + '">';
-        if (type === 'text' || type === 'textarea') {
+        if (type === 'text') {
             input += '<input type="url" class="em-v4-chip__tlink" placeholder="' + esc(TXT.link) + '">';
         }
         if (TEXT_STYLE.indexOf(type) !== -1) { input += textStyleHtml(key); }
@@ -350,8 +398,9 @@ window.EmWpV4Chip = (function () {
     function readStyle(chip) {
         var sz = chip.querySelector('.em-v4-chip__tsize');
         var fn = chip.querySelector('.em-v4-chip__tfont');
+        var al = chip.querySelector('.em-v4-chip__talign');
         var cl = chip.querySelector('.em-v4-chip__tcolor');
-        return { size: sz ? (parseInt(sz.value, 10) || 0) : 0, font: fn ? fn.value : '', color: cl ? cl.value : '' };
+        return { size: sz ? (parseInt(sz.value, 10) || 0) : 0, font: fn ? fn.value : '', align: al ? al.value : '', color: cl ? cl.value : '' };
     }
 
     return {

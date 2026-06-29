@@ -35,12 +35,17 @@ function em_wp_rubrique_field_supports_text_style(string $type): bool
  * Normalise un style de texte par champ (taille px, clé de police, couleur hex).
  *
  * @param mixed $raw
- * @return array{size:int, font:string, color:string}
+ * @return array{size:int, font:string, color:string, align:string}
  */
 function em_wp_rubrique_normalize_text_style($raw): array
 {
     $raw = is_array($raw) ? $raw : [];
     $font = sanitize_key((string) ($raw['font'] ?? ''));
+    $align = sanitize_key((string) ($raw['align'] ?? ''));
+
+    if (!in_array($align, ['left', 'center', 'right', 'justify'], true)) {
+        $align = '';
+    }
 
     if ($font !== '' && !isset(em_wp_rubrique_font_choices()[$font])) {
         $font = '';
@@ -50,6 +55,7 @@ function em_wp_rubrique_normalize_text_style($raw): array
         'size'  => max(0, min(200, (int) ($raw['size'] ?? 0))),
         'font'  => $font,
         'color' => em_wp_field_sanitize_color((string) ($raw['color'] ?? '')),
+        'align' => $align,
     ];
 }
 
@@ -85,6 +91,10 @@ function em_wp_rubrique_text_style_css(array $style): string
 
     if ($style['color'] !== '') {
         $css .= 'color:' . $style['color'] . ';';
+    }
+
+    if ($style['align'] !== '') {
+        $css .= 'text-align:' . $style['align'] . ';';
     }
 
     return $css;

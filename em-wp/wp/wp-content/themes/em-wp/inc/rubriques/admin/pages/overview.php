@@ -66,6 +66,29 @@ function em_wp_v4_overview_menu(): void
 add_action('admin_menu', 'em_wp_v4_overview_menu', 100);
 
 /**
+ * Assets de la page Rubriques V4 (inclut le header admin partage).
+ */
+function em_wp_v4_overview_enqueue_assets(string $hook_suffix): void
+{
+    unset($hook_suffix);
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page = sanitize_key((string) ($_GET['page'] ?? ''));
+    if ($page !== 'em-wp-v4-overview') {
+        return;
+    }
+
+    if (function_exists('em_wp_admin_hub_cards_enqueue_assets')) {
+        em_wp_admin_hub_cards_enqueue_assets();
+        return;
+    }
+
+    if (function_exists('em_wp_admin_enqueue_shared_assets')) {
+        em_wp_admin_enqueue_shared_assets();
+    }
+}
+add_action('admin_enqueue_scripts', 'em_wp_v4_overview_enqueue_assets');
+
+/**
  * Types triés dans l'ordre des rubriques du site (HEADER absent du V4).
  *
  * @return array<string, array<string, mixed>>
@@ -105,12 +128,17 @@ function em_wp_v4_overview_render(): void
     $types = em_wp_v4_ordered_types();
     // Rubrique ciblée par le sous-menu de gauche (…&type=<slug>) : on ouvre sa carte.
     $open_type = sanitize_key((string) ($_GET['type'] ?? ''));
+    $breadcrumb = [];
+    if (function_exists('em_wp_admin_hub_breadcrumb_crumb')) {
+        $breadcrumb[] = em_wp_admin_hub_breadcrumb_crumb(__('Mes Rubriques', 'em-wp'));
+    }
     ?>
-    <div class="wrap em-v4-overview">
-        <h1><?php esc_html_e('EM-WP V4 — Rubriques', 'em-wp'); ?></h1>
-        <p class="description">
-            <?php esc_html_e('Par rubrique, crée tes variantes. Compose la STRUCTURE et saisis le CONTENU au même endroit : ajoute un champ dans une zone (Gauche/Centre/Droite), nomme-le, remplis-le. Aperçu temps réel. Additif, sans impact sur le front.', 'em-wp'); ?>
-        </p>
+    <div class="wrap em-v4-overview em-wp-admin-module em-wp-hub-sommaire">
+        <?php
+        if (function_exists('em_wp_admin_hub_render_sommaire_header')) {
+            em_wp_admin_hub_render_sommaire_header('', 'dashicons-screenoptions', false, true, null, $breadcrumb, false);
+        }
+        ?>
 
         <?php em_wp_v4_overview_notice(); ?>
         <?php em_wp_v4_overview_render_styles(); ?>

@@ -21,6 +21,8 @@ require __DIR__ . '/slides-editor-script.php';
 ?>
 <script>
 (function () {
+    var richDialog = null;
+
     function init() {
         document.querySelectorAll('.em-v4-builder').forEach(setup);
     }
@@ -96,6 +98,11 @@ require __DIR__ . '/slides-editor-script.php';
 
         // Drag chip coupé dans les champs de saisie ; ligne déplaçable via poignée.
         builder.addEventListener('mousedown', function (e) {
+            var richBtn = e.target.closest('.em-v4-richbtn');
+            if (richBtn) {
+                e.preventDefault();
+                return;
+            }
             var handle = e.target.closest('.em-v4-row__drag');
             if (handle) {
                 var hrow = handle.closest('.em-v4-row');
@@ -104,14 +111,38 @@ require __DIR__ . '/slides-editor-script.php';
             }
             var chip = e.target.closest('.em-v4-chip');
             if (!chip) { return; }
-            chip.draggable = !e.target.closest('input, textarea, select');
+            chip.draggable = !e.target.closest('input, textarea, select, [contenteditable="true"], .em-v4-richbtn, .em-v4-richcolor');
         });
         builder.addEventListener('mouseup', function () {
             builder.querySelectorAll('.em-v4-chip').forEach(function (c) { c.draggable = true; });
             builder.querySelectorAll('.em-v4-row[draggable]').forEach(function (r) { r.removeAttribute('draggable'); });
         });
 
+        builder.addEventListener('keyup', function (e) {
+            var rich = e.target && e.target.closest ? e.target.closest('.em-v4-chip__richedit') : null;
+            if (rich) { saveRichSelection(rich.closest('.em-v4-chip')); }
+        });
+
+        builder.addEventListener('mouseup', function (e) {
+            var rich = e.target && e.target.closest ? e.target.closest('.em-v4-chip__richedit') : null;
+            if (rich) { saveRichSelection(rich.closest('.em-v4-chip')); }
+        });
+
         builder.addEventListener('click', function (e) {
+            var titleWrap = e.target.closest('.em-v4-row__title');
+            if (titleWrap) {
+                if (e.target.closest('.em-v4-row__titleedit')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    startRowTitleEdit(titleWrap);
+                }
+                e.stopPropagation();
+                return;
+            }
+            if (e.target.closest('.em-v4-row__titleinput')) {
+                e.stopPropagation();
+                return;
+            }
             // Œil « Contenu » → aperçu réduit persistant (ne bascule pas la section).
             var eye = e.target.closest('.em-v4-gridmap__eye');
             if (eye) { e.preventDefault(); if (window.EmWpV4Mini) { window.EmWpV4Mini.toggle(builder, eye); } return; }
@@ -121,8 +152,48 @@ require __DIR__ . '/slides-editor-script.php';
         });
         builder.addEventListener('mouseover', function (e) { var c = e.target.closest('.em-v4-gridmap__cell'); if (c) { window.EmWpV4Rows.showCellPreview(builder, c); } });
         builder.addEventListener('mouseout', function (e) { if (e.target.closest('.em-v4-gridmap__cell')) { window.EmWpV4Rows.hideCellPreview(); } });
-        builder.addEventListener('input', update);
-        builder.addEventListener('change', update);
+        builder.addEventListener('input', function (e) {
+            var rich = e.target && e.target.closest ? e.target.closest('.em-v4-chip__richedit') : null;
+            if (rich) {
+                syncRichValue(rich.closest('.em-v4-chip'));
+            }
+            update();
+        });
+        builder.addEventListener('keydown', function (e) {
+            var titleInput = e.target && e.target.closest ? e.target.closest('.em-v4-row__titleinput') : null;
+            if (!titleInput) { return; }
+            var titleWrap = titleInput.closest('.em-v4-row__title');
+            if (!titleWrap) { return; }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                commitRowTitleEdit(titleWrap, update);
+            } else if (e.key === 'Escape') {
+                e.preventDefault();
+                cancelRowTitleEdit(titleWrap);
+            }
+        });
+        builder.addEventListener('focusout', function (e) {
+            var titleInput = e.target && e.target.closest ? e.target.closest('.em-v4-row__titleinput') : null;
+            if (!titleInput) { return; }
+            var titleWrap = titleInput.closest('.em-v4-row__title');
+            if (!titleWrap || titleWrap.getAttribute('data-editing') !== '1') { return; }
+            window.setTimeout(function () {
+                if (titleWrap.contains(document.activeElement)) { return; }
+                commitRowTitleEdit(titleWrap, update);
+            }, 0);
+        });
+        builder.addEventListener('change', function (e) {
+            var color = e.target && e.target.classList && e.target.classList.contains('em-v4-richcolor') ? e.target : null;
+            if (color) {
+                applyRichColor(color);
+                syncRichValue(color.closest('.em-v4-chip'));
+            }
+            var align = e.target && e.target.classList && e.target.classList.contains('em-v4-chip__talign') ? e.target : null;
+            if (align) {
+                syncRichAlign(align.closest('.em-v4-chip'));
+            }
+            update();
+        });
         builder.addEventListener('dragstart', function (e) {
             var chip = e.target.closest('.em-v4-chip');
             if (chip) { dragged = chip; chip.classList.add('is-dragging'); e.dataTransfer.effectAllowed = 'move'; return; }
@@ -160,8 +231,59 @@ require __DIR__ . '/slides-editor-script.php';
         if (form) { form.addEventListener('submit', update); }
 
         window.EmWpV4Rows.singleOpen(builder);
+        builder.querySelectorAll('.em-v4-chip').forEach(function (chip) { syncRichAlign(chip); });
+        builder.querySelectorAll('.em-v4-row__title').forEach(function (box) { renderRowTitleText(box); });
         update();
         ready = true;
+    }
+
+    function startRowTitleEdit(box) {
+        if (!box || box.getAttribute('data-editing') === '1') { return; }
+        var input = box.querySelector('.em-v4-row__titleinput');
+        if (!input) { return; }
+        box.setAttribute('data-editing', '1');
+        box.setAttribute('data-prev', input.value || '');
+        input.hidden = false;
+        input.focus();
+        input.select();
+    }
+
+    function commitRowTitleEdit(box, update) {
+        if (!box || box.getAttribute('data-editing') !== '1') { return; }
+        var input = box.querySelector('.em-v4-row__titleinput');
+        if (!input) { return; }
+        var value = (input.value || '').trim();
+        var prev = (box.getAttribute('data-prev') || '').trim();
+        input.value = value;
+        box.setAttribute('data-editing', '0');
+        input.hidden = true;
+        renderRowTitleText(box);
+        if (value !== prev) { update(); }
+    }
+
+    function cancelRowTitleEdit(box) {
+        if (!box || box.getAttribute('data-editing') !== '1') { return; }
+        var input = box.querySelector('.em-v4-row__titleinput');
+        if (!input) { return; }
+        input.value = box.getAttribute('data-prev') || '';
+        box.setAttribute('data-editing', '0');
+        input.hidden = true;
+        renderRowTitleText(box);
+    }
+
+    function renderRowTitleText(box) {
+        if (!box) { return; }
+        var input = box.querySelector('.em-v4-row__titleinput');
+        var text = box.querySelector('.em-v4-row__titletxt');
+        if (!input || !text) { return; }
+        var value = (input.value || '').trim();
+        if (value) {
+            text.textContent = value;
+            text.setAttribute('data-empty', '0');
+        } else {
+            text.textContent = input.getAttribute('placeholder') || 'Titre de ligne';
+            text.setAttribute('data-empty', '1');
+        }
     }
 
     // Sérialise une chip selon son type.
@@ -239,10 +361,15 @@ require __DIR__ . '/slides-editor-script.php';
             });
         }
         window.EmWpV4Chip.readMedia(chip, type, item);
-        if (type === 'text' || type === 'textarea') {
+        if (type === 'text') {
             var tlk = chip.querySelector('.em-v4-chip__tlink');
             item.link = tlk ? tlk.value : '';
             item.value = item.link ? JSON.stringify({ text: item.value, link: item.link }) : item.value;
+        }
+        if (type === 'textarea') {
+            syncRichValue(chip);
+            var richVal = val(chip, '.em-v4-chip__value');
+            item.value = richVal;
         }
         if (type === 'text_image') {
             var tmd = chip.querySelector('.em-v4-chip__media');
@@ -284,6 +411,16 @@ require __DIR__ . '/slides-editor-script.php';
 
     function onClick(e, builder, update) {
         var t = e.target;
+        var richBtn = t.closest('.em-v4-richbtn');
+        if (richBtn) {
+            e.preventDefault();
+            runRichCommand(richBtn, update);
+            return;
+        }
+        var pickBtn = t.closest('.em-v4-celladd__pickbtn');
+        if (pickBtn) { e.preventDefault(); toggleCellTypeMenu(pickBtn.closest('.em-v4-celladd__picker')); return; }
+        var pickOpt = t.closest('.em-v4-celladd__opt');
+        if (pickOpt) { e.preventDefault(); chooseCellType(pickOpt); return; }
         var mc = t.closest('.em-v4-gridmap__cell');
         if (mc) { e.preventDefault(); window.EmWpV4Rows.openCell(builder, parseInt(mc.getAttribute('data-row-index'), 10) || 0, parseInt(mc.getAttribute('data-col'), 10) || 1); return; }
         if (t.closest('.em-v4-row__drag')) { e.preventDefault(); return; }
@@ -314,6 +451,7 @@ require __DIR__ . '/slides-editor-script.php';
         if (rm) { e.preventDefault(); removeChip(rm, update); return; }
         var rrm = t.closest('.em-v4-row__remove');
         if (rrm) { e.preventDefault(); removeRow(rrm, update); }
+        if (!t.closest('.em-v4-celladd__picker')) { closeAllCellTypeMenus(builder); }
     }
 
     function toggleCellForm(cell, show) {
@@ -322,8 +460,11 @@ require __DIR__ . '/slides-editor-script.php';
         if (form) { form.hidden = !show; }
         if (btn) { btn.hidden = show; }
         if (show && form) {
-            var sel = form.querySelector('.em-v4-celladd__type');
-            if (sel) { sel.focus(); }
+            syncCellTypePicker(form);
+            var pick = form.querySelector('.em-v4-celladd__pickbtn');
+            if (pick) { pick.focus(); }
+        } else if (form) {
+            closeAllCellTypeMenus(form.closest('.em-v4-builder'));
         }
     }
 
@@ -335,6 +476,69 @@ require __DIR__ . '/slides-editor-script.php';
         col.querySelector('.em-v4-col__drop').appendChild(window.EmWpV4Chip.build(type, ''));
         toggleCellForm(cell, false);
         update();
+    }
+
+    function closeAllCellTypeMenus(scope) {
+        if (!scope || !scope.querySelectorAll) { return; }
+        scope.querySelectorAll('.em-v4-celladd__picker[data-open="1"]').forEach(function (picker) {
+            picker.setAttribute('data-open', '0');
+            var btn = picker.querySelector('.em-v4-celladd__pickbtn');
+            var menu = picker.querySelector('.em-v4-celladd__menu');
+            if (btn) { btn.setAttribute('aria-expanded', 'false'); }
+            if (menu) { menu.hidden = true; }
+        });
+    }
+
+    function toggleCellTypeMenu(picker) {
+        if (!picker) { return; }
+        var builder = picker.closest('.em-v4-builder');
+        if (!builder) { return; }
+        var open = picker.getAttribute('data-open') === '1';
+        closeAllCellTypeMenus(builder);
+        if (open) { return; }
+        picker.setAttribute('data-open', '1');
+        var btn = picker.querySelector('.em-v4-celladd__pickbtn');
+        var menu = picker.querySelector('.em-v4-celladd__menu');
+        if (btn) { btn.setAttribute('aria-expanded', 'true'); }
+        if (menu) { menu.hidden = false; }
+    }
+
+    function chooseCellType(opt) {
+        var picker = opt.closest('.em-v4-celladd__picker');
+        if (!picker) { return; }
+        var form = opt.closest('.em-v4-celladd__form');
+        if (!form) { return; }
+        var select = form.querySelector('.em-v4-celladd__type');
+        if (!select) { return; }
+        var type = opt.getAttribute('data-value') || '';
+        if (!type) { return; }
+        select.value = type;
+        syncCellTypePicker(form, type, opt.getAttribute('data-label') || '', opt.getAttribute('data-icon') || '');
+        closeAllCellTypeMenus(form.closest('.em-v4-builder'));
+    }
+
+    function syncCellTypePicker(form, forcedType, forcedLabel, forcedIcon) {
+        if (!form) { return; }
+        var select = form.querySelector('.em-v4-celladd__type');
+        var label = form.querySelector('.em-v4-celladd__picklabel');
+        var icon = form.querySelector('.em-v4-celladd__pickicon');
+        if (!select || !label || !icon) { return; }
+        var selectedType = forcedType || select.value;
+        var selectedLabel = forcedLabel || '';
+        var selectedIcon = forcedIcon || '';
+        if (!selectedLabel || !selectedIcon) {
+            var selectedOpt = form.querySelector('.em-v4-celladd__opt[data-value="' + cssEscape(selectedType) + '"]');
+            if (selectedOpt) {
+                selectedLabel = selectedLabel || selectedOpt.getAttribute('data-label') || '';
+                selectedIcon = selectedIcon || selectedOpt.getAttribute('data-icon') || '';
+            }
+        }
+        label.textContent = selectedLabel || select.options[select.selectedIndex].text || '';
+        icon.className = 'em-v4-celladd__pickicon dashicons ' + (selectedIcon || 'dashicons-marker');
+    }
+
+    function cssEscape(value) {
+        return String(value || '').replace(/"/g, '\\"');
     }
 
     function toggleChip(btn, update) {
@@ -363,6 +567,277 @@ require __DIR__ . '/slides-editor-script.php';
     function ask(message, ackText, onConfirm) {
         if (!window.EmWpAdminConfirm || !window.EmWpAdminConfirm.confirmDelete) { return; }
         window.EmWpAdminConfirm.confirmDelete(onConfirm, { title: '<?php echo esc_js(__('Supprimer', 'em-wp')); ?>', message: message, acknowledgeLabel: ackText, confirmLabel: '<?php echo esc_js(__('Supprimer définitivement', 'em-wp')); ?>' });
+    }
+
+    function syncRichValue(chip) {
+        if (!chip) { return; }
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        var hidden = chip.querySelector('.em-v4-chip__value');
+        if (!rich || !hidden) { return; }
+        hidden.value = (rich.innerHTML || '').trim();
+    }
+
+    function syncRichAlign(chip) {
+        if (!chip) { return; }
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        var align = chip.querySelector('.em-v4-chip__talign');
+        if (!rich || !align) { return; }
+        var val = align.value || '';
+        rich.style.textAlign = val;
+    }
+
+    function saveRichSelection(chip) {
+        if (!chip) { return; }
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        if (!rich) { return; }
+        var sel = window.getSelection ? window.getSelection() : null;
+        if (!sel || sel.rangeCount === 0) { return; }
+        var range = sel.getRangeAt(0);
+        if (!rich.contains(range.commonAncestorContainer)) { return; }
+        chip.__emRichRange = range.cloneRange();
+    }
+
+    function restoreRichSelection(chip) {
+        if (!chip || !chip.__emRichRange || !window.getSelection) { return false; }
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        if (!rich) { return false; }
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(chip.__emRichRange);
+        return true;
+    }
+
+    function runRichCommand(btn, update) {
+        var chip = btn.closest('.em-v4-chip');
+        if (!chip) { return; }
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        if (!rich) { return; }
+        rich.focus();
+        restoreRichSelection(chip);
+        var action = btn.getAttribute('data-action') || '';
+        if (action === 'link') {
+            saveRichSelection(chip);
+            applyRichInlineLink(chip, function (changed) {
+                if (changed) {
+                    syncRichValue(chip);
+                    saveRichSelection(chip);
+                }
+                update();
+            });
+            return;
+        }
+        if (action === 'anchor') {
+            saveRichSelection(chip);
+            applyRichAnchor(chip, function (changed) {
+                if (changed) {
+                    syncRichValue(chip);
+                    saveRichSelection(chip);
+                }
+                update();
+            });
+            return;
+        }
+        var cmd = btn.getAttribute('data-cmd') || '';
+        if (cmd) {
+            document.execCommand(cmd, false, null);
+            syncRichValue(chip);
+            saveRichSelection(chip);
+            update();
+        }
+    }
+
+    function applyRichColor(input) {
+        var chip = input && input.closest ? input.closest('.em-v4-chip') : null;
+        if (!chip) { return; }
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        if (!rich) { return; }
+        rich.focus();
+        restoreRichSelection(chip);
+        document.execCommand('foreColor', false, input.value || '#000000');
+        saveRichSelection(chip);
+    }
+
+    function applyRichInlineLink(chip, onDone) {
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        if (!rich) { if (onDone) { onDone(false); } return; }
+        var sel = window.getSelection ? window.getSelection() : null;
+        if (!sel || sel.rangeCount === 0) { if (onDone) { onDone(false); } return; }
+        var range = sel.getRangeAt(0);
+        if (!rich.contains(range.commonAncestorContainer) || range.collapsed) { if (onDone) { onDone(false); } return; }
+        var current = '';
+        var parentLink = findAnchorNode(range.startContainer, rich);
+        if (parentLink && parentLink.getAttribute) {
+            current = parentLink.getAttribute('href') || '';
+        }
+        openRichDialog({
+            title: '<?php echo esc_js(__('Ajouter un lien', 'em-wp')); ?>',
+            label: '<?php echo esc_js(__('URL du lien (https://... ou #ancre)', 'em-wp')); ?>',
+            value: current,
+            placeholder: 'https://example.com'
+        }, function (raw) {
+            if (raw === null) { if (onDone) { onDone(false); } return; }
+            rich.focus();
+            restoreRichSelection(chip);
+            var url = normalizeRichLink(raw);
+            if (url === '') {
+                document.execCommand('unlink', false, null);
+                if (onDone) { onDone(true); }
+                return;
+            }
+            document.execCommand('createLink', false, url);
+            if (onDone) { onDone(true); }
+        });
+    }
+
+    function applyRichAnchor(chip, onDone) {
+        var rich = chip.querySelector('.em-v4-chip__richedit');
+        if (!rich) { if (onDone) { onDone(false); } return; }
+        var sel = window.getSelection ? window.getSelection() : null;
+        if (!sel || sel.rangeCount === 0) { if (onDone) { onDone(false); } return; }
+        var range = sel.getRangeAt(0);
+        if (!rich.contains(range.commonAncestorContainer)) { if (onDone) { onDone(false); } return; }
+        openRichDialog({
+            title: '<?php echo esc_js(__('Ajouter une ancre', 'em-wp')); ?>',
+            label: '<?php echo esc_js(__('Nom de l\'ancre (sans #)', 'em-wp')); ?>',
+            value: '',
+            placeholder: 'section-1'
+        }, function (raw) {
+            if (raw === null) { if (onDone) { onDone(false); } return; }
+            rich.focus();
+            restoreRichSelection(chip);
+            var currentSel = window.getSelection ? window.getSelection() : null;
+            if (!currentSel || currentSel.rangeCount === 0) { if (onDone) { onDone(false); } return; }
+            var currentRange = currentSel.getRangeAt(0);
+            if (!rich.contains(currentRange.commonAncestorContainer)) { if (onDone) { onDone(false); } return; }
+
+            var anchorId = normalizeRichAnchorId(raw);
+            if (anchorId === '') { if (onDone) { onDone(false); } return; }
+
+            if (currentRange.collapsed) {
+                var marker = document.createElement('a');
+                marker.setAttribute('id', anchorId);
+                marker.setAttribute('class', 'em-v4-inline-anchor');
+                marker.textContent = '\u200b';
+                currentRange.insertNode(marker);
+                currentRange.setStartAfter(marker);
+                currentRange.collapse(true);
+                currentSel.removeAllRanges();
+                currentSel.addRange(currentRange);
+                if (onDone) { onDone(true); }
+                return;
+            }
+
+            var wrapper = document.createElement('a');
+            wrapper.setAttribute('id', anchorId);
+            wrapper.appendChild(currentRange.extractContents());
+            currentRange.insertNode(wrapper);
+            currentSel.removeAllRanges();
+            var newRange = document.createRange();
+            newRange.selectNodeContents(wrapper);
+            currentSel.addRange(newRange);
+            if (onDone) { onDone(true); }
+        });
+    }
+
+    function ensureRichDialog() {
+        if (richDialog) { return richDialog; }
+        var host = document.createElement('div');
+        host.className = 'em-v4-richdialog';
+        host.hidden = true;
+        host.innerHTML = ''
+            + '<div class="em-v4-richdialog__backdrop" data-close="1"></div>'
+            + '<div class="em-v4-richdialog__panel" role="dialog" aria-modal="true" aria-labelledby="em-v4-richdialog-title">'
+            + '  <h3 id="em-v4-richdialog-title" class="em-v4-richdialog__title"></h3>'
+            + '  <label class="em-v4-richdialog__label"></label>'
+            + '  <input type="text" class="em-v4-richdialog__input">'
+            + '  <div class="em-v4-richdialog__actions">'
+            + '    <button type="button" class="button button-primary em-v4-richdialog__ok"><?php echo esc_js(__('Valider', 'em-wp')); ?></button>'
+            + '    <button type="button" class="button em-v4-richdialog__cancel"><?php echo esc_js(__('Annuler', 'em-wp')); ?></button>'
+            + '  </div>'
+            + '</div>';
+        document.body.appendChild(host);
+        var input = host.querySelector('.em-v4-richdialog__input');
+        var close = function (value) {
+            host.hidden = true;
+            if (host.__done) {
+                var done = host.__done;
+                host.__done = null;
+                done(value);
+            }
+        };
+        host.addEventListener('click', function (e) {
+            if (e.target && e.target.getAttribute('data-close') === '1') {
+                close(null);
+            }
+            if (e.target && e.target.classList && e.target.classList.contains('em-v4-richdialog__cancel')) {
+                close(null);
+            }
+            if (e.target && e.target.classList && e.target.classList.contains('em-v4-richdialog__ok')) {
+                close(input ? input.value : '');
+            }
+        });
+        host.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                close(null);
+                return;
+            }
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                close(input ? input.value : '');
+            }
+        });
+        richDialog = host;
+        return richDialog;
+    }
+
+    function openRichDialog(opts, done) {
+        var host = ensureRichDialog();
+        host.__done = done;
+        var title = host.querySelector('.em-v4-richdialog__title');
+        var label = host.querySelector('.em-v4-richdialog__label');
+        var input = host.querySelector('.em-v4-richdialog__input');
+        if (title) { title.textContent = opts && opts.title ? opts.title : ''; }
+        if (label) { label.textContent = opts && opts.label ? opts.label : ''; }
+        if (input) {
+            input.value = opts && typeof opts.value === 'string' ? opts.value : '';
+            input.placeholder = opts && opts.placeholder ? opts.placeholder : '';
+        }
+        host.hidden = false;
+        if (input) {
+            input.focus();
+            input.select();
+        }
+    }
+
+    function normalizeRichLink(raw) {
+        var url = (raw || '').trim();
+        if (!url) { return ''; }
+        if (/^(https?:|mailto:|tel:|#|\/)/i.test(url)) {
+            return url;
+        }
+        return 'https://' + url;
+    }
+
+    function normalizeRichAnchorId(raw) {
+        var id = (raw || '').trim();
+        id = id.replace(/^#+/, '');
+        id = id.toLowerCase();
+        id = id.replace(/[^a-z0-9\-_:]/g, '-');
+        id = id.replace(/-+/g, '-');
+        id = id.replace(/^-+|-+$/g, '');
+        return id;
+    }
+
+    function findAnchorNode(node, root) {
+        var cur = node && node.nodeType === 1 ? node : (node ? node.parentNode : null);
+        while (cur && cur !== root) {
+            if (cur.nodeType === 1 && cur.tagName && cur.tagName.toLowerCase() === 'a') {
+                return cur;
+            }
+            cur = cur.parentNode;
+        }
+        return null;
     }
 
     if (document.readyState === 'loading') {

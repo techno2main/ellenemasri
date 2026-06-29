@@ -22,11 +22,44 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
         return;
     }
 
-    if ($type === 'text' || $type === 'textarea') {
+    if ($type === 'text') {
         $tv = em_wp_rubrique_text_value($value);
         ?>
         <input type="text" class="em-v4-chip__value" value="<?php echo esc_attr($tv['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-wp'); ?>">
         <input type="url" class="em-v4-chip__tlink" value="<?php echo esc_url($tv['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+        <?php
+        return;
+    }
+
+    if ($type === 'textarea') {
+        $tv = em_wp_rubrique_text_value($value);
+        $editor_html = em_wp_rubrique_textarea_editor_html((string) $tv['text']);
+        ?>
+        <span class="em-v4-chip__rich">
+            <span class="em-v4-chip__richbar">
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="bold" title="<?php esc_attr_e('Gras', 'em-wp'); ?>"><strong>B</strong></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="italic" title="<?php esc_attr_e('Italique', 'em-wp'); ?>"><em>I</em></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="underline" title="<?php esc_attr_e('Souligné', 'em-wp'); ?>"><span style="text-decoration:underline;">U</span></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="insertUnorderedList" title="<?php esc_attr_e('Liste', 'em-wp'); ?>">•</button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyLeft" title="<?php esc_attr_e('Aligner à gauche', 'em-wp'); ?>"><span class="dashicons dashicons-editor-alignleft" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyCenter" title="<?php esc_attr_e('Centrer', 'em-wp'); ?>"><span class="dashicons dashicons-editor-aligncenter" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyRight" title="<?php esc_attr_e('Aligner à droite', 'em-wp'); ?>"><span class="dashicons dashicons-editor-alignright" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyFull" title="<?php esc_attr_e('Justifier', 'em-wp'); ?>"><span class="dashicons dashicons-editor-justify" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-action="link" title="<?php esc_attr_e('Ajouter un lien sur la sélection', 'em-wp'); ?>"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-cmd="unlink" title="<?php esc_attr_e('Retirer le lien', 'em-wp'); ?>"><span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-v4-richbtn" data-action="anchor" title="<?php esc_attr_e('Ajouter une ancre sur la sélection', 'em-wp'); ?>">#</button>
+                <span class="em-v4-chip__richcolor" title="<?php esc_attr_e('Couleur du texte', 'em-wp'); ?>">
+                    <?php em_wp_admin_render_color_field([
+                        'id'            => em_wp_v4_chip_color_id('emv4rc-', $key),
+                        'value'         => '#000000',
+                        'input_class'   => 'em-v4-richcolor',
+                        'preview_label' => __('Couleur du texte', 'em-wp'),
+                    ]); ?>
+                </span>
+            </span>
+            <div class="em-v4-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="<?php esc_attr_e('Contenu enrichi…', 'em-wp'); ?>"><?php echo $editor_html; ?></div>
+            <input type="hidden" class="em-v4-chip__value" value="<?php echo esc_attr((string) $tv['text']); ?>">
+        </span>
         <?php
         return;
     }

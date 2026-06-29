@@ -251,19 +251,19 @@ function em_wp_admin_dashboard_render_settings_badge(): void
 }
 
 /**
- * Onglets Accueil (CATALOGUES, TEMPLATES, MEDIAS, SETTINGS).
+ * Onglets Accueil (MES RUBRIQUES, MES TEMPLATES, MEDIAS, SETTINGS).
  *
  * @return array<string, array{menu_title:string, url:string}>
  */
 function em_wp_admin_dashboard_nav_tab_definitions(): array
 {
     return [
-        'catalogues' => [
-            'menu_title' => __('CATALOGUES', 'em-wp'),
-            'url'        => function_exists('em_wp_catalog_parent_page_url') ? em_wp_catalog_parent_page_url() : '',
+        'rubriques' => [
+            'menu_title' => __('MES RUBRIQUES', 'em-wp'),
+            'url'        => em_wp_admin_dashboard_rubriques_overview_url(),
         ],
         'templates' => [
-            'menu_title' => __('TEMPLATES', 'em-wp'),
+            'menu_title' => __('MES TEMPLATES', 'em-wp'),
             'url'        => function_exists('em_wp_admin_template_choice_admin_url') ? em_wp_admin_template_choice_admin_url() : '',
         ],
         'medias' => [

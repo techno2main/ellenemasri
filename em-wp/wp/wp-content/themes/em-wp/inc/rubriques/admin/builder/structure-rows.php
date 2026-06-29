@@ -29,13 +29,40 @@ function em_wp_v4_render_col_pips(int $columns): void
 }
 
 /**
+ * Libelle de synthese du nombre de colonnes (ex: "1 colonne", "3 colonnes").
+ */
+function em_wp_v4_row_cols_text(int $columns): string
+{
+    $columns = max(1, $columns);
+
+    return sprintf(
+        /* translators: %d: number of columns */
+        _n('%d colonne', '%d colonnes', $columns, 'em-wp'),
+        $columns
+    );
+}
+
+/**
+ * Bloc info colonnes: nombre + pictos (meme rendu ouvert/ferme).
+ */
+function em_wp_v4_render_row_cols_meta(int $columns): void
+{
+    ?>
+    <span class="em-v4-rowcols-label">
+        <span class="em-v4-row__colsnum"><?php echo esc_html(em_wp_v4_row_cols_text($columns)); ?></span>
+        <?php em_wp_v4_render_col_pips($columns); ?>
+    </span>
+    <?php
+}
+
+/**
  * Indicateur discret du nombre de colonnes (visible quand la ligne est fermée).
  */
 function em_wp_v4_render_row_colcount(int $columns): void
 {
     ?>
     <span class="em-v4-row__colcount" title="<?php esc_attr_e('Nombre de colonnes', 'em-wp'); ?>">
-        <?php em_wp_v4_render_col_pips($columns); ?>
+        <?php em_wp_v4_render_row_cols_meta($columns); ?>
     </span>
     <?php
 }
@@ -53,10 +80,7 @@ function em_wp_v4_render_row_layout(int $row, array $layout): void
     $columns = em_wp_rubrique_layout_columns_for($layout, $row);
     ?>
     <div class="em-v4-row__layout">
-        <span class="em-v4-rowcols-label">
-            <span><?php esc_html_e('Colonnes', 'em-wp'); ?></span>
-            <?php em_wp_v4_render_col_pips($columns); ?>
-        </span>
+        <?php em_wp_v4_render_row_cols_meta($columns); ?>
     </div>
     <?php
 }
@@ -130,12 +154,21 @@ function em_wp_v4_render_align_select(int $index, string $value): void
 function em_wp_v4_render_row(int $row, array $layout, array $row_grid, array $content = []): void
 {
     $columns = em_wp_rubrique_layout_columns_for($layout, $row);
+    $title = em_wp_rubrique_layout_title_for($layout, $row);
+    $title_placeholder = __('Titre de ligne', 'em-wp');
+    $title_display = $title !== '' ? $title : $title_placeholder;
     ?>
     <details class="em-v4-row">
         <summary class="em-v4-row__summary">
             <span class="em-v4-row__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour déplacer la ligne', 'em-wp'); ?>" aria-hidden="true"></span>
             <span class="em-v4-collapse__chevron"></span>
             <span class="em-v4-row__label" aria-hidden="true"></span>
+            <span class="em-v4-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-wp'); ?>">
+                <span class="em-v4-row__titleprefix" aria-hidden="true">#</span>
+                <span class="em-v4-row__titletxt" data-empty="<?php echo $title !== '' ? '0' : '1'; ?>"><?php echo esc_html($title_display); ?></span>
+                <input type="text" class="em-v4-row__titleinput" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr($title_placeholder); ?>" hidden>
+                <button type="button" class="em-v4-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
+            </span>
             <?php em_wp_v4_render_row_colcount($columns); ?>
             <?php em_wp_v4_render_row_layout($row, $layout); ?>
             <button type="button" class="em-v4-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-wp'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
@@ -184,14 +217,71 @@ function em_wp_v4_render_col(int $index, array $fields, array $content = [], boo
  */
 function em_wp_v4_render_cell_add(): void
 {
+    $registry = em_wp_field_type_registry();
+    $allowed = em_wp_v4_builder_field_types();
+    $first_type = 'text';
+    if (!in_array($first_type, $allowed, true)) {
+        $first_type = isset($allowed[0]) ? (string) $allowed[0] : '';
+    }
+    $first_label = em_wp_v4_field_type_picker_label($first_type);
+    $first_icon = em_wp_v4_field_type_icon($first_type);
     ?>
     <div class="em-v4-celladd">
         <button type="button" class="em-v4-celladd__btn"><span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e('Ajouter un champ', 'em-wp'); ?></button>
         <div class="em-v4-celladd__form" hidden>
-            <select class="em-v4-celladd__type">
-                <?php foreach (em_wp_field_type_registry() as $ft_key => $ft) : ?>
-                    <?php if (!in_array($ft_key, em_wp_v4_builder_field_types(), true)) { continue; } ?>
-                    <option value="<?php echo esc_attr($ft_key); ?>"><?php echo esc_html((string) $ft['label']); ?></option>
+            <div class="em-v4-celladd__picker" data-open="0">
+                <button type="button" class="em-v4-celladd__pickbtn" aria-expanded="false" title="<?php esc_attr_e('Choisir un type de champ', 'em-wp'); ?>">
+                    <span class="em-v4-celladd__pickicon dashicons <?php echo esc_attr($first_icon); ?>" aria-hidden="true"></span>
+                    <span class="em-v4-celladd__picklabel"><?php echo esc_html($first_label); ?></span>
+                    <span class="em-v4-celladd__pickarrow dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+                </button>
+                <div class="em-v4-celladd__menu" hidden>
+                    <?php foreach (em_wp_v4_builder_field_groups() as $group_label => $group_types) : ?>
+                        <?php
+                        $rendered = false;
+                        ob_start();
+                        foreach ($group_types as $ft_key) {
+                            if (!in_array($ft_key, $allowed, true) || !isset($registry[$ft_key])) {
+                                continue;
+                            }
+                            $rendered = true;
+                            $ft_label = em_wp_v4_field_type_picker_label($ft_key);
+                            $ft_icon = em_wp_v4_field_type_icon($ft_key);
+                            echo '<button type="button" class="em-v4-celladd__opt" data-value="' . esc_attr($ft_key) . '" data-label="' . esc_attr($ft_label) . '" data-icon="' . esc_attr($ft_icon) . '">';
+                            echo '<span class="em-v4-celladd__opticon dashicons ' . esc_attr($ft_icon) . '" aria-hidden="true"></span>';
+                            echo '<span class="em-v4-celladd__optlabel">' . esc_html($ft_label) . '</span>';
+                            echo '</button>';
+                        }
+                        $group_options = ob_get_clean();
+                        if (!$rendered || $group_options === '') {
+                            continue;
+                        }
+                        ?>
+                        <div class="em-v4-celladd__group">
+                            <div class="em-v4-celladd__gtitle"><?php echo esc_html($group_label); ?></div>
+                            <div class="em-v4-celladd__glist"><?php echo $group_options; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <select class="em-v4-celladd__type" hidden>
+                <?php foreach (em_wp_v4_builder_field_groups() as $group_label => $group_types) : ?>
+                    <?php
+                    $rendered = false;
+                    ob_start();
+                    foreach ($group_types as $ft_key) {
+                        if (!in_array($ft_key, $allowed, true) || !isset($registry[$ft_key])) {
+                            continue;
+                        }
+                        $rendered = true;
+                        echo '<option value="' . esc_attr($ft_key) . '"' . selected($ft_key, $first_type, false) . '>' . esc_html(em_wp_v4_field_type_picker_label($ft_key)) . '</option>';
+                    }
+                    $group_options = ob_get_clean();
+                    if (!$rendered || $group_options === '') {
+                        continue;
+                    }
+                    ?>
+                    <optgroup label="<?php echo esc_attr($group_label); ?>"><?php echo $group_options; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></optgroup>
                 <?php endforeach; ?>
             </select>
             <button type="button" class="button button-small em-v4-celladd__confirm"><?php esc_html_e('OK', 'em-wp'); ?></button>
@@ -213,6 +303,12 @@ function em_wp_v4_render_templates(): void
                 <span class="em-v4-row__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour déplacer la ligne', 'em-wp'); ?>" aria-hidden="true"></span>
                 <span class="em-v4-collapse__chevron"></span>
                 <span class="em-v4-row__label" aria-hidden="true"></span>
+                <span class="em-v4-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-wp'); ?>">
+                    <span class="em-v4-row__titleprefix" aria-hidden="true">#</span>
+                    <span class="em-v4-row__titletxt" data-empty="1"><?php esc_html_e('Titre de ligne', 'em-wp'); ?></span>
+                    <input type="text" class="em-v4-row__titleinput" value="" placeholder="<?php esc_attr_e('Titre de ligne', 'em-wp'); ?>" hidden>
+                    <button type="button" class="em-v4-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
+                </span>
                 <?php em_wp_v4_render_row_colcount(1); ?>
                 <?php em_wp_v4_render_row_layout(1, ['rows' => [['columns' => 1, 'align' => [1 => 'center']]]]); ?>
                 <button type="button" class="em-v4-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-wp'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>

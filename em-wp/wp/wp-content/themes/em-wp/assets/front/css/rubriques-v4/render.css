@@ -143,6 +143,14 @@
     color: var(--em-rubrique-link-hover, var(--em-rubrique-link, inherit));
 }
 
+.em-rubrique__field--rich a,
+.em-rubrique__field--rich a:visited,
+.em-rubrique__field--rich a:hover,
+.em-rubrique__field--rich a:focus {
+    color: inherit;
+    text-decoration: none;
+}
+
 .em-rubrique__link:focus,
 .em-rubrique__link:active,
 .em-rubrique__link:focus-visible {

@@ -13,9 +13,12 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Affiche la rangée « Mes rubriques ».
+ * Affiche la rangée « Mes rubriques » + « Mes templates ».
+ *
+ * @param string $active_label Libellé template actif live.
+ * @param string $active_slug Slug template actif live.
  */
-function em_wp_admin_dashboard_render_row_rubriques(): void
+function em_wp_admin_dashboard_render_row_rubriques(string $active_label, string $active_slug): void
 {
     ?>
     <section class="em-wp-hub__row em-wp-dashboard__row--hub-cards" aria-label="<?php esc_attr_e('Rubriques', 'em-wp'); ?>">
@@ -33,8 +36,9 @@ function em_wp_admin_dashboard_render_row_rubriques(): void
                 <p class="em-wp-hub__card-desc">
                     <?php esc_html_e('Sections réutilisables (Top-bar, Hero, Slider, Stream…) qui composent tes templates.', 'em-wp'); ?>
                 </p>
-                <?php em_wp_admin_dashboard_render_rubriques_badge(); ?>
             </section>
+
+            <?php em_wp_admin_dashboard_render_templates_card($active_label, $active_slug); ?>
         </div>
     </section>
     <?php

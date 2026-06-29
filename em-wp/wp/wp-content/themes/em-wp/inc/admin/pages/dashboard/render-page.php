@@ -45,8 +45,7 @@ function em_wp_admin_render_dashboard_page(): void
 
         <div class="em-wp-hub__rows">
             <?php
-            em_wp_admin_dashboard_render_row_rubriques();
-            em_wp_admin_dashboard_render_row_templates($active_label, $active_slug);
+            em_wp_admin_dashboard_render_row_rubriques($active_label, $active_slug);
             em_wp_admin_dashboard_render_row_medias_settings();
             ?>
         </div>

@@ -19,7 +19,31 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_v4_builder_field_types(): array
 {
-    return ['text', 'textarea', 'url', 'email', 'image', 'text_image', 'text_text', 'icon', 'platform_block', 'button', 'animated_badge', 'video_url', 'video_file', 'audio_file', 'audio_url', 'network_block', 'slider', 'sep_line', 'sep_blank', 'arrow_up', 'arrow_down'];
+    return ['text', 'textarea', 'email', 'image', 'text_image', 'text_text', 'icon', 'platform_block', 'button', 'animated_badge', 'video_url', 'video_file', 'audio_file', 'audio_url', 'network_block', 'slider', 'sep_line', 'sep_blank', 'arrow_up', 'arrow_down'];
+}
+
+/**
+ * Groupes de types pour le select "Ajouter un champ".
+ *
+ * @return array<string, array<int, string>>
+ */
+function em_wp_v4_builder_field_groups(): array
+{
+    return [
+        __('Texte et contenu', 'em-wp') => ['text', 'textarea', 'url', 'email', 'text_image', 'text_text', 'button', 'animated_badge'],
+        __('Media', 'em-wp') => ['image', 'video_url', 'video_file', 'audio_file', 'audio_url', 'slider'],
+        __('Plateformes et reseaux', 'em-wp') => ['icon', 'platform_block', 'network_block'],
+        __('Structure et navigation', 'em-wp') => ['sep_line', 'sep_blank', 'arrow_up', 'arrow_down'],
+    ];
+}
+
+/**
+ * Libelle lisible d'un type pour le picker.
+ */
+function em_wp_v4_field_type_picker_label(string $type): string
+{
+    $def = em_wp_field_type_get($type);
+    return $def ? (string) ($def['label'] ?? $type) : $type;
 }
 
 /**
@@ -107,6 +131,13 @@ function em_wp_v4_render_chip_textstyle(string $key, array $style): void
             <?php foreach (em_wp_rubrique_font_choices() as $fkey => $choice) : ?>
                 <option value="<?php echo esc_attr($fkey); ?>" data-stack="<?php echo esc_attr($choice['stack']); ?>" <?php selected($style['font'], $fkey); ?>><?php echo esc_html($choice['label']); ?></option>
             <?php endforeach; ?>
+        </select>
+        <select class="em-v4-chip__talign" title="<?php esc_attr_e('Alignement du texte', 'em-wp'); ?>">
+            <option value=""><?php esc_html_e('Alignement hérité', 'em-wp'); ?></option>
+            <option value="left" <?php selected($style['align'], 'left'); ?>><?php esc_html_e('Gauche', 'em-wp'); ?></option>
+            <option value="center" <?php selected($style['align'], 'center'); ?>><?php esc_html_e('Centre', 'em-wp'); ?></option>
+            <option value="right" <?php selected($style['align'], 'right'); ?>><?php esc_html_e('Droite', 'em-wp'); ?></option>
+            <option value="justify" <?php selected($style['align'], 'justify'); ?>><?php esc_html_e('Justifié', 'em-wp'); ?></option>
         </select>
         <?php em_wp_admin_render_color_field([
             'id'            => em_wp_v4_chip_color_id('emv4ts-', $key),
