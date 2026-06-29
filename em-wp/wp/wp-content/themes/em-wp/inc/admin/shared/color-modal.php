@@ -174,9 +174,12 @@ function em_wp_admin_render_color_field(array $args): void
     ?>
     <div class="<?php echo esc_attr($wrap_classes); ?>">
         <?php if ($field_label !== '') { ?>
-            <label class="em-wp-admin-color-field-row__label" for="<?php echo esc_attr($id); ?>">
+            <?php // Pas de <label for> : le contrôle réel est un déclencheur custom
+            // + un <input type="hidden"> (non « labelable »), ce qui déclenche le
+            // warning Chrome « Incorrect use of <label for=FORM_ELEMENT> ». ?>
+            <span class="em-wp-admin-color-field-row__label">
                 <?php echo esc_html($field_label); ?>
-            </label>
+            </span>
         <?php } ?>
         <div class="<?php echo esc_attr($trigger_classes); ?>" data-em-wp-color-trigger-for="<?php echo esc_attr($id); ?>">
             <?php if ($is_text_preview) { ?>
