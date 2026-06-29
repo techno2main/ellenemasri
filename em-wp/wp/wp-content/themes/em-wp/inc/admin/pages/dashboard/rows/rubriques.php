@@ -33,8 +33,26 @@ function em_wp_admin_dashboard_render_row_rubriques(string $active_label, string
                         __('Gérer mes rubriques', 'em-wp')
                     ); ?>
                 </header>
-                <p class="em-wp-hub__card-desc">
-                    <?php esc_html_e('Sections réutilisables (Top-bar, Hero, Slider, Stream…) qui composent tes templates.', 'em-wp'); ?>
+                <div class="em-wp-hub__card-live-status em-wp-hub__card-live-status--rubriques">
+                    <p class="em-wp-hub__card-live-status-prefix">
+                        <?php esc_html_e('Sections réutilisables qui composent tes templates.', 'em-wp'); ?>
+                    </p>
+                    <a
+                        class="em-wp-hub__template-live-pill em-wp-hub__template-live-pill--rubriques-link"
+                        href="<?php echo esc_url(em_wp_admin_dashboard_rubriques_overview_url()); ?>"
+                        style="--em-wp-template-accent:#af16a8;--em-wp-template-text:#ffffff;"
+                    >
+                        <span class="em-wp-hub__template-live-pill-name"><?php echo esc_html(mb_strtoupper(__('Voir tout', 'em-wp'))); ?></span>
+                    </a>
+                </div>
+                <p class="em-wp-hub__live em-wp-hub__live--in-card em-wp-hub__live--entry-links em-wp-hub__live--uppercase em-wp-hub__live--rubriques-empty" aria-hidden="true">
+                    <span class="em-wp-hub__catalog-entry-arrow">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2.5 6h5.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M6.25 3.25 9.5 6l-3.25 2.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="em-wp-hub__live-text">&nbsp;</span>
                 </p>
             </section>
 

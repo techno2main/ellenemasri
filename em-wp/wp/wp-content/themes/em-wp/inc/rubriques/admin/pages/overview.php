@@ -143,7 +143,8 @@ function em_wp_v4_overview_render(): void
         <?php em_wp_v4_overview_notice(); ?>
         <?php em_wp_v4_overview_render_styles(); ?>
 
-        <h2><?php esc_html_e('Rubriques', 'em-wp'); ?></h2>
+        <?php em_wp_v4_overview_render_create_type(); ?>
+
         <?php if ($types === []) : ?>
             <p><?php esc_html_e('Aucune rubrique déclarée pour le moment.', 'em-wp'); ?></p>
         <?php else : ?>
@@ -153,8 +154,6 @@ function em_wp_v4_overview_render(): void
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
-
-        <?php em_wp_v4_overview_render_create_type(); ?>
     </div>
     <?php em_wp_v4_overview_render_reorder_script(); ?>
     <?php em_wp_v4_overview_render_rename_script(); ?>

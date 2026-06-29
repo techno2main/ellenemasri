@@ -1092,6 +1092,12 @@ body.em-wp-admin-confirm-open {
 
 .em-wp-rubriques-admin__main {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.em-wp-rubriques-admin .wp-heading-inline {
+    display: none;
 }
 
 .em-wp-rubriques-admin__aside {
@@ -1886,7 +1892,10 @@ a.em-wp-admin-landing-map__zone.has-structure:focus {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: 28px;
+    order: -1;
+    align-self: flex-start;
+    margin-top: 0;
+    margin-bottom: 12px;
     font-weight: 600;
 }
 

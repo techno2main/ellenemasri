@@ -151,6 +151,25 @@ function em_wp_admin_render_rubriques_page(): void
         ?>
         <div class="em-wp-rubriques-admin__layout">
             <div class="em-wp-rubriques-admin__main">
+                <?php if (current_user_can('manage_options')) { ?>
+                    <button
+                        type="button"
+                        class="button button-primary em-v4-savebar__btn em-wp-rubriques-admin__add-rubrique-toggle"
+                        id="em-wp-rubrique-skeleton-add-toggle"
+                        aria-controls="em-wp-rubrique-skeleton-add-panel"
+                        aria-expanded="false"
+                    >
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                        <?php esc_html_e('+ Nouvelle Rubrique', 'em-wp'); ?>
+                    </button>
+
+                    <?php
+                    if (function_exists('em_wp_admin_render_template_skeleton_add_panel')) {
+                        em_wp_admin_render_template_skeleton_add_panel();
+                    }
+                    ?>
+                <?php } ?>
+
                 <ul class="em-wp-rubriques-admin__list">
                     <?php
                     foreach ($definitions as $module_slug => $definition) {
@@ -162,25 +181,6 @@ function em_wp_admin_render_rubriques_page(): void
                     }
                     ?>
                 </ul>
-
-                <?php if (current_user_can('manage_options')) { ?>
-                    <button
-                        type="button"
-                        class="button button-primary em-v4-savebar__btn em-wp-rubriques-admin__add-rubrique-toggle"
-                        id="em-wp-rubrique-skeleton-add-toggle"
-                        aria-controls="em-wp-rubrique-skeleton-add-panel"
-                        aria-expanded="false"
-                    >
-                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                        <?php esc_html_e('Ajouter une rubrique', 'em-wp'); ?>
-                    </button>
-
-                    <?php
-                    if (function_exists('em_wp_admin_render_template_skeleton_add_panel')) {
-                        em_wp_admin_render_template_skeleton_add_panel();
-                    }
-                    ?>
-                <?php } ?>
             </div>
 
             <?php if (function_exists('em_wp_admin_render_landing_map')) { ?>

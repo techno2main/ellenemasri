@@ -1269,6 +1269,27 @@ button.em-wp-hub__catalog-entry-link {
         0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
+.em-wp-hub__card-live-status--rubriques {
+    margin-top: 0;
+}
+
+.em-wp-hub__live--rubriques-empty {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.em-wp-hub__template-live-pill--rubriques-link,
+.em-wp-hub__template-live-pill--rubriques-link:hover,
+.em-wp-hub__template-live-pill--rubriques-link:focus,
+.em-wp-hub__template-live-pill--rubriques-link:focus-visible,
+.em-wp-hub__template-live-pill--rubriques-link:active,
+.em-wp-hub__template-live-pill--rubriques-link:visited {
+    color: var(--em-wp-template-text, #ffffff);
+    text-decoration: none;
+    background: var(--em-wp-template-accent, #751820);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
 .em-wp-dashboard .em-wp-catalog-edit__nav .em-wp-catalog-edit__nav-link:not(.em-wp-catalog-edit__nav-link--list):hover,
 .em-wp-dashboard .em-wp-catalog-edit__nav .em-wp-catalog-edit__nav-link.is-preview-active:not(.em-wp-catalog-edit__nav-link--list) {
     border-color: #4e080e;
