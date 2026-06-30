@@ -16,7 +16,7 @@ function em_wp_footer_page_slug(): string
 
 function em_wp_footer_form_option_key(): string
 {
-    return 'em_wp_footer_options';
+    return em_wp_footer_option_name(em_wp_footer_admin_template_slug());
 }
 
 function em_wp_footer_rubrique_default_options(): array

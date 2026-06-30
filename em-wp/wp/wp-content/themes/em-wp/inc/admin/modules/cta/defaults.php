@@ -16,7 +16,7 @@ function em_wp_cta_page_slug(): string
 
 function em_wp_cta_form_option_key(): string
 {
-    return 'em_wp_cta_options';
+    return em_wp_cta_option_name(em_wp_cta_admin_template_slug());
 }
 
 function em_wp_cta_default_texture_url(): string

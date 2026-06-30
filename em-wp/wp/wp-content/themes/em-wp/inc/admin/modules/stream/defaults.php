@@ -16,7 +16,7 @@ function em_wp_stream_page_slug(): string
 
 function em_wp_stream_form_option_key(): string
 {
-    return 'em_wp_stream_options';
+    return em_wp_stream_option_name(em_wp_stream_admin_template_slug());
 }
 
 /**

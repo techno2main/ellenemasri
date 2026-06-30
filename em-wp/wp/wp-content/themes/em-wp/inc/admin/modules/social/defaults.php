@@ -34,7 +34,7 @@ function em_wp_social_form_option_key(): string
 
 {
 
-    return 'em_wp_social_options';
+    return em_wp_social_option_name(em_wp_social_admin_template_slug());
 
 }
 

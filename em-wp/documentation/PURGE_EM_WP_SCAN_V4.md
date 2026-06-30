@@ -25,7 +25,7 @@ Règle de gouvernance :
 | 5 | Purge modules front legacy | Terminée | Oui |
 | 6 | Purge mappings/migrations legacy | Terminée | Oui |
 | 7 | Purge assets legacy | Terminée | Oui |
-| 8 | Validation finale et verrouillage PROD | En cours | Non |
+| 8 | Validation finale et verrouillage PROD | Terminée | Oui |
 
 ### Historique validations
 
@@ -37,6 +37,7 @@ Règle de gouvernance :
 6. 2026-06-30 — Étape 5 validée par utilisateur (wiring front passé en V4 strict, fallbacks legacy de rendu supprimés et alias modules non utilisés purgés).
 7. 2026-06-30 — Étape 6 validée par utilisateur (purge des mappings/migrations legacy, suppression des hooks auto et fichiers de migration orphelins, stabilité technique confirmée).
 8. 2026-06-30 — Étape 7 validée par utilisateur (purge des assets front legacy `ellene`, nettoyage des dossiers vides et enqueues alignées en V4 mayami).
+9. 2026-06-30 — Étape 8 validée par utilisateur (validation finale V4 only, purge BDD des options legacy résiduelles avec backup SQL et smoke tests front/admin OK).
 
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
@@ -431,6 +432,14 @@ Checklist :
 Critère de sortie :
 - Site fonctionnel en V4 only (back + front), sans dépendance legacy runtime.
 
+Avancement (lot terminé) :
+1. Docker/stack: conteneurs `em-wp-local`, `em-wp-local-db`, `em-wp-local-pma` opérationnels et ports exposés conformes.
+2. Smoke tests runtime: front HTTP 200 et `/wp-admin/` HTTP 302 (auth attendue) après les purges.
+3. Logs: aucun signal fatal bloquant détecté sur la fenêtre de validation locale.
+4. Code V4 only finalisé: suppression des reliquats de fonctions de migration stream/top-bar non appelées et bascule des clés d'options modules vers les option names V4 par template.
+5. BDD V4 only: suppression de 34 options legacy/dormantes (`*_options` globaux historiques + templates non actifs `music/new-york/tyson`) après backup SQL.
+6. Rollback BDD disponible: `em-wp/documentation/SQL_BACKUP_LEGACY_OPTIONS_20260630.sql`.
+
 ## 4) Suivi des lots de commits
 
 Lots exécutés (validés) :
@@ -443,7 +452,7 @@ Lots exécutés (validés) :
 7. Lot G : purge assets legacy.
 
 Lot restant :
-1. Lot H : validation finale et verrouillage (étape 8).
+1. Aucun. Tous les lots A -> H sont soldés.
 
 Note de pilotage :
 - Les garde-fous historiques Lot A + Lot B sont déjà soldés.
