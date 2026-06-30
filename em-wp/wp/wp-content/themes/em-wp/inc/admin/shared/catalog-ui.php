@@ -271,6 +271,132 @@ if (!function_exists('em_wp_catalog_resolve_active_module')) {
     }
 }
 
+if (!function_exists('em_wp_catalog_nav_tab_definitions')) {
+    /**
+     * Definitions des onglets catalogue (TOP-BARS, HEROS, SLIDERS...).
+     *
+     * @return array<string, array{menu_title:string,page_slug:string}>
+     */
+    function em_wp_catalog_nav_tab_definitions(): array
+    {
+        if (!function_exists('em_wp_admin_catalog_menu_modules') || !function_exists('em_wp_catalog_menu_definitions')) {
+            return [];
+        }
+
+        $tabs = [];
+
+        foreach (em_wp_admin_catalog_menu_modules() as $module_slug) {
+            $definition = em_wp_catalog_menu_definitions()[$module_slug] ?? null;
+
+            if (!is_array($definition) || empty($definition['available'])) {
+                continue;
+            }
+
+            $hub_slug = sanitize_key((string) ($definition['slug'] ?? ''));
+
+            if ($hub_slug === '') {
+                continue;
+            }
+
+            $tabs[$module_slug] = [
+                'menu_title' => (string) ($definition['menu_title'] ?? $definition['label'] ?? $module_slug),
+                'page_slug'  => $hub_slug,
+            ];
+        }
+
+        return $tabs;
+    }
+}
+
+if (!function_exists('em_wp_catalog_module_entry_definitions')) {
+    /**
+     * Items (entrees) d'un module catalogue donne, pour les menus deroulants d'onglets.
+     *
+     * @return array<string, array{label?:string,menu_title?:string,page_slug?:string}>
+     */
+    function em_wp_catalog_module_entry_definitions(string $module_slug): array
+    {
+        $module_slug = sanitize_key($module_slug);
+
+        if ($module_slug === '') {
+            return [];
+        }
+
+        $resolvers = [
+            'heros'    => 'em_wp_hero_style_definitions',
+            'sliders'  => 'em_wp_slider_style_definitions',
+            'videos'   => 'em_wp_video_style_definitions',
+            'streams'  => 'em_wp_stream_style_definitions',
+            'socials'  => 'em_wp_social_style_definitions',
+            'top-bars' => 'em_wp_top_bar_style_definitions',
+            'releases' => 'em_wp_release_style_definitions',
+            'ctas'     => 'em_wp_cta_style_definitions',
+            'footers'  => 'em_wp_footer_style_definitions',
+        ];
+
+        if (isset($resolvers[$module_slug]) && function_exists($resolvers[$module_slug])) {
+            return (array) call_user_func($resolvers[$module_slug]);
+        }
+
+        if (
+            function_exists('em_wp_custom_catalog_is_module')
+            && em_wp_custom_catalog_is_module($module_slug)
+            && function_exists('em_wp_custom_catalog_style_definitions')
+        ) {
+            return (array) em_wp_custom_catalog_style_definitions($module_slug);
+        }
+
+        return [];
+    }
+}
+
+if (!function_exists('em_wp_catalog_style_definitions_from_entries')) {
+    /**
+     * @param array<string, array{label?:string,layout?:string}> $entries
+     * @return array<string, array{label:string,menu_title:string,page_slug:string}>
+     */
+    function em_wp_catalog_style_definitions_from_entries(array $entries, string $edit_page_slug_fn): array
+    {
+        if ($edit_page_slug_fn === '' || !function_exists($edit_page_slug_fn)) {
+            return [];
+        }
+
+        $definitions = [];
+
+        foreach ($entries as $catalog_slug => $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+
+            $catalog_slug = sanitize_key((string) $catalog_slug);
+
+            if ($catalog_slug === '') {
+                continue;
+            }
+
+            $label = trim(sanitize_text_field((string) ($entry['label'] ?? $catalog_slug)));
+
+            if ($label === '') {
+                continue;
+            }
+
+            $page_slug = sanitize_key((string) call_user_func($edit_page_slug_fn, $catalog_slug));
+
+            if ($page_slug === '') {
+                continue;
+            }
+
+            $definitions[$catalog_slug] = [
+                'label'      => $label,
+                'menu_title' => $label,
+                'page_slug'  => $page_slug,
+            ];
+        }
+
+        return $definitions;
+    }
+}
+
 if (!function_exists('em_wp_catalog_breadcrumb_item_label')) {
     /**
      * Libelle fil d'Ariane pour l'entree catalogue en edition.
