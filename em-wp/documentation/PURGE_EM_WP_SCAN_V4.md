@@ -359,6 +359,10 @@ Actions :
 Critère de sortie :
 - 0 include/require/module legacy encore actif.
 
+Avancement (lot en cours) :
+1. Audit de `inc/front/modules/**` effectué: tous les modules restants sont encore chargés explicitement par `inc/front/bootstrap.php` et appelés par le runtime landing (`landing-render.php`) ou les chemins de rendu front.
+2. Après purge des template-parts `sections`, aucune suppression safe immédiate de module front n'est engagée tant que le wiring `bootstrap.php`/`landing-render.php` n'est pas décorrélé module par module.
+
 ### Étape 6 — Purger mappings/migrations legacy
 
 Objectif : retirer la dette technique de compatibilité historique.
