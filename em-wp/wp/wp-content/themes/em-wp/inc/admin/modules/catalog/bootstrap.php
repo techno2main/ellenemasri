@@ -20,6 +20,36 @@ function em_wp_catalog_legacy_admin_enabled(): bool
     return (bool) apply_filters('em_wp_catalog_legacy_admin_enabled', false);
 }
 
+if (!function_exists('em_wp_catalog_parent_menu_slug')) {
+    /**
+     * Slug page admin parent Catalogues.
+     */
+    function em_wp_catalog_parent_menu_slug(): string
+    {
+        return 'em-wp-catalog';
+    }
+}
+
+if (!function_exists('em_wp_catalog_parent_page_url')) {
+    /**
+     * URL page admin parent Catalogues.
+     */
+    function em_wp_catalog_parent_page_url(): string
+    {
+        return admin_url('admin.php?page=' . em_wp_catalog_parent_menu_slug());
+    }
+}
+
+if (!function_exists('em_wp_catalog_sommaire_menu_slug')) {
+    /**
+     * Slug legacy Sommaire (redirection vers hub parent).
+     */
+    function em_wp_catalog_sommaire_menu_slug(): string
+    {
+        return 'em-wp-catalog-sommaire';
+    }
+}
+
 require_once __DIR__ . '/sommaire.php';
 require_once __DIR__ . '/custom-module-fields.php';
 

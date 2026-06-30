@@ -14,25 +14,31 @@ require_once __DIR__ . '/sommaire-catalog-extensions.php';
 /**
  * Slug page admin parent Catalogues.
  */
-function em_wp_catalog_parent_menu_slug(): string
-{
-    return 'em-wp-catalog';
+if (!function_exists('em_wp_catalog_parent_menu_slug')) {
+    function em_wp_catalog_parent_menu_slug(): string
+    {
+        return 'em-wp-catalog';
+    }
 }
 
 /**
  * URL page admin parent Catalogues.
  */
-function em_wp_catalog_parent_page_url(): string
-{
-    return admin_url('admin.php?page=' . em_wp_catalog_parent_menu_slug());
+if (!function_exists('em_wp_catalog_parent_page_url')) {
+    function em_wp_catalog_parent_page_url(): string
+    {
+        return admin_url('admin.php?page=' . em_wp_catalog_parent_menu_slug());
+    }
 }
 
 /**
  * Slug legacy Sommaire (redirection vers HEROS).
  */
-function em_wp_catalog_sommaire_menu_slug(): string
-{
-    return 'em-wp-catalog-sommaire';
+if (!function_exists('em_wp_catalog_sommaire_menu_slug')) {
+    function em_wp_catalog_sommaire_menu_slug(): string
+    {
+        return 'em-wp-catalog-sommaire';
+    }
 }
 
 /**
