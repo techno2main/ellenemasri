@@ -38,14 +38,15 @@ Règle de gouvernance :
 7. 2026-06-30 — Étape 6 validée par utilisateur (purge des mappings/migrations legacy, suppression des hooks auto et fichiers de migration orphelins, stabilité technique confirmée).
 8. 2026-06-30 — Étape 7 validée par utilisateur (purge des assets front legacy `ellene`, nettoyage des dossiers vides et enqueues alignées en V4 mayami).
 9. 2026-06-30 — Étape 8 validée par utilisateur (validation finale V4 only, purge BDD des options legacy résiduelles avec backup SQL et smoke tests front/admin OK).
+10. 2026-06-30 — Post-clôture purge: suppression des dossiers vides résiduels sous `wp-content` (`upgrade`, `upgrade-temp-backup`, `upgrade-temp-backup/plugins` et autres détectés), avec re-scan à 0 dossier vide restant.
 
-## Périmètre scanné (lecture seule)
+## Périmètre scanné (scan initial)
 - em-wp/docker
 - em-wp/documentation
 - em-wp/wp (core WP + thème em-wp)
 - Dépendances front vérifiées via includes PHP, enqueues CSS/JS, get_template_part et fallback V4 -> legacy.
 
-Aucune suppression effectuée. Aucune action destructive.
+Le bloc ci-dessus correspond au contexte du scan initial avant exécution complète de la purge V4.
 
 ## 1) Éléments supprimables SANS conséquences (constat actuel)
 
@@ -439,6 +440,7 @@ Avancement (lot terminé) :
 4. Code V4 only finalisé: suppression des reliquats de fonctions de migration stream/top-bar non appelées et bascule des clés d'options modules vers les option names V4 par template.
 5. BDD V4 only: suppression de 34 options legacy/dormantes (`*_options` globaux historiques + templates non actifs `music/new-york/tyson`) après backup SQL.
 6. Rollback BDD disponible: `em-wp/documentation/SQL_BACKUP_LEGACY_OPTIONS_20260630.sql`.
+7. Filesystem final: purge des dossiers vides résiduels sous `wp-content` (`upgrade`, `upgrade-temp-backup`, `upgrade-temp-backup/plugins`, `themes/em-wp/inc/rubriques/admin/render`, `uploads/2026/07`) et re-contrôle à 0 dossier vide.
 
 ## 4) Suivi des lots de commits
 
