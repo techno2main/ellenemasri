@@ -20,7 +20,7 @@ Règle de gouvernance :
 | 0 | Branche dédiée + baseline + garde-fous | Terminée | Oui |
 | 1 | Coupure fallback legacy front | Terminée | Oui |
 | 2 | Couverture V4 complète des rubriques actives | Terminée | Oui |
-| 3 | Purge Catalogues legacy (back) | À faire | Non |
+| 3 | Purge Catalogues legacy (back) | En cours | Non |
 | 4 | Purge template-parts legacy | À faire | Non |
 | 5 | Purge modules front legacy | À faire | Non |
 | 6 | Purge mappings/migrations legacy | À faire | Non |
@@ -300,6 +300,8 @@ Avancement (lot en cours) :
 1. Coupure des points d'entrée BO catalog legacy via un flag central `em_wp_catalog_legacy_admin_enabled` (désactivé par défaut).
 2. Menus/pages admin catalog legacy non enregistrés quand ce flag est désactivé.
 3. Runtime/front non touché à ce stade (helpers catalog conservés tant que l'audit runtime n'est pas soldé).
+4. Migration legacy V1 automatique neutralisée via `em_wp_catalog_legacy_migration_enabled` (désactivée par défaut).
+5. Chargement BO de `inc/admin/modules/catalog/bootstrap.php` conservé (fonctions utilitaires requises), avec coupure des points d'entrée legacy pilotée par `em_wp_catalog_legacy_admin_enabled`.
 
 ### Étape 4 — Purger les templates-parts legacy
 
