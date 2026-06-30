@@ -2578,23 +2578,25 @@ function em_wp_catalog_resolve_hub_menu_slug(string $hub_menu_slug): string
  *
  * @param array<string, array{label?:string,menu_title?:string,page_slug?:string}> $style_definitions
  */
-function em_wp_catalog_render_module_entry_tabs(
-    string $hub_menu_slug,
-    array $style_definitions,
-    string $selected_slug,
-    string $nav_label,
-    string $list_tab_label = ''
-): void {
-    unset($list_tab_label);
+if (!function_exists('em_wp_catalog_render_module_entry_tabs')) {
+    function em_wp_catalog_render_module_entry_tabs(
+        string $hub_menu_slug,
+        array $style_definitions,
+        string $selected_slug,
+        string $nav_label,
+        string $list_tab_label = ''
+    ): void {
+        unset($list_tab_label);
 
-    em_wp_catalog_render_module_tabs(
-        em_wp_catalog_module_slug_for_hub($hub_menu_slug),
-        false,
-        $style_definitions,
-        $selected_slug,
-        $hub_menu_slug,
-        $nav_label
-    );
+        em_wp_catalog_render_module_tabs(
+            em_wp_catalog_module_slug_for_hub($hub_menu_slug),
+            false,
+            $style_definitions,
+            $selected_slug,
+            $hub_menu_slug,
+            $nav_label
+        );
+    }
 }
 
 /**
@@ -2724,43 +2726,47 @@ function em_wp_catalog_render_edit_navbar(
 /**
  * Ouvre le bloc section d'édition catalogue (barre marron + contenu blanc).
  */
-function em_wp_catalog_render_edit_section_open(string $module_label, string $entry_label): void
-{
-    // Pastille uniformisée pour toutes les sections catalogue.
-    $rubrique = mb_strtoupper(trim($module_label));
-    $entry = mb_strtoupper(trim($entry_label));
+if (!function_exists('em_wp_catalog_render_edit_section_open')) {
+    function em_wp_catalog_render_edit_section_open(string $module_label, string $entry_label): void
+    {
+        // Pastille uniformisee pour toutes les sections catalogue.
+        $rubrique = mb_strtoupper(trim($module_label));
+        $entry = mb_strtoupper(trim($entry_label));
 
-    // Le libellé d'item suit la convention « {RUBRIQUE} {TEMPLATE} ».
-    // On isole la partie « template » en retirant le préfixe rubrique si présent.
-    $template = $entry;
-    if ($rubrique !== '' && mb_substr($entry, 0, mb_strlen($rubrique) + 1) === $rubrique . ' ') {
-        $template = trim(mb_substr($entry, mb_strlen($rubrique) + 1));
-    }
-    ?>
-    <div class="em-wp-rubrique-section em-wp-catalog-edit__section">
-        <div class="em-wp-rubrique-section-bar">
-            <div class="em-wp-rubrique-section-bar__heading">
-                <h2 class="em-wp-rubrique-section-bar__title">
-                    <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html(mb_strtoupper(__('Catalogue', 'em-wp'))); ?></span>
-                    <span class="em-wp-rubrique-section-bar__template">
-                        <?php esc_html_e('Rubrique', 'em-wp'); ?>
-                        <strong><?php echo esc_html($rubrique); ?></strong>
-                        <strong><?php echo esc_html($template); ?></strong>
-                    </span>
-                </h2>
+        // Le libelle d'item suit la convention "{RUBRIQUE} {TEMPLATE}".
+        // On isole la partie "template" en retirant le prefixe rubrique si present.
+        $template = $entry;
+        if ($rubrique !== '' && mb_substr($entry, 0, mb_strlen($rubrique) + 1) === $rubrique . ' ') {
+            $template = trim(mb_substr($entry, mb_strlen($rubrique) + 1));
+        }
+        ?>
+        <div class="em-wp-rubrique-section em-wp-catalog-edit__section">
+            <div class="em-wp-rubrique-section-bar">
+                <div class="em-wp-rubrique-section-bar__heading">
+                    <h2 class="em-wp-rubrique-section-bar__title">
+                        <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html(mb_strtoupper(__('Catalogue', 'em-wp'))); ?></span>
+                        <span class="em-wp-rubrique-section-bar__template">
+                            <?php esc_html_e('Rubrique', 'em-wp'); ?>
+                            <strong><?php echo esc_html($rubrique); ?></strong>
+                            <strong><?php echo esc_html($template); ?></strong>
+                        </span>
+                    </h2>
+                </div>
             </div>
-        </div>
-        <div class="em-wp-rubrique-section__content">
-    <?php
+            <div class="em-wp-rubrique-section__content">
+        <?php
+    }
 }
 
 /**
  * Ferme le bloc section d'édition catalogue.
  */
-function em_wp_catalog_render_edit_section_close(): void
-{
-    ?>
+if (!function_exists('em_wp_catalog_render_edit_section_close')) {
+    function em_wp_catalog_render_edit_section_close(): void
+    {
+        ?>
+            </div>
         </div>
-    </div>
-    <?php
+        <?php
+    }
 }
