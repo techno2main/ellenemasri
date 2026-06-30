@@ -90,6 +90,10 @@ function em_wp_social_catalog_hub_menu_slug(): string
  */
 function em_wp_catalog_registered_hub_menu_slugs(): array
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return [];
+    }
+
     $slugs = array_values(array_filter([
         em_wp_hero_hub_menu_slug(),
         em_wp_slider_hub_menu_slug(),
@@ -196,6 +200,10 @@ function em_wp_catalog_menu_definitions(): array
  */
 function em_wp_catalog_sidebar_entry_definitions(): array
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return [];
+    }
+
     $entries = [];
 
     if (function_exists('em_wp_hero_style_definitions')) {
@@ -325,6 +333,10 @@ function em_wp_catalog_sidebar_entry_page_slugs(): array
  */
 function em_wp_catalog_admin_page_slugs(): array
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return [];
+    }
+
     $slugs = array_merge(
         [
             em_wp_catalog_parent_menu_slug(),
@@ -698,6 +710,10 @@ add_action('admin_enqueue_scripts', 'em_wp_catalog_hub_enqueue');
  */
 function em_wp_catalog_edit_page_slugs(): array
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return [];
+    }
+
     $slugs = [];
 
     if (function_exists('em_wp_hero_style_definitions')) {
