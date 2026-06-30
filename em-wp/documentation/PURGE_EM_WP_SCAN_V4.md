@@ -1,0 +1,289 @@
+# Purge em-wp après refacto V4 (scan complet)
+
+Date du scan : 2026-06-30
+
+## Périmètre scanné (lecture seule)
+- em-wp/docker
+- em-wp/documentation
+- em-wp/wp (core WP + thème em-wp)
+- Dépendances front vérifiées via includes PHP, enqueues CSS/JS, get_template_part et fallback V4 -> legacy.
+
+Aucune suppression effectuée. Aucune action destructive.
+
+## 1) Éléments supprimables SANS conséquences (constat actuel)
+
+Confiance élevée (pas d'impact runtime front/back WP) :
+
+1. em-wp/documentation/AUDIT_ARCHITECTURE_RUBRIQUES.md
+2. em-wp/documentation/REFONTE_RUBRIQUES_CIBLE.md
+3. em-wp/documentation/SETUP_EM_WP_LOCAL.md
+4. em-wp/documentation/TEMPLATE_V2.md
+5. em-wp/documentation/WIZARD-NEW-TEMPLATE.md
+6. em-wp/wp/scripts/reset-hero-ellene-from-mayami.php
+
+Raison :
+- Les 5 fichiers Markdown sont de la documentation projet (non exécutés par WP).
+- Le script reset-hero-ellene-from-mayami.php est un script utilitaire manuel, non chargé par le thème (aucune référence détectée dans le code PHP du thème).
+
+## 2) Éléments qui cassent encore le front si supprimés directement
+
+### 2.1 Bootstrap thème et chaîne de chargement
+
+1. em-wp/wp/wp-content/themes/em-wp/functions.php
+2. em-wp/wp/wp-content/themes/em-wp/inc/bootstrap.php
+
+Pourquoi ça casse :
+- functions.php est le point d'entrée du thème.
+- inc/bootstrap.php charge la couche front et rubriques (require_once), notamment rubriques/bootstrap.php et front/bootstrap.php.
+- Références :
+  - inc/bootstrap.php:22
+  - inc/bootstrap.php:24
+
+### 2.2 Runtime front V4 + fallback legacy
+
+1. em-wp/wp/wp-content/themes/em-wp/inc/front/v4-preview.php
+2. em-wp/wp/wp-content/themes/em-wp/inc/front/landing-render.php
+3. em-wp/wp/wp-content/themes/em-wp/inc/front/modules/**
+
+Pourquoi ça casse :
+- V4 est actif sur le vrai front, mais garde un fallback legacy si une rubrique n'a pas encore d'item V4.
+- Ce fallback appelle encore les renders legacy (header/stream/social/video/release/cta).
+- Références :
+  - inc/front/v4-preview.php:223
+  - inc/front/v4-preview.php:231
+  - inc/front/landing-render.php:208
+  - inc/front/landing-render.php:214
+  - inc/front/landing-render.php:220
+  - inc/front/landing-render.php:226
+  - inc/front/landing-render.php:232
+  - inc/front/landing-render.php:238
+
+### 2.3 Templates front appelés par les modules
+
+1. em-wp/wp/wp-content/themes/em-wp/template-parts/sections/**
+2. em-wp/wp/wp-content/themes/em-wp/template-parts/layout/**
+3. em-wp/wp/wp-content/themes/em-wp/template-parts/views/**
+4. em-wp/wp/wp-content/themes/em-wp/front-page.php
+5. em-wp/wp/wp-content/themes/em-wp/header.php
+6. em-wp/wp/wp-content/themes/em-wp/footer.php
+
+Pourquoi ça casse :
+- Les modules front appellent get_template_part sur ces chemins.
+- Références (exemples directs) :
+  - inc/front/modules/top-bar/render.php:62
+  - inc/front/modules/footer/render.php:58
+  - inc/front/modules/footer/render.php:62
+  - inc/front/modules/slider/render.php:191
+  - inc/front/modules/hero/render.php:100
+  - front-page.php:10
+
+### 2.4 Assets front (CSS/JS)
+
+1. em-wp/wp/wp-content/themes/em-wp/assets/front/css/**
+2. em-wp/wp/wp-content/themes/em-wp/assets/js/theme.js
+3. em-wp/wp/wp-content/themes/em-wp/style.css
+
+Pourquoi ça casse :
+- Enqueues front explicites dans inc/core/enqueue.php.
+- Références :
+  - inc/core/enqueue.php:32
+  - inc/core/enqueue.php:33
+  - inc/core/enqueue.php:34
+  - inc/core/enqueue.php:80
+  - inc/core/enqueue.php:123
+  - inc/core/enqueue.php:138
+
+### 2.5 Moteur Rubriques V4 (désormais utilisé en live)
+
+1. em-wp/wp/wp-content/themes/em-wp/inc/rubriques/**
+
+Pourquoi ça casse :
+- Le front V4 appelle em_wp_rubrique_render.
+- Le bootstrap rubriques charge dynamiquement les types V4.
+- Références :
+  - inc/front/v4-preview.php:219
+  - inc/rubriques/renderer/engine.php:20
+  - inc/rubriques/bootstrap.php:42
+
+### 2.6 Core WordPress local (instance em-wp/wp)
+
+1. em-wp/wp/wp-admin/**
+2. em-wp/wp/wp-includes/**
+3. em-wp/wp/wp-content/plugins/** (selon plugins actifs)
+4. em-wp/wp/wp-content/uploads/** (médias/front)
+
+Pourquoi ça casse :
+- Suppression directe = instance WP locale inopérante (front non servable ou assets/contenus manquants).
+
+## Conclusion opérationnelle
+
+Aujourd'hui, la purge sans risque réel est très courte : documentation + script utilitaire manuel listés en section 1.
+
+Le reste du thème em-wp est encore couplé au front via :
+- V4 live
+- fallback legacy encore actif
+- enqueues CSS/JS
+- templates legacy encore appelés
+
+Donc supprimer directement des dossiers legacy dans le thème casserait encore le front tant que le fallback legacy n'est pas retiré et validé type par type.
+
+## 3) Plan d'action (PA) purge V4 ONLY — back + front
+
+Objectif cible :
+- Le site tourne uniquement sur la V4, côté front et côté back.
+- Aucune dépendance runtime aux catalogues legacy, templates legacy et fallback legacy.
+
+Règle d'exécution :
+- Une étape = un lot = un commit atomique.
+- Validation obligatoire à chaque étape avant de passer à la suivante.
+- Aucune suppression massive sans gate de validation.
+
+### Étape 0 — Branche dédiée, baseline et filet de sécurité
+
+Objectif : figer le point de départ et sécuriser un rollback immédiat.
+
+Actions :
+1. Travailler uniquement sur une branche dédiée purge.
+2. Capturer la baseline technique (état front/back, captures, logs PHP).
+3. Poser un flag temporaire de sécurité (V4 strict on/off) si nécessaire.
+
+Critère de sortie :
+- Baseline validée.
+- Retour arrière possible en un commit.
+
+### Étape 1 — Couper le fallback legacy front
+
+Objectif : empêcher le runtime front de retomber sur les renders legacy.
+
+Cibles principales :
+1. em-wp/wp/wp-content/themes/em-wp/inc/front/v4-preview.php
+2. em-wp/wp/wp-content/themes/em-wp/inc/front/landing-render.php
+
+Actions :
+1. Forcer un flux V4 strict (pas de return false vers legacy).
+2. Remplacer le fallback par des placeholders V4 contrôlés en non-prod si besoin.
+
+Risque :
+- Une rubrique sans item V4 n'affichera plus son rendu legacy.
+
+Critère de sortie :
+- Front 100% V4 sans appel legacy.
+
+### Étape 2 — Migrer/valider la couverture V4 de toutes les rubriques
+
+Objectif : garantir que chaque rubrique active dispose d'un item V4 exploitable.
+
+Actions :
+1. Vérifier les rubriques actives (Top-Bar, Header, Hero/Slider, Stream, Social, Video, Release, CTA, Footer, rubriques custom).
+2. Compléter les items V4 manquants avant purge physique.
+3. Vérifier ancres, layouts lignes/colonnes, médias et styles.
+
+Critère de sortie :
+- 0 rubrique active dépendante d'un rendu legacy.
+
+### Étape 3 — Purger la couche Catalogues legacy (back)
+
+Objectif : supprimer l'ancienne version Catalogues sans impacter V4.
+
+Cibles candidates :
+1. em-wp/wp/wp-content/themes/em-wp/inc/shared/catalog/**
+2. Écrans/admin catalogues legacy encore branchés.
+
+Actions :
+1. Retirer les points d'entrée admin catalogues non nécessaires à V4.
+2. Supprimer progressivement registry/crud legacy une fois les appels coupés.
+
+Risque :
+- Casse du back si un écran Dashboard/Settings utilise encore ces helpers.
+
+Critère de sortie :
+- Aucune référence runtime à inc/shared/catalog/**.
+
+### Étape 4 — Purger les templates-parts legacy
+
+Objectif : retirer les templates front historiques non utilisés par V4.
+
+Cibles candidates :
+1. em-wp/wp/wp-content/themes/em-wp/template-parts/sections/** (legacy)
+2. Nettoyage ciblé dans template-parts/layout et template-parts/views si redondances legacy.
+
+Actions :
+1. Supprimer d'abord les appels get_template_part legacy.
+2. Supprimer ensuite les fichiers devenus orphelins.
+
+Risque :
+- Casse immédiate si un module front appelle encore ces paths.
+
+Critère de sortie :
+- 0 appel get_template_part legacy pour la landing V4.
+
+### Étape 5 — Purger les modules front legacy devenus inutiles
+
+Objectif : garder uniquement les composants front réellement nécessaires au runtime V4.
+
+Cibles candidates :
+1. em-wp/wp/wp-content/themes/em-wp/inc/front/modules/** (après coupure appels)
+
+Actions :
+1. Supprimer uniquement les modules non référencés.
+2. Revalider le rendu top-bar/footer/header composite et rubriques custom V4.
+
+Critère de sortie :
+- 0 include/require/module legacy encore actif.
+
+### Étape 6 — Purger mappings/migrations legacy
+
+Objectif : retirer la dette technique de compatibilité historique.
+
+Cibles candidates :
+1. Mappings legacy template/options.
+2. Migrations auto V1/V2 devenues inutiles.
+
+Actions :
+1. Désactiver d'abord les hooks de migration.
+2. Supprimer ensuite le code mort une fois la data stabilisée.
+
+Critère de sortie :
+- Aucun chemin de migration legacy déclenchable en runtime.
+
+### Étape 7 — Purge assets legacy
+
+Objectif : supprimer CSS/JS non utilisés après bascule V4 stricte.
+
+Cibles candidates :
+1. assets/front/css legacy non enqueued
+2. assets/front/js legacy non enqueued
+
+Actions :
+1. Nettoyer les enqueues dans inc/core/enqueue.php.
+2. Supprimer les fichiers assets orphelins.
+
+Critère de sortie :
+- 0 asset legacy chargé en front.
+- 0 404 asset côté navigateur.
+
+### Étape 8 — Validation finale et verrouillage
+
+Objectif : valider définitivement le mode V4 only en prod-ready.
+
+Checklist :
+1. Front : parcours complet desktop/mobile, performance et rendu visuel.
+2. Back : Templates, Rubriques, Médias, Settings, Dashboard.
+3. Logs : aucune erreur PHP/JS liée à la purge.
+4. Diff : uniquement suppressions prévues + ajustements de wiring V4.
+
+Critère de sortie :
+- Site fonctionnel en V4 only (back + front), sans dépendance legacy runtime.
+
+## 4) Ordre recommandé des lots de commits
+
+1. Lot A : coupure fallback legacy front.
+2. Lot B : couverture V4 complète des rubriques actives.
+3. Lot C : purge Catalogues legacy (back).
+4. Lot D : purge template-parts legacy.
+5. Lot E : purge modules front legacy.
+6. Lot F : purge migrations/mappings legacy.
+7. Lot G : purge assets legacy + polish final.
+
+Note importante :
+- Tant que le Lot A + Lot B ne sont pas validés, toute suppression physique massive est à haut risque de casse front.
