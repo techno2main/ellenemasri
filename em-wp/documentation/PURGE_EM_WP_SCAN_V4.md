@@ -305,6 +305,7 @@ Avancement (lot en cours) :
 6. Chargement des fichiers d'actions/pages catalog legacy (`*-actions.php`, `registry-crud.php`, `custom-modules-admin.php`, `custom-module-actions.php`) conditionné au flag `em_wp_catalog_legacy_admin_enabled`.
 7. Chargement de `inc/shared/catalog/migrate-v1.php` conditionné à `em_wp_catalog_legacy_migration_enabled`.
 8. Hooks admin legacy dans `sommaire.php` (`remove_duplicate_submenus`, `hub_enqueue`, `edit_enqueue`, `redirect_legacy_hubs`) neutralisés quand `em_wp_catalog_legacy_admin_enabled` est désactivé.
+9. Hardening menu admin: fallback de slug parent Catalogues dans `inc/admin/shared/menu/catalog-positions.php` pour éviter tout fatal si `em_wp_catalog_parent_menu_slug()` n'est pas chargée.
 
 ### Étape 4 — Purger les templates-parts legacy
 

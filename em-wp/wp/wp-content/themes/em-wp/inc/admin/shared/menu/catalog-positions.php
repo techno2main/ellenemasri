@@ -10,6 +10,18 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Slug parent Catalogues avec fallback si le module legacy n'est pas chargé.
+ */
+function em_wp_admin_catalog_parent_menu_slug_fallback(): string
+{
+    if (function_exists('em_wp_catalog_parent_menu_slug')) {
+        return em_wp_catalog_parent_menu_slug();
+    }
+
+    return 'em-wp-catalog';
+}
+
+/**
  * Filet au-dessus du bloc Catalogues (séparation visuelle après MEDIAS).
  */
 function em_wp_admin_menu_catalog_separator_top_position(): int
@@ -22,7 +34,7 @@ function em_wp_admin_menu_catalog_separator_top_position(): int
  */
 function em_wp_admin_menu_position_catalog_parent(): int
 {
-    return (int) em_wp_admin_menu_position_for_slug(em_wp_catalog_parent_menu_slug());
+    return (int) em_wp_admin_menu_position_for_slug(em_wp_admin_catalog_parent_menu_slug_fallback());
 }
 
 /**
