@@ -448,6 +448,93 @@ function em_wp_v4_save_instance(string $template_slug, string $type_slug, array 
 }
 
 /**
+ * Retourne le slug item par défaut d'un type ('' si aucun item).
+ */
+function em_wp_v4_default_item_slug(string $type_slug): string
+{
+    $items = em_wp_v4_get_items($type_slug);
+
+    if (isset($items['default'])) {
+        return 'default';
+    }
+
+    return $items === [] ? '' : (string) array_key_first($items);
+}
+
+/**
+ * Garantit des instances V4 cohérentes pour un template donné.
+ *
+ * Règles :
+ * - si l'instance existe et pointe vers un item valide : inchangé
+ * - sinon, on branche explicitement l'item par défaut résolu du type
+ */
+function em_wp_v4_ensure_template_instances(string $template_slug): void
+{
+    $template_slug = sanitize_key($template_slug);
+
+    if ($template_slug === '') {
+        return;
+    }
+
+    $candidate_types = [];
+
+    if (function_exists('em_wp_get_template_skeleton_order')) {
+        $candidate_types = em_wp_get_template_skeleton_order($template_slug);
+    }
+
+    if (!is_array($candidate_types) || $candidate_types === []) {
+        $candidate_types = array_keys((array) em_wp_rubrique_type_registry());
+    }
+
+    foreach ($candidate_types as $type_slug) {
+        $type_slug = sanitize_key((string) $type_slug);
+
+        if ($type_slug === '' || !em_wp_rubrique_type_exists($type_slug)) {
+            continue;
+        }
+
+        $items = em_wp_v4_get_items($type_slug);
+
+        if ($items === []) {
+            continue;
+        }
+
+        $instance = em_wp_v4_get_instance($template_slug, $type_slug);
+        $current_item = sanitize_key((string) ($instance['item'] ?? ''));
+
+        if ($current_item !== '' && isset($items[$current_item])) {
+            continue;
+        }
+
+        $fallback_item = em_wp_v4_default_item_slug($type_slug);
+
+        if ($fallback_item === '') {
+            continue;
+        }
+
+        $instance['item'] = $fallback_item;
+        em_wp_v4_save_instance($template_slug, $type_slug, $instance);
+    }
+}
+
+/**
+ * Synchronise les instances V4 pour tous les templates existants.
+ */
+function em_wp_v4_sync_all_templates_instances(): void
+{
+    if (!function_exists('em_wp_template_registry') || !function_exists('em_wp_rubrique_type_registry')) {
+        return;
+    }
+
+    $templates = em_wp_template_registry();
+
+    foreach (array_keys((array) $templates) as $template_slug) {
+        em_wp_v4_ensure_template_instances((string) $template_slug);
+    }
+}
+add_action('admin_init', 'em_wp_v4_sync_all_templates_instances', 6);
+
+/**
  * Réconcilie une fois les slugs d'items hérités (slug != sanitize_title(label)).
  *
  * Évite les cas historiques du type `default => MAYAMI` après déploiement de la

@@ -19,7 +19,7 @@ Règle de gouvernance :
 |---|---|---|---|
 | 0 | Branche dédiée + baseline + garde-fous | Terminée | Oui |
 | 1 | Coupure fallback legacy front | Terminée | Oui |
-| 2 | Couverture V4 complète des rubriques actives | À faire | Non |
+| 2 | Couverture V4 complète des rubriques actives | Terminée | Oui |
 | 3 | Purge Catalogues legacy (back) | À faire | Non |
 | 4 | Purge template-parts legacy | À faire | Non |
 | 5 | Purge modules front legacy | À faire | Non |
@@ -31,6 +31,7 @@ Règle de gouvernance :
 
 1. 2026-06-30 — Étape 1 validée par utilisateur (vérification fonctionnelle OK) — commit 58db430.
 2. 2026-06-30 — Correctif slug V4 validé (renommage temps réel + migration auto + normalisation préfixes métier: hero/contact/slider) — prêt reprise purge.
+3. 2026-06-30 — Étape 2 validée par utilisateur (couverture V4 explicite mayami + cas HEADER composite confirmé non bloquant).
 
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
@@ -232,6 +233,49 @@ Actions :
 
 Critère de sortie :
 - 0 rubrique active dépendante d'un rendu legacy.
+
+#### État d'audit (2026-06-30)
+
+Template live détecté : `mayami`.
+
+Squelette template `mayami` (ordre actuel) :
+1. top-bar
+2. header
+3. stream
+4. social
+5. video
+6. release
+7. cta
+8. contacts
+9. about
+10. footer
+
+Instances V4 effectivement branchées sur `mayami` :
+1. top-bar -> `top-bar-mayami`
+2. footer -> `footer-mayami`
+
+Items V4 présents par type (BDD) :
+1. top-bar : `top-bar-mayami`
+2. header : `hero-mayami`
+3. stream : `stream-mayami`
+4. social : `social-mayami`
+5. video : `video-mayami`
+6. release : `release-mayami`
+7. cta : `cta-mayami`
+8. contacts : `contact-default`
+9. about : `about-default`
+10. footer : `footer-mayami`
+11. sliders : `slider-mayami`
+
+Constat de couverture Étape 2 :
+1. Couverture partielle validée en base : les items V4 existent pour toutes les rubriques du squelette `mayami`.
+2. Couverture template explicitée pour `mayami` : instances présentes pour `top-bar`, `header`, `stream`, `social`, `video`, `release`, `cta`, `contacts`, `about`, `footer`.
+3. Cas particulier `header` validé : l'instance `em_wp_v4_instance_mayami_header` pointe sur `hero-mayami`, tandis que la composition HERO/SLIDER est pilotée séparément par `em_wp_v4_header_mayami` (matrix `hero_slider`, position `hero_left`, hero `mayami`, slider `mayami`, ratio `60-40`).
+4. Les rubriques `contacts` et `about` restent branchées sur des items `*-default` (fonctionnels), à confirmer côté contenu métier attendu avant validation finale Étape 2.
+
+Action recommandée avant validation Étape 2 :
+1. Vérifier rendu front pour `mayami` sur les 10 rubriques du squelette (contenu, ancres, styles) après liaison explicite.
+2. Décider si `about-default` et `contact-default` doivent rester en l'état ou être remplacés par des items métier dédiés.
 
 ### Étape 3 — Purger la couche Catalogues legacy (back)
 
