@@ -70,8 +70,9 @@ function em_wp_enqueue_assets(): void
     $theme_dir = get_template_directory();
     $landing_ui_path = 'assets/front/css/landing-ui.css';
     $hero_css_style_slug = $hero_style_slug === 'ellene' ? 'mayami' : $hero_style_slug;
+    $slider_css_style_slug = $slider_style_slug === 'ellene' ? 'mayami' : $slider_style_slug;
     $hero_css_path = 'assets/front/css/modules/hero/' . $hero_css_style_slug . '/hero.css';
-    $slider_css_path = 'assets/front/css/modules/slider/' . $slider_style_slug . '/slider.css';
+    $slider_css_path = 'assets/front/css/modules/slider/' . $slider_css_style_slug . '/slider.css';
     $enqueue_hero = empty($header) || !empty($header['hero_slug']);
     $enqueue_slider = empty($header) || !empty($header['slider_slug']);
     $enqueue_header = empty($header) || !empty($header['hero_slug']) || !empty($header['slider_slug']);

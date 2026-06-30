@@ -23,9 +23,9 @@ Règle de gouvernance :
 | 3 | Purge Catalogues legacy (back) | Terminée | Oui |
 | 4 | Purge template-parts legacy | Terminée | Oui |
 | 5 | Purge modules front legacy | Terminée | Oui |
-| 6 | Purge mappings/migrations legacy | Terminée | Non |
-| 7 | Purge assets legacy | À faire | Non |
-| 8 | Validation finale et verrouillage PROD | À faire | Non |
+| 6 | Purge mappings/migrations legacy | Terminée | Oui |
+| 7 | Purge assets legacy | Terminée | Oui |
+| 8 | Validation finale et verrouillage PROD | En cours | Non |
 
 ### Historique validations
 
@@ -35,7 +35,8 @@ Règle de gouvernance :
 4. 2026-06-30 — Étape 3 validée par utilisateur (purge Catalogues legacy back en mode safe, extraction helpers vers shared et stabilité runtime confirmée).
 5. 2026-06-30 — Étape 4 validée par utilisateur (purge complète des template-parts `sections`, appels legacy supprimés et dossiers vides nettoyés).
 6. 2026-06-30 — Étape 5 validée par utilisateur (wiring front passé en V4 strict, fallbacks legacy de rendu supprimés et alias modules non utilisés purgés).
-7. 2026-06-30 — Étape 6 exécutée techniquement (suppression des hooks auto de migration legacy et des fichiers `migrate.php` orphelins), en attente de validation utilisateur finale.
+7. 2026-06-30 — Étape 6 validée par utilisateur (purge des mappings/migrations legacy, suppression des hooks auto et fichiers de migration orphelins, stabilité technique confirmée).
+8. 2026-06-30 — Étape 7 validée par utilisateur (purge des assets front legacy `ellene`, nettoyage des dossiers vides et enqueues alignées en V4 mayami).
 
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
@@ -300,7 +301,7 @@ Risque :
 Critère de sortie :
 - Aucune référence runtime à inc/shared/catalog/**.
 
-Avancement (lot en cours) :
+Avancement (lot terminé) :
 1. Coupure des points d'entrée BO catalog legacy via un flag central `em_wp_catalog_legacy_admin_enabled` (désactivé par défaut).
 2. Menus/pages admin catalog legacy non enregistrés quand ce flag est désactivé.
 3. Runtime/front non touché à ce stade (helpers catalog conservés tant que l'audit runtime n'est pas soldé).
@@ -338,7 +339,7 @@ Risque :
 Critère de sortie :
 - 0 appel get_template_part legacy pour la landing V4.
 
-Avancement (lot en cours) :
+Avancement (lot terminé) :
 1. Inventaire des appels `get_template_part('template-parts/sections/...')` effectué: les chemins encore actifs sont conservés et aucun retrait massif n'est engagé.
 2. Suppression ciblée d'un template orphelin non référencé (`template-parts/sections/landing/hero-slider-pair.php`) validée comme sans appel runtime.
 3. Suppression ciblée des fichiers `index.php` orphelins sous `template-parts/sections/**` (fichiers non appelés par les routes `get_template_part` actives).
@@ -361,7 +362,7 @@ Actions :
 Critère de sortie :
 - 0 include/require/module legacy encore actif.
 
-Avancement (lot en cours) :
+Avancement (lot terminé) :
 1. Audit de `inc/front/modules/**` effectué: tous les modules restants sont encore chargés explicitement par `inc/front/bootstrap.php` et appelés par le runtime landing (`landing-render.php`) ou les chemins de rendu front.
 2. Après purge des template-parts `sections`, aucune suppression safe immédiate de module front n'est engagée tant que le wiring `bootstrap.php`/`landing-render.php` n'est pas décorrélé module par module.
 3. Bascule V4 stricte réalisée: suppression des guards `function_exists` de rendu landing/top-bar/footer/front-page et retrait du fallback hero legacy en page d'accueil.
@@ -384,7 +385,7 @@ Actions :
 Critère de sortie :
 - Aucun chemin de migration legacy déclenchable en runtime.
 
-Avancement (lot en cours) :
+Avancement (lot terminé) :
 1. Fallback de mapping d'options legacy retiré: `em_wp_template_resolve_option_name()` lit désormais uniquement les options V2 (`em_wp_{rubrique}_{template}_options`).
 2. Hooks automatiques de migration stream/top-bar retirés de `inc/shared/stream-platform-items.php`.
 3. Chargements `migrate.php` supprimés des bootstraps admin modules (`video`, `social`, `footer`, `stream`, `top-bar`, `release`, `cta`).
@@ -407,6 +408,13 @@ Actions :
 Critère de sortie :
 - 0 asset legacy chargé en front.
 - 0 404 asset côté navigateur.
+
+Avancement (lot terminé) :
+1. Audit des assets front réalisé: les modules actifs V4 continuent d'utiliser les assets `mayami` et les assets `ellene` ne sont plus requis en runtime.
+2. Enqueue front durci: le style slider `ellene` est désormais remappé vers `mayami` dans `inc/core/enqueue.php`.
+3. Purge fichiers legacy: suppression des assets `hero/ellene` et `slider/ellene` (CSS/JS + index legacy associés).
+4. Purge filesystem: suppression des dossiers `ellene` devenus vides sous `assets/front/css/modules/slider` et `assets/front/js/modules/slider`.
+5. Validation technique: `php -l` Docker OK sur `inc/core/enqueue.php` et recherche de références PHP `modules/(hero|slider)/ellene` sans résultat.
 
 ### Étape 8 — Validation finale et verrouillage
 
