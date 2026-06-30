@@ -175,6 +175,102 @@ if (!function_exists('em_wp_catalog_module_slug_for_hub')) {
     }
 }
 
+if (!function_exists('em_wp_catalog_admin_page_belongs_to_module')) {
+    /**
+     * Indique si une page admin appartient a un module catalogue (hub ou edition).
+     */
+    function em_wp_catalog_admin_page_belongs_to_module(string $page_slug, string $module_slug): bool
+    {
+        $page_slug = sanitize_key($page_slug);
+        $module_slug = sanitize_key($module_slug);
+
+        if ($page_slug === '' || $module_slug === '') {
+            return false;
+        }
+
+        $style_resolvers = [
+            'heros'     => 'em_wp_hero_style_from_page_slug',
+            'sliders'   => 'em_wp_slider_style_from_page_slug',
+            'videos'    => 'em_wp_video_style_from_page_slug',
+            'streams'   => 'em_wp_stream_style_from_page_slug',
+            'socials'   => 'em_wp_social_style_from_page_slug',
+            'top-bars'  => 'em_wp_top_bar_style_from_page_slug',
+            'releases'  => 'em_wp_release_style_from_page_slug',
+            'ctas'      => 'em_wp_cta_style_from_page_slug',
+            'footers'   => 'em_wp_footer_style_from_page_slug',
+        ];
+
+        $resolver = $style_resolvers[$module_slug] ?? '';
+
+        if ($resolver !== '' && function_exists($resolver) && $resolver($page_slug) !== '') {
+            return true;
+        }
+
+        if (function_exists('em_wp_custom_catalog_is_module') && em_wp_custom_catalog_is_module($module_slug)) {
+            $resolved = em_wp_custom_catalog_entry_from_page($page_slug);
+
+            return (string) ($resolved['module_slug'] ?? '') === $module_slug;
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists('em_wp_catalog_module_slug_for_admin_page')) {
+    /**
+     * Module catalogue actif pour la page admin courante (vide = sommaire Liste).
+     */
+    function em_wp_catalog_module_slug_for_admin_page(string $page_slug = ''): string
+    {
+        if ($page_slug === '') {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+        }
+
+        if ($page_slug === '' || $page_slug === em_wp_catalog_parent_menu_slug()) {
+            return '';
+        }
+
+        if (!function_exists('em_wp_catalog_menu_definitions')) {
+            return '';
+        }
+
+        foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+            if (empty($definition['available'])) {
+                continue;
+            }
+
+            $hub_slug = sanitize_key((string) ($definition['slug'] ?? ''));
+
+            if ($hub_slug !== '' && $page_slug === $hub_slug) {
+                return (string) $module_slug;
+            }
+
+            if (em_wp_catalog_admin_page_belongs_to_module($page_slug, (string) $module_slug)) {
+                return (string) $module_slug;
+            }
+        }
+
+        return '';
+    }
+}
+
+if (!function_exists('em_wp_catalog_resolve_active_module')) {
+    /**
+     * Module catalogue actif (parametre explicite ou page courante).
+     */
+    function em_wp_catalog_resolve_active_module(string $module_slug = ''): string
+    {
+        $module_slug = sanitize_key($module_slug);
+
+        if ($module_slug !== '') {
+            return $module_slug;
+        }
+
+        return em_wp_catalog_module_slug_for_admin_page();
+    }
+}
+
 if (!function_exists('em_wp_catalog_breadcrumb_item_label')) {
     /**
      * Libelle fil d'Ariane pour l'entree catalogue en edition.
