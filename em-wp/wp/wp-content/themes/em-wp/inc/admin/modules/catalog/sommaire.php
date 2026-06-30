@@ -2322,21 +2322,23 @@ function em_wp_catalog_module_entry_definitions(string $module_slug): array
 /**
  * Module catalogue associé à un slug hub (callable ou slug direct).
  */
-function em_wp_catalog_module_slug_for_hub(string $hub_menu_slug): string
-{
-    $hub_slug = em_wp_catalog_resolve_hub_menu_slug($hub_menu_slug);
+if (!function_exists('em_wp_catalog_module_slug_for_hub')) {
+    function em_wp_catalog_module_slug_for_hub(string $hub_menu_slug): string
+    {
+        $hub_slug = em_wp_catalog_resolve_hub_menu_slug($hub_menu_slug);
 
-    if ($hub_slug === '') {
+        if ($hub_slug === '') {
+            return '';
+        }
+
+        foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+            if (sanitize_key((string) ($definition['slug'] ?? '')) === $hub_slug) {
+                return (string) $module_slug;
+            }
+        }
+
         return '';
     }
-
-    foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
-        if (sanitize_key((string) ($definition['slug'] ?? '')) === $hub_slug) {
-            return (string) $module_slug;
-        }
-    }
-
-    return '';
 }
 
 /**
@@ -2568,13 +2570,15 @@ function em_wp_catalog_style_definitions_from_entries(array $entries, string $ed
 /**
  * Résout le slug hub catalogue (callable ou slug direct).
  */
-function em_wp_catalog_resolve_hub_menu_slug(string $hub_menu_slug): string
-{
-    if ($hub_menu_slug !== '' && function_exists($hub_menu_slug)) {
-        return sanitize_key((string) call_user_func($hub_menu_slug));
-    }
+if (!function_exists('em_wp_catalog_resolve_hub_menu_slug')) {
+    function em_wp_catalog_resolve_hub_menu_slug(string $hub_menu_slug): string
+    {
+        if ($hub_menu_slug !== '' && function_exists($hub_menu_slug)) {
+            return sanitize_key((string) call_user_func($hub_menu_slug));
+        }
 
-    return sanitize_key($hub_menu_slug);
+        return sanitize_key($hub_menu_slug);
+    }
 }
 
 /**

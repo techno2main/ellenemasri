@@ -139,6 +139,42 @@ if (!function_exists('em_wp_catalog_header_title_html')) {
     }
 }
 
+if (!function_exists('em_wp_catalog_resolve_hub_menu_slug')) {
+    /**
+     * Resout le slug hub catalogue (callable ou slug direct).
+     */
+    function em_wp_catalog_resolve_hub_menu_slug(string $hub_menu_slug): string
+    {
+        if ($hub_menu_slug !== '' && function_exists($hub_menu_slug)) {
+            return sanitize_key((string) call_user_func($hub_menu_slug));
+        }
+
+        return sanitize_key($hub_menu_slug);
+    }
+}
+
+if (!function_exists('em_wp_catalog_module_slug_for_hub')) {
+    /**
+     * Module catalogue associe a un slug hub (callable ou slug direct).
+     */
+    function em_wp_catalog_module_slug_for_hub(string $hub_menu_slug): string
+    {
+        $hub_slug = em_wp_catalog_resolve_hub_menu_slug($hub_menu_slug);
+
+        if ($hub_slug === '' || !function_exists('em_wp_catalog_menu_definitions')) {
+            return '';
+        }
+
+        foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+            if (sanitize_key((string) ($definition['slug'] ?? '')) === $hub_slug) {
+                return (string) $module_slug;
+            }
+        }
+
+        return '';
+    }
+}
+
 if (!function_exists('em_wp_catalog_breadcrumb_item_label')) {
     /**
      * Libelle fil d'Ariane pour l'entree catalogue en edition.

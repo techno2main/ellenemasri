@@ -312,6 +312,7 @@ Avancement (lot en cours) :
 13. Extraction UI démarrée: helpers breadcrumb/entêtes catalogues mutualisés dans `inc/admin/shared/catalog-ui.php` et chargés depuis `inc/admin/bootstrap.php` (avec fallback `function_exists` conservé dans `sommaire.php`).
 14. Extraction UI complétée (lot 2): helpers tabs/sections d'édition (`render_module_entry_tabs`, `render_edit_section_open`, `render_edit_section_close`) mutualisés dans `inc/admin/shared/catalog-ui.php` avec fallback conservé dans `sommaire.php`.
 15. Extraction UI complétée (lot 3): helpers de breadcrumb page et compatibilité entête (`breadcrumb_crumbs_for_page`, `header_title_html`) mutualisés dans `inc/admin/shared/catalog-ui.php` avec fallback conservé dans `sommaire.php`.
+16. Extraction UI complétée (lot 4): helpers de résolution hub/module (`resolve_hub_menu_slug`, `module_slug_for_hub`) mutualisés dans `inc/admin/shared/catalog-ui.php` avec fallback conservé dans `sommaire.php`.
 
 ### Étape 4 — Purger les templates-parts legacy
 
