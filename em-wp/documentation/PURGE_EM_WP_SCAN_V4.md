@@ -2,6 +2,31 @@
 
 Date du scan : 2026-06-30
 
+## Objectif final (PROD)
+
+Après purge, le système doit fonctionner en V4 uniquement sur le site de production (hors Docker), avec cohérence complète :
+- Back office (Templates, Rubriques, Médias, Settings, Dashboard)
+- Front public
+- Données BDD (aucune dépendance runtime legacy)
+
+## Sommaire d'avancement des étapes
+
+Règle de gouvernance :
+- Ce sommaire est mis à jour uniquement après validation explicite utilisateur, post-vérifications fonctionnelles.
+- Aucune étape n'est marquée "Terminée" sans accord utilisateur.
+
+| Étape | Intitulé | Statut | Validation utilisateur |
+|---|---|---|---|
+| 0 | Branche dédiée + baseline + garde-fous | Terminée | Oui |
+| 1 | Coupure fallback legacy front | À faire | Non |
+| 2 | Couverture V4 complète des rubriques actives | À faire | Non |
+| 3 | Purge Catalogues legacy (back) | À faire | Non |
+| 4 | Purge template-parts legacy | À faire | Non |
+| 5 | Purge modules front legacy | À faire | Non |
+| 6 | Purge mappings/migrations legacy | À faire | Non |
+| 7 | Purge assets legacy | À faire | Non |
+| 8 | Validation finale et verrouillage PROD | À faire | Non |
+
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
 - em-wp/documentation
@@ -138,6 +163,28 @@ Règle d'exécution :
 - Validation obligatoire à chaque étape avant de passer à la suivante.
 - Aucune suppression massive sans gate de validation.
 
+Garde-fou supplémentaire (obligatoire) :
+- À chaque étape, contrôle BDD + Docker avant et après exécution.
+- Aucune purge de données legacy tant qu'une dépendance runtime est encore détectée.
+- Toute suppression de données se fait d'abord en marquage/archivage, puis suppression définitive sur étape dédiée.
+
+### Gate BDD/Docker à appliquer sur chaque étape
+
+Contrôles BDD (avant/après) :
+1. Lister les options WordPress legacy encore lues par le code (option_name, autoload, volume).
+2. Vérifier les méta/template pointers encore actifs vers catalogues legacy.
+3. Contrôler l'absence d'erreurs SQL et de valeurs orphelines sur les rubriques V4.
+4. Capturer un snapshot SQL horodaté avant toute suppression irréversible.
+
+Contrôles Docker (avant/après) :
+1. État des conteneurs em-wp-local, em-wp-local-db, em-wp-local-pma.
+2. Santé services (HTTP front/admin, connexion DB).
+3. Volumes montés et absence de fichiers générés parasites liés à l'ancien système.
+4. Logs conteneurs (php/apache/db) sans erreurs introduites par l'étape.
+
+Règle de décision :
+- Si un contrôle BDD ou Docker échoue, on stoppe l'étape, rollback commit, puis correctif ciblé.
+
 ### Étape 0 — Branche dédiée, baseline et filet de sécurité
 
 Objectif : figer le point de départ et sécuriser un rollback immédiat.
@@ -192,6 +239,7 @@ Cibles candidates :
 Actions :
 1. Retirer les points d'entrée admin catalogues non nécessaires à V4.
 2. Supprimer progressivement registry/crud legacy une fois les appels coupés.
+3. Vérifier côté BDD qu'aucune option active de back ne référence encore catalogues legacy.
 
 Risque :
 - Casse du back si un écran Dashboard/Settings utilise encore ces helpers.
@@ -242,6 +290,7 @@ Cibles candidates :
 Actions :
 1. Désactiver d'abord les hooks de migration.
 2. Supprimer ensuite le code mort une fois la data stabilisée.
+3. Nettoyer les données legacy en base uniquement après preuve d'absence de lecture runtime.
 
 Critère de sortie :
 - Aucun chemin de migration legacy déclenchable en runtime.
@@ -271,6 +320,8 @@ Checklist :
 2. Back : Templates, Rubriques, Médias, Settings, Dashboard.
 3. Logs : aucune erreur PHP/JS liée à la purge.
 4. Diff : uniquement suppressions prévues + ajustements de wiring V4.
+5. BDD : aucune option legacy encore consommée en runtime.
+6. Docker : stack stable, aucun warning persistant lié à la purge.
 
 Critère de sortie :
 - Site fonctionnel en V4 only (back + front), sans dépendance legacy runtime.
