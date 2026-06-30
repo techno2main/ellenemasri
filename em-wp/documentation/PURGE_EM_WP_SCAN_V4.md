@@ -21,7 +21,7 @@ Règle de gouvernance :
 | 1 | Coupure fallback legacy front | Terminée | Oui |
 | 2 | Couverture V4 complète des rubriques actives | Terminée | Oui |
 | 3 | Purge Catalogues legacy (back) | Terminée | Oui |
-| 4 | Purge template-parts legacy | À faire | Non |
+| 4 | Purge template-parts legacy | En cours | Non |
 | 5 | Purge modules front legacy | À faire | Non |
 | 6 | Purge mappings/migrations legacy | À faire | Non |
 | 7 | Purge assets legacy | À faire | Non |
@@ -334,6 +334,10 @@ Risque :
 
 Critère de sortie :
 - 0 appel get_template_part legacy pour la landing V4.
+
+Avancement (lot en cours) :
+1. Inventaire des appels `get_template_part('template-parts/sections/...')` effectué: les chemins encore actifs sont conservés et aucun retrait massif n'est engagé.
+2. Suppression ciblée d'un template orphelin non référencé (`template-parts/sections/landing/hero-slider-pair.php`) validée comme sans appel runtime.
 
 ### Étape 5 — Purger les modules front legacy devenus inutiles
 
