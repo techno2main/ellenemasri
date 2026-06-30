@@ -341,6 +341,8 @@ Avancement (lot en cours) :
 3. Suppression ciblée des fichiers `index.php` orphelins sous `template-parts/sections/**` (fichiers non appelés par les routes `get_template_part` actives).
 4. Coupure ciblée d'un appel legacy actif: le module CTA rend désormais son HTML directement depuis `inc/front/modules/cta/render.php` (suppression de `template-parts/sections/cta/cta.php`).
 5. Rafale modules simples: les modules `contacts`, `video`, `social`, `stream`, `release`, `top-bar` et `footer` rendent désormais leur HTML directement depuis `inc/front/modules/**/render.php` (suppression des template-parts associés).
+6. Trio principal migré: `header`, `hero` et `slider` rendent désormais leur HTML directement depuis `inc/front/modules/**/render.php` (suppression des template-parts `landing/header-pair.php` et `hero/ellene/hero.php`).
+7. Champ média rubriques V4 migré: l'aperçu slider utilise désormais le renderer interne (`em_wp_render_slider_mayami`) sans `get_template_part`, ce qui permet la suppression des derniers template-parts `hero/slider` legacy.
 
 ### Étape 5 — Purger les modules front legacy devenus inutiles
 
