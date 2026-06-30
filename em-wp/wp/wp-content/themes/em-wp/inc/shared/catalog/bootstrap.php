@@ -44,7 +44,6 @@ require_once __DIR__ . '/custom-modules/fields.php';
 require_once __DIR__ . '/custom-modules/rubrique.php';
 require_once __DIR__ . '/custom-modules/bootstrap.php';
 require_once __DIR__ . '/module-overrides.php';
-require_once __DIR__ . '/migrate-v1.php';
 require_once __DIR__ . '/resolve-style.php';
 
 /**
@@ -59,5 +58,6 @@ function em_wp_catalog_legacy_migration_enabled(): bool
 }
 
 if (em_wp_catalog_legacy_migration_enabled()) {
+    require_once __DIR__ . '/migrate-v1.php';
     add_action('init', 'em_wp_catalog_maybe_migrate_v1', 5);
 }

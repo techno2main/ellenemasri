@@ -430,6 +430,10 @@ add_action('admin_menu', 'em_wp_catalog_register_admin_menus');
  */
 function em_wp_catalog_remove_duplicate_submenus(): void
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return;
+    }
+
     $pages = array_merge(
         [em_wp_catalog_parent_menu_slug()],
         em_wp_catalog_registered_hub_menu_slugs()
@@ -621,6 +625,10 @@ function em_wp_catalog_enqueue_sommaire_crud_assets(string $catalog_type): void
  */
 function em_wp_catalog_hub_enqueue(): void
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return;
+    }
+
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $hub_slugs = array_merge(
         [em_wp_catalog_parent_menu_slug()],
@@ -742,6 +750,10 @@ function em_wp_catalog_edit_page_slugs(): array
  */
 function em_wp_catalog_edit_enqueue(): void
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return;
+    }
+
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
     if (!in_array($page_slug, em_wp_catalog_edit_page_slugs(), true)) {
@@ -1081,6 +1093,10 @@ function em_wp_admin_catalog_menu_highlight_slug(string $page_slug): string
  */
 function em_wp_catalog_redirect_legacy_hubs(): void
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return;
+    }
+
     if (!current_user_can('manage_options')) {
         return;
     }

@@ -302,6 +302,9 @@ Avancement (lot en cours) :
 3. Runtime/front non touché à ce stade (helpers catalog conservés tant que l'audit runtime n'est pas soldé).
 4. Migration legacy V1 automatique neutralisée via `em_wp_catalog_legacy_migration_enabled` (désactivée par défaut).
 5. Chargement BO de `inc/admin/modules/catalog/bootstrap.php` conservé (fonctions utilitaires requises), avec coupure des points d'entrée legacy pilotée par `em_wp_catalog_legacy_admin_enabled`.
+6. Chargement des fichiers d'actions/pages catalog legacy (`*-actions.php`, `registry-crud.php`, `custom-modules-admin.php`, `custom-module-actions.php`) conditionné au flag `em_wp_catalog_legacy_admin_enabled`.
+7. Chargement de `inc/shared/catalog/migrate-v1.php` conditionné à `em_wp_catalog_legacy_migration_enabled`.
+8. Hooks admin legacy dans `sommaire.php` (`remove_duplicate_submenus`, `hub_enqueue`, `edit_enqueue`, `redirect_legacy_hubs`) neutralisés quand `em_wp_catalog_legacy_admin_enabled` est désactivé.
 
 ### Étape 4 — Purger les templates-parts legacy
 
