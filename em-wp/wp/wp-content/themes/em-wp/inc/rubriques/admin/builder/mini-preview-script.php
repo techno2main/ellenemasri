@@ -23,6 +23,25 @@ window.EmWpV4Mini = (function () {
     function box(builder) { return builder ? builder.querySelector('.em-v4-miniprev:not(.em-v4-partprev)') : null; }
     function partBox(builder) { return builder ? builder.querySelector('.em-v4-partprev') : null; }
 
+    function firstItemLabel(items, rowNum, col) {
+        for (var i = 0; i < items.length; i++) {
+            var it = items[i] || {};
+            if (it.row === rowNum && it.col === col) {
+                var label = ((it.label || '') + '').trim();
+                if (label) { return label; }
+            }
+        }
+        return '';
+    }
+
+    function partTitle(data, rIdx, col, columns) {
+        var rl = (data.layout.rows || [])[rIdx] || {};
+        var custom = (rl.col_titles && rl.col_titles[col]) ? String(rl.col_titles[col]).trim() : '';
+        var rowNum = rIdx + 1;
+        var fallback = firstItemLabel(data.items || [], rowNum, col) || EMPTY_COL;
+        return 'L' + rowNum + 'C' + col + ' - ' + (custom || fallback);
+    }
+
     // Scale une vignette (.em-v4-livepreview) à la HAUTEUR du grid, comme le total.
     function fit(builder, host, inner) {
         var realW = Math.round(builder.getBoundingClientRect().width) || 800;
@@ -98,6 +117,7 @@ window.EmWpV4Mini = (function () {
         }).map(function (it) { var o = {}; for (var k in it) { o[k] = it[k]; } o.row = 1; o.col = 1; return o; });
 
         c.hidden = false;
+        c.setAttribute('title', partTitle(data, info.rIdx, col, columns));
         var stage = c.querySelector('.em-v4-miniprev__stage');
         var inner = document.createElement('div');
         inner.className = 'em-v4-livepreview';

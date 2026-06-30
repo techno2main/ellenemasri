@@ -42,7 +42,7 @@ function em_wp_admin_dashboard_render_row_rubriques(string $active_label, string
                         href="<?php echo esc_url(em_wp_admin_dashboard_rubriques_overview_url()); ?>"
                         style="--em-wp-template-accent:#af16a8;--em-wp-template-text:#ffffff;"
                     >
-                        <span class="em-wp-hub__template-live-pill-name"><?php echo esc_html(mb_strtoupper(__('Voir tout', 'em-wp'))); ?></span>
+                        <span class="em-wp-hub__template-live-pill-name"><?php echo esc_html(mb_strtoupper(__('Gérer les rubriques', 'em-wp'))); ?></span>
                     </a>
                 </div>
                 <p class="em-wp-hub__live em-wp-hub__live--in-card em-wp-hub__live--entry-links em-wp-hub__live--uppercase em-wp-hub__live--rubriques-empty" aria-hidden="true">

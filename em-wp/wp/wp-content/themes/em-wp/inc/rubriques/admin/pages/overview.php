@@ -159,27 +159,90 @@ function em_wp_v4_overview_render(): void
     <?php em_wp_v4_overview_render_rename_script(); ?>
     <script>
     (function () {
+        function setCreateOpenState(btn, box, isOpen) {
+            if (!box) { return; }
+            box.hidden = !isOpen;
+            if (!btn) { return; }
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            btn.classList.toggle('is-active', !!isOpen);
+        }
+
+        function syncCardAddButton(card) {
+            if (!card) { return; }
+            var hasOpenItem = !!card.querySelector('.em-v4-items > .em-v4-item[open]');
+            card.classList.toggle('em-v4-card--item-open', hasOpenItem);
+            if (!hasOpenItem) { return; }
+            var btn = card.querySelector('.em-v4-card__additem');
+            var box = card.querySelector('.em-v4-create');
+            setCreateOpenState(btn, box, false);
+        }
+
         // Accordéon : une seule rubrique ouverte à la fois (focus sur l'édition).
         var cards = document.querySelectorAll('.em-v4-card');
         cards.forEach(function (card) {
             card.addEventListener('toggle', function () {
+                var ownCreate = card.querySelector('.em-v4-create');
+                var ownBtn = card.querySelector('.em-v4-card__additem');
+                setCreateOpenState(ownBtn, ownCreate, false);
                 if (!card.open) { return; }
                 cards.forEach(function (other) {
                     if (other !== card && other.open) { other.open = false; }
+                    if (other !== card) {
+                        var otherBtn = other.querySelector('.em-v4-card__additem');
+                        var otherCreate = other.querySelector('.em-v4-create');
+                        setCreateOpenState(otherBtn, otherCreate, false);
+                    }
                 });
+                syncCardAddButton(card);
             });
+        });
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.em-v4-card__additem');
+            if (!btn) { return; }
+            e.preventDefault();
+            e.stopPropagation();
+            var card = btn.closest('.em-v4-card');
+            if (card && !card.open) { card.open = true; }
+            var targetId = btn.getAttribute('data-create-target') || '';
+            var createBox = targetId ? document.getElementById(targetId) : null;
+            if (!createBox) { return; }
+            var nextOpen = createBox.hidden;
+            setCreateOpenState(btn, createBox, nextOpen);
+            if (!nextOpen) { return; }
+            try {
+                var firstInput = createBox.querySelector('.em-v4-create__name:not([disabled])');
+                if (firstInput) { firstInput.focus(); }
+            } catch (err) {}
         });
         // Accordéon : une seule section (item) ouverte à la fois, par rubrique.
         document.querySelectorAll('.em-v4-items').forEach(function (group) {
             var items = group.querySelectorAll(':scope > .em-v4-item');
             items.forEach(function (item) {
                 item.addEventListener('toggle', function () {
-                    if (!item.open) { return; }
-                    items.forEach(function (other) {
-                        if (other !== item && other.open) { other.open = false; }
-                    });
+                    var card = item.closest('.em-v4-card');
+                    if (item.open) {
+                        items.forEach(function (other) {
+                            if (other !== item && other.open) { other.open = false; }
+                        });
+                    }
+                    syncCardAddButton(card);
                 });
             });
+
+            var anyItem = group.querySelector(':scope > .em-v4-item');
+            if (anyItem) {
+                var card = anyItem.closest('.em-v4-card');
+                syncCardAddButton(card);
+            }
+        });
+
+        // État initial ARIA/cohérence visuelle.
+        cards.forEach(function (card) {
+            var btn = card.querySelector('.em-v4-card__additem');
+            var box = card.querySelector('.em-v4-create');
+            if (!btn || !box) { return; }
+            setCreateOpenState(btn, box, !box.hidden);
+            syncCardAddButton(card);
         });
     })();
     </script>
@@ -234,17 +297,19 @@ function em_wp_v4_overview_render_type(string $slug, array $type, bool $open): v
 {
     $count = count(em_wp_v4_get_items($slug));
     $label = (string) ($type['label_plural'] ?? $type['label']);
+    $label_singular = (string) ($type['label'] ?? $label);
+    $add_label = sprintf(__('Ajouter une Section %s', 'em-wp'), $label_singular);
     ?>
     <details class="em-v4-collapse em-v4-card" id="em-v4-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-v4-collapse__summary em-v4-card__head">
             <span class="em-v4-card__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>" aria-hidden="true"></span>
             <span class="em-v4-collapse__chevron" aria-hidden="true"></span>
             <span class="em-v4-card__icon dashicons <?php echo esc_attr((string) ($type['icon'] ?? 'dashicons-screenoptions')); ?>"></span>
-            <strong class="em-v4-card__name"><?php echo esc_html($label); ?></strong>
-            <input type="text" class="em-v4-card__nameinput" data-slug="<?php echo esc_attr($slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
             <button type="button" class="em-v4-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-wp'); ?>">
                 <span class="dashicons dashicons-edit" aria-hidden="true"></span>
             </button>
+            <strong class="em-v4-card__name"><?php echo esc_html($label); ?></strong>
+            <input type="text" class="em-v4-card__nameinput" data-slug="<?php echo esc_attr($slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
             <button type="button" class="em-v4-card__confirm" title="<?php esc_attr_e('Valider', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-wp'); ?>" hidden>
                 <span class="dashicons dashicons-yes" aria-hidden="true"></span>
             </button>
@@ -252,6 +317,10 @@ function em_wp_v4_overview_render_type(string $slug, array $type, bool $open): v
                 <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
             </button>
             <span class="em-v4-card__count" title="<?php echo esc_attr(sprintf(_n('%d section', '%d sections', $count, 'em-wp'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
+            <button type="button" class="em-v4-card__additem" data-create-target="em-v4-create-<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($add_label); ?>" aria-label="<?php echo esc_attr($add_label); ?>" aria-expanded="false">
+                <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+                <span><?php echo esc_html($add_label); ?></span>
+            </button>
         </summary>
         <div class="em-v4-collapse__body">
             <?php em_wp_v4_render_items_section($slug); ?>

@@ -68,6 +68,9 @@ require __DIR__ . '/slides-editor-script.php';
         }
 
         function update() {
+            if (window.EmWpV4Rows && window.EmWpV4Rows.refreshAllTabNames) {
+                window.EmWpV4Rows.refreshAllTabNames(builder);
+            }
             var items = collect();
             var layout = collectLayout();
             var colors = EmWpV4Appearance.collect(builder);
@@ -139,6 +142,17 @@ require __DIR__ . '/slides-editor-script.php';
                 e.stopPropagation();
                 return;
             }
+            var colTitleEdit = e.target.closest('.em-v4-col-tab__titleedit');
+            if (colTitleEdit) {
+                e.preventDefault();
+                e.stopPropagation();
+                startColTitleEdit(colTitleEdit.closest('.em-v4-col-tab'));
+                return;
+            }
+            if (e.target.closest('.em-v4-col-tab__titleinput')) {
+                e.stopPropagation();
+                return;
+            }
             if (e.target.closest('.em-v4-row__titleinput')) {
                 e.stopPropagation();
                 return;
@@ -160,6 +174,19 @@ require __DIR__ . '/slides-editor-script.php';
             update();
         });
         builder.addEventListener('keydown', function (e) {
+            var colTitleInput = e.target && e.target.closest ? e.target.closest('.em-v4-col-tab__titleinput') : null;
+            if (colTitleInput) {
+                var colTab = colTitleInput.closest('.em-v4-col-tab');
+                if (!colTab) { return; }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    commitColTitleEdit(colTab, update);
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelColTitleEdit(colTab);
+                }
+                return;
+            }
             var titleInput = e.target && e.target.closest ? e.target.closest('.em-v4-row__titleinput') : null;
             if (!titleInput) { return; }
             var titleWrap = titleInput.closest('.em-v4-row__title');
@@ -173,6 +200,16 @@ require __DIR__ . '/slides-editor-script.php';
             }
         });
         builder.addEventListener('focusout', function (e) {
+            var colTitleInput = e.target && e.target.closest ? e.target.closest('.em-v4-col-tab__titleinput') : null;
+            if (colTitleInput) {
+                var colTab = colTitleInput.closest('.em-v4-col-tab');
+                if (!colTab || colTab.getAttribute('data-editing') !== '1') { return; }
+                window.setTimeout(function () {
+                    if (colTab.contains(document.activeElement)) { return; }
+                    commitColTitleEdit(colTab, update);
+                }, 0);
+                return;
+            }
             var titleInput = e.target && e.target.closest ? e.target.closest('.em-v4-row__titleinput') : null;
             if (!titleInput) { return; }
             var titleWrap = titleInput.closest('.em-v4-row__title');
@@ -284,6 +321,38 @@ require __DIR__ . '/slides-editor-script.php';
             text.textContent = input.getAttribute('placeholder') || 'Titre de ligne';
             text.setAttribute('data-empty', '1');
         }
+    }
+
+    function startColTitleEdit(tab) {
+        if (!tab || tab.getAttribute('data-editing') === '1') { return; }
+        var input = tab.querySelector('.em-v4-col-tab__titleinput');
+        if (!input) { return; }
+        tab.setAttribute('data-editing', '1');
+        tab.setAttribute('data-prev', input.value || '');
+        input.hidden = false;
+        input.focus();
+        input.select();
+    }
+
+    function commitColTitleEdit(tab, update) {
+        if (!tab || tab.getAttribute('data-editing') !== '1') { return; }
+        var input = tab.querySelector('.em-v4-col-tab__titleinput');
+        if (!input) { return; }
+        var value = (input.value || '').trim();
+        var prev = (tab.getAttribute('data-prev') || '').trim();
+        input.value = value;
+        tab.setAttribute('data-editing', '0');
+        input.hidden = true;
+        if (value !== prev) { update(); }
+    }
+
+    function cancelColTitleEdit(tab) {
+        if (!tab || tab.getAttribute('data-editing') !== '1') { return; }
+        var input = tab.querySelector('.em-v4-col-tab__titleinput');
+        if (!input) { return; }
+        input.value = tab.getAttribute('data-prev') || '';
+        tab.setAttribute('data-editing', '0');
+        input.hidden = true;
     }
 
     // Sérialise une chip selon son type.
@@ -423,6 +492,16 @@ require __DIR__ . '/slides-editor-script.php';
         if (pickOpt) { e.preventDefault(); chooseCellType(pickOpt); return; }
         var mc = t.closest('.em-v4-gridmap__cell');
         if (mc) { e.preventDefault(); window.EmWpV4Rows.openCell(builder, parseInt(mc.getAttribute('data-row-index'), 10) || 0, parseInt(mc.getAttribute('data-col'), 10) || 1); return; }
+        var rc = t.closest('.em-v4-row__colname');
+        if (rc) {
+            e.preventDefault();
+            e.stopPropagation();
+            var rr = rc.closest('.em-v4-row');
+            if (rr && window.EmWpV4Rows && window.EmWpV4Rows.openAt) {
+                window.EmWpV4Rows.openAt(rr, parseInt(rc.getAttribute('data-col'), 10) || 1);
+            }
+            return;
+        }
         if (t.closest('.em-v4-row__drag')) { e.preventDefault(); return; }
         if (t.closest('.em-v4-row__add')) { e.preventDefault(); window.EmWpV4Rows.addRow(builder, update, t.closest('.em-v4-row')); return; }
         if (t.closest('.em-v4-addrow')) { e.preventDefault(); window.EmWpV4Rows.addRow(builder, update); return; }

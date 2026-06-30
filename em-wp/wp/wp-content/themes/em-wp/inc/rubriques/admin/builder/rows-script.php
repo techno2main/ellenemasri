@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 ?>
 <script>
 window.EmWpV4Rows = (function () {
-    var COL = '<?php echo esc_js(__('Colonne', 'em-wp')); ?>';
+    var COL_EMPTY = '<?php echo esc_js(__('Vide', 'em-wp')); ?>';
     var EMPTY = '<?php echo esc_js(__('Colonne vide', 'em-wp')); ?>';
     var MAXCOL = <?php echo (int) em_wp_rubrique_max_columns(); ?>;
     var DEL_TITLE = '<?php echo esc_js(__('Supprimer la colonne', 'em-wp')); ?>';
@@ -32,6 +32,7 @@ window.EmWpV4Rows = (function () {
 
     function tabsEl(row) { return row.querySelector('.em-v4-col-tabs'); }
     function panelsEl(row) { return row.querySelector('.em-v4-col-panels'); }
+    function rowColNamesEl(row) { return row.querySelector('.em-v4-row__colnames'); }
 
     function buildPanel(builder, index, active) {
         var tpl = builder.querySelector('.em-v4-cell-template');
@@ -46,9 +47,86 @@ window.EmWpV4Rows = (function () {
         var tab = tpl.content.querySelector('.em-v4-col-tab').cloneNode(true);
         tab.setAttribute('data-col', index);
         tab.classList.toggle('is-active', !!active);
-        tab.querySelector('.em-v4-col-tab__name').textContent = COL + ' ' + index;
+        tab.querySelector('.em-v4-col-tab__name').textContent = 'L1C' + index + ' - ' + COL_EMPTY;
         window.EmWpV4Align.mark(tab.querySelector('.em-v4-align__group'), align);
         return tab;
+    }
+
+    function rowNumber(row) {
+        var rowsWrap = row && row.parentNode;
+        if (!rowsWrap) { return 1; }
+        var list = rowsWrap.querySelectorAll(':scope > .em-v4-row');
+        for (var i = 0; i < list.length; i++) {
+            if (list[i] === row) { return i + 1; }
+        }
+        return 1;
+    }
+
+    function firstColumnName(row, col) {
+        var panel = row.querySelector('.em-v4-col[data-col="' + col + '"]');
+        if (!panel) { return COL_EMPTY; }
+        var labels = panel.querySelectorAll('.em-v4-chip .em-v4-chip__label');
+        for (var i = 0; i < labels.length; i++) {
+            var value = ((labels[i].value || labels[i].textContent || '') + '').trim();
+            if (value) { return value; }
+        }
+        return COL_EMPTY;
+    }
+
+    function customColumnName(row, col) {
+        var tab = row.querySelector('.em-v4-col-tab[data-col="' + col + '"]');
+        if (!tab) { return ''; }
+        var input = tab.querySelector('.em-v4-col-tab__titleinput');
+        return input ? ((input.value || '') + '').trim() : '';
+    }
+
+    function resolvedColumnName(row, col) {
+        var custom = customColumnName(row, col);
+        return custom || firstColumnName(row, col);
+    }
+
+    function tabText(row, col) {
+        return 'L' + rowNumber(row) + 'C' + col + ' - ' + resolvedColumnName(row, col);
+    }
+
+    function refreshRowTabNames(row) {
+        if (!row) { return; }
+        row.querySelectorAll('.em-v4-col-tab').forEach(function (tab) {
+            var col = parseInt(tab.getAttribute('data-col'), 10) || 1;
+            var name = tab.querySelector('.em-v4-col-tab__name');
+            if (name) { name.textContent = tabText(row, col); }
+        });
+        refreshRowColNames(row);
+    }
+
+    function refreshRowColNames(row) {
+        var box = rowColNamesEl(row);
+        if (!box) { return; }
+        var n = currentColumns(row);
+        var active = row.open ? activeCol(row) : 0;
+        var html = '';
+        for (var c = 1; c <= n; c++) {
+            html += '<button type="button" class="em-v4-row__colname' + (c === active ? ' is-active' : '') + '" data-col="' + c + '">' +
+                escapeHtml(resolvedColumnName(row, c)) +
+                '</button>';
+        }
+        box.innerHTML = html;
+    }
+
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function refreshAllTabNames(builder) {
+        if (!builder) { return; }
+        builder.querySelectorAll('.em-v4-rows > .em-v4-row').forEach(function (row) {
+            refreshRowTabNames(row);
+        });
     }
 
     function currentColumns(row) {
@@ -81,6 +159,9 @@ window.EmWpV4Rows = (function () {
         });
         panelsEl(row).querySelectorAll('.em-v4-col').forEach(function (p) {
             p.classList.toggle('is-active', (parseInt(p.getAttribute('data-col'), 10) || 1) === col);
+        });
+        row.querySelectorAll('.em-v4-row__colname').forEach(function (btn) {
+            btn.classList.toggle('is-active', row.open && (parseInt(btn.getAttribute('data-col'), 10) || 1) === col);
         });
         var builder = row.closest('.em-v4-builder');
         if (builder) {
@@ -160,19 +241,29 @@ window.EmWpV4Rows = (function () {
     }
 
     // Vide : on rend quand même la section (fond/marges) et on y pose le message.
-    function renderPreviewInto(layout, items, colors, emptyMsg, rowTitle) {
+    function renderPreviewInto(layout, items, colors, emptyMsg, previewTitle) {
         var inner = document.createElement('div');
         inner.className = 'em-v4-livepreview';
         window.EmWpV4Preview.render(inner, layout, items, colors);
         if (!items.length) { (inner.querySelector('.em-rubrique') || inner).insertAdjacentHTML('beforeend', '<div class="em-v4-gridmap__pop-empty">' + emptyMsg + '</div>'); }
         hoverPop.innerHTML = '';
-        if (rowTitle) {
+        if (previewTitle) {
             var title = document.createElement('div');
             title.className = 'em-v4-gridmap__pop-title';
-            title.textContent = rowTitle;
+            title.textContent = previewTitle;
             hoverPop.appendChild(title);
         }
         hoverPop.appendChild(inner);
+    }
+
+    function previewCellTitle(builder, rIdx, col) {
+        var row = builder.querySelectorAll('.em-v4-rows > .em-v4-row')[rIdx];
+        if (row) {
+            return tabText(row, col);
+        }
+
+        var rowNum = rIdx + 1;
+        return 'L' + rowNum + 'C' + col + ' - ' + COL_EMPTY;
     }
 
     // Aperçu au survol : rend uniquement la colonne concernée dans une bulle.
@@ -186,13 +277,12 @@ window.EmWpV4Rows = (function () {
         var rl = (data.layout.rows || [])[rIdx] || {};
         var columns = clampCols(rl.columns);
         var align = (rl.align || {})[col] || 'left';
-        var rowTitle = (rl.title || '').toString().trim();
         var rowNum = rIdx + 1;
         var cellItems = data.items.filter(function (it) {
             return it.row === rowNum && Math.min(columns, Math.max(1, it.col)) === col;
         }).map(function (it) { var o = {}; for (var k in it) { o[k] = it[k]; } o.row = 1; o.col = 1; return o; });
         ensurePop();
-        renderPreviewInto({ rows: [{ columns: 1, align: { 1: align } }] }, cellItems, data.colors, EMPTY, rowTitle);
+        renderPreviewInto({ rows: [{ columns: 1, align: { 1: align } }] }, cellItems, data.colors, EMPTY, previewCellTitle(builder, rIdx, col));
         placePop(cell);
     }
 
@@ -207,7 +297,6 @@ window.EmWpV4Rows = (function () {
         var n = tabs.length;
         tabs.forEach(function (t, idx) {
             t.setAttribute('data-col', idx + 1);
-            t.querySelector('.em-v4-col-tab__name').textContent = COL + ' ' + (idx + 1);
             var sel = t.querySelector('.em-v4-align__sel');
             if (sel) { sel.setAttribute('data-col', idx + 1); }
             // Flèches « déplacer » : désactivées aux extrémités.
@@ -220,6 +309,7 @@ window.EmWpV4Rows = (function () {
         var add = tabsEl(row).querySelector('.em-v4-col-tab__add');
         if (add) { add.style.display = currentColumns(row) >= MAXCOL ? 'none' : ''; }
         updateColcount(row);
+        refreshRowTabNames(row);
     }
 
     // Déplace une colonne (onglet + panneau, donc ses champs ET son alignement)
@@ -343,7 +433,9 @@ window.EmWpV4Rows = (function () {
         });
         builder.addEventListener('toggle', function (e) {
             var row = e.target;
-            if (!row.classList || !row.classList.contains('em-v4-row') || !row.open) { return; }
+            if (!row.classList || !row.classList.contains('em-v4-row')) { return; }
+            refreshAllTabNames(builder);
+            if (!row.open) { return; }
             builder.querySelectorAll('.em-v4-row[open]').forEach(function (r) { if (r !== row) { r.open = false; } });
             activate(row, pendingCol || 1);
             pendingCol = null;
@@ -353,13 +445,19 @@ window.EmWpV4Rows = (function () {
     // Lay-out sérialisable d'une ligne : { columns, align:{col:val} }.
     function rowLayout(row) {
         var align = {};
+        var colTitles = {};
         row.querySelectorAll('.em-v4-align__sel').forEach(function (sel) {
             align[parseInt(sel.getAttribute('data-col'), 10)] = sel.value;
+        });
+        row.querySelectorAll('.em-v4-col-tab').forEach(function (tab) {
+            var col = parseInt(tab.getAttribute('data-col'), 10) || 1;
+            var input = tab.querySelector('.em-v4-col-tab__titleinput');
+            colTitles[col] = input ? ((input.value || '') + '').trim() : '';
         });
         var title = '';
         var input = row.querySelector('.em-v4-row__titleinput');
         if (input) { title = (input.value || '').trim(); }
-        return { columns: rowColumns(row), align: align, title: title };
+        return { columns: rowColumns(row), align: align, title: title, col_titles: colTitles };
     }
 
     return {
@@ -367,7 +465,9 @@ window.EmWpV4Rows = (function () {
         rowLayout: rowLayout, singleOpen: singleOpen, activate: activate,
         activateTab: activateTab, updateColcount: updateColcount,
         renderMap: renderMap, openCell: openCell,
-        showCellPreview: showCellPreview, hideCellPreview: hideCellPreview
+        showCellPreview: showCellPreview, hideCellPreview: hideCellPreview,
+        refreshAllTabNames: refreshAllTabNames,
+        openAt: openAt
     };
 })();
 </script>

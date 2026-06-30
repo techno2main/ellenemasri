@@ -4,7 +4,7 @@
  *
  * Chaque ligne définit son propre nombre de colonnes (1 à 4) et l'alignement de
  * chacune. Le lay-out est donc une liste de lignes :
- *   { rows: [ { columns:int, align:{1:str,2:str,…}, title:str }, … ] }
+ *   { rows: [ { columns:int, align:{1:str,2:str,…}, title:str, col_titles:{1:str,2:str,…} }, … ] }
  *
  * Les champs se positionnent par `row` (index de ligne) et `col` (colonne de la
  * ligne). Le rendu final utilise une grille CSS (repeat(columns, 1fr)) par ligne.
@@ -113,7 +113,7 @@ function em_wp_rubrique_fields_row_count(array $fields): int
  *
  * @param mixed                            $raw
  * @param array<int, array<string, mixed>> $fields champs (pour déduire le nombre de lignes)
- * @return array{rows:array<int,array{columns:int,align:array<int,string>,title:string}>}
+ * @return array{rows:array<int,array{columns:int,align:array<int,string>,title:string,col_titles:array<int,string>}>}
  */
 function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
 {
@@ -135,21 +135,27 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
             $cols = (int) ($entry['columns'] ?? 0);
             $align_src = is_array($entry['align'] ?? null) ? $entry['align'] : [];
             $title = sanitize_text_field((string) ($entry['title'] ?? ''));
+            $col_titles_src = is_array($entry['col_titles'] ?? null) ? $entry['col_titles'] : [];
         } else {
             $cols = $legacy_cols;
             $align_src = $legacy_align;
             $title = '';
+            $col_titles_src = [];
         }
 
         $cols = min(em_wp_rubrique_max_columns(), max(1, $cols));
         $align = [];
+        $col_titles = [];
 
         for ($c = 1; $c <= $cols; $c++) {
             $value = isset($align_src[$c]) ? (string) $align_src[$c] : '';
             $align[$c] = $value !== '' ? em_wp_rubrique_valid_align($value) : em_wp_rubrique_default_align($c, $cols);
+
+            $raw_title = isset($col_titles_src[$c]) ? (string) $col_titles_src[$c] : '';
+            $col_titles[$c] = sanitize_text_field($raw_title);
         }
 
-        $rows[] = ['columns' => $cols, 'align' => $align, 'title' => $title];
+        $rows[] = ['columns' => $cols, 'align' => $align, 'title' => $title, 'col_titles' => $col_titles];
     }
 
     return ['rows' => $rows];
@@ -159,11 +165,26 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
  * Lignes d'un lay-out normalisé.
  *
  * @param array<string, mixed> $layout
- * @return array<int, array{columns:int, align:array<int,string>, title:string}>
+ * @return array<int, array{columns:int, align:array<int,string>, title:string, col_titles:array<int,string>}>
  */
 function em_wp_rubrique_layout_rows(array $layout): array
 {
     return is_array($layout['rows'] ?? null) ? array_values($layout['rows']) : [];
+}
+
+/**
+ * Titre personnalisé d'une colonne d'une ligne (1-indexées).
+ *
+ * @param array<string, mixed> $layout
+ */
+function em_wp_rubrique_layout_col_title_for(array $layout, int $row, int $col): string
+{
+    $rows = em_wp_rubrique_layout_rows($layout);
+    $entry = $rows[$row - 1] ?? null;
+    $col_titles = is_array($entry['col_titles'] ?? null) ? $entry['col_titles'] : [];
+    $value = isset($col_titles[$col]) ? (string) $col_titles[$col] : '';
+
+    return sanitize_text_field($value);
 }
 
 /**

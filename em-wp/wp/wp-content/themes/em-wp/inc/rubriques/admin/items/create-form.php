@@ -20,15 +20,10 @@ function em_wp_v4_render_create_footer_form(string $type_slug): void
     $n = em_wp_rubrique_type_nouns($type_slug);
     $label_uc = (string) (em_wp_rubrique_type_get($type_slug)['label'] ?? mb_strtoupper($type_slug));
     $items = em_wp_v4_get_items($type_slug);
-    $singular = ucfirst($n['singular']);
-    $title = mb_strtoupper(sprintf(__('Nouvelle %s', 'em-wp'), $singular), 'UTF-8');
     $action = esc_url(admin_url('admin-post.php'));
+    $create_id = 'em-v4-create-' . $type_slug;
     ?>
-    <details class="em-v4-collapse em-v4-create em-v4-create--nochevron">
-        <summary class="em-v4-collapse__summary">
-            <span class="dashicons dashicons-plus-alt2"></span>
-            <strong><?php echo esc_html($title); ?></strong>
-        </summary>
+    <div id="<?php echo esc_attr($create_id); ?>" class="em-v4-collapse em-v4-create em-v4-create--nochevron" hidden>
         <div class="em-v4-collapse__body em-v4-create__options">
             <form method="post" action="<?php echo $action; ?>" class="em-v4-form em-v4-create__row">
                 <?php wp_nonce_field('em_wp_v4_create_item'); ?>
@@ -60,7 +55,7 @@ function em_wp_v4_render_create_footer_form(string $type_slug): void
             </form>
             <?php endif; ?>
         </div>
-    </details>
+    </div>
     <?php
     em_wp_v4_render_create_mode_script();
 }
