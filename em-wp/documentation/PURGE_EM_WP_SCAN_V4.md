@@ -340,6 +340,7 @@ Avancement (lot en cours) :
 2. Suppression ciblée d'un template orphelin non référencé (`template-parts/sections/landing/hero-slider-pair.php`) validée comme sans appel runtime.
 3. Suppression ciblée des fichiers `index.php` orphelins sous `template-parts/sections/**` (fichiers non appelés par les routes `get_template_part` actives).
 4. Coupure ciblée d'un appel legacy actif: le module CTA rend désormais son HTML directement depuis `inc/front/modules/cta/render.php` (suppression de `template-parts/sections/cta/cta.php`).
+5. Rafale modules simples: les modules `contacts`, `video`, `social`, `stream`, `release`, `top-bar` et `footer` rendent désormais leur HTML directement depuis `inc/front/modules/**/render.php` (suppression des template-parts associés).
 
 ### Étape 5 — Purger les modules front legacy devenus inutiles
 
