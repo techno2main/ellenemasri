@@ -406,8 +406,6 @@ function em_wp_stream_maybe_migrate_legacy_platform_data(): void
 
     update_option('em_wp_stream_platforms_migrated_v2', 1);
 }
-add_action('init', 'em_wp_stream_maybe_migrate_legacy_platform_data', 1);
-add_action('admin_init', 'em_wp_stream_maybe_migrate_legacy_platform_data', 1);
 
 /**
  * Migre l'ancienne liste stream_icons TOP-BAR vers stream_icons_hidden (section).
@@ -441,5 +439,3 @@ function em_wp_top_bar_maybe_migrate_stream_icons_section(): void
     update_option('em_wp_top_bar_options', $saved);
     update_option('em_wp_top_bar_stream_icons_v3', 1);
 }
-add_action('init', 'em_wp_top_bar_maybe_migrate_stream_icons_section', 2);
-add_action('admin_init', 'em_wp_top_bar_maybe_migrate_stream_icons_section', 2);

@@ -45,19 +45,3 @@ require_once __DIR__ . '/custom-modules/rubrique.php';
 require_once __DIR__ . '/custom-modules/bootstrap.php';
 require_once __DIR__ . '/module-overrides.php';
 require_once __DIR__ . '/resolve-style.php';
-
-/**
- * Active/désactive la migration legacy V1 auto au boot.
- *
- * Étape 3 purge V4: désactivée par défaut pour éviter d'entretenir
- * les chemins de migration historiques tant que la purge n'est pas soldée.
- */
-function em_wp_catalog_legacy_migration_enabled(): bool
-{
-    return (bool) apply_filters('em_wp_catalog_legacy_migration_enabled', false);
-}
-
-if (em_wp_catalog_legacy_migration_enabled()) {
-    require_once __DIR__ . '/migrate-v1.php';
-    add_action('init', 'em_wp_catalog_maybe_migrate_v1', 5);
-}

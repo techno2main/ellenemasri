@@ -23,7 +23,7 @@ Règle de gouvernance :
 | 3 | Purge Catalogues legacy (back) | Terminée | Oui |
 | 4 | Purge template-parts legacy | Terminée | Oui |
 | 5 | Purge modules front legacy | Terminée | Oui |
-| 6 | Purge mappings/migrations legacy | En cours | Non |
+| 6 | Purge mappings/migrations legacy | Terminée | Non |
 | 7 | Purge assets legacy | À faire | Non |
 | 8 | Validation finale et verrouillage PROD | À faire | Non |
 
@@ -35,6 +35,7 @@ Règle de gouvernance :
 4. 2026-06-30 — Étape 3 validée par utilisateur (purge Catalogues legacy back en mode safe, extraction helpers vers shared et stabilité runtime confirmée).
 5. 2026-06-30 — Étape 4 validée par utilisateur (purge complète des template-parts `sections`, appels legacy supprimés et dossiers vides nettoyés).
 6. 2026-06-30 — Étape 5 validée par utilisateur (wiring front passé en V4 strict, fallbacks legacy de rendu supprimés et alias modules non utilisés purgés).
+7. 2026-06-30 — Étape 6 exécutée techniquement (suppression des hooks auto de migration legacy et des fichiers `migrate.php` orphelins), en attente de validation utilisateur finale.
 
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
@@ -382,6 +383,14 @@ Actions :
 
 Critère de sortie :
 - Aucun chemin de migration legacy déclenchable en runtime.
+
+Avancement (lot en cours) :
+1. Fallback de mapping d'options legacy retiré: `em_wp_template_resolve_option_name()` lit désormais uniquement les options V2 (`em_wp_{rubrique}_{template}_options`).
+2. Hooks automatiques de migration stream/top-bar retirés de `inc/shared/stream-platform-items.php`.
+3. Chargements `migrate.php` supprimés des bootstraps admin modules (`video`, `social`, `footer`, `stream`, `top-bar`, `release`, `cta`).
+4. Fichiers de migration modules supprimés (`inc/admin/modules/*/migrate.php`) après débranchement.
+5. Migration catalogue V1 retirée du boot runtime (`inc/shared/catalog/bootstrap.php`) et suppression du fichier `inc/shared/catalog/migrate-v1.php`.
+6. Validation technique: `php -l` Docker OK sur tous les fichiers modifiés et recherche `add_action(...migrate...)` sans résultat.
 
 ### Étape 7 — Purge assets legacy
 
