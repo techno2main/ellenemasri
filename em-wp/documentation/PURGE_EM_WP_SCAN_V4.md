@@ -18,7 +18,7 @@ Règle de gouvernance :
 | Étape | Intitulé | Statut | Validation utilisateur |
 |---|---|---|---|
 | 0 | Branche dédiée + baseline + garde-fous | Terminée | Oui |
-| 1 | Coupure fallback legacy front | À faire | Non |
+| 1 | Coupure fallback legacy front | Terminée | Oui |
 | 2 | Couverture V4 complète des rubriques actives | À faire | Non |
 | 3 | Purge Catalogues legacy (back) | À faire | Non |
 | 4 | Purge template-parts legacy | À faire | Non |
