@@ -27,6 +27,10 @@ Règle de gouvernance :
 | 7 | Purge assets legacy | À faire | Non |
 | 8 | Validation finale et verrouillage PROD | À faire | Non |
 
+### Historique validations
+
+1. 2026-06-30 — Étape 1 validée par utilisateur (vérification fonctionnelle OK) — commit 58db430.
+
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
 - em-wp/documentation
