@@ -120,7 +120,11 @@ function em_wp_admin_menu_position_registry(): array
     $registry['media-new.php'] = $p++;
     $registry['separator-em-wp-after-medias'] = $p++;
 
-    if (function_exists('em_wp_catalog_parent_menu_slug')) {
+    $catalog_legacy_enabled = function_exists('em_wp_catalog_legacy_admin_enabled')
+        ? em_wp_catalog_legacy_admin_enabled()
+        : false;
+
+    if ($catalog_legacy_enabled && function_exists('em_wp_catalog_parent_menu_slug')) {
         $registry[em_wp_catalog_parent_menu_slug()] = $p++;
 
         if (function_exists('em_wp_catalog_menu_definitions') && function_exists('em_wp_admin_catalog_menu_modules')) {

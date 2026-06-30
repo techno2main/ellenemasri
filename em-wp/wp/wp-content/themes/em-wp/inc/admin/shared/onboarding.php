@@ -16,6 +16,10 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_neutral_page_slugs(): array
 {
+    $catalog_legacy_enabled = function_exists('em_wp_catalog_legacy_admin_enabled')
+        ? em_wp_catalog_legacy_admin_enabled()
+        : false;
+
     $slugs = [
         em_wp_admin_dashboard_page_slug(),
     ];
@@ -28,15 +32,15 @@ function em_wp_admin_neutral_page_slugs(): array
         $slugs = array_merge($slugs, em_wp_admin_media_accordion_child_slugs());
     }
 
-    if (function_exists('em_wp_catalog_parent_menu_slug')) {
+    if ($catalog_legacy_enabled && function_exists('em_wp_catalog_parent_menu_slug')) {
         $slugs[] = em_wp_catalog_parent_menu_slug();
     }
 
-    if (function_exists('em_wp_catalog_registered_hub_menu_slugs')) {
+    if ($catalog_legacy_enabled && function_exists('em_wp_catalog_registered_hub_menu_slugs')) {
         $slugs = array_merge($slugs, em_wp_catalog_registered_hub_menu_slugs());
     }
 
-    if (function_exists('em_wp_catalog_sommaire_menu_slug')) {
+    if ($catalog_legacy_enabled && function_exists('em_wp_catalog_sommaire_menu_slug')) {
         $slugs[] = em_wp_catalog_sommaire_menu_slug();
     }
 
