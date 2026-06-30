@@ -21,8 +21,8 @@ Règle de gouvernance :
 | 1 | Coupure fallback legacy front | Terminée | Oui |
 | 2 | Couverture V4 complète des rubriques actives | Terminée | Oui |
 | 3 | Purge Catalogues legacy (back) | Terminée | Oui |
-| 4 | Purge template-parts legacy | En cours | Non |
-| 5 | Purge modules front legacy | À faire | Non |
+| 4 | Purge template-parts legacy | Terminée | Oui |
+| 5 | Purge modules front legacy | En cours | Non |
 | 6 | Purge mappings/migrations legacy | À faire | Non |
 | 7 | Purge assets legacy | À faire | Non |
 | 8 | Validation finale et verrouillage PROD | À faire | Non |
@@ -33,6 +33,7 @@ Règle de gouvernance :
 2. 2026-06-30 — Correctif slug V4 validé (renommage temps réel + migration auto + normalisation préfixes métier: hero/contact/slider) — prêt reprise purge.
 3. 2026-06-30 — Étape 2 validée par utilisateur (couverture V4 explicite mayami + cas HEADER composite confirmé non bloquant).
 4. 2026-06-30 — Étape 3 validée par utilisateur (purge Catalogues legacy back en mode safe, extraction helpers vers shared et stabilité runtime confirmée).
+5. 2026-06-30 — Étape 4 validée par utilisateur (purge complète des template-parts `sections`, appels legacy supprimés et dossiers vides nettoyés).
 
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
