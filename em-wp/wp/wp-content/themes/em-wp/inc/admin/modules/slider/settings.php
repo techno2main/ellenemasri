@@ -102,11 +102,16 @@ function em_wp_slider_parent_menu_slug(): string
  */
 function em_wp_slider_admin_page_slugs(): array
 {
+    $slugs = [
+        em_wp_slider_hub_menu_slug(),
+    ];
+
+    if (function_exists('em_wp_catalog_parent_menu_slug')) {
+        $slugs[] = em_wp_catalog_parent_menu_slug();
+    }
+
     return array_merge(
-        [
-            em_wp_catalog_parent_menu_slug(),
-            em_wp_slider_hub_menu_slug(),
-        ],
+        $slugs,
         wp_list_pluck(em_wp_slider_style_definitions(), 'page_slug')
     );
 }

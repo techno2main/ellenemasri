@@ -106,8 +106,12 @@ function em_wp_admin_apply_menu_accordion_classes(): void
 
     global $menu;
 
-    $catalog_parent = em_wp_catalog_parent_menu_slug();
-    $catalog_children = em_wp_catalog_registered_hub_menu_slugs();
+    $catalog_parent = function_exists('em_wp_catalog_parent_menu_slug')
+        ? em_wp_catalog_parent_menu_slug()
+        : '';
+    $catalog_children = function_exists('em_wp_catalog_registered_hub_menu_slugs')
+        ? em_wp_catalog_registered_hub_menu_slugs()
+        : [];
     $catalog_entries = function_exists('em_wp_catalog_sidebar_entry_page_slugs')
         ? em_wp_catalog_sidebar_entry_page_slugs()
         : [];

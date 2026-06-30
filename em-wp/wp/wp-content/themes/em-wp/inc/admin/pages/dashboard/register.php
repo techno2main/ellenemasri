@@ -65,13 +65,6 @@ function em_wp_admin_dashboard_enqueue(): void
         '6.5.1'
     );
 
-    wp_enqueue_style(
-        'em-wp-admin-catalog-sommaire',
-        get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
-        ['em-wp-admin-hub-cards'],
-        em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
-    );
-
     if (function_exists('em_wp_admin_template_enqueue_new_template_launcher')) {
         em_wp_admin_template_enqueue_new_template_launcher();
     }

@@ -35,13 +35,6 @@ function em_wp_admin_hub_cards_enqueue_assets(): void
         true
     );
 
-    wp_enqueue_script(
-        'em-wp-admin-catalog-module-tabs-flyout',
-        get_template_directory_uri() . '/assets/admin/js/catalog/module-tabs-flyout.js',
-        [],
-        em_wp_admin_asset_version('assets/admin/js/catalog/module-tabs-flyout.js'),
-        true
-    );
 }
 
 /**
