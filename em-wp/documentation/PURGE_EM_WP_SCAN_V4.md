@@ -431,15 +431,20 @@ Checklist :
 Critère de sortie :
 - Site fonctionnel en V4 only (back + front), sans dépendance legacy runtime.
 
-## 4) Ordre recommandé des lots de commits
+## 4) Suivi des lots de commits
 
+Lots exécutés (validés) :
 1. Lot A : coupure fallback legacy front.
 2. Lot B : couverture V4 complète des rubriques actives.
 3. Lot C : purge Catalogues legacy (back).
 4. Lot D : purge template-parts legacy.
 5. Lot E : purge modules front legacy.
 6. Lot F : purge migrations/mappings legacy.
-7. Lot G : purge assets legacy + polish final.
+7. Lot G : purge assets legacy.
 
-Note importante :
-- Tant que le Lot A + Lot B ne sont pas validés, toute suppression physique massive est à haut risque de casse front.
+Lot restant :
+1. Lot H : validation finale et verrouillage (étape 8).
+
+Note de pilotage :
+- Les garde-fous historiques Lot A + Lot B sont déjà soldés.
+- Le risque principal restant porte sur la validation fonctionnelle finale front/back, les logs, et les contrôles Docker/BDD de clôture.
