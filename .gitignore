@@ -4,6 +4,8 @@ _sources/
 .github/
 docker/ellene-local/
 em-wp/docker/
+old_docker/
+old_wp/
 website/
 
 # Logs
