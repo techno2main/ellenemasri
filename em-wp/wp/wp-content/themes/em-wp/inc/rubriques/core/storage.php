@@ -87,6 +87,72 @@ function em_wp_v4_save_items(string $type_slug, array $items): bool
 }
 
 /**
+ * Génère une base de slug d'item lisible et distincte par rubrique.
+ *
+ * Exemple : type `top-bar` + label `MAYAMI` => `top-bar-mayami`.
+ */
+function em_wp_v4_item_slug_base(string $type_slug, string $label_or_slug): string
+{
+    $type_slug = sanitize_key($type_slug);
+    $value_slug = sanitize_key(sanitize_title($label_or_slug));
+    $slug_prefix = em_wp_v4_item_slug_prefix($type_slug);
+
+    if ($slug_prefix === '') {
+        return $value_slug !== '' ? $value_slug : 'item';
+    }
+
+    if ($value_slug === '' || $value_slug === $slug_prefix || $value_slug === $type_slug) {
+        return $slug_prefix;
+    }
+
+    if (strpos($value_slug, $slug_prefix . '-') === 0) {
+        return $value_slug;
+    }
+
+    return $slug_prefix . '-' . $value_slug;
+}
+
+/**
+ * Préfixe de slug métier par rubrique (peut différer du slug technique).
+ */
+function em_wp_v4_item_slug_prefix(string $type_slug): string
+{
+    $type_slug = sanitize_key($type_slug);
+
+    $map = [
+        'header' => 'hero',
+        'contacts' => 'contact',
+        'sliders' => 'slider',
+    ];
+
+    return $map[$type_slug] ?? $type_slug;
+}
+
+/**
+ * Génère un slug d'item unique pour un type (suffixe -2, -3... si déjà pris).
+ */
+function em_wp_v4_unique_item_slug(string $type_slug, string $base_slug, string $exclude_slug = ''): string
+{
+    $base_slug = sanitize_key($base_slug);
+    $exclude_slug = sanitize_key($exclude_slug);
+
+    if ($base_slug === '') {
+        $base_slug = 'item';
+    }
+
+    $items = em_wp_v4_get_items($type_slug);
+    $slug = $base_slug;
+    $i = 2;
+
+    while (isset($items[$slug]) && $slug !== $exclude_slug) {
+        $slug = $base_slug . '-' . $i;
+        $i++;
+    }
+
+    return $slug;
+}
+
+/**
  * Item complet (label/fields/content/layout), valeurs sûres si absent.
  *
  * @return array{label:string, fields:array<int,array<string,mixed>>, content:array<string,mixed>, layout:array{columns:int,align:array<int,string>}}
@@ -280,6 +346,86 @@ function em_wp_v4_register_item(string $type_slug, string $item_slug, string $la
 }
 
 /**
+ * Renomme un item (label + slug) et migre ses références d'instance.
+ *
+ * @return array{item:string,label:string}
+ */
+function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $label): array
+{
+    $type_slug = sanitize_key($type_slug);
+    $item_slug = sanitize_key($item_slug);
+    $label = sanitize_text_field($label);
+
+    if ($type_slug === '' || $item_slug === '') {
+        return ['item' => '', 'label' => $label];
+    }
+
+    $items = em_wp_v4_get_items($type_slug);
+
+    if (!isset($items[$item_slug])) {
+        return ['item' => '', 'label' => $label];
+    }
+
+    if ($label === '') {
+        $label = (string) $items[$item_slug];
+    }
+
+    $desired_slug = em_wp_v4_item_slug_base($type_slug, $label);
+    $new_slug = em_wp_v4_unique_item_slug($type_slug, $desired_slug, $item_slug);
+
+    if ($new_slug === $item_slug) {
+        $items[$item_slug] = $label;
+        em_wp_v4_save_items($type_slug, $items);
+
+        $data = em_wp_v4_get_item($type_slug, $item_slug);
+        $data['label'] = $label;
+        em_wp_v4_save_item($type_slug, $item_slug, $data);
+
+        return ['item' => $item_slug, 'label' => $label];
+    }
+
+    $new_items = [];
+    foreach ($items as $slug => $item_label) {
+        if ((string) $slug === $item_slug) {
+            $new_items[$new_slug] = $label;
+            continue;
+        }
+
+        $new_items[(string) $slug] = (string) $item_label;
+    }
+    em_wp_v4_save_items($type_slug, $new_items);
+
+    $old_option = em_wp_v4_item_option_name($type_slug, $item_slug);
+    $new_option = em_wp_v4_item_option_name($type_slug, $new_slug);
+    $raw_item = get_option($old_option, null);
+    $item_data = is_array($raw_item) ? $raw_item : em_wp_v4_get_item($type_slug, $item_slug);
+    $item_data['label'] = $label;
+    update_option($new_option, $item_data);
+    delete_option($old_option);
+
+    if (function_exists('em_wp_template_registry')) {
+        foreach (array_keys((array) em_wp_template_registry()) as $template_slug) {
+            $template_slug = sanitize_key((string) $template_slug);
+
+            if ($template_slug === '') {
+                continue;
+            }
+
+            $instance = em_wp_v4_get_instance($template_slug, $type_slug);
+
+            if (sanitize_key((string) ($instance['item'] ?? '')) !== $item_slug) {
+                continue;
+            }
+
+            $instance['item'] = $new_slug;
+            em_wp_v4_save_instance($template_slug, $type_slug, $instance);
+        }
+    }
+
+    return ['item' => $new_slug, 'label' => $label];
+}
+
+/**
  * Instance d'une rubrique pour un template, [] si absente.
  *
  * @return array<string, mixed>
@@ -300,3 +446,52 @@ function em_wp_v4_save_instance(string $template_slug, string $type_slug, array 
 {
     return (bool) update_option(em_wp_v4_instance_option_name($template_slug, $type_slug), $instance);
 }
+
+/**
+ * Réconcilie une fois les slugs d'items hérités (slug != sanitize_title(label)).
+ *
+ * Évite les cas historiques du type `default => MAYAMI` après déploiement de la
+ * migration de renommage de slug.
+ */
+function em_wp_v4_maybe_reconcile_item_slugs(): void
+{
+    if (get_option('em_wp_v4_item_slugs_reconciled_v4', false)) {
+        return;
+    }
+
+    if (!function_exists('em_wp_rubrique_type_registry')) {
+        return;
+    }
+
+    $types = em_wp_rubrique_type_registry();
+
+    foreach (array_keys($types) as $type_slug) {
+        $type_slug = sanitize_key((string) $type_slug);
+
+        if ($type_slug === '') {
+            continue;
+        }
+
+        $items = em_wp_v4_get_items($type_slug);
+
+        foreach ($items as $item_slug => $label) {
+            $item_slug = sanitize_key((string) $item_slug);
+            $label = sanitize_text_field((string) $label);
+
+            if ($item_slug === '' || $label === '') {
+                continue;
+            }
+
+            $desired_slug = em_wp_v4_item_slug_base($type_slug, $label);
+
+            if ($desired_slug === '' || $desired_slug === $item_slug) {
+                continue;
+            }
+
+            em_wp_v4_rename_item($type_slug, $item_slug, $label);
+        }
+    }
+
+    update_option('em_wp_v4_item_slugs_reconciled_v4', '1', false);
+}
+add_action('admin_init', 'em_wp_v4_maybe_reconcile_item_slugs', 5);

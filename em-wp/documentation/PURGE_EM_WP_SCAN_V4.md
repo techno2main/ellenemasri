@@ -30,6 +30,7 @@ Règle de gouvernance :
 ### Historique validations
 
 1. 2026-06-30 — Étape 1 validée par utilisateur (vérification fonctionnelle OK) — commit 58db430.
+2. 2026-06-30 — Correctif slug V4 validé (renommage temps réel + migration auto + normalisation préfixes métier: hero/contact/slider) — prêt reprise purge.
 
 ## Périmètre scanné (lecture seule)
 - em-wp/docker

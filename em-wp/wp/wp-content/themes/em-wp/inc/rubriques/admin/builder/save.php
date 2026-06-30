@@ -123,9 +123,11 @@ function em_wp_v4_handle_save_item(): void
     em_wp_v4_save_item($type, $item, $data);
 
     $label = sanitize_text_field(wp_unslash((string) ($_POST['item_label'] ?? '')));
-    em_wp_v4_rename_item($type, $item, function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label));
+    $label = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
+    $renamed = em_wp_v4_rename_item($type, $item, $label);
+    $target_item = (string) ($renamed['item'] ?? $item);
 
-    em_wp_v4_builder_redirect(['v4_updated' => 'saved', 'type' => $type, 'item' => $item]);
+    em_wp_v4_builder_redirect(['v4_updated' => 'saved', 'type' => $type, 'item' => $target_item]);
 }
 add_action('admin_post_em_wp_v4_save_item', 'em_wp_v4_handle_save_item');
 
@@ -205,23 +207,3 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
     return $field;
 }
 
-/**
- * Renomme un item (liste + item) si un libellé non vide est fourni.
- */
-function em_wp_v4_rename_item(string $type, string $item, string $label): void
-{
-    if ($label === '') {
-        return;
-    }
-
-    $items = em_wp_v4_get_items($type);
-
-    if (isset($items[$item])) {
-        $items[$item] = $label;
-        em_wp_v4_save_items($type, $items);
-    }
-
-    $data = em_wp_v4_get_item($type, $item);
-    $data['label'] = $label;
-    em_wp_v4_save_item($type, $item, $data);
-}
