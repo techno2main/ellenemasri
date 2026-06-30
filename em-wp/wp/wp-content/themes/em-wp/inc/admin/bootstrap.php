@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/shared/style-panel.php';
 require_once __DIR__ . '/shared/catalog-rubrique-page.php';
+require_once __DIR__ . '/shared/catalog-ui.php';
 require_once __DIR__ . '/shared/assets.php';
 require_once __DIR__ . '/shared/color-modal.php';
 require_once __DIR__ . '/shared/hub-cards.php';

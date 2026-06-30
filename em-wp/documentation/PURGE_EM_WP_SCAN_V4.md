@@ -309,6 +309,7 @@ Avancement (lot en cours) :
 10. Registres admin durcis: slugs Catalogues legacy exclus de `onboarding.php`, `menu/layout.php` et `menu/reserved-slugs.php` quand `em_wp_catalog_legacy_admin_enabled` est désactivé.
 11. Helpers catalog admin (`registered_hub_menu_slugs`, `sidebar_entry_definitions`, `admin_page_slugs`, `edit_page_slugs`) renvoient des listes vides quand `em_wp_catalog_legacy_admin_enabled` est désactivé.
 12. Extraction fondation démarrée: fonctions d'identité Catalogues (`parent_menu_slug`, `parent_page_url`, `sommaire_menu_slug`) définies dans `inc/admin/modules/catalog/bootstrap.php` pour préparer le découplage de `sommaire.php`.
+13. Extraction UI démarrée: helpers breadcrumb/entêtes catalogues mutualisés dans `inc/admin/shared/catalog-ui.php` et chargés depuis `inc/admin/bootstrap.php` (avec fallback `function_exists` conservé dans `sommaire.php`).
 
 ### Étape 4 — Purger les templates-parts legacy
 
