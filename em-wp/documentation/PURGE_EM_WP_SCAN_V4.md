@@ -459,3 +459,8 @@ Lot restant :
 Note de pilotage :
 - Les garde-fous historiques Lot A + Lot B sont déjà soldés.
 - Le risque principal restant porte sur la validation fonctionnelle finale front/back, les logs, et les contrôles Docker/BDD de clôture.
+
+
+SCAN COMPLET 2026-06-30: ✅ Purge robuste confirmée (lint PHP OK, 0 fatal runtime sur la fenêtre de contrôle, et 0 référence restante vers `assets/admin/css/catalog/sommaire.css` dans le thème).
+
+

@@ -907,12 +907,7 @@ function em_wp_admin_rubrique_enqueue_nav_assets(string $page_slug = ''): void
         return;
     }
 
-    wp_enqueue_style(
-        'em-wp-admin-rubrique-nav',
-        get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
-        ['em-wp-admin-module-common'],
-        em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
-    );
+    wp_enqueue_style('em-wp-admin-module-common');
 }
 
 /**
