@@ -9,6 +9,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Active/désactive l'admin legacy Catalogues.
+ *
+ * Étape 3 purge V4: désactivé par défaut pour couper les entrées BO legacy,
+ * tout en conservant le runtime/front tant que la purge n'est pas terminée.
+ */
+function em_wp_catalog_legacy_admin_enabled(): bool
+{
+    return (bool) apply_filters('em_wp_catalog_legacy_admin_enabled', false);
+}
+
 require_once __DIR__ . '/sommaire.php';
 require_once __DIR__ . '/registry-crud.php';
 require_once __DIR__ . '/hero-actions.php';

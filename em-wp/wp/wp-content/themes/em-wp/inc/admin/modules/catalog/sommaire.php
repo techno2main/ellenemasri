@@ -383,6 +383,10 @@ function em_wp_catalog_admin_page_slugs(): array
  */
 function em_wp_catalog_register_admin_menus(): void
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return;
+    }
+
     add_menu_page(
         __('Catalogues', 'em-wp'),
         __('CATALOGUES', 'em-wp'),

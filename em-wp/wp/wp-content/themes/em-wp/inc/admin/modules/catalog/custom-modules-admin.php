@@ -129,6 +129,10 @@ function em_wp_custom_catalog_render_module_admin_notices(): void
 
 function em_wp_custom_catalog_register_entry_admin_pages(): void
 {
+    if (function_exists('em_wp_catalog_legacy_admin_enabled') && !em_wp_catalog_legacy_admin_enabled()) {
+        return;
+    }
+
     foreach (em_wp_custom_catalog_modules() as $module_slug => $module) {
         unset($module);
 

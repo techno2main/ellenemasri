@@ -296,6 +296,11 @@ Risque :
 Critère de sortie :
 - Aucune référence runtime à inc/shared/catalog/**.
 
+Avancement (lot en cours) :
+1. Coupure des points d'entrée BO catalog legacy via un flag central `em_wp_catalog_legacy_admin_enabled` (désactivé par défaut).
+2. Menus/pages admin catalog legacy non enregistrés quand ce flag est désactivé.
+3. Runtime/front non touché à ce stade (helpers catalog conservés tant que l'audit runtime n'est pas soldé).
+
 ### Étape 4 — Purger les templates-parts legacy
 
 Objectif : retirer les templates front historiques non utilisés par V4.
