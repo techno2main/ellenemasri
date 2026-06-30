@@ -311,6 +311,7 @@ Avancement (lot en cours) :
 12. Extraction fondation démarrée: fonctions d'identité Catalogues (`parent_menu_slug`, `parent_page_url`, `sommaire_menu_slug`) définies dans `inc/admin/modules/catalog/bootstrap.php` pour préparer le découplage de `sommaire.php`.
 13. Extraction UI démarrée: helpers breadcrumb/entêtes catalogues mutualisés dans `inc/admin/shared/catalog-ui.php` et chargés depuis `inc/admin/bootstrap.php` (avec fallback `function_exists` conservé dans `sommaire.php`).
 14. Extraction UI complétée (lot 2): helpers tabs/sections d'édition (`render_module_entry_tabs`, `render_edit_section_open`, `render_edit_section_close`) mutualisés dans `inc/admin/shared/catalog-ui.php` avec fallback conservé dans `sommaire.php`.
+15. Extraction UI complétée (lot 3): helpers de breadcrumb page et compatibilité entête (`breadcrumb_crumbs_for_page`, `header_title_html`) mutualisés dans `inc/admin/shared/catalog-ui.php` avec fallback conservé dans `sommaire.php`.
 
 ### Étape 4 — Purger les templates-parts legacy
 

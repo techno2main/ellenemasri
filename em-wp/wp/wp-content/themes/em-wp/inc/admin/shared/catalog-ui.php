@@ -51,6 +51,94 @@ if (!function_exists('em_wp_catalog_build_breadcrumb_crumbs')) {
     }
 }
 
+if (!function_exists('em_wp_catalog_breadcrumb_crumbs_for_page')) {
+    /**
+     * Fil d'Ariane catalogue pour une page admin.
+     *
+     * @return array<int, array{label:string,url?:string}>
+     */
+    function em_wp_catalog_breadcrumb_crumbs_for_page(string $page_slug): array
+    {
+        $page_slug = sanitize_key($page_slug);
+
+        if ($page_slug === '') {
+            return [];
+        }
+
+        if (function_exists('em_wp_catalog_parent_menu_slug') && $page_slug === em_wp_catalog_parent_menu_slug()) {
+            return [
+                em_wp_admin_hub_breadcrumb_crumb(__('MES CATALOGUES', 'em-wp')),
+            ];
+        }
+
+        if (!function_exists('em_wp_catalog_menu_definitions')) {
+            return [];
+        }
+
+        foreach (em_wp_catalog_menu_definitions() as $module_slug => $definition) {
+            if (!is_array($definition)) {
+                continue;
+            }
+
+            $hub_slug = sanitize_key((string) ($definition['slug'] ?? ''));
+
+            if ($hub_slug === '' || $page_slug !== $hub_slug) {
+                continue;
+            }
+
+            return em_wp_catalog_build_breadcrumb_crumbs((string) ($definition['label'] ?? $module_slug));
+        }
+
+        if (!function_exists('em_wp_catalog_sidebar_entry_definitions')) {
+            return [];
+        }
+
+        $entry = em_wp_catalog_sidebar_entry_definitions()[$page_slug] ?? null;
+
+        if (!is_array($entry)) {
+            return [];
+        }
+
+        $module_slug = sanitize_key((string) ($entry['module'] ?? ''));
+        $module_label = em_wp_catalog_module_label($module_slug);
+        $module_definition = em_wp_catalog_menu_definitions()[$module_slug] ?? null;
+        $hub_url = '';
+
+        if (is_array($module_definition)) {
+            $hub_url = trim((string) ($module_definition['url'] ?? ''));
+
+            if ($hub_url === '') {
+                $hub_slug = sanitize_key((string) ($module_definition['slug'] ?? ''));
+
+                if ($hub_slug !== '') {
+                    $hub_url = admin_url('admin.php?page=' . $hub_slug);
+                }
+            }
+        }
+
+        return em_wp_catalog_build_breadcrumb_crumbs(
+            $module_label,
+            (string) ($entry['label'] ?? ''),
+            $hub_url
+        );
+    }
+}
+
+if (!function_exists('em_wp_catalog_header_title_html')) {
+    /**
+     * @deprecated Utiliser em_wp_admin_hub_breadcrumb_html() + em_wp_catalog_build_breadcrumb_crumbs().
+     */
+    function em_wp_catalog_header_title_html(
+        string $catalog_label,
+        string $item_label = '',
+        string $hub_page_url = ''
+    ): string {
+        return em_wp_admin_hub_breadcrumb_html(
+            em_wp_catalog_build_breadcrumb_crumbs($catalog_label, $item_label, $hub_page_url)
+        );
+    }
+}
+
 if (!function_exists('em_wp_catalog_breadcrumb_item_label')) {
     /**
      * Libelle fil d'Ariane pour l'entree catalogue en edition.
