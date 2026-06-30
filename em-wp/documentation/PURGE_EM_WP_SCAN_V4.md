@@ -22,8 +22,8 @@ Règle de gouvernance :
 | 2 | Couverture V4 complète des rubriques actives | Terminée | Oui |
 | 3 | Purge Catalogues legacy (back) | Terminée | Oui |
 | 4 | Purge template-parts legacy | Terminée | Oui |
-| 5 | Purge modules front legacy | En cours | Non |
-| 6 | Purge mappings/migrations legacy | À faire | Non |
+| 5 | Purge modules front legacy | Terminée | Oui |
+| 6 | Purge mappings/migrations legacy | En cours | Non |
 | 7 | Purge assets legacy | À faire | Non |
 | 8 | Validation finale et verrouillage PROD | À faire | Non |
 
@@ -34,6 +34,7 @@ Règle de gouvernance :
 3. 2026-06-30 — Étape 2 validée par utilisateur (couverture V4 explicite mayami + cas HEADER composite confirmé non bloquant).
 4. 2026-06-30 — Étape 3 validée par utilisateur (purge Catalogues legacy back en mode safe, extraction helpers vers shared et stabilité runtime confirmée).
 5. 2026-06-30 — Étape 4 validée par utilisateur (purge complète des template-parts `sections`, appels legacy supprimés et dossiers vides nettoyés).
+6. 2026-06-30 — Étape 5 validée par utilisateur (wiring front passé en V4 strict, fallbacks legacy de rendu supprimés et alias modules non utilisés purgés).
 
 ## Périmètre scanné (lecture seule)
 - em-wp/docker
@@ -362,6 +363,9 @@ Critère de sortie :
 Avancement (lot en cours) :
 1. Audit de `inc/front/modules/**` effectué: tous les modules restants sont encore chargés explicitement par `inc/front/bootstrap.php` et appelés par le runtime landing (`landing-render.php`) ou les chemins de rendu front.
 2. Après purge des template-parts `sections`, aucune suppression safe immédiate de module front n'est engagée tant que le wiring `bootstrap.php`/`landing-render.php` n'est pas décorrélé module par module.
+3. Bascule V4 stricte réalisée: suppression des guards `function_exists` de rendu landing/top-bar/footer/front-page et retrait du fallback hero legacy en page d'accueil.
+4. Purge code mort module front: alias `em_wp_render_contacts()` supprimé (non référencé).
+5. Validation technique: `php -l` Docker OK sur tous les fichiers modifiés de l'étape.
 
 ### Étape 6 — Purger mappings/migrations legacy
 

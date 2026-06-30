@@ -157,8 +157,3 @@ function em_wp_render_custom_catalog_rubrique(string $module_slug): void
 
     em_wp_render_contact_section($options, $module_slug);
 }
-
-function em_wp_render_contacts(): void
-{
-    em_wp_render_custom_catalog_rubrique('contacts');
-}
