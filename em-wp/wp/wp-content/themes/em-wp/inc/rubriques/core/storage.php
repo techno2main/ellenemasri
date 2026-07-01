@@ -47,13 +47,183 @@ function em_wp_v4_instance_option_name(string $template_slug, string $type_slug)
 }
 
 /**
+ * Tente de reconstruire une valeur serializee avec longueurs incoherentes.
+ *
+ * Retourne null si aucune reparation fiable n'est possible.
+ *
+ * @return array<string, mixed>|array<int, mixed>|null
+ */
+function em_wp_v4_repair_serialized_array_value($raw): ?array
+{
+    if (!is_string($raw) || $raw === '') {
+        return null;
+    }
+
+    $decoded = maybe_unserialize($raw);
+
+    if (is_array($decoded)) {
+        return $decoded;
+    }
+
+    $looks_serialized = preg_match('/^(?:a|O|C|s|i|d|b|N)\:/', ltrim($raw)) === 1;
+
+    if (!$looks_serialized) {
+        return null;
+    }
+
+    $repaired = preg_replace_callback(
+        '~s:(\d+):"((?:\\\\.|[^"\\\\])*)";~s',
+        static function (array $m): string {
+            return 's:' . strlen($m[2]) . ':"' . $m[2] . '";';
+        },
+        $raw
+    );
+
+    if (!is_string($repaired) || $repaired === '') {
+        return null;
+    }
+
+    $decoded_repaired = @unserialize($repaired, ['allowed_classes' => false]);
+
+    return is_array($decoded_repaired) ? $decoded_repaired : null;
+}
+
+/**
+ * Lit la valeur brute d'une option (sans tentative de deserialisation WP).
+ */
+function em_wp_v4_get_raw_option_value(string $option_name)
+{
+    global $wpdb;
+
+    if (!isset($wpdb) || !is_object($wpdb)) {
+        return null;
+    }
+
+    $table = isset($wpdb->options) ? (string) $wpdb->options : '';
+
+    if ($table === '') {
+        return null;
+    }
+
+    $sql = $wpdb->prepare("SELECT option_value FROM {$table} WHERE option_name = %s LIMIT 1", $option_name);
+
+    if (!is_string($sql) || $sql === '') {
+        return null;
+    }
+
+    $raw = $wpdb->get_var($sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+    return is_string($raw) ? $raw : null;
+}
+
+/**
+ * Repare les textes mojibake les plus frequents apres migration SQL.
+ */
+function em_wp_v4_fix_mojibake_string(string $value): string
+{
+    if ($value === '') {
+        return $value;
+    }
+
+    if (preg_match('/[ÃÂâ├┬�]/u', $value) !== 1) {
+        return $value;
+    }
+
+    $best = $value;
+    $best_score = preg_match_all('/[ÃÂâ├┬�]/u', $value);
+
+    if (function_exists('mb_convert_encoding')) {
+        $candidates = [
+            @mb_convert_encoding($value, 'UTF-8', 'Windows-1252'),
+            @mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1'),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (!is_string($candidate) || $candidate === '') {
+                continue;
+            }
+
+            $score = preg_match_all('/[ÃÂâ├┬�]/u', $candidate);
+
+            if ($score !== false && $best_score !== false && $score < $best_score) {
+                $best = $candidate;
+                $best_score = $score;
+            }
+        }
+    }
+
+    return $best;
+}
+
+/**
+ * Normalise recursivement l'encodage des valeurs textuelles d'un tableau V4.
+ *
+ * @param mixed $value
+ * @return mixed
+ */
+function em_wp_v4_normalize_value_encoding($value)
+{
+    if (is_array($value)) {
+        foreach ($value as $k => $v) {
+            $value[$k] = em_wp_v4_normalize_value_encoding($v);
+        }
+
+        return $value;
+    }
+
+    if (is_string($value)) {
+        return em_wp_v4_fix_mojibake_string($value);
+    }
+
+    return $value;
+}
+
+/**
+ * Lit une option V4 attendue comme tableau avec tentative de reparation.
+ *
+ * @return array<string, mixed>|array<int, mixed>
+ */
+function em_wp_v4_get_array_option(string $option_name): array
+{
+    $value = get_option($option_name, null);
+
+    if (is_array($value)) {
+        $normalized = em_wp_v4_normalize_value_encoding($value);
+
+        if ($normalized !== $value) {
+            update_option($option_name, $normalized);
+        }
+
+        return is_array($normalized) ? $normalized : [];
+    }
+
+    $repaired = em_wp_v4_repair_serialized_array_value($value);
+
+    if ($repaired === null) {
+        $raw = em_wp_v4_get_raw_option_value($option_name);
+        $repaired = em_wp_v4_repair_serialized_array_value($raw);
+    }
+
+    if ($repaired !== null) {
+        $normalized = em_wp_v4_normalize_value_encoding($repaired);
+
+        // Auto-heal : on persiste la version propre pour eviter de reparer a chaque requete.
+        update_option($option_name, $normalized);
+
+        return is_array($normalized) ? $normalized : [];
+    }
+
+    return [];
+}
+
+/**
  * Liste des items d'un type (slug => label).
  *
  * @return array<string, string>
  */
 function em_wp_v4_get_items(string $type_slug): array
 {
-    $items = get_option(em_wp_v4_items_option_name($type_slug), []);
+    $items = em_wp_v4_get_array_option(em_wp_v4_items_option_name($type_slug));
 
     return em_wp_v4_sort_items(is_array($items) ? $items : []);
 }
@@ -159,8 +329,7 @@ function em_wp_v4_unique_item_slug(string $type_slug, string $base_slug, string 
  */
 function em_wp_v4_get_item(string $type_slug, string $item_slug): array
 {
-    $data = get_option(em_wp_v4_item_option_name($type_slug, $item_slug), []);
-    $data = is_array($data) ? $data : [];
+    $data = em_wp_v4_get_array_option(em_wp_v4_item_option_name($type_slug, $item_slug));
 
     $fields = em_wp_rubrique_normalize_fields(is_array($data['fields'] ?? null) ? $data['fields'] : []);
 
@@ -397,8 +566,8 @@ function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $labe
 
     $old_option = em_wp_v4_item_option_name($type_slug, $item_slug);
     $new_option = em_wp_v4_item_option_name($type_slug, $new_slug);
-    $raw_item = get_option($old_option, null);
-    $item_data = is_array($raw_item) ? $raw_item : em_wp_v4_get_item($type_slug, $item_slug);
+    $raw_item = em_wp_v4_get_array_option($old_option);
+    $item_data = $raw_item !== [] ? $raw_item : em_wp_v4_get_item($type_slug, $item_slug);
     $item_data['label'] = $label;
     update_option($new_option, $item_data);
     delete_option($old_option);
@@ -432,9 +601,7 @@ function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $labe
  */
 function em_wp_v4_get_instance(string $template_slug, string $type_slug): array
 {
-    $data = get_option(em_wp_v4_instance_option_name($template_slug, $type_slug), []);
-
-    return is_array($data) ? $data : [];
+    return em_wp_v4_get_array_option(em_wp_v4_instance_option_name($template_slug, $type_slug));
 }
 
 /**

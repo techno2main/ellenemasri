@@ -37,13 +37,88 @@ function em_wp_rubrique_labels_option_name(): string
 }
 
 /**
+ * Repare une chaine serializee avec longueurs incoherentes.
+ *
+ * @return array<string, mixed>|array<int, mixed>|null
+ */
+function em_wp_rubrique_repair_serialized_array($raw): ?array
+{
+    if (!is_string($raw) || $raw === '') {
+        return null;
+    }
+
+    $decoded = maybe_unserialize($raw);
+
+    if (is_array($decoded)) {
+        return $decoded;
+    }
+
+    if (preg_match('/^(?:a|O|C|s|i|d|b|N)\:/', ltrim($raw)) !== 1) {
+        return null;
+    }
+
+    $repaired = preg_replace_callback(
+        '~s:(\d+):"((?:\\\\.|[^"\\\\])*)";~s',
+        static function (array $m): string {
+            return 's:' . strlen($m[2]) . ':"' . $m[2] . '";';
+        },
+        $raw
+    );
+
+    if (!is_string($repaired) || $repaired === '') {
+        return null;
+    }
+
+    $decoded_repaired = @unserialize($repaired, ['allowed_classes' => false]);
+
+    return is_array($decoded_repaired) ? $decoded_repaired : null;
+}
+
+/**
+ * Lit une option de type tableau de facon robuste (get_option puis brute SQL).
+ *
+ * @return array<string, mixed>|array<int, mixed>
+ */
+function em_wp_rubrique_get_array_option_safe(string $option_name): array
+{
+    $value = get_option($option_name, null);
+
+    if (is_array($value)) {
+        return $value;
+    }
+
+    $repaired = em_wp_rubrique_repair_serialized_array($value);
+
+    if ($repaired === null) {
+        global $wpdb;
+
+        if (isset($wpdb) && isset($wpdb->options)) {
+            $raw = $wpdb->get_var($wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+                $option_name
+            ));
+
+            $repaired = em_wp_rubrique_repair_serialized_array($raw);
+        }
+    }
+
+    if ($repaired !== null) {
+        update_option($option_name, $repaired, false);
+
+        return $repaired;
+    }
+
+    return [];
+}
+
+/**
  * Libellés personnalisés enregistrés (map slug => libellé).
  *
  * @return array<string, string>
  */
 function em_wp_rubrique_labels(): array
 {
-    $labels = get_option(em_wp_rubrique_labels_option_name(), []);
+    $labels = em_wp_rubrique_get_array_option_safe(em_wp_rubrique_labels_option_name());
 
     return is_array($labels) ? $labels : [];
 }
@@ -96,8 +171,7 @@ function em_wp_rubrique_type_registry(): array
     }
 
     $code_types = (array) apply_filters('em_wp_rubrique_types', []);
-    $saved = get_option(em_wp_rubrique_types_option_name(), []);
-    $option_types = is_array($saved) ? $saved : [];
+    $option_types = em_wp_rubrique_get_array_option_safe(em_wp_rubrique_types_option_name());
 
     $merged = $code_types;
 

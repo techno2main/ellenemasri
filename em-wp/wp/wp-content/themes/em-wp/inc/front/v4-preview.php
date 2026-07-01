@@ -56,7 +56,9 @@ function em_wp_front_v4_preview_template(): string
  */
 function em_wp_front_v4_live_enabled(): bool
 {
-    return (bool) apply_filters('em_wp_front_v4_live_enabled', true);
+    $default = defined('EM_WP_FRONT_V4_LIVE') ? (bool) EM_WP_FRONT_V4_LIVE : true;
+
+    return (bool) apply_filters('em_wp_front_v4_live_enabled', $default);
 }
 
 /**
@@ -221,10 +223,14 @@ function em_wp_front_v4_render_module(string $module_slug): bool
     }
 
     if (trim($html) === '') {
-        // Mode V4 strict (preview + live) : pas de repli legacy.
-        // Une rubrique sans item V4 reste explicitement visible via placeholder.
-        em_wp_front_v4_render_placeholder($module_slug, $anchor);
-        return true;
+        // En apercu, on garde un placeholder explicite pour comprendre le trou.
+        // En live, on laisse le caller retomber sur le rendu legacy de la rubrique.
+        if (em_wp_front_v4_preview_active()) {
+            em_wp_front_v4_render_placeholder($module_slug, $anchor);
+            return true;
+        }
+
+        return false;
     }
 
     // Players inline (#player-*-{slug}) accumulés pendant le rendu des cartes.
