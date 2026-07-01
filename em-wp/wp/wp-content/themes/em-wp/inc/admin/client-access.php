@@ -493,11 +493,24 @@ function em_wp_ellene_admin_gate_settings_admin_url(): string
 }
 
 /**
+ * Indique si l'écran admin courant est la page intermédiaire ellene-admin.
+ */
+function em_wp_ellene_admin_is_gate_screen(): bool
+{
+    global $pagenow;
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $current_page = sanitize_key((string) ($_GET['page'] ?? ''));
+
+    return $pagenow === 'admin.php' && $current_page === em_wp_ellene_admin_gate_page_slug();
+}
+
+/**
  * URL de la page intermédiaire dédiée à ellene-admin.
  */
 function em_wp_ellene_admin_gate_admin_url(): string
 {
-    return admin_url('admin.php?page=' . em_wp_ellene_admin_gate_page_slug());
+    return home_url('/wp-login-off/');
 }
 
 /**
@@ -532,7 +545,6 @@ function em_wp_ellene_admin_register_gate_page(): void
         2
     );
 }
-add_action('admin_menu', 'em_wp_ellene_admin_register_gate_page', 2);
 
 /**
  * Enregistre la page de réglages du verrou (admin-my uniquement).
@@ -561,7 +573,6 @@ function em_wp_ellene_admin_hide_gate_menu_entry(): void
 {
     remove_menu_page(em_wp_ellene_admin_gate_page_slug());
 }
-add_action('admin_menu', 'em_wp_ellene_admin_hide_gate_menu_entry', 10002);
 
 /**
  * Rendu de la page intermédiaire (bloc message personnalisable).
@@ -573,16 +584,42 @@ function em_wp_ellene_admin_render_gate_page(): void
         exit;
     }
 
+    $logo_url = function_exists('em_wp_get_login_logo_url') ? em_wp_get_login_logo_url() : '';
+    $lost_password_url = wp_lostpassword_url();
+    $site_url = home_url('/');
     $logout_url = wp_logout_url(home_url('/'));
     ?>
-    <div class="wrap em-wp-ellene-gate-wrap">
-        <div class="em-wp-ellene-gate-card">
-            <h1><?php esc_html_e('Information', 'em-wp'); ?></h1>
-            <div class="em-wp-ellene-gate-message"><?php echo wp_kses_post(em_wp_ellene_admin_gate_message_html()); ?></div>
-            <p class="em-wp-ellene-gate-actions">
+    <div id="login" class="em-wp-ellene-gate-login">
+        <h1>
+            <?php if ($logo_url !== '') { ?>
+                <img
+                    src="<?php echo esc_url($logo_url); ?>"
+                    alt="<?php esc_attr_e('Ellene Masri', 'em-wp'); ?>"
+                    class="em-wp-login-logo"
+                    width="480"
+                    height="480"
+                >
+            <?php } ?>
+        </h1>
+
+        <form id="loginform" class="em-wp-ellene-gate-form" action="#" method="post">
+            <p>
+                <label><?php esc_html_e('Information', 'em-wp'); ?></label>
+            </p>
+            <div class="em-wp-ellene-gate-message">
+                <?php echo wp_kses_post(em_wp_ellene_admin_gate_message_html()); ?>
+            </div>
+            <p class="submit">
                 <a class="button button-primary" href="<?php echo esc_url($logout_url); ?>"><?php esc_html_e('Se déconnecter', 'em-wp'); ?></a>
             </p>
-        </div>
+        </form>
+
+        <p id="nav">
+            <a href="<?php echo esc_url($lost_password_url); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Mot de passe oublié ?', 'em-wp'); ?></a>
+        </p>
+        <p id="backtoblog">
+            <a href="<?php echo esc_url($site_url); ?>" target="_blank" rel="noopener noreferrer">&larr; <?php esc_html_e('Aller sur Ellene Masri', 'em-wp'); ?></a>
+        </p>
     </div>
     <?php
 }
@@ -741,6 +778,43 @@ function em_wp_ellene_admin_disable_admin_bar(bool $show): bool
 add_filter('show_admin_bar', 'em_wp_ellene_admin_disable_admin_bar', 100);
 
 /**
+ * Charge les assets de la page login sur la page intermédiaire.
+ */
+function em_wp_ellene_admin_gate_enqueue_login_assets(): void
+{
+    if (!em_wp_admin_should_limit_ellene_client() || !em_wp_ellene_admin_gate_is_enabled() || !em_wp_ellene_admin_is_gate_screen()) {
+        return;
+    }
+
+    $theme_uri = get_template_directory_uri();
+    $login_css_path = 'assets/css/login.css';
+
+    wp_enqueue_style(
+        'em-wp-login',
+        $theme_uri . '/' . $login_css_path,
+        [],
+        function_exists('em_wp_login_asset_version') ? em_wp_login_asset_version($login_css_path) : wp_get_theme()->get('Version')
+    );
+}
+add_action('admin_enqueue_scripts', 'em_wp_ellene_admin_gate_enqueue_login_assets', 20);
+
+/**
+ * Ajoute les classes body pour réutiliser strictement le layout login.
+ *
+ * @param mixed $classes
+ * @return mixed
+ */
+function em_wp_ellene_admin_gate_body_class($classes)
+{
+    if (!em_wp_admin_should_limit_ellene_client() || !em_wp_ellene_admin_gate_is_enabled() || !em_wp_ellene_admin_is_gate_screen()) {
+        return $classes;
+    }
+
+    return trim((string) $classes . ' login wp-core-ui');
+}
+add_filter('admin_body_class', 'em_wp_ellene_admin_gate_body_class');
+
+/**
  * Masque complètement le chrome admin (menu gauche + footer) sur la page intermédiaire.
  */
 function em_wp_ellene_admin_gate_chrome_css(): void
@@ -749,12 +823,7 @@ function em_wp_ellene_admin_gate_chrome_css(): void
         return;
     }
 
-    global $pagenow;
-
-    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-    $current_page = sanitize_key((string) ($_GET['page'] ?? ''));
-
-    if ($pagenow !== 'admin.php' || $current_page !== em_wp_ellene_admin_gate_page_slug()) {
+    if (!em_wp_ellene_admin_is_gate_screen()) {
         return;
     }
     ?>
@@ -765,6 +834,14 @@ function em_wp_ellene_admin_gate_chrome_css(): void
         #contextual-help-link-wrap,
         #screen-options-link-wrap,
         #wpadminbar {
+            display: none !important;
+        }
+
+        .update-nag,
+        .notice,
+        .error,
+        .updated,
+        #screen-meta {
             display: none !important;
         }
 
@@ -779,39 +856,35 @@ function em_wp_ellene_admin_gate_chrome_css(): void
             padding-bottom: 24px !important;
         }
 
-        .em-wp-ellene-gate-wrap {
-            min-height: calc(100vh - 40px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            box-sizing: border-box;
+        body.login {
+            background: #4f080e !important;
         }
 
-        .em-wp-ellene-gate-card {
-            width: 100%;
-            max-width: 760px;
-            background: #ffffff;
-            border: 1px solid #d9dee7;
-            border-radius: 12px;
-            box-shadow: 0 14px 34px rgba(16, 24, 40, 0.08);
-            padding: 28px;
+        body.login #wpbody-content {
+            min-height: 100vh;
         }
 
-        .em-wp-ellene-gate-card h1 {
-            margin: 0 0 14px;
-            font-size: 28px;
-            line-height: 1.2;
+        .em-wp-ellene-gate-login {
+            margin: 0 auto;
         }
 
-        .em-wp-ellene-gate-message p {
-            margin: 0 0 10px;
+        body.login #login .em-wp-ellene-gate-message {
+            color: #ffffff;
             font-size: 15px;
             line-height: 1.6;
+            margin-top: 6px;
         }
 
-        .em-wp-ellene-gate-actions {
-            margin: 16px 0 0;
+        body.login #login .em-wp-ellene-gate-message p {
+            margin: 0 0 10px;
+        }
+
+        body.login #login .em-wp-ellene-gate-form label {
+            color: #ffffff !important;
+        }
+
+        body.login #login .em-wp-ellene-gate-form .submit {
+            margin-top: 18px;
         }
     </style>
     <?php
