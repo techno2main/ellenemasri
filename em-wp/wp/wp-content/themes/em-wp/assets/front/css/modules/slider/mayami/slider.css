@@ -85,6 +85,17 @@
     background: #000000;
 }
 
+.em-slider--mayami .em-slider__slide[data-video-unplayable="1"] .em-slider__video-wrap {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.em-slider--mayami .em-slider__slide[data-video-unplayable="1"] .em-slider__tiktok-video {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .em-slider--mayami .em-slider__tiktok-video {
     position: absolute;
     inset: 0;
