@@ -376,16 +376,9 @@ function em_wp_admin_templates_enqueue(): void
         );
 
         wp_enqueue_style(
-            'em-wp-admin-catalog-sommaire',
-            get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
-            ['em-wp-admin-hub-cards'],
-            em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
-        );
-
-        wp_enqueue_style(
             'em-wp-admin-template-list',
             get_template_directory_uri() . '/assets/admin/css/template/list-page.css',
-            ['em-wp-admin-catalog-sommaire'],
+            ['em-wp-admin-hub-cards'],
             em_wp_admin_asset_version('assets/admin/css/template/list-page.css')
         );
 
@@ -407,16 +400,9 @@ function em_wp_admin_templates_enqueue(): void
         );
 
         wp_enqueue_style(
-            'em-wp-admin-catalog-sommaire',
-            get_template_directory_uri() . '/assets/admin/css/catalog/sommaire.css',
-            ['em-wp-admin-hub-cards'],
-            em_wp_admin_asset_version('assets/admin/css/catalog/sommaire.css')
-        );
-
-        wp_enqueue_style(
             'em-wp-admin-template-list',
             get_template_directory_uri() . '/assets/admin/css/template/list-page.css',
-            ['em-wp-admin-catalog-sommaire'],
+            ['em-wp-admin-hub-cards'],
             em_wp_admin_asset_version('assets/admin/css/template/list-page.css')
         );
 

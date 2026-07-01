@@ -25,7 +25,11 @@ function em_wp_v4_handle_create_item(): void
     $slug = sanitize_key((string) ($_POST['item_slug'] ?? ''));
 
     if ($slug === '' && $label !== '') {
-        $slug = sanitize_title($label);
+        $slug = $label;
+    }
+
+    if ($slug !== '') {
+        $slug = em_wp_v4_item_slug_base($type, $slug);
     }
 
     if (!em_wp_rubrique_type_exists($type) || $slug === '') {
@@ -59,8 +63,16 @@ function em_wp_v4_handle_ajax_rename_item(): void
         wp_send_json_error('invalid', 400);
     }
 
-    em_wp_v4_rename_item($type, $item, $label);
-    wp_send_json_success(['label' => $label]);
+    $renamed = em_wp_v4_rename_item($type, $item, $label);
+
+    if (($renamed['item'] ?? '') === '') {
+        wp_send_json_error('rename_failed', 400);
+    }
+
+    wp_send_json_success([
+        'label' => (string) ($renamed['label'] ?? $label),
+        'item'  => (string) ($renamed['item'] ?? $item),
+    ]);
 }
 add_action('wp_ajax_em_wp_v4_rename_item', 'em_wp_v4_handle_ajax_rename_item');
 
@@ -96,24 +108,6 @@ function em_wp_v4_handle_ajax_set_anchor(): void
 add_action('wp_ajax_em_wp_v4_set_anchor', 'em_wp_v4_handle_ajax_set_anchor');
 
 /**
- * Slug d'item unique pour un type (suffixe -2, -3… si déjà pris).
- */
-function em_wp_v4_unique_item_slug(string $type, string $base): string
-{
-    $base = $base !== '' ? $base : 'item';
-    $items = em_wp_v4_get_items($type);
-    $slug = $base;
-    $i = 2;
-
-    while (isset($items[$slug])) {
-        $slug = $base . '-' . $i;
-        $i++;
-    }
-
-    return $slug;
-}
-
-/**
  * Duplique un footer (structure + contenu + lay-out) sous un nouveau nom.
  */
 function em_wp_v4_handle_duplicate_item(): void
@@ -134,7 +128,7 @@ function em_wp_v4_handle_duplicate_item(): void
     }
 
     $label = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
-    $slug = em_wp_v4_unique_item_slug($type, sanitize_title($label));
+    $slug = em_wp_v4_unique_item_slug($type, em_wp_v4_item_slug_base($type, $label));
 
     $data = em_wp_v4_get_item($type, $source);
     $data['label'] = $label;

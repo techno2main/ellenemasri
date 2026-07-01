@@ -16,7 +16,7 @@ function em_wp_release_page_slug(): string
 
 function em_wp_release_form_option_key(): string
 {
-    return 'em_wp_release_options';
+    return em_wp_release_option_name(em_wp_release_admin_template_slug());
 }
 
 /**

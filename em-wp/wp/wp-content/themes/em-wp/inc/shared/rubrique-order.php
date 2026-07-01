@@ -205,19 +205,33 @@ function em_wp_get_rubrique_module_option_name(string $module_slug): string
 {
     switch ($module_slug) {
         case 'top-bar':
-            return 'em_wp_top_bar_options';
+            return function_exists('em_wp_top_bar_option_name')
+                ? em_wp_top_bar_option_name(em_wp_get_active_template_slug())
+                : '';
         case 'footer':
-            return 'em_wp_footer_options';
+            return function_exists('em_wp_footer_option_name')
+                ? em_wp_footer_option_name(em_wp_get_active_template_slug())
+                : '';
         case 'stream':
-            return 'em_wp_stream_options';
+            return function_exists('em_wp_stream_option_name')
+                ? em_wp_stream_option_name(em_wp_get_active_template_slug())
+                : '';
         case 'social':
-            return 'em_wp_social_options';
+            return function_exists('em_wp_social_option_name')
+                ? em_wp_social_option_name(em_wp_get_active_template_slug())
+                : '';
         case 'video':
-            return 'em_wp_video_options';
+            return function_exists('em_wp_video_option_name')
+                ? em_wp_video_option_name(em_wp_get_active_template_slug())
+                : '';
         case 'release':
-            return 'em_wp_release_options';
+            return function_exists('em_wp_release_option_name')
+                ? em_wp_release_option_name(em_wp_get_active_template_slug())
+                : '';
         case 'cta':
-            return 'em_wp_cta_options';
+            return function_exists('em_wp_cta_option_name')
+                ? em_wp_cta_option_name(em_wp_get_active_template_slug())
+                : '';
         case 'header':
             if (function_exists('em_wp_header_option_name')) {
                 return em_wp_header_option_name();
@@ -229,13 +243,13 @@ function em_wp_get_rubrique_module_option_name(string $module_slug): string
                 return em_wp_hero_option_name(em_wp_hero_active_style_slug());
             }
 
-            return 'em_wp_hero_mayami_options';
+            return '';
         case 'slider':
             if (function_exists('em_wp_slider_option_name') && function_exists('em_wp_slider_active_style_slug')) {
                 return em_wp_slider_option_name(em_wp_slider_active_style_slug());
             }
 
-            return 'em_wp_slider_mayami_options';
+            return '';
         default:
             if (function_exists('em_wp_custom_catalog_is_module') && em_wp_custom_catalog_is_module($module_slug)) {
                 return em_wp_custom_catalog_rubrique_option_name($module_slug);

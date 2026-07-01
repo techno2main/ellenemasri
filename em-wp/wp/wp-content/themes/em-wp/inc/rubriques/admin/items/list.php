@@ -91,6 +91,10 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
                     autocomplete="off"
                 >
             </span>
+            <span class="em-v4-item__slug" title="<?php esc_attr_e('Slug technique (lecture seule).', 'em-wp'); ?>">
+                <span class="em-v4-item__slug-label">slug</span>
+                <span class="em-v4-item__slug-value"><?php echo esc_html($item_slug); ?></span>
+            </span>
         </summary>
         <div class="em-v4-collapse__body">
             <?php em_wp_v4_render_item_builder($type_slug, $item_slug); ?>

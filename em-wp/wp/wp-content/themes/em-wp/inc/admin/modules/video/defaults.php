@@ -16,7 +16,7 @@ function em_wp_video_page_slug(): string
 
 function em_wp_video_form_option_key(): string
 {
-    return 'em_wp_video_options';
+    return em_wp_video_option_name(em_wp_video_admin_template_slug());
 }
 
 /**

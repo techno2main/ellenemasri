@@ -13,7 +13,6 @@ require_once __DIR__ . '/defaults.php';
 require_once __DIR__ . '/helpers.php';
 require_once __DIR__ . '/get-options.php';
 require_once __DIR__ . '/sanitize.php';
-require_once __DIR__ . '/migrate.php';
 require_once __DIR__ . '/partials/style-panel.php';
 require_once __DIR__ . '/partials/logo-panel.php';
 require_once __DIR__ . '/partials/item-panel.php';

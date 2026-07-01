@@ -14,9 +14,7 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <?php
-if (function_exists('em_wp_render_top_bar')) {
-    em_wp_render_top_bar();
-}
+em_wp_render_top_bar();
 ?>
 <?php if (!is_front_page()) { ?>
     <header class="site-header">

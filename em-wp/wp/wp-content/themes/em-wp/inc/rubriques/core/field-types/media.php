@@ -330,11 +330,19 @@ function em_wp_rubrique_slides_front_html(array $config): string
         }
     }
 
+    if (!function_exists('em_wp_render_slider_mayami')) {
+        $slider_render_file = get_template_directory() . '/inc/front/modules/slider/render.php';
+        if (file_exists($slider_render_file)) {
+            require_once $slider_render_file;
+        }
+    }
+
+    if (!function_exists('em_wp_render_slider_mayami')) {
+        return '';
+    }
+
     ob_start();
-    get_template_part('template-parts/sections/slider/mayami/slider', null, [
-        'slider' => $slider,
-        'slides' => $slides,
-    ]);
+    em_wp_render_slider_mayami($slider, $slides);
 
     return (string) ob_get_clean();
 }

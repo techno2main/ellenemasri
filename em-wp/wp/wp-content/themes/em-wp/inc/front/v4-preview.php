@@ -221,14 +221,10 @@ function em_wp_front_v4_render_module(string $module_slug): bool
     }
 
     if (trim($html) === '') {
-        // En aperçu : placeholder discret pour signaler la rubrique sans item V4.
-        // Sur le vrai front : on laisse le rendu legacy prendre le relais (false).
-        if (em_wp_front_v4_preview_active()) {
-            em_wp_front_v4_render_placeholder($module_slug, $anchor);
-            return true;
-        }
-
-        return false;
+        // Mode V4 strict (preview + live) : pas de repli legacy.
+        // Une rubrique sans item V4 reste explicitement visible via placeholder.
+        em_wp_front_v4_render_placeholder($module_slug, $anchor);
+        return true;
     }
 
     // Players inline (#player-*-{slug}) accumulés pendant le rendu des cartes.

@@ -106,3 +106,4 @@ em-wp/wp/AGENTS.md
 # em-wp — doc V2 suivie en repo (reste de em-wp/documentation/ hors repo)
 em-wp/documentation/*
 !em-wp/documentation/TEMPLATE_V2.md
+!em-wp/documentation/PURGE_EM_WP_SCAN_V4.md

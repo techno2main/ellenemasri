@@ -264,6 +264,10 @@ function em_wp_template_create(string $label, string $color = '')
         return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
     }
 
+    if (function_exists('em_wp_v4_ensure_template_instances')) {
+        em_wp_v4_ensure_template_instances($slug);
+    }
+
     return $registry[$slug];
 }
 
@@ -296,6 +300,10 @@ function em_wp_template_duplicate(string $source_slug, string $label, string $co
 
     if ($order !== []) {
         em_wp_save_template_skeleton_order($target_slug, $order);
+    }
+
+    if (function_exists('em_wp_v4_ensure_template_instances')) {
+        em_wp_v4_ensure_template_instances($target_slug);
     }
 
     $rubrique_slugs = function_exists('em_wp_admin_site_rubrique_all_definitions')
@@ -463,6 +471,10 @@ function em_wp_template_change_slug(string $old_slug, string $new_slug)
 
     foreach ($editing_users as $user_id) {
         update_user_meta((int) $user_id, $meta_key, $new_slug);
+    }
+
+    if (function_exists('em_wp_v4_ensure_template_instances')) {
+        em_wp_v4_ensure_template_instances($new_slug);
     }
 
     return true;

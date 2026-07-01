@@ -69,7 +69,7 @@ function em_wp_top_bar_page_slug(): string
 
 function em_wp_top_bar_form_option_key(): string
 {
-    return 'em_wp_top_bar_options';
+    return em_wp_top_bar_option_name(em_wp_top_bar_admin_template_slug());
 }
 
 function em_wp_top_bar_rubrique_default_options(): array

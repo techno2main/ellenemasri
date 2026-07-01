@@ -127,6 +127,9 @@ if (!defined('ABSPATH')) {
         border:0; border-radius:0; background:transparent; outline:0; box-shadow:none; appearance:none;
     }
     .em-v4-item__anchorinput::placeholder { color:#aeb6bf; opacity:1; }
+   .em-v4-item__slug { display:inline-flex; align-items:center; gap:5px; margin-left:6px; padding:0 8px; height:24px; border:1px solid #e5e8ec; border-radius:7px; background:#f6f8fa; color:#7c8794; font-size:11px; line-height:1; }
+   .em-v4-item__slug-label { text-transform:uppercase; letter-spacing:.04em; font-weight:600; opacity:.8; }
+   .em-v4-item__slug-value { color:#66717e; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:11px; }
     .em-v4-item__nameinput { text-transform:uppercase; font-weight:600; min-width:200px; }
     /* Boutons valider / annuler du renommage inline (items + rubriques) */
     .em-v4-item__confirm, .em-v4-item__cancel, .em-v4-card__confirm, .em-v4-card__cancel { background:#fff; border:1px solid #c3c4c7; border-radius:4px; cursor:pointer; padding:2px 4px; margin-left:4px; display:inline-flex; align-items:center; line-height:1; }

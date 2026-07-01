@@ -86,6 +86,64 @@ function em_wp_render_header_close(): void
 }
 
 /**
+ * Rendu paire Hero + Slider dans HEADER (layout hero_left ou slider_left).
+ */
+function em_wp_render_header_pair(string $hero_slug, string $slider_slug, string $layout): void
+{
+    $hero_slug = sanitize_key($hero_slug);
+    $slider_slug = sanitize_key($slider_slug);
+    $slider_first = $layout === 'slider_left';
+
+    ?>
+    <section class="em-landing-hero-row em-landing-header-pair">
+        <div class="em-landing-hero-row__inner<?php echo $slider_first ? ' is-slider-first' : ''; ?>">
+            <?php
+            if ($slider_first) {
+                if ($slider_slug !== '' && function_exists('em_wp_render_slider_section')) {
+                    em_wp_render_slider_section([
+                        'catalog_slug'          => $slider_slug,
+                        'wrapper'               => 'column',
+                        'skip_visibility_check' => true,
+                    ]);
+                }
+
+                if ($hero_slug !== '' && function_exists('em_wp_render_hero')) {
+                    echo '<div class="em-landing-hero-row__column em-landing-hero-row__column--hero">';
+                    em_wp_render_hero([
+                        'catalog_slug' => $hero_slug,
+                        'embed_slider' => false,
+                        'layout'       => 'pair-column',
+                        'in_header'    => true,
+                    ]);
+                    echo '</div>';
+                }
+            } else {
+                if ($hero_slug !== '' && function_exists('em_wp_render_hero')) {
+                    echo '<div class="em-landing-hero-row__column em-landing-hero-row__column--hero">';
+                    em_wp_render_hero([
+                        'catalog_slug' => $hero_slug,
+                        'embed_slider' => false,
+                        'layout'       => 'pair-column',
+                        'in_header'    => true,
+                    ]);
+                    echo '</div>';
+                }
+
+                if ($slider_slug !== '' && function_exists('em_wp_render_slider_section')) {
+                    em_wp_render_slider_section([
+                        'catalog_slug'          => $slider_slug,
+                        'wrapper'               => 'column',
+                        'skip_visibility_check' => true,
+                    ]);
+                }
+            }
+            ?>
+        </div>
+    </section>
+    <?php
+}
+
+/**
  * Affiche la rubrique HEADER selon le template live.
  */
 function em_wp_render_header(): void
@@ -129,11 +187,7 @@ function em_wp_render_header(): void
             'skip_visibility_check' => true,
         ]);
     } elseif ($hero_slug !== '' && $slider_slug !== '') {
-        get_template_part('template-parts/sections/landing/header-pair', null, [
-            'hero_slug'   => $hero_slug,
-            'slider_slug' => $slider_slug,
-            'layout'      => $layout,
-        ]);
+        em_wp_render_header_pair($hero_slug, $slider_slug, $layout);
     }
 
     em_wp_render_header_close();
