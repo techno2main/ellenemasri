@@ -43,7 +43,6 @@ require_once __DIR__ . '/pages/dashboard.php';
 require_once __DIR__ . '/shared/menu/layout.php';
 require_once __DIR__ . '/shared/menu/accordion.php';
 require_once __DIR__ . '/shared/onboarding.php';
-require_once __DIR__ . '/modules/coming-soon/register.php';
 
 /**
  * Slugs modules gérés côté admin.
