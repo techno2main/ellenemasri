@@ -1,11 +1,13 @@
         body.em-wp-admin-sidebar-chrome #adminmenu li.wp-menu-separator.separator-em-wp-site-top .separator,
         body.em-wp-admin-sidebar-chrome #adminmenu li.wp-menu-separator.separator-em-wp-bottom .separator,
+        body.em-wp-admin-sidebar-chrome #adminmenu li.wp-menu-separator.separator-em-wp-before-vlb .separator,
         body.em-wp-admin-sidebar-chrome #adminmenu li.wp-menu-separator.separator-em-wp-after-medias .separator,
         body.em-wp-admin-sidebar-chrome #adminmenu li.wp-menu-separator.separator-em-wp-after-catalog .separator,
         body.em-wp-admin-sidebar-chrome #adminmenu li.wp-menu-separator.separator-em-wp-after-templates .separator,
         body.em-wp-admin-sidebar-chrome #adminmenu li.wp-menu-separator.separator-em-wp-before-settings .separator,
         body.em-wp-admin-dashboard-screen #adminmenu li.wp-menu-separator.separator-em-wp-site-top .separator,
         body.em-wp-admin-dashboard-screen #adminmenu li.wp-menu-separator.separator-em-wp-bottom .separator,
+        body.em-wp-admin-dashboard-screen #adminmenu li.wp-menu-separator.separator-em-wp-before-vlb .separator,
         body.em-wp-admin-dashboard-screen #adminmenu li.wp-menu-separator.separator-em-wp-after-medias .separator,
         body.em-wp-admin-dashboard-screen #adminmenu li.wp-menu-separator.separator-em-wp-after-catalog .separator,
         body.em-wp-admin-dashboard-screen #adminmenu li.wp-menu-separator.separator-em-wp-after-templates .separator,
@@ -16,6 +18,7 @@
 
         #adminmenu li.wp-menu-separator.separator-em-wp-site-top,
         #adminmenu li.wp-menu-separator.separator-em-wp-bottom,
+        #adminmenu li.wp-menu-separator.separator-em-wp-before-vlb,
         #adminmenu li.wp-menu-separator.separator-em-wp-after-medias,
         #adminmenu li.wp-menu-separator.separator-em-wp-after-catalog,
         #adminmenu li.wp-menu-separator.separator-em-wp-after-templates,
@@ -33,6 +36,7 @@
 
         #adminmenu li.wp-menu-separator.separator-em-wp-site-top .separator,
         #adminmenu li.wp-menu-separator.separator-em-wp-bottom .separator,
+        #adminmenu li.wp-menu-separator.separator-em-wp-before-vlb .separator,
         #adminmenu li.wp-menu-separator.separator-em-wp-after-medias .separator,
         #adminmenu li.wp-menu-separator.separator-em-wp-after-catalog .separator,
         #adminmenu li.wp-menu-separator.separator-em-wp-after-templates .separator,
@@ -47,6 +51,6 @@
             box-shadow: none;
         }
 
-        #adminmenu li.wp-menu-separator:not(.separator-em-wp-site-top):not(.separator-em-wp-bottom):not(.separator-em-wp-after-medias):not(.separator-em-wp-after-catalog):not(.separator-em-wp-after-templates):not(.separator-em-wp-before-settings) {
+        #adminmenu li.wp-menu-separator:not(.separator-em-wp-site-top):not(.separator-em-wp-bottom):not(.separator-em-wp-before-vlb):not(.separator-em-wp-after-medias):not(.separator-em-wp-after-catalog):not(.separator-em-wp-after-templates):not(.separator-em-wp-before-settings) {
             display: none !important;
         }

@@ -19,6 +19,7 @@ function em_wp_admin_menu_chrome_slugs(): array
     return [
         'separator-em-wp-site-top',
         'separator-em-wp-bottom',
+        'separator-em-wp-before-vlb',
         'separator-em-wp-after-medias',
         'separator-em-wp-after-catalog',
         'separator-em-wp-after-templates',

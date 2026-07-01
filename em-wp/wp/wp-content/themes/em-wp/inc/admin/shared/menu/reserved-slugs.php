@@ -24,6 +24,7 @@ function em_wp_admin_rubrique_reserved_menu_slugs(): array
         em_wp_admin_rubriques_page_slug(),
         'separator-em-wp-site-top',
         'separator-em-wp-bottom',
+        'separator-em-wp-before-vlb',
         'upload.php',
         'media-new.php',
         em_wp_admin_media_parent_menu_slug(),

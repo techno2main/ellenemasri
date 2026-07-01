@@ -42,6 +42,30 @@ function em_wp_admin_menu_settings_block_base(): int
 }
 
 /**
+ * Slug parent du menu VLB (Visual Links Builder).
+ */
+function em_wp_admin_menu_vlb_parent_slug(): string
+{
+    return 'mayami_visual_links_builder';
+}
+
+/**
+ * Position du menu VLB : aprÃ¨s RUBRIQUES et avant ParamÃ¨tres.
+ */
+function em_wp_admin_menu_vlb_position(): int
+{
+    return em_wp_admin_menu_settings_block_base() - 2;
+}
+
+/**
+ * Position du séparateur visuel juste avant VLB.
+ */
+function em_wp_admin_menu_vlb_separator_position(): int
+{
+    return em_wp_admin_menu_vlb_position() - 1;
+}
+
+/**
  * Slugs des menus WordPress natifs sous PARAMÃˆTRES.
  *
  * @return string[]
@@ -190,6 +214,9 @@ function em_wp_admin_menu_position_registry(): array
 
         $registry['separator-em-wp-bottom'] = $rub_base + $idx;
     }
+
+    $registry['separator-em-wp-before-vlb'] = em_wp_admin_menu_vlb_separator_position();
+    $registry[em_wp_admin_menu_vlb_parent_slug()] = em_wp_admin_menu_vlb_position();
 
     $settings = em_wp_admin_menu_settings_block_base();
     $registry['separator-em-wp-before-settings'] = $settings;
