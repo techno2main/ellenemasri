@@ -235,17 +235,28 @@ function em_wp_admin_dashboard_render_medias_badge(): void
  */
 function em_wp_admin_dashboard_render_settings_badge(): void
 {
-    em_wp_admin_hub_render_catalog_entry_links_badge(
+    $entries = [
         [
-            [
-                'label' => __('APPARENCE', 'em-wp'),
-                'url'   => admin_url('themes.php'),
-            ],
-            [
-                'label' => __('GÉNÉRAL', 'em-wp'),
-                'url'   => admin_url('options-general.php'),
-            ],
+            'label' => __('APPARENCE', 'em-wp'),
+            'url'   => admin_url('themes.php'),
         ],
+        [
+            'label' => __('GÉNÉRAL', 'em-wp'),
+            'url'   => admin_url('options-general.php'),
+        ],
+    ];
+
+    if (function_exists('em_wp_admin_is_power_user')
+        && function_exists('em_wp_ellene_admin_gate_settings_admin_url')
+        && em_wp_admin_is_power_user()) {
+        $entries[] = [
+            'label' => __('VERROU ELLENE', 'em-wp'),
+            'url'   => em_wp_ellene_admin_gate_settings_admin_url(),
+        ];
+    }
+
+    em_wp_admin_hub_render_catalog_entry_links_badge(
+        $entries,
         '#4e080e'
     );
 }
@@ -272,7 +283,11 @@ function em_wp_admin_dashboard_nav_tab_definitions(): array
         ],
         'settings' => [
             'menu_title' => __('SETTINGS', 'em-wp'),
-            'url'        => admin_url('options-general.php'),
+            'url'        => (function_exists('em_wp_admin_is_power_user')
+                && function_exists('em_wp_ellene_admin_gate_settings_admin_url')
+                && em_wp_admin_is_power_user())
+                ? em_wp_ellene_admin_gate_settings_admin_url()
+                : admin_url('options-general.php'),
         ],
     ];
 }
