@@ -84,3 +84,37 @@
         grid-template-columns: minmax(0, 1fr) !important;
     }
 }
+
+@media (max-width: 760px) {
+    /* Mobile header: limiter au maximum l'espace avant la fleche bas du hero. */
+    .em-header-shell__inner,
+    .em-header-shell__inner.is-slider-first {
+        padding-top: 2px;
+        padding-bottom: 30px;
+        gap: 12px;
+    }
+
+    .em-header-shell .em-hero--mayami .em-hero__inner {
+        padding-top: 6px;
+    }
+
+    .em-header-shell .em-hero--mayami .em-hero__scroll-row {
+        margin-bottom: 8px;
+    }
+
+    /* Forcer Stream/Watch sur une seule ligne en mobile. */
+    .em-header-shell .em-hero--mayami .em-hero__actions {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-top: 14px;
+        padding-bottom: 10px;
+    }
+
+    .em-header-shell .em-hero--mayami .em-hero__btn {
+        white-space: nowrap;
+        font-size: 13px;
+        padding: 10px 12px;
+        gap: 6px;
+    }
+}
