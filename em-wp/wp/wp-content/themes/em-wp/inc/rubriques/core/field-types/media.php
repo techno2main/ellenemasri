@@ -513,7 +513,7 @@ function em_wp_rubrique_video_embed_html(string $url): string
     }
 
     return '<div class="em-rubrique__video-embed em-rubrique__video-embed--' . esc_attr($info['provider']) . '">'
-        . '<iframe src="' . esc_url($src) . '" loading="lazy" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
+        . '<iframe src="' . esc_url($src) . '" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
         . '</div>';
 }
 
