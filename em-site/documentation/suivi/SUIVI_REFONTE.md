@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-03 00:07:22.
+3. Dernière mise à jour : 2026-07-03 00:22:30.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -52,11 +52,11 @@
 3. Contrôle runtime validé : front HTTP 200 et fallback texte WordPress toujours neutralisé.
 
 ## Exécution en cours (flow GH demandé)
-1. Rubrique CONTACT importée depuis la source officielle em-wp et intégrée dans em-site (module cible `contact`, source `contacts`).
-2. Structuration appliquée : pattern render/helpers sur CONTACT, aligné avec TOP-BAR, STREAM, SOCIAL, VIDEO, RELEASE, CTA, ABOUT et FOOTER.
-3. Intégration front validée : bootstrap + enqueue CSS contact + rendu de section + retrait automatique du placeholder CONTACT quand la rubrique est prête.
-4. Fidélité source validée : badges latéraux `Contact Me` et `ellenemasri.com` (forme/animation/radius/couleurs) rendus selon les métadonnées V4.
-5. Vérifications validées avant flow GH : lint PHP OK, front HTTP 200, section CONTACT présente, placeholder CONTACT retiré.
+1. Rubrique HEADER engagée en priorité après ABOUT puis CONTACT, avec intégration conjointe HERO + SLIDER selon l'ordre demandé.
+2. Rendu front activé : retrait du placeholder HEADER, assemblage shell + hero + slider, conservation des contraintes WordPress (pas de copie récursive).
+3. Ajustements fidélité source appliqués : boutons HERO alignés (libellés uppercase et animations actives), structure slider mayami opérationnelle côté cible.
+4. Refactor JS slider finalisé en découpage logique réel : `media.js`, `runtime.js`, `player.js`, `core.js` (compatibilité) et `index.js` (bootstrap).
+5. Vérifications validées avant flow GH : lint PHP OK via Docker, front HTTP 200, présence HEADER/SLIDER confirmée et scripts slider découpés chargés dans le HTML.
 
 ## Méthode d'import par rubrique (gravée)
 1. Source unique autorisée : `em-wp` (source officielle), jamais d'autre source.

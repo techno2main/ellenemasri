@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/core/assets.php';
 require_once __DIR__ . '/front/modules/top-bar/render.php';
+require_once __DIR__ . '/front/modules/header/render.php';
 require_once __DIR__ . '/front/modules/stream/render.php';
 require_once __DIR__ . '/front/modules/social/render.php';
 require_once __DIR__ . '/front/modules/video/render.php';

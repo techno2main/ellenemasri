@@ -58,6 +58,27 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_style(
+		'em-site-header',
+		$base_uri . '/assets/front/css/modules/header/index.css',
+		['em-site-front-layout'],
+		em_site_asset_version('assets/front/css/modules/header/index.css')
+	);
+
+	wp_enqueue_style(
+		'em-site-hero',
+		$base_uri . '/assets/front/css/modules/hero/index.css',
+		['em-site-front-layout'],
+		em_site_asset_version('assets/front/css/modules/hero/index.css')
+	);
+
+	wp_enqueue_style(
+		'em-site-slider',
+		$base_uri . '/assets/front/css/modules/slider/index.css',
+		['em-site-front-layout'],
+		em_site_asset_version('assets/front/css/modules/slider/index.css')
+	);
+
+	wp_enqueue_style(
 		'em-site-stream',
 		$base_uri . '/assets/front/css/modules/stream/index.css',
 		['em-site-front-layout', 'font-awesome-6'],
@@ -132,6 +153,46 @@ function em_site_enqueue_front_assets(): void
 		$base_uri . '/assets/front/js/modules/stream/index.js',
 		[],
 		em_site_asset_version('assets/front/js/modules/stream/index.js'),
+		true
+	);
+
+	wp_enqueue_script(
+		'em-site-slider-media',
+		$base_uri . '/assets/front/js/modules/slider/media.js',
+		[],
+		em_site_asset_version('assets/front/js/modules/slider/media.js'),
+		true
+	);
+
+	wp_enqueue_script(
+		'em-site-slider-runtime',
+		$base_uri . '/assets/front/js/modules/slider/runtime.js',
+		['em-site-slider-media'],
+		em_site_asset_version('assets/front/js/modules/slider/runtime.js'),
+		true
+	);
+
+	wp_enqueue_script(
+		'em-site-slider-player',
+		$base_uri . '/assets/front/js/modules/slider/player.js',
+		['em-site-slider-runtime'],
+		em_site_asset_version('assets/front/js/modules/slider/player.js'),
+		true
+	);
+
+	wp_enqueue_script(
+		'em-site-slider-core',
+		$base_uri . '/assets/front/js/modules/slider/core.js',
+		['em-site-slider-player'],
+		em_site_asset_version('assets/front/js/modules/slider/core.js'),
+		true
+	);
+
+	wp_enqueue_script(
+		'em-site-slider',
+		$base_uri . '/assets/front/js/modules/slider/index.js',
+		['em-site-slider-core'],
+		em_site_asset_version('assets/front/js/modules/slider/index.js'),
 		true
 	);
 }
