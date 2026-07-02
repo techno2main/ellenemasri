@@ -142,7 +142,12 @@ function em_wp_render_hero_mayami(array $hero, bool $embed_slider, string $layou
             <div class="em-hero__left">
                 <?php if ($hero_nav_next_href !== '') { ?>
                 <div class="em-hero__scroll-row">
-                    <a href="<?php echo esc_attr($hero_nav_next_href); ?>" class="em-hero__scroll" aria-label="<?php esc_attr_e('Section suivante', 'em-wp'); ?>">↓</a>
+                    <a
+                        href="<?php echo esc_attr($hero_nav_next_href); ?>"
+                        class="em-hero__scroll"
+                        <?php echo $embed_slider ? 'data-mobile-target="#hero-slider"' : ''; ?>
+                        aria-label="<?php esc_attr_e('Section suivante', 'em-wp'); ?>"
+                    >↓</a>
                 </div>
                 <?php } ?>
 
@@ -187,7 +192,7 @@ function em_wp_render_hero_mayami(array $hero, bool $embed_slider, string $layou
             </div>
 
             <?php if ($embed_slider) { ?>
-            <aside class="em-hero__slider-slot">
+            <aside id="hero-slider" class="em-hero__slider-slot">
                 <?php
                 if (function_exists('em_wp_render_slider_in_hero')) {
                     $slider_args = [];
