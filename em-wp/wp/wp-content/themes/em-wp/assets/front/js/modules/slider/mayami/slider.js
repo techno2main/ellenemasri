@@ -38,37 +38,6 @@ window.emWpInitMayamiSlider = function (root) {
         return slide ? slide.querySelector('video.em-slider__tiktok-video') : null;
     }
 
-    function isTikTokVideoUnplayable(index) {
-        const slide = slides[index];
-        if (!slide) {
-            return false;
-        }
-
-        return slide.getAttribute('data-video-unplayable') === '1';
-    }
-
-    function markTikTokVideoUnplayable(slide, index, video) {
-        if (!slide || slide.getAttribute('data-type') !== 'tiktok') {
-            return;
-        }
-
-        if (slide.getAttribute('data-video-unplayable') === '1') {
-            return;
-        }
-
-        slide.setAttribute('data-video-unplayable', '1');
-
-        if (video) {
-            try {
-                video.pause();
-            } catch (e) {}
-        }
-
-        if (index === currentIndex) {
-            startAutoPlay();
-        }
-    }
-
     function stopAutoPlay() {
         if (autoPlayTimer) {
             clearTimeout(autoPlayTimer);
@@ -96,10 +65,6 @@ window.emWpInitMayamiSlider = function (root) {
         }
 
         if (slide.getAttribute('data-type') === 'tiktok') {
-            if (isTikTokVideoUnplayable(index)) {
-                return true;
-            }
-
             return isTimedTikTokEmbedSlide(index);
         }
 
@@ -155,7 +120,7 @@ window.emWpInitMayamiSlider = function (root) {
 
             if (i === index) {
                 video.currentTime = 0;
-                video.muted = true;
+                video.muted = false;
                 video.volume = 1;
 
                 const playPromise = video.play();
@@ -166,9 +131,7 @@ window.emWpInitMayamiSlider = function (root) {
 
                         const retryPromise = video.play();
                         if (retryPromise && typeof retryPromise.catch === 'function') {
-                            retryPromise.catch(function () {
-                                markTikTokVideoUnplayable(slide, i, video);
-                            });
+                            retryPromise.catch(function () {});
                         }
                     });
                 }
@@ -237,16 +200,6 @@ window.emWpInitMayamiSlider = function (root) {
 
                 goToSlide((currentIndex + 1) % slides.length);
             });
-
-            const onVideoFailure = function () {
-                const slideIndex = slides.indexOf(slide);
-                markTikTokVideoUnplayable(slide, slideIndex, video);
-            };
-
-            video.addEventListener('error', onVideoFailure);
-            video.addEventListener('abort', onVideoFailure);
-            video.addEventListener('stalled', onVideoFailure);
-            video.addEventListener('emptied', onVideoFailure);
         });
     }
 
@@ -293,8 +246,8 @@ window.emWpInitMayamiSlider = function (root) {
     }
 
     // Les navigateurs bloquent la lecture audible tant qu'aucune interaction
-    // utilisateur n'a eu lieu : à l'init la vidéo retombe en muet. On rétablit le
-    // son dès le premier geste (clic, touche, toucher) sur la page, comme attendu.
+    // utilisateur n'a eu lieu : ├á l'init la vid├®o retombe en muet. On r├®tablit le
+    // son d├¿s le premier geste (clic, touche, toucher) sur la page, comme attendu.
     let soundUnlocked = false;
     function unlockActiveSound() {
         if (soundUnlocked) {

@@ -42,39 +42,6 @@ function em_wp_slider_extract_tiktok_video_id(string $url): string
 }
 
 /**
- * Rend une URL média robuste en front multi-hôte (localhost, IP LAN, tunnel).
- */
-function em_wp_slider_front_media_url(string $url): string
-{
-    $url = trim($url);
-    if ($url === '') {
-        return '';
-    }
-
-    $parts = wp_parse_url($url);
-    if (!is_array($parts)) {
-        return $url;
-    }
-
-    $host = strtolower((string) ($parts['host'] ?? ''));
-    $path = (string) ($parts['path'] ?? '');
-    $query = isset($parts['query']) && $parts['query'] !== '' ? '?' . (string) $parts['query'] : '';
-
-    if ($host !== '' && $path !== '') {
-        if (in_array($host, ['localhost', '127.0.0.1'], true)) {
-            return $path . $query;
-        }
-
-        $home_host = strtolower((string) wp_parse_url(home_url('/'), PHP_URL_HOST));
-        if ($home_host !== '' && $host === $home_host) {
-            return $path . $query;
-        }
-    }
-
-    return $url;
-}
-
-/**
  * Retourne les options slider pour le front.
  */
 function em_wp_get_slider_options_for_front(string $style_slug = ''): array
@@ -254,11 +221,11 @@ function em_wp_render_slider_mayami(array $slider, array $slides): void
                                     ></iframe>
                                 <?php elseif ($slide_type === 'tiktok'): ?>
                                     <?php if (!empty($slide['tiktok_video_url'])): ?>
-                                        <div class="em-slider__video-wrap"<?php echo !empty($slide['image']) ? ' style="background-image:url(' . esc_url(em_wp_slider_front_media_url((string) $slide['image'])) . ');"' : ''; ?>>
+                                        <div class="em-slider__video-wrap">
                                             <video
                                                 class="em-slider__tiktok-video"
-                                                src="<?php echo esc_url(em_wp_slider_front_media_url((string) $slide['tiktok_video_url'])); ?>"
-                                                poster="<?php echo esc_url(em_wp_slider_front_media_url((string) ($slide['image'] ?? ''))); ?>"
+                                                src="<?php echo esc_url((string) $slide['tiktok_video_url']); ?>"
+                                                poster="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>"
                                                 playsinline
                                                 webkit-playsinline
                                                 preload="metadata"
@@ -288,7 +255,7 @@ function em_wp_render_slider_mayami(array $slider, array $slides): void
                                     <?php endif; ?>
                                 <?php else: ?>
                                     <img
-                                        src="<?php echo esc_url(em_wp_slider_front_media_url((string) ($slide['image'] ?? ''))); ?>"
+                                        src="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>"
                                         alt="<?php echo esc_attr((string) ($slide['alt'] ?? '')); ?>"
                                         loading="lazy"
                                         decoding="async"
