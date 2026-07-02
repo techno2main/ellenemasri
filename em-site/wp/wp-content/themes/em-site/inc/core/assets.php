@@ -100,6 +100,13 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_style(
+		'em-site-contact',
+		$base_uri . '/assets/front/css/modules/contact/index.css',
+		['em-site-front-layout'],
+		em_site_asset_version('assets/front/css/modules/contact/index.css')
+	);
+
+	wp_enqueue_style(
 		'em-site-footer',
 		$base_uri . '/assets/front/css/modules/footer/index.css',
 		['em-site-front-layout', 'font-awesome-6'],

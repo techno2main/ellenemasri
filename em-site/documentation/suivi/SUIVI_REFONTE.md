@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 23:58:40.
+3. Dernière mise à jour : 2026-07-03 00:07:22.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -52,11 +52,11 @@
 3. Contrôle runtime validé : front HTTP 200 et fallback texte WordPress toujours neutralisé.
 
 ## Exécution en cours (flow GH demandé)
-1. Rubrique ABOUT importée depuis la source officielle em-wp et intégrée dans em-site.
-2. Structuration appliquée : pattern render/helpers sur ABOUT, aligné avec TOP-BAR, STREAM, SOCIAL, VIDEO, RELEASE, CTA et FOOTER.
-3. Intégration front validée : bootstrap + enqueue CSS about + rendu de section + retrait automatique du placeholder ABOUT quand la rubrique est prête.
-4. Ajustement visuel validé après contrôle source/cible : taille de texte ABOUT réduite et justification appliquée comme sur la source.
-5. Vérifications validées avant flow GH : lint PHP OK, front HTTP 200, section ABOUT présente, placeholder ABOUT retiré.
+1. Rubrique CONTACT importée depuis la source officielle em-wp et intégrée dans em-site (module cible `contact`, source `contacts`).
+2. Structuration appliquée : pattern render/helpers sur CONTACT, aligné avec TOP-BAR, STREAM, SOCIAL, VIDEO, RELEASE, CTA, ABOUT et FOOTER.
+3. Intégration front validée : bootstrap + enqueue CSS contact + rendu de section + retrait automatique du placeholder CONTACT quand la rubrique est prête.
+4. Fidélité source validée : badges latéraux `Contact Me` et `ellenemasri.com` (forme/animation/radius/couleurs) rendus selon les métadonnées V4.
+5. Vérifications validées avant flow GH : lint PHP OK, front HTTP 200, section CONTACT présente, placeholder CONTACT retiré.
 
 ## Méthode d'import par rubrique (gravée)
 1. Source unique autorisée : `em-wp` (source officielle), jamais d'autre source.
