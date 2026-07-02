@@ -50,6 +50,13 @@ function em_site_front_rubrique_placeholders(): array
 		));
 	}
 
+	if (function_exists('em_site_video_is_ready') && em_site_video_is_ready()) {
+		$items = array_values(array_filter(
+			$items,
+			static fn(array $item): bool => ($item['slug'] ?? '') !== 'video'
+		));
+	}
+
 	return $items;
 }
 
@@ -88,6 +95,10 @@ function em_site_render_front_page(): void
 
 	if (function_exists('em_wp_render_social')) {
 		em_wp_render_social();
+	}
+
+	if (function_exists('em_wp_render_video')) {
+		em_wp_render_video();
 	}
 
 	em_site_render_front_placeholders();
