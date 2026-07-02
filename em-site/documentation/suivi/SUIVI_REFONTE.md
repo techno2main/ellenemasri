@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 18:31:59.
+3. Dernière mise à jour : 2026-07-02 19:15:51.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -39,3 +39,4 @@
 
 ## Reprise de session
 1. Prompt de reprise figé : PROMPT_REPRISE_SESSION.md
+2. Prochaine étape prioritaire : mini-lot "chargement fonctions métier" (brancher les fonctions d'options/visibilité V4 manquantes avant nouveau lot).
