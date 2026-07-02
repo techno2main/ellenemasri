@@ -42,6 +42,61 @@ function em_wp_slider_extract_tiktok_video_id(string $url): string
 }
 
 /**
+ * Normalise une URL media pour le front (corrige les URLs localhost en prod).
+ */
+function em_wp_slider_front_media_url(string $url): string
+{
+    $url = trim($url);
+    if ($url === '') {
+        return '';
+    }
+
+    $parts = wp_parse_url($url);
+    if (!is_array($parts) || empty($parts['host'])) {
+        return $url;
+    }
+
+    $host = strtolower((string) $parts['host']);
+    $is_local_host = in_array($host, ['localhost', '127.0.0.1'], true) || str_ends_with($host, '.local');
+    if (!$is_local_host) {
+        return $url;
+    }
+
+    $home_parts = wp_parse_url(home_url('/'));
+    if (!is_array($home_parts) || empty($home_parts['host'])) {
+        return $url;
+    }
+
+    $path = (string) ($parts['path'] ?? '');
+    if ($path !== '' && str_starts_with($path, '/wp-content/')) {
+        $content_parts = wp_parse_url(content_url('/'));
+        if (is_array($content_parts)) {
+            $content_path = rtrim((string) ($content_parts['path'] ?? '/wp-content'), '/');
+            if ($content_path !== '') {
+                $path = $content_path . substr($path, strlen('/wp-content'));
+            }
+        }
+    }
+
+    $scheme = !empty($home_parts['scheme']) ? (string) $home_parts['scheme'] : 'https';
+    $front = $scheme . '://' . (string) $home_parts['host'];
+    if (!empty($home_parts['port'])) {
+        $front .= ':' . (int) $home_parts['port'];
+    }
+
+    $normalized = $front . $path;
+
+    if (isset($parts['query']) && $parts['query'] !== '') {
+        $normalized .= '?' . (string) $parts['query'];
+    }
+    if (isset($parts['fragment']) && $parts['fragment'] !== '') {
+        $normalized .= '#' . (string) $parts['fragment'];
+    }
+
+    return $normalized;
+}
+
+/**
  * Retourne les options slider pour le front.
  */
 function em_wp_get_slider_options_for_front(string $style_slug = ''): array
@@ -87,10 +142,10 @@ function em_wp_slider_collect_slides(array $slider): array
         $slide = em_wp_slider_normalize_slide_item($item);
         $slide_type = $slide['type'];
         $name = trim($slide['name']);
-        $image = trim($slide['image']);
+        $image = em_wp_slider_front_media_url(trim($slide['image']));
         $video_url = trim($slide['video_url']);
         $tiktok_url = trim($slide['tiktok_url']);
-        $tiktok_video_url = trim($slide['tiktok_video_url']);
+        $tiktok_video_url = em_wp_slider_front_media_url(trim($slide['tiktok_video_url']));
         $alt_text = trim($slide['alt_text']);
         $slide_duration_seconds = max(1, intval($slide['duration']));
         $slide_delay_ms = $slide_duration_seconds * 1000;
