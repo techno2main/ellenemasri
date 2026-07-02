@@ -16,8 +16,9 @@ Contexte chantier em-site (à respecter strictement) :
 1) Point de rollback GH actif créé sur feature/em-site à la demande utilisateur.
 2) Structure de thème conservée pour imports contrôlés.
 3) Fallback texte WordPress neutralisé via header/footer thème minimal.
-4) Top-bar annulée (render/css vidés) pour repartir d'un état visuel neutre.
-5) Prochaine action autorisée : import FRONT une rubrique à la fois, avec validation visuelle utilisateur après chaque rubrique.
+4) Top-bar V4 réactivée en FRONT, placeholder top-bar retiré automatiquement quand les données V4 sont présentes.
+5) Layout global centralisé dans `assets/front/css/core/layout.css` ; ne pas remettre de logique de layout dans `modules/top-bar/index.css`.
+6) Prochaine action autorisée : poursuivre rubrique par rubrique (HEADER ensuite), avec validation visuelle utilisateur après chaque rubrique.
 
 Consignes d'exécution :
 - Toujours mettre à jour la documentation de suivi avant tout flow GH.

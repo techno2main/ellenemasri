@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
  */
 function em_site_front_rubrique_placeholders(): array
 {
-	return [
+	$items = [
 		['slug' => 'top-bar', 'label' => 'TOP-BAR'],
 		['slug' => 'header', 'label' => 'HEADER (HERO + SLIDER)'],
 		['slug' => 'stream', 'label' => 'STREAM'],
@@ -28,6 +28,15 @@ function em_site_front_rubrique_placeholders(): array
 		['slug' => 'contact', 'label' => 'CONTACT'],
 		['slug' => 'footer', 'label' => 'FOOTER'],
 	];
+
+	if (function_exists('em_site_top_bar_is_ready') && em_site_top_bar_is_ready()) {
+		$items = array_values(array_filter(
+			$items,
+			static fn(array $item): bool => ($item['slug'] ?? '') !== 'top-bar'
+		));
+	}
+
+	return $items;
 }
 
 /**
@@ -55,5 +64,9 @@ function em_site_render_front_placeholders(): void
  */
 function em_site_render_front_page(): void
 {
+	if (function_exists('em_wp_render_top_bar')) {
+		em_wp_render_top_bar();
+	}
+
 	em_site_render_front_placeholders();
 }
