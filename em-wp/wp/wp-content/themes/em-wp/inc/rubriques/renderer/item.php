@@ -53,9 +53,29 @@ function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array
     <footer id="<?php echo esc_attr($uid); ?>" class="em-rubrique em-rubrique--<?php echo esc_attr($type_slug); ?>"<?php echo $style !== '' ? ' style="' . esc_attr($style) . '"' : ''; ?>>
         <?php for ($row = 1; $row <= $row_count; $row++) : ?>
             <?php $cols = em_wp_rubrique_layout_columns_for($layout, $row); ?>
-            <div class="em-rubrique__row" data-em-row="<?php echo (int) $row; ?>" style="grid-template-columns:repeat(<?php echo (int) $cols; ?>,minmax(0,1fr))">
+            <?php
+            $row_has_button = false;
+            foreach (($grid[$row] ?? []) as $row_cells) {
+                foreach ((array) $row_cells as $chunk) {
+                    if (strpos((string) $chunk, 'em-rubrique__button') !== false) {
+                        $row_has_button = true;
+                        break 2;
+                    }
+                }
+            }
+            ?>
+            <div class="em-rubrique__row" data-em-row="<?php echo (int) $row; ?>" data-em-has-button="<?php echo $row_has_button ? '1' : '0'; ?>" style="grid-template-columns:repeat(<?php echo (int) $cols; ?>,minmax(0,1fr))">
                 <?php for ($col = 1; $col <= $cols; $col++) : ?>
-                    <div class="em-rubrique__col em-rubrique__col--<?php echo esc_attr(em_wp_rubrique_layout_align_for($layout, $row, $col)); ?>" data-em-col="<?php echo (int) $col; ?>">
+                    <?php
+                    $col_has_button = false;
+                    foreach (($grid[$row][$col] ?? []) as $chunk) {
+                        if (strpos((string) $chunk, 'em-rubrique__button') !== false) {
+                            $col_has_button = true;
+                            break;
+                        }
+                    }
+                    ?>
+                    <div class="em-rubrique__col em-rubrique__col--<?php echo esc_attr(em_wp_rubrique_layout_align_for($layout, $row, $col)); ?>" data-em-col="<?php echo (int) $col; ?>" data-em-has-button="<?php echo $col_has_button ? '1' : '0'; ?>">
                         <?php echo implode('', $grid[$row][$col] ?? []); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                     </div>
                 <?php endfor; ?>

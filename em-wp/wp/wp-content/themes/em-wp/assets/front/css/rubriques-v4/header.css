@@ -113,33 +113,27 @@
 
     .em-header-shell .em-hero--mayami .em-hero__btn {
         white-space: nowrap;
-        font-size: 13px;
-        padding: 10px 12px;
-        gap: 6px;
     }
 
     /* V4 réel: certains templates utilisent les boutons génériques */
-    .em-header-shell .em-rubrique__row:has(.em-rubrique__button) {
+    .em-header-shell .em-rubrique__row[data-em-has-button="1"] {
         display: flex !important;
         flex-wrap: nowrap !important;
         align-items: center;
         gap: 8px;
     }
 
-    .em-header-shell .em-rubrique__row:has(.em-rubrique__button) > .em-rubrique__col {
+    .em-header-shell .em-rubrique__row[data-em-has-button="1"] > .em-rubrique__col[data-em-has-button="1"] {
         width: auto !important;
         min-width: 0;
         flex: 0 1 auto;
     }
 
-    .em-header-shell .em-rubrique__row:has(.em-rubrique__button) .em-rubrique__button {
+    .em-header-shell .em-rubrique__row[data-em-has-button="1"] .em-rubrique__button {
         display: inline-flex;
         align-items: center;
         justify-content: center;
         white-space: nowrap;
-        font-size: 12px;
-        line-height: 1;
-        padding: 9px 12px;
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
     }
