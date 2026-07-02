@@ -1,7 +1,7 @@
 # Étape 5 - Plan de copie sélective V4 (whitelist stricte)
 
 ## Horodatage (Paris)
-1. Dernière mise à jour : 2026-07-02 18:13:30.
+1. Dernière mise à jour : 2026-07-02 18:31:59.
 
 ## Statut
 Terminé (arbo 100% clean et prête).
@@ -27,7 +27,7 @@ Avancer sereinement avec une copie strictement contrôlée depuis la source V4, 
 
 ## Lots proposés
 1. Lot 1 - Noyau front minimal (rendu de base)
-   - Fichiers candidats présents en source V4 :
+    - Copie directe (présents en source V4) :
      - style.css
      - functions.php
      - index.php
@@ -42,6 +42,9 @@ Avancer sereinement avec une copie strictement contrôlée depuis la source V4, 
      - inc/front/modules/release/render.php
      - inc/front/modules/cta/render.php
      - inc/front/modules/footer/render.php
+    - Adaptations obligatoires incluses dans le lot 1 (sans legacy) :
+       - about : créer `inc/front/modules/about/render.php` via mapping contrôlé depuis la source V4.
+       - contact : alimenter `inc/front/modules/contact/render.php` via mapping contrôlé depuis `inc/front/modules/contacts/render.php` (source V4).
 2. Lot 2 - Domaine et orchestration (adaptation contrôlée)
    - Cible arbo attendue : `inc/domain/*`, `inc/helpers/*`, `inc/infra/*`, `inc/front/render-page.php`, `inc/front/rendering/engine.php`.
    - Constat : ces chemins ne sont pas présents tels quels dans la source V4.
@@ -59,7 +62,7 @@ Avancer sereinement avec une copie strictement contrôlée depuis la source V4, 
 ## Vérification de faisabilité déjà effectuée
 1. Une pré-vérification a comparé les chemins cibles avec la source V4.
 2. Résultat : 14 chemins candidats disponibles immédiatement, 47 chemins nécessitent mapping/adaptation.
-3. Décision : démarrer par le lot 1 uniquement, puis traiter les écarts par mapping explicite.
+3. Décision : démarrer par le lot 1 uniquement, avec les adaptations about/contact incluses dans ce lot.
 
 ## Reset préalable confirmé
 1. Le dossier thème cible a été reconstruit depuis zéro.
