@@ -352,7 +352,7 @@ function em_wp_admin_header_composite_html(string $template): string
         if ($slider_html !== '') {
             $is_pair = true;
             $cols = em_wp_admin_header_ratio_columns($cfg['ratio'], $slider_left);
-            $slider_col = '<div class="em-header-shell__col em-header-shell__col--slider">' . $slider_html . '</div>';
+            $slider_col = '<div id="hero-slider" class="em-header-shell__col em-header-shell__col--slider">' . $slider_html . '</div>';
             $inner = $slider_left ? ($slider_col . $hero_col) : ($hero_col . $slider_col);
         }
     }

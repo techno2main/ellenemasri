@@ -106,6 +106,23 @@
         }
 
         var hash = getSamePageHash(anchor);
+
+        if (
+            window.matchMedia
+            && window.matchMedia('(max-width: 760px)').matches
+        ) {
+            var mobileTarget = anchor.getAttribute('data-mobile-target');
+            if (mobileTarget && mobileTarget.charAt(0) === '#') {
+                hash = mobileTarget;
+            } else if (
+                anchor.classList.contains('em-rubrique__arrow-link')
+                && anchor.closest('.emv4-section--header, .em-header-shell')
+                && hash === '#stream'
+            ) {
+                hash = '#hero-slider';
+            }
+        }
+
         if (!hash) {
             return;
         }
