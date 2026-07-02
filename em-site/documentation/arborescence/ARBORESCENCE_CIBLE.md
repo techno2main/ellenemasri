@@ -53,19 +53,30 @@ www/
 
 							domain/
 								templates/
-									registry.php
-									active.php
-									skeleton.php
+									registry/
+										index.php
+									active/
+										index.php
+									skeleton/
+										index.php
 								sections/
-									registry.php
-									header.php
-									items.php
-									instances.php
-									visibility.php
-									slide.php
+									registry/
+										index.php
+									header/
+										index.php
+									items/
+										index.php
+									instances/
+										index.php
+									visibility/
+										index.php
+									slide/
+										index.php
 								resolver/
-									header.php
-									sections.php
+									header/
+										index.php
+									sections/
+										index.php
 
 							front/
 								rendering/
@@ -100,9 +111,36 @@ www/
 
 							admin/
 								menu.php
+								modules/
+									top-bar/
+										index.php
+									header/
+										index.php
+									hero/
+										index.php
+									slider/
+										index.php
+									stream/
+										index.php
+									social/
+										index.php
+									video/
+										index.php
+									release/
+										index.php
+									cta/
+										index.php
+									about/
+										index.php
+									contact/
+										index.php
+									footer/
+										index.php
 								pages/
-									templates.php
-									sections.php
+									templates/
+										index.php
+									sections/
+										index.php
 								ajax/
 									save-skeleton.php
 									save-instance.php
@@ -129,18 +167,30 @@ www/
 										base.css
 										layout.css
 									modules/
-										top-bar.css
-										header.css
-										hero.css
-										slider.css
-										stream.css
-										social.css
-										video.css
-										release.css
-										cta.css
-										about.css
-										contact.css
-										footer.css
+										top-bar/
+											index.css
+										header/
+											index.css
+										hero/
+											index.css
+										slider/
+											index.css
+										stream/
+											index.css
+										social/
+											index.css
+										video/
+											index.css
+										release/
+											index.css
+										cta/
+											index.css
+										about/
+											index.css
+										contact/
+											index.css
+										footer/
+											index.css
 									pages/
 										front-page.css
 								js/
@@ -148,18 +198,30 @@ www/
 										bootstrap.js
 										events.js
 									modules/
-										top-bar.js
-										header.js
-										hero.js
-										slider.js
-										stream.js
-										social.js
-										video.js
-										release.js
-										cta.js
-										about.js
-										contact.js
-										footer.js
+										top-bar/
+											index.js
+										header/
+											index.js
+										hero/
+											index.js
+										slider/
+											index.js
+										stream/
+											index.js
+										social/
+											index.js
+										video/
+											index.js
+										release/
+											index.js
+										cta/
+											index.js
+										about/
+											index.js
+										contact/
+											index.js
+										footer/
+											index.js
 									pages/
 										front-page.js
 
@@ -171,18 +233,30 @@ www/
 										templates.css
 										sections.css
 									modules/
-										top-bar.css
-										header.css
-										hero.css
-										slider.css
-										stream.css
-										social.css
-										video.css
-										release.css
-										cta.css
-										about.css
-										contact.css
-										footer.css
+										top-bar/
+											index.css
+										header/
+											index.css
+										hero/
+											index.css
+										slider/
+											index.css
+										stream/
+											index.css
+										social/
+											index.css
+										video/
+											index.css
+										release/
+											index.css
+										cta/
+											index.css
+										about/
+											index.css
+										contact/
+											index.css
+										footer/
+											index.css
 								js/
 									core/
 										admin-bootstrap.js
@@ -190,16 +264,28 @@ www/
 										templates.js
 										sections.js
 									modules/
-										top-bar.js
-										header.js
-										hero.js
-										slider.js
-										stream.js
-										social.js
-										video.js
-										release.js
-										cta.js
-										about.js
-										contact.js
-										footer.js
+										top-bar/
+											index.js
+										header/
+											index.js
+										hero/
+											index.js
+										slider/
+											index.js
+										stream/
+											index.js
+										social/
+											index.js
+										video/
+											index.js
+										release/
+											index.js
+										cta/
+											index.js
+										about/
+											index.js
+										contact/
+											index.js
+										footer/
+											index.js
 ```

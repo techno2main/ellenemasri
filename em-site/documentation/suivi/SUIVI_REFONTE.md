@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 17:34:42.
+3. Dernière mise à jour : 2026-07-02 18:13:30.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -19,13 +19,15 @@
 11. Mot-clé flow GH : lancer le process GitHub selon les règles actives du chantier, uniquement sur demande explicite.
 12. RÈGLE D'OR : aucun flow GH sans vérification et finalisation préalable de la MAJ docs.
 13. Quand l'utilisateur écrit Ok, enchaîner immédiatement sur l'étape suivante.
+14. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
 
 ## Avancement global
 - [x] Étape 0 validée
 - [x] Étape 1 validée
 - [x] Étape 2 validée
 - [x] Étape 3 validée
-- [ ] Étape 4 en cours (contrôle fonctionnel applicatif)
+- [ ] Étape 4 en cours (copie sélective V4 à finaliser)
+- [x] Étape 5 validée (arbo 100% clean prête pour imports V4)
 
 ## Index des étapes
 1. Étape 0 : ETAPE_00_CADRAGE.md
@@ -33,3 +35,4 @@
 3. Étape 2 : ETAPE_02_CADRAGE_BDD.md
 4. Étape 3 : ETAPE_03_STACK_DOCKER.md
 5. Étape 4 : ETAPE_04_CONTROLE_FONCTIONNEL.md
+6. Étape 5 : ETAPE_05_PLAN_COPIE_SELECTIVE_V4.md

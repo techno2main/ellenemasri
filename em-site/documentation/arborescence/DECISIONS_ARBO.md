@@ -18,6 +18,10 @@ Avoir une base propre, isolée de em-wp, avec une structure claire, scalable et 
 6. Assets scindés dès le départ : core, modules, pages.
 7. Pas de fichier CSS/JS monolithique : un besoin = un fichier dédié.
 8. Taille cible max par fichier CSS/JS : 300 lignes.
+9. Règle assets modules : un sous-dossier par rubrique, avec point d'entrée `index.css` / `index.js`.
+10. Cette règle s'applique à `assets/front/*/modules` et `assets/admin/*/modules`.
+11. Règle PHP modules-first : sous-dossier dédié avec `index.php` pour `domain/templates`, `domain/sections`, `domain/resolver` et `admin/pages`.
+12. L'admin PHP dispose d'un dossier dédié `inc/admin/modules/<rubrique>/index.php` prêt au split progressif des responsabilités.
 
 ## Décisions validées
 1. On garde wp dans em-site/wp.
@@ -38,8 +42,8 @@ Avoir une base propre, isolée de em-wp, avec une structure claire, scalable et 
 1. Header est une rubrique dynamique d'orchestration.
 2. Hero et Slider restent des rubriques dynamiques autonomes.
 3. Header décide de la composition (Hero seul, Slider seul, Hero + Slider) et de l'ordre d'affichage.
-4. Domaine : règles Header dans domain/sections/header.php.
-5. Resolver : décision finale dans domain/resolver/header.php.
+4. Domaine : règles Header dans `domain/sections/header/index.php`.
+5. Resolver : décision finale dans `domain/resolver/header/index.php`.
 6. Front : rendu d'assemblage dans front/modules/header/render.php, puis rendu des rubriques Hero/Slider.
 
 ## Décisions à valider ensemble
