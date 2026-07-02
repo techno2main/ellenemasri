@@ -13,16 +13,17 @@ Contexte chantier em-site (à respecter strictement) :
 - Règle lots : copie étape par étape, tests obligatoires, validation utilisateur avant lot suivant
 
 État figé actuel :
-1) Lot 1 V4 exécuté (copie whitelist + adaptations about/contact + assets CSS/JS importés + mini-lot raccord front).
-2) Règle stricte <300 lignes validée avec méthode fiable ReadAllLines sur tous les fichiers thème PHP/CSS/JS.
-3) Audit BDD validé : WordPress lit bien em_site_bdd/wpem_ avec données em_wp présentes (options/posts non vides, template actif mayami).
-4) Le blocage restant de parité front/back vient du chargement incomplet des fonctions métier V4 (options/visibilité), pas d'une mauvaise base source.
-5) Prochaine action autorisée : mini-lot "chargement fonctions métier" (front + admin), puis contrôles obligatoires et MAJ docs.
+1) Point de rollback GH actif créé sur feature/em-site à la demande utilisateur.
+2) Structure de thème conservée pour imports contrôlés.
+3) Fallback texte WordPress neutralisé via header/footer thème minimal.
+4) Top-bar annulée (render/css vidés) pour repartir d'un état visuel neutre.
+5) Prochaine action autorisée : import FRONT une rubrique à la fois, avec validation visuelle utilisateur après chaque rubrique.
 
 Consignes d'exécution :
 - Toujours mettre à jour la documentation de suivi avant tout flow GH.
 - Ne rien copier hors whitelist validée.
-- Stopper après chaque lot pour validation utilisateur explicite.
+- FRONT uniquement tant que l'utilisateur ne rouvre pas le scope.
+- Stopper après chaque rubrique pour validation utilisateur explicite.
 ```
 
 ## Vérifications rapides de reprise

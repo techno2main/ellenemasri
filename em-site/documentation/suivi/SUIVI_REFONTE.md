@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 19:15:51.
+3. Dernière mise à jour : 2026-07-02 22:00:36.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -39,4 +39,9 @@
 
 ## Reprise de session
 1. Prompt de reprise figé : PROMPT_REPRISE_SESSION.md
-2. Prochaine étape prioritaire : mini-lot "chargement fonctions métier" (brancher les fonctions d'options/visibilité V4 manquantes avant nouveau lot).
+2. Prochaine étape prioritaire : import FRONT par rubrique, une seule à la fois, avec validation visuelle utilisateur après chaque rubrique.
+
+## Point de rollback GH (actif)
+1. Point figé demandé par l'utilisateur créé après nettoyage du fallback texte WordPress et maintien de la structure de thème.
+2. État fonctionnel figé : front HTTP 200, structure vide exploitable, top-bar annulée (render/css vidés).
+3. Règle d'exécution à partir de ce point : ne traiter que le FRONT, une rubrique par étape, sans copie récursive de dossier.
