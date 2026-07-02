@@ -8,6 +8,16 @@ old_docker/
 old_wp/
 website/
 
+# Sensitive files
+**/.env
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+
 # Logs
 logs
 *.log
@@ -95,6 +105,17 @@ em-wp/wp/wp-content/themes/*
 !em-wp/wp/wp-content/themes/em-wp/**
 em-wp/wp/wp-content/themes/em-wp/node_modules/
 em-wp/wp/AGENTS.md
+
+# Ignore full WordPress tree em-site, keep only the custom theme
+em-site/wp/*
+!em-site/wp/wp-content/
+em-site/wp/wp-content/*
+!em-site/wp/wp-content/themes/
+em-site/wp/wp-content/themes/*
+!em-site/wp/wp-content/themes/em-site/
+!em-site/wp/wp-content/themes/em-site/**
+em-site/wp/wp-content/themes/em-site/node_modules/
+em-site/wp/wp-config.php
 
 # Deployment-only root files
 /.htaccess
