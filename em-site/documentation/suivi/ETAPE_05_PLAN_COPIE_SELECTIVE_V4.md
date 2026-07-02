@@ -1,7 +1,7 @@
 # Étape 5 - Plan de copie sélective V4 (whitelist stricte)
 
 ## Horodatage (Paris)
-1. Dernière mise à jour : 2026-07-02 22:43:45.
+1. Dernière mise à jour : 2026-07-02 22:53:48.
 
 ## Statut
 En cours (mode rubriques FRONT unitaires).
@@ -178,3 +178,17 @@ Avancer sereinement avec une copie strictement contrôlée depuis la source V4, 
 1. Lot A - Layout global uniquement : importer les parties CSS V4 nécessaires au contenant global dans l'arbo cible existante (`assets/front/css/core/layout.css`) et corriger les marges blanches haut/côtés.
 2. Lot B - TOP-BAR uniquement : finaliser le rendu top-bar V4 et retirer son placeholder après validation.
 3. Règle respectée : aucun ajout persistant du dossier `assets/front/css/rubriques-v4` dans la cible ; seules les parties utiles sont copiées dans les fichiers cibles existants.
+
+## Méthode officielle par rubrique (à appliquer pour toutes les suivantes)
+1. Prendre la rubrique courante dans la source officielle (`em-wp`) et identifier uniquement les règles réellement utilisées par son rendu.
+2. Copier ces règles dans le fichier module dédié de la cible : `assets/front/css/modules/<rubrique>/index.css`.
+3. Laisser dans `assets/front/css/core/layout.css` uniquement les règles transverses (reset global, largeur commune, grille commune).
+4. Si une règle déplacée est spécifique à la rubrique, la retirer explicitement du global.
+5. Ne jamais créer/copier le dossier complet `rubriques-v4` dans la cible.
+6. Dans le CSS cible, bannir toute mention `v4` (sélecteurs, classes, data-attrs, commentaires).
+7. Conserver les accents en français dans les commentaires et textes documentaires.
+8. Vérifier à chaque import :
+   - `git status` limité à la rubrique courante + fichiers globaux strictement nécessaires,
+   - front HTTP 200,
+   - présence du CSS module rubrique dans le HTML,
+   - validation visuelle utilisateur avant étape suivante.

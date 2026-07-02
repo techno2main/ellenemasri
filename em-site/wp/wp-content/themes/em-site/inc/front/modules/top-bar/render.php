@@ -128,7 +128,7 @@ function em_wp_render_top_bar(): void
 
 	$icons = ['stream_spotify', 'stream_apple_music', 'stream_deezer', 'stream_youtube_music', 'stream_amazon_music'];
 	?>
-	<section id="top" class="emv4-section emv4-section--top-bar" data-emv4-rubrique="top-bar">
+	<section id="top" class="em-section em-section--top-bar" data-em-rubrique="top-bar">
 		<footer id="em-rubrique-top-bar-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--top-bar" style="<?php echo esc_attr(implode(';', $top_styles)); ?>;">
 			<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(3,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">

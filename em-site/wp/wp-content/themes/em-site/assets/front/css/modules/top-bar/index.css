@@ -1,2 +1,111 @@
-/* Module TOP-BAR: aucun style de layout ici, centralise dans assets/front/css/core/layout.css. */
+/* Rubrique TOP-BAR : toutes les règles spécifiques top-bar. */
+
+.em-section--top-bar {
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+	width: 100%;
+}
+
+.em-section--top-bar > .em-rubrique {
+	overflow: visible;
+	background-color: var(--em-rubrique-bg, #0f172a);
+	color: var(--em-rubrique-text, #e2e8f0);
+	padding: var(--em-rubrique-pt, 40px) var(--em-rubrique-pr, 180px) var(--em-rubrique-pb, 40px) var(--em-rubrique-pl, 180px);
+	font-family: var(--em-rubrique-font, "Archivo Black", system-ui, sans-serif);
+}
+
+.em-section--top-bar .em-rubrique__field--join_the_journey,
+.em-section--top-bar .em-rubrique__field--stream_share {
+	margin: 0;
+}
+
+body.admin-bar .em-section--top-bar {
+	top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+	body.admin-bar .em-section--top-bar {
+		top: 46px;
+	}
+}
+
+@media (max-width: 760px) {
+	.em-section--top-bar > .em-rubrique {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		column-gap: 12px;
+		padding-top: 18px;
+		padding-bottom: 18px;
+		padding-left: 18px;
+		padding-right: 14px;
+	}
+
+	.em-section--top-bar > .em-rubrique > .em-rubrique__row {
+		display: none !important;
+		width: 100%;
+	}
+
+	.em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) {
+		display: block !important;
+		grid-column: 1;
+		margin-top: 0;
+	}
+
+	.em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) {
+		display: block !important;
+		grid-column: 2;
+		margin-top: 0;
+	}
+
+	.em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col,
+	.em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col {
+		display: none;
+	}
+
+	.em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col:has(.em-rubrique__imgwrap),
+	.em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col:has(.top-bar-platform-link) {
+		display: block;
+	}
+
+	.em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__image {
+		width: 108px;
+		max-width: 108px;
+		height: auto;
+	}
+
+	.em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape {
+		width: 54px;
+		height: 12px;
+		opacity: .58;
+		border-width: 0;
+	}
+
+	.em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape--left {
+		top: -6px;
+		left: 16px;
+	}
+
+	.em-section--top-bar > .em-rubrique .top-bar-platform-link .em-rubrique__icon {
+		font-size: 22px;
+		line-height: 22px;
+		margin: 0 6px;
+	}
+
+	.em-section--top-bar > .em-rubrique .em-rubrique__col:has(.top-bar-platform-link)::after {
+		content: "Mayami, My Miami";
+		display: block;
+		margin-top: 10px;
+		padding-right: 6px;
+		color: #f4d03c;
+		font-family: "Brush Script MT", "Segoe Script", cursive;
+		font-size: .95rem;
+		font-weight: 400;
+		line-height: 1;
+		text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+		text-align: right;
+		white-space: nowrap;
+	}
+}
 

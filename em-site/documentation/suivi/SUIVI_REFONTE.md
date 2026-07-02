@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 22:43:45.
+3. Dernière mise à jour : 2026-07-02 22:53:48.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -56,3 +56,15 @@
 2. Commit 1 ciblé : réglages layout global FRONT (suppression marges blanches haut/côtés + centralisation layout V4 dans le global).
 3. Commit 2 ciblé : tout ce qui concerne la rubrique TOP-BAR (rendu + retrait placeholder + styles module résiduels).
 4. Contrainte appliquée : pas de dossier `rubriques-v4` dans la cible, import uniquement des parties CSS utiles recopiées dans l'arbo cible existante.
+
+## Méthode d'import par rubrique (gravée)
+1. Source unique autorisée : `em-wp` (source officielle), jamais d'autre source.
+2. Portée stricte : une seule rubrique par lot (TOP-BAR, puis HEADER, puis suivantes).
+3. Copie sélective uniquement : interdiction de copier un dossier CSS complet ; extraire seulement les règles utiles.
+4. Répartition obligatoire CSS :
+	- `assets/front/css/core/layout.css` = règles globales communes.
+	- `assets/front/css/modules/<rubrique>/index.css` = règles spécifiques à la rubrique.
+5. Interdiction de surcharge : aucune règle spécifique rubrique ne doit rester dans `core/layout.css` après import.
+6. Nommage CSS : aucune mention `v4` dans les classes, sélecteurs, attributs de données et commentaires CSS de la cible.
+7. Qualité documentaire : conserver les accents dans tous les commentaires et textes français.
+8. Validation obligatoire à chaque rubrique : contrôle technique + contrôle runtime + validation visuelle utilisateur avant rubrique suivante.

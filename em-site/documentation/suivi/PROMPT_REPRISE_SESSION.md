@@ -8,7 +8,7 @@ Contexte chantier em-site (à respecter strictement) :
 
 - Dossier de travail : em-site/
 - Branche active : feature/em-site
-- Source officielle autorisée : em-wp (V4 uniquement)
+- Source officielle autorisée : em-wp (uniquement)
 - Interdictions : aucune copie récursive globale, aucun legacy, aucun fallback, aucun import non whitelisté
 - Règle lots : copie étape par étape, tests obligatoires, validation utilisateur avant lot suivant
 
@@ -16,8 +16,8 @@ Contexte chantier em-site (à respecter strictement) :
 1) Point de rollback GH actif créé sur feature/em-site à la demande utilisateur.
 2) Structure de thème conservée pour imports contrôlés.
 3) Fallback texte WordPress neutralisé via header/footer thème minimal.
-4) Top-bar V4 réactivée en FRONT, placeholder top-bar retiré automatiquement quand les données V4 sont présentes.
-5) Layout global centralisé dans `assets/front/css/core/layout.css` ; ne pas remettre de logique de layout dans `modules/top-bar/index.css`.
+4) Top-bar réactivée en FRONT, placeholder top-bar retiré automatiquement quand les données sont présentes.
+5) Layout global centralisé dans `assets/front/css/core/layout.css` ; ne pas remettre de logique spécifique rubrique dans ce fichier.
 6) Prochaine action autorisée : poursuivre rubrique par rubrique (HEADER ensuite), avec validation visuelle utilisateur après chaque rubrique.
 
 Consignes d'exécution :
@@ -25,6 +25,11 @@ Consignes d'exécution :
 - Ne rien copier hors whitelist validée.
 - FRONT uniquement tant que l'utilisateur ne rouvre pas le scope.
 - Stopper après chaque rubrique pour validation utilisateur explicite.
+- Pour chaque rubrique : copier seulement les règles utiles depuis la source officielle, vers `assets/front/css/modules/<rubrique>/index.css`.
+- Interdiction de copier un dossier CSS complet dans la cible.
+- `assets/front/css/core/layout.css` ne doit contenir que le commun global.
+- Aucune mention `v4` dans le CSS cible (sélecteurs, classes, data-attrs, commentaires).
+- Conserver les accents en français dans les commentaires.
 ```
 
 ## Vérifications rapides de reprise
