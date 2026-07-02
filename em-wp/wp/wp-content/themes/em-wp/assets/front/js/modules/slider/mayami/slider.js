@@ -77,6 +77,11 @@ window.emWpInitMayamiSlider = function (root) {
             return false;
         }
 
+        // Local/dev same-origin media must stay allowed (ex: http://localhost:8190/...).
+        if (parsed.origin === window.location.origin) {
+            return false;
+        }
+
         if (isPrivateOrLocalHostname(parsed.hostname)) {
             return true;
         }
