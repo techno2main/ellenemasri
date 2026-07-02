@@ -1,7 +1,7 @@
 # Étape 5 - Plan de copie sélective V4 (whitelist stricte)
 
 ## Horodatage (Paris)
-1. Dernière mise à jour : 2026-07-02 22:11:09.
+1. Dernière mise à jour : 2026-07-02 22:43:45.
 
 ## Statut
 En cours (mode rubriques FRONT unitaires).
@@ -173,3 +173,8 @@ Avancer sereinement avec une copie strictement contrôlée depuis la source V4, 
 1. Exécuter le mini-lot "chargement fonctions métier" : brancher les fonctions V4 d'options/visibilité manquantes (front + admin) pour supprimer les garde-fous `function_exists` bloquants.
 2. Refaire immédiatement les contrôles obligatoires : `php -l`, runtime front/admin, et scan complet strict `<300 lignes` sur tous les fichiers `.php/.css/.js`.
 3. Mettre à jour les docs de suivi avec preuves, puis attendre validation utilisateur avant tout lot supplémentaire.
+
+## Découpage flow GH demandé (2026-07-02)
+1. Lot A - Layout global uniquement : importer les parties CSS V4 nécessaires au contenant global dans l'arbo cible existante (`assets/front/css/core/layout.css`) et corriger les marges blanches haut/côtés.
+2. Lot B - TOP-BAR uniquement : finaliser le rendu top-bar V4 et retirer son placeholder après validation.
+3. Règle respectée : aucun ajout persistant du dossier `assets/front/css/rubriques-v4` dans la cible ; seules les parties utiles sont copiées dans les fichiers cibles existants.

@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 22:11:09.
+3. Dernière mise à jour : 2026-07-02 22:43:45.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -50,3 +50,9 @@
 1. Placeholders actifs pour les 10 rubriques FRONT, dans l'ordre de migration demandé.
 2. Layout validé : un placeholder par ligne, pleine largeur, sans bandeau titre.
 3. Contrôle runtime validé : front HTTP 200 et fallback texte WordPress toujours neutralisé.
+
+## Exécution en cours (flow GH demandé)
+1. Demande utilisateur validée : flow GH en 2 commits atomiques séparés.
+2. Commit 1 ciblé : réglages layout global FRONT (suppression marges blanches haut/côtés + centralisation layout V4 dans le global).
+3. Commit 2 ciblé : tout ce qui concerne la rubrique TOP-BAR (rendu + retrait placeholder + styles module résiduels).
+4. Contrainte appliquée : pas de dossier `rubriques-v4` dans la cible, import uniquement des parties CSS utiles recopiées dans l'arbo cible existante.

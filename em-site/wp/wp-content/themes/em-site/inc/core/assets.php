@@ -37,10 +37,10 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_style(
-		'em-site-top-bar',
-		$base_uri . '/assets/front/css/modules/top-bar/index.css',
+		'em-site-front-layout',
+		$base_uri . '/assets/front/css/core/layout.css',
 		['em-site-style'],
-		em_site_asset_version('assets/front/css/modules/top-bar/index.css')
+		em_site_asset_version('assets/front/css/core/layout.css')
 	);
 
 	wp_enqueue_style(
