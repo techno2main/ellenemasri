@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 18:13:30.
+3. Dernière mise à jour : 2026-07-02 18:20:33.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -26,7 +26,7 @@
 - [x] Étape 1 validée
 - [x] Étape 2 validée
 - [x] Étape 3 validée
-- [ ] Étape 4 en cours (copie sélective V4 à finaliser)
+- [x] Étape 4 validée (contrôle fonctionnel clôturé pour la base zéro import)
 - [x] Étape 5 validée (arbo 100% clean prête pour imports V4)
 
 ## Index des étapes
@@ -36,3 +36,6 @@
 4. Étape 3 : ETAPE_03_STACK_DOCKER.md
 5. Étape 4 : ETAPE_04_CONTROLE_FONCTIONNEL.md
 6. Étape 5 : ETAPE_05_PLAN_COPIE_SELECTIVE_V4.md
+
+## Reprise de session
+1. Prompt de reprise figé : PROMPT_REPRISE_SESSION.md

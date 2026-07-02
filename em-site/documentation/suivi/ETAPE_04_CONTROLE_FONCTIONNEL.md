@@ -1,7 +1,7 @@
 # Étape 4 - Contrôle fonctionnel applicatif (A→G)
 
 ## Horodatage (Paris)
-1. Dernière mise à jour : 2026-07-02 17:50:56.
+1. Dernière mise à jour : 2026-07-02 18:20:33.
 
 ## Avancement
 - [x] Contrôle A effectué
@@ -13,7 +13,7 @@
 - [x] Contrôle G effectué
 
 ## Statut
-En cours.
+Terminé (constat fonctionnel établi pour la base zéro import).
 
 ## Objectif
 Valider le comportement applicatif em-site-local après réimport base V4.
@@ -50,3 +50,4 @@ Aucun blocage critique sur front, admin, données et configuration thème.
 2. Les documents de suivi sont conservés et mis à jour.
 3. La suite se fait en copie sélective (whitelist) des seuls fichiers V4 nécessaires à la nouvelle arborescence cible.
 4. Reset complet appliqué : thème `em-site` reconstruit depuis zéro avec fichiers vides uniquement selon l'arborescence cible.
+5. Étape clôturée : front vide considéré comme état normal tant que les lots V4 n'ont pas démarré.
