@@ -30,7 +30,7 @@ function em_site_header_hero_button(array $content, string $key, string $label):
 	];
 }
 
-function em_site_render_header_hero_html(array $content, string $item_slug): string
+function em_site_render_header_hero_html(array $content, string $item_slug, bool $embed_slider = false): string
 {
 	$arrow_down = em_site_header_decode_json_field((string) ($content['arrow_down'] ?? ''));
 	$badge = em_site_header_decode_json_field((string) ($content['animated_badge'] ?? ''));
@@ -66,7 +66,7 @@ function em_site_render_header_hero_html(array $content, string $item_slug): str
 	<footer id="em-rubrique-header-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--header" style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
 		<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 			<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-				<?php if (!empty($arrow_down['link'])) : ?><a class="em-rubrique__link em-rubrique__link--media em-rubrique__arrow-link" href="<?php echo esc_url((string) $arrow_down['link']); ?>"><span class="em-rubrique__arrow em-rubrique__arrow--down" aria-hidden="true">&darr;</span></a><?php endif; ?>
+				<?php if (!empty($arrow_down['link'])) : ?><a class="em-rubrique__link em-rubrique__link--media em-rubrique__arrow-link" href="<?php echo esc_url((string) $arrow_down['link']); ?>"<?php echo $embed_slider ? ' data-mobile-target="#hero-slider"' : ''; ?>><span class="em-rubrique__arrow em-rubrique__arrow--down" aria-hidden="true">&darr;</span></a><?php endif; ?>
 			</div>
 		</div>
 

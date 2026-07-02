@@ -149,9 +149,17 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_script(
+		'em-site-theme',
+		$base_uri . '/assets/front/js/core/theme.js',
+		[],
+		em_site_asset_version('assets/front/js/core/theme.js'),
+		true
+	);
+
+	wp_enqueue_script(
 		'em-site-stream',
 		$base_uri . '/assets/front/js/modules/stream/index.js',
-		[],
+		['em-site-theme'],
 		em_site_asset_version('assets/front/js/modules/stream/index.js'),
 		true
 	);

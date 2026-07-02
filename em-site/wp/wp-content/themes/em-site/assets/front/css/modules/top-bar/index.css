@@ -7,6 +7,31 @@
 	width: 100%;
 }
 
+:root {
+	--em-sticky-top-bar-offset: 112px;
+	--em-section-scroll-offset: calc(var(--em-sticky-top-bar-offset) + 24px);
+}
+
+html {
+	scroll-padding-top: var(--em-section-scroll-offset);
+}
+
+#hero,
+#hero-slider,
+#stream,
+#social,
+#video,
+#release,
+#cta,
+#about,
+#contact,
+#footer,
+.em-section,
+.em-landing-section,
+.emv4-section {
+	scroll-margin-top: var(--em-section-scroll-offset);
+}
+
 .em-section--top-bar > .em-rubrique {
 	overflow: visible;
 	background-color: var(--em-rubrique-bg, #0f172a);

@@ -130,6 +130,21 @@
 }
 
 @media (max-width: 639px) {
+	.em-section--stream .em-rubrique__textimg--stream-title {
+		align-items: center;
+		gap: 14px;
+	}
+
+	.em-section--stream .em-rubrique__textimg--stream-title .em-rubrique__field {
+		font-size: clamp(2rem, 5vw, 3.75rem) !important;
+		line-height: .9;
+	}
+
+	.em-section--stream .em-rubrique__textimg--stream-title .em-rubrique__image {
+		width: min(43vw, 170px) !important;
+		max-width: 170px;
+	}
+
 	.platform-player-desktop,
 	.platform-player-desktop.is-active {
 		display: none !important;

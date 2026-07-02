@@ -23,7 +23,7 @@ function em_wp_render_header(): void
 		return;
 	}
 
-	$hero_html = em_site_render_header_hero_html($hero_content, $hero_item_slug);
+	$hero_html = em_site_render_header_hero_html($hero_content, $hero_item_slug, true);
 	if (trim($hero_html) === '') {
 		return;
 	}

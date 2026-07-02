@@ -29,6 +29,11 @@
 		}
 
 		function scrollToTarget(target, behavior) {
+			if (typeof window.emWpScrollToElement === 'function') {
+				window.emWpScrollToElement(target, behavior);
+				return;
+			}
+
 			target.scrollIntoView({ behavior: behavior || 'smooth', block: 'start' });
 		}
 
