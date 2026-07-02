@@ -71,6 +71,13 @@ function em_site_front_rubrique_placeholders(): array
 		));
 	}
 
+	if (function_exists('em_site_footer_is_ready') && em_site_footer_is_ready()) {
+		$items = array_values(array_filter(
+			$items,
+			static fn(array $item): bool => ($item['slug'] ?? '') !== 'footer'
+		));
+	}
+
 	return $items;
 }
 
@@ -121,6 +128,10 @@ function em_site_render_front_page(): void
 
 	if (function_exists('em_wp_render_cta')) {
 		em_wp_render_cta();
+	}
+
+	if (function_exists('em_wp_render_footer')) {
+		em_wp_render_footer();
 	}
 
 	em_site_render_front_placeholders();

@@ -1,0 +1,47 @@
+/* Rubrique FOOTER : règles spécifiques (ligne de séparation + icônes). */
+
+.em-section--footer .em-rubrique__field--text,
+.em-section--footer .em-rubrique__field--text_2 {
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-weight: 400;
+}
+
+.em-section--footer .em-rubrique__field--text {
+	font-size: 12px;
+	line-height: 1.4;
+}
+
+.em-section--footer .em-rubrique__field--text_2 {
+	font-size: 12px;
+	line-height: 1.4;
+	letter-spacing: .02em;
+}
+
+.em-section--footer .em-rubrique__sep {
+	opacity: 1;
+	border-top-width: 1px;
+}
+
+.em-section--footer .em-rubrique__col--left .em-rubrique__icon,
+.em-section--footer .em-rubrique__col--right .em-rubrique__icon {
+	font-size: 28px;
+	line-height: 1;
+	margin: 0 7px;
+}
+
+.em-section--footer .em-rubrique__col--left .em-rubrique__link--media:hover,
+.em-section--footer .em-rubrique__col--right .em-rubrique__link--media:hover {
+	color: var(--em-rubrique-link-hover, #45a6ff);
+}
+
+@media (max-width: 760px) {
+	.em-section--footer .em-rubrique__row[data-em-row="3"] {
+		grid-template-columns: minmax(0, 1fr) !important;
+	}
+
+	.em-section--footer .em-rubrique__row[data-em-row="3"] .em-rubrique__col--left,
+	.em-section--footer .em-rubrique__row[data-em-row="3"] .em-rubrique__col--right,
+	.em-section--footer .em-rubrique__row[data-em-row="3"] .em-rubrique__col--center {
+		text-align: center;
+	}
+}
