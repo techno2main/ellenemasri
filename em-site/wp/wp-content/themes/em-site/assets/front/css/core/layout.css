@@ -122,6 +122,10 @@ body {
 	text-align: right;
 }
 
+.em-rubrique__col--justify {
+	text-align: justify;
+}
+
 .em-rubrique__link {
 	color: var(--em-rubrique-link, inherit);
 	text-decoration: var(--em-rubrique-underline, none);
