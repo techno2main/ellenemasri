@@ -65,6 +65,13 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_style(
+		'em-site-social',
+		$base_uri . '/assets/front/css/modules/social/index.css',
+		['em-site-front-layout', 'font-awesome-6'],
+		em_site_asset_version('assets/front/css/modules/social/index.css')
+	);
+
+	wp_enqueue_style(
 		'em-site-front-placeholders',
 		$base_uri . '/assets/front/css/pages/front-page.css',
 		['em-site-style'],
