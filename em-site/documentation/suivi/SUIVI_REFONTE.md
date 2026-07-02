@@ -69,3 +69,9 @@
 6. Nommage CSS : aucune mention `v4` dans les classes, sélecteurs, attributs de données et commentaires CSS de la cible.
 7. Qualité documentaire : conserver les accents dans tous les commentaires et textes français.
 8. Validation obligatoire à chaque rubrique : contrôle technique + contrôle runtime + validation visuelle utilisateur avant rubrique suivante.
+
+AVANCEMENT 
+
+---> Le front est OK maintenant
+
+Prochaine étape : rebrancher l'admin à l'identique sur le nouveau site. Il faudra procéder par étapes aussi pour ne rien casser.
