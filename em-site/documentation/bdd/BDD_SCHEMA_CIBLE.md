@@ -47,3 +47,13 @@ Cadrer une reprise stricte depuis la source officielle stable (uniquement V4), s
 1. Tables présentes après import : 12 tables `wpem_*`.
 2. Volumes minimaux contrôlés : options 309, posts 31, users 2.
 3. Options critiques alignées sur em-site-local : `home` et `siteurl` = http://localhost:8290.
+
+## Réimportation propre (2026-07-02)
+1. Préparation : tables supprimées en amont dans phpMyAdmin pour repartir sur une base propre.
+2. Import relancé depuis le dump officiel V4 retenu : em_wp_bdd_v4_full_2026-07-02_1652_sql_gz.sql.gz.
+3. Contrôle post-réimport : 12 tables `wpem_*`, options 309, posts 31, users 2.
+4. Ajustements critiques appliqués immédiatement :
+	- `home` = http://localhost:8290
+	- `siteurl` = http://localhost:8290
+	- `template` = em-site
+	- `stylesheet` = em-site
