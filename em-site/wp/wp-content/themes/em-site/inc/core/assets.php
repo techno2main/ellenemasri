@@ -37,9 +37,16 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_style(
+		'em-site-font-archivo-black',
+		'https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap',
+		[],
+		null
+	);
+
+	wp_enqueue_style(
 		'em-site-front-layout',
 		$base_uri . '/assets/front/css/core/layout.css',
-		['em-site-style'],
+		['em-site-style', 'em-site-font-archivo-black'],
 		em_site_asset_version('assets/front/css/core/layout.css')
 	);
 
@@ -48,6 +55,13 @@ function em_site_enqueue_front_assets(): void
 		$base_uri . '/assets/front/css/modules/top-bar/index.css',
 		['em-site-front-layout'],
 		em_site_asset_version('assets/front/css/modules/top-bar/index.css')
+	);
+
+	wp_enqueue_style(
+		'em-site-stream',
+		$base_uri . '/assets/front/css/modules/stream/index.css',
+		['em-site-front-layout', 'font-awesome-6'],
+		em_site_asset_version('assets/front/css/modules/stream/index.css')
 	);
 
 	wp_enqueue_style(
@@ -62,6 +76,14 @@ function em_site_enqueue_front_assets(): void
 		'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
 		[],
 		'6.5.1'
+	);
+
+	wp_enqueue_script(
+		'em-site-stream',
+		$base_uri . '/assets/front/js/modules/stream/index.js',
+		[],
+		em_site_asset_version('assets/front/js/modules/stream/index.js'),
+		true
 	);
 }
 add_action('wp_enqueue_scripts', 'em_site_enqueue_front_assets');

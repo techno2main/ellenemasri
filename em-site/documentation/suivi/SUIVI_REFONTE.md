@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 22:53:48.
+3. Dernière mise à jour : 2026-07-02 23:20:24.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -52,10 +52,10 @@
 3. Contrôle runtime validé : front HTTP 200 et fallback texte WordPress toujours neutralisé.
 
 ## Exécution en cours (flow GH demandé)
-1. Demande utilisateur validée : flow GH en 2 commits atomiques séparés.
-2. Commit 1 ciblé : réglages layout global FRONT (suppression marges blanches haut/côtés + centralisation layout V4 dans le global).
-3. Commit 2 ciblé : tout ce qui concerne la rubrique TOP-BAR (rendu + retrait placeholder + styles module résiduels).
-4. Contrainte appliquée : pas de dossier `rubriques-v4` dans la cible, import uniquement des parties CSS utiles recopiées dans l'arbo cible existante.
+1. Demande utilisateur validée : flow GH immédiat après stabilisation TOP-BAR + STREAM.
+2. Structuration appliquée : pattern render/helpers sur STREAM et TOP-BAR pour imposer une base propre à toutes les prochaines rubriques importées.
+3. Correctif runtime appliqué : players/iframes STREAM déplacés dans la div de la rubrique STREAM pour éviter l'ouverture hors bloc.
+4. Vérifications validées avant commit : lint PHP OK, front HTTP 200, sections STREAM et TOP-BAR présentes.
 
 ## Méthode d'import par rubrique (gravée)
 1. Source unique autorisée : `em-wp` (source officielle), jamais d'autre source.

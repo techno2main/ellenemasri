@@ -59,6 +59,38 @@ body {
 	margin-top: 10px;
 }
 
+.em-rubrique__field {
+	margin: 0 0 4px;
+}
+
+.em-rubrique__textimg,
+.em-rubrique__texttext {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+
+.em-rubrique__textimg .em-rubrique__field,
+.em-rubrique__texttext .em-rubrique__field {
+	margin: 0;
+}
+
+.em-rubrique__col--center .em-rubrique__textimg,
+.em-rubrique__col--center .em-rubrique__texttext {
+	justify-content: center;
+}
+
+.em-rubrique__col--right .em-rubrique__textimg,
+.em-rubrique__col--right .em-rubrique__texttext {
+	justify-content: flex-end;
+}
+
+.em-rubrique__col--justify .em-rubrique__textimg,
+.em-rubrique__col--justify .em-rubrique__texttext {
+	justify-content: space-between;
+}
+
 .em-rubrique__col--left {
 	text-align: left;
 }
