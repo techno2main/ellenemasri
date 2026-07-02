@@ -44,6 +44,13 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_style(
+		'em-site-front-placeholders',
+		$base_uri . '/assets/front/css/pages/front-page.css',
+		['em-site-style'],
+		em_site_asset_version('assets/front/css/pages/front-page.css')
+	);
+
+	wp_enqueue_style(
 		'font-awesome-6',
 		'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
 		[],

@@ -1,7 +1,7 @@
 # Étape 5 - Plan de copie sélective V4 (whitelist stricte)
 
 ## Horodatage (Paris)
-1. Dernière mise à jour : 2026-07-02 22:00:36.
+1. Dernière mise à jour : 2026-07-02 22:11:09.
 
 ## Statut
 En cours (mode rubriques FRONT unitaires).
@@ -11,6 +11,12 @@ En cours (mode rubriques FRONT unitaires).
 2. État figé retenu : structure thème conservée, fallback texte WordPress supprimé via header/footer thème, top-bar annulée pour revenir à un état visuel neutre.
 3. Portée des prochaines exécutions : FRONT uniquement, une rubrique à la fois, preuve des fichiers modifiés à chaque étape.
 4. Interdiction explicitement reconfirmée : aucune copie récursive de dossier V4.
+
+## État placeholder FRONT validé
+1. Les 10 rubriques à migrer sont matérialisées en placeholders visibles.
+2. Ordre figé et validé : TOP-BAR, HEADER (HERO + SLIDER), STREAM, SOCIAL, VIDEO, RELEASE, CTA, ABOUT, CONTACT, FOOTER.
+3. Présentation validée : suppression du bandeau titre, placeholders en pleine largeur sur une seule ligne chacun, empilés verticalement.
+4. Ces placeholders servent de repère de contrôle avant remplacement rubrique par rubrique.
 
 ## Objectif
 Avancer sereinement avec une copie strictement contrôlée depuis la source V4, sans copie récursive globale.

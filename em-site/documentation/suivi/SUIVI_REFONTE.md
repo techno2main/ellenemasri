@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 22:00:36.
+3. Dernière mise à jour : 2026-07-02 22:11:09.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -45,3 +45,8 @@
 1. Point figé demandé par l'utilisateur créé après nettoyage du fallback texte WordPress et maintien de la structure de thème.
 2. État fonctionnel figé : front HTTP 200, structure vide exploitable, top-bar annulée (render/css vidés).
 3. Règle d'exécution à partir de ce point : ne traiter que le FRONT, une rubrique par étape, sans copie récursive de dossier.
+
+## État front visuel (placeholders)
+1. Placeholders actifs pour les 10 rubriques FRONT, dans l'ordre de migration demandé.
+2. Layout validé : un placeholder par ligne, pleine largeur, sans bandeau titre.
+3. Contrôle runtime validé : front HTTP 200 et fallback texte WordPress toujours neutralisé.
