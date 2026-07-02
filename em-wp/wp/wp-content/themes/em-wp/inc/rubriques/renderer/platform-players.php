@@ -124,7 +124,7 @@ function em_wp_v4_players_html(): string
             $players .= '<div id="player-' . $variant . '-' . esc_attr($player['slug']) . '" class="em-stream__player platform-player-' . $variant . '">'
                 . '<iframe title="' . esc_attr((string) $player['label']) . ' player" src="' . esc_url((string) $player['embed']) . '"'
                 . ' width="100%" height="' . esc_attr((string) (int) $player['height']) . '"'
-                . ' allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'
+                . ' allow="autoplay; encrypted-media; fullscreen; picture-in-picture" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>'
                 . '</div>';
         }
     }

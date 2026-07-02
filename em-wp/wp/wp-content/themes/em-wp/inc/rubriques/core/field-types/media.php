@@ -503,7 +503,7 @@ function em_wp_rubrique_video_embed_html(string $url): string
     $src = '';
 
     if ($info['provider'] === 'youtube' && $info['id'] !== '') {
-        $src = 'https://www.youtube.com/embed/' . $info['id'];
+        $src = 'https://www.youtube-nocookie.com/embed/' . $info['id'] . '?rel=0';
     } elseif ($info['provider'] === 'tiktok' && $info['id'] !== '') {
         $src = 'https://www.tiktok.com/embed/v2/' . $info['id'];
     }
@@ -513,7 +513,7 @@ function em_wp_rubrique_video_embed_html(string $url): string
     }
 
     return '<div class="em-rubrique__video-embed em-rubrique__video-embed--' . esc_attr($info['provider']) . '">'
-        . '<iframe src="' . esc_url($src) . '" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+        . '<iframe src="' . esc_url($src) . '" loading="lazy" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
         . '</div>';
 }
 
