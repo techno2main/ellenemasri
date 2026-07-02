@@ -6,6 +6,8 @@ www/
 		docker/
 			docker-compose.yml
 			.env.example
+				php-uploads.ini
+				wp-config.docker.php
 			scripts/
 				reserve-ports.ps1
 				start-stack.ps1
