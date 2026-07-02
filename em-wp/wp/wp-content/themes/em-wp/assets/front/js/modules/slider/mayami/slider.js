@@ -38,6 +38,86 @@ window.emWpInitMayamiSlider = function (root) {
         return slide ? slide.querySelector('video.em-slider__tiktok-video') : null;
     }
 
+    function isPrivateOrLocalHostname(hostname) {
+        const host = (hostname || '').toLowerCase();
+        if (!host) {
+            return false;
+        }
+
+        if (host === 'localhost' || host === '127.0.0.1') {
+            return true;
+        }
+
+        if (
+            host.endsWith('.local')
+            || host.endsWith('.lan')
+            || host.endsWith('.home')
+            || host.endsWith('.home.arpa')
+        ) {
+            return true;
+        }
+
+        if (/^10\./.test(host) || /^192\.168\./.test(host) || /^169\.254\./.test(host)) {
+            return true;
+        }
+
+        return /^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host);
+    }
+
+    function isBlockedMediaUrl(rawUrl) {
+        if (!rawUrl) {
+            return false;
+        }
+
+        let parsed;
+        try {
+            parsed = new URL(rawUrl, window.location.href);
+        } catch (e) {
+            return false;
+        }
+
+        if (isPrivateOrLocalHostname(parsed.hostname)) {
+            return true;
+        }
+
+        return window.location.protocol === 'https:' && parsed.protocol === 'http:';
+    }
+
+    function markVideoUnplayable(video, reason) {
+        if (!video || video.dataset.emVideoUnplayable === '1') {
+            return;
+        }
+
+        video.dataset.emVideoUnplayable = '1';
+        video.dataset.emVideoUnplayableReason = reason || 'blocked';
+        video.pause();
+        video.muted = true;
+        video.setAttribute('preload', 'none');
+
+        // Remove blocked URL to prevent repeated network retries and console spam.
+        video.removeAttribute('src');
+        video.load();
+
+        const slide = video.closest('.em-slider__slide');
+        if (slide) {
+            slide.setAttribute('data-video-unplayable', 'true');
+        }
+    }
+
+    function sanitizeBlockedVideos() {
+        slides.forEach(function (slide) {
+            const video = slide.querySelector('video.em-slider__tiktok-video');
+            if (!video) {
+                return;
+            }
+
+            const src = video.getAttribute('src') || '';
+            if (isBlockedMediaUrl(src)) {
+                markVideoUnplayable(video, 'mixed-content-local-network');
+            }
+        });
+    }
+
     function stopAutoPlay() {
         if (autoPlayTimer) {
             clearTimeout(autoPlayTimer);
@@ -119,19 +199,34 @@ window.emWpInitMayamiSlider = function (root) {
             }
 
             if (i === index) {
+                if (video.dataset.emVideoUnplayable === '1') {
+                    return;
+                }
+
                 video.currentTime = 0;
                 video.muted = false;
                 video.volume = 1;
 
                 const playPromise = video.play();
                 if (playPromise && typeof playPromise.catch === 'function') {
-                    playPromise.catch(function () {
+                    playPromise.catch(function (err) {
+                        if (video.error || (err && (err.name === 'NotSupportedError' || err.name === 'AbortError'))) {
+                            markVideoUnplayable(video, 'playback-error');
+                            updateAudioButtonState(null);
+                            return;
+                        }
+
                         video.muted = true;
                         updateAudioButtonState(video);
 
                         const retryPromise = video.play();
                         if (retryPromise && typeof retryPromise.catch === 'function') {
-                            retryPromise.catch(function () {});
+                            retryPromise.catch(function (retryErr) {
+                                if (video.error || (retryErr && (retryErr.name === 'NotSupportedError' || retryErr.name === 'AbortError'))) {
+                                    markVideoUnplayable(video, 'retry-playback-error');
+                                    updateAudioButtonState(null);
+                                }
+                            });
                         }
                     });
                 }
@@ -278,6 +373,7 @@ window.emWpInitMayamiSlider = function (root) {
         document.addEventListener(evt, unlockActiveSound, { once: true });
     });
 
+    sanitizeBlockedVideos();
     initVideoEndedHandlers();
     syncActiveVideoPlayback(currentIndex);
 

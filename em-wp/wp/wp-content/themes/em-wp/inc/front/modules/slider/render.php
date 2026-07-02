@@ -56,14 +56,54 @@ function em_wp_slider_front_media_url(string $url): string
         return $url;
     }
 
-    $host = strtolower((string) $parts['host']);
-    $is_local_host = in_array($host, ['localhost', '127.0.0.1'], true) || str_ends_with($host, '.local');
-    if (!$is_local_host) {
+    $home_parts = wp_parse_url(home_url('/'));
+
+    $request_host = '';
+    if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+        $forwarded_host = explode(',', (string) $_SERVER['HTTP_X_FORWARDED_HOST']);
+        $request_host = trim((string) $forwarded_host[0]);
+    } elseif (!empty($_SERVER['HTTP_HOST'])) {
+        $request_host = trim((string) $_SERVER['HTTP_HOST']);
+    }
+
+    if (($pos = strpos($request_host, ':')) !== false) {
+        $request_host = substr($request_host, 0, $pos);
+    }
+
+    $request_scheme = 'https';
+    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+        $request_scheme = strtolower(trim((string) $_SERVER['HTTP_X_FORWARDED_PROTO']));
+    } elseif (is_ssl()) {
+        $request_scheme = 'https';
+    } elseif (!empty($_SERVER['REQUEST_SCHEME'])) {
+        $request_scheme = strtolower((string) $_SERVER['REQUEST_SCHEME']);
+    }
+    if (!in_array($request_scheme, ['http', 'https'], true)) {
+        $request_scheme = 'https';
+    }
+
+    $target_host = $request_host;
+    if ($target_host === '' && is_array($home_parts) && !empty($home_parts['host'])) {
+        $target_host = (string) $home_parts['host'];
+    }
+    if ($target_host === '') {
         return $url;
     }
 
-    $home_parts = wp_parse_url(home_url('/'));
-    if (!is_array($home_parts) || empty($home_parts['host'])) {
+    $host = strtolower((string) $parts['host']);
+    $home_host = strtolower($target_host);
+
+    $is_localhost = in_array($host, ['localhost', '127.0.0.1'], true);
+    $is_local_tld = str_ends_with($host, '.local') || str_ends_with($host, '.lan') || str_ends_with($host, '.home') || str_ends_with($host, '.home.arpa');
+    $is_private_ip = (bool) preg_match(
+        '/^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|169\.254\.)/',
+        $host
+    );
+
+    $is_local_host = $is_localhost || $is_local_tld || $is_private_ip;
+    $is_same_host_http = ($host === $home_host) && (($parts['scheme'] ?? '') === 'http') && (($home_parts['scheme'] ?? 'https') === 'https');
+
+    if (!$is_local_host && !$is_same_host_http) {
         return $url;
     }
 
@@ -78,9 +118,8 @@ function em_wp_slider_front_media_url(string $url): string
         }
     }
 
-    $scheme = !empty($home_parts['scheme']) ? (string) $home_parts['scheme'] : 'https';
-    $front = $scheme . '://' . (string) $home_parts['host'];
-    if (!empty($home_parts['port'])) {
+    $front = $request_scheme . '://' . $target_host;
+    if ($request_host === '' && is_array($home_parts) && !empty($home_parts['port'])) {
         $front .= ':' . (int) $home_parts['port'];
     }
 
