@@ -276,4 +276,17 @@
     .emv4-section--stream > .em-rubrique > .em-rubrique__row[data-em-row="3"] > .em-rubrique__col[data-em-col="2"] {
         display: none;
     }
+
+    /* V4 mobile only (CTA): les boutons sont dans une MEME cellule, puis wrap.
+       On applique le spacing sur le conteneur qui wrap réellement. */
+    .emv4-section--cta > .em-rubrique .em-rubrique__col:has(.em-rubrique__button + .em-rubrique__button) {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px 12px;
+    }
+
+    .emv4-section--cta > .em-rubrique .em-rubrique__col:has(.em-rubrique__button + .em-rubrique__button) .em-rubrique__button {
+        margin-right: 0 !important;
+    }
 }
