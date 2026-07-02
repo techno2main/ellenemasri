@@ -289,4 +289,69 @@
     .emv4-section--cta > .em-rubrique .em-rubrique__col[data-em-has-button="1"] .em-rubrique__button {
         margin-right: 0 !important;
     }
+
+    /* V4 mobile only (Footer) */
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="1"] {
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        align-items: center;
+        column-gap: 10px;
+    }
+
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="1"] > .em-rubrique__col[data-em-col="1"] {
+        text-align: left;
+    }
+
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="1"] > .em-rubrique__col[data-em-col="2"] {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    /* Masque "May 29th | A release campaign." (L1C3). */
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="1"] > .em-rubrique__col[data-em-col="3"] {
+        display: none;
+    }
+
+    .emv4-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__imgwrap .em-rubrique__image {
+        width: 170px !important;
+        max-width: 170px;
+        height: auto;
+    }
+
+    .emv4-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__imgwrap .em-rubrique__tape {
+        width: 76px;
+        height: 16px;
+        top: -8px;
+    }
+
+    /* Plateformes + réseaux sur la même ligne (row 3), copyright en dessous. */
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="3"] {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        row-gap: 8px;
+    }
+
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="3"] > .em-rubrique__col[data-em-col="1"] {
+        order: 1;
+        flex: 1 1 auto;
+        text-align: left;
+    }
+
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="3"] > .em-rubrique__col[data-em-col="3"] {
+        order: 2;
+        flex: 0 0 auto;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="3"] > .em-rubrique__col[data-em-col="2"] {
+        order: 3;
+        flex: 1 1 100%;
+        text-align: center;
+    }
+
+    .emv4-section--footer .em-rubrique__field--text_2 {
+        font-size: 13px;
+        line-height: 1.25;
+    }
 }
