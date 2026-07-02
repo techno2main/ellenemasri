@@ -15,4 +15,5 @@ require_once __DIR__ . '/front/modules/stream/render.php';
 require_once __DIR__ . '/front/modules/social/render.php';
 require_once __DIR__ . '/front/modules/video/render.php';
 require_once __DIR__ . '/front/modules/release/render.php';
+require_once __DIR__ . '/front/modules/cta/render.php';
 require_once __DIR__ . '/front/render-page.php';

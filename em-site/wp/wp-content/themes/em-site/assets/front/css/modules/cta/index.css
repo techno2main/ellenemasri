@@ -1,0 +1,134 @@
+/* Rubrique CTA : badge animé et boutons pop. */
+
+@keyframes em-rubrique-badge-wiggle {
+	0%,
+	100% { transform: rotate(-1.5deg); }
+	50% { transform: rotate(1.5deg); }
+}
+
+@keyframes em-rubrique-badge-pulse {
+	0%,
+	100% { transform: scale(1); }
+	50% { transform: scale(1.06); }
+}
+
+@keyframes em-rubrique-badge-bounce {
+	0%,
+	100% { transform: translateY(0); }
+	50% { transform: translateY(-5px); }
+}
+
+.em-section--cta .em-rubrique__field--text_2,
+.em-section--cta .em-rubrique__field--textarea,
+.em-section--cta .em-rubrique__button,
+.em-section--cta .em-rubrique__badge {
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-weight: 400;
+}
+
+.em-section--cta .em-rubrique__field--textarea {
+	max-width: 860px;
+	font-size: clamp(16px, 1.55vw, 24px);
+	line-height: 1.35;
+}
+
+.em-section--cta .em-rubrique__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 18px;
+	border: 2px solid var(--em-rubrique-badge-ink, #100421);
+	border-radius: 999px;
+	background: var(--em-rubrique-badge-bg, #f4d03f);
+	color: var(--em-rubrique-badge-ink, #100421);
+	font-size: 12px;
+	line-height: 1;
+	letter-spacing: .02em;
+	box-shadow: 0 4px 0 color-mix(in srgb, var(--em-rubrique-badge-ink, #100421) 35%, transparent);
+	transform-origin: center;
+}
+
+.em-section--cta .em-rubrique__badge-dot {
+	width: 9px;
+	height: 9px;
+	border-radius: 999px;
+	background: #20cdd6;
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+.em-section--cta .em-rubrique__badge--shape-pill {
+	border-radius: 999px;
+}
+
+.em-section--cta .em-rubrique__badge--shape-square {
+	border-radius: var(--em-rubrique-badge-radius, 6px);
+}
+
+.em-section--cta .em-rubrique__badge--shape-triangle {
+	border: 0;
+	box-shadow: none;
+	border-radius: 0;
+	padding: 12px 20px;
+	clip-path: polygon(50% 0, 0 100%, 100% 100%);
+	align-items: flex-end;
+}
+
+.em-section--cta .em-rubrique__badge--anim-wiggle {
+	animation: em-rubrique-badge-wiggle 4s ease-in-out infinite;
+}
+
+.em-section--cta .em-rubrique__badge--anim-pulse {
+	animation: em-rubrique-badge-pulse 2.4s ease-in-out infinite;
+}
+
+.em-section--cta .em-rubrique__badge--anim-bounce {
+	animation: em-rubrique-badge-bounce 2.2s ease-in-out infinite;
+}
+
+.em-section--cta .em-rubrique__button {
+	display: inline-block;
+	padding: 12px 28px;
+	border-radius: 999px;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: .03em;
+	text-decoration: none;
+	border: 2px solid #111;
+	box-shadow: 0 4px 0 rgba(0, 0, 0, .45);
+	line-height: 1.1;
+	margin-bottom: 10px;
+	transform-origin: center;
+}
+
+.em-section--cta .em-rubrique__button:hover {
+	filter: brightness(1.06);
+}
+
+.em-section--cta .em-rubrique__button--shape-pill {
+	border-radius: 999px;
+}
+
+.em-section--cta .em-rubrique__button--shape-square {
+	border-radius: var(--em-rubrique-button-radius, 6px);
+}
+
+.em-section--cta .em-rubrique__button--shape-triangle {
+	border: 0;
+	box-shadow: none;
+	border-radius: 0;
+	padding: 22px 30px 12px;
+	clip-path: polygon(50% 0, 0 100%, 100% 100%);
+}
+
+.em-section--cta .em-rubrique__button--anim-wiggle {
+	animation: em-rubrique-badge-wiggle 4s ease-in-out infinite;
+}
+
+.em-section--cta .em-rubrique__button--anim-pulse {
+	animation: em-rubrique-badge-pulse 2.4s ease-in-out infinite;
+}
+
+.em-section--cta .em-rubrique__button--anim-bounce {
+	animation: em-rubrique-badge-bounce 2.2s ease-in-out infinite;
+}

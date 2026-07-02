@@ -48,6 +48,25 @@ body {
 	font-family: var(--em-rubrique-font, inherit);
 }
 
+.em-rubrique::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	background-image: var(--em-rubrique-bg-image, none);
+	background-size: var(--em-rubrique-bg-size, cover);
+	background-repeat: var(--em-rubrique-bg-repeat, no-repeat);
+	background-position: var(--em-rubrique-bg-position, center);
+	opacity: var(--em-rubrique-bg-opacity, 1);
+	transform: var(--em-rubrique-bg-transform, none);
+	pointer-events: none;
+}
+
+.em-rubrique > * {
+	position: relative;
+	z-index: 1;
+}
+
 .em-rubrique__row {
 	display: grid;
 	grid-template-columns: repeat(1, minmax(0, 1fr));
