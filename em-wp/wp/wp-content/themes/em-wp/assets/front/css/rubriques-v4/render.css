@@ -269,3 +269,11 @@
     vertical-align: middle;
     margin: 2px;
 }
+
+@media (max-width: 760px) {
+    /* V4 mobile only: masquer la cellule L3C2 de la section Stream
+       (texte "Available Everywhere" dans le template actuel). */
+    .emv4-section--stream > .em-rubrique > .em-rubrique__row[data-em-row="3"] > .em-rubrique__col[data-em-col="2"] {
+        display: none;
+    }
+}

@@ -53,9 +53,9 @@ function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array
     <footer id="<?php echo esc_attr($uid); ?>" class="em-rubrique em-rubrique--<?php echo esc_attr($type_slug); ?>"<?php echo $style !== '' ? ' style="' . esc_attr($style) . '"' : ''; ?>>
         <?php for ($row = 1; $row <= $row_count; $row++) : ?>
             <?php $cols = em_wp_rubrique_layout_columns_for($layout, $row); ?>
-            <div class="em-rubrique__row" style="grid-template-columns:repeat(<?php echo (int) $cols; ?>,minmax(0,1fr))">
+            <div class="em-rubrique__row" data-em-row="<?php echo (int) $row; ?>" style="grid-template-columns:repeat(<?php echo (int) $cols; ?>,minmax(0,1fr))">
                 <?php for ($col = 1; $col <= $cols; $col++) : ?>
-                    <div class="em-rubrique__col em-rubrique__col--<?php echo esc_attr(em_wp_rubrique_layout_align_for($layout, $row, $col)); ?>">
+                    <div class="em-rubrique__col em-rubrique__col--<?php echo esc_attr(em_wp_rubrique_layout_align_for($layout, $row, $col)); ?>" data-em-col="<?php echo (int) $col; ?>">
                         <?php echo implode('', $grid[$row][$col] ?? []); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                     </div>
                 <?php endfor; ?>
