@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-02 23:34:20.
+3. Dernière mise à jour : 2026-07-02 23:37:32.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -52,10 +52,10 @@
 3. Contrôle runtime validé : front HTTP 200 et fallback texte WordPress toujours neutralisé.
 
 ## Exécution en cours (flow GH demandé)
-1. Rubrique VIDEO importée depuis la source officielle em-wp et intégrée dans em-site.
-2. Structuration appliquée : pattern render/helpers sur VIDEO, aligné avec TOP-BAR, STREAM et SOCIAL.
-3. Intégration front validée : bootstrap + enqueue CSS video + rendu de section + retrait automatique du placeholder VIDEO quand la rubrique est prête.
-4. Vérifications validées avant flow GH : lint PHP OK, front HTTP 200, section VIDEO présente, façade player vidéo cliquable détectée.
+1. Rubrique RELEASE importée depuis la source officielle em-wp et intégrée dans em-site.
+2. Structuration appliquée : pattern render/helpers sur RELEASE, aligné avec TOP-BAR, STREAM, SOCIAL et VIDEO.
+3. Intégration front validée : bootstrap + enqueue CSS release + rendu de section + retrait automatique du placeholder RELEASE quand la rubrique est prête.
+4. Vérifications validées avant flow GH : lint PHP OK, front HTTP 200, section RELEASE présente, cover et crédits détectés.
 
 ## Méthode d'import par rubrique (gravée)
 1. Source unique autorisée : `em-wp` (source officielle), jamais d'autre source.

@@ -79,6 +79,13 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_style(
+		'em-site-release',
+		$base_uri . '/assets/front/css/modules/release/index.css',
+		['em-site-front-layout'],
+		em_site_asset_version('assets/front/css/modules/release/index.css')
+	);
+
+	wp_enqueue_style(
 		'em-site-front-placeholders',
 		$base_uri . '/assets/front/css/pages/front-page.css',
 		['em-site-style'],
