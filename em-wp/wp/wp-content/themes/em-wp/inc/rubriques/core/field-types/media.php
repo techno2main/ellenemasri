@@ -236,6 +236,14 @@ function em_wp_rubrique_slides_collect(array $slides): array
 {
     $out = [];
 
+    $normalize_media = static function (string $media_url): string {
+        if (function_exists('em_wp_slider_front_media_url')) {
+            return em_wp_slider_front_media_url($media_url);
+        }
+
+        return $media_url;
+    };
+
     foreach ($slides as $index => $slide) {
         if (!is_array($slide) || !empty($slide['hidden'])) {
             continue;
@@ -266,9 +274,9 @@ function em_wp_rubrique_slides_collect(array $slides): array
                 'name'             => $name,
                 'delay_ms'         => $delay_ms,
                 'tiktok_url'       => $slide['tiktok_url'],
-                'tiktok_video_url' => $slide['tiktok_video_url'],
+                'tiktok_video_url' => $normalize_media($slide['tiktok_video_url']),
                 'tiktok_video_id'  => em_wp_rubrique_slide_tiktok_id($slide['tiktok_url']),
-                'image'            => $slide['image'],
+                'image'            => $normalize_media($slide['image']),
                 'alt'              => $slide['alt_text'],
             ];
             continue;
@@ -280,7 +288,7 @@ function em_wp_rubrique_slides_collect(array $slides): array
 
         $out[] = [
             'type'     => 'image',
-            'image'    => $slide['image'],
+            'image'    => $normalize_media($slide['image']),
             'name'     => $name,
             'alt'      => $slide['alt_text'] !== '' ? $slide['alt_text'] : $name,
             'delay_ms' => $delay_ms,

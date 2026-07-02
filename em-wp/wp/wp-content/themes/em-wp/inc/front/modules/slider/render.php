@@ -66,13 +66,16 @@ function em_wp_slider_front_media_url(string $url): string
         $request_host = trim((string) $_SERVER['HTTP_HOST']);
     }
 
+    $request_port = '';
     if (($pos = strpos($request_host, ':')) !== false) {
+        $request_port = substr($request_host, $pos + 1);
         $request_host = substr($request_host, 0, $pos);
     }
 
     $request_scheme = 'https';
     if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-        $request_scheme = strtolower(trim((string) $_SERVER['HTTP_X_FORWARDED_PROTO']));
+        $forwarded_proto = explode(',', (string) $_SERVER['HTTP_X_FORWARDED_PROTO']);
+        $request_scheme = strtolower(trim((string) $forwarded_proto[0]));
     } elseif (is_ssl()) {
         $request_scheme = 'https';
     } elseif (!empty($_SERVER['REQUEST_SCHEME'])) {
@@ -119,6 +122,12 @@ function em_wp_slider_front_media_url(string $url): string
     }
 
     $front = $request_scheme . '://' . $target_host;
+    if ($request_port !== '' && ctype_digit($request_port)) {
+        $port_int = (int) $request_port;
+        if (!(($request_scheme === 'http' && $port_int === 80) || ($request_scheme === 'https' && $port_int === 443))) {
+            $front .= ':' . $port_int;
+        }
+    }
     if ($request_host === '' && is_array($home_parts) && !empty($home_parts['port'])) {
         $front .= ':' . (int) $home_parts['port'];
     }
@@ -297,7 +306,11 @@ function em_wp_render_slider_mayami(array $slider, array $slides): void
                 <div class="em-slider__media">
                     <?php if (!empty($slides)): ?>
                         <?php foreach ($slides as $index => $slide): ?>
-                            <?php $slide_type = sanitize_key((string) ($slide['type'] ?? 'image')); ?>
+                            <?php
+                            $slide_type = sanitize_key((string) ($slide['type'] ?? 'image'));
+                            $slide_image_url = em_wp_slider_front_media_url((string) ($slide['image'] ?? ''));
+                            $slide_tiktok_video_url = em_wp_slider_front_media_url((string) ($slide['tiktok_video_url'] ?? ''));
+                            ?>
                             <figure
                                 class="em-slider__slide<?php echo $index === 0 ? ' is-active' : ''; ?>"
                                 data-slide-index="<?php echo esc_attr((string) $index); ?>"
@@ -314,12 +327,12 @@ function em_wp_render_slider_mayami(array $slider, array $slides): void
                                         allowfullscreen
                                     ></iframe>
                                 <?php elseif ($slide_type === 'tiktok'): ?>
-                                    <?php if (!empty($slide['tiktok_video_url'])): ?>
+                                    <?php if ($slide_tiktok_video_url !== ''): ?>
                                         <div class="em-slider__video-wrap">
                                             <video
                                                 class="em-slider__tiktok-video"
-                                                src="<?php echo esc_url((string) $slide['tiktok_video_url']); ?>"
-                                                poster="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>"
+                                                src="<?php echo esc_url($slide_tiktok_video_url); ?>"
+                                                poster="<?php echo esc_url($slide_image_url); ?>"
                                                 playsinline
                                                 webkit-playsinline
                                                 preload="metadata"
@@ -349,7 +362,7 @@ function em_wp_render_slider_mayami(array $slider, array $slides): void
                                     <?php endif; ?>
                                 <?php else: ?>
                                     <img
-                                        src="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>"
+                                        src="<?php echo esc_url($slide_image_url); ?>"
                                         alt="<?php echo esc_attr((string) ($slide['alt'] ?? '')); ?>"
                                         loading="lazy"
                                         decoding="async"

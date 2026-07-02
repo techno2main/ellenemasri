@@ -18,6 +18,7 @@ window.emWpInitMayamiSlider = function (root) {
     let currentIndex = 0;
     let autoPlayTimer = null;
     const DEFAULT_AUTOPLAY_DELAY = 5000;
+    let uploadsBasePath = null;
 
     function getSlideDelay(index) {
         const slide = slides[index];
@@ -83,6 +84,52 @@ window.emWpInitMayamiSlider = function (root) {
         return window.location.protocol === 'https:' && parsed.protocol === 'http:';
     }
 
+    function detectUploadsBasePath() {
+        if (uploadsBasePath !== null) {
+            return uploadsBasePath;
+        }
+
+        const hintSelectors = [
+            'img[src*="/wp/wp-content/uploads/"]',
+            'source[src*="/wp/wp-content/uploads/"]',
+            'a[href*="/wp/wp-content/uploads/"]'
+        ];
+
+        const hasWpSubdir = hintSelectors.some(function (sel) {
+            return !!document.querySelector(sel);
+        });
+
+        uploadsBasePath = hasWpSubdir ? '/wp/wp-content' : '/wp-content';
+        return uploadsBasePath;
+    }
+
+    function normalizeMediaUrl(rawUrl) {
+        if (!rawUrl) {
+            return rawUrl;
+        }
+
+        let parsed;
+        try {
+            parsed = new URL(rawUrl, window.location.href);
+        } catch (e) {
+            return rawUrl;
+        }
+
+        if (!isBlockedMediaUrl(parsed.href)) {
+            return parsed.href;
+        }
+
+        let nextPath = parsed.pathname || '';
+        if (nextPath.startsWith('/wp-content/')) {
+            const basePath = detectUploadsBasePath();
+            if (basePath === '/wp/wp-content') {
+                nextPath = '/wp' + nextPath;
+            }
+        }
+
+        return window.location.origin + nextPath + (parsed.search || '') + (parsed.hash || '');
+    }
+
     function markVideoUnplayable(video, reason) {
         if (!video || video.dataset.emVideoUnplayable === '1') {
             return;
@@ -106,13 +153,33 @@ window.emWpInitMayamiSlider = function (root) {
 
     function sanitizeBlockedVideos() {
         slides.forEach(function (slide) {
+            const image = slide.querySelector('img');
+            if (image) {
+                const imageSrc = image.getAttribute('src') || '';
+                const normalizedImageSrc = normalizeMediaUrl(imageSrc);
+                if (normalizedImageSrc && normalizedImageSrc !== imageSrc) {
+                    image.setAttribute('src', normalizedImageSrc);
+                }
+            }
+
             const video = slide.querySelector('video.em-slider__tiktok-video');
             if (!video) {
                 return;
             }
 
             const src = video.getAttribute('src') || '';
-            if (isBlockedMediaUrl(src)) {
+            const normalizedSrc = normalizeMediaUrl(src);
+            if (normalizedSrc && normalizedSrc !== src) {
+                video.setAttribute('src', normalizedSrc);
+            }
+
+            const poster = video.getAttribute('poster') || '';
+            const normalizedPoster = normalizeMediaUrl(poster);
+            if (normalizedPoster && normalizedPoster !== poster) {
+                video.setAttribute('poster', normalizedPoster);
+            }
+
+            if (isBlockedMediaUrl(video.getAttribute('src') || '')) {
                 markVideoUnplayable(video, 'mixed-content-local-network');
             }
         });
