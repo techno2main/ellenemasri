@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/menu.php';
 require_once __DIR__ . '/pages/dashboard-menus.php';
+require_once __DIR__ . '/client-access.php';
 
 /**
  * Slugs modules admin cibles (ordre source em-wp).
