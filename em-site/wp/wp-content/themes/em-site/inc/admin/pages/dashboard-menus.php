@@ -16,7 +16,7 @@ function em_site_admin_templates_page_slug(): string
 
 function em_site_admin_rubriques_page_slug(): string
 {
-    return 'em-wp-v4-overview';
+    return 'em-site-rubriques';
 }
 
 function em_site_admin_vlb_page_slug(): string

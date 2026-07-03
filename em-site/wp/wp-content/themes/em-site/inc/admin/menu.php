@@ -111,7 +111,7 @@ function em_site_admin_dashboard_tabs(): array
 	return [
 		[
 			'label' => __('MES RUBRIQUES', 'em-wp'),
-			'url' => admin_url('admin.php?page=em-wp-v4-overview'),
+			'url' => admin_url('admin.php?page=em-site-rubriques'),
 		],
 		[
 			'label' => __('MES TEMPLATES', 'em-wp'),
@@ -244,7 +244,7 @@ function em_site_admin_render_dashboard_page(): void
 			<section class="em-site-dashboard__card">
 				<h2><?php esc_html_e('MES RUBRIQUES', 'em-wp'); ?></h2>
 				<p><?php esc_html_e('Sections réutilisables qui composent tes templates.', 'em-wp'); ?></p>
-				<a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=em-wp-v4-overview')); ?>"><?php esc_html_e('GÉRER LES RUBRIQUES', 'em-wp'); ?></a>
+				<a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=em-site-rubriques')); ?>"><?php esc_html_e('GÉRER LES RUBRIQUES', 'em-wp'); ?></a>
 			</section>
 
 			<section class="em-site-dashboard__card">
