@@ -1,0 +1,66 @@
+body.wp-admin.em-site-admin-screen #adminmenu,
+body.wp-admin.em-site-admin-screen #adminmenuback,
+body.wp-admin.em-site-admin-screen #adminmenuwrap {
+    background: #6b000d;
+}
+
+body.wp-admin.em-site-admin-screen #adminmenu .wp-has-current-submenu .wp-submenu,
+body.wp-admin.em-site-admin-screen #adminmenu .wp-has-current-submenu.opensub .wp-submenu,
+body.wp-admin.em-site-admin-screen #adminmenu a.wp-has-current-submenu:focus + .wp-submenu,
+body.wp-admin.em-site-admin-screen #adminmenu .wp-submenu,
+body.wp-admin.em-site-admin-screen #adminmenu .opensub .wp-submenu {
+    background: #5f000b;
+}
+
+body.wp-admin.em-site-admin-screen #adminmenu li.menu-top,
+body.wp-admin.em-site-admin-screen #adminmenu li.wp-has-submenu.wp-not-current-submenu.menu-top {
+    border-bottom: 1px solid rgba(255, 255, 255, .15);
+}
+
+body.wp-admin.em-site-admin-screen #adminmenu a,
+body.wp-admin.em-site-admin-screen #adminmenu div.wp-menu-name,
+body.wp-admin.em-site-admin-screen #adminmenu .wp-submenu a {
+    color: #f2f3f5;
+}
+
+body.wp-admin.em-site-admin-screen #adminmenu li.current a.menu-top,
+body.wp-admin.em-site-admin-screen #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu,
+body.wp-admin.em-site-admin-screen #adminmenu li.menu-top:hover,
+body.wp-admin.em-site-admin-screen #adminmenu li.opensub > a.menu-top {
+    background: #7a0b16;
+    color: #ffffff;
+}
+
+body.wp-admin.em-site-admin-screen #adminmenu .wp-submenu a:hover,
+body.wp-admin.em-site-admin-screen #adminmenu .wp-submenu a:focus,
+body.wp-admin.em-site-admin-screen #adminmenu .wp-submenu a.current {
+    color: #ffffff;
+}
+
+body.wp-admin.em-site-admin-screen #wpadminbar {
+    background: #14202a;
+}
+
+body.wp-admin.em-site-admin-screen .em-wp-menu-dashboard-entry {
+    position: relative;
+}
+
+body.wp-admin.em-site-admin-screen .em-wp-dashboard-menu-arrow {
+    display: block;
+    height: 14px;
+    width: 14px;
+    margin: 6px auto;
+    border-radius: 999px;
+    background: #7a0b16;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2);
+    position: relative;
+}
+
+body.wp-admin.em-site-admin-screen .em-wp-dashboard-menu-arrow::before {
+    content: "\2193";
+    color: #ffffff;
+    font-size: 11px;
+    line-height: 14px;
+    text-align: center;
+    display: block;
+}

@@ -1,0 +1,270 @@
+<?php
+/**
+ * Menu et dashboard admin em-site (Lot B).
+ *
+ * @package em-wp
+ */
+
+if (!defined('ABSPATH')) {
+	exit;
+}
+
+function em_site_admin_is_dashboard_screen(): bool
+{
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	return sanitize_key((string) ($_GET['page'] ?? '')) === em_site_admin_dashboard_page_slug();
+}
+
+function em_site_admin_dashboard_page_slug(): string
+{
+	return 'em-wp-dashboard';
+}
+
+function em_site_admin_dashboard_admin_url(): string
+{
+	return admin_url('admin.php?page=' . em_site_admin_dashboard_page_slug());
+}
+
+function em_site_admin_register_dashboard_page(): void
+{
+	add_menu_page(
+		__('Dashboard EM-SITE', 'em-wp'),
+		__('Dashboard', 'em-wp'),
+		'manage_options',
+		em_site_admin_dashboard_page_slug(),
+		'em_site_admin_render_dashboard_page',
+		'dashicons-dashboard',
+		3
+	);
+}
+add_action('admin_menu', 'em_site_admin_register_dashboard_page');
+
+function em_site_admin_remove_dashboard_duplicate_submenu(): void
+{
+	remove_submenu_page(em_site_admin_dashboard_page_slug(), em_site_admin_dashboard_page_slug());
+}
+add_action('admin_menu', 'em_site_admin_remove_dashboard_duplicate_submenu', 999);
+
+function em_site_admin_point_dashboard_to_home(): void
+{
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+
+	global $menu, $submenu;
+
+	remove_submenu_page('index.php', 'index.php');
+	remove_submenu_page('index.php', 'update-core.php');
+	unset($submenu['index.php']);
+
+	foreach ($menu as $position => $item) {
+		if (!is_array($item)) {
+			continue;
+		}
+
+		$slug = sanitize_key((string) ($item[2] ?? ''));
+		if ($slug !== 'index.php' && $slug !== em_site_admin_dashboard_page_slug()) {
+			continue;
+		}
+
+		$menu[$position][0] = 'DASHBOARD';
+		$menu[$position][3] = 'DASHBOARD';
+		$menu[$position][2] = 'index.php';
+		$menu[$position][4] = trim(((string) ($item[4] ?? 'menu-top')) . ' em-wp-menu-dashboard-entry');
+		$menu[$position][6] = 'dashicons-dashboard';
+	}
+}
+add_action('admin_menu', 'em_site_admin_point_dashboard_to_home', 1000002);
+
+function em_site_admin_highlight_dashboard_menu($parent_file)
+{
+	if (em_site_admin_is_dashboard_screen()) {
+		return 'index.php';
+	}
+
+	return $parent_file;
+}
+add_filter('parent_file', 'em_site_admin_highlight_dashboard_menu');
+
+function em_site_admin_highlight_dashboard_submenu($submenu_file)
+{
+	if (em_site_admin_is_dashboard_screen()) {
+		return '';
+	}
+
+	return $submenu_file;
+}
+add_filter('submenu_file', 'em_site_admin_highlight_dashboard_submenu');
+
+function em_site_admin_dashboard_body_class($classes)
+{
+	if (!em_site_admin_is_dashboard_screen()) {
+		return $classes;
+	}
+
+	return $classes . ' em-wp-admin-dashboard-screen em-site-admin-screen';
+}
+add_filter('admin_body_class', 'em_site_admin_dashboard_body_class');
+
+function em_site_admin_dashboard_tabs(): array
+{
+	return [
+		[
+			'label' => __('MES RUBRIQUES', 'em-wp'),
+			'url' => admin_url('admin.php?page=em-wp-v4-overview'),
+		],
+		[
+			'label' => __('MES TEMPLATES', 'em-wp'),
+			'url' => admin_url('admin.php?page=em-site-templates'),
+		],
+		[
+			'label' => __('MEDIAS', 'em-wp'),
+			'url' => admin_url('upload.php'),
+		],
+		[
+			'label' => __('SETTINGS', 'em-wp'),
+			'url' => admin_url('options-general.php'),
+		],
+	];
+}
+
+function em_site_admin_enqueue_dashboard_assets(): void
+{
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+
+	wp_enqueue_style(
+		'em-site-admin-chrome',
+		get_template_directory_uri() . '/assets/admin/css/core/admin-chrome.css',
+		[],
+		file_exists(get_template_directory() . '/assets/admin/css/core/admin-chrome.css')
+			? (string) filemtime(get_template_directory() . '/assets/admin/css/core/admin-chrome.css')
+			: (string) wp_get_theme()->get('Version')
+	);
+
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
+	if ($page_slug !== em_site_admin_dashboard_page_slug()) {
+		return;
+	}
+
+	wp_enqueue_style(
+		'font-awesome-6',
+		'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+		[],
+		'6.5.1'
+	);
+
+	wp_enqueue_style(
+		'em-site-admin-dashboard',
+		get_template_directory_uri() . '/assets/admin/css/dashboard.css',
+		['em-site-admin-chrome'],
+		file_exists(get_template_directory() . '/assets/admin/css/dashboard.css')
+			? (string) filemtime(get_template_directory() . '/assets/admin/css/dashboard.css')
+			: (string) wp_get_theme()->get('Version')
+	);
+
+	wp_enqueue_style(
+		'em-site-admin-hub-cards',
+		get_template_directory_uri() . '/assets/admin/css/shared/hub-cards.css',
+		['em-site-admin-dashboard'],
+		file_exists(get_template_directory() . '/assets/admin/css/shared/hub-cards.css')
+			? (string) filemtime(get_template_directory() . '/assets/admin/css/shared/hub-cards.css')
+			: (string) wp_get_theme()->get('Version')
+	);
+}
+add_action('admin_enqueue_scripts', 'em_site_admin_enqueue_dashboard_assets');
+
+function em_site_admin_mount_sidebar_menu_chrome_scripts(): void
+{
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+	?>
+	<script id="em-site-sidebar-menu-chrome">
+		(function () {
+			function getDashboardItem() {
+				return document.getElementById('menu-dashboard')
+					|| document.querySelector('#adminmenu li.em-wp-menu-dashboard-entry');
+			}
+
+			function mountDashboardArrow() {
+				var item = getDashboardItem();
+				if (!item || item.querySelector('.em-wp-dashboard-menu-arrow')) {
+					return;
+				}
+
+				var link = item.querySelector('a.menu-top');
+				var arrow = document.createElement('span');
+				arrow.className = 'em-wp-dashboard-menu-arrow';
+				arrow.setAttribute('aria-hidden', 'true');
+
+				if (link) {
+					link.insertAdjacentElement('afterend', arrow);
+					return;
+				}
+
+				item.appendChild(arrow);
+			}
+
+			mountDashboardArrow();
+			document.addEventListener('DOMContentLoaded', mountDashboardArrow);
+			window.addEventListener('load', mountDashboardArrow);
+		})();
+	</script>
+	<?php
+}
+add_action('admin_footer', 'em_site_admin_mount_sidebar_menu_chrome_scripts', 5);
+
+function em_site_admin_render_dashboard_page(): void
+{
+	if (!current_user_can('manage_options')) {
+		return;
+	}
+
+	$tabs = em_site_admin_dashboard_tabs();
+	?>
+	<div class="wrap em-wp-admin-module em-wp-hub-sommaire em-site-dashboard">
+		<div class="em-wp-hub__greeting">
+			<span class="dashicons dashicons-admin-home em-wp-hub__greeting-icon" aria-hidden="true"></span>
+			<div class="em-wp-hub__greeting-text">
+				<h1><?php esc_html_e('Ellen Masri', 'em-wp'); ?></h1>
+				<p class="em-site-dashboard__sub"><?php esc_html_e('MON DASHBOARD', 'em-wp'); ?></p>
+			</div>
+		</div>
+
+		<div class="em-site-dashboard__tabs" role="navigation" aria-label="Dashboard navigation">
+			<?php foreach ($tabs as $tab) : ?>
+				<a class="em-site-dashboard__tab" href="<?php echo esc_url((string) $tab['url']); ?>"><?php echo esc_html((string) $tab['label']); ?></a>
+			<?php endforeach; ?>
+		</div>
+
+		<div class="em-site-dashboard__grid">
+			<section class="em-site-dashboard__card">
+				<h2><?php esc_html_e('MES RUBRIQUES', 'em-wp'); ?></h2>
+				<p><?php esc_html_e('Sections réutilisables qui composent tes templates.', 'em-wp'); ?></p>
+				<a class="button button-primary" href="<?php echo esc_url(admin_url('admin.php?page=em-wp-v4-overview')); ?>"><?php esc_html_e('GÉRER LES RUBRIQUES', 'em-wp'); ?></a>
+			</section>
+
+			<section class="em-site-dashboard__card">
+				<h2><?php esc_html_e('MES TEMPLATES', 'em-wp'); ?></h2>
+				<p><?php esc_html_e('Ton site utilise actuellement le template :', 'em-wp'); ?></p>
+				<a class="button" href="<?php echo esc_url(admin_url('admin.php?page=em-site-templates')); ?>"><?php esc_html_e('VOIR TOUT', 'em-wp'); ?></a>
+			</section>
+
+			<section class="em-site-dashboard__card">
+				<h2><?php esc_html_e('MES MEDIAS', 'em-wp'); ?></h2>
+				<p><?php esc_html_e('Accède à ta bibliothèque de fichiers (images, vidéos, documents).', 'em-wp'); ?></p>
+				<a class="button" href="<?php echo esc_url(admin_url('upload.php')); ?>"><?php esc_html_e('LIBRAIRIE', 'em-wp'); ?></a>
+			</section>
+
+			<section class="em-site-dashboard__card">
+				<h2><?php esc_html_e('MES SETTINGS', 'em-wp'); ?></h2>
+				<p><?php esc_html_e('Réglages généraux de ton site.', 'em-wp'); ?></p>
+				<a class="button" href="<?php echo esc_url(admin_url('options-general.php')); ?>"><?php esc_html_e('APPARENCE · GÉNÉRAL', 'em-wp'); ?></a>
+			</section>
+		</div>
+	</div>
+	<?php
+}

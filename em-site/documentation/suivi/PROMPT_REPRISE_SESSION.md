@@ -15,9 +15,10 @@ Contexte chantier em-site (à respecter strictement) :
 État figé actuel :
 1) Le FRONT est validé par l'utilisateur sur em-site.
 2) Les ajustements mobiles récents sont validés (ancres, stream, footer).
-3) Le scope actif bascule vers l'ADMIN.
-4) Objectif : rebrancher l'admin à l'identique de em-wp, sans casser le front stabilisé.
-5) Prochaine action autorisée : démarrer par un inventaire ADMIN source -> cible avant tout rebranchement.
+3) Le scope actif est ADMIN.
+4) Le Lot A (inventaire/carto) est démarré et documenté.
+5) Objectif : rebrancher l'admin à l'identique de em-wp, sans casser le front stabilisé.
+6) Prochaine action autorisée : Lot B (boot admin minimal : dashboard + chrome + assets de base).
 
 Consignes d'exécution :
 - Toujours mettre à jour la documentation de suivi avant tout flow GH.

@@ -21,3 +21,7 @@ require_once __DIR__ . '/front/modules/contact/render.php';
 require_once __DIR__ . '/front/modules/about/render.php';
 require_once __DIR__ . '/front/modules/footer/render.php';
 require_once __DIR__ . '/front/render-page.php';
+
+if (is_admin()) {
+	require_once __DIR__ . '/admin/bootstrap.php';
+}

@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-03 12:48:16.
+3. Dernière mise à jour : 2026-07-03 13:00:35.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -36,6 +36,7 @@
 4. Étape 3 : ETAPE_03_STACK_DOCKER.md
 5. Étape 4 : ETAPE_04_CONTROLE_FONCTIONNEL.md
 6. Étape 5 : ETAPE_05_PLAN_COPIE_SELECTIVE_V4.md
+7. Étape 6 : ETAPE_06_REBRANCHEMENT_ADMIN.md
 
 ## Reprise de session
 1. Prompt de reprise figé : PROMPT_REPRISE_SESSION.md
@@ -53,9 +54,13 @@
 
 ## Exécution en cours
 1. Le lot FRONT est validé fonctionnellement et visuellement par l'utilisateur.
-2. La prochaine phase est ADMIN (rebranchement à l'identique) sur la cible em-site.
-3. Exécution imposée : progression par lots courts, sans refonte structurelle, avec vérification technique et validation fonctionnelle à chaque lot.
-4. Objectif de phase : retrouver un ADMIN strictement équivalent à la source em-wp, tout en conservant l'architecture em-site déjà stabilisée.
+2. La phase ADMIN est démarrée : Lot A (cartographie source -> cible) ouvert et documenté.
+3. Lot B engagé : premier dashboard admin branché avec slug source `em-wp-dashboard` + style dédié.
+4. Alignement chrome/sidebar engagé : menu dashboard, flèche latérale, thème admin et styles shared hub importés depuis la source.
+5. Menu latéral rapproché de la source : entrées `TEMPLATES`, `RUBRIQUES`, `VLB` ajoutées, labels `MEDIAS` et `PARAMÈTRES` harmonisés.
+6. Vérifications en cours : lint PHP OK sur les points d'entrée admin ajoutés, front HTTP 200 conservé.
+7. Exécution imposée : progression par lots courts, sans refonte structurelle, avec vérification technique et validation fonctionnelle à chaque lot.
+8. Objectif de phase : retrouver un ADMIN strictement équivalent à la source em-wp, tout en conservant l'architecture em-site déjà stabilisée.
 
 ## Plan phase ADMIN (itératif et sécurisé)
 1. Lot A - Inventaire et cartographie
