@@ -41,6 +41,19 @@ body.wp-admin.em-site-admin-screen #wpadminbar {
     background: #14202a;
 }
 
+body.wp-admin.em-site-admin-screen #adminmenu a[href="options-general.php"] {
+    background: #78313a;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+    border-bottom: 1px solid rgba(255, 255, 255, .12);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+body.wp-admin.em-site-admin-screen #adminmenu a[href="options-general.php"] .wp-menu-image:before {
+    opacity: .65;
+}
+
 body.wp-admin.em-site-admin-screen .em-wp-menu-dashboard-entry {
     position: relative;
 }

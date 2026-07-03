@@ -265,3 +265,13 @@ function em_site_ellene_admin_access_fallback_css(): void
     <?php
 }
 add_action('admin_head', 'em_site_ellene_admin_access_fallback_css', 100);
+
+function em_site_admin_global_body_class($classes)
+{
+    if (is_admin() && current_user_can('manage_options')) {
+        return trim($classes . ' em-site-admin-screen');
+    }
+
+    return $classes;
+}
+add_filter('admin_body_class', 'em_site_admin_global_body_class', 20);

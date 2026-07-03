@@ -85,6 +85,36 @@ function em_site_admin_rename_native_menus(): void
 }
 add_action('admin_menu', 'em_site_admin_rename_native_menus', 999);
 
+function em_site_admin_group_settings_menus(): void
+{
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    remove_menu_page('themes.php');
+
+    add_submenu_page(
+        'options-general.php',
+        __('Apparence', 'em-wp'),
+        __('Apparence', 'em-wp'),
+        'manage_options',
+        'themes.php'
+    );
+
+    global $submenu;
+
+    if (!empty($submenu['options-general.php']) && is_array($submenu['options-general.php'])) {
+        foreach ($submenu['options-general.php'] as $index => $submenu_item) {
+            $slug = (string) ($submenu_item[2] ?? '');
+
+            if ($slug === 'options-general.php') {
+                $submenu['options-general.php'][$index][0] = __('Settings', 'em-wp');
+            }
+        }
+    }
+}
+add_action('admin_menu', 'em_site_admin_group_settings_menus', 1002);
+
 function em_site_admin_render_templates_page(): void
 {
     if (!current_user_can('manage_options')) {

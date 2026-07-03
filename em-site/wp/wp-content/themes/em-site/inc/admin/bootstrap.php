@@ -14,6 +14,9 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/menu.php';
 require_once __DIR__ . '/pages/dashboard-menus.php';
+require_once __DIR__ . '/pages/dashboard-routing.php';
+require_once __DIR__ . '/pages/dashboard-context.php';
+require_once __DIR__ . '/pages/ellene-gate.php';
 require_once __DIR__ . '/client-access.php';
 
 /**

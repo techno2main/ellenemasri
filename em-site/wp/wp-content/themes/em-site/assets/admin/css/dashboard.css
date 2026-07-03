@@ -65,6 +65,114 @@
     color: #4b5563;
 }
 
+.em-site-dashboard__card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 10px;
+}
+
+.em-site-dashboard__card-head h2 {
+    margin: 0;
+}
+
+.em-site-dashboard__gear {
+    color: #b3132a;
+    text-decoration: none;
+}
+
+.em-site-dashboard__gear .dashicons {
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+.em-site-dashboard__status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+.em-site-pill {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+.em-site-pill--primary {
+    background: #b126b0;
+    color: #fff;
+}
+
+.em-site-pill--live {
+    background: #f3e8ff;
+    color: #a21caf;
+    border: 1px solid #e9d5ff;
+}
+
+.em-site-dashboard__links {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 3px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 999px;
+    background: #f9fafb;
+    color: #7b7f86;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.em-site-dashboard__mini-link {
+    color: #7c2d12;
+    text-decoration: none;
+}
+
+.em-site-dashboard__bubble {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    color: #7c2d12;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.em-site-dashboard__primary {
+    display: inline-flex;
+    align-items: center;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 999px;
+    background: #af16a8;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.em-site-dashboard__tab--list {
+    width: 34px;
+    min-width: 34px;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: #751820;
+    color: #fff;
+}
+
 @media (max-width: 960px) {
     .em-site-dashboard__grid {
         grid-template-columns: 1fr;
