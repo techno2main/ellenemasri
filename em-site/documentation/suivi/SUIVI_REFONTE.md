@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-03 00:22:30.
+3. Dernière mise à jour : 2026-07-03 12:48:16.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -39,24 +39,40 @@
 
 ## Reprise de session
 1. Prompt de reprise figé : PROMPT_REPRISE_SESSION.md
-2. Prochaine étape prioritaire : import FRONT par rubrique, une seule à la fois, avec validation visuelle utilisateur après chaque rubrique.
+2. Prochaine étape prioritaire : rebranchement ADMIN à l'identique sur em-site, en lots progressifs avec validations à chaque étape.
 
 ## Point de rollback GH (actif)
 1. Point figé demandé par l'utilisateur créé après nettoyage du fallback texte WordPress et maintien de la structure de thème.
 2. État fonctionnel figé : front HTTP 200, structure vide exploitable, top-bar annulée (render/css vidés).
-3. Règle d'exécution à partir de ce point : ne traiter que le FRONT, une rubrique par étape, sans copie récursive de dossier.
+3. Ce point a servi de base à la migration FRONT (désormais validée) ; la phase active bascule maintenant sur le rebranchement ADMIN à l'identique.
 
 ## État front visuel (placeholders)
-1. Placeholders actifs pour les 10 rubriques FRONT, dans l'ordre de migration demandé.
-2. Layout validé : un placeholder par ligne, pleine largeur, sans bandeau titre.
-3. Contrôle runtime validé : front HTTP 200 et fallback texte WordPress toujours neutralisé.
+1. Migration front validée par l'utilisateur : rendu global conforme à la source sur la cible em-site.
+2. Ajustements mobile validés : ancres (sans hash visible), alignement offsets, STREAM (taille titre/logo), FOOTER mobile.
+3. Contrôle runtime validé : front HTTP 200, navigation ancres opérationnelle, lot FRONT clôturable.
 
-## Exécution en cours (flow GH demandé)
-1. Rubrique HEADER engagée en priorité après ABOUT puis CONTACT, avec intégration conjointe HERO + SLIDER selon l'ordre demandé.
-2. Rendu front activé : retrait du placeholder HEADER, assemblage shell + hero + slider, conservation des contraintes WordPress (pas de copie récursive).
-3. Ajustements fidélité source appliqués : boutons HERO alignés (libellés uppercase et animations actives), structure slider mayami opérationnelle côté cible.
-4. Refactor JS slider finalisé en découpage logique réel : `media.js`, `runtime.js`, `player.js`, `core.js` (compatibilité) et `index.js` (bootstrap).
-5. Vérifications validées avant flow GH : lint PHP OK via Docker, front HTTP 200, présence HEADER/SLIDER confirmée et scripts slider découpés chargés dans le HTML.
+## Exécution en cours
+1. Le lot FRONT est validé fonctionnellement et visuellement par l'utilisateur.
+2. La prochaine phase est ADMIN (rebranchement à l'identique) sur la cible em-site.
+3. Exécution imposée : progression par lots courts, sans refonte structurelle, avec vérification technique et validation fonctionnelle à chaque lot.
+4. Objectif de phase : retrouver un ADMIN strictement équivalent à la source em-wp, tout en conservant l'architecture em-site déjà stabilisée.
+
+## Plan phase ADMIN (itératif et sécurisé)
+1. Lot A - Inventaire et cartographie
+	- Relever les menus/pages/admin assets/hooks côté source em-wp.
+	- Produire la matrice source -> cible (fichiers, hooks, dépendances) avant copie.
+2. Lot B - Boot admin minimal
+	- Rebrancher uniquement le bootstrap ADMIN indispensable.
+	- Vérifier accès aux pages de base sans erreurs fatales.
+3. Lot C - Écrans coeur et assets
+	- Rebrancher les écrans prioritaires un par un (même ordre que la source).
+	- Rebrancher scripts/styles admin associés, sans duplication massive.
+4. Lot D - Actions/AJAX/permissions
+	- Rebrancher endpoints, nonces, capacités et validations serveur.
+	- Tester les parcours CRUD critiques.
+5. Lot E - Finition et contrôle de conformité
+	- Vérifier parité fonctionnelle finale source/cible.
+	- Stabiliser la documentation et préparer flow GH sur demande explicite.
 
 ## Méthode d'import par rubrique (gravée)
 1. Source unique autorisée : `em-wp` (source officielle), jamais d'autre source.
@@ -70,8 +86,7 @@
 7. Qualité documentaire : conserver les accents dans tous les commentaires et textes français.
 8. Validation obligatoire à chaque rubrique : contrôle technique + contrôle runtime + validation visuelle utilisateur avant rubrique suivante.
 
-AVANCEMENT 
-
----> Le front est OK maintenant
-
-Prochaine étape : rebrancher l'admin à l'identique sur le nouveau site. Il faudra procéder par étapes aussi pour ne rien casser.
+## Avancement validé utilisateur
+1. Front : ✅ validé.
+2. Prochaine étape validée : rebrancher l'admin à l'identique sur le nouveau site.
+3. Contrainte d'exécution confirmée : procéder par étapes pour éviter toute casse.
