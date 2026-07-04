@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Position du libellÃ© Â« ThÃ¨me actif Â» (au-dessus de DASHBOARD).
+ * Position du libellé « Thème actif » (au-dessus de DASHBOARD).
  */
 function em_wp_admin_menu_active_template_label_position(): int
 {
@@ -18,7 +18,7 @@ function em_wp_admin_menu_active_template_label_position(): int
 }
 
 /**
- * DÃ©but du bloc navigation principale (MEDIAS, CATALOGUES, TEMPLATES).
+ * Début du bloc navigation principale (MEDIAS, CATALOGUES, TEMPLATES).
  */
 function em_wp_admin_menu_main_nav_base(): int
 {
@@ -26,7 +26,7 @@ function em_wp_admin_menu_main_nav_base(): int
 }
 
 /**
- * DÃ©but du bloc Rubriques template.
+ * Début du bloc Rubriques template.
  */
 function em_wp_admin_menu_rubrique_block_base(): int
 {
@@ -34,7 +34,7 @@ function em_wp_admin_menu_rubrique_block_base(): int
 }
 
 /**
- * DÃ©but du bloc ParamÃ¨tres (filet + accordÃ©on + menus WP natifs).
+ * Début du bloc Paramètres (filet + accordéon + menus WP natifs).
  */
 function em_wp_admin_menu_settings_block_base(): int
 {
@@ -50,7 +50,7 @@ function em_wp_admin_menu_vlb_parent_slug(): string
 }
 
 /**
- * Position du menu VLB : aprÃ¨s RUBRIQUES et avant ParamÃ¨tres.
+ * Position du menu VLB : après RUBRIQUES et avant Paramètres.
  */
 function em_wp_admin_menu_vlb_position(): int
 {
@@ -66,7 +66,7 @@ function em_wp_admin_menu_vlb_separator_position(): int
 }
 
 /**
- * Slugs des menus WordPress natifs sous PARAMÃˆTRES.
+ * Slugs des menus WordPress natifs sous PARAMÈTRES.
  *
  * @return string[]
  */
@@ -76,7 +76,7 @@ function em_wp_admin_menu_native_settings_registry_slugs(): array
 }
 
 /**
- * EntrÃ©e menu Â« THÃˆME ACTIF : â€¦ Â».
+ * Entrée menu « THÈME ACTIF : … ».
  *
  * @return array<int, string>
  */
@@ -95,7 +95,7 @@ function em_wp_admin_menu_active_template_label_item(string $theme_name): array
 }
 
 /**
- * Slug registre pour une entrÃ©e menu (Ã©vite collision upload.php / em-wp-medias).
+ * Slug registre pour une entrée menu (évite collision upload.php / em-wp-medias).
  */
 function em_wp_admin_menu_registry_slug_for_item(array $item): string
 {
@@ -121,7 +121,7 @@ function em_wp_admin_menu_registry_slug_for_item(array $item): string
 }
 
 /**
- * Registre slug => position (source de vÃ©ritÃ©).
+ * Registre slug => position (source de vérité).
  *
  * @return array<string, int>
  */
@@ -232,7 +232,7 @@ function em_wp_admin_menu_position_registry(): array
 }
 
 /**
- * Position menu pour un slug enregistrÃ©.
+ * Position menu pour un slug enregistré.
  */
 function em_wp_admin_menu_position_for_slug(string $slug): float
 {

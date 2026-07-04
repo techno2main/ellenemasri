@@ -98,7 +98,7 @@ function em_wp_admin_is_em_wp_screen(): bool
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
 
-    return $page_slug !== '' && str_starts_with($page_slug, 'em-wp-');
+    return $page_slug !== '' && str_starts_with($page_slug, 'em-');
 }
 
 /**
@@ -336,3 +336,4 @@ function em_wp_admin_template_render_banner(): void
     </div>
     <?php
 }
+

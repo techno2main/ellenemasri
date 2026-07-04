@@ -1,12 +1,12 @@
 <?php
 /**
- * Script du builder (V4) â€” grille par LIGNE + Ã©dition + aperÃ§u temps rÃ©el.
+ * Script du builder (V4) — grille par LIGNE + édition + aperçu temps réel.
  *
- * Chaque ligne dÃ©finit son nombre de COLONNES (1-4) et l'ALIGNEMENT de chacune
- * (en-tÃªte de ligne). Ajout d'un champ par colonne (+), libellÃ© + valeur,
- * suppression (modale mutualisÃ©e), glisser-dÃ©poser, ajout/suppression de ligne,
- * couleurs globales. SÃ©rialise { rows:[{columns,align}], fields } et rend
- * l'aperÃ§u via EmWpV4Preview.
+ * Chaque ligne définit son nombre de COLONNES (1-4) et l'ALIGNEMENT de chacune
+ * (en-tête de ligne). Ajout d'un champ par colonne (+), libellé + valeur,
+ * suppression (modale mutualisée), glisser-déposer, ajout/suppression de ligne,
+ * couleurs globales. Sérialise { rows:[{columns,align}], fields } et rend
+ * l'aperçu via EmWpV4Preview.
  *
  * @package em-wp
  */
@@ -24,10 +24,32 @@ require dirname(__DIR__) . '/slides-editor-script.php';
     var richDialog = null;
 
     function init() {
-        document.querySelectorAll('.em-v4-builder').forEach(setup);
+        document.querySelectorAll('.em-v4-item[open] .em-v4-builder').forEach(setup);
+
+        // Lazy init: un builder n'est monté que lorsque son item est ouvert.
+        document.addEventListener('toggle', function (e) {
+            var item = e.target;
+            if (!item || !item.classList || !item.classList.contains('em-v4-item') || !item.open) {
+                return;
+            }
+
+            var builder = item.querySelector('.em-v4-builder');
+            if (!builder) {
+                return;
+            }
+
+            window.requestAnimationFrame(function () {
+                setup(builder);
+            });
+        }, true);
     }
 
     function setup(builder) {
+        if (!builder || builder.dataset.emV4SetupDone === '1') {
+            return;
+        }
+        builder.dataset.emV4SetupDone = '1';
+
         var formId = builder.getAttribute('data-form');
         var structureInput = document.getElementById(formId + '-structure');
         var rows = builder.querySelector('.em-v4-rows');
@@ -37,9 +59,9 @@ require dirname(__DIR__) . '/slides-editor-script.php';
         var ready = false;
         var baseline = null;
 
-        // AccordÃ©on des sections de l'item : ouvrir Apparence referme Contenu (et
+        // Accordéon des sections de l'item : ouvrir Apparence referme Contenu (et
         // inversement), comme les lignes de Contenu entre elles. Capture car
-        // l'Ã©vÃ©nement Â« toggle Â» ne bouillonne pas.
+        // l'événement « toggle » ne bouillonne pas.
         builder.addEventListener('toggle', function (e) {
             var sec = e.target;
             if (!sec.classList || !sec.classList.contains('em-v4-builder__section') || !sec.open) { return; }
@@ -78,9 +100,9 @@ require dirname(__DIR__) . '/slides-editor-script.php';
             if (structureInput) {
                 structureInput.value = JSON.stringify({ rows: layout.rows, fields: items });
             }
-            // Signature de l'Ã©tat (structure + apparence). La savebar n'apparaÃ®t que
-            // si l'Ã©tat diffÃ¨re du dernier enregistrÃ© (revenir Ã  la valeur d'origine
-            // fait disparaÃ®tre Enregistrer / Annuler).
+            // Signature de l'état (structure + apparence). La savebar n'apparaît que
+            // si l'état diffère du dernier enregistré (revenir à la valeur d'origine
+            // fait disparaître Enregistrer / Annuler).
             var sig = (structureInput ? structureInput.value : '') + '|' + JSON.stringify(colors);
             if (baseline === null) { baseline = sig; }
             var sb = builder.querySelector('.em-v4-savebar');
@@ -92,15 +114,17 @@ require dirname(__DIR__) . '/slides-editor-script.php';
                 return { row: it.row, col: it.col, type: it.type, label: it.label, value: it.value || it.label, url: it.url, imageUrl: it.imageUrl, icon: it.icon, color: it.color, name: it.name, link: it.link, hidden: it.hidden, style: it.style, sliderUrls: it.sliderUrls, thumbUrl: it.thumbUrl, clickable: it.clickable };
             });
             builder.emv4Data = { layout: layout, items: mapped, colors: colors };
-            if (preview) {
+            var hostItem = builder.closest('.em-v4-item');
+            var visible = !hostItem || !!hostItem.open;
+            if (preview && visible) {
                 EmWpV4Preview.render(preview, layout, mapped, colors);
                 EmWpV4Preview.syncWindow(preview);
             }
-            if (window.EmWpV4Rows) { window.EmWpV4Rows.renderMap(builder); }
-            if (window.EmWpV4Mini) { window.EmWpV4Mini.refresh(builder); }
+            if (window.EmWpV4Rows && visible) { window.EmWpV4Rows.renderMap(builder); }
+            if (window.EmWpV4Mini && visible) { window.EmWpV4Mini.refresh(builder); }
         }
 
-        // Drag chip coupÃ© dans les champs de saisie ; ligne dÃ©plaÃ§able via poignÃ©e.
+        // Drag chip coupé dans les champs de saisie ; ligne déplaçable via poignée.
         builder.addEventListener('mousedown', function (e) {
             var richBtn = e.target.closest('.em-v4-richbtn');
             if (richBtn) {
@@ -158,7 +182,7 @@ require dirname(__DIR__) . '/slides-editor-script.php';
                 e.stopPropagation();
                 return;
             }
-            // Å’il Â« Contenu Â» â†’ aperÃ§u rÃ©duit persistant (ne bascule pas la section).
+            // Œil « Contenu » → aperçu réduit persistant (ne bascule pas la section).
             var eye = e.target.closest('.em-v4-gridmap__eye');
             if (eye) { e.preventDefault(); if (window.EmWpV4Mini) { window.EmWpV4Mini.toggle(builder, eye); } return; }
             if (e.target.closest('.em-v4-row__layout') || e.target.closest('.em-v4-gridmap') || e.target.closest('.em-v4-miniprev')) { e.preventDefault(); }
@@ -357,7 +381,7 @@ require dirname(__DIR__) . '/slides-editor-script.php';
         input.hidden = true;
     }
 
-    // SÃ©rialise une chip selon son type.
+    // Sérialise une chip selon son type.
     function readChip(chip, row, c) {
         var type = chip.getAttribute('data-type');
         var item = {
@@ -550,8 +574,8 @@ require dirname(__DIR__) . '/slides-editor-script.php';
     }
 
     // Insertion d'un champ : on choisit juste le type et on valide ;
-    // la personnalisation (libellÃ©, contenu, lien, styleâ€¦) se fait ensuite
-    // directement dans la chip ajoutÃ©e.
+    // la personnalisation (libellé, contenu, lien, style…) se fait ensuite
+    // directement dans la chip ajoutée.
     function confirmCellAdd(col, cell, update) {
         var type = cell.querySelector('.em-v4-celladd__type').value;
         col.querySelector('.em-v4-col__drop').appendChild(window.EmWpV4Chip.build(type, ''));

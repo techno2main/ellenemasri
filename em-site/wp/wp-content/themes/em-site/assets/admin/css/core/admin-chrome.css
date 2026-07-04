@@ -54,11 +54,11 @@ body.wp-admin.em-site-admin-screen #adminmenu a[href="options-general.php"] .wp-
     opacity: .65;
 }
 
-body.wp-admin.em-site-admin-screen .em-wp-menu-dashboard-entry {
+body.wp-admin.em-site-admin-screen .em-menu-dashboard-entry {
     position: relative;
 }
 
-body.wp-admin.em-site-admin-screen .em-wp-dashboard-menu-arrow {
+body.wp-admin.em-site-admin-screen .em-dashboard-menu-arrow {
     display: block;
     height: 14px;
     width: 14px;
@@ -69,7 +69,7 @@ body.wp-admin.em-site-admin-screen .em-wp-dashboard-menu-arrow {
     position: relative;
 }
 
-body.wp-admin.em-site-admin-screen .em-wp-dashboard-menu-arrow::before {
+body.wp-admin.em-site-admin-screen .em-dashboard-menu-arrow::before {
     content: "\2193";
     color: #ffffff;
     font-size: 11px;

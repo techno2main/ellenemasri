@@ -7,7 +7,7 @@ function em_wp_admin_catalog_choice_switch_color(string $catalog_slug): string
 }
 
 /**
- * Module catalogue associÃ© Ã  un identifiant rubrique (hero, slider, videoâ€¦).
+ * Module catalogue associé à un identifiant rubrique (hero, slider, video…).
  */
 function em_wp_admin_catalog_part_to_module_slug(string $catalog_part): string
 {
@@ -35,7 +35,7 @@ function em_wp_admin_catalog_part_to_module_slug(string $catalog_part): string
 }
 
 /**
- * URL admin d'Ã©dition d'une entrÃ©e catalogue (depuis une rubrique template).
+ * URL admin d'édition d'une entrée catalogue (depuis une rubrique template).
  */
 function em_wp_admin_catalog_entry_edit_url(string $catalog_part, string $catalog_slug): string
 {
@@ -67,7 +67,7 @@ function em_wp_admin_catalog_entry_edit_url(string $catalog_part, string $catalo
 }
 
 /**
- * SÃ©lecteur catalogue hero/slider (toggles exclusifs, style template live).
+ * Sélecteur catalogue hero/slider (toggles exclusifs, style template live).
  *
  * @param array<string, string> $choices slug => label
  */
@@ -176,7 +176,7 @@ function em_wp_admin_render_catalog_slug_switcher(
 }
 
 /**
- * Enqueue JS des toggles catalogue (hero/slider HEADERâ€¦).
+ * Enqueue JS des toggles catalogue (hero/slider HEADER…).
  */
 function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
 {

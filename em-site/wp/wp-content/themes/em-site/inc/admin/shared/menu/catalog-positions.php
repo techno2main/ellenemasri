@@ -18,7 +18,7 @@ function em_wp_admin_catalog_parent_menu_slug_fallback(): string
         return em_wp_catalog_parent_menu_slug();
     }
 
-    return 'em-wp-catalog';
+    return 'em-catalog';
 }
 
 /**
@@ -111,3 +111,4 @@ function em_wp_admin_menu_position_slider(): int
 {
     return em_wp_admin_menu_position_catalog_sliders();
 }
+

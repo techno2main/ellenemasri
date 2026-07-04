@@ -174,3 +174,4 @@ function em_wp_admin_mount_sidebar_menu_chrome_scripts(): void
     <?php
 }
 add_action('admin_footer', 'em_wp_admin_mount_sidebar_menu_chrome_scripts', 5);
+

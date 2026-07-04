@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_dashboard_page_slug(): string
 {
-    return 'em-wp-dashboard';
+    return 'em-dashboard';
 }
 
 /**
@@ -39,3 +39,4 @@ function em_wp_admin_is_dashboard_admin_screen(): bool
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     return sanitize_key((string) ($_GET['page'] ?? '')) === em_wp_admin_dashboard_page_slug();
 }
+

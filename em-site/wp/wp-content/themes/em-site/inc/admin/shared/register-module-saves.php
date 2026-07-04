@@ -57,7 +57,7 @@ function em_wp_admin_register_all_module_saves(): void
                 return (string) ($definitions[$catalog_slug]['page_slug'] ?? em_wp_stream_page_slug());
             }
 
-            return function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-wp-stream';
+            return function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-stream';
         },
         'sanitize'     => static function ($input): array {
             $catalog_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -113,7 +113,7 @@ function em_wp_admin_register_all_module_saves(): void
                 return (string) ($definitions[$catalog_slug]['page_slug'] ?? em_wp_top_bar_page_slug());
             }
 
-            return function_exists('em_wp_top_bar_page_slug') ? em_wp_top_bar_page_slug() : 'em-wp-top-bar';
+            return function_exists('em_wp_top_bar_page_slug') ? em_wp_top_bar_page_slug() : 'em-top-bar';
         },
         'sanitize'     => static function ($input): array {
             $catalog_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -138,7 +138,7 @@ function em_wp_admin_register_all_module_saves(): void
             return em_wp_header_option_name($template_slug !== '' ? $template_slug : null);
         },
         'value_field'  => 'em_wp_header_options',
-        'page_slug'    => function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-wp-header',
+        'page_slug'    => function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-header',
         'sanitize'     => 'em_wp_header_sanitize_options',
     ]);
 
@@ -157,7 +157,7 @@ function em_wp_admin_register_all_module_saves(): void
             $style_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
             $definitions = em_wp_hero_style_definitions();
 
-            return (string) ($definitions[$style_slug]['page_slug'] ?? 'em-wp-hero-mayami');
+            return (string) ($definitions[$style_slug]['page_slug'] ?? 'em-hero-mayami');
         },
         'sanitize'     => static function ($input): array {
             $style_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -181,7 +181,7 @@ function em_wp_admin_register_all_module_saves(): void
             $style_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
             $definitions = em_wp_slider_style_definitions();
 
-            return (string) ($definitions[$style_slug]['page_slug'] ?? 'em-wp-slider-mayami');
+            return (string) ($definitions[$style_slug]['page_slug'] ?? 'em-slider-mayami');
         },
         'sanitize'     => static function ($input): array {
             $style_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -233,7 +233,7 @@ function em_wp_admin_register_all_module_saves(): void
                 return (string) ($definitions[$catalog_slug]['page_slug'] ?? em_wp_social_page_slug());
             }
 
-            return function_exists('em_wp_social_page_slug') ? em_wp_social_page_slug() : 'em-wp-social';
+            return function_exists('em_wp_social_page_slug') ? em_wp_social_page_slug() : 'em-social';
         },
         'sanitize'     => static function ($input): array {
             $catalog_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -289,7 +289,7 @@ function em_wp_admin_register_all_module_saves(): void
                 return (string) ($definitions[$catalog_slug]['page_slug'] ?? em_wp_video_page_slug());
             }
 
-            return function_exists('em_wp_video_page_slug') ? em_wp_video_page_slug() : 'em-wp-videos';
+            return function_exists('em_wp_video_page_slug') ? em_wp_video_page_slug() : 'em-videos';
         },
         'sanitize'     => static function ($input): array {
             $catalog_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -345,7 +345,7 @@ function em_wp_admin_register_all_module_saves(): void
                 return (string) ($definitions[$catalog_slug]['page_slug'] ?? em_wp_release_page_slug());
             }
 
-            return function_exists('em_wp_release_page_slug') ? em_wp_release_page_slug() : 'em-wp-releases';
+            return function_exists('em_wp_release_page_slug') ? em_wp_release_page_slug() : 'em-releases';
         },
         'sanitize'     => static function ($input): array {
             $catalog_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -401,7 +401,7 @@ function em_wp_admin_register_all_module_saves(): void
                 return (string) ($definitions[$catalog_slug]['page_slug'] ?? em_wp_cta_page_slug());
             }
 
-            return function_exists('em_wp_cta_page_slug') ? em_wp_cta_page_slug() : 'em-wp-cta';
+            return function_exists('em_wp_cta_page_slug') ? em_wp_cta_page_slug() : 'em-cta';
         },
         'sanitize'     => static function ($input): array {
             $catalog_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -457,7 +457,7 @@ function em_wp_admin_register_all_module_saves(): void
                 return (string) ($definitions[$catalog_slug]['page_slug'] ?? em_wp_footer_page_slug());
             }
 
-            return function_exists('em_wp_footer_page_slug') ? em_wp_footer_page_slug() : 'em-wp-footer';
+            return function_exists('em_wp_footer_page_slug') ? em_wp_footer_page_slug() : 'em-footer';
         },
         'sanitize'     => static function ($input): array {
             $catalog_slug = sanitize_key((string) ($_POST['em_wp_module_context'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing

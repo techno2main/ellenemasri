@@ -1,0 +1,145 @@
+
+.em-template-wizard-catalog__title {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.em-template-wizard-catalog__field {
+    margin: 0 0 8px;
+}
+
+.em-template-wizard-catalog__field label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.em-template-wizard-catalog__select {
+    width: 100%;
+    max-width: 360px;
+}
+
+.em-template-wizard-catalog__hint {
+    margin: 0;
+    color: #646970;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.em-template-wizard-wireframe-host {
+    min-height: 120px;
+}
+
+.em-template-wizard__panel--wireframe {
+    max-width: min(100%, 960px);
+}
+
+.em-template-wizard__panel-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.em-template-wizard__panel-actions-start {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.em-template-wizard__panel-actions .em-hub__action-inner {
+    gap: 8px;
+}
+
+.em-template-wizard__panel-actions [data-wizard-submit] {
+    margin-left: auto;
+    border-color: var(--em-wizard-continue-from, #4e080e);
+    background: linear-gradient(
+        180deg,
+        var(--em-wizard-continue-to, #751820) 0%,
+        var(--em-wizard-continue-from, #4e080e) 100%
+    );
+    color: #ffffff;
+}
+
+.em-template-wizard__panel-actions [data-wizard-submit] .em-hub__action-label,
+.em-template-wizard__panel-actions [data-wizard-submit] .fa-solid {
+    color: #ffffff;
+}
+
+.em-template-wizard__panel-actions [data-wizard-submit]:focus,
+.em-template-wizard__panel-actions [data-wizard-submit]:focus-visible {
+    color: #ffffff;
+    outline: 2px solid var(--em-wizard-continue-from, #4e080e);
+    outline-offset: 2px;
+}
+
+.em-template-wizard-global-wireframe__label {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #1f2937;
+}
+
+.em-template-wizard-global-wireframe__map {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.em-admin-landing-map--wizard-preview .em-rubriques-sortable__handle,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__swap-header,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__hidden-badge {
+    display: none !important;
+}
+
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__section {
+    min-height: 40px;
+}
+
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__section.section-footer {
+    min-height: 32px;
+}
+
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__header-group.is-layout-mode {
+    min-height: 96px;
+}
+
+.em-admin-landing-map--wizard-preview a.em-admin-landing-map__zone,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__header-group-link {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+}
+
+.em-admin-landing-map--wizard-preview a.em-admin-landing-map__zone:hover,
+.em-admin-landing-map--wizard-preview a.em-admin-landing-map__zone:focus,
+.em-admin-landing-map--wizard-preview a.em-admin-landing-map__zone:focus-visible,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__header-group.is-layout-mode:hover,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__header-group.is-layout-mode.is-active,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__header-group.is-layout-mode:has(> .em-admin-landing-map__header-group-link.is-layout-only:focus-visible) {
+    background: #d1d5db !important;
+    color: #374151 !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.em-admin-landing-map--wizard-preview a.em-admin-landing-map__zone:hover .em-admin-landing-map__zone-label,
+.em-admin-landing-map--wizard-preview a.em-admin-landing-map__zone:focus .em-admin-landing-map__zone-label,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__header-group.is-layout-mode:hover .em-admin-landing-map__header-group-title,
+.em-admin-landing-map--wizard-preview .em-admin-landing-map__header-group.is-layout-mode:hover .em-admin-landing-map__header-part .em-admin-landing-map__zone-label {
+    color: #374151 !important;
+}
+

@@ -24,7 +24,7 @@ function em_wp_social_page_slug(): string
 
 {
 
-    return 'em-wp-social';
+    return 'em-social';
 
 }
 
@@ -111,5 +111,6 @@ function em_wp_social_catalog_default_options(): array
     ];
 
 }
+
 
 

@@ -78,13 +78,15 @@ function em_wp_v4_render_item_builder(string $type, string $item): void
             <summary class="em-v4-collapse__summary">
                 <span class="em-v4-collapse__chevron"></span>
                 <strong><?php esc_html_e('Contenu', 'em-wp'); ?></strong>
+            </summary>
+            <div class="em-v4-builder__section-actions">
                 <span class="em-v4-gridmap" role="grid" aria-label="<?php esc_attr_e('Aperçu de la grille (cliquer pour naviguer)', 'em-wp'); ?>"></span>
+                <span class="em-v4-miniprev"><span class="em-v4-miniprev__stage"></span></span>
+                <span class="em-v4-miniprev em-v4-partprev" hidden title="<?php esc_attr_e('Aperçu de la colonne en cours d’édition', 'em-wp'); ?>"><span class="em-v4-miniprev__stage"></span></span>
                 <button type="button" class="em-v4-gridmap__eye" aria-pressed="true" title="<?php esc_attr_e('Afficher / masquer l’aperçu de la section', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Afficher / masquer l’aperçu de la section', 'em-wp'); ?>">
                     <span class="dashicons dashicons-hidden" aria-hidden="true"></span>
                 </button>
-                <span class="em-v4-miniprev"><span class="em-v4-miniprev__stage"></span></span>
-                <span class="em-v4-miniprev em-v4-partprev" hidden title="<?php esc_attr_e('Aperçu de la colonne en cours d’édition', 'em-wp'); ?>"><span class="em-v4-miniprev__stage"></span></span>
-            </summary>
+            </div>
             <div class="em-v4-collapse__body">
                 <div class="em-v4-rows">
                     <?php for ($row = 1; $row <= $row_count; $row++) : ?>

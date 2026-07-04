@@ -144,6 +144,35 @@ function em_wp_admin_enqueue_notice_autodismiss(): void
 add_action('admin_enqueue_scripts', 'em_wp_admin_enqueue_notice_autodismiss', 5);
 
 /**
+ * Compatibilité des classes admin: ajoute des alias "em-" quand le markup
+ * expose encore des classes "em-wp-" (transition de préfixe).
+ */
+function em_wp_admin_enqueue_class_prefix_compat(): void
+{
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return;
+    }
+
+    global $pagenow;
+
+    $is_em_wp = function_exists('em_wp_admin_is_em_wp_screen') && em_wp_admin_is_em_wp_screen();
+    $is_dashboard = $pagenow === 'index.php';
+
+    if (!$is_em_wp && !$is_dashboard) {
+        return;
+    }
+
+    wp_enqueue_script(
+        'em-wp-admin-class-prefix-compat',
+        get_template_directory_uri() . '/assets/admin/js/shared/class-prefix-compat.js',
+        [],
+        em_wp_admin_asset_version('assets/admin/js/shared/class-prefix-compat.js'),
+        true
+    );
+}
+add_action('admin_enqueue_scripts', 'em_wp_admin_enqueue_class_prefix_compat', 6);
+
+/**
  * Enqueue d'un module admin (CSS + JS spécifiques).
  */
 function em_wp_admin_enqueue_module_assets(

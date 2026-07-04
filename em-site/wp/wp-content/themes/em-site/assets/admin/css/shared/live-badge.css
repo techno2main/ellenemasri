@@ -2,34 +2,34 @@
  * Badges LIVE — clignotement sur les puces / pastilles uniquement (pas le texte).
  */
 
-@keyframes em-wp-live-dot-blink {
+@keyframes em-live-dot-blink {
     0%,
     45% {
         opacity: 1;
         transform: scale(1);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--em-wp-live-color, #22c55e) 24%, transparent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--em-live-color, #22c55e) 24%, transparent);
     }
 
     50%,
     95% {
         opacity: 0.25;
         transform: scale(0.82);
-        box-shadow: 0 0 0 5px color-mix(in srgb, var(--em-wp-live-color, #22c55e) 42%, transparent);
+        box-shadow: 0 0 0 5px color-mix(in srgb, var(--em-live-color, #22c55e) 42%, transparent);
     }
 
     100% {
         opacity: 1;
         transform: scale(1);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--em-wp-live-color, #22c55e) 24%, transparent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--em-live-color, #22c55e) 24%, transparent);
     }
 }
 
-@keyframes em-wp-live-puce-blink {
+@keyframes em-live-puce-blink {
     0%,
     45% {
         opacity: 1;
         transform: scale(1);
-        box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-wp-live-color, #751820) 14%, transparent);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-live-color, #751820) 14%, transparent);
     }
 
     50%,
@@ -37,32 +37,32 @@
         opacity: 0.35;
         transform: scale(0.88);
         box-shadow:
-            0 0 0 1px color-mix(in srgb, var(--em-wp-live-color, #751820) 35%, transparent),
-            0 0 8px color-mix(in srgb, var(--em-wp-live-color, #751820) 30%, transparent);
+            0 0 0 1px color-mix(in srgb, var(--em-live-color, #751820) 35%, transparent),
+            0 0 8px color-mix(in srgb, var(--em-live-color, #751820) 30%, transparent);
     }
 
     100% {
         opacity: 1;
         transform: scale(1);
-        box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-wp-live-color, #751820) 14%, transparent);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--em-live-color, #751820) 14%, transparent);
     }
 }
 
 /* Pastille point live (cartes MAYAMI LIVE, bandeau…) */
-.em-wp-hub__live:not(.em-wp-hub__live--activate) .em-wp-hub__live-dot,
-.em-wp-hub__template-live-pill .em-wp-hub__live-dot,
-#adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before {
-    animation: em-wp-live-dot-blink 1.35s ease-in-out infinite;
+.em-hub__live:not(.em-hub__live--activate) .em-hub__live-dot,
+.em-hub__template-live-pill .em-hub__live-dot,
+#adminmenu li.em-menu-template-live > a.menu-top .wp-menu-name::before {
+    animation: em-live-dot-blink 1.35s ease-in-out infinite;
 }
 
 /* Puce flèche — template live dashboard uniquement */
-.em-wp-hub__live--blink-puce .em-wp-hub__catalog-entry-arrow {
-    animation: em-wp-live-puce-blink 1.35s ease-in-out infinite;
+.em-hub__live--blink-puce .em-hub__catalog-entry-arrow {
+    animation: em-live-puce-blink 1.35s ease-in-out infinite;
 }
 
 /* Pastilles compactes LIVE (onglets, tableau) — point ::before clignotant */
-.em-wp-templates-admin__badge--live::before,
-.em-wp-catalog-edit__nav-live::before {
+.em-templates-admin__badge--live::before,
+.em-catalog-edit__nav-live::before {
     content: '';
     display: inline-block;
     flex-shrink: 0;
@@ -70,26 +70,26 @@
     height: 6px;
     margin-right: 5px;
     border-radius: 999px;
-    background: var(--em-template-accent, var(--em-wp-live-color, #751820));
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--em-template-accent, var(--em-wp-live-color, #751820)) 24%, transparent);
+    background: var(--em-template-accent, var(--em-live-color, #751820));
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--em-template-accent, var(--em-live-color, #751820)) 24%, transparent);
     vertical-align: middle;
     transform: translateY(-1px);
-    animation: em-wp-live-dot-blink 1.35s ease-in-out infinite;
+    animation: em-live-dot-blink 1.35s ease-in-out infinite;
 }
 
-.em-wp-catalog-edit__nav-live::before {
+.em-catalog-edit__nav-live::before {
     width: 5px;
     height: 5px;
     margin-right: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .em-wp-hub__live:not(.em-wp-hub__live--activate) .em-wp-hub__live-dot,
-    .em-wp-hub__template-live-pill .em-wp-hub__live-dot,
-    #adminmenu li.em-wp-menu-template-live > a.menu-top .wp-menu-name::before,
-    .em-wp-hub__live--blink-puce .em-wp-hub__catalog-entry-arrow,
-    .em-wp-templates-admin__badge--live::before,
-    .em-wp-catalog-edit__nav-live::before {
+    .em-hub__live:not(.em-hub__live--activate) .em-hub__live-dot,
+    .em-hub__template-live-pill .em-hub__live-dot,
+    #adminmenu li.em-menu-template-live > a.menu-top .wp-menu-name::before,
+    .em-hub__live--blink-puce .em-hub__catalog-entry-arrow,
+    .em-templates-admin__badge--live::before,
+    .em-catalog-edit__nav-live::before {
         animation: none;
     }
 }

@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_v4_overview_redirect_url(array $args = []): string
 {
-    return add_query_arg($args, admin_url('admin.php?page=em-wp-v4-overview'));
+    return add_query_arg($args, admin_url('admin.php?page=em-rubriques-overview'));
 }
 
 /**
@@ -206,4 +206,5 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
 
     return $field;
 }
+
 

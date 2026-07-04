@@ -31,10 +31,10 @@ function em_wp_admin_menu_layout_ensure_settings_entries(array $relocate): array
 }
 
 /**
- * Retire du menu latÃ©ral les rubriques absentes du squelette / contexte courant.
+ * Retire du menu latéral les rubriques absentes du squelette / contexte courant.
  *
- * Les pages enregistrÃ©es via add_menu_page (Release, Contactâ€¦) restent accessibles par URL
- * mais ne doivent pas apparaÃ®tre en orphelines entre TEMPLATES et PARAMÃˆTRES.
+ * Les pages enregistrées via add_menu_page (Release, Contact…) restent accessibles par URL
+ * mais ne doivent pas apparaître en orphelines entre TEMPLATES et PARAMÈTRES.
  */
 function em_wp_admin_menu_layout_purge_out_of_context_rubriques(): void
 {
@@ -113,7 +113,7 @@ function em_wp_admin_menu_layout_purge_out_of_context_rubriques(): void
 }
 
 /**
- * Supprime les doublons de hubs catalogues sans classe accordÃ©on (legacy add_menu_page).
+ * Supprime les doublons de hubs catalogues sans classe accordéon (legacy add_menu_page).
  */
 function em_wp_admin_menu_layout_purge_duplicate_catalog_hubs(): void
 {
@@ -159,6 +159,6 @@ function em_wp_admin_menu_layout_purge_duplicate_catalog_hubs(): void
 }
 
 /**
- * Applique le registre de positions (dernier mot sur le menu latÃ©ral).
+ * Applique le registre de positions (dernier mot sur le menu latéral).
  */
 

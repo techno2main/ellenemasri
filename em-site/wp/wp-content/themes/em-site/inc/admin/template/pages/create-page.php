@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_template_create_page_slug(): string
 {
-    return 'em-wp-template-create';
+    return 'em-template-create';
 }
 
 /**
@@ -468,3 +468,4 @@ function em_wp_admin_render_template_create_page(): void
         em_wp_admin_render_new_template_modals();
     }
 }
+

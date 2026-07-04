@@ -85,7 +85,7 @@ function em_wp_admin_hub_render_catalog_entry_links_badge(
 }
 
 /**
- * Pastille actions Â« Nouveau template Â» (DUPLIQUER + WIZARD).
+ * Pastille actions « Nouveau template » (DUPLIQUER + WIZARD).
  */
 function em_wp_admin_hub_render_template_create_actions_badge(bool $can_duplicate = true): void
 {
@@ -138,7 +138,7 @@ function em_wp_admin_hub_render_template_create_actions_badge(bool $can_duplicat
 }
 
 /**
- * Carte Â« Nouveau template Â» (sommaire Templates + Accueil).
+ * Carte « Nouveau template » (sommaire Templates + Accueil).
  *
  * @param array{
  *     enabled?: bool,
@@ -215,7 +215,7 @@ function em_wp_admin_hub_render_template_create_card(array $args = []): void
 }
 
 /**
- * Pastille badge gÃ©nÃ©rique.
+ * Pastille badge générique.
  */
 function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $in_card = false, bool $uppercase = false, bool $compact = false): void
 {
@@ -249,6 +249,6 @@ function em_wp_admin_hub_render_status_badge(string $text, string $color, bool $
 }
 
 /**
- * Pastille Â« template actif sur le site Â».
+ * Pastille « template actif sur le site ».
  */
 

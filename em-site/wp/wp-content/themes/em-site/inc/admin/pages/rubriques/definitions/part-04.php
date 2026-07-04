@@ -20,10 +20,10 @@ function em_wp_admin_rubrique_skeleton_label(string $module_slug): string
         return (string) $static[$module_slug];
     }
 
-    // Modules catalogue personnalisÃ©s : lire le libellÃ© du module directement.
+    // Modules catalogue personnalisés : lire le libellé du module directement.
     // NE PAS passer par em_wp_admin_site_rubrique_all_definitions() ici : cette
     // fonction reconstruit les rubriques custom en rappelant skeleton_label(),
-    // ce qui provoquerait une rÃ©cursion infinie pour tout slug non statique.
+    // ce qui provoquerait une récursion infinie pour tout slug non statique.
     if (function_exists('em_wp_custom_catalog_module')) {
         $module = em_wp_custom_catalog_module($module_slug);
 
@@ -36,7 +36,7 @@ function em_wp_admin_rubrique_skeleton_label(string $module_slug): string
         }
     }
 
-    // Rubriques intÃ©grÃ©es uniquement (pas de modules custom ici â†’ pas de rÃ©cursion).
+    // Rubriques intégrées uniquement (pas de modules custom ici → pas de récursion).
     $definition = em_wp_admin_site_rubrique_static_definitions()[$module_slug] ?? null;
 
     if (is_array($definition)) {
@@ -47,7 +47,7 @@ function em_wp_admin_rubrique_skeleton_label(string $module_slug): string
 }
 
 /**
- * LibellÃ© du template en cours d'Ã©dition (majuscules, barre rubrique + intro).
+ * Libellé du template en cours d'édition (majuscules, barre rubrique + intro).
  */
 function em_wp_admin_rubrique_editing_template_label(): string
 {
@@ -59,7 +59,7 @@ function em_wp_admin_rubrique_editing_template_label(): string
 }
 
 /**
- * Description de page pour une rubrique en Ã©dition template (HTML autorisÃ© : strong).
+ * Description de page pour une rubrique en édition template (HTML autorisé : strong).
  */
 function em_wp_admin_rubrique_editing_page_description_html(string $module_slug): string
 {
@@ -118,7 +118,7 @@ function em_wp_admin_rubrique_should_show_nav(string $page_slug = ''): bool
 }
 
 /**
- * DÃ©finitions des onglets Rubriques (slug module => page admin).
+ * Définitions des onglets Rubriques (slug module => page admin).
  *
  * @return array<string, array{menu_title:string,page_slug:string}>
  */
@@ -178,7 +178,7 @@ function em_wp_admin_rubrique_resolve_active_module(string $module_slug = ''): s
 }
 
 /**
- * Charge le CSS des onglets Rubriques (rÃ©utilise les pastilles catalogue).
+ * Charge le CSS des onglets Rubriques (réutilise les pastilles catalogue).
  */
 function em_wp_admin_rubrique_enqueue_nav_assets(string $page_slug = ''): void
 {

@@ -42,7 +42,7 @@ function em_wp_admin_apply_menu_layout(): void
 
     $relocate = em_wp_admin_menu_layout_ensure_medias_entries($relocate);
     $relocate = em_wp_admin_menu_layout_ensure_catalog_entries($relocate);
-    // Demande UI: masquer l'entree parent Â« CATALOGUES Â» dans le menu gauche,
+    // Demande UI: masquer l'entree parent « CATALOGUES » dans le menu gauche,
     // sans impacter les autres blocs.
     if (function_exists('em_wp_catalog_parent_menu_slug')) {
         unset($relocate[em_wp_catalog_parent_menu_slug()]);

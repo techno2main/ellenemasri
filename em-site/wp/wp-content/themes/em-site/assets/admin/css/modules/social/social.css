@@ -1,0 +1,23 @@
+.em-wp-social-admin .em-top-bar-platform-item summary,
+.em-social-admin .em-top-bar-platform-item summary,
+#em-wp-social-form .em-top-bar-platform-item summary {
+	padding-block: 10px;
+}
+
+.em-wp-social-admin .em-top-bar-platform-item__label,
+.em-social-admin .em-top-bar-platform-item__label,
+#em-wp-social-form .em-top-bar-platform-item__label {
+	gap: 12px;
+}
+
+.em-wp-social-admin .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text,
+.em-social-admin .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text,
+#em-wp-social-form .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text {
+	max-width: 460px;
+}
+
+.em-wp-social-admin .em-admin-module__hero,
+.em-social-admin .em-admin-module__hero,
+#em-wp-social-form .em-admin-module__hero {
+	border-left: 4px solid #1d4ed8;
+}

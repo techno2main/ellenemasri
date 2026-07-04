@@ -1,0 +1,129 @@
+/*
+ * Rubriques admin — conteneur commun.
+ */
+
+.em-section {
+    width: 100%;
+}
+
+/* La rubrique porte le fond pleine largeur ; marges latérales fixes annulées,
+   padding vertical conservé. */
+.em-section > .em-rubrique {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Conteneur centré commun à toutes les sections. */
+.em-section > .em-rubrique > .em-rubrique__row,
+.em-section > .em-rubrique > .em-rubrique__sep,
+.em-section > .em-rubrique > .em-rubrique__spacer {
+    width: min(1100px, 92vw);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+/* Top-bar collante. */
+.em-section--top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.em-section--top-bar > .em-rubrique {
+    overflow: visible;
+}
+
+@media (max-width: 760px) {
+    /* TOP-BAR mobile: une seule ligne (logo gauche + icônes droite). */
+    .em-section--top-bar > .em-rubrique {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        column-gap: 12px;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        padding-left: 18px;
+        padding-right: 14px;
+    }
+
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row {
+        display: none !important;
+        width: 100%;
+    }
+
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) {
+        display: block !important;
+        grid-column: 1;
+        margin-top: 0;
+    }
+
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) {
+        display: block !important;
+        grid-column: 2;
+        margin-top: 0;
+    }
+
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col,
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col {
+        display: none;
+    }
+
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col:has(.em-rubrique__imgwrap),
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col:has(.top-bar-platform-link) {
+        display: block;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__col:has(.em-rubrique__imgwrap) {
+        text-align: left;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__col:has(.top-bar-platform-link) {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__image {
+        width: 108px;
+        max-width: 108px;
+        height: auto;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape {
+        width: 54px;
+        height: 12px;
+        opacity: .58;
+        border-width: 0;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape--left {
+        top: -6px;
+        left: 16px;
+    }
+
+    .em-section--top-bar > .em-rubrique .top-bar-platform-link .em-rubrique__icon {
+        font-size: 22px;
+        line-height: 22px;
+        margin: 0 6px;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__col:has(.top-bar-platform-link)::after {
+        content: "Mayami, My Miami";
+        display: block;
+        margin-top: 10px;
+        padding-right: 6px;
+        color: #f4d03c;
+        font-family: "Brush Script MT", "Segoe Script", cursive;
+        font-size: 0.95rem;
+        font-weight: 400;
+        line-height: 1;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .em-section > .em-rubrique > .em-rubrique__row {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 14px;
+    }
+}

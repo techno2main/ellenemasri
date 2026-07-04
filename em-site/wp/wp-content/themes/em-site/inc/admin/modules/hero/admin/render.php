@@ -87,7 +87,7 @@ function em_wp_hero_render_style_setup(array $context, array $options, string $a
 {
     $hero_label = (string) ($context['label'] ?? 'Mayami');
     $style_slug = (string) ($context['style_slug'] ?? 'mayami');
-    $page_slug = (string) ($context['page_slug'] ?? 'em-wp-hero-mayami');
+    $page_slug = (string) ($context['page_slug'] ?? 'em-hero-mayami');
     ?>
     <div class="em-wp-hero-admin__setup">
         <?php em_wp_catalog_render_edit_section_open(__('Hero', 'em-wp'), $hero_label); ?>

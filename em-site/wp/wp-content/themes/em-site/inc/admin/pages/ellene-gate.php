@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_site_ellene_admin_gate_page_slug(): string
 {
-    return 'em-site-ellene-admin-gate';
+    return 'em-ellene-admin-gate';
 }
 
 function em_site_ellene_admin_gate_option_name(): string
@@ -21,7 +21,7 @@ function em_site_ellene_admin_gate_option_name(): string
 
 function em_site_ellene_admin_gate_settings_page_slug(): string
 {
-    return 'em-site-ellene-admin-gate-settings';
+    return 'em-ellene-admin-gate-settings';
 }
 
 function em_site_ellene_admin_gate_default_message(): string

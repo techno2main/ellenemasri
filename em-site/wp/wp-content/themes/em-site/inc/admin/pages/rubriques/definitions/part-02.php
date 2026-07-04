@@ -10,7 +10,7 @@ function em_wp_admin_template_proposable_rubrique_definitions(?string $template_
 
     foreach (em_wp_admin_site_rubrique_all_definitions() as $rubrique_slug => $definition) {
         // V4 uniquement : ne proposer que les rubriques disposant d'un type V4
-        // (exclut les rubriques legacy absentes de la V4, ex. Â« contact Â»).
+        // (exclut les rubriques legacy absentes de la V4, ex. « contact »).
         if (!function_exists('em_wp_rubrique_type_exists')
             || !em_wp_rubrique_type_exists((string) $rubrique_slug)) {
             continue;
@@ -25,7 +25,7 @@ function em_wp_admin_template_proposable_rubrique_definitions(?string $template_
 }
 
 /**
- * Positions d'insertion proposÃ©es pour une rubrique dans le squelette template.
+ * Positions d'insertion proposées pour une rubrique dans le squelette template.
  *
  * @return array<int, array{value:string,label:string}>
  */
@@ -95,7 +95,7 @@ function em_wp_admin_template_skeleton_insert_positions(?string $template_slug =
 }
 
 /**
- * Une rubrique peut-elle Ãªtre ajoutÃ©e au squelette du template ?
+ * Une rubrique peut-elle être ajoutée au squelette du template ?
  */
 function em_wp_rubrique_is_proposable_for_template(string $rubrique_slug, ?string $template_slug = null): bool
 {
@@ -146,7 +146,7 @@ function em_wp_rubrique_is_proposable_for_template(string $rubrique_slug, ?strin
 }
 
 /**
- * DÃ©finitions des rubriques affichÃ©es dans le sommaire et le menu latÃ©ral.
+ * Définitions des rubriques affichées dans le sommaire et le menu latéral.
  *
  * @return array<string, array{
  *     label:string,
@@ -174,7 +174,7 @@ function em_wp_admin_site_rubrique_definitions(): array
 }
 
 /**
- * DÃ©finitions rubriques ordonnÃ©es pour un template (squelette).
+ * Définitions rubriques ordonnées pour un template (squelette).
  *
  * @return array<string, array<string, mixed>>
  */
@@ -198,7 +198,7 @@ function em_wp_admin_site_rubrique_definitions_for_template(string $template_slu
 }
 
 /**
- * Slug admin Ã  ouvrir pour une rubrique (variante active si hub multi-choix).
+ * Slug admin à ouvrir pour une rubrique (variante active si hub multi-choix).
  */
 function em_wp_admin_site_rubrique_entry_page_slug(string $module_slug): string
 {
@@ -210,14 +210,14 @@ function em_wp_admin_site_rubrique_entry_page_slug(string $module_slug): string
     }
 
     if ($module_slug === 'header') {
-        return function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-wp-header';
+        return function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-header';
     }
 
     return (string) ($definition['page_slug'] ?? '');
 }
 
 /**
- * URL admin d'entrÃ©e d'une rubrique (alignÃ©e sur le menu latÃ©ral).
+ * URL admin d'entrée d'une rubrique (alignée sur le menu latéral).
  */
 function em_wp_admin_site_rubrique_entry_url(string $module_slug): string
 {
@@ -231,8 +231,8 @@ function em_wp_admin_site_rubrique_entry_url(string $module_slug): string
 }
 
 /**
- * URL Â« rester sur le squelette Â» : ouvre la gestion V4 de la rubrique en dessous
- * du squelette (?page=em-wp-rubriques&open=<slug>) au lieu des anciennes pages par
+ * URL « rester sur le squelette » : ouvre la gestion V4 de la rubrique en dessous
+ * du squelette (?page=em-rubriques&open=<slug>) au lieu des anciennes pages par
  * module. Conserve le contexte template courant.
  */
 

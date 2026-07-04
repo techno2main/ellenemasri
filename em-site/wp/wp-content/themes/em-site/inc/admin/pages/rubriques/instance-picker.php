@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_rubrique_v4_edit_url(string $type_slug, string $item_slug = ''): string
 {
-    $args = ['page' => 'em-wp-v4-overview', 'type' => sanitize_key($type_slug)];
+    $args = ['page' => 'em-rubriques-overview', 'type' => sanitize_key($type_slug)];
 
     if ($item_slug !== '') {
         $args['item'] = sanitize_key($item_slug);
@@ -176,3 +176,4 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug): void
     <?php
     em_wp_admin_render_rubrique_items_picker_assets();
 }
+

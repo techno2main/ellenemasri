@@ -47,6 +47,13 @@ function em_wp_video_admin_enqueue(string $hook_suffix): void
         em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
     );
 
+    wp_enqueue_style(
+        'em-wp-video-admin',
+        get_template_directory_uri() . '/assets/admin/css/modules/video/video.css',
+        ['em-wp-admin-module-common'],
+        em_wp_admin_asset_version('assets/admin/css/modules/video/video.css')
+    );
+
     wp_enqueue_script(
         'em-wp-stream-admin',
         get_template_directory_uri() . '/assets/admin/js/modules/top-bar/top-bar.js',

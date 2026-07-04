@@ -350,7 +350,18 @@ function em_wp_admin_handle_quit_editing_nav_request(): void
         return;
     }
 
-    check_admin_referer('em_wp_quit_editing_nav');
+    // Ne jamais bloquer la navigation admin sur un nonce expiré : on redirige
+    // proprement vers la cible demandée pour éviter un écran blanc en cours de clic menu.
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $nonce = (string) ($_GET['_wpnonce'] ?? '');
+    if (!wp_verify_nonce($nonce, 'em_wp_quit_editing_nav')) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $fallback_redirect = esc_url_raw(wp_unslash((string) ($_GET['redirect_to'] ?? '')));
+        $fallback_redirect = wp_validate_redirect($fallback_redirect, admin_url());
+
+        wp_safe_redirect($fallback_redirect);
+        exit;
+    }
 
     em_wp_clear_editing_template_context();
 

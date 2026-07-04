@@ -53,7 +53,7 @@ function em_wp_admin_menu_layout_ensure_medias_entries(array $relocate): array
 }
 
 /**
- * Supprime tout sous-menu WordPress sur un parent accordÃ©on (Ã©vite wp-has-submenu + wp-menu-arrow).
+ * Supprime tout sous-menu WordPress sur un parent accordéon (évite wp-has-submenu + wp-menu-arrow).
  */
 function em_wp_admin_menu_layout_clear_parent_submenu(string $parent_slug): void
 {
@@ -80,7 +80,7 @@ function em_wp_admin_menu_layout_clear_parent_submenu(string $parent_slug): void
 }
 
 /**
- * Reconstruit le bloc menu CATALOGUES (mÃªme structure que MEDIAS).
+ * Reconstruit le bloc menu CATALOGUES (même structure que MEDIAS).
  *
  * @param array<string, array<int, string>> $relocate
  * @return array<string, array<int, string>>
@@ -157,7 +157,7 @@ function em_wp_admin_menu_layout_ensure_catalog_entries(array $relocate): array
 }
 
 /**
- * Reconstruit le bloc menu TEMPLATES (mÃªme structure que MEDIAS).
+ * Reconstruit le bloc menu TEMPLATES (même structure que MEDIAS).
  *
  * @param array<string, array<int, string>> $relocate
  * @return array<string, array<int, string>>
@@ -217,7 +217,7 @@ function em_wp_admin_menu_layout_ensure_template_entries(array $relocate): array
 }
 
 /**
- * LibellÃ©s menu latÃ©ral Rubriques template (singulier, neutre â€” pas les catalogues).
+ * Libellés menu latéral Rubriques template (singulier, neutre — pas les catalogues).
  *
  * @param array<string, array<int, string>> $relocate
  * @return array<string, array<int, string>>

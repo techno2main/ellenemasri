@@ -27,7 +27,7 @@ function em_wp_admin_is_rubrique_screen(): bool
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
 
-    return $page_slug !== '' && str_starts_with($page_slug, 'em-wp-');
+    return $page_slug !== '' && str_starts_with($page_slug, 'em-');
 }
 
 /**
@@ -63,3 +63,4 @@ function em_wp_admin_filter_rubrique_update_footer(string $version): string
     return '';
 }
 add_filter('update_footer', 'em_wp_admin_filter_rubrique_update_footer');
+

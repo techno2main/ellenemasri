@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_media_parent_menu_slug(): string
 {
-    return 'em-wp-medias';
+    return 'em-medias';
 }
 
 /**
@@ -103,7 +103,7 @@ function em_wp_admin_redirect_medias_hub_to_library(): void
 add_action('load-toplevel_page_' . em_wp_admin_media_parent_menu_slug(), 'em_wp_admin_redirect_medias_hub_to_library');
 
 /**
- * Secours si accès admin.php?page=em-wp-medias avant le hook load-*.
+ * Secours si accès admin.php?page=em-medias avant le hook load-*.
  */
 function em_wp_admin_redirect_medias_hub_on_admin_init(): void
 {
@@ -199,3 +199,4 @@ function em_wp_admin_purge_media_menu_entries(): void
         remove_submenu_page(em_wp_admin_media_parent_menu_slug(), $slug);
     }
 }
+

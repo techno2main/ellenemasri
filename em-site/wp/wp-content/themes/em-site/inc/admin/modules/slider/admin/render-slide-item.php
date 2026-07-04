@@ -63,20 +63,20 @@ function em_wp_slider_render_slide_item($list_index, array $context, array $slid
         <summary>
             <?php em_wp_admin_render_panel_edit_trigger(); ?>
             <span class="em-wp-slider-slide-item__label">
-                <span class="em-wp-slider-slide-item__order">
-                    <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--up" aria-label="<?php esc_attr_e('Monter', 'em-wp'); ?>" title="<?php esc_attr_e('Monter', 'em-wp'); ?>"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
-                    <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--down" aria-label="<?php esc_attr_e('Descendre', 'em-wp'); ?>" title="<?php esc_attr_e('Descendre', 'em-wp'); ?>"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
-                    <span class="em-wp-slide-sortable__handle em-wp-slider-slide-item__drag" role="button" tabindex="0" aria-label="<?php esc_attr_e('Glisser pour reordonner', 'em-wp'); ?>" title="<?php esc_attr_e('Glisser pour reordonner', 'em-wp'); ?>"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
-                </span>
-                <span class="em-wp-slider-slide-item__sep" aria-hidden="true">|</span>
                 <span class="em-wp-admin-module__item-visibility<?php echo $is_hidden ? ' is-hidden' : ''; ?>" aria-hidden="true"><i class="fa-solid <?php echo $is_hidden ? 'fa-eye-slash' : 'fa-eye'; ?>"></i></span>
-                <span class="em-wp-slider-slide-item__sep" aria-hidden="true">|</span>
-                <button type="button" class="em-wp-slider-slide-item__delete" aria-label="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>" title="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
-                <span class="em-wp-slider-slide-item__sep" aria-hidden="true">|</span>
                 <i class="em-wp-slider-slide-item__type-icon <?php echo esc_attr(em_wp_slider_slide_type_icon_classes($slide_type)); ?>" aria-hidden="true"></i>
                 <span class="em-wp-slider-slide-item__title"><?php echo esc_html($display_name); ?></span>
             </span>
         </summary>
+        <div class="em-wp-slider-slide-item__summary-actions">
+            <span class="em-wp-slider-slide-item__order">
+                <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--up" aria-label="<?php esc_attr_e('Monter', 'em-wp'); ?>" title="<?php esc_attr_e('Monter', 'em-wp'); ?>"><i class="fa-solid fa-chevron-up" aria-hidden="true"></i></button>
+                <button type="button" class="em-wp-slider-slide-item__move em-wp-slider-slide-item__move--down" aria-label="<?php esc_attr_e('Descendre', 'em-wp'); ?>" title="<?php esc_attr_e('Descendre', 'em-wp'); ?>"><i class="fa-solid fa-chevron-down" aria-hidden="true"></i></button>
+                <span class="em-wp-slide-sortable__handle em-wp-slider-slide-item__drag" role="button" tabindex="0" aria-label="<?php esc_attr_e('Glisser pour reordonner', 'em-wp'); ?>" title="<?php esc_attr_e('Glisser pour reordonner', 'em-wp'); ?>"><i class="fa-solid fa-grip-vertical" aria-hidden="true"></i></span>
+            </span>
+            <span class="em-wp-slider-slide-item__sep" aria-hidden="true">|</span>
+            <button type="button" class="em-wp-slider-slide-item__delete" aria-label="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>" title="<?php esc_attr_e('Supprimer ce slide', 'em-wp'); ?>"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+        </div>
         <div class="em-wp-admin-nested-item__body em-wp-slider-slide-item__body">
             <div class="em-wp-admin-field-row em-wp-slider-head-row">
                 <span class="em-wp-admin-field-group">

@@ -57,10 +57,16 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
                 <span class="em-v4-item__prefix"><?php echo esc_html($type_label); ?></span>
                 <span class="em-v4-item__name"><?php echo esc_html($label); ?></span>
             </strong>
+            <span class="em-v4-item__slug" title="<?php esc_attr_e('Slug technique (lecture seule).', 'em-wp'); ?>">
+                <span class="em-v4-item__slug-label">slug</span>
+                <span class="em-v4-item__slug-value"><?php echo esc_html($item_slug); ?></span>
+            </span>
+        </summary>
+        <div class="em-v4-item__actions">
             <button type="button" class="em-v4-item__edit" data-target="<?php echo esc_attr($target); ?>" title="<?php esc_attr_e('Renommer', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Renommer', 'em-wp'); ?>">
                 <span class="dashicons dashicons-edit"></span>
             </button>
-            <input type="text" class="em-v4-item__nameinput" data-target="<?php echo esc_attr($target); ?>" data-type="<?php echo esc_attr($type_slug); ?>" data-item="<?php echo esc_attr($item_slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
+            <input type="text" id="em-v4-item-name-<?php echo esc_attr($type_slug . '-' . $item_slug); ?>" class="em-v4-item__nameinput" data-target="<?php echo esc_attr($target); ?>" data-type="<?php echo esc_attr($type_slug); ?>" data-item="<?php echo esc_attr($item_slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
             <button type="button" class="em-v4-item__confirm" title="<?php esc_attr_e('Valider', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-wp'); ?>" hidden>
                 <span class="dashicons dashicons-yes" aria-hidden="true"></span>
             </button>
@@ -82,6 +88,7 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
                 <span class="em-v4-item__anchor-hash" aria-hidden="true">#</span>
                 <input
                     type="text"
+                    id="em-v4-item-anchor-<?php echo esc_attr($type_slug . '-' . $item_slug); ?>"
                     class="em-v4-item__anchorinput"
                     data-type="<?php echo esc_attr($type_slug); ?>"
                     data-item="<?php echo esc_attr($item_slug); ?>"
@@ -91,11 +98,7 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
                     autocomplete="off"
                 >
             </span>
-            <span class="em-v4-item__slug" title="<?php esc_attr_e('Slug technique (lecture seule).', 'em-wp'); ?>">
-                <span class="em-v4-item__slug-label">slug</span>
-                <span class="em-v4-item__slug-value"><?php echo esc_html($item_slug); ?></span>
-            </span>
-        </summary>
+        </div>
         <div class="em-v4-collapse__body">
             <?php em_wp_v4_render_item_builder($type_slug, $item_slug); ?>
             <form id="<?php echo esc_attr($del_form_id); ?>" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-v4-deleteform" hidden>

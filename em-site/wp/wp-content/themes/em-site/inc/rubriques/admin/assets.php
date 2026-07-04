@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_v4_page_slug(): string
 {
-    return 'em-wp-v4-overview';
+    return 'em-rubriques-overview';
 }
 
 /**
@@ -61,13 +61,14 @@ function em_wp_v4_enqueue_assets(): void
         );
     }
 
-    // NB : le CSS de rendu front V4 (.em-rubrique… : base, grille, champs,
+    // NB : le CSS de rendu Rubriques (.em-rubrique… : base, grille, champs,
     // médias, cartes plateforme/réseau, cadre vidéo + scotchs) est inliné par
-    // em_wp_v4_overview_render_styles() / em_wp_v4_front_render_css() depuis les
-    // fichiers du front → source UNIQUE partagée par tous les aperçus admin
-    // (builder, squelette, instance-picker, header). Pas d'enqueue ici.
+    // la page d'aperçu admin locale → source UNIQUE partagée par tous les
+    // aperçus admin (builder, squelette, instance-picker, header). Pas
+    // d'enqueue ici.
 
     // Médiathèque WordPress pour le choix d'image dans le builder.
     wp_enqueue_media();
 }
 add_action('admin_enqueue_scripts', 'em_wp_v4_enqueue_assets');
+

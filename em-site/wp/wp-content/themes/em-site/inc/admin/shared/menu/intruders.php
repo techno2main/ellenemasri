@@ -56,7 +56,7 @@ function em_wp_admin_collect_menu_intruders_in_range(float $range_start, float $
         if (
             in_array($slug, em_wp_admin_menu_chrome_slugs(), true)
             || str_starts_with($slug, 'em-wp-menu-')
-            || str_starts_with($slug, 'em-wp-')
+            || str_starts_with($slug, 'em-')
         ) {
             continue;
         }
@@ -161,3 +161,4 @@ function em_wp_admin_insert_relocated_menus(array $intruders): void
         $insert_at++;
     }
 }
+

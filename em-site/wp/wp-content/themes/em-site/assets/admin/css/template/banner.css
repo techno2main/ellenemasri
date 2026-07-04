@@ -1,4 +1,4 @@
-.em-wp-template-banner {
+.em-template-banner {
     position: static;
     z-index: auto;
     margin: 0 0 14px;
@@ -7,7 +7,7 @@
     color: inherit;
 }
 
-.em-wp-template-banner__inner {
+.em-template-banner__inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -18,15 +18,15 @@
     box-shadow: none;
 }
 
-.em-wp-hub-sommaire .em-wp-template-banner {
+.em-hub-sommaire .em-template-banner {
     margin: 14px 0 16px;
 }
 
-.em-wp-admin-module .em-wp-template-banner {
+.em-admin-module .em-template-banner {
     margin: 0 0 18px;
 }
 
-.em-wp-template-banner__block {
+.em-template-banner__block {
     display: inline-flex;
     flex-wrap: wrap;
     align-items: center;
@@ -41,31 +41,31 @@
     max-width: 100%;
 }
 
-.em-wp-template-banner__block--editing {
+.em-template-banner__block--editing {
     border-color: rgba(0, 0, 0, 0.1);
     background: #ffffff;
     color: #111827;
 }
 
-.em-wp-template-banner__block--editing .em-wp-template-banner__label {
+.em-template-banner__block--editing .em-template-banner__label {
     color: #111827;
 }
 
-.em-wp-template-banner__block--editing .em-wp-template-banner__label i {
+.em-template-banner__block--editing .em-template-banner__label i {
     color: #751820;
 }
 
-.em-wp-template-banner__block--editing .em-wp-template-banner__select {
+.em-template-banner__block--editing .em-template-banner__select {
     border-color: rgba(0, 0, 0, 0.15);
     text-transform: uppercase;
 }
 
-.em-wp-template-banner__block--editing .em-wp-template-banner__select:focus {
+.em-template-banner__block--editing .em-template-banner__select:focus {
     border-color: #751820;
     box-shadow: 0 0 0 2px rgba(117, 24, 32, 0.22);
 }
 
-.em-wp-template-banner__label {
+.em-template-banner__label {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -77,14 +77,14 @@
     white-space: nowrap;
 }
 
-.em-wp-template-banner__form {
+.em-template-banner__form {
     display: inline-flex;
     align-items: center;
     gap: 8px;
     margin: 0;
 }
 
-.em-wp-template-banner__select {
+.em-template-banner__select {
     min-width: 140px;
     max-width: min(280px, 100%);
     min-height: 32px;
@@ -99,27 +99,27 @@
     line-height: 1.3;
 }
 
-.em-wp-template-banner__select:focus {
+.em-template-banner__select:focus {
     outline: none;
 }
 
-.em-wp-template-banner__select option {
+.em-template-banner__select option {
     color: #111827;
     background: #ffffff;
     font-weight: 600;
 }
 
-.em-wp-template-banner__block--live {
+.em-template-banner__block--live {
     border-color: rgba(0, 0, 0, 0.1);
     background: #ffffff;
     color: #111827;
 }
 
-.em-wp-template-banner__block--live .em-wp-hub__live {
+.em-template-banner__block--live .em-hub__live {
     margin: 0;
 }
 
-.em-wp-template-banner__status {
+.em-template-banner__status {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -136,21 +136,21 @@
     line-height: 1.35;
 }
 
-.em-wp-template-banner__status.is-differs {
+.em-template-banner__status.is-differs {
     border-color: rgba(251, 191, 36, 0.55);
 }
 
-.em-wp-template-banner__status.is-synced {
+.em-template-banner__status.is-synced {
     border-color: rgba(34, 197, 94, 0.45);
 }
 
-.em-wp-template-banner__status-icon {
+.em-template-banner__status-icon {
     color: #b45309;
     font-size: 13px;
     flex-shrink: 0;
 }
 
-.em-wp-template-banner__status-dot {
+.em-template-banner__status-dot {
     width: 8px;
     height: 8px;
     border-radius: 999px;
@@ -160,7 +160,7 @@
 }
 
 /* Legacy alias — conservé si référencé ailleurs */
-.em-wp-template-banner__alert {
+.em-template-banner__alert {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -177,24 +177,24 @@
     line-height: 1.35;
 }
 
-.em-wp-template-banner__alert i {
+.em-template-banner__alert i {
     color: #b45309;
     font-size: 13px;
 }
 
-.em-wp-template-banner__quit-form {
+.em-template-banner__quit-form {
     margin: 0;
 }
 
-.em-wp-template-banner__actions {
+.em-template-banner__actions {
     display: inline-flex;
     align-items: center;
     gap: 8px;
 }
 
-.em-wp-template-banner__save,
-.em-wp-template-banner__quit,
-.em-wp-template-banner__preview {
+.em-template-banner__save,
+.em-template-banner__quit,
+.em-template-banner__preview {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -212,39 +212,39 @@
     line-height: 1.3;
 }
 
-.em-wp-template-banner__preview {
+.em-template-banner__preview {
     border: 1px solid rgba(117, 24, 32, 0.35);
     background: #ffffff;
     color: #751820;
     text-decoration: none;
 }
 
-.em-wp-template-banner__preview:hover,
-.em-wp-template-banner__preview:focus {
+.em-template-banner__preview:hover,
+.em-template-banner__preview:focus {
     border-color: #751820;
     background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
     color: #ffffff;
 }
 
-.em-wp-template-banner__preview .fa-eye {
+.em-template-banner__preview .fa-eye {
     font-size: 12px;
 }
 
-.em-wp-template-banner__save {
+.em-template-banner__save {
     border: 1px solid #4e080e;
     background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
     color: #ffffff;
 }
 
-.em-wp-template-banner__save:hover,
-.em-wp-template-banner__save:focus {
+.em-template-banner__save:hover,
+.em-template-banner__save:focus {
     border-color: #4e080e;
     background: linear-gradient(180deg, #8a1c26 0%, #5a0a12 100%);
     color: #ffffff;
 }
 
-.em-wp-template-banner__save:disabled,
-.em-wp-template-banner__save[aria-disabled="true"] {
+.em-template-banner__save:disabled,
+.em-template-banner__save[aria-disabled="true"] {
     opacity: 0.45;
     cursor: not-allowed;
     background: #c4c4c4;
@@ -253,23 +253,23 @@
     box-shadow: none;
 }
 
-.em-wp-template-banner__save:disabled:hover,
-.em-wp-template-banner__save:disabled:focus,
-.em-wp-template-banner__save[aria-disabled="true"]:hover,
-.em-wp-template-banner__save[aria-disabled="true"]:focus {
+.em-template-banner__save:disabled:hover,
+.em-template-banner__save:disabled:focus,
+.em-template-banner__save[aria-disabled="true"]:hover,
+.em-template-banner__save[aria-disabled="true"]:focus {
     background: #c4c4c4;
     border-color: #a8a8a8;
     color: #ffffff;
 }
 
-.em-wp-template-banner__quit {
+.em-template-banner__quit {
     border: 1px solid rgba(117, 24, 32, 0.35);
     background: #ffffff;
     color: #751820;
 }
 
-.em-wp-template-banner__quit:hover,
-.em-wp-template-banner__quit:focus {
+.em-template-banner__quit:hover,
+.em-template-banner__quit:focus {
     border-color: #751820;
     background: #f9fafb;
     color: #4e080e;

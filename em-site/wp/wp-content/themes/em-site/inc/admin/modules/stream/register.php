@@ -67,6 +67,13 @@ function em_wp_stream_admin_enqueue(string $hook_suffix): void
         em_wp_admin_asset_version('assets/admin/css/modules/top-bar/top-bar.css')
     );
 
+    wp_enqueue_style(
+        'em-wp-stream-module-admin',
+        $theme_uri . '/assets/admin/css/modules/stream/stream.css',
+        ['em-wp-top-bar-platform-list'],
+        em_wp_admin_asset_version('assets/admin/css/modules/stream/stream.css')
+    );
+
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
         $theme_uri . '/assets/admin/js/shared/slide-sortable.js',

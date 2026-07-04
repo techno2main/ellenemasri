@@ -109,7 +109,7 @@ function em_wp_v4_overview_render_reorder_script(): void
         // Réordonne le sous-menu de gauche pour refléter l'ordre des cartes,
         // sans recharger la page (le serveur a déjà le même ordre au refresh).
         function syncMenu(order) {
-            var links = document.querySelectorAll('#adminmenu a[href*="page=em-wp-v4-overview"]');
+            var links = document.querySelectorAll('#adminmenu a[href*="page=em-rubriques-overview"]');
             var bySlug = {};
             var ul = null;
             links.forEach(function (a) {
@@ -151,3 +151,4 @@ function em_wp_v4_overview_render_reorder_script(): void
     </script>
     <?php
 }
+

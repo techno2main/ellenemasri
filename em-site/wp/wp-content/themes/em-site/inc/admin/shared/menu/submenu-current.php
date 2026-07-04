@@ -70,3 +70,4 @@ function em_wp_admin_highlight_submenu_parent($parent_file)
     return $parent_file;
 }
 add_filter('parent_file', 'em_wp_admin_highlight_submenu_parent');
+

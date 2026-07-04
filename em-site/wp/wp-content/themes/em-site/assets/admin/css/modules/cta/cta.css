@@ -1,9 +1,9 @@
-.em-wp-admin-module--texture-preview .em-wp-admin-module__hero {
+.em-admin-module--texture-preview .em-admin-module__hero {
     position: relative;
     overflow: hidden;
 }
 
-.em-wp-admin-module__hero-texture {
+.em-admin-module__hero-texture {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -15,7 +15,7 @@
     z-index: 0;
 }
 
-.em-wp-admin-module--texture-preview .em-wp-admin-module__hero > :not(.em-wp-admin-module__hero-texture) {
+.em-admin-module--texture-preview .em-admin-module__hero > :not(.em-admin-module__hero-texture) {
     position: relative;
     z-index: 1;
 }

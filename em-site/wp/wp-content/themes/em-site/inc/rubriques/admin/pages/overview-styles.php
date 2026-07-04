@@ -34,7 +34,7 @@ if (!defined('ABSPATH')) {
    .em-v4-card > .em-v4-card__head {
       font-size:15px;
       display:grid;
-      grid-template-columns: 18px 10px 18px 18px minmax(100px, 135px) 22px 22px 46px 220px;
+      grid-template-columns: 18px 10px 18px minmax(120px, 1fr) 46px;
       align-items:center;
       column-gap:10px;
       justify-content:start;
@@ -56,8 +56,10 @@ if (!defined('ABSPATH')) {
       .em-v4-card:not([open]) .em-v4-card__additem { display:none; }
       .em-v4-card.em-v4-card--item-open .em-v4-card__additem { display:none; }
       .em-v4-create[hidden] { display:none; }
-      .em-v4-create:not([hidden]) { border-color:#751820; box-shadow:0 0 0 1px #751820, 0 8px 20px -12px rgba(78,8,14,.28); background:#fff8f8; }
-      .em-v4-create:not([hidden]) .em-v4-collapse__body { border-top-color:#ead6d8; }
+      .em-v4-create:not([hidden]):not(.em-v4-createtype),
+      .em-v4-create.em-v4-createtype[open] { border-color:#751820; box-shadow:0 0 0 1px #751820, 0 8px 20px -12px rgba(78,8,14,.28); background:#fff8f8; }
+      .em-v4-create:not([hidden]):not(.em-v4-createtype) .em-v4-collapse__body,
+      .em-v4-create.em-v4-createtype[open] .em-v4-collapse__body { border-top-color:#ead6d8; }
     .em-v4-create__options { display:flex; flex-direction:column; gap:12px; padding:14px; }
     .em-v4-create__row { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:0; }
     .em-v4-create__row .button { display:inline-flex; align-items:center; gap:6px; height:34px; line-height:1; }
@@ -85,10 +87,10 @@ if (!defined('ABSPATH')) {
     .em-v4-card__icon { color:#4e080e; }
    .em-v4-card__icon { grid-column:3; }
    .em-v4-card__name { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-   .em-v4-card__name { grid-column:5; }
+   .em-v4-card__name { grid-column:4; }
    .em-v4-card__nameinput { width:100%; max-width:none; text-transform:uppercase; font-weight:700; min-width:0; margin:0; }
-   .em-v4-card__nameinput { grid-column:5; }
-   .em-v4-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; margin-left:0; justify-self:center; grid-column:8; background:#f0f0f1; color:#646970; border:1px solid #dcdcde; border-radius:999px; font-size:11px; font-weight:600; line-height:1; }
+   .em-v4-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; margin-left:0; justify-self:center; grid-column:5; background:#f0f0f1; color:#646970; border:1px solid #dcdcde; border-radius:999px; font-size:11px; font-weight:600; line-height:1; }
+   .em-v4-card__actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:0 14px 10px; }
     /* Réordonnancement des rubriques (glisser-déposer) */
     .em-v4-card__drag { color:#a7aaae; cursor:grab; font-size:18px; width:18px; height:18px; flex:0 0 auto; }
     .em-v4-card__drag:hover { color:#646970; }
@@ -96,12 +98,19 @@ if (!defined('ABSPATH')) {
     .em-v4-card.is-dragging { opacity:.6; outline:2px dashed #2271b1; outline-offset:2px; }
     /* Renommage d'une rubrique (crayon + champ inline) */
    .em-v4-card__edit { background:none; border:0; cursor:pointer; color:#2271b1; padding:0 2px; margin-left:0; display:inline-flex; align-items:center; justify-content:center; }
-   .em-v4-card__edit { grid-column:4; }
     .em-v4-card__edit:hover { color:#135e96; }
     .em-v4-card__edit .dashicons { font-size:16px; width:16px; height:16px; }
-   .em-v4-card__confirm { grid-column:6; margin-left:0; }
-   .em-v4-card__cancel { grid-column:7; margin-left:0; }
-   .em-v4-card__additem { grid-column:9; justify-self:end; }
+      .em-v4-card__confirm { margin-left:0; }
+      .em-v4-card__cancel { margin-left:0; }
+      .em-v4-card__additem { margin-left:auto; justify-self:end; }
+
+      .em-v4-item__actions {
+         display:flex;
+         align-items:center;
+         gap:8px;
+         flex-wrap:wrap;
+         padding:0 14px 10px;
+      }
 
     .em-v4-item__title { display:inline-flex; align-items:center; gap:6px; }
     .em-v4-item__prefix, .em-v4-item__name { text-transform:uppercase; font-weight:600; }
@@ -217,6 +226,7 @@ if (!defined('ABSPATH')) {
     .em-v4-gridmap__eye:hover { color:#135e96; }
     .em-v4-gridmap__eye[aria-pressed="true"] { color:#135e96; }
     .em-v4-gridmap__eye .dashicons { font-size:18px; width:18px; height:18px; }
+   .em-v4-builder__section-actions { display:flex; align-items:center; gap:8px; padding:0 14px 8px; }
 
     /* Bulle d'aperçu d'une cellule de la carte (survol) */
     .em-v4-gridmap__pop { position:absolute; z-index:100000; display:none; max-width:380px; min-width:180px; padding:8px; background:#fff; border:1px solid #c3c4c7; border-radius:8px; box-shadow:0 8px 28px rgba(16,24,40,.20); pointer-events:none; }
@@ -276,6 +286,13 @@ if (!defined('ABSPATH')) {
    .em-v4-row__colname.is-active { color:#111; font-weight:600; }
     .em-v4-row__colcount .dashicons { font-size:15px; width:15px; height:15px; }
     .em-v4-row[open] > .em-v4-row__summary > .em-v4-row__colcount { display:none; }
+   .em-v4-row__summary-actions {
+      display:grid;
+      grid-template-columns:minmax(230px, 320px) minmax(420px, 1fr) auto auto;
+      align-items:center;
+      column-gap:8px;
+      padding:0 12px 8px;
+   }
     .em-v4-row__drag { cursor:grab; color:#aab1bd; flex:0 0 auto; }
     .em-v4-row__drag:hover { color:#1d2327; }
     .em-v4-row.is-dragging { opacity:.5; outline:2px dashed #2271b1; }
@@ -486,6 +503,30 @@ if (!defined('ABSPATH')) {
     /* Boutons de la savebar : mêmes styles que le modal de confirmation (bordeaux, pas de bleu) */
     .em-v4-savebar__btn.button-primary { border-color:#4e080e !important; background:linear-gradient(180deg,#751820 0%,#4e080e 100%) !important; color:#fff !important; text-shadow:none !important; box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 2px 8px rgba(78,8,14,.28) !important; }
     .em-v4-savebar__btn.button-primary:hover, .em-v4-savebar__btn.button-primary:focus { border-color:#3d060b !important; background:linear-gradient(180deg,#651620 0%,#3d060b 100%) !important; color:#fff !important; box-shadow:0 1px 0 rgba(255,255,255,.14) inset, 0 4px 12px rgba(78,8,14,.34) !important; }
+   /* Exception: bouton "+ Nouvelle Rubrique" neutre au chargement, accent seulement en interaction/ouverture. */
+   .em-v4-savebar__btn.em-wp-rubriques-admin__add-rubrique-toggle.button-primary,
+   .em-v4-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary {
+      border-color:transparent !important;
+      background:transparent !important;
+      color:#1d2327 !important;
+      box-shadow:none !important;
+   }
+   .em-v4-savebar__btn.em-wp-rubriques-admin__add-rubrique-toggle.button-primary:hover,
+   .em-v4-savebar__btn.em-wp-rubriques-admin__add-rubrique-toggle.button-primary:focus,
+   .em-v4-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary:hover,
+   .em-v4-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary:focus {
+      border-color:#751820 !important;
+      background:#fff !important;
+      color:#751820 !important;
+      box-shadow:none !important;
+   }
+   .em-v4-savebar__btn.em-wp-rubriques-admin__add-rubrique-toggle.button-primary[aria-expanded="true"],
+   .em-v4-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary[aria-expanded="true"] {
+      border-color:#751820 !important;
+      background:#751820 !important;
+      color:#fff !important;
+      box-shadow:none !important;
+   }
     .em-v4-savebar__revert { display:inline-flex; align-items:center; height:30px; padding:0 12px; border:1px solid #c3c4c7; border-radius:3px; background:#fff; color:#50575e; font-size:13px; font-weight:500; line-height:1; cursor:pointer; box-shadow:0 1px 0 rgba(255,255,255,.9) inset; }
     .em-v4-savebar__revert:hover, .em-v4-savebar__revert:focus { border-color:#751820; color:#751820; background:#fafafa; }
     /* Contrôles d'aperçu sur la ligne du nom de la rubrique (œil + nouvel onglet) */
@@ -501,15 +542,13 @@ if (!defined('ABSPATH')) {
     .em-v4-livepreview:empty::before { content:"…"; display:block; padding:18px; color:#9ca3af; text-align:center; }
 
     /* NOTE : le rendu .em-rubrique… (base, grille, champs, médias, composants)
-       n'est PLUS dupliqué ici. Il est inliné en fin de fichier depuis les
-       fichiers FRONT (rubriques-v4/render.css, media.css, components.css) via
-       em_wp_v4_front_render_css() → source de style UNIQUE back = front. */
-    /* HEADER composite (.em-header-shell…) : source unique = front
-       rubriques-v4/header.css, inliné via em_wp_v4_front_render_css(). */
+       n'est plus dupliqué ici. Il est inliné en fin de fichier depuis la
+      source admin locale rubriques-preview/ via em_wp_admin_rubriques_preview_css(). */
+    /* HEADER composite (.em-header-shell…) : même source admin locale. */
     .em-v4-chip--decor { align-items:center; }
     .em-v4-chip--decor .em-v4-chip__type { font-weight:600; color:#1d2327; text-transform:none; }
 
-    /* === RENDU FRONT V4 (source unique : assets/front/css/rubriques-v4/*) === */
-<?php echo function_exists('em_wp_v4_front_render_css') ? em_wp_v4_front_render_css() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+   /* === RENDU RUBRIQUES ADMIN (source unique : assets/admin/css/rubriques-preview/*) === */
+<?php echo function_exists('em_wp_admin_rubriques_preview_css') ? em_wp_admin_rubriques_preview_css() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 </style>
 <?php

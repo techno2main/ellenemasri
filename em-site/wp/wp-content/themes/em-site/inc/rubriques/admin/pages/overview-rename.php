@@ -61,7 +61,7 @@ function em_wp_v4_overview_render_rename_script(): void
 
         // Libellé du sous-menu de gauche correspondant à la rubrique.
         function menuText(slug) {
-            var links = document.querySelectorAll('#adminmenu a[href*="page=em-wp-v4-overview"]');
+            var links = document.querySelectorAll('#adminmenu a[href*="page=em-rubriques-overview"]');
             for (var i = 0; i < links.length; i++) {
                 var type = '';
                 try { type = new URL(links[i].href).searchParams.get('type') || ''; } catch (err) {}
@@ -90,18 +90,18 @@ function em_wp_v4_overview_render_rename_script(): void
             if (mt) { mt.textContent = label; }
         }
 
-        function parts(summary) {
+        function parts(card) {
             return {
-                name:    summary.querySelector('.em-v4-card__name'),
-                pen:     summary.querySelector('.em-v4-card__edit'),
-                input:   summary.querySelector('.em-v4-card__nameinput'),
-                confirm: summary.querySelector('.em-v4-card__confirm'),
-                cancel:  summary.querySelector('.em-v4-card__cancel')
+                name:    card.querySelector('.em-v4-card__name'),
+                pen:     card.querySelector('.em-v4-card__edit'),
+                input:   card.querySelector('.em-v4-card__nameinput'),
+                confirm: card.querySelector('.em-v4-card__confirm'),
+                cancel:  card.querySelector('.em-v4-card__cancel')
             };
         }
 
-        function open(summary) {
-            var p = parts(summary);
+        function open(card) {
+            var p = parts(card);
             if (!p.input) { return; }
             if (p.name) { p.name.hidden = true; }
             if (p.pen) { p.pen.hidden = true; }
@@ -112,8 +112,8 @@ function em_wp_v4_overview_render_rename_script(): void
             p.input.select();
         }
 
-        function close(summary) {
-            var p = parts(summary);
+        function close(card) {
+            var p = parts(card);
             if (p.input) { p.input.hidden = true; }
             if (p.confirm) { p.confirm.hidden = true; }
             if (p.cancel) { p.cancel.hidden = true; }
@@ -123,19 +123,19 @@ function em_wp_v4_overview_render_rename_script(): void
 
         // Aperçu en direct du libellé saisi (carte + sous-menu) avant validation.
         function preview(input, label) {
-            var summary = input.closest('summary');
-            var name = summary ? summary.querySelector('.em-v4-card__name') : null;
+            var card = input.closest('.em-v4-card');
+            var name = card ? card.querySelector('.em-v4-card__name') : null;
             if (name) { name.textContent = label; }
             var mt = menuText(input.getAttribute('data-slug') || '');
             if (mt) { mt.textContent = label; }
         }
 
-        function confirm(summary) {
-            var p = parts(summary);
+        function confirm(card) {
+            var p = parts(card);
             if (!p.input) { return; }
             var val = p.input.value.trim();
             var slug = p.input.getAttribute('data-slug') || '';
-            if (val === '' || val === p.input.getAttribute('data-original')) { close(summary); return; }
+            if (val === '' || val === p.input.getAttribute('data-original')) { close(card); return; }
             var body = new URLSearchParams();
             body.set('action', 'em_wp_v4_rename_type');
             body.set('_ajax_nonce', NONCE);
@@ -151,26 +151,26 @@ function em_wp_v4_overview_render_rename_script(): void
                     applyLabel(slug, res.data.label, res.data.singular || '');
                 }
             }).catch(function () {});
-            close(summary);
+            close(card);
         }
 
-        function cancel(summary) {
-            var p = parts(summary);
+        function cancel(card) {
+            var p = parts(card);
             if (p.input) {
                 var orig = p.input.getAttribute('data-original') || '';
                 p.input.value = orig;
                 preview(p.input, orig);
             }
-            close(summary);
+            close(card);
         }
 
         document.addEventListener('click', function (e) {
             var pen = e.target.closest('.em-v4-card__edit');
-            if (pen) { stop(e); open(pen.closest('summary')); return; }
+            if (pen) { stop(e); open(pen.closest('.em-v4-card')); return; }
             var ok = e.target.closest('.em-v4-card__confirm');
-            if (ok) { stop(e); confirm(ok.closest('summary')); return; }
+            if (ok) { stop(e); confirm(ok.closest('.em-v4-card')); return; }
             var no = e.target.closest('.em-v4-card__cancel');
-            if (no) { stop(e); cancel(no.closest('summary')); return; }
+            if (no) { stop(e); cancel(no.closest('.em-v4-card')); return; }
             if (e.target.closest('.em-v4-card__nameinput')) { e.preventDefault(); e.stopPropagation(); }
         });
 
@@ -195,3 +195,4 @@ function em_wp_v4_overview_render_rename_script(): void
     </script>
     <?php
 }
+

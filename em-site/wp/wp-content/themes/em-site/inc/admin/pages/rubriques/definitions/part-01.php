@@ -21,7 +21,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('TOP-BAR', 'em-wp'),
             'menu_title'   => __('TOP-BAR', 'em-wp'),
             'description'  => __('Section TOP-BAR / HEADER', 'em-wp'),
-            'page_slug'    => function_exists('em_wp_top_bar_page_slug') ? em_wp_top_bar_page_slug() : 'em-wp-top-bar',
+            'page_slug'    => function_exists('em_wp_top_bar_page_slug') ? em_wp_top_bar_page_slug() : 'em-top-bar',
             'preview_zone' => 'top_bar',
             'accent_color' => '#100421',
         ],
@@ -29,7 +29,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('HEADER', 'em-wp'),
             'menu_title'   => __('HEADER', 'em-wp'),
             'description'  => __('Section HEADER (Hero et/ou Slider)', 'em-wp'),
-            'page_slug'    => function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-wp-header',
+            'page_slug'    => function_exists('em_wp_header_page_slug') ? em_wp_header_page_slug() : 'em-header',
             'preview_zone' => 'header',
             'accent_color' => '#d94a2d',
         ],
@@ -37,7 +37,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('STREAM', 'em-wp'),
             'menu_title'   => __('STREAM', 'em-wp'),
             'description'  => __('Section 01 / LISTEN', 'em-wp'),
-            'page_slug'    => function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-wp-stream',
+            'page_slug'    => function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-stream',
             'preview_zone' => 'section_stream',
             'accent_color' => '#7c3aed',
         ],
@@ -45,7 +45,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('SOCIAL', 'em-wp'),
             'menu_title'   => __('SOCIAL', 'em-wp'),
             'description'  => __('Section 02 / FOLLOW', 'em-wp'),
-            'page_slug'    => 'em-wp-social',
+            'page_slug'    => 'em-social',
             'preview_zone' => 'section_social',
             'accent_color' => '#db2777',
             'coming_soon'  => true,
@@ -54,7 +54,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('VIDEO', 'em-wp'),
             'menu_title'   => __('VIDEO', 'em-wp'),
             'description'  => __('Section 03 / WATCH', 'em-wp'),
-            'page_slug'    => function_exists('em_wp_video_page_slug') ? em_wp_video_page_slug() : 'em-wp-videos',
+            'page_slug'    => function_exists('em_wp_video_page_slug') ? em_wp_video_page_slug() : 'em-videos',
             'preview_zone' => 'section_video',
             'accent_color' => '#ca8a04',
         ],
@@ -62,7 +62,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('RELEASE', 'em-wp'),
             'menu_title'   => __('RELEASE', 'em-wp'),
             'description'  => __('Section 04 / RELEASE INFOS', 'em-wp'),
-            'page_slug'    => function_exists('em_wp_release_page_slug') ? em_wp_release_page_slug() : 'em-wp-releases',
+            'page_slug'    => function_exists('em_wp_release_page_slug') ? em_wp_release_page_slug() : 'em-releases',
             'preview_zone' => 'section_release',
             'accent_color' => '#b8956a',
         ],
@@ -70,7 +70,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('CTA', 'em-wp'),
             'menu_title'   => __('CTA', 'em-wp'),
             'description'  => __('Section 05 / DON\'T SLEEP ON IT', 'em-wp'),
-            'page_slug'    => 'em-wp-cta',
+            'page_slug'    => 'em-cta',
             'preview_zone' => 'section_cta',
             'accent_color' => '#0d9488',
             'coming_soon'  => true,
@@ -79,7 +79,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
             'label'        => __('FOOTER', 'em-wp'),
             'menu_title'   => __('FOOTER', 'em-wp'),
             'description'  => __('Section FOOTER', 'em-wp'),
-            'page_slug'    => 'em-wp-footer',
+            'page_slug'    => 'em-footer',
             'preview_zone' => 'section_footer',
             'accent_color' => '#100421',
             'coming_soon'  => true,
@@ -152,7 +152,7 @@ function em_wp_admin_v4_extra_rubrique_definitions(): array
     // DÃ©finitions dÃ©jÃ  connues (statiques + catalogues). On ne rÃ©injecte un type
     // V4 QUE s'il n'est pas dÃ©jÃ  couvert : sinon une entrÃ©e synthÃ©tique
     // Ã©craserait la dÃ©finition existante (ex. le type V4 Â« contacts Â» Ã©crasait le
-    // module catalogue Â« contacts Â» et son page_slug Â« em-wp-contacts Â», ce qui
+    // module catalogue Â« contacts Â» et son page_slug Â« em-contacts Â», ce qui
     // empÃªchait le purge de retirer le lien isolÃ© CONTACT du menu).
     $existing = array_merge(
         em_wp_admin_site_rubrique_static_definitions(),
@@ -202,7 +202,7 @@ function em_wp_admin_v4_extra_rubrique_definitions(): array
                 __('Section %s', 'em-wp'),
                 (string) ($type['label'] ?? $slug)
             ),
-            // IMPORTANT : pas de page_slug. Un page_slug 'em-wp-v4-overview'
+            // IMPORTANT : pas de page_slug. Un page_slug 'em-rubriques-overview'
             // entrerait en collision avec le menu top-level RUBRIQUES et le ferait
             // PURGER par em_wp_admin_menu_layout_purge_out_of_context_rubriques().
             // La carte Â« Ajouter une rubrique Â» n'utilise que le slug + le label.
@@ -259,4 +259,5 @@ function em_wp_admin_site_rubrique_modules_for_context(): array
  *
  * @return array<string, array<string, mixed>>
  */
+
 

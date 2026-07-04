@@ -56,6 +56,13 @@ function em_wp_social_admin_enqueue(string $hook_suffix): void
         em_wp_admin_asset_version('assets/admin/css/modules/top-bar/top-bar.css')
     );
 
+    wp_enqueue_style(
+        'em-wp-social-admin',
+        $theme_uri . '/assets/admin/css/modules/social/social.css',
+        ['em-wp-top-bar-platform-list'],
+        em_wp_admin_asset_version('assets/admin/css/modules/social/social.css')
+    );
+
     wp_enqueue_script(
         'em-wp-stream-admin',
         $theme_uri . '/assets/admin/js/modules/top-bar/top-bar.js',

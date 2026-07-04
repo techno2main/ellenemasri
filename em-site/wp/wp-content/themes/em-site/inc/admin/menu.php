@@ -17,7 +17,7 @@ function em_site_admin_is_dashboard_screen(): bool
 
 function em_site_admin_dashboard_page_slug(): string
 {
-	return 'em-wp-dashboard';
+	return 'em-dashboard';
 }
 
 function em_site_admin_dashboard_admin_url(): string
@@ -117,11 +117,11 @@ function em_site_admin_dashboard_tabs(): array
 	return [
 		[
 			'label' => __('MES RUBRIQUES', 'em-wp'),
-			'url' => admin_url('admin.php?page=em-site-rubriques'),
+			'url' => admin_url('admin.php?page=em-rubriques-overview'),
 		],
 		[
 			'label' => __('MES TEMPLATES', 'em-wp'),
-			'url' => admin_url('admin.php?page=em-site-templates'),
+			'url' => admin_url('admin.php?page=em-template'),
 		],
 		[
 			'label' => __('MEDIAS', 'em-wp'),
@@ -261,16 +261,16 @@ function em_site_admin_render_dashboard_page(): void
 
 		<div class="em-site-dashboard__grid">
 			<section class="em-site-dashboard__card">
-				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES RUBRIQUES', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-site-rubriques')); ?>" aria-label="<?php esc_attr_e('Gérer mes rubriques', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
+				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES RUBRIQUES', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-rubriques-overview')); ?>" aria-label="<?php esc_attr_e('Gérer mes rubriques', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
 				<p><?php esc_html_e('Sections réutilisables qui composent tes templates.', 'em-wp'); ?></p>
-				<a class="em-site-dashboard__primary" href="<?php echo esc_url(admin_url('admin.php?page=em-site-rubriques')); ?>"><?php esc_html_e('GÉRER LES RUBRIQUES', 'em-wp'); ?></a>
+				<a class="em-site-dashboard__primary" href="<?php echo esc_url(admin_url('admin.php?page=em-rubriques-overview')); ?>"><?php esc_html_e('GÉRER LES RUBRIQUES', 'em-wp'); ?></a>
 			</section>
 
 			<section class="em-site-dashboard__card">
-				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES TEMPLATES', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-site-templates')); ?>" aria-label="<?php esc_attr_e('Gérer mes templates', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
+				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES TEMPLATES', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>" aria-label="<?php esc_attr_e('Gérer mes templates', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
 				<p><?php esc_html_e('Ton site utilise actuellement le template :', 'em-wp'); ?></p>
 				<p class="em-site-dashboard__status"><span class="em-site-pill em-site-pill--primary"><?php echo esc_html($active_template); ?></span><span class="em-site-pill em-site-pill--live"><?php esc_html_e('LIVE', 'em-wp'); ?></span></p>
-				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-site-templates')); ?>"><?php echo esc_html($active_template); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-site-templates')); ?>"><?php esc_html_e('VOIR TOUT', 'em-wp'); ?></a></p>
+				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>"><?php echo esc_html($active_template); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>"><?php esc_html_e('VOIR TOUT', 'em-wp'); ?></a></p>
 			</section>
 
 			<section class="em-site-dashboard__card">
@@ -288,3 +288,4 @@ function em_site_admin_render_dashboard_page(): void
 	</div>
 	<?php
 }
+

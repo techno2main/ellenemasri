@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_slider_hub_menu_slug(): string
 {
-    return 'em-wp-catalog-sliders';
+    return 'em-catalog-sliders';
 }
 
 /**
@@ -70,7 +70,7 @@ function em_wp_slider_style_definitions(): array
             'slider-mayami-default' => [
                 'label'      => 'Mayami',
                 'menu_title' => __('Slider Mayami default', 'em-wp'),
-                'page_slug'  => 'em-wp-cs-slider-mayami-default',
+                'page_slug'  => 'em-cs-slider-mayami-default',
             ],
         ];
     }
@@ -133,8 +133,8 @@ function em_wp_slider_style_from_page_slug(string $page_slug): string
     }
 
     $legacy = [
-        'em-wp-slider-mayami' => 'slider-mayami-default',
-        'em-wp-slider-ellene' => 'slider-ellene-default',
+        'em-slider-mayami' => 'slider-mayami-default',
+        'em-slider-ellene' => 'slider-ellene-default',
     ];
 
     if (isset($legacy[$page_slug])) {
@@ -174,7 +174,7 @@ function em_wp_slider_get_admin_context(): array
     return [
         'style_slug'  => $style_slug,
         'label'       => (string) ($definition['label'] ?? 'Mayami'),
-        'page_slug'   => (string) ($definition['page_slug'] ?? 'em-wp-slider-mayami'),
+        'page_slug'   => (string) ($definition['page_slug'] ?? 'em-slider-mayami'),
         'option_name' => em_wp_slider_option_name($style_slug),
         'group'       => em_wp_slider_group_name($style_slug),
     ];
@@ -210,15 +210,21 @@ function em_wp_slider_admin_asset_view_slug(string $style_slug): string
 {
     $style_slug = sanitize_key($style_slug);
     $theme_dir = get_template_directory();
-    $base = $theme_dir . '/assets/admin/js/modules/slider/';
+    $js_base = $theme_dir . '/assets/admin/js/modules/slider/';
+    $css_base = $theme_dir . '/assets/admin/css/modules/slider/';
 
-    if ($style_slug !== '' && is_dir($base . $style_slug)) {
+    $has_view_assets = static function (string $view_slug) use ($js_base, $css_base): bool {
+        return is_dir($js_base . $view_slug) && is_file($css_base . $view_slug . '/slider.css');
+    };
+
+    if ($style_slug !== '' && $has_view_assets($style_slug)) {
         return $style_slug;
     }
 
-    if (strpos($style_slug, 'ellene') !== false && is_dir($base . 'ellene')) {
+    if (strpos($style_slug, 'ellene') !== false && $has_view_assets('ellene')) {
         return 'ellene';
     }
 
     return 'mayami';
 }
+

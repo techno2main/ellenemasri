@@ -1,11 +1,11 @@
         /* RUBRIQUES : icône + libellé alignés dans les sous-menus de gauche. */
-        #adminmenu #toplevel_page_em-wp-v4-overview .wp-submenu li > a {
+        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu li > a {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        #adminmenu #toplevel_page_em-wp-v4-overview .wp-submenu .em-wp-rubrique-submenu__icon {
+        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu .em-wp-rubrique-submenu__icon {
             font-size: 16px;
             width: 16px;
             height: 16px;
@@ -13,14 +13,14 @@
             flex: 0 0 auto;
         }
 
-        #adminmenu #toplevel_page_em-wp-v4-overview .wp-submenu .em-wp-rubrique-submenu__text {
+        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu .em-wp-rubrique-submenu__text {
             flex: 1 1 auto;
         }
 
-        /* Masque le 1er sous-menu auto (lien « …page=em-wp-v4-overview » sans &type) :
+        /* Masque le 1er sous-menu auto (lien « …page=em-rubriques-overview » sans &type) :
            on le garde pour que le parent RUBRIQUES n'ouvre pas le 1er type, mais on
            ne l'affiche pas (l'utilisateur ne veut pas d'entrée « Vue d'ensemble »). */
-        #adminmenu #toplevel_page_em-wp-v4-overview .wp-submenu li:has(> a[href$="page=em-wp-v4-overview"]) {
+        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu li:has(> a[href$="page=em-rubriques-overview"]) {
             display: none;
         }
 
@@ -30,6 +30,7 @@
            On garde `body:not(.folded)` pour NE PAS casser le mode réduit, où le
            flyout au survol est le seul moyen d'accéder aux types (sinon RUBRIQUES
            devient inaccessible une fois le menu replié). */
-        body:not(.folded) #adminmenu #toplevel_page_em-wp-v4-overview:not(.wp-menu-open):not(.wp-has-current-submenu) > .wp-submenu {
+        body:not(.folded) #adminmenu #toplevel_page_em-rubriques-overview:not(.wp-menu-open):not(.wp-has-current-submenu) > .wp-submenu {
             display: none !important;
         }
+

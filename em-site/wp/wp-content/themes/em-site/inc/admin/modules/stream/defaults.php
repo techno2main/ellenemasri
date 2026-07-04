@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_wp_stream_page_slug(): string
 {
-    return 'em-wp-stream';
+    return 'em-stream';
 }
 
 function em_wp_stream_form_option_key(): string
@@ -56,3 +56,4 @@ function em_wp_stream_catalog_default_options(): array
         'platforms'         => $platforms,
     ];
 }
+

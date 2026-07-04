@@ -46,5 +46,12 @@ function em_wp_footer_admin_enqueue(string $hook_suffix): void
         ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
         em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
     );
+
+    wp_enqueue_style(
+        'em-wp-footer-admin',
+        get_template_directory_uri() . '/assets/admin/css/modules/footer/footer.css',
+        ['em-wp-admin-module-common'],
+        em_wp_admin_asset_version('assets/admin/css/modules/footer/footer.css')
+    );
 }
 add_action('admin_enqueue_scripts', 'em_wp_footer_admin_enqueue');

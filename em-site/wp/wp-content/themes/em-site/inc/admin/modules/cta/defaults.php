@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_wp_cta_page_slug(): string
 {
-    return 'em-wp-cta';
+    return 'em-cta';
 }
 
 function em_wp_cta_form_option_key(): string
@@ -59,3 +59,4 @@ function em_wp_cta_catalog_default_options(): array
         'texture_image'     => em_wp_cta_default_texture_url(),
     ];
 }
+

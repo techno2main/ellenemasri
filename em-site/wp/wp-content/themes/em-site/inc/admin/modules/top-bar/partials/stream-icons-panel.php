@@ -18,7 +18,7 @@ function em_wp_top_bar_render_stream_icons_panel(array $options, ?string $field 
 {
     $field = $field ?? em_wp_top_bar_form_option_key();
     $is_hidden = !empty($options['stream_icons_hidden']);
-    $stream_url = admin_url('admin.php?page=' . (function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-wp-stream'));
+    $stream_url = admin_url('admin.php?page=' . (function_exists('em_wp_stream_page_slug') ? em_wp_stream_page_slug() : 'em-stream'));
     ?>
     <section class="em-wp-top-bar-panel em-wp-admin-module__panel">
         <button class="<?php echo esc_attr(em_wp_admin_panel_header_class('em-wp-top-bar-panel')); ?>" type="button" aria-expanded="false">

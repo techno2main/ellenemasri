@@ -80,7 +80,7 @@ function em_wp_admin_rubrique_render_edit_navbar(
 }
 
 /**
- * Onglets Liste + rubriques (TOP-BAR, HEADER, STREAMâ€¦).
+ * Onglets Liste + rubriques (TOP-BAR, HEADER, STREAM…).
  */
 function em_wp_admin_rubrique_render_entry_tabs(string $active_module_slug = ''): void
 {
@@ -110,7 +110,7 @@ function em_wp_admin_rubrique_render_entry_tabs(string $active_module_slug = '')
 }
 
 /**
- * En-tÃªte hub (bandeau template + intro) pour une page rubrique en Ã©dition.
+ * En-tête hub (bandeau template + intro) pour une page rubrique en édition.
  */
 function em_wp_admin_rubrique_render_editing_page_header(string $module_slug): void
 {
@@ -132,7 +132,7 @@ function em_wp_admin_rubrique_render_editing_page_header(string $module_slug): v
 }
 
 /**
- * Nom du champ options Â« enabled Â» pour une rubrique (vide si non applicable).
+ * Nom du champ options « enabled » pour une rubrique (vide si non applicable).
  */
 function em_wp_admin_rubrique_enabled_field_name(string $module_slug): string
 {
@@ -161,7 +161,7 @@ function em_wp_admin_rubrique_enabled_field_name(string $module_slug): string
 }
 
 /**
- * Indique si la barre rubrique affiche un toggle Â« Afficher Â».
+ * Indique si la barre rubrique affiche un toggle « Afficher ».
  */
 function em_wp_admin_rubrique_section_has_toggle(string $module_slug): bool
 {
@@ -169,9 +169,9 @@ function em_wp_admin_rubrique_section_has_toggle(string $module_slug): bool
 }
 
 /**
- * Toggle Â« Afficher Â» marron dans la barre titre rubrique.
+ * Toggle « Afficher » marron dans la barre titre rubrique.
  *
- * @param array<string, mixed> $options Options module (clÃ© enabled pour les rubriques classiques).
+ * @param array<string, mixed> $options Options module (clé enabled pour les rubriques classiques).
  */
 function em_wp_admin_rubrique_render_section_toggle(string $module_slug, array $options = []): void
 {
@@ -199,7 +199,7 @@ function em_wp_admin_rubrique_render_section_toggle(string $module_slug, array $
 /**
  * Ouvre le bloc rubrique (barre titre + bordure haute) avant les panneaux.
  *
- * @param array<string, mixed> $options Options module (enabledâ€¦).
+ * @param array<string, mixed> $options Options module (enabled…).
  */
 function em_wp_admin_rubrique_open_section(string $module_slug, array $options = []): void
 {

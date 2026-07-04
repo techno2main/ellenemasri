@@ -80,6 +80,12 @@
             box-sizing: border-box;
         }
 
+        #adminmenu li.em-wp-menu-rubrique-child > a.menu-top {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px;
+        }
+
         #adminmenu li.em-wp-menu-accordion-catalog-child .wp-menu-image,
         #adminmenu li.em-wp-menu-accordion-templates-child .wp-menu-image,
         #adminmenu li.em-wp-menu-accordion-medias-child .wp-menu-image,
@@ -87,11 +93,40 @@
             width: 30px;
         }
 
+        #adminmenu li.em-wp-menu-rubrique-child .wp-menu-image {
+            margin-right: 6px;
+            flex: 0 0 auto;
+        }
+
         #adminmenu li.em-wp-menu-accordion-catalog-child .wp-menu-name,
         #adminmenu li.em-wp-menu-accordion-templates-child .wp-menu-name,
         #adminmenu li.em-wp-menu-accordion-medias-child .wp-menu-name,
         #adminmenu li.em-wp-menu-rubrique-child .wp-menu-name {
             padding-left: 0;
+        }
+
+        /* Entrées RUBRIQUES (TOP-BARS, HEROS...) : icône et libellé avec un
+           espacement constant même quand WordPress rend ces entrées en items
+           menu (pas en .wp-submenu). */
+        #adminmenu li.em-wp-menu-rubrique-child .wp-menu-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        #adminmenu li.em-wp-menu-rubrique-child .wp-menu-name .em-wp-rubrique-submenu__icon {
+            flex: 0 0 auto;
+            width: 14px;
+            height: 14px;
+            line-height: 14px;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        #adminmenu li.em-wp-menu-rubrique-child .wp-menu-name .em-wp-rubrique-submenu__text {
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .folded #adminmenu li.em-wp-menu-accordion-catalog-child > a.menu-top,

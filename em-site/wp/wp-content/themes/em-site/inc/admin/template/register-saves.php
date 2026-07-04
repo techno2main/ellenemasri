@@ -208,7 +208,7 @@ function em_wp_admin_template_handle_set_active(): void
 
     $slug = em_wp_template_sanitize_slug((string) ($_POST['em_wp_template_active_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
     $redirect_page = sanitize_key((string) ($_POST['em_wp_template_redirect_page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-    $redirect_url = ($redirect_page !== '' && str_starts_with($redirect_page, 'em-wp-'))
+    $redirect_url = ($redirect_page !== '' && str_starts_with($redirect_page, 'em-'))
         ? admin_url('admin.php?page=' . $redirect_page)
         : em_wp_admin_templates_manage_admin_url();
     $result = em_wp_set_active_template_slug($slug);
@@ -292,14 +292,14 @@ function em_wp_admin_template_banner_redirect_url(): string
 {
     $page = sanitize_key((string) ($_POST['em_wp_template_redirect_page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-    if ($page !== '' && str_starts_with($page, 'em-wp-')) {
+    if ($page !== '' && str_starts_with($page, 'em-')) {
         return admin_url('admin.php?page=' . $page);
     }
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $current = sanitize_key((string) ($_GET['page'] ?? ''));
 
-    if ($current !== '' && str_starts_with($current, 'em-wp-')) {
+    if ($current !== '' && str_starts_with($current, 'em-')) {
         return admin_url('admin.php?page=' . $current);
     }
 
@@ -346,3 +346,4 @@ function em_wp_admin_template_render_admin_notice(): void
     <?php
 }
 add_action('admin_notices', 'em_wp_admin_template_render_admin_notice', 3);
+

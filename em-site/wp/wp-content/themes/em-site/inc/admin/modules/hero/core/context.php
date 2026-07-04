@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_hero_hub_menu_slug(): string
 {
-    return 'em-wp-catalog-heros';
+    return 'em-catalog-heros';
 }
 
 /**
@@ -25,8 +25,8 @@ function em_wp_hero_hub_menu_slug(): string
 function em_wp_hero_legacy_page_slug_map(): array
 {
     return [
-        'em-wp-hero-mayami' => 'hero-mayami-default',
-        'em-wp-hero-ellene' => 'hero-ellene-default',
+        'em-hero-mayami' => 'hero-mayami-default',
+        'em-hero-ellene' => 'hero-ellene-default',
     ];
 }
 
@@ -83,7 +83,7 @@ function em_wp_hero_style_definitions(): array
             'hero-mayami-default' => [
                 'label'      => 'Mayami',
                 'menu_title' => __('Hero Mayami default', 'em-wp'),
-                'page_slug'  => 'em-wp-ch-hero-mayami-default',
+                'page_slug'  => 'em-ch-hero-mayami-default',
             ],
         ];
     }
@@ -183,7 +183,7 @@ function em_wp_hero_get_admin_context(): array
     return [
         'style_slug'  => $style_slug,
         'label'       => (string) ($definition['label'] ?? 'Mayami'),
-        'page_slug'   => (string) ($definition['page_slug'] ?? 'em-wp-hero-mayami'),
+        'page_slug'   => (string) ($definition['page_slug'] ?? 'em-hero-mayami'),
         'option_name' => em_wp_hero_option_name($style_slug),
         'group'       => em_wp_hero_group_name($style_slug),
     ];
@@ -208,3 +208,4 @@ function em_wp_hero_group_name(string $style_slug): string
 {
     return 'em_wp_hero_' . sanitize_key($style_slug) . '_group';
 }
+

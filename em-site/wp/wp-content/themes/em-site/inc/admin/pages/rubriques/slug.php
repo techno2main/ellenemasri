@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_rubriques_page_slug(): string
 {
-    return 'em-wp-rubriques';
+    return 'em-rubriques';
 }
 
 /**
@@ -24,3 +24,4 @@ function em_wp_admin_rubriques_admin_url(): string
 {
     return admin_url('admin.php?page=' . em_wp_admin_rubriques_page_slug());
 }
+

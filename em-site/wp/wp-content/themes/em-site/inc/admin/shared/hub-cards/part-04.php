@@ -19,7 +19,7 @@ function em_wp_admin_hub_render_live_template_badge(string $active_label, string
 }
 
 /**
- * Pastille Â« template live Â» compacte (carte template individuelle).
+ * Pastille « template live » compacte (carte template individuelle).
  */
 function em_wp_admin_hub_render_template_live_badge(string $label, string $template_slug): void
 {
@@ -56,7 +56,7 @@ function em_wp_admin_hub_render_template_active_pill(string $label, string $temp
 }
 
 /**
- * Pastille Â« Activer Â» (fond couleur template, chip Activer).
+ * Pastille « Activer » (fond couleur template, chip Activer).
  *
  * @param array{compact?:bool,table?:bool,block?:bool,id?:string,class?:string} $args
  */
@@ -109,7 +109,7 @@ function em_wp_admin_hub_render_template_activate_pill(string $slug, string $dis
 }
 
 /**
- * Badge Â« Activer sur le site Â» (carte ou tableau).
+ * Badge « Activer sur le site » (carte ou tableau).
  */
 function em_wp_admin_hub_render_template_activate_badge(
     string $slug,
@@ -128,7 +128,7 @@ function em_wp_admin_hub_render_template_activate_badge(
 }
 
 /**
- * Pied de carte template : badge live ou action dâ€™activation.
+ * Pied de carte template : badge live ou action d’activation.
  */
 function em_wp_admin_hub_render_template_card_live_footer(
     string $slug,
@@ -150,7 +150,7 @@ function em_wp_admin_hub_render_template_card_live_footer(
 }
 
 /**
- * Formulaire POST â€” bascule template live (sommaire Templates).
+ * Formulaire POST — bascule template live (sommaire Templates).
  */
 function em_wp_admin_hub_render_template_set_live_form(string $redirect_page = ''): void
 {
@@ -224,7 +224,7 @@ function em_wp_admin_hub_render_live_template_switcher(string $redirect_page = '
 }
 
 /**
- * LibellÃ© court pour toggle catalogue (MAYAMI, ELLENEâ€¦).
+ * Libellé court pour toggle catalogue (MAYAMI, ELLENE…).
  */
 function em_wp_admin_catalog_choice_switch_label(string $catalog_slug, string $label): string
 {
@@ -242,7 +242,7 @@ function em_wp_admin_catalog_choice_switch_label(string $catalog_slug, string $l
 }
 
 /**
- * Couleur d'accent admin partagÃ©e (catalogues, toggles rubrique templateâ€¦).
+ * Couleur d'accent admin partagée (catalogues, toggles rubrique template…).
  */
 function em_wp_admin_hub_brand_accent_color(): string
 {
@@ -250,7 +250,7 @@ function em_wp_admin_hub_brand_accent_color(): string
 }
 
 /**
- * Couleur d'accent pour un toggle catalogue (hero/sliderâ€¦) en Ã©dition template.
- * Toujours la couleur catalogues â€” pas de couleur par entrÃ©e.
+ * Couleur d'accent pour un toggle catalogue (hero/slider…) en édition template.
+ * Toujours la couleur catalogues — pas de couleur par entrée.
  */
 

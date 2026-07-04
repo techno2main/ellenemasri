@@ -166,7 +166,7 @@ function em_wp_admin_dashboard_render_templates_badge(): void
  */
 function em_wp_admin_dashboard_rubriques_overview_url(): string
 {
-    return add_query_arg(['page' => 'em-wp-v4-overview'], admin_url('admin.php'));
+    return add_query_arg(['page' => 'em-rubriques-overview'], admin_url('admin.php'));
 }
 
 /**
@@ -192,7 +192,7 @@ function em_wp_admin_dashboard_render_rubriques_badge(): void
             $entries[] = [
                 'label' => $label,
                 'url'   => add_query_arg(
-                    ['page' => 'em-wp-v4-overview', 'type' => $slug],
+                    ['page' => 'em-rubriques-overview', 'type' => $slug],
                     admin_url('admin.php')
                 ),
             ];
@@ -343,3 +343,4 @@ function em_wp_admin_dashboard_render_nav_tabs(): void
         em_wp_admin_hub_sticky_head_close();
     }
 }
+

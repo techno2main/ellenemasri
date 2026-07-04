@@ -1,10 +1,10 @@
-.em-wp-release-rows-list {
+.em-release-rows-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-.em-wp-release-row-item {
+.em-release-row-item {
     align-items: flex-end;
     flex-wrap: nowrap;
     padding: 10px 12px;
@@ -12,11 +12,11 @@
     background: #fff;
 }
 
-.em-wp-release-row-item.is-row-hidden {
+.em-release-row-item.is-row-hidden {
     opacity: 0.55;
 }
 
-.em-wp-release-row-item__handle {
+.em-release-row-item__handle {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -27,11 +27,11 @@
     flex: 0 0 auto;
 }
 
-.em-wp-release-row-item__handle:active {
+.em-release-row-item__handle:active {
     cursor: grabbing;
 }
 
-.em-wp-release-row-item__actions {
+.em-release-row-item__actions {
     display: inline-flex;
     align-items: center;
     gap: 12px;
@@ -40,13 +40,13 @@
     flex: 0 0 auto;
 }
 
-.em-wp-release-row-item__actions .button-link-delete {
+.em-release-row-item__actions .button-link-delete {
     margin: 0;
     padding: 0 4px;
     height: 36px;
     line-height: 36px;
 }
 
-.em-wp-release-row-item.is-dragging {
+.em-release-row-item.is-dragging {
     opacity: 0.88;
 }

@@ -24,7 +24,7 @@ function em_wp_admin_rubrique_open_url(string $module_slug): string
 }
 
 /**
- * URL squelette Â« rubrique refermÃ©e Â» (sans paramÃ¨tre open). Conserve le template.
+ * URL squelette « rubrique refermée » (sans paramètre open). Conserve le template.
  */
 function em_wp_admin_rubrique_close_url(): string
 {
@@ -42,8 +42,8 @@ function em_wp_admin_rubrique_close_url(): string
 }
 
 /**
- * LibellÃ© rubrique squelette + nom de la section branchÃ©e au template courant.
- * Ex. Â« TOP-BAR MAYAMI Â». Repli sur le libellÃ© seul si aucune section/instance.
+ * Libellé rubrique squelette + nom de la section branchée au template courant.
+ * Ex. « TOP-BAR MAYAMI ». Repli sur le libellé seul si aucune section/instance.
  */
 function em_wp_admin_rubrique_skeleton_label_with_item(string $module_slug): string
 {
@@ -80,7 +80,7 @@ function em_wp_admin_rubrique_skeleton_label_with_item(string $module_slug): str
 }
 
 /**
- * LibellÃ©s des rubriques visibles pour un template (ordre sommaire).
+ * Libellés des rubriques visibles pour un template (ordre sommaire).
  *
  * @return string[]
  */
@@ -142,7 +142,7 @@ function em_wp_admin_template_site_rubriques_summary_parts(string $template_slug
 }
 
 /**
- * Liste des rubriques d'un template sous forme d'entrÃ©es cliquables (label + url).
+ * Liste des rubriques d'un template sous forme d'entrées cliquables (label + url).
  *
  * @return array<int, array{label:string,url:string}>
  */
@@ -184,8 +184,8 @@ function em_wp_admin_template_site_rubriques_entry_links(string $template_slug):
             continue;
         }
 
-        // Conserve le template de la carte : la page rubrique s'ouvrira en Ã©dition
-        // de CE template (Ã©vite le message Â« choisis d'abord un template Â»).
+        // Conserve le template de la carte : la page rubrique s'ouvrira en édition
+        // de CE template (évite le message « choisis d'abord un template »).
         $url = add_query_arg('em_wp_edit_template', $template_slug, $url);
 
         $links[] = [
@@ -198,7 +198,7 @@ function em_wp_admin_template_site_rubriques_entry_links(string $template_slug):
 }
 
 /**
- * RÃ©sumÃ© texte Â« Rubriques du site : TOP-BAR, HEADER, â€¦ Â».
+ * Résumé texte « Rubriques du site : TOP-BAR, HEADER, … ».
  */
 function em_wp_admin_template_active_rubriques_summary(string $template_slug): string
 {
@@ -208,7 +208,7 @@ function em_wp_admin_template_active_rubriques_summary(string $template_slug): s
 }
 
 /**
- * LibellÃ© affichÃ© d'une rubrique (TOP-BAR, HEADER, â€¦).
+ * Libellé affiché d'une rubrique (TOP-BAR, HEADER, …).
  */
 function em_wp_admin_rubrique_label(string $module_slug): string
 {
@@ -222,6 +222,6 @@ function em_wp_admin_rubrique_label(string $module_slug): string
 }
 
 /**
- * LibellÃ© neutre au singulier pour le squelette template (liste + wireframe + onglets).
+ * Libellé neutre au singulier pour le squelette template (liste + wireframe + onglets).
  */
 

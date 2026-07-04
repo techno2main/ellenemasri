@@ -64,7 +64,7 @@ function em_wp_top_bar_font_stack(string $slug): string
 
 function em_wp_top_bar_page_slug(): string
 {
-    return 'em-wp-top-bar';
+    return 'em-top-bar';
 }
 
 function em_wp_top_bar_form_option_key(): string
@@ -114,3 +114,4 @@ function em_wp_top_bar_catalog_default_options(): array
         'stream_icons_hidden'      => false,
     ];
 }
+

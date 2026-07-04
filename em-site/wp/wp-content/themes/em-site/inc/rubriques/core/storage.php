@@ -1,9 +1,9 @@
 <?php
 /**
- * Stockage V4 — noms d'options & accès items / instances.
+ * Stockage V4 � noms d'options & acc�s items / instances.
  *
- * Namespace dédié `em_wp_v4_*` pour NE PAS écraser les options v3 (rollback sûr).
- *   - Item     : un footer nommé = STRUCTURE (champs + positions) + CONTENU.
+ * Namespace d�di� `em_wp_v4_*` pour NE PAS �craser les options v3 (rollback s�r).
+ *   - Item     : un footer nomm� = STRUCTURE (champs + positions) + CONTENU.
  *                Forme : [ 'label', 'fields' => [...], 'content' => [...] ]
  *   - Instance : item choisi pour une rubrique dans un template.
  *
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Préfixe global des options V4.
+ * Pr�fixe global des options V4.
  */
 function em_wp_v4_option_prefix(): string
 {
@@ -31,7 +31,7 @@ function em_wp_v4_items_option_name(string $type_slug): string
 }
 
 /**
- * Nom d'option du CONTENU d'un item précis.
+ * Nom d'option du CONTENU d'un item pr�cis.
  */
 function em_wp_v4_item_option_name(string $type_slug, string $item_slug): string
 {
@@ -229,7 +229,7 @@ function em_wp_v4_get_items(string $type_slug): array
 }
 
 /**
- * Trie les items : ceux nommés « DEFAULT » d'abord, puis ordre alphabétique.
+ * Trie les items : ceux nomm�s � DEFAULT � d'abord, puis ordre alphab�tique.
  *
  * @param array<string, string> $items slug => label
  * @return array<string, string>
@@ -257,7 +257,7 @@ function em_wp_v4_save_items(string $type_slug, array $items): bool
 }
 
 /**
- * Génère une base de slug d'item lisible et distincte par rubrique.
+ * G�n�re une base de slug d'item lisible et distincte par rubrique.
  *
  * Exemple : type `top-bar` + label `MAYAMI` => `top-bar-mayami`.
  */
@@ -283,7 +283,7 @@ function em_wp_v4_item_slug_base(string $type_slug, string $label_or_slug): stri
 }
 
 /**
- * Préfixe de slug métier par rubrique (peut différer du slug technique).
+ * Pr�fixe de slug m�tier par rubrique (peut diff�rer du slug technique).
  */
 function em_wp_v4_item_slug_prefix(string $type_slug): string
 {
@@ -299,7 +299,7 @@ function em_wp_v4_item_slug_prefix(string $type_slug): string
 }
 
 /**
- * Génère un slug d'item unique pour un type (suffixe -2, -3... si déjà pris).
+ * G�n�re un slug d'item unique pour un type (suffixe -2, -3... si d�j� pris).
  */
 function em_wp_v4_unique_item_slug(string $type_slug, string $base_slug, string $exclude_slug = ''): string
 {
@@ -323,7 +323,7 @@ function em_wp_v4_unique_item_slug(string $type_slug, string $base_slug, string 
 }
 
 /**
- * Item complet (label/fields/content/layout), valeurs sûres si absent.
+ * Item complet (label/fields/content/layout), valeurs s�res si absent.
  *
  * @return array{label:string, fields:array<int,array<string,mixed>>, content:array<string,mixed>, layout:array{columns:int,align:array<int,string>}}
  */
@@ -333,8 +333,8 @@ function em_wp_v4_get_item(string $type_slug, string $item_slug): array
 
     $fields = em_wp_rubrique_normalize_fields(is_array($data['fields'] ?? null) ? $data['fields'] : []);
 
-    // Repli : un item sans structure démarre VIDE côté contenu (aucune ligne,
-    // aucun champ) ; seuls les champs d'apparence (globaux) du type sont conservés.
+    // Repli : un item sans structure d�marre VIDE c�t� contenu (aucune ligne,
+    // aucun champ) ; seuls les champs d'apparence (globaux) du type sont conserv�s.
     if ($fields === []) {
         [$starter_global] = em_wp_rubrique_split_global_fields(em_wp_rubrique_type_starter_fields($type_slug));
         $fields = $starter_global;
@@ -354,10 +354,10 @@ function em_wp_v4_get_item(string $type_slug, string $item_slug): array
 }
 
 /**
- * Normalise une ancre (#section) en identifiant HTML sûr, SANS le « # ».
+ * Normalise une ancre (#section) en identifiant HTML s�r, SANS le � # �.
  *
- * Accepte « #stream », « Stream », « mon-ancre »… et renvoie un slug réutilisable
- * à la fois comme attribut id="" de la section et comme cible d'un lien #ancre.
+ * Accepte � #stream �, � Stream �, � mon-ancre �� et renvoie un slug r�utilisable
+ * � la fois comme attribut id="" de la section et comme cible d'un lien #ancre.
  */
 function em_wp_v4_sanitize_anchor(string $anchor): string
 {
@@ -375,11 +375,11 @@ function em_wp_v4_get_item_layout(string $type_slug, string $item_slug): array
 }
 
 /**
- * Aligne les champs globaux (apparence) sur la définition du type.
+ * Aligne les champs globaux (apparence) sur la d�finition du type.
  *
- * Les champs globaux sont pilotés par le type (libellés, rôles, défauts, ordre) :
- * on les reprend systématiquement depuis le starter et on conserve les champs de
- * CONTENU de l'item. Les VALEURS restent dans `content` (indexées par clé).
+ * Les champs globaux sont pilot�s par le type (libell�s, r�les, d�fauts, ordre) :
+ * on les reprend syst�matiquement depuis le starter et on conserve les champs de
+ * CONTENU de l'item. Les VALEURS restent dans `content` (index�es par cl�).
  *
  * @param array<int, array<string, mixed>> $fields
  * @return array<int, array<string, mixed>>
@@ -396,7 +396,7 @@ function em_wp_v4_ensure_global_fields(string $type_slug, array $fields): array
 }
 
 /**
- * Supprime un item (sa liste + son option de données).
+ * Supprime un item (sa liste + son option de donn�es).
  */
 function em_wp_v4_delete_item(string $type_slug, string $item_slug): void
 {
@@ -427,7 +427,7 @@ function em_wp_v4_get_item_fields(string $type_slug, string $item_slug): array
 }
 
 /**
- * Contenu fusionné (défauts de la structure + valeurs enregistrées).
+ * Contenu fusionn� (d�fauts de la structure + valeurs enregistr�es).
  *
  * @return array<string, mixed>
  */
@@ -458,7 +458,7 @@ function em_wp_v4_save_item(string $type_slug, string $item_slug, array $item): 
 }
 
 /**
- * Met à jour uniquement la structure (champs) d'un item.
+ * Met � jour uniquement la structure (champs) d'un item.
  *
  * @param array<int, array<string, mixed>> $fields
  */
@@ -471,7 +471,7 @@ function em_wp_v4_save_item_fields(string $type_slug, string $item_slug, array $
 }
 
 /**
- * Met à jour uniquement le contenu d'un item.
+ * Met � jour uniquement le contenu d'un item.
  *
  * @param array<string, mixed> $content
  */
@@ -484,7 +484,7 @@ function em_wp_v4_save_item_content(string $type_slug, string $item_slug, array 
 }
 
 /**
- * Déclare un item dans la liste (et l'initialise avec la structure de départ).
+ * D�clare un item dans la liste (et l'initialise avec la structure de d�part).
  */
 function em_wp_v4_register_item(string $type_slug, string $item_slug, string $label): void
 {
@@ -501,8 +501,8 @@ function em_wp_v4_register_item(string $type_slug, string $item_slug, string $la
     if (get_option(em_wp_v4_item_option_name($type_slug, $item_slug), null) === null) {
         $fields = em_wp_rubrique_type_starter_fields($type_slug);
         // On ne fige QUE les valeurs des champs de contenu. Les valeurs globales
-        // (apparence) ne sont pas persistées à la création : elles suivent ainsi
-        // toujours les défauts courants (mutualisation), tant que l'utilisateur
+        // (apparence) ne sont pas persist�es � la cr�ation : elles suivent ainsi
+        // toujours les d�fauts courants (mutualisation), tant que l'utilisateur
         // ne les modifie pas explicitement via le builder.
         [, $content_fields] = em_wp_rubrique_split_global_fields($fields);
         em_wp_v4_save_item($type_slug, $item_slug, [
@@ -515,7 +515,7 @@ function em_wp_v4_register_item(string $type_slug, string $item_slug, string $la
 }
 
 /**
- * Renomme un item (label + slug) et migre ses références d'instance.
+ * Renomme un item (label + slug) et migre ses r�f�rences d'instance.
  *
  * @return array{item:string,label:string}
  */
@@ -615,7 +615,7 @@ function em_wp_v4_save_instance(string $template_slug, string $type_slug, array 
 }
 
 /**
- * Retourne le slug item par défaut d'un type ('' si aucun item).
+ * Retourne le slug item par d�faut d'un type ('' si aucun item).
  */
 function em_wp_v4_default_item_slug(string $type_slug): string
 {
@@ -629,11 +629,11 @@ function em_wp_v4_default_item_slug(string $type_slug): string
 }
 
 /**
- * Garantit des instances V4 cohérentes pour un template donné.
+ * Garantit des instances V4 coh�rentes pour un template donn�.
  *
- * Règles :
- * - si l'instance existe et pointe vers un item valide : inchangé
- * - sinon, on branche explicitement l'item par défaut résolu du type
+ * R�gles :
+ * - si l'instance existe et pointe vers un item valide : inchang�
+ * - sinon, on branche explicitement l'item par d�faut r�solu du type
  */
 function em_wp_v4_ensure_template_instances(string $template_slug): void
 {
@@ -702,9 +702,9 @@ function em_wp_v4_sync_all_templates_instances(): void
 add_action('admin_init', 'em_wp_v4_sync_all_templates_instances', 6);
 
 /**
- * Réconcilie une fois les slugs d'items hérités (slug != sanitize_title(label)).
+ * R�concilie une fois les slugs d'items h�rit�s (slug != sanitize_title(label)).
  *
- * Évite les cas historiques du type `default => MAYAMI` après déploiement de la
+ * �vite les cas historiques du type `default => MAYAMI` apr�s d�ploiement de la
  * migration de renommage de slug.
  */
 function em_wp_v4_maybe_reconcile_item_slugs(): void

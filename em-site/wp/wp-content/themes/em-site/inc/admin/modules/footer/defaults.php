@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_wp_footer_page_slug(): string
 {
-    return 'em-wp-footer';
+    return 'em-footer';
 }
 
 function em_wp_footer_form_option_key(): string
@@ -40,3 +40,4 @@ function em_wp_footer_catalog_default_options(): array
         'sticky_tiktok_link'  => '',
     ];
 }
+

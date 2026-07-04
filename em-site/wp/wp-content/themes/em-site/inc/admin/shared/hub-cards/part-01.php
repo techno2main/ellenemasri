@@ -1,6 +1,6 @@
 <?php
 /**
- * Composants UI partagÃ©s â€” grilles de cartes sommaire (Accueil, Catalogues, Templatesâ€¦).
+ * Composants UI partagés — grilles de cartes sommaire (Accueil, Catalogues, Templates…).
  *
  * @package em-wp
  */
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 require_once dirname(__DIR__) . '/hub-breadcrumb.php';
 
 /**
- * Enqueue CSS/JS communs aux pages sommaire Ã  cartes.
+ * Enqueue CSS/JS communs aux pages sommaire à cartes.
  */
 function em_wp_admin_hub_cards_enqueue_assets(): void
 {
@@ -38,7 +38,7 @@ function em_wp_admin_hub_cards_enqueue_assets(): void
 }
 
 /**
- * PrÃ©nom (ou repli) de l'admin connectÃ© pour les en-tÃªtes sommaire.
+ * Prénom (ou repli) de l'admin connecté pour les en-têtes sommaire.
  */
 function em_wp_admin_hub_greeting_name(): string
 {
@@ -64,7 +64,7 @@ function em_wp_admin_hub_greeting_name(): string
 }
 
 /**
- * Balises HTML autorisÃ©es dans l'intro sommaire (fil d'Ariane, nom templateâ€¦).
+ * Balises HTML autorisées dans l'intro sommaire (fil d'Ariane, nom template…).
  *
  * @return array<string, array<string, bool>>
  */
@@ -111,7 +111,7 @@ function em_wp_admin_hub_sticky_head_close(): void
 }
 
 /**
- * En-tÃªte sommaire partagÃ© (avatar + description + flÃ¨che).
+ * En-tête sommaire partagé (avatar + description + flèche).
  */
 function em_wp_admin_hub_render_sommaire_header(
     string $description = '',
@@ -194,7 +194,7 @@ function em_wp_admin_hub_render_sommaire_header(
 }
 
 /**
- * Rendu du titre d'une carte (icÃ´ne dashicons + libellÃ©).
+ * Rendu du titre d'une carte (icône dashicons + libellé).
  */
 function em_wp_admin_hub_render_card_title(string $title, string $icon_class, ?callable $after_icon = null, string $icon_color = ''): void
 {
@@ -218,7 +218,7 @@ function em_wp_admin_hub_render_card_title(string $title, string $icon_class, ?c
 }
 
 /**
- * Pastille compacte â€” nombre d'entrÃ©es (cartes sommaire).
+ * Pastille compacte — nombre d'entrées (cartes sommaire).
  */
 function em_wp_admin_hub_render_count_badge(int $count): void
 {
@@ -251,6 +251,6 @@ function em_wp_admin_hub_catalog_card_description_text(string $item_name, string
 }
 
 /**
- * Description carte catalogue â€” nom d'item en gras / majuscules.
+ * Description carte catalogue — nom d'item en gras / majuscules.
  */
 

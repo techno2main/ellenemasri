@@ -54,14 +54,11 @@ function em_wp_hero_admin_enqueue(string $hook_suffix): void
         return;
     }
 
-    // Tous les heros catalogue partagent le layout admin Mayami.
-    $asset_style_slug = 'mayami';
-
     em_wp_admin_enqueue_module_assets(
         'em-wp-hero-admin',
-        'assets/admin/css/modules/hero/' . $asset_style_slug . '/hero.css',
+        'assets/admin/css/modules/hero/hero.css',
         'em-wp-hero-admin',
-        'assets/admin/js/modules/hero/' . $asset_style_slug . '/hero.js',
+        'assets/admin/js/modules/hero/mayami/hero.js',
         ['wp-color-picker']
     );
 }

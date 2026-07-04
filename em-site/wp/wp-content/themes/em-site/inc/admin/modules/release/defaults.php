@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_wp_release_page_slug(): string
 {
-    return 'em-wp-releases';
+    return 'em-releases';
 }
 
 function em_wp_release_form_option_key(): string
@@ -49,3 +49,4 @@ function em_wp_release_catalog_default_options(): array
         'rows'            => [],
     ];
 }
+

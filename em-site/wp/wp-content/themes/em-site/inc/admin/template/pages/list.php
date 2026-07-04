@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_admin_template_parent_page_slug(): string
 {
-    return 'em-wp-template';
+    return 'em-template';
 }
 
 /**
@@ -38,7 +38,7 @@ function em_wp_admin_template_choice_admin_url(): string
  */
 function em_wp_admin_template_entry_page_slug(string $template_slug): string
 {
-    return 'em-wp-template-' . em_wp_template_sanitize_slug($template_slug);
+    return 'em-template-' . em_wp_template_sanitize_slug($template_slug);
 }
 
 /**
@@ -83,7 +83,7 @@ function em_wp_admin_template_reserved_menu_slugs(): array
 function em_wp_admin_template_slug_from_entry_page(string $page_slug): string
 {
     $page_slug = sanitize_key($page_slug);
-    $prefix = 'em-wp-template-';
+    $prefix = 'em-template-';
 
     if (!str_starts_with($page_slug, $prefix)) {
         return '';
@@ -115,7 +115,7 @@ function em_wp_admin_render_template_choice_page(): void
  */
 function em_wp_admin_templates_page_slug(): string
 {
-    return 'em-wp-templates';
+    return 'em-templates';
 }
 
 /**
@@ -274,7 +274,7 @@ function em_wp_admin_rubrique_set_editing_from_query(): void
 add_action('admin_init', 'em_wp_admin_rubrique_set_editing_from_query', 1);
 
 /**
- * Redirige l'ancien slug em-wp-template-choice vers le parent TEMPLATES.
+ * Redirige l'ancien slug em-template-choice vers le parent TEMPLATES.
  */
 function em_wp_admin_template_redirect_legacy_choice_slug(): void
 {
@@ -290,7 +290,7 @@ function em_wp_admin_template_redirect_legacy_choice_slug(): void
 
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-    if ($page_slug !== 'em-wp-template-choice') {
+    if ($page_slug !== 'em-template-choice') {
         return;
     }
 
@@ -440,3 +440,4 @@ add_action('admin_enqueue_scripts', 'em_wp_admin_templates_enqueue');
 require_once __DIR__ . '/render-templates-page.php';
 require_once __DIR__ . '/new-template-modals.php';
 require_once __DIR__ . '/create-page.php';
+

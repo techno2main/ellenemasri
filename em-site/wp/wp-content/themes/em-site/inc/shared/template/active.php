@@ -145,7 +145,7 @@ function em_wp_front_render_preview_close_bar(): void
     $label = (string) ($registry[$slug]['label'] ?? $slug);
     // Repli si le navigateur refuse window.close() (aperçu ouvert manuellement) :
     // on revient sur la page d'édition du template dans l'admin.
-    $close_url = admin_url('admin.php?page=em-wp-rubriques');
+    $close_url = admin_url('admin.php?page=em-rubriques');
     ?>
     <div id="em-wp-preview-bar" class="em-wp-preview-bar" role="status">
         <span class="em-wp-preview-bar__label">
@@ -412,3 +412,4 @@ function em_wp_get_editing_template_label(): string
 
     return $slug;
 }
+

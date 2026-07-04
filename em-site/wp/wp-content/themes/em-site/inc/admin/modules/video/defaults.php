@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_wp_video_page_slug(): string
 {
-    return 'em-wp-videos';
+    return 'em-videos';
 }
 
 function em_wp_video_form_option_key(): string
@@ -51,3 +51,4 @@ function em_wp_video_catalog_default_options(): array
         'cover_image'        => '',
     ];
 }
+

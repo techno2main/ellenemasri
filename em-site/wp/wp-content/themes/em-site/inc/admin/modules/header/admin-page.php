@@ -30,7 +30,7 @@ function em_wp_header_page_slug(): string
 
 {
 
-    return 'em-wp-header';
+    return 'em-header';
 
 }
 
@@ -185,5 +185,6 @@ function em_wp_header_render_admin_page(): void
     <?php
 
 }
+
 
 

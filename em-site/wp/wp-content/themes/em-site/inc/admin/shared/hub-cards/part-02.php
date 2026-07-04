@@ -71,7 +71,7 @@ function em_wp_admin_hub_render_action_link(
 }
 
 /**
- * Bouton renommer â€” Ã  gauche du titre de carte catalogue.
+ * Bouton renommer — à gauche du titre de carte catalogue.
  *
  * @param array<string, string> $attrs
  */
@@ -113,7 +113,7 @@ function em_wp_admin_hub_render_catalog_name_edit_button(
 }
 
 /**
- * Action Â« Ouvrir le catalogue Â» â€” libellÃ© visible + icÃ´ne dossier.
+ * Action « Ouvrir le catalogue » — libellé visible + icône dossier.
  */
 function em_wp_admin_hub_render_catalog_open_action(string $url, string $catalog_label = ''): void
 {
@@ -147,7 +147,7 @@ function em_wp_admin_hub_render_catalog_open_action(string $url, string $catalog
 }
 
 /**
- * Lien icÃ´ne Font Awesome compact (cartes hub â€” voir, Ã©diterâ€¦).
+ * Lien icône Font Awesome compact (cartes hub — voir, éditer…).
  */
 function em_wp_admin_hub_render_card_fa_action_link(
     string $url,
@@ -174,7 +174,7 @@ function em_wp_admin_hub_render_card_fa_action_link(
 }
 
 /**
- * Bouton icÃ´ne Font Awesome compact (panneau inline, toggleâ€¦).
+ * Bouton icône Font Awesome compact (panneau inline, toggle…).
  *
  * @param array<string, string> $attrs
  */
@@ -219,7 +219,7 @@ function em_wp_admin_hub_render_card_fa_action_button(
 }
 
 /**
- * Bouton secondaire dÃ©sactivÃ© (cartes Â« Nouveau â€¦ Â», prochaine Ã©tape).
+ * Bouton secondaire désactivé (cartes « Nouveau … », prochaine étape).
  */
 function em_wp_admin_hub_render_disabled_action(string $label, string $icon_class = 'dashicons dashicons-plus-alt2', bool $compact = false): void
 {
@@ -248,7 +248,7 @@ function em_wp_admin_hub_render_disabled_action(string $label, string $icon_clas
 }
 
 /**
- * Pastille liste des entrÃ©es catalogue cliquables (cartes hub CATALOGUES).
+ * Pastille liste des entrées catalogue cliquables (cartes hub CATALOGUES).
  *
  * @param array<int, array{label:string,url:string}> $entries
  */

@@ -129,5 +129,5 @@ function em_wp_v4_players_html(): string
         }
     }
 
-    return '<div class="emv4-section__players">' . $players . '</div>';
+    return '<div class="em-section__players">' . $players . '</div>';
 }

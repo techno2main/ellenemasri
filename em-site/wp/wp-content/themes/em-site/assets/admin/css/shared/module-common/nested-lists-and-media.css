@@ -1,0 +1,280 @@
+}
+
+.em-admin-media-preview.is-empty {
+    display: none;
+}
+
+/* Listes imbriquÃ©es (slides, plateformes streamâ€¦) */
+.em-admin-nested-list {
+    display: grid;
+    gap: 10px;
+}
+
+.em-admin-nested-item {
+    border: 1px solid #d0d5dd;
+    background: #fff;
+}
+
+.em-admin-nested-item summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 10px 14px;
+    background: #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.em-admin-nested-item summary:has(.em-admin-module__panel-edit-trigger) {
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+.em-admin-nested-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.em-admin-nested-item summary::after {
+    content: "\25B8";
+    font-size: 14px;
+    line-height: 1;
+    color: #6b7280;
+    margin-left: 8px;
+}
+
+.em-admin-nested-item summary:has(.em-admin-module__panel-edit-trigger)::after {
+    content: none;
+    display: none;
+}
+
+.em-admin-nested-item[open] summary::after {
+    content: "\25BE";
+}
+
+.em-admin-nested-item[open] summary:has(.em-admin-module__panel-edit-trigger)::after {
+    content: none;
+    display: none;
+}
+
+.em-admin-nested-item summary:has(.em-admin-module__panel-edit-trigger) > :not(.em-admin-module__panel-edit-trigger) {
+    flex: 1;
+    min-width: 0;
+}
+
+.em-admin-nested-item[open] summary .em-admin-module__panel-edit-trigger {
+    background: #4e080e;
+    color: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.em-admin-nested-item__body {
+    padding: 12px 14px;
+}
+
+.em-admin-nested-item__body.em-admin-panel-body--row {
+    align-items: end;
+}
+
+@media (max-width: 860px) {
+    .em-admin-module__hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .em-admin-field-row {
+        flex-wrap: wrap;
+    }
+
+    .em-admin-field-input--wide {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .em-admin-media-picker {
+        flex-wrap: wrap;
+    }
+}
+
+/* Boutons Enregistrer WordPress (submit_button) â€” thÃ¨me marron */
+.wp-core-ui .em-admin-module .button-primary,
+.wp-core-ui .em-hub-sommaire .button-primary {
+    border-color: #4e080e;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+    text-shadow: none;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.18) inset,
+        0 2px 8px rgba(78, 8, 14, 0.28);
+}
+
+.wp-core-ui .em-admin-module .button-primary:hover,
+.wp-core-ui .em-admin-module .button-primary:focus,
+.wp-core-ui .em-hub-sommaire .button-primary:hover,
+.wp-core-ui .em-hub-sommaire .button-primary:focus {
+    border-color: #3d060b;
+    background: linear-gradient(180deg, #651620 0%, #3d060b 100%);
+    color: #ffffff;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.14) inset,
+        0 4px 12px rgba(78, 8, 14, 0.34);
+}
+
+.wp-core-ui .em-admin-module .button-primary:focus,
+.wp-core-ui .em-hub-sommaire .button-primary:focus {
+    outline: 2px solid rgba(117, 24, 32, 0.35);
+    outline-offset: 1px;
+}
+
+.wp-core-ui .em-admin-module .button-primary:active,
+.wp-core-ui .em-hub-sommaire .button-primary:active {
+    border-color: #3d060b;
+    background: linear-gradient(180deg, #4e080e 0%, #3d060b 100%);
+    color: #ffffff;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+    transform: translateY(1px);
+}
+
+.wp-core-ui .em-admin-module .button-primary:disabled,
+.wp-core-ui .em-admin-module .button-primary[disabled],
+.wp-core-ui .em-hub-sommaire .button-primary:disabled,
+.wp-core-ui .em-hub-sommaire .button-primary[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-color: #a8a8a8;
+    background: #c4c4c4;
+    color: #ffffff;
+    text-shadow: none;
+    box-shadow: none;
+    transform: none;
+}
+
+.wp-core-ui .em-admin-module .button-primary:disabled:hover,
+.wp-core-ui .em-admin-module .button-primary:disabled:focus,
+.wp-core-ui .em-hub-sommaire .button-primary:disabled:hover,
+.wp-core-ui .em-hub-sommaire .button-primary:disabled:focus {
+    border-color: #a8a8a8;
+    background: #c4c4c4;
+    color: #ffffff;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Boutons media "Modifier" â€” thÃ¨me marron global */
+.wp-core-ui .em-admin-module .em-admin-media-button.button,
+.wp-core-ui .em-admin-module .em-admin-media-button.button-secondary {
+    border: 1px solid #751820;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #751820;
+    font-weight: 600;
+    box-shadow: none;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.wp-core-ui .em-admin-module .em-admin-media-button.button:hover,
+.wp-core-ui .em-admin-module .em-admin-media-button.button:focus {
+    border-color: #4e080e;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(78, 8, 14, 0.22);
+}
+
+/* Modale de confirmation admin */
+.em-admin-confirm {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.em-admin-confirm[hidden] {
+    display: none !important;
+}
+
+.em-admin-confirm__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(16, 4, 33, 0.62);
+}
+
+.em-admin-confirm__dialog {
+    position: relative;
+    width: min(460px, 100%);
+    background: #fff;
+    border: 1px solid #d8dee6;
+    border-radius: 10px;
+    box-shadow: 0 16px 48px rgba(16, 4, 33, 0.22);
+    overflow: hidden;
+}
+
+.em-admin-confirm__head {
+    padding: 14px 20px;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.em-admin-confirm__title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.em-admin-confirm__body {
+    padding: 20px 22px 0;
+}
+
+.em-admin-confirm__message {
+    margin: 0 0 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #1d2327;
+}
+
+.em-admin-confirm__acknowledge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 18px;
+    padding: 12px 14px;
+    border: 1px solid color-mix(in srgb, #751820 22%, #dcdcde);
+    border-radius: 8px;
+    background: color-mix(in srgb, #751820 5%, #ffffff);
+    cursor: pointer;
+}
+
+.em-admin-confirm__acknowledge[hidden] {
+    display: none !important;
+}
+
+.em-admin-confirm__ack-checkbox {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    accent-color: #751820;
+}
+
+.em-admin-confirm__ack-text {
+    font-size: 13px;
+    line-height: 1.45;
+    color: #4e080e;
+}
+
+.em-admin-confirm__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 0 22px 18px;
+}
+
+.em-admin-confirm__actions .button {
+    min-height: 36px;
+    padding: 0 16px;

@@ -1,0 +1,14 @@
+}
+
+.em-templates-admin .em-catalog-sommaire__section-title .em-hub__card-title-label {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.em-dashboard .em-hub__sticky-head + .notice {
+    margin-top: 16px;
+}
+
+.em-dashboard .em-hub__sticky-head + .em-hub__rows {
+    margin-top: 16px;
+}

@@ -41,9 +41,9 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_style(
         'em-wp-slider-admin',
-        $theme_uri . '/assets/admin/css/modules/slider/' . $view_slug . '/slider.css',
+        $theme_uri . '/assets/admin/css/modules/slider/slider.css',
         ['em-wp-admin-color-picker', 'em-wp-admin-module-common'],
-        em_wp_admin_asset_version('assets/admin/css/modules/slider/' . $view_slug . '/slider.css')
+        em_wp_admin_asset_version('assets/admin/css/modules/slider/slider.css')
     );
 
     wp_enqueue_script(

@@ -11,21 +11,31 @@ if (!defined('ABSPATH')) {
 
 function em_site_admin_templates_page_slug(): string
 {
-    return 'em-site-templates';
+    return function_exists('em_wp_admin_template_parent_page_slug')
+        ? em_wp_admin_template_parent_page_slug()
+        : 'em-template';
 }
 
 function em_site_admin_rubriques_page_slug(): string
 {
-    return 'em-site-rubriques';
+    return function_exists('em_wp_v4_page_slug')
+        ? em_wp_v4_page_slug()
+        : 'em-rubriques-overview';
 }
 
 function em_site_admin_vlb_page_slug(): string
 {
-    return 'em-site-vlb';
+    return function_exists('em_wp_admin_menu_vlb_parent_slug')
+        ? em_wp_admin_menu_vlb_parent_slug()
+        : 'mayami_visual_links_builder';
 }
 
 function em_site_admin_register_secondary_menus(): void
 {
+    if (function_exists('em_wp_admin_template_parent_page_slug') && function_exists('em_wp_v4_page_slug')) {
+        return;
+    }
+
     add_menu_page(
         __('Templates', 'em-wp'),
         __('TEMPLATES', 'em-wp'),

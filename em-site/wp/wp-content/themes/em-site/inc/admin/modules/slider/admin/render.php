@@ -91,7 +91,7 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
 {
     $slider_label = (string) ($context['label'] ?? 'Mayami');
     $style_slug = (string) ($context['style_slug'] ?? 'mayami');
-    $page_slug = (string) ($context['page_slug'] ?? 'em-wp-slider-mayami');
+    $page_slug = (string) ($context['page_slug'] ?? 'em-slider-mayami');
     ?>
     <div class="em-wp-slider-admin__setup">
         <?php em_wp_catalog_render_edit_section_open(__('Slider', 'em-wp'), $slider_label); ?>
