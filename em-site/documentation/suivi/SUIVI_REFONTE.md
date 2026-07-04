@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-03 13:00:35.
+3. Dernière mise à jour : 2026-07-04 14:41:24.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -28,6 +28,7 @@
 - [x] Étape 3 validée
 - [x] Étape 4 validée (contrôle fonctionnel clôturé pour la base zéro import)
 - [x] Étape 5 validée (arbo 100% clean prête pour imports V4)
+- [ ] Étape 6 en validation finale (admin importé + parité en cours de verrouillage)
 
 ## Index des étapes
 1. Étape 0 : ETAPE_00_CADRAGE.md
@@ -40,7 +41,7 @@
 
 ## Reprise de session
 1. Prompt de reprise figé : PROMPT_REPRISE_SESSION.md
-2. Prochaine étape prioritaire : rebranchement ADMIN à l'identique sur em-site, en lots progressifs avec validations à chaque étape.
+2. Prochaine étape prioritaire : lancer le flow GH du lot "admin importé" puis démarrer le refactor ADMIN (structure, arbo, back).
 
 ## Point de rollback GH (actif)
 1. Point figé demandé par l'utilisateur créé après nettoyage du fallback texte WordPress et maintien de la structure de thème.
@@ -53,14 +54,14 @@
 3. Contrôle runtime validé : front HTTP 200, navigation ancres opérationnelle, lot FRONT clôturable.
 
 ## Exécution en cours
-1. Le lot FRONT est validé fonctionnellement et visuellement par l'utilisateur.
-2. La phase ADMIN est démarrée : Lot A (cartographie source -> cible) ouvert et documenté.
-3. Lot B engagé : premier dashboard admin branché avec slug source `em-wp-dashboard` + style dédié.
-4. Alignement chrome/sidebar engagé : menu dashboard, flèche latérale, thème admin et styles shared hub importés depuis la source.
-5. Menu latéral rapproché de la source : entrées `TEMPLATES`, `RUBRIQUES`, `VLB` ajoutées, labels `MEDIAS` et `PARAMÈTRES` harmonisés.
-6. Vérifications en cours : lint PHP OK sur les points d'entrée admin ajoutés, front HTTP 200 conservé.
-7. Exécution imposée : progression par lots courts, sans refonte structurelle, avec vérification technique et validation fonctionnelle à chaque lot.
-8. Objectif de phase : retrouver un ADMIN strictement équivalent à la source em-wp, tout en conservant l'architecture em-site déjà stabilisée.
+1. Le lot FRONT reste validé fonctionnellement et visuellement par l'utilisateur.
+2. Import ADMIN étendu réalisé depuis la source : `inc/admin`, `inc/shared`, `inc/rubriques`, `inc/vlb`, `visual-links-builder`, `assets/admin` et dépendances CSS requises.
+3. Branchement runtime consolidé : chargement des dépendances admin dans `is_admin()` + chargement global des composants login/client-access nécessaires aux parcours hors `wp-admin`.
+4. Parité accès et branding renforcée : alias comptes admin source/nouveaux (`admin-tyson`, `admin-ellene`), ajustement avatars, restauration page login source.
+5. Liaison BACK -> FRONT rétablie : le rendu front respecte désormais le squelette et la visibilité template définis en back-office (dont cas About/Contact masqués).
+6. Parité page Apparence restaurée : métadonnées du thème et screenshot importés (correction de la carte thème vide/Anonymous).
+7. Validation infra faite : le back actif sur `localhost:8290` écrit bien dans la nouvelle base `em_site_bdd` (préfixe `wpem_`).
+8. Demande utilisateur en cours : flow GH complet du lot admin importé, puis ouverture du refactor ADMIN (structure, arbo, back).
 
 ## Plan phase ADMIN (itératif et sécurisé)
 1. Lot A - Inventaire et cartographie

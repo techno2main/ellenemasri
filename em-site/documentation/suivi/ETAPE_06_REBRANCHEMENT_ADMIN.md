@@ -1,8 +1,8 @@
 # Étape 6 - Rebranchement ADMIN à l'identique
 
 ## Statut
-- 🟢 Démarrée
-- Horodatage (Paris) : 2026-07-03 13:00:35
+- 🟡 En validation finale pré-flow GH
+- Horodatage (Paris) : 2026-07-04 14:41:24
 - Objectif : retrouver un back-office em-site strictement identique à em-wp, sans régression front.
 
 ## Contraintes validées
@@ -90,3 +90,30 @@
 1. Remplacer les placeholders `TEMPLATES/RUBRIQUES/VLB` par les écrans source réels (Lot C).
 2. Aligner le rendu dashboard au pixel plus strictement (structure + composants hub source).
 3. Vérifier en session wp-admin authentifiée source vs cible écran par écran.
+
+## Lots C à E - Avancement réalisé
+
+### Lot C - Rubriques / templates
+1. Écrans source réels rebranchés pour templates/rubriques et VLB.
+2. Import des dépendances fonctionnelles `inc/rubriques`, `inc/shared`, `inc/vlb` et `visual-links-builder`.
+3. Intégration des styles nécessaires au fonctionnement admin Rubriques V4 (dont dépendances CSS front techniques).
+
+### Lot D - Modules admin
+1. Import du socle modules admin (top-bar, hero/header, stream, social, video, release, cta, contacts/footer) avec pages/settings/partials.
+2. Réactivation des assets admin modules CSS/JS et des composants shared nécessaires.
+3. Harmonisation progressive de la structure cible avec la source, sans refonte front.
+
+### Lot E - AJAX, permissions, onboarding
+1. Rebranchement des accès clients/admin et compatibilité des nouveaux logins avec alias source (`admin-tyson`, `admin-ellene`).
+2. Réactivation des écrans login/logout source (`inc/core/login.php`, `inc/core/login-off.php`) et des assets associés.
+3. Ajustement branding avatar/logo admin pour parité visuelle (fallback site icon si ressource absente).
+
+## Correctifs de parité appliqués en fin d'import
+1. BACK/FRONT : correction orchestrateur de rendu pour faire respecter en front la visibilité/squelette définis en back-office.
+2. Apparence : restauration des métadonnées thème et du screenshot pour supprimer la carte vide/"Anonymous".
+3. Environnement : confirmation que le site actif em-site (`localhost:8290`) écrit dans la nouvelle base `em_site_bdd`.
+
+## Vérifications et état de clôture
+1. Aucune erreur détectée sur les fichiers clés modifiés lors des contrôles ciblés.
+2. Le stack legacy em-wp (`8190`) a été arrêté sans suppression des conteneurs pour isoler la recette em-site.
+3. Étape suivante validée utilisateur : lancer flow GH de tout le lot "admin importé", puis démarrer le refactor admin (structure, arbo, back).

@@ -1,0 +1,299 @@
+/*
+ * V4 front — COMPOSANTS riches (réutilisables dans n'importe quelle rubrique).
+ *
+ * Chaque composant reprend le look du site. Un composant = un type de champ
+ * autonome (markup généré par le moteur V4 + style ici).
+ *
+ * --- Carte plateforme (champ « Bloc Plateforme ») ---
+ * Rendu identique aux cartes de la section Stream/Social du site.
+ * Markup : em_wp_rubrique_platform_card_html() (.em-rubrique__platform-card*).
+ */
+
+.em-rubrique__platform-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px 24px;
+    border: 2px solid #100421;
+    border-radius: 16px;
+    background: #fff6ea;
+    color: #100421;
+    /* Contenu TOUJOURS aligné à gauche, quel que soit l'alignement de la
+       colonne hôte (sinon « Listen On » suit center/right de la colonne). */
+    text-align: left;
+    text-decoration: none;
+    box-shadow: 6px 6px 0 #100421;
+    transition: transform .12s ease;
+}
+
+.em-rubrique__platform-card:hover {
+    transform: translate(-2px, -4px);
+    color: #100421;
+}
+
+.em-rubrique__platform-card-body {
+    min-width: 0;
+}
+
+.em-rubrique__platform-card-label {
+    display: block;
+    margin: 0 0 4px;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+.em-rubrique__platform-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.em-rubrique__platform-card-icon {
+    font-size: .9em;
+}
+
+.em-rubrique__platform-card-arrow {
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 24px;
+    transition: transform .12s ease;
+}
+
+.em-rubrique__platform-card:hover .em-rubrique__platform-card-arrow {
+    transform: translateX(4px);
+}
+
+/*
+ * --- Carte réseau (champ « Bloc Réseau ») ---
+ * Rendu identique aux cartes de la section Social du site : fond coloré par
+ * marque (inline, via le rendu PHP), badge, icône + nom, @pseudo, ombre néon.
+ * Markup : em_wp_rubrique_network_card_html() (.em-rubrique__network-card*).
+ */
+.em-rubrique__network-card {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    border: 2px solid #fff6ea;
+    border-radius: 16px;
+    color: #fff6ea;
+    text-align: left;
+    text-decoration: none;
+    transition: transform .12s ease;
+}
+
+.em-rubrique__network-card:hover {
+    transform: translateY(-4px);
+    color: #fff6ea;
+}
+
+.em-rubrique__network-card-badge {
+    display: block;
+    margin: 0;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 11px;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    opacity: .85;
+}
+
+.em-rubrique__network-card-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 4px 0 0;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    line-height: 1.1;
+}
+
+.em-rubrique__network-card-account {
+    display: block;
+    margin: 8px 0 0;
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 12px;
+    letter-spacing: normal;
+    text-transform: none;
+    opacity: .85;
+}
+
+/*
+ * --- Badge animé (champ « Badge animé ») ---
+ * Pilule identique au badge du hero mayami (bordure + ombre = couleur du texte),
+ * point « aqua » et animation wiggle. Couleurs surchargées en inline via le rendu.
+ * Markup : em_wp_rubrique_animated_badge_html() (.em-rubrique__badge*).
+ */
+@keyframes em-rubrique-badge-wiggle {
+    0%,
+    100% {
+        transform: rotate(-1.5deg);
+    }
+
+    50% {
+        transform: rotate(1.5deg);
+    }
+}
+
+@keyframes em-rubrique-badge-pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.06);
+    }
+}
+
+@keyframes em-rubrique-badge-bounce {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.em-rubrique__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    border: 2px solid var(--em-rubrique-badge-ink, #100421);
+    border-radius: 999px;
+    background: var(--em-rubrique-badge-bg, #f4d03f);
+    color: var(--em-rubrique-badge-ink, #100421);
+    font-family: "Archivo Black", Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    box-shadow: 3px 3px 0 var(--em-rubrique-badge-ink, #100421);
+    transform-origin: center center;
+}
+
+/* --- Formes --- */
+.em-rubrique__badge--shape-pill {
+    border-radius: 999px;
+}
+
+.em-rubrique__badge--shape-square {
+    border-radius: var(--em-rubrique-badge-radius, 6px);
+}
+
+/* Triangle : clip-path → la bordure/ombre CSS ne suit pas la découpe, on passe
+   donc l'ombre portée en filter:drop-shadow et on ajoute de la marge haute pour
+   loger le texte dans la partie large du triangle. */
+.em-rubrique__badge--shape-triangle {
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 18px 24px 9px;
+    clip-path: polygon(50% 0, 0 100%, 100% 100%);
+    filter: drop-shadow(3px 3px 0 var(--em-rubrique-badge-ink, #100421));
+}
+
+/* --- Animations --- */
+.em-rubrique__badge--anim-wiggle {
+    animation: em-rubrique-badge-wiggle 4s ease-in-out infinite;
+}
+
+.em-rubrique__badge--anim-pulse {
+    animation: em-rubrique-badge-pulse 2.4s ease-in-out infinite;
+}
+
+.em-rubrique__badge--anim-bounce {
+    animation: em-rubrique-badge-bounce 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .em-rubrique__badge--anim-wiggle,
+    .em-rubrique__badge--anim-pulse,
+    .em-rubrique__badge--anim-bounce {
+        animation: none;
+    }
+}
+
+.em-rubrique__badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--em-rubrique-badge-dot, #1fcdd5);
+    flex-shrink: 0;
+}
+
+/*
+ * --- Players plateformes (système d'ouverture du site réel) ---
+ * Rendus en bas de la section par em_wp_v4_players_html() ; togglés par
+ * assets/front/js/modules/stream/stream.js (classe .is-active). Styles repris de
+ * la section Stream legacy (stream.css) pour un rendu identique en V4.
+ */
+.emv4-section__players {
+    width: min(1100px, 92vw);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.em-stream__player {
+    display: none;
+    margin-top: 24px;
+    overflow: hidden;
+    border: 2px solid #100421;
+    border-radius: 16px;
+    background: #fff6ea;
+    padding: 0;
+    box-shadow: 6px 6px 0 #100421;
+}
+
+.em-stream__player iframe {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    border: 0;
+    vertical-align: top;
+}
+
+.platform-player-mobile,
+.platform-player-desktop {
+    display: none;
+}
+
+.platform-player-mobile.is-active,
+.platform-player-desktop.is-active {
+    display: block;
+}
+
+@media (max-width: 639px) {
+    .platform-player-desktop,
+    .platform-player-desktop.is-active {
+        display: none !important;
+    }
+
+    .platform-player-mobile.is-active {
+        display: block;
+    }
+}
+
+@media (min-width: 640px) {
+    .platform-player-mobile,
+    .platform-player-mobile.is-active {
+        display: none !important;
+    }
+
+    .platform-player-desktop.is-active {
+        display: block;
+    }
+}
