@@ -1,0 +1,31 @@
+# ETAPE 10 - REFACTOR PHP ADMIN
+
+Date de mise à jour : 2026-07-04 16:52:33
+
+## État
+
+⚪ **À lancer en dernier**
+
+## Périmètre prévu
+
+- Rationalisation des includes admin PHP (pages, modules, shared).
+- Stabilisation des slugs/fonctions helper et suppression des duplications historiques.
+- Nettoyage final des textes/mojibake résiduels côté PHP.
+- Consolidation des contrats entre PHP (render) et JS (comportement).
+
+## Pré-requis
+
+- ETAPE 08 finalisée (URLs admin stables).
+- ETAPE 09 finalisée (console/behaviour stabilisés).
+
+## Risques
+
+- Étape la plus volumineuse : risque de régression transverse (menus, formulaires, navigation, enregistrement).
+- Nécessite une vérification fonctionnelle écran par écran après chaque lot.
+
+## Stratégie
+
+- Avancer par lots atomiques (un sous-domaine admin a la fois).
+- Vérifier syntaxe + comportement après chaque lot.
+- Mettre à jour la documentation de suivi en temps réel avant clôture.
+
