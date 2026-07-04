@@ -1,6 +1,6 @@
 # ETAPE 07 - REFACTOR CSS ADMIN
 
-Date de mise à jour : 2026-07-04 16:59:13
+Date de mise à jour : 2026-07-04 17:04:54
 
 ## État
 
@@ -25,5 +25,5 @@ Date de mise à jour : 2026-07-04 16:59:13
 
 ## Étape suivante
 
-- Poursuivre ETAPE 08 (URLs admin), puis ETAPE 09 (JS admin).
+- Poursuivre ETAPE 08 (URL/erreurs admin), puis ETAPE 09 (refacto JS admin à venir).
 
