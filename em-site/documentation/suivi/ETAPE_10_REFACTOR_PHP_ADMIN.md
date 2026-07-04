@@ -1,6 +1,6 @@
 # ETAPE 10 - REFACTOR PHP ADMIN
 
-Date de mise à jour : 2026-07-04 16:52:33
+Date de mise à jour : 2026-07-04 17:03:46
 
 ## État
 
@@ -15,7 +15,7 @@ Date de mise à jour : 2026-07-04 16:52:33
 
 ## Pré-requis
 
-- ETAPE 08 finalisée (URLs admin stables).
+- ETAPE 08 finalisée (refacto dossier JS admin stabilisé).
 - ETAPE 09 finalisée (console/behaviour stabilisés).
 
 ## Risques
