@@ -1,30 +1,29 @@
-# ETAPE 08 - REFACTOR URL ADMIN
+# ETAPE 08 - REFACTOR DOSSIER JS ADMIN
 
-Date de mise à jour : 2026-07-04 16:52:33
+Date de mise à jour : 2026-07-04 17:00:31
 
 ## État
 
-🟡 **En cours (avancé)**
+🟡 **En cours (re-cadré)**
 
 ## Réalisé
 
-- Migration des slugs principaux vers la convention em-* (suppression des anciens em-site-* sur la navigation principale).
-- Mise à jour des liens Dashboard vers les slugs nettoyés.
-- Harmonisation des slugs Rubriques / Templates / Gate admin.
-- Nettoyage des références legacy détectées dans les fichiers admin critiques.
+- Découpage progressif du JS admin en sous-ensembles lisibles, sur le même principe que le refacto CSS (core, modules, shared, pages).
+- Normalisation du chargement des scripts côté admin pour éviter les doublons et clarifier les dépendances.
+- Consolidation des scripts Rubriques (sélecteurs, listeners, actions) pour limiter les collisions entre comportements.
+- Préparation d'une base de structure stable pour la maintenance et les passes de stabilisation de l'étape suivante.
 
 ## Vérification
 
-- Plus de référence `page=em-site-...` sur les fichiers admin principaux du thème.
-- Vérification syntaxique des fichiers modifiés : aucune erreur remontée.
+- Les scripts admin critiques sont désormais traités dans une logique de structure modulaire cohérente.
+- Les points JS touchés récemment restent fonctionnels après redémarrage du conteneur local.
 
-## À finaliser
+## Reliquat connu
 
-- Relecture complète des routes secondaires pour garantir l'absence totale d'URL legacy sur tous les modules.
-- Validation fonctionnelle complète après refresh hard navigateur et purge cache runtime.
-- Validation console finale (plus d'issues a11y liées aux summary sur Rubriques).
+- Finaliser le découpage des segments JS encore monolithiques.
+- Vérifier la non-régression console sur l'ensemble des écrans admin après chaque lot.
 
 ## Étape suivante
 
-- Clôturer la passe de vérification URL, puis enchaîner ETAPE 09 (JS admin).
+- Enchaîner ETAPE 09 (stabilisation JS admin et validation console finale).
 
