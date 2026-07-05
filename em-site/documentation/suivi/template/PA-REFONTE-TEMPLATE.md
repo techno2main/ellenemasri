@@ -1,7 +1,7 @@
 # PA - Refonte Gestion Template
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 18:52:15
+Horodatage précis (Paris): 2026-07-05 19:04:58
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
@@ -698,3 +698,4 @@ Critères de sortie Phase 7:
 - Règle UX affinée: en Unique imposé (TOP-BAR/FOOTER), le titre "Items disponibles pour ..." est masqué.
 - HEADER: le sélecteur "Principe d'affichage" (Unique/Multi) est affiché avant la zone "Composition du HEADER".
 - Correction confusion HEADER: le mode Unique/Multi est désormais indépendant de la composition HERO/SLIDER (plus de bascule automatique).
+- Fix UI couleur (builder Rubriques): compat variables CSS `--em-wp-color-swatch` / `--em-color-swatch` pour éviter les swatches gris et rétablir la mise à jour live dans la modale.

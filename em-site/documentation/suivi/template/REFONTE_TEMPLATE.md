@@ -1,7 +1,7 @@
 # Refonte template unique avec multi-items
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 18:52:15
+Horodatage précis (Paris): 2026-07-05 19:04:58
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
 
@@ -204,3 +204,4 @@ Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) 
 - Ajustement d'affichage: pour les rubriques en Unique imposé (TOP-BAR/FOOTER), ne pas afficher "Items disponibles pour ...".
 - HEADER: priorité d'UI mise en place avec "Principe d'affichage" (Unique/Multi) affiché avant "Composition du HEADER".
 - Correction de logique: le choix Unique/Multi et le choix de composition HERO/SLIDER sont séparés et persistés indépendamment.
+- Correctif JS/CSS: la pastille couleur (fond) se met à jour en direct et n'apparaît plus grise après duplication d'item.

@@ -89,6 +89,7 @@
 
                 if (swatch) {
                     swatch.style.setProperty('--em-wp-color-swatch', color || '#cccccc');
+                    swatch.style.setProperty('--em-color-swatch', color || '#cccccc');
                     swatch.style.setProperty('--em-template-swatch', color || '#cccccc');
                 }
 
@@ -109,6 +110,7 @@
             var triggerSwatch = trigger.querySelector('.em-wp-admin-color-trigger__swatch');
             if (triggerSwatch) {
                 triggerSwatch.style.setProperty('--em-wp-color-swatch', color || '#cccccc');
+                triggerSwatch.style.setProperty('--em-color-swatch', color || '#cccccc');
             }
         }
 
@@ -184,6 +186,7 @@
 
         if (previewSwatch) {
             previewSwatch.style.setProperty('--em-wp-color-swatch', color || '#2d1454');
+            previewSwatch.style.setProperty('--em-color-swatch', color || '#2d1454');
         }
     }
 

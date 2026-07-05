@@ -23,7 +23,7 @@
     height: 22px;
     border-radius: 999px;
     border: 2px solid rgba(0, 0, 0, 0.08);
-    background: var(--em-color-swatch, #cccccc);
+    background: var(--em-wp-color-swatch, var(--em-color-swatch, #cccccc));
     flex-shrink: 0;
 }
 
@@ -124,7 +124,7 @@
     height: 42px;
     border-radius: 999px;
     border: 2px solid rgba(0, 0, 0, 0.08);
-    background: var(--em-color-swatch, #2d1454);
+    background: var(--em-wp-color-swatch, var(--em-color-swatch, #2d1454));
     flex-shrink: 0;
 }
 
@@ -235,7 +235,7 @@ body.em-admin-color-modal-open {
     height: 22px;
     border-radius: 999px;
     border: 2px solid rgba(0, 0, 0, 0.08);
-    background: var(--em-color-swatch, var(--em-template-swatch, #cccccc));
+    background: var(--em-wp-color-swatch, var(--em-color-swatch, var(--em-template-swatch, #cccccc)));
     flex-shrink: 0;
 }
 
