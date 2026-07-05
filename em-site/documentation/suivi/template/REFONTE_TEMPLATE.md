@@ -1,7 +1,7 @@
 # Refonte template unique avec multi-items
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 19:25:07
+Horodatage précis (Paris): 2026-07-05 22:12:15
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
 
@@ -211,3 +211,17 @@ Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) 
 - STREAM Multi (front): rendu réellement multi-items via `multi_items` persisté et résolu côté helpers, même si le registre d'items n'est pas chargé côté front.
 - STREAM Multi (UI front): contrôles prev/next intégrés au bloc (plus de bandeau séparé), avec style harmonisé à la section active.
 - STREAM Multi (UI front, itération): fond du conteneur de navigation rendu transparent pour épouser la couleur de l'item affiché.
+- STREAM Multi (navigation): un lien d'ancre ciblé (`#stream-<item-slug>`) active désormais l'item visé puis positionne la vue sur la section STREAM.
+- TOP-BAR (rendu texte lien): correction du champ `mayami_my_miami` pour éviter l'affichage JSON brut quand un lien est défini.
+- Navigation interne front: correction de l'interception des ancres pour éviter que le handler global annule les ancres STREAM item sans délégation au module STREAM.
+- Picker admin non-stream (ex: VIDEO): correction de la mise à jour des radios en mode Multi (sélection persistée + feedback visuel cohérent).
+- Harmonisation de la logique Unique/Multi hors STREAM: mode Multi sans renommage de rubrique par item et sans badge "en ligne" (réservé au mode Unique).
+- Modale de confirmation admin: formulation mise à jour pour le modèle template unique (référence à la rubrique, sans "Mayami").
+- Multi non-stream aligné sur STREAM manuel: plus de sélection radio "active" ni de confirmation "section branchée" quand le mode est Multi.
+- Harmonisation Multi globale: contrôles "items inclus" + "premier item" + "transition" appliqués de manière cohérente à STREAM et aux rubriques non single-only (ex: VIDEO).
+- Harmonisation back/front effective: VIDEO dispose maintenant du rendu Multi front complet (navigation + transition + hash ciblé), et la disponibilité du mode Multi est alignée côté admin/backend sur les rubriques réellement branchées front (STREAM + VIDEO).
+- VIDEO row description: support complet du type "Texte enrichi" côté front (HTML + lien), avec fallback sur l'ancien champ legacy.
+- VIDEO description: clé front résolue dynamiquement à partir des métadonnées de champ (row/col/type), pour rester stable même si la clé technique change.
+- VIDEO description: style du champ (taille/police/couleur/alignement) désormais appliqué depuis la définition du champ (`options.style`) en front.
+- Régression corrigée: le mode Multi est de nouveau disponible pour toutes les rubriques sauf TOP-BAR et FOOTER (imposées en Unique uniquement).
+- RELEASE front: mode Multi branché (items multiples, navigation, auto/manual, hash ciblé) avec récupération de la section rétablie après correction du fallback items.

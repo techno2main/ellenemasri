@@ -165,6 +165,22 @@ function em_site_enqueue_front_assets(): void
 	);
 
 	wp_enqueue_script(
+		'em-site-video',
+		$base_uri . '/assets/front/js/modules/video/index.js',
+		['em-site-theme'],
+		em_site_asset_version('assets/front/js/modules/video/index.js'),
+		true
+	);
+
+	wp_enqueue_script(
+		'em-site-release',
+		$base_uri . '/assets/front/js/modules/release/index.js',
+		['em-site-theme'],
+		em_site_asset_version('assets/front/js/modules/release/index.js'),
+		true
+	);
+
+	wp_enqueue_script(
 		'em-site-slider-media',
 		$base_uri . '/assets/front/js/modules/slider/media.js',
 		[],

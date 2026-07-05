@@ -165,6 +165,51 @@
 			return -1;
 		}
 
+		function findInstanceIndexBySlug(itemSlug) {
+			if (!itemSlug) {
+				return -1;
+			}
+
+			for (var i = 0; i < instances.length; i++) {
+				if ((instances[i].getAttribute('data-stream-item') || '') === itemSlug) {
+					return i;
+				}
+			}
+
+			return -1;
+		}
+
+		function handleStreamHash(rawHash, behavior) {
+			rawHash = rawHash || window.location.hash || '';
+			if (!rawHash) {
+				return false;
+			}
+
+			var hash = rawHash.replace(/^#/, '').trim().toLowerCase();
+			if (!hash) {
+				return false;
+			}
+
+			if (hash === 'stream') {
+				scrollToTarget(streamSection, behavior || 'smooth');
+				return true;
+			}
+
+			if (hash.indexOf('stream-') !== 0) {
+				return false;
+			}
+
+			var targetIndex = findInstanceIndexBySlug(hash);
+			if (targetIndex < 0) {
+				return false;
+			}
+
+			showInstance(targetIndex);
+			startAutoTransition();
+			scrollToTarget(streamSection, behavior || 'smooth');
+			return true;
+		}
+
 		streamSection.addEventListener('click', function (event) {
 			var link = event.target.closest('.platform-card');
 			if (!link) {
@@ -270,7 +315,16 @@
 			}
 		});
 
+		window.addEventListener('hashchange', function () {
+			handleStreamHash('', 'smooth');
+		});
+
+		window.emWpHandleStreamHash = function (hash, behavior) {
+			return handleStreamHash(hash || '', behavior || 'smooth');
+		};
+
 		showInstance(0);
+		handleStreamHash('', 'auto');
 		startAutoTransition();
 	});
 })();

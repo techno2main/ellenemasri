@@ -15,8 +15,8 @@ function em_wp_render_about(): void
 {
 	$item = em_site_about_item();
 	$content = is_array($item['content'] ?? null) ? $item['content'] : [];
-	$textarea = (string) ($content['textarea'] ?? '');
-	if (trim($textarea) === '') {
+	$textarea_html = em_site_front_text_field_html($item, $content, ['textarea'], '');
+	if (trim(wp_strip_all_tags($textarea_html)) === '') {
 		return;
 	}
 
@@ -40,7 +40,7 @@ function em_wp_render_about(): void
 		<footer id="em-rubrique-about-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--about" style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
 			<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--justify" data-em-col="1" data-em-has-button="0">
-					<div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea"><?php echo wp_kses_post($textarea); ?></div>
+					<div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea"><?php echo wp_kses_post($textarea_html); ?></div>
 				</div>
 			</div>
 		</footer>

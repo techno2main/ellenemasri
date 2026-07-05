@@ -126,7 +126,23 @@
         event.preventDefault();
         event.stopPropagation();
 
-        scrollToHash(hash, 'smooth');
+        if (scrollToHash(hash, 'smooth')) {
+            return;
+        }
+
+        if (typeof window.emWpHandleStreamHash === 'function' && window.emWpHandleStreamHash(hash, 'smooth')) {
+            return;
+        }
+
+        if (typeof window.emWpHandleVideoHash === 'function' && window.emWpHandleVideoHash(hash, 'smooth')) {
+            return;
+        }
+
+        if (typeof window.emWpHandleReleaseHash === 'function' && window.emWpHandleReleaseHash(hash, 'smooth')) {
+            return;
+        }
+
+        window.location.hash = hash;
     }
 
     window.emWpGetStickyScrollOffset = getStickyScrollOffset;
@@ -140,8 +156,9 @@
         if (window.location.hash) {
             var initialHash = window.location.hash;
             window.requestAnimationFrame(function () {
-                scrollToHash(initialHash, 'auto');
-                cleanUrlWithoutHash();
+                if (scrollToHash(initialHash, 'auto')) {
+                    cleanUrlWithoutHash();
+                }
             });
         }
 
@@ -151,8 +168,14 @@
             }
 
             var hash = window.location.hash;
-            scrollToHash(hash, 'auto');
-            cleanUrlWithoutHash();
+            if (scrollToHash(hash, 'auto')) {
+                cleanUrlWithoutHash();
+                return;
+            }
+
+            if (typeof window.emWpHandleReleaseHash === 'function' && window.emWpHandleReleaseHash(hash, 'auto')) {
+                cleanUrlWithoutHash();
+            }
         });
     });
 })();

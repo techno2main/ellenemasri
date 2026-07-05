@@ -30,9 +30,142 @@ function em_site_release_item_option_name(string $template_slug): string
 
 function em_site_release_item(): array
 {
-	$template_slug = em_site_release_active_template();
-	$option_name = em_site_release_item_option_name($template_slug);
-	$item = get_option($option_name, []);
+	$config = em_site_release_resolved_config();
+	$item_slug = (string) ($config['item_slugs'][0] ?? '');
+	$item = $item_slug !== '' ? em_site_release_item_by_slug($item_slug) : [];
+
+	return is_array($item) ? $item : [];
+}
+
+/**
+ * @return array{display_mode:string,transition_mode:string,transition_timer:int,item_slugs:array<int,string>,hidden_items:array<int,string>,first_item:string}
+ */
+function em_site_release_resolved_config(): array
+{
+	$template = em_site_release_active_template();
+	$instance = get_option('em_wp_v4_instance_' . $template . '_release', []);
+	$instance = is_array($instance) ? $instance : [];
+
+	$items = function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items('release') : [];
+	$item_slugs = array_map('strval', array_keys($items));
+
+	if ($item_slugs === []) {
+		$raw_items = get_option('em_wp_v4_items_release', []);
+		if (is_array($raw_items)) {
+			foreach ($raw_items as $raw_slug => $_label) {
+				$raw_slug = sanitize_key((string) $raw_slug);
+				if ($raw_slug !== '') {
+					$item_slugs[] = $raw_slug;
+				}
+			}
+		}
+	}
+
+	$item_slugs = array_values(array_unique(array_filter($item_slugs)));
+
+	$selected = sanitize_key((string) ($instance['item'] ?? ''));
+	if ($selected !== '' && !in_array($selected, $item_slugs, true)) {
+		$item_slugs[] = $selected;
+	}
+	if ($selected === '' || !in_array($selected, $item_slugs, true)) {
+		$selected = sanitize_key((string) str_replace('em_wp_v4_item_release_', '', em_site_release_item_option_name($template)));
+	}
+	if ($selected !== '' && !in_array($selected, $item_slugs, true)) {
+		$item_slugs[] = $selected;
+	}
+	if ($item_slugs === []) {
+		$item_slugs[] = 'release-' . $template;
+	}
+	if ($selected === '' || !in_array($selected, $item_slugs, true)) {
+		$selected = (string) ($item_slugs[0] ?? '');
+	}
+
+	$display_mode = sanitize_key((string) ($instance['display_mode'] ?? 'single'));
+	if (!in_array($display_mode, ['single', 'multi'], true)) {
+		$display_mode = 'single';
+	}
+
+	$transition_mode = sanitize_key((string) ($instance['transition_mode'] ?? 'manual'));
+	if (!in_array($transition_mode, ['manual', 'auto'], true)) {
+		$transition_mode = 'manual';
+	}
+
+	$transition_timer = (int) ($instance['transition_timer'] ?? 6);
+	if ($transition_timer < 2 || $transition_timer > 120) {
+		$transition_timer = 6;
+	}
+
+	$instance_multi_items = [];
+	if (is_array($instance['multi_items'] ?? null)) {
+		foreach ((array) $instance['multi_items'] as $slug) {
+			$slug = sanitize_key((string) $slug);
+			if ($slug !== '' && in_array($slug, $item_slugs, true)) {
+				$instance_multi_items[] = $slug;
+			}
+		}
+		$instance_multi_items = array_values(array_unique($instance_multi_items));
+	}
+
+	$hidden_items = [];
+	if (is_array($instance['hidden_items'] ?? null)) {
+		foreach ((array) $instance['hidden_items'] as $hidden_slug) {
+			$hidden_slug = sanitize_key((string) $hidden_slug);
+			if ($hidden_slug !== '' && in_array($hidden_slug, $item_slugs, true)) {
+				$hidden_items[] = $hidden_slug;
+			}
+		}
+		$hidden_items = array_values(array_unique($hidden_items));
+	}
+
+	$first_item = sanitize_key((string) ($instance['first_item'] ?? $selected));
+
+	if ($display_mode === 'single') {
+		return [
+			'display_mode' => 'single',
+			'transition_mode' => $transition_mode,
+			'transition_timer' => $transition_timer,
+			'item_slugs' => $selected !== '' ? [$selected] : [],
+			'hidden_items' => [],
+			'first_item' => $selected,
+		];
+	}
+
+	$visible_items = $instance_multi_items !== []
+		? array_values(array_intersect($instance_multi_items, $item_slugs))
+		: array_values(array_diff($item_slugs, $hidden_items));
+	if ($visible_items === []) {
+		$hidden_items = [];
+		$visible_items = $item_slugs;
+	}
+
+	if ($first_item === '' || !in_array($first_item, $visible_items, true)) {
+		$first_item = (string) ($visible_items[0] ?? '');
+	}
+
+	$ordered = $visible_items;
+	if ($first_item !== '') {
+		$ordered = array_values(array_diff($visible_items, [$first_item]));
+		array_unshift($ordered, $first_item);
+	}
+
+	return [
+		'display_mode' => 'multi',
+		'transition_mode' => $transition_mode,
+		'transition_timer' => $transition_timer,
+		'item_slugs' => $ordered,
+		'hidden_items' => $hidden_items,
+		'first_item' => $first_item,
+	];
+}
+
+function em_site_release_item_by_slug(string $slug): array
+{
+	$slug = sanitize_key($slug);
+	if ($slug === '') {
+		return [];
+	}
+
+	$item = get_option('em_wp_v4_item_release_' . $slug, []);
 
 	return is_array($item) ? $item : [];
 }

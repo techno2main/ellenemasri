@@ -1,5 +1,72 @@
 /* Rubrique VIDEO : règles spécifiques (façade vidéo + player). */
 
+.em-section--video {
+	position: relative;
+}
+
+.em-video-switch {
+	position: absolute;
+	top: 16px;
+	left: 50%;
+	transform: translateX(-50%);
+	color: var(--em-video-switch-color, currentColor);
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 2px 4px;
+	border-radius: 999px;
+	background: transparent;
+	box-shadow: none;
+}
+
+.em-video-switch__btn {
+	width: 28px;
+	height: 28px;
+	border: 1px solid currentColor;
+	border-radius: 999px;
+	background: transparent;
+	color: currentColor;
+	opacity: .82;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.em-video-switch__btn:hover {
+	opacity: 1;
+}
+
+.em-video-switch__dots {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.em-video-switch__dot {
+	width: 10px;
+	height: 10px;
+	padding: 0;
+	border: 0;
+	border-radius: 999px;
+	color: inherit;
+	background: currentColor;
+	opacity: .45;
+	cursor: pointer;
+}
+
+.em-video-switch__dot.is-active {
+	opacity: 1;
+}
+
+.em-video-instance {
+	transition: opacity .2s ease;
+}
+
+.em-video-instance:not(.is-active) {
+	opacity: 0;
+}
+
 .em-section--video .em-rubrique__field--03_watch,
 .em-section--video .em-rubrique__field--official_video {
 	font-family: "Archivo Black", Arial, sans-serif;

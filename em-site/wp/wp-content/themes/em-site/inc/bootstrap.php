@@ -13,6 +13,7 @@ require_once __DIR__ . '/core/assets.php';
 require_once __DIR__ . '/core/login.php';
 require_once __DIR__ . '/core/login-off.php';
 require_once __DIR__ . '/admin/client-access.php';
+require_once __DIR__ . '/front/rendering/fields.php';
 require_once __DIR__ . '/front/modules/top-bar/render.php';
 require_once __DIR__ . '/front/modules/header/render.php';
 require_once __DIR__ . '/front/modules/stream/render.php';

@@ -68,8 +68,11 @@ function em_wp_render_stream(): void
 
 		<?php foreach ($entries as $entry_index => $entry) :
 			$item_slug = (string) $entry['slug'];
+			$item = (array) $entry['item'];
 			$content = (array) $entry['content'];
 			$cards = (array) $entry['cards'];
+			$listen_html = em_site_front_text_field_html($item, $content, ['01_listen'], '01 / LISTEN');
+			$available_html = em_site_front_text_field_html($item, $content, ['avalaible_everywhere'], 'Available Everywhere');
 			$arrow_down = em_site_stream_decode_json_field((string) ($content['arrow_down'] ?? ''));
 			$arrow_up = em_site_stream_decode_json_field((string) ($content['arrow_up'] ?? ''));
 			$stream_logo = em_site_stream_decode_json_field((string) ($content['stream_logo'] ?? ''));
@@ -114,7 +117,7 @@ function em_wp_render_stream(): void
 
 			<div class="em-rubrique__row" data-em-row="2" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-					<p class="em-rubrique__field em-rubrique__field--01_listen"><?php echo esc_html((string) ($content['01_listen'] ?? '01 / LISTEN')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--01_listen"><?php echo wp_kses_post($listen_html); ?></p>
 				</div>
 			</div>
 
@@ -131,7 +134,7 @@ function em_wp_render_stream(): void
 					<?php if ($spacer_height > 0) : ?><span class="em-rubrique__spacer" aria-hidden="true" style="display:block;height:<?php echo esc_attr((string) $spacer_height); ?>px;"></span><?php endif; ?>
 				</div>
 				<div class="em-rubrique__col em-rubrique__col--right" data-em-col="2" data-em-has-button="0">
-					<p class="em-rubrique__field em-rubrique__field--avalaible_everywhere" style="font-size:15px;"><?php echo esc_html((string) ($content['avalaible_everywhere'] ?? 'Available Everywhere')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--avalaible_everywhere" style="font-size:15px;"><?php echo wp_kses_post($available_html); ?></p>
 				</div>
 			</div>
 

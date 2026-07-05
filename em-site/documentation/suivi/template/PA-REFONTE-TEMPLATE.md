@@ -1,10 +1,16 @@
 # PA - Refonte Gestion Template
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 19:25:07
+Horodatage précis (Paris): 2026-07-05 22:12:15
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
+
+Mises à jour de session:
+
+- Correction d'une régression admin: mode Multi rétabli pour toutes les rubriques sauf TOP-BAR et FOOTER (restent imposées en Unique).
+- RELEASE front: branchement du mode Multi (instances, navigation prev/next, dots, timer auto/manuelle, hash d'item).
+- RELEASE front: correction de disparition de section via fallback robuste de résolution des items (`em_wp_v4_get_items` + store brut + slug sélectionné + slug par défaut).
 
 Règle de suivi: toujours inclure un horodatage précis temps réel (date + heure Paris) à chaque mise à jour.
 
@@ -705,3 +711,26 @@ Critères de sortie Phase 7:
 - Branchement front Multi STREAM: persistance explicite de la liste d'items visibles (`multi_items`) + fallback lecture option pour garantir le rendu multi-items en front.
 - Ajustement front STREAM: contrôles prev/next intégrés visuellement au bloc STREAM actif (overlay), suppression de l'effet de bandeau séparé.
 - Ajustement front STREAM (itération UI): capsule de contrôle passée en fond transparent pour se fondre dans la couleur de chaque item.
+- Correctif navigation ancre STREAM multi-items: support hash ciblé (`#stream-<item-slug>`) pour activer l'item correspondant puis scroller sur la section STREAM.
+- Correctif TOP-BAR: le champ texte `mayami_my_miami` accepte désormais le format texte+lien (JSON) sans afficher l'objet JSON brut en front.
+- Correctif chaînage ancres front: le handler global (`theme.js`) délègue maintenant correctement les hashes STREAM item (`#stream-...`) au module STREAM au lieu de bloquer le scroll ciblé.
+- Correctif admin picker (VIDEO et rubriques non-stream): sélection radio en mode Multi resynchronisée (état `current`, badge et titre section), sans masquer les radios hors STREAM.
+- Harmonisation Multi non-stream (VIDEO/SOCIAL/RELEASE/...):
+	- en mode Multi, plus de confirmation "brancher" bloquante sur clic radio,
+	- badge "Item en ligne actuellement" réservé au mode Unique,
+	- le titre rubrique du squelette reste générique (ex: `VIDEO`) et ne bascule plus en `VIDEO MAYAMI`.
+- Modale de confirmation: wording aligné template unique (cible = rubrique, plus de mention du label template legacy type "Mayami").
+- Harmonisation stricte Multi (hors STREAM) avec STREAM manuel: radios de section active masquées en mode Multi et aucun flux "Section branchée" en Multi.
+- Correctif d'harmonisation complet Multi (STREAM + non-STREAM):
+	- cases à cocher "items inclus" restaurées en mode Multi,
+	- choix "premier item" restauré en mode Multi,
+	- bloc "Transition Multi" (manuel/auto + timer) disponible sur VIDEO et autres rubriques multi,
+	- persistance backend des champs multi généralisée aux rubriques non single-only.
+- Harmonisation back/front consolidée:
+	- front VIDEO branché en vrai mode Multi (items multiples, nav prev/next+dots, auto/manual, hash `#video-<slug>`),
+	- runtime JS VIDEO enqueued + styles de switch ajoutés,
+	- handler global d'ancres délègue aussi VIDEO,
+	- cadrage fonctionnel stabilisé: mode Multi disponible officiellement sur STREAM + VIDEO (rubriques non branchées front forcées en Unique pour éviter divergence back/front).
+- Correctif front VIDEO (champ texte enrichi): rendu row description compatible avec stockage `textarea`/JSON (`text` + `link`) + fallback legacy, avec affichage HTML sécurisé.
+- Renforcement anti-régression type de champ: résolution dynamique de la clé front VIDEO par position (`row=4`,`col=1`) + type réel (`text`/`textarea`) au lieu d'un key figé.
+- Correctif style typographique dynamique: application front de `options.style` (taille/police/couleur/alignement) pour le champ texte VIDEO résolu dynamiquement.

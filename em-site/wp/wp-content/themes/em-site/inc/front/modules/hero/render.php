@@ -32,11 +32,19 @@ function em_site_header_hero_button(array $content, string $key, string $label):
 
 function em_site_render_header_hero_html(array $content, string $item_slug, bool $embed_slider = false): string
 {
+	$item = ['fields' => []];
+	if (function_exists('em_site_header_item')) {
+		$maybe_item = em_site_header_item();
+		if (is_array($maybe_item)) {
+			$item = $maybe_item;
+		}
+	}
+
 	$arrow_down = em_site_header_decode_json_field((string) ($content['arrow_down'] ?? ''));
 	$badge = em_site_header_decode_json_field((string) ($content['animated_badge'] ?? ''));
 	$image_meta = em_site_header_decode_json_field((string) ($content['image'] ?? ''));
-	$textarea = (string) ($content['textarea'] ?? '');
-	$text_2 = (string) ($content['text_2'] ?? '');
+	$textarea_html = em_site_front_text_field_html($item, $content, ['textarea'], '');
+	$text2_html = em_site_front_text_field_html($item, $content, ['text_2'], '');
 	$stream = em_site_header_hero_button($content, 'stream', 'STREAM');
 	$watch = em_site_header_hero_button($content, 'watch', 'WATCH');
 
@@ -80,7 +88,7 @@ function em_site_render_header_hero_html(array $content, string $item_slug, bool
 
 		<div class="em-rubrique__row" data-em-row="3" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 			<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-				<?php if ($text_2 !== '') : ?><p class="em-rubrique__field em-rubrique__field--text_2"><?php echo esc_html($text_2); ?></p><?php endif; ?>
+				<?php if (trim(wp_strip_all_tags($text2_html)) !== '') : ?><p class="em-rubrique__field em-rubrique__field--text_2"><?php echo wp_kses_post($text2_html); ?></p><?php endif; ?>
 			</div>
 		</div>
 
@@ -94,7 +102,7 @@ function em_site_render_header_hero_html(array $content, string $item_slug, bool
 
 		<div class="em-rubrique__row" data-em-row="5" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 			<div class="em-rubrique__col em-rubrique__col--justify" data-em-col="1" data-em-has-button="0">
-				<?php if (trim($textarea) !== '') : ?><div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea" style="font-size:17px;"><?php echo wp_kses_post($textarea); ?></div><?php endif; ?>
+				<?php if (trim(wp_strip_all_tags($textarea_html)) !== '') : ?><div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea" style="font-size:17px;"><?php echo wp_kses_post($textarea_html); ?></div><?php endif; ?>
 			</div>
 		</div>
 

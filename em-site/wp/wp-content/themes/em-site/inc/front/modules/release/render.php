@@ -13,50 +13,95 @@ require_once __DIR__ . '/helpers.php';
 
 function em_wp_render_release(): void
 {
-	$item = em_site_release_item();
-	$content = is_array($item['content'] ?? null) ? $item['content'] : [];
-	if ($content === []) {
+	$config = em_site_release_resolved_config();
+	$item_slugs = (array) ($config['item_slugs'] ?? []);
+	$entries = [];
+
+	foreach ($item_slugs as $slug) {
+		$slug = sanitize_key((string) $slug);
+		if ($slug === '') {
+			continue;
+		}
+
+		$item = em_site_release_item_by_slug($slug);
+		$content = is_array($item['content'] ?? null) ? $item['content'] : [];
+		if ($content === []) {
+			continue;
+		}
+
+		$cover_meta = em_site_release_decode_json_field((string) ($content['cover'] ?? ''));
+		$cover_id = (int) ($cover_meta['id'] ?? 0);
+		$cover_src = $cover_id > 0 ? (string) wp_get_attachment_image_url($cover_id, 'full') : '';
+		if ($cover_src === '') {
+			continue;
+		}
+
+		$entries[] = [
+			'slug' => $slug,
+			'item' => $item,
+			'content' => $content,
+			'cover_meta' => $cover_meta,
+			'cover_src' => $cover_src,
+		];
+	}
+
+	if ($entries === []) {
 		return;
 	}
 
-	$cover_meta = em_site_release_decode_json_field((string) ($content['cover'] ?? ''));
-	$cover_id = (int) ($cover_meta['id'] ?? 0);
-	$cover_src = $cover_id > 0 ? (string) wp_get_attachment_image_url($cover_id, 'full') : '';
-	if ($cover_src === '') {
-		return;
+	$is_multi = (string) ($config['display_mode'] ?? 'single') === 'multi' && count($entries) > 1;
+	$transition_mode = $is_multi ? (string) ($config['transition_mode'] ?? 'manual') : 'manual';
+	$transition_timer = $is_multi ? (int) ($config['transition_timer'] ?? 6) : 6;
+	if ($transition_timer < 2 || $transition_timer > 120) {
+		$transition_timer = 6;
 	}
-
-	$item_option_name = em_site_release_item_option_name(em_site_release_active_template());
-	$item_slug = str_replace('em_wp_v4_item_release_', '', $item_option_name);
-
-	$arrow_down = em_site_release_decode_json_field((string) ($content['arrow_down'] ?? ''));
-	$arrow_up = em_site_release_decode_json_field((string) ($content['arrow_up'] ?? ''));
-	$title_meta = em_site_release_decode_json_field((string) ($content['text_text_6'] ?? ''));
-	$title_left = (string) ($title_meta['text'] ?? 'The');
-	$title_right = (string) ($title_meta['text2'] ?? 'Credits');
-	$title_left_style = is_array($title_meta['style'] ?? null) ? $title_meta['style'] : [];
-	$title_right_style = is_array($title_meta['style2'] ?? null) ? $title_meta['style2'] : [];
-	$title_left_size = (int) ($title_left_style['size'] ?? 55);
-	$title_right_size = (int) ($title_right_style['size'] ?? 55);
-	$title_right_color = (string) ($title_right_style['color'] ?? '#db2778');
-
-	$credit_rows = em_site_release_collect_credit_rows($content);
-
-	$style_vars = [
-		'--em-rubrique-bg:' . (string) ($content['bg_color'] ?? '#fff4d6'),
-		'--em-rubrique-text:' . (string) ($content['text_color'] ?? '#000000'),
-		'--em-rubrique-link:' . (string) ($content['link_color'] ?? '#000000'),
-		'--em-rubrique-link-hover:' . (string) ($content['link_hover_color'] ?? '#000000'),
-		'--em-rubrique-underline:' . (!empty($content['link_underline']) ? 'underline' : 'none'),
-		'--em-rubrique-pt:' . ((int) ($content['space_top'] ?? 40)) . 'px',
-		'--em-rubrique-pb:' . ((int) ($content['space_bottom'] ?? 40)) . 'px',
-		'--em-rubrique-pl:' . ((int) ($content['space_left'] ?? 180)) . 'px',
-		'--em-rubrique-pr:' . ((int) ($content['space_right'] ?? 180)) . 'px',
-		'--em-rubrique-font:' . em_site_release_font_stack((string) ($content['font_family'] ?? 'archivo_black')),
-	];
 	?>
-	<section id="release" class="em-section em-section--release" data-em-rubrique="release">
-		<footer id="em-rubrique-release-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--release" style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
+	<section id="release" class="em-section em-section--release" data-em-rubrique="release" data-em-release-mode="<?php echo esc_attr($is_multi ? 'multi' : 'single'); ?>" data-em-release-transition="<?php echo esc_attr($transition_mode); ?>" data-em-release-timer="<?php echo esc_attr((string) $transition_timer); ?>">
+		<?php if ($is_multi) : ?>
+			<nav class="em-release-switch" aria-label="<?php esc_attr_e('Navigation Release', 'em-wp'); ?>">
+				<button type="button" class="em-release-switch__btn" data-em-release-prev aria-label="<?php esc_attr_e('Item précédent', 'em-wp'); ?>">&larr;</button>
+				<div class="em-release-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Release', 'em-wp'); ?>">
+					<?php foreach ($entries as $idx => $entry) : ?>
+						<button type="button" class="em-release-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-release-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-wp'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
+					<?php endforeach; ?>
+				</div>
+				<button type="button" class="em-release-switch__btn" data-em-release-next aria-label="<?php esc_attr_e('Item suivant', 'em-wp'); ?>">&rarr;</button>
+			</nav>
+		<?php endif; ?>
+
+		<?php foreach ($entries as $entry_index => $entry) :
+			$item_slug = (string) $entry['slug'];
+			$item = (array) $entry['item'];
+			$content = (array) $entry['content'];
+			$cover_meta = (array) $entry['cover_meta'];
+			$cover_src = (string) $entry['cover_src'];
+			$arrow_down = em_site_release_decode_json_field((string) ($content['arrow_down'] ?? ''));
+			$arrow_up = em_site_release_decode_json_field((string) ($content['arrow_up'] ?? ''));
+			$title_meta = em_site_release_decode_json_field((string) ($content['text_text_6'] ?? ''));
+			$title_left = (string) ($title_meta['text'] ?? 'The');
+			$title_right = (string) ($title_meta['text2'] ?? 'Credits');
+			$title_left_style = is_array($title_meta['style'] ?? null) ? $title_meta['style'] : [];
+			$title_right_style = is_array($title_meta['style2'] ?? null) ? $title_meta['style2'] : [];
+			$title_left_size = (int) ($title_left_style['size'] ?? 55);
+			$title_right_size = (int) ($title_right_style['size'] ?? 55);
+			$title_right_color = (string) ($title_right_style['color'] ?? '#db2778');
+			$text_html = em_site_front_text_field_html($item, $content, ['text'], '04 / Release');
+			$credit_rows = em_site_release_collect_credit_rows($content);
+
+			$style_vars = [
+				'--em-rubrique-bg:' . (string) ($content['bg_color'] ?? '#fff4d6'),
+				'--em-rubrique-text:' . (string) ($content['text_color'] ?? '#000000'),
+				'--em-rubrique-link:' . (string) ($content['link_color'] ?? '#000000'),
+				'--em-rubrique-link-hover:' . (string) ($content['link_hover_color'] ?? '#000000'),
+				'--em-rubrique-underline:' . (!empty($content['link_underline']) ? 'underline' : 'none'),
+				'--em-rubrique-pt:' . ((int) ($content['space_top'] ?? 40)) . 'px',
+				'--em-rubrique-pb:' . ((int) ($content['space_bottom'] ?? 40)) . 'px',
+				'--em-rubrique-pl:' . ((int) ($content['space_left'] ?? 180)) . 'px',
+				'--em-rubrique-pr:' . ((int) ($content['space_right'] ?? 180)) . 'px',
+				'--em-rubrique-font:' . em_site_release_font_stack((string) ($content['font_family'] ?? 'archivo_black')),
+			];
+			?>
+		<footer id="em-rubrique-release-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--release em-release-instance<?php echo $entry_index === 0 ? ' is-active' : ''; ?>" data-release-item="<?php echo esc_attr($item_slug); ?>" <?php echo $entry_index === 0 ? '' : 'hidden'; ?> style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
 			<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(2,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--center" data-em-col="1" data-em-has-button="0">
 					<span class="em-rubrique__imgwrap"><?php if (!empty($cover_meta['tape'])) : ?><span class="em-rubrique__tape em-rubrique__tape--left" aria-hidden="true"></span><?php endif; ?><img class="em-rubrique__image" src="<?php echo esc_url($cover_src); ?>" alt="Mayami, My Miami Cover"></span>
@@ -65,7 +110,7 @@ function em_wp_render_release(): void
 					<?php if (!empty($arrow_down['link'])) : ?><a class="em-rubrique__link em-rubrique__link--media em-rubrique__arrow-link" href="<?php echo esc_url((string) $arrow_down['link']); ?>"><span class="em-rubrique__arrow em-rubrique__arrow--down" aria-hidden="true">&darr;</span></a><?php endif; ?>
 					<?php if (!empty($arrow_up['link'])) : ?><a class="em-rubrique__link em-rubrique__link--media em-rubrique__arrow-link" href="<?php echo esc_url((string) $arrow_up['link']); ?>"><span class="em-rubrique__arrow em-rubrique__arrow--up" aria-hidden="true">&uarr;</span></a><?php endif; ?>
 					<?php if ((int) ($content['sep_blank'] ?? 0) > 0) : ?><span class="em-rubrique__spacer" aria-hidden="true" style="display:block;height:<?php echo esc_attr((string) ((int) $content['sep_blank'])); ?>px;"></span><?php endif; ?>
-					<p class="em-rubrique__field em-rubrique__field--text"><?php echo esc_html((string) ($content['text'] ?? '04 / Release')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--text"><?php echo wp_kses_post($text_html); ?></p>
 					<?php if ((int) ($content['sep_blank_2'] ?? 0) > 0) : ?><span class="em-rubrique__spacer" aria-hidden="true" style="display:block;height:<?php echo esc_attr((string) ((int) $content['sep_blank_2'])); ?>px;"></span><?php endif; ?>
 
 					<div class="em-rubrique__texttext"><p class="em-rubrique__field" style="font-size:clamp(28px, calc(28px + (<?php echo esc_attr((string) $title_left_size); ?> - 28) * ((100vw - 360px) / 740)), <?php echo esc_attr((string) $title_left_size); ?>px);"><?php echo esc_html($title_left); ?></p><p class="em-rubrique__field" style="font-size:clamp(28px, calc(28px + (<?php echo esc_attr((string) $title_right_size); ?> - 28) * ((100vw - 360px) / 740)), <?php echo esc_attr((string) $title_right_size); ?>px);color:<?php echo esc_attr($title_right_color); ?>;"><?php echo esc_html($title_right); ?></p></div>
@@ -82,6 +127,7 @@ function em_wp_render_release(): void
 				</div>
 			</div>
 		</footer>
+		<?php endforeach; ?>
 	</section>
 	<?php
 }

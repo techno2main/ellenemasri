@@ -50,8 +50,6 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
     .em-wp-instance-picker[data-display-mode="multi"] .em-wp-instance-picker__single-radio { display:none; }
     .em-wp-instance-picker[data-display-mode="single"] .em-wp-instance-picker__multi-include,
     .em-wp-instance-picker[data-display-mode="single"] .em-wp-instance-picker__multi-first { display:none !important; }
-    .em-wp-instance-picker[data-display-mode="multi"][data-transition-mode="manual"] .em-wp-instance-picker__multi-include,
-    .em-wp-instance-picker[data-display-mode="multi"][data-transition-mode="manual"] .em-wp-instance-picker__multi-first { display:none !important; }
     .em-wp-instance-picker { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; }
     .em-wp-instance-picker__row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 10px; background:#fff; border:1px solid #e6d9dc; border-radius:6px; }
     .em-wp-instance-picker__row:has(input:checked) { border-color:#751820; box-shadow:inset 0 0 0 1px #751820; }
@@ -76,7 +74,7 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
         var ERR = '<?php echo esc_js(__('Échec de l’enregistrement.', 'em-wp')); ?>';
         var BADGE = '<?php echo esc_js(__('Item en ligne actuellement', 'em-wp')); ?>';
         var ASK_TITLE = '<?php echo esc_js(__('Changer la section branchée', 'em-wp')); ?>';
-        var ASK_MSG = '<?php echo esc_js(__('Brancher « %1$s » à %2$s ?', 'em-wp')); ?>';
+        var ASK_MSG = '<?php echo esc_js(__('Définir « %1$s » comme section active de %2$s ?', 'em-wp')); ?>';
         var ASK_LIVE = '<?php echo esc_js(__('⚠ Ce template est EN LIGNE (LIVE) : le changement sera visible immédiatement sur le site public. ', 'em-wp')); ?>';
         var ASK_OK = '<?php echo esc_js(__('Confirmer le changement', 'em-wp')); ?>';
         var ASK_CANCEL = '<?php echo esc_js(__('Annuler', 'em-wp')); ?>';
@@ -115,8 +113,22 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             setLeadingText(zone, composite);
         }
 
+        function reflectSectionBaseTitle(list) {
+            if (!list) { return; }
+            var type = list.getAttribute('data-type') || '';
+            var baseLabel = (list.getAttribute('data-module-label') || '').trim();
+            if (!type || !baseLabel) { return; }
+
+            var row = document.querySelector('.em-wp-rubriques-admin__list-item[data-module-slug="' + type + '"] .em-wp-rubriques-admin__list-label');
+            setLeadingText(row, baseLabel);
+
+            var zone = document.querySelector('.em-wp-admin-landing-map [data-module-slug="' + type + '"]:not([data-header-part]) .em-wp-admin-landing-map__zone-label');
+            setLeadingText(zone, baseLabel);
+        }
+
         function updateSingleBadge(list, itemSlug) {
             list.querySelectorAll('.em-wp-instance-picker__badge').forEach(function (b) { b.remove(); });
+            if ((list.getAttribute('data-display-mode') || 'single') !== 'single') { return; }
             if (!itemSlug) { return; }
             var input = list.querySelector('.em-wp-instance-picker__single-radio[value="' + itemSlug + '"]')
                 || list.querySelector('input[type="radio"][value="' + itemSlug + '"]');
@@ -167,26 +179,25 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
         }
 
         function syncStreamMultiControls(list, mode) {
-            if (!isStreamList(list)) { return; }
             var root = list.closest('.em-wp-rubriques-admin__picker-inner');
             if (!root) { return; }
-            var multiWrap = root.querySelector('[data-em-stream-multi-options]');
-            var timerWrap = root.querySelector('[data-em-stream-timer-wrap]');
-            var transitionAuto = root.querySelector('input[name^="em-wp-stream-transition-"][value="auto"]');
-            var transitionManual = root.querySelector('input[name^="em-wp-stream-transition-"][value="manual"]');
+            var type = list.getAttribute('data-type') || '';
+            var multiWrap = root.querySelector('[data-em-multi-options]');
+            var timerWrap = root.querySelector('[data-em-multi-timer-wrap]');
+            var transitionAuto = root.querySelector('input[name="em-wp-transition-' + type + '"][value="auto"]');
+            var transitionManual = root.querySelector('input[name="em-wp-transition-' + type + '"][value="manual"]');
             var isMulti = mode === 'multi';
             var isAuto = !!(transitionAuto && transitionAuto.checked);
-            var isMultiAuto = isMulti && isAuto;
 
             if (multiWrap) { multiWrap.hidden = !isMulti; }
             list.querySelectorAll('.em-wp-instance-picker__single-radio').forEach(function (el) { el.hidden = isMulti; });
             list.querySelectorAll('.em-wp-instance-picker__multi-include, .em-wp-instance-picker__multi-first').forEach(function (el) {
-                el.hidden = !isMultiAuto;
-                el.disabled = !isMultiAuto;
+                el.hidden = !isMulti;
+                el.disabled = !isMulti;
             });
 
             if (timerWrap) {
-                timerWrap.hidden = !isMultiAuto;
+                timerWrap.hidden = !(isMulti && isAuto);
             }
 
             if (transitionManual) { transitionManual.disabled = !isMulti; }
@@ -197,10 +208,11 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
                 return;
             }
 
-            if (!isMultiAuto) {
-                clearStreamBadges(list);
+            clearStreamBadges(list);
+            if (isStreamList(list)) {
                 reflectSectionTitle(list, list.getAttribute('data-current') || list.getAttribute('data-first-item') || '');
-                return;
+            } else {
+                reflectSectionBaseTitle(list);
             }
 
             var visible = streamVisibleItems(list);
@@ -228,7 +240,9 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             if (firstItem) {
                 list.setAttribute('data-first-item', firstItem);
                 updateStreamMultiBadges(list, firstItem);
-                reflectSectionTitle(list, firstItem);
+                if (isStreamList(list)) {
+                    reflectSectionTitle(list, firstItem);
+                }
             }
         }
 
@@ -304,12 +318,12 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
         }
 
         function appendStreamPayload(body, list, mode) {
-            if (!isStreamList(list)) { return; }
             var root = list.closest('.em-wp-rubriques-admin__picker-inner');
             if (!root) { return; }
+            var type = list.getAttribute('data-type') || '';
 
-            var transition = root.querySelector('input[name^="em-wp-stream-transition-"]:checked');
-            var timerInput = root.querySelector('[data-em-stream-timer-input]');
+            var transition = root.querySelector('input[name="em-wp-transition-' + type + '"]:checked');
+            var timerInput = root.querySelector('[data-em-multi-timer-input]');
             var timer = timerInput ? parseInt(timerInput.value || '6', 10) : 6;
             if (isNaN(timer)) { timer = 6; }
             var transitionMode = transition ? String(transition.value || 'manual') : 'manual';
@@ -342,25 +356,28 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
 
         function applySavedResponse(list, res) {
             var mode = String((res && res.display_mode) || getDisplayModeValue(list) || 'single');
+            var current = String((res && res.item) || (list.getAttribute('data-current') || ''));
             list.setAttribute('data-display-mode', mode);
+            list.setAttribute('data-current', current);
 
-            if (isStreamList(list)) {
-                var firstItem = String((res && res.first_item) || (list.getAttribute('data-first-item') || ''));
-                var hiddenItems = Array.isArray(res && res.hidden_items) ? res.hidden_items : parseHiddenItems(list);
-                list.setAttribute('data-transition-mode', String((res && res.transition_mode) || (list.getAttribute('data-transition-mode') || 'manual')));
-                list.setAttribute('data-transition-timer', String((res && res.transition_timer) || (list.getAttribute('data-transition-timer') || '6')));
-                list.setAttribute('data-first-item', firstItem);
-                list.setAttribute('data-hidden-items', JSON.stringify(hiddenItems));
-                syncStreamMultiControls(list, mode);
-                if (mode === 'multi') {
-                    var transitionMode = list.getAttribute('data-transition-mode') || 'manual';
-                    reflectSectionTitle(list, transitionMode === 'auto' ? firstItem : (list.getAttribute('data-current') || firstItem));
-                }
+            var firstItem = String((res && res.first_item) || (list.getAttribute('data-first-item') || ''));
+            var hiddenItems = Array.isArray(res && res.hidden_items) ? res.hidden_items : parseHiddenItems(list);
+            list.setAttribute('data-transition-mode', String((res && res.transition_mode) || (list.getAttribute('data-transition-mode') || 'manual')));
+            list.setAttribute('data-transition-timer', String((res && res.transition_timer) || (list.getAttribute('data-transition-timer') || '6')));
+            list.setAttribute('data-first-item', firstItem);
+            list.setAttribute('data-hidden-items', JSON.stringify(hiddenItems));
+            syncStreamMultiControls(list, mode);
+            if (isStreamList(list) && mode === 'multi') {
+                reflectSectionTitle(list, firstItem || current);
+            }
+
+            if (!isStreamList(list)) {
+                updateSingleBadge(list, current);
+                reflectSectionBaseTitle(list);
+                return;
             }
 
             if (mode === 'single') {
-                var current = String((res && res.item) || (list.getAttribute('data-current') || ''));
-                list.setAttribute('data-current', current);
                 updateSingleBadge(list, current);
                 reflectSectionTitle(list, current);
             }
@@ -450,15 +467,16 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             if (!radio) { return; }
             var list = radio.closest('.em-wp-instance-picker');
             if (!list) { return; }
+            if ((list.getAttribute('data-display-mode') || 'single') === 'multi') { return; }
             if ((list.getAttribute('data-current') || '') === (radio.value || '')) { return; }
 
             var status = list.parentNode.querySelector('.em-wp-instance-picker__status');
             var isLive = list.getAttribute('data-live') === '1';
-            var tplLabel = list.getAttribute('data-template-label') || '';
+            var moduleLabel = list.getAttribute('data-module-label') || '';
             var nameSpan = radio.parentNode.querySelector('.em-wp-instance-picker__name');
             var itemName = nameSpan ? nameSpan.textContent.trim() : (radio.value || '');
             var message = (isLive ? ASK_LIVE : '')
-                + ASK_MSG.replace('%1$s', itemName).replace('%2$s', tplLabel || '<?php echo esc_js(__('ce template', 'em-wp')); ?>');
+                + ASK_MSG.replace('%1$s', itemName).replace('%2$s', moduleLabel || '<?php echo esc_js(__('cette rubrique', 'em-wp')); ?>');
 
             function onChoice(ok) {
                 if (ok) { saveInstance(list, radio.value || '', status); }
@@ -492,17 +510,18 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
         });
 
         document.addEventListener('change', function (e) {
-            var control = e.target.closest('.em-wp-instance-picker__multi-include, .em-wp-instance-picker__multi-first, [data-em-stream-timer-input], [name^="em-wp-stream-transition-"]');
+            var control = e.target.closest('.em-wp-instance-picker__multi-include, .em-wp-instance-picker__multi-first, [data-em-multi-timer-input], [name^="em-wp-transition-"]');
             if (!control) { return; }
             var root = control.closest('.em-wp-rubriques-admin__picker-inner');
             if (!root) { return; }
             var list = root.querySelector('.em-wp-instance-picker');
-            if (!isStreamList(list)) { return; }
+            if (!list) { return; }
             if ((list.getAttribute('data-display-mode') || 'single') !== 'multi') { return; }
 
             syncStreamMultiControls(list, 'multi');
 
-            var transition = root.querySelector('input[name^="em-wp-stream-transition-"]:checked');
+            var type = list.getAttribute('data-type') || '';
+            var transition = root.querySelector('input[name="em-wp-transition-' + type + '"]:checked');
             var transitionMode = transition ? String(transition.value || 'manual') : 'manual';
             var firstItem = list.getAttribute('data-current') || '';
 
@@ -519,6 +538,9 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
         });
 
         document.querySelectorAll('.em-wp-instance-picker').forEach(function (list) {
+            if (!isStreamList(list)) {
+                reflectSectionBaseTitle(list);
+            }
             syncStreamMultiControls(list, list.getAttribute('data-display-mode') || 'single');
         });
     })();
@@ -586,8 +608,9 @@ function em_wp_v4_handle_ajax_set_instance(): void
     }
 
     $multi_items = [];
+    $is_multi_allowed = !in_array($type, $single_only_modules, true);
 
-    if ($type === 'stream' && $display_mode === 'multi') {
+    if ($is_multi_allowed && $display_mode === 'multi') {
         $visible_items = array_values(array_diff($item_slugs, $hidden_items));
         if ($visible_items === []) {
             $hidden_items = [];
@@ -604,9 +627,7 @@ function em_wp_v4_handle_ajax_set_instance(): void
             $first_item = $item;
         }
 
-        if ($type === 'stream') {
-            $multi_items = $item_slugs;
-        }
+        $multi_items = $item_slugs;
     }
 
     $instance_data = [
@@ -614,7 +635,7 @@ function em_wp_v4_handle_ajax_set_instance(): void
         'display_mode' => $display_mode,
     ];
 
-    if ($type === 'stream') {
+    if ($is_multi_allowed) {
         $instance_data['transition_mode'] = $transition_mode;
         $instance_data['transition_timer'] = $transition_timer;
         $instance_data['first_item'] = $first_item;

@@ -32,6 +32,8 @@ function em_wp_render_footer(): void
 	$arrow_up = em_site_footer_decode_json_field((string) ($content['arrow_up'] ?? ''));
 	$stream_links = em_site_footer_stream_links($content);
 	$social_links = em_site_footer_social_links($content);
+	$text_html = em_site_front_text_field_html($item, $content, ['text'], '');
+	$text2_html = em_site_front_text_field_html($item, $content, ['text_2'], '');
 	$image_link = (string) ($image_meta['link'] ?? '#stream');
 	$image_width = (int) ($image_meta['w'] ?? 235);
 	if ($image_width <= 0) {
@@ -62,7 +64,7 @@ function em_wp_render_footer(): void
 				</div>
 				<div class="em-rubrique__col em-rubrique__col--right" data-em-col="3" data-em-has-button="0">
 					<?php if ((int) ($content['sep_blank'] ?? 0) > 0) : ?><span class="em-rubrique__spacer" aria-hidden="true" style="display:block;height:<?php echo esc_attr((string) ((int) $content['sep_blank'])); ?>px;"></span><?php endif; ?>
-					<p class="em-rubrique__field em-rubrique__field--text"><?php echo esc_html((string) ($content['text'] ?? '')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--text"><?php echo wp_kses_post($text_html); ?></p>
 				</div>
 			</div>
 
@@ -80,7 +82,7 @@ function em_wp_render_footer(): void
 				</div>
 				<div class="em-rubrique__col em-rubrique__col--center" data-em-col="2" data-em-has-button="0">
 					<?php if ((int) ($content['sep_blank_2'] ?? 0) > 0) : ?><span class="em-rubrique__spacer" aria-hidden="true" style="display:block;height:<?php echo esc_attr((string) ((int) $content['sep_blank_2'])); ?>px;"></span><?php endif; ?>
-					<p class="em-rubrique__field em-rubrique__field--text_2"><?php echo esc_html((string) ($content['text_2'] ?? '')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--text_2"><?php echo wp_kses_post($text2_html); ?></p>
 				</div>
 				<div class="em-rubrique__col em-rubrique__col--right" data-em-col="3" data-em-has-button="0">
 					<?php foreach ($social_links as $link) : ?>

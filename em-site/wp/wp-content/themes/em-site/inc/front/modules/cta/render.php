@@ -23,6 +23,8 @@ function em_wp_render_cta(): void
 	if ($buttons === []) {
 		return;
 	}
+	$text2_html = em_site_front_text_field_html($item, $content, ['text_2'], 'Press play.');
+	$textarea_html = em_site_front_text_field_html($item, $content, ['textarea'], '');
 
 	$item_option_name = em_site_cta_item_option_name(em_site_cta_active_template());
 	$item_slug = str_replace('em_wp_v4_item_cta_', '', $item_option_name);
@@ -68,13 +70,13 @@ function em_wp_render_cta(): void
 
 			<div class="em-rubrique__row" data-em-row="3" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-					<p class="em-rubrique__field em-rubrique__field--text_2" style="font-size:clamp(28px, calc(28px + (55 - 28) * ((100vw - 360px) / 740)), 55px);"><?php echo esc_html((string) ($content['text_2'] ?? 'Press play.')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--text_2" style="font-size:clamp(28px, calc(28px + (55 - 28) * ((100vw - 360px) / 740)), 55px);"><?php echo wp_kses_post($text2_html); ?></p>
 				</div>
 			</div>
 
 			<div class="em-rubrique__row" data-em-row="4" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-					<div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea"><?php echo esc_html((string) ($content['textarea'] ?? '')); ?></div>
+					<div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea"><?php echo wp_kses_post($textarea_html); ?></div>
 				</div>
 			</div>
 

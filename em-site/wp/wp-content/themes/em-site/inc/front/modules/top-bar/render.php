@@ -23,8 +23,9 @@ function em_wp_render_top_bar(): void
 	$item_option_name = em_site_top_bar_v4_item_option_name(em_site_top_bar_v4_active_template());
 	$item_slug = str_replace('em_wp_v4_item_top-bar_', '', $item_option_name);
 	$logo_meta = em_site_top_bar_v4_decode_json_field((string) ($content['logo_em'] ?? ''));
-	$join_meta = em_site_top_bar_v4_decode_json_field((string) ($content['join_the_journey'] ?? ''));
-	$stream_meta = em_site_top_bar_v4_decode_json_field((string) ($content['stream_share'] ?? ''));
+	$join_html = em_site_front_text_field_html($item, $content, ['join_the_journey'], 'Join The Journey');
+	$stream_html = em_site_front_text_field_html($item, $content, ['stream_share'], 'Stream & Share');
+	$mayami_html = em_site_front_text_field_html($item, $content, ['mayami_my_miami'], '');
 
 	$logo_id = (int) ($logo_meta['id'] ?? 0);
 	$logo_src = $logo_id > 0 ? (string) wp_get_attachment_image_url($logo_id, 'full') : '';
@@ -59,15 +60,15 @@ function em_wp_render_top_bar(): void
 				</div>
 				<div class="em-rubrique__col em-rubrique__col--center" data-em-col="2" data-em-has-button="0"></div>
 				<div class="em-rubrique__col em-rubrique__col--right" data-em-col="3" data-em-has-button="0">
-					<p class="em-rubrique__field em-rubrique__field--mayami_my_miami" style="font-size:24px;font-family:&quot;Brush Script MT&quot;, &quot;Segoe Script&quot;, cursive;color:#f5d03d;"><?php echo esc_html((string) ($content['mayami_my_miami'] ?? '')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--mayami_my_miami" style="font-size:24px;font-family:&quot;Brush Script MT&quot;, &quot;Segoe Script&quot;, cursive;color:#f5d03d;"><?php echo wp_kses_post($mayami_html); ?></p>
 				</div>
 			</div>
 			<div class="em-rubrique__row" data-em-row="2" data-em-has-button="0" style="grid-template-columns:repeat(3,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-					<p class="em-rubrique__field em-rubrique__field--join_the_journey" style="font-size:17px;"><a class="em-rubrique__link" href="<?php echo esc_url((string) ($join_meta['link'] ?? '#social')); ?>"><?php echo esc_html((string) ($join_meta['text'] ?? 'Join The Journey')); ?></a></p>
+					<p class="em-rubrique__field em-rubrique__field--join_the_journey" style="font-size:17px;"><?php echo wp_kses_post($join_html); ?></p>
 				</div>
 				<div class="em-rubrique__col em-rubrique__col--center" data-em-col="2" data-em-has-button="0">
-					<p class="em-rubrique__field em-rubrique__field--stream_share" style="font-size:17px;"><a class="em-rubrique__link" href="<?php echo esc_url((string) ($stream_meta['link'] ?? '#stream')); ?>"><?php echo esc_html((string) ($stream_meta['text'] ?? 'Stream & Share')); ?></a></p>
+					<p class="em-rubrique__field em-rubrique__field--stream_share" style="font-size:17px;"><?php echo wp_kses_post($stream_html); ?></p>
 				</div>
 				<div class="em-rubrique__col em-rubrique__col--right" data-em-col="3" data-em-has-button="0">
 					<?php foreach ($icons as $icon_key) :

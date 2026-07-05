@@ -23,6 +23,8 @@ function em_wp_render_social(): void
 	if ($cards === []) {
 		return;
 	}
+	$follow_html = em_site_front_text_field_html($item, $content, ['02_follow'], '02 / FOLLOW');
+	$textarea_html = em_site_front_text_field_html($item, $content, ['textarea'], '');
 
 	$item_option_name = em_site_social_item_option_name(em_site_social_active_template());
 	$item_slug = str_replace('em_wp_v4_item_social_', '', $item_option_name);
@@ -68,7 +70,7 @@ function em_wp_render_social(): void
 
 			<div class="em-rubrique__row" data-em-row="2" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-					<p class="em-rubrique__field em-rubrique__field--02_follow"><?php echo esc_html((string) ($content['02_follow'] ?? '02 / FOLLOW')); ?></p>
+					<p class="em-rubrique__field em-rubrique__field--02_follow"><?php echo wp_kses_post($follow_html); ?></p>
 				</div>
 			</div>
 
@@ -83,7 +85,7 @@ function em_wp_render_social(): void
 
 			<div class="em-rubrique__row" data-em-row="4" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-					<div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea"><?php echo esc_html((string) ($content['textarea'] ?? '')); ?></div>
+					<div class="em-rubrique__field em-rubrique__field--rich em-rubrique__field--textarea"><?php echo wp_kses_post($textarea_html); ?></div>
 				</div>
 			</div>
 
