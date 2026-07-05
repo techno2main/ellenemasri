@@ -20,10 +20,4 @@
 12. RÈGLE D'OR : aucun flow GH sans vérification et finalisation préalable de la MAJ docs.
 13. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
 
-## Prochaines étapes
-1. REFACTOR_JS_ADMIN.md
-2. REFACTOR_PHP_ADMIN.md
 
-## Ménage docs
-1. Fichiers historiques obsolètes supprimés (ancienne série ETAPE_00 à ETAPE_08 + ancien prompt de reprise).
-2. Fichiers actifs renommés et conservés : REFACTOR_JS_ADMIN.md, REFACTOR_PHP_ADMIN.md.
