@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-05 16:51:14.
+3. Dernière mise à jour : 2026-07-05 17:01:01.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -18,85 +18,12 @@
 10. Mot-clé MAJ docs : scanner tous les documents de suivi concernés par l'avancement en temps réel, puis les mettre à jour.
 11. Mot-clé flow GH : lancer le process GitHub selon les règles actives du chantier, uniquement sur demande explicite.
 12. RÈGLE D'OR : aucun flow GH sans vérification et finalisation préalable de la MAJ docs.
-13. Quand l'utilisateur écrit Ok, enchaîner immédiatement sur l'étape suivante.
-14. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
+13. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
 
-## Avancement global
-- [x] Étape 0 validée
-- [x] Étape 1 validée
-- [x] Étape 2 validée
-- [x] Étape 3 validée
-- [x] Étape 4 validée (contrôle fonctionnel clôturé pour la base zéro import)
-- [x] Étape 5 validée (arbo 100% clean prête pour imports V4)
-- [ ] Étape 6 en validation finale (admin importé + parité en cours de verrouillage)
+## Prochaines étapes
+1. REFACTOR_JS_ADMIN.md
+2. REFACTOR_PHP_ADMIN.md
 
-## Index des étapes
-1. Étape 0 : ETAPE_00_CADRAGE.md
-2. Étape 1 : ETAPE_01_VALIDATION_ARBO.md
-3. Étape 2 : ETAPE_02_CADRAGE_BDD.md
-4. Étape 3 : ETAPE_03_STACK_DOCKER.md
-5. Étape 4 : ETAPE_04_CONTROLE_FONCTIONNEL.md
-6. Étape 5 : ETAPE_05_PLAN_COPIE_SELECTIVE_V4.md
-7. Étape 6 : ETAPE_06_REBRANCHEMENT_ADMIN.md
-
-## Reprise de session
-1. Prompt de reprise figé : PROMPT_REPRISE_SESSION.md
-2. Prochaine étape prioritaire : lancer le flow GH du lot "admin importé" puis démarrer le refactor ADMIN (structure, arbo, back).
-
-## Point de rollback GH (actif)
-1. Point figé demandé par l'utilisateur créé après nettoyage du fallback texte WordPress et maintien de la structure de thème.
-2. État fonctionnel figé : front HTTP 200, structure vide exploitable, top-bar annulée (render/css vidés).
-3. Ce point a servi de base à la migration FRONT (désormais validée) ; la phase active bascule maintenant sur le rebranchement ADMIN à l'identique.
-
-## État front visuel (placeholders)
-1. Migration front validée par l'utilisateur : rendu global conforme à la source sur la cible em-site.
-2. Ajustements mobile validés : ancres (sans hash visible), alignement offsets, STREAM (taille titre/logo), FOOTER mobile.
-3. Contrôle runtime validé : front HTTP 200, navigation ancres opérationnelle, lot FRONT clôturable.
-
-## Exécution en cours
-1. Le lot FRONT reste validé fonctionnellement et visuellement par l'utilisateur.
-2. Import ADMIN étendu réalisé depuis la source : `inc/admin`, `inc/shared`, `inc/rubriques`, `inc/vlb`, `visual-links-builder`, `assets/admin` et dépendances CSS requises.
-3. Branchement runtime consolidé : chargement des dépendances admin dans `is_admin()` + chargement global des composants login/client-access nécessaires aux parcours hors `wp-admin`.
-4. Parité accès et branding renforcée : alias comptes admin source/nouveaux (`admin-tyson`, `admin-ellene`), ajustement avatars, restauration page login source.
-5. Liaison BACK -> FRONT rétablie : le rendu front respecte désormais le squelette et la visibilité template définis en back-office (dont cas About/Contact masqués).
-6. Parité page Apparence restaurée : métadonnées du thème et screenshot importés (correction de la carte thème vide/Anonymous).
-7. Validation infra faite : le back actif sur `localhost:8290` écrit bien dans la nouvelle base `em_site_bdd` (préfixe `wpem_`).
-8. Parité rubriques renforcée : correction des décalages visuels sur les lignes d'édition (titre rubrique, titre item, ligne CONTENU, lignes L1/L2/...) avec réalignement structurel sur la source.
-9. Lot Rubriques optimisé : ouverture/fermeture des rubriques sans reload via AJAX, cache local des panneaux, synchronisation URL `open` sans navigation complète.
-10. Wireframe synchronisé automatiquement à l'ouverture d'une rubrique : affichage immédiat de l'item branché sans clic sur l'œil.
-11. Correction globale des textes mojibake côté thème em-site : accents/guillemets restaurés sur CSS, JS et PHP (scan final sans occurrence `Ã`, `Â`, `â`, `�`).
-12. Demande utilisateur en cours : flow GH.
-
-## Plan phase ADMIN (itératif et sécurisé)
-1. Lot A - Inventaire et cartographie
-	- Relever les menus/pages/admin assets/hooks côté source em-wp.
-	- Produire la matrice source -> cible (fichiers, hooks, dépendances) avant copie.
-2. Lot B - Boot admin minimal
-	- Rebrancher uniquement le bootstrap ADMIN indispensable.
-	- Vérifier accès aux pages de base sans erreurs fatales.
-3. Lot C - Écrans coeur et assets
-	- Rebrancher les écrans prioritaires un par un (même ordre que la source).
-	- Rebrancher scripts/styles admin associés, sans duplication massive.
-4. Lot D - Actions/AJAX/permissions
-	- Rebrancher endpoints, nonces, capacités et validations serveur.
-	- Tester les parcours CRUD critiques.
-5. Lot E - Finition et contrôle de conformité
-	- Vérifier parité fonctionnelle finale source/cible.
-	- Stabiliser la documentation et préparer flow GH sur demande explicite.
-
-## Méthode d'import par rubrique (gravée)
-1. Source unique autorisée : `em-wp` (source officielle), jamais d'autre source.
-2. Portée stricte : une seule rubrique par lot (TOP-BAR, puis HEADER, puis suivantes).
-3. Copie sélective uniquement : interdiction de copier un dossier CSS complet ; extraire seulement les règles utiles.
-4. Répartition obligatoire CSS :
-	- `assets/front/css/core/layout.css` = règles globales communes.
-	- `assets/front/css/modules/<rubrique>/index.css` = règles spécifiques à la rubrique.
-5. Interdiction de surcharge : aucune règle spécifique rubrique ne doit rester dans `core/layout.css` après import.
-6. Nommage CSS : aucune mention `v4` dans les classes, sélecteurs, attributs de données et commentaires CSS de la cible.
-7. Qualité documentaire : conserver les accents dans tous les commentaires et textes français.
-8. Validation obligatoire à chaque rubrique : contrôle technique + contrôle runtime + validation visuelle utilisateur avant rubrique suivante.
-
-## Avancement validé utilisateur
-1. Front : ✅ validé.
-2. Prochaine étape validée : rebrancher l'admin à l'identique sur le nouveau site.
-3. Contrainte d'exécution confirmée : procéder par étapes pour éviter toute casse.
+## Ménage docs
+1. Fichiers historiques obsolètes supprimés (ancienne série ETAPE_00 à ETAPE_08 + ancien prompt de reprise).
+2. Fichiers actifs renommés et conservés : REFACTOR_JS_ADMIN.md, REFACTOR_PHP_ADMIN.md.
