@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-04 14:41:24.
+3. Dernière mise à jour : 2026-07-05 03:09:52.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -61,7 +61,8 @@
 5. Liaison BACK -> FRONT rétablie : le rendu front respecte désormais le squelette et la visibilité template définis en back-office (dont cas About/Contact masqués).
 6. Parité page Apparence restaurée : métadonnées du thème et screenshot importés (correction de la carte thème vide/Anonymous).
 7. Validation infra faite : le back actif sur `localhost:8290` écrit bien dans la nouvelle base `em_site_bdd` (préfixe `wpem_`).
-8. Demande utilisateur en cours : flow GH complet du lot admin importé, puis ouverture du refactor ADMIN (structure, arbo, back).
+8. Parité rubriques renforcée : correction des décalages visuels sur les lignes d'édition (titre rubrique, titre item, ligne CONTENU, lignes L1/L2/...) avec réalignement structurel sur la source.
+9. Demande utilisateur en cours : flow GH avant grande pause.
 
 ## Plan phase ADMIN (itératif et sécurisé)
 1. Lot A - Inventaire et cartographie

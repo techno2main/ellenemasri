@@ -2,7 +2,7 @@
 
 ## Statut
 - 🟡 En validation finale pré-flow GH
-- Horodatage (Paris) : 2026-07-04 14:41:24
+- Horodatage (Paris) : 2026-07-05 03:09:52
 - Objectif : retrouver un back-office em-site strictement identique à em-wp, sans régression front.
 
 ## Contraintes validées
@@ -112,6 +112,7 @@
 1. BACK/FRONT : correction orchestrateur de rendu pour faire respecter en front la visibilité/squelette définis en back-office.
 2. Apparence : restauration des métadonnées thème et du screenshot pour supprimer la carte vide/"Anonymous".
 3. Environnement : confirmation que le site actif em-site (`localhost:8290`) écrit dans la nouvelle base `em_site_bdd`.
+4. Rubriques admin : réalignement de parité des lignes d'édition (titre rubrique, titre item, ligne CONTENU, lignes L1/L2/...) en revenant à la structure inline source sur `summary` et en retirant les wrappers de déplacement qui provoquaient des décalages visuels ligne par ligne.
 
 ## Vérifications et état de clôture
 1. Aucune erreur détectée sur les fichiers clés modifiés lors des contrôles ciblés.

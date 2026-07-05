@@ -159,78 +159,6 @@ function em_wp_v4_overview_render(): void
     <?php em_wp_v4_overview_render_rename_script(); ?>
     <script>
     (function () {
-        var a11yCounter = 0;
-
-        function createActionsHost(details, className) {
-            var host = details.querySelector(':scope > .' + className);
-            if (host) { return host; }
-            host = document.createElement('div');
-            host.className = className;
-            var summary = details.querySelector(':scope > summary');
-            if (!summary || !summary.parentNode) { return null; }
-            summary.insertAdjacentElement('afterend', host);
-            return host;
-        }
-
-        function moveChildFromSummary(summary, host, selector) {
-            var node = summary.querySelector(':scope > ' + selector);
-            if (node) { host.appendChild(node); }
-        }
-
-        function sanitizeSummaryInteractions(root) {
-            (root || document).querySelectorAll('details').forEach(function (details) {
-                var summary = details.querySelector(':scope > summary');
-                if (!summary) { return; }
-
-                if (details.classList.contains('em-v4-row')) {
-                    var rowHost = createActionsHost(details, 'em-v4-row__summary-actions');
-                    if (!rowHost) { return; }
-                    moveChildFromSummary(summary, rowHost, '.em-v4-row__title');
-                    moveChildFromSummary(summary, rowHost, '.em-v4-row__right');
-                    moveChildFromSummary(summary, rowHost, '.em-v4-row__add');
-                    moveChildFromSummary(summary, rowHost, '.em-v4-row__remove');
-                    return;
-                }
-
-                if (details.classList.contains('em-v4-builder__section')) {
-                    var sectionHost = createActionsHost(details, 'em-v4-builder__section-actions');
-                    if (!sectionHost) { return; }
-                    moveChildFromSummary(summary, sectionHost, '.em-v4-gridmap__eye');
-                }
-            });
-        }
-
-        function ensureFormFieldIdentifiers(root) {
-            var scope = root || document;
-            var fields = scope.querySelectorAll('input:not([id]):not([name]), select:not([id]):not([name]), textarea:not([id]):not([name])');
-            fields.forEach(function (field) {
-                if (field.hasAttribute('data-em-a11y-auto')) { return; }
-                a11yCounter += 1;
-                var token = 'em-a11y-' + a11yCounter;
-                field.id = token;
-                field.name = token;
-                field.setAttribute('data-em-a11y-auto', '1');
-            });
-        }
-
-        function sanitizeAccessibility(root) {
-            sanitizeSummaryInteractions(root);
-            ensureFormFieldIdentifiers(root);
-        }
-
-        sanitizeAccessibility(document);
-
-        var observer = new MutationObserver(function (mutations) {
-            mutations.forEach(function (mutation) {
-                mutation.addedNodes.forEach(function (node) {
-                    if (!(node instanceof HTMLElement)) { return; }
-                    sanitizeAccessibility(node);
-                });
-            });
-        });
-
-        observer.observe(document.body, { childList: true, subtree: true });
-
         function setCreateOpenState(btn, box, isOpen) {
             if (!box) { return; }
             box.hidden = !isOpen;
@@ -377,25 +305,23 @@ function em_wp_v4_overview_render_type(string $slug, array $type, bool $open): v
             <span class="em-v4-card__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>" aria-hidden="true"></span>
             <span class="em-v4-collapse__chevron" aria-hidden="true"></span>
             <span class="em-v4-card__icon dashicons <?php echo esc_attr((string) ($type['icon'] ?? 'dashicons-screenoptions')); ?>"></span>
-            <strong class="em-v4-card__name"><?php echo esc_html($label); ?></strong>
-            <span class="em-v4-card__count" title="<?php echo esc_attr(sprintf(_n('%d section', '%d sections', $count, 'em-wp'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
-        </summary>
-        <div class="em-v4-card__actions">
             <button type="button" class="em-v4-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-wp'); ?>">
                 <span class="dashicons dashicons-edit" aria-hidden="true"></span>
             </button>
-            <input type="text" id="em-v4-card-name-<?php echo esc_attr($slug); ?>" class="em-v4-card__nameinput" data-slug="<?php echo esc_attr($slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
+            <strong class="em-v4-card__name"><?php echo esc_html($label); ?></strong>
+            <input type="text" class="em-v4-card__nameinput" data-slug="<?php echo esc_attr($slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
             <button type="button" class="em-v4-card__confirm" title="<?php esc_attr_e('Valider', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-wp'); ?>" hidden>
                 <span class="dashicons dashicons-yes" aria-hidden="true"></span>
             </button>
             <button type="button" class="em-v4-card__cancel" title="<?php esc_attr_e('Annuler', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Annuler', 'em-wp'); ?>" hidden>
                 <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
             </button>
+            <span class="em-v4-card__count" title="<?php echo esc_attr(sprintf(_n('%d section', '%d sections', $count, 'em-wp'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
             <button type="button" class="em-v4-card__additem" data-create-target="em-v4-create-<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($add_label); ?>" aria-label="<?php echo esc_attr($add_label); ?>" aria-expanded="false">
                 <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
                 <span><?php echo esc_html($add_label); ?></span>
             </button>
-        </div>
+        </summary>
         <div class="em-v4-collapse__body">
             <?php em_wp_v4_render_items_section($slug); ?>
         </div>

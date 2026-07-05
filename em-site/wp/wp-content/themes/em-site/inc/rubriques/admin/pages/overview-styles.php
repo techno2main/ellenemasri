@@ -34,7 +34,7 @@ if (!defined('ABSPATH')) {
    .em-v4-card > .em-v4-card__head {
       font-size:15px;
       display:grid;
-      grid-template-columns: 18px 10px 18px minmax(120px, 1fr) 46px;
+      grid-template-columns: 18px 10px 18px 18px minmax(100px, 135px) 22px 22px 46px 220px;
       align-items:center;
       column-gap:10px;
       justify-content:start;
@@ -87,10 +87,10 @@ if (!defined('ABSPATH')) {
     .em-v4-card__icon { color:#4e080e; }
    .em-v4-card__icon { grid-column:3; }
    .em-v4-card__name { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-   .em-v4-card__name { grid-column:4; }
+   .em-v4-card__name { grid-column:5; }
    .em-v4-card__nameinput { width:100%; max-width:none; text-transform:uppercase; font-weight:700; min-width:0; margin:0; }
-   .em-v4-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; margin-left:0; justify-self:center; grid-column:5; background:#f0f0f1; color:#646970; border:1px solid #dcdcde; border-radius:999px; font-size:11px; font-weight:600; line-height:1; }
-   .em-v4-card__actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:0 14px 10px; }
+   .em-v4-card__nameinput { grid-column:5; }
+   .em-v4-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; margin-left:0; justify-self:center; grid-column:8; background:#f0f0f1; color:#646970; border:1px solid #dcdcde; border-radius:999px; font-size:11px; font-weight:600; line-height:1; }
     /* Réordonnancement des rubriques (glisser-déposer) */
     .em-v4-card__drag { color:#a7aaae; cursor:grab; font-size:18px; width:18px; height:18px; flex:0 0 auto; }
     .em-v4-card__drag:hover { color:#646970; }
@@ -98,19 +98,12 @@ if (!defined('ABSPATH')) {
     .em-v4-card.is-dragging { opacity:.6; outline:2px dashed #2271b1; outline-offset:2px; }
     /* Renommage d'une rubrique (crayon + champ inline) */
    .em-v4-card__edit { background:none; border:0; cursor:pointer; color:#2271b1; padding:0 2px; margin-left:0; display:inline-flex; align-items:center; justify-content:center; }
+   .em-v4-card__edit { grid-column:4; }
     .em-v4-card__edit:hover { color:#135e96; }
     .em-v4-card__edit .dashicons { font-size:16px; width:16px; height:16px; }
-      .em-v4-card__confirm { margin-left:0; }
-      .em-v4-card__cancel { margin-left:0; }
-      .em-v4-card__additem { margin-left:auto; justify-self:end; }
-
-      .em-v4-item__actions {
-         display:flex;
-         align-items:center;
-         gap:8px;
-         flex-wrap:wrap;
-         padding:0 14px 10px;
-      }
+   .em-v4-card__confirm { grid-column:6; margin-left:0; }
+   .em-v4-card__cancel { grid-column:7; margin-left:0; }
+   .em-v4-card__additem { grid-column:9; justify-self:end; }
 
     .em-v4-item__title { display:inline-flex; align-items:center; gap:6px; }
     .em-v4-item__prefix, .em-v4-item__name { text-transform:uppercase; font-weight:600; }
@@ -226,7 +219,6 @@ if (!defined('ABSPATH')) {
     .em-v4-gridmap__eye:hover { color:#135e96; }
     .em-v4-gridmap__eye[aria-pressed="true"] { color:#135e96; }
     .em-v4-gridmap__eye .dashicons { font-size:18px; width:18px; height:18px; }
-   .em-v4-builder__section-actions { display:flex; align-items:center; gap:8px; padding:0 14px 8px; }
 
     /* Bulle d'aperçu d'une cellule de la carte (survol) */
     .em-v4-gridmap__pop { position:absolute; z-index:100000; display:none; max-width:380px; min-width:180px; padding:8px; background:#fff; border:1px solid #c3c4c7; border-radius:8px; box-shadow:0 8px 28px rgba(16,24,40,.20); pointer-events:none; }
@@ -286,13 +278,6 @@ if (!defined('ABSPATH')) {
    .em-v4-row__colname.is-active { color:#111; font-weight:600; }
     .em-v4-row__colcount .dashicons { font-size:15px; width:15px; height:15px; }
     .em-v4-row[open] > .em-v4-row__summary > .em-v4-row__colcount { display:none; }
-   .em-v4-row__summary-actions {
-      display:grid;
-      grid-template-columns:minmax(230px, 320px) minmax(420px, 1fr) auto auto;
-      align-items:center;
-      column-gap:8px;
-      padding:0 12px 8px;
-   }
     .em-v4-row__drag { cursor:grab; color:#aab1bd; flex:0 0 auto; }
     .em-v4-row__drag:hover { color:#1d2327; }
     .em-v4-row.is-dragging { opacity:.5; outline:2px dashed #2271b1; }

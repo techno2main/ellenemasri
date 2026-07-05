@@ -219,14 +219,12 @@ function em_wp_v4_render_row(int $row, array $layout, array $row_grid, array $co
             <span class="em-v4-collapse__chevron"></span>
             <span class="em-v4-row__left">
                 <span class="em-v4-row__label" aria-hidden="true"></span>
-            </span>
-        </summary>
-        <div class="em-v4-row__summary-actions">
-            <span class="em-v4-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-wp'); ?>">
-                <span class="em-v4-row__titleprefix" aria-hidden="true"></span>
-                <span class="em-v4-row__titletxt" data-empty="<?php echo $title !== '' ? '0' : '1'; ?>"><?php echo esc_html($title_display); ?></span>
-                <input type="text" class="em-v4-row__titleinput" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr($title_placeholder); ?>" hidden>
-                <button type="button" class="em-v4-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
+                <span class="em-v4-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-wp'); ?>">
+                    <span class="em-v4-row__titleprefix" aria-hidden="true"></span>
+                    <span class="em-v4-row__titletxt" data-empty="<?php echo $title !== '' ? '0' : '1'; ?>"><?php echo esc_html($title_display); ?></span>
+                    <input type="text" class="em-v4-row__titleinput" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr($title_placeholder); ?>" hidden>
+                    <button type="button" class="em-v4-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
+                </span>
             </span>
             <span class="em-v4-row__right">
                 <?php em_wp_v4_render_row_colcount($columns); ?>
@@ -234,7 +232,7 @@ function em_wp_v4_render_row(int $row, array $layout, array $row_grid, array $co
             </span>
             <button type="button" class="em-v4-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-wp'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
             <button type="button" class="em-v4-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-wp'); ?>">&times;</button>
-        </div>
+        </summary>
         <div class="em-v4-row__body">
             <div class="em-v4-col-tabs" role="tablist">
                 <?php for ($c = 1; $c <= $columns; $c++) : ?>
@@ -365,14 +363,12 @@ function em_wp_v4_render_templates(): void
                 <span class="em-v4-collapse__chevron"></span>
                 <span class="em-v4-row__left">
                     <span class="em-v4-row__label" aria-hidden="true"></span>
-                </span>
-            </summary>
-            <div class="em-v4-row__summary-actions">
-                <span class="em-v4-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-wp'); ?>">
-                    <span class="em-v4-row__titleprefix" aria-hidden="true"></span>
-                    <span class="em-v4-row__titletxt" data-empty="1"><?php esc_html_e('Titre de ligne', 'em-wp'); ?></span>
-                    <input type="text" class="em-v4-row__titleinput" value="" placeholder="<?php esc_attr_e('Titre de ligne', 'em-wp'); ?>" hidden>
-                    <button type="button" class="em-v4-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
+                    <span class="em-v4-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-wp'); ?>">
+                        <span class="em-v4-row__titleprefix" aria-hidden="true"></span>
+                        <span class="em-v4-row__titletxt" data-empty="1"><?php esc_html_e('Titre de ligne', 'em-wp'); ?></span>
+                        <input type="text" class="em-v4-row__titleinput" value="" placeholder="<?php esc_attr_e('Titre de ligne', 'em-wp'); ?>" hidden>
+                        <button type="button" class="em-v4-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-wp'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
+                    </span>
                 </span>
                 <span class="em-v4-row__right">
                     <?php em_wp_v4_render_row_colcount(1); ?>
@@ -380,7 +376,7 @@ function em_wp_v4_render_templates(): void
                 </span>
                 <button type="button" class="em-v4-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-wp'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
                 <button type="button" class="em-v4-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-wp'); ?>">&times;</button>
-            </div>
+            </summary>
             <div class="em-v4-row__body">
                 <div class="em-v4-col-tabs" role="tablist"><?php em_wp_v4_render_col_addbtn(); ?></div>
                 <div class="em-v4-col-panels"></div>
