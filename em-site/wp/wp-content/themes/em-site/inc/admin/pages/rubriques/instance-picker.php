@@ -77,6 +77,15 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug, bool $wit
                 $items = em_wp_v4_get_items($module_slug);
                 $instance = $template !== '' ? em_wp_v4_get_instance($template, $module_slug) : [];
                 $selected = sanitize_key((string) ($instance['item'] ?? ''));
+                $single_only_modules = ['top-bar', 'footer'];
+                $is_single_only = in_array($module_slug, $single_only_modules, true);
+                $display_mode = sanitize_key((string) ($instance['display_mode'] ?? 'single'));
+                if (!in_array($display_mode, ['single', 'multi'], true)) {
+                    $display_mode = 'single';
+                }
+                if ($is_single_only) {
+                    $display_mode = 'single';
+                }
                 $effective = $selected !== '' ? $selected : em_wp_rubrique_default_item_slug($module_slug);
 
                 // La section branchée (utilisée par le template) toujours en premier.
@@ -84,12 +93,45 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug, bool $wit
                     $items = [$effective => $items[$effective]] + $items;
                 }
                 ?>
-                <p class="em-wp-rubriques-admin__picker-head">
-                    <?php
-                    /* translators: %s: rubrique label (ex. TOP-BAR). */
-                    echo esc_html(sprintf(__('Items disponibles pour %s', 'em-wp'), $label));
-                    ?>
-                </p>
+                <?php if (!$is_single_only) : ?>
+                    <p class="em-wp-rubriques-admin__picker-head">
+                        <?php
+                        /* translators: %s: rubrique label (ex. TOP-BAR). */
+                        echo esc_html(sprintf(__('Items disponibles pour %s', 'em-wp'), $label));
+                        ?>
+                    </p>
+                <?php endif; ?>
+
+                <div class="em-wp-instance-picker__mode" role="group" aria-label="<?php esc_attr_e('Principe d\'affichage', 'em-wp'); ?>">
+                    <p class="em-wp-instance-picker__mode-title"><?php esc_html_e('Principe d\'affichage', 'em-wp'); ?></p>
+                    <?php if ($is_single_only) { ?>
+                        <p class="em-wp-instance-picker__mode-locked"><?php esc_html_e('Unique (imposé par défaut pour cette rubrique)', 'em-wp'); ?></p>
+                    <?php } else { ?>
+                        <div class="em-wp-instance-picker__mode-switch">
+                            <label class="em-wp-instance-picker__mode-option">
+                                <input
+                                    type="radio"
+                                    name="em-wp-display-mode-<?php echo esc_attr($module_slug); ?>"
+                                    value="single"
+                                    <?php checked($display_mode === 'single'); ?>
+                                >
+                                <span><?php esc_html_e('Unique', 'em-wp'); ?></span>
+                            </label>
+                            <label class="em-wp-instance-picker__mode-option">
+                                <input
+                                    type="radio"
+                                    name="em-wp-display-mode-<?php echo esc_attr($module_slug); ?>"
+                                    value="multi"
+                                    <?php checked($display_mode === 'multi'); ?>
+                                >
+                                <span><?php esc_html_e('Multi', 'em-wp'); ?></span>
+                            </label>
+                        </div>
+                        <p class="em-wp-instance-picker__mode-help">
+                            <?php esc_html_e('Choisis d\'abord le mode, puis la section active.', 'em-wp'); ?>
+                        </p>
+                    <?php } ?>
+                </div>
 
                 <?php if ($items === []) : ?>
                     <p class="em-wp-rubriques-admin__picker-empty">
@@ -109,6 +151,7 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug, bool $wit
                         data-template="<?php echo esc_attr($template); ?>"
                         data-template-label="<?php echo esc_attr($template_label); ?>"
                         data-current="<?php echo esc_attr($effective); ?>"
+                        data-display-mode="<?php echo esc_attr($display_mode); ?>"
                         data-live="<?php echo $is_live ? '1' : '0'; ?>"
                     >
                         <?php foreach ($items as $slug => $item_label) :

@@ -16,7 +16,7 @@ function em_wp_hero_default_options(): array
 {
     return [
         'enabled'                  => true,
-        'badge_text'               => __('New Single · Available!', 'em-wp'),
+        'badge_text'               => __('New Unique · Available!', 'em-wp'),
         'badge_text_hidden'        => false,
         'badge_bg_color'           => '',
         'badge_text_color'         => '',

@@ -158,7 +158,7 @@ function em_wp_admin_header_appearance_normalize(array $raw): array
 /**
  * Config HEADER normalisée d'un template.
  *
- * @return array{matrix:string, position:string, hero:string, slider:string, ratio:string, appearance:array<string,mixed>}
+ * @return array{display_mode:string, matrix:string, position:string, hero:string, slider:string, ratio:string, appearance:array<string,mixed>}
  */
 function em_wp_admin_header_section_get(string $template): array
 {
@@ -173,8 +173,15 @@ function em_wp_admin_header_section_get(string $template): array
         $ratio = '75-25';
     }
 
+    $matrix = ($raw['matrix'] ?? '') === 'hero_slider' ? 'hero_slider' : 'hero';
+    $display_mode_raw = sanitize_key((string) ($raw['display_mode'] ?? ''));
+    $display_mode = in_array($display_mode_raw, ['single', 'multi'], true)
+        ? $display_mode_raw
+        : ($matrix === 'hero_slider' ? 'multi' : 'single');
+
     return [
-        'matrix'     => ($raw['matrix'] ?? '') === 'hero_slider' ? 'hero_slider' : 'hero',
+        'display_mode' => $display_mode,
+        'matrix'     => $matrix,
         'position'   => ($raw['position'] ?? '') === 'slider_left' ? 'slider_left' : 'hero_left',
         'hero'       => sanitize_key((string) ($raw['hero'] ?? '')),
         'slider'     => sanitize_key((string) ($raw['slider'] ?? '')),
@@ -199,7 +206,13 @@ function em_wp_admin_header_section_save(string $template, array $data): void
         $ratio = '75-25';
     }
 
+    $display_mode = sanitize_key((string) ($data['display_mode'] ?? 'single'));
+    if (!in_array($display_mode, ['single', 'multi'], true)) {
+        $display_mode = 'single';
+    }
+
     update_option(em_wp_admin_header_section_option_name($template), [
+        'display_mode' => $display_mode,
         'matrix'     => ($data['matrix'] ?? '') === 'hero_slider' ? 'hero_slider' : 'hero',
         'position'   => ($data['position'] ?? '') === 'slider_left' ? 'slider_left' : 'hero_left',
         'hero'       => sanitize_key((string) ($data['hero'] ?? '')),
@@ -544,6 +557,9 @@ function em_wp_admin_render_header_section_picker(string $template): void
         ? (string) em_wp_get_editing_template_label()
         : '';
     $both = $cfg['matrix'] === 'hero_slider';
+    $display_mode = in_array((string) ($cfg['display_mode'] ?? ''), ['single', 'multi'], true)
+        ? (string) $cfg['display_mode']
+        : 'single';
     ?>
     <div
         class="em-wp-header-picker"
@@ -554,6 +570,20 @@ function em_wp_admin_render_header_section_picker(string $template): void
         data-position="<?php echo esc_attr($cfg['position']); ?>"
         data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>"
     >
+        <div class="em-wp-header-picker__mode" role="group" aria-label="<?php esc_attr_e('Principe d\'affichage', 'em-wp'); ?>">
+            <p class="em-wp-header-picker__mode-title"><?php esc_html_e('Principe d\'affichage', 'em-wp'); ?></p>
+            <div class="em-wp-header-picker__mode-switch">
+                <label class="em-wp-header-picker__mode-option">
+                    <input type="radio" name="em-wp-header-display-mode" value="single" <?php checked($display_mode === 'single'); ?>>
+                    <span><?php esc_html_e('Unique', 'em-wp'); ?></span>
+                </label>
+                <label class="em-wp-header-picker__mode-option">
+                    <input type="radio" name="em-wp-header-display-mode" value="multi" <?php checked($display_mode === 'multi'); ?>>
+                    <span><?php esc_html_e('Multi', 'em-wp'); ?></span>
+                </label>
+            </div>
+        </div>
+
         <p class="em-wp-rubriques-admin__picker-head"><?php esc_html_e('Composition du HEADER', 'em-wp'); ?></p>
 
         <div class="em-wp-header-picker__compo">

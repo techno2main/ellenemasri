@@ -324,7 +324,7 @@ function em_wp_admin_render_skeleton_preview_assets(): void
         }
 
         // Aperçu d'UNE section (œil du sélecteur).
-        function showSingle(type, stageNode, eye) {
+            function showUnique(type, stageNode, eye) {
             restoreAll();
             var zone = zoneFor(type);
             if (!zone || !stageNode) { return; }
@@ -361,7 +361,7 @@ function em_wp_admin_render_skeleton_preview_assets(): void
             t = setTimeout(relayout, 150);
         });
 
-        return { showSingle: showSingle, restoreAll: restoreAll, toggleFull: toggleFull };
+            return { showUnique: showUnique, restoreAll: restoreAll, toggleFull: toggleFull };
     })();
     </script>
     <?php

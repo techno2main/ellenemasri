@@ -46,6 +46,11 @@ if (!defined('ABSPATH')) {
        L'anneau via box-shadow évite tout décalage de mise en page. */
     .em-v4-card[open] { border-color:#751820; background:#fdf7f7; box-shadow:0 0 0 1px #751820, 0 8px 20px -8px rgba(78,8,14,.22); }
     .em-v4-card[open] > .em-v4-card__head { background:#fbf1f1; border-radius:6px 6px 0 0; }
+   /* Hiérarchie Rubriques : les rubriques standards sont décalées à droite,
+      TOP-BAR/FOOTER restent alignées à gauche (rubriques spéciales). */
+   .em-v4-card { margin-left:14px; }
+   .em-v4-card--fixed-single { margin-left:0; border-left:3px solid #751820; }
+   .em-v4-card--fixed-single > .em-v4-card__head { padding-left:10px; }
     .em-v4-item, .em-v4-step, .em-v4-create { background:#fbfbfc; }
     /* Ligne « Nouvelle Section » : 2 lignes empilées (créer / dupliquer) */
       .em-v4-card__additem { display:inline-flex; align-items:center; justify-content:center; gap:4px; margin-left:0; width:220px; height:24px; padding:0 8px; border:1px dashed #c3c4c7; border-radius:5px; background:#fff; color:#2271b1; cursor:pointer; font-size:11px; text-transform:uppercase; letter-spacing:.03em; }

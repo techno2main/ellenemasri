@@ -20,6 +20,7 @@ function em_wp_v4_render_items_section(string $type_slug): void
     $items = em_wp_v4_get_items($type_slug);
     $open_item = sanitize_key((string) ($_GET['item'] ?? ''));
     $n = em_wp_rubrique_type_nouns($type_slug);
+    $can_add_items = !(function_exists('em_wp_v4_is_fixed_single_item_type') && em_wp_v4_is_fixed_single_item_type($type_slug));
     ?>
     <div class="em-v4-items">
         <?php if ($items === []) : ?>
@@ -30,7 +31,7 @@ function em_wp_v4_render_items_section(string $type_slug): void
             <?php endforeach; ?>
         <?php endif; ?>
 
-        <?php em_wp_v4_render_create_footer_form($type_slug); ?>
+        <?php if ($can_add_items) { em_wp_v4_render_create_footer_form($type_slug); } ?>
     </div>
     <?php
 }

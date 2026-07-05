@@ -1,7 +1,7 @@
 # PA - Refonte Gestion Template
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 18:27:16
+Horodatage précis (Paris): 2026-07-05 18:52:15
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
@@ -686,3 +686,15 @@ Critères de sortie Phase 7:
 - Libellés rubriques rendus génériques en mode unique (sans suffixe MAYAMI/DEFAULT).
 - Fil d'Ariane ajusté en mode unique (suppression du segment template nommé).
 - Titre panneau droit ajusté: "Squelette" (sans suffixe template).
+- Picker rubrique enrichi avec un choix prioritaire du principe d'affichage: single ou multi.
+- Choix single/multi persisté en AJAX par rubrique/template (instance V4 enrichie avec display_mode).
+- Rectification produit appliquée: TOP-BAR et FOOTER restent en affichage single par défaut (mode multi non proposé).
+- Renommage immédiat demandé: items TOP-BAR/FOOTER harmonisés en "default" avec mise à jour des slugs dans Rubriques.
+- Vocabulaire UI ajusté: TOP-BARS -> TOP-BAR et FOOTERS -> FOOTER (singulier imposé).
+- Option d'ajout de section retirée pour TOP-BAR et FOOTER (UI + garde-fou backend create/duplicate).
+- Page Rubriques: décalage visuel ajouté pour TOP-BAR/FOOTER afin de signaler leur statut spécial.
+- Correction UI validée: décalage inversé corrigé (rubriques standards décalées à droite, TOP-BAR/FOOTER non décalés).
+- Harmonisation terminologique: remplacement de "Single" par "Unique" sur les libellés et hooks JS admin ciblés.
+- Règle UX affinée: en Unique imposé (TOP-BAR/FOOTER), le titre "Items disponibles pour ..." est masqué.
+- HEADER: le sélecteur "Principe d'affichage" (Unique/Multi) est affiché avant la zone "Composition du HEADER".
+- Correction confusion HEADER: le mode Unique/Multi est désormais indépendant de la composition HERO/SLIDER (plus de bascule automatique).

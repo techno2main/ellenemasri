@@ -1,7 +1,7 @@
 # Refonte template unique avec multi-items
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 18:27:16
+Horodatage précis (Paris): 2026-07-05 18:52:15
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
 
@@ -192,3 +192,15 @@ Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) 
 - Les actions de création/duplication/wizard sont neutralisées dans le flux principal.
 - Les rubriques du squelette sont affichées en générique (sans suffixe artiste/template).
 - Le fil d'Ariane et le titre du panneau squelette sont alignés sur la logique template unique.
+- Le picker rubrique propose désormais en premier le principe d'affichage single/multi.
+- Le choix single/multi est sauvegardé par rubrique dans l'instance template.
+- Rectification validée: TOP-BAR et FOOTER restent en single par défaut (pas de multi sur ces deux rubriques).
+- Harmonisation nomenclature items: TOP-BAR et FOOTER migrent vers des items "default" (slugs alignés dans Rubriques).
+- Harmonisation libellés rubrique: TOP-BARS devient TOP-BAR et FOOTERS devient FOOTER.
+- Règle UX/produit: ajout de section désactivé pour TOP-BAR et FOOTER (rubriques figées à item unique).
+- Cohérence visuelle Rubriques: TOP-BAR et FOOTER reçoivent aussi un décalage visuel dédié (rubriques spéciales).
+- Ajustement final du sens du décalage: les rubriques standards sont décalées à droite; TOP-BAR/FOOTER restent alignés à gauche.
+- Harmonisation wording: remplacement de "Single" par "Unique" sur l'admin concerné.
+- Ajustement d'affichage: pour les rubriques en Unique imposé (TOP-BAR/FOOTER), ne pas afficher "Items disponibles pour ...".
+- HEADER: priorité d'UI mise en place avec "Principe d'affichage" (Unique/Multi) affiché avant "Composition du HEADER".
+- Correction de logique: le choix Unique/Multi et le choix de composition HERO/SLIDER sont séparés et persistés indépendamment.
