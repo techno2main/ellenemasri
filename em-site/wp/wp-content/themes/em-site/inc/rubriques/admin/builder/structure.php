@@ -42,7 +42,7 @@ function em_wp_v4_render_item_builder(string $type, string $item): void
         $grid[(int) $field['row']][(int) $field['col']][] = $field;
     }
     ?>
-    <div class="em-v4-builder" data-form="<?php echo esc_attr($form_id); ?>">
+    <div class="em-v4-builder" data-form="<?php echo esc_attr($form_id); ?>" data-item-type="<?php echo esc_attr($type); ?>">
         <div class="em-v4-sticky">
             <div class="em-v4-savebar" hidden>
                 <button type="submit" form="<?php echo esc_attr($form_id); ?>" class="button button-primary em-v4-savebar__btn"><?php esc_html_e('Enregistrer', 'em-wp'); ?></button>

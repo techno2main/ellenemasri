@@ -49,6 +49,7 @@ require dirname(__DIR__) . '/slides-editor-script.php';
             return;
         }
         builder.dataset.emV4SetupDone = '1';
+        var isReleaseBuilder = (builder.getAttribute('data-item-type') || '') === 'release';
 
         var formId = builder.getAttribute('data-form');
         var structureInput = document.getElementById(formId + '-structure');
@@ -91,6 +92,9 @@ require dirname(__DIR__) . '/slides-editor-script.php';
 
 
         function update() {
+            if (isReleaseBuilder) {
+                applyReleaseCompactMode(builder);
+            }
             if (window.EmWpV4Rows && window.EmWpV4Rows.refreshAllTabNames) {
                 window.EmWpV4Rows.refreshAllTabNames(builder);
             }
@@ -293,10 +297,88 @@ require dirname(__DIR__) . '/slides-editor-script.php';
         if (form) { form.addEventListener('submit', update); }
 
         window.EmWpV4Rows.singleOpen(builder);
+        if (isReleaseBuilder) {
+            installReleaseTools(builder, update);
+        }
         builder.querySelectorAll('.em-v4-chip').forEach(function (chip) { syncRichAlign(chip); });
         builder.querySelectorAll('.em-v4-row__title').forEach(function (box) { renderRowTitleText(box); });
         update();
         ready = true;
+    }
+
+    function installReleaseTools(builder, update) {
+        var actions = builder.querySelector('.em-v4-builder__actions');
+        if (!actions || actions.querySelector('.em-v4-release-tools')) {
+            return;
+        }
+
+        var wrap = document.createElement('span');
+        wrap.className = 'em-v4-release-tools';
+
+        var addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'button em-v4-release-tools__add';
+        addBtn.textContent = '<?php echo esc_js(__('Ajouter une ligne crédit', 'em-wp')); ?>';
+        addBtn.addEventListener('click', function () {
+            addReleaseCreditLine(builder, update);
+        });
+
+        var hint = document.createElement('span');
+        hint.className = 'em-v4-release-tools__hint';
+        hint.textContent = '<?php echo esc_js(__('Mode compact: les lignes crédit masquent les options avancées (liens, taille, police, alignement).', 'em-wp')); ?>';
+
+        wrap.appendChild(addBtn);
+        wrap.appendChild(hint);
+        actions.appendChild(wrap);
+    }
+
+    function releaseRightColumn(builder) {
+        var row = builder.querySelector('.em-v4-row');
+        if (!row) { return null; }
+        return row.querySelector('.em-v4-col[data-col="2"] .em-v4-col__drop');
+    }
+
+    function addReleaseCreditLine(builder, update) {
+        var drop = releaseRightColumn(builder);
+        if (!drop || !window.EmWpV4Chip || typeof window.EmWpV4Chip.build !== 'function') {
+            return;
+        }
+
+        var creditChip = window.EmWpV4Chip.build('text_text', '');
+        if (creditChip) {
+            var left = creditChip.querySelector('.em-v4-chip__titext');
+            var right = creditChip.querySelector('.em-v4-chip__titext2');
+            if (left) { left.value = '<?php echo esc_js(__('Label:', 'em-wp')); ?>'; }
+            if (right) { right.value = ''; }
+            drop.appendChild(creditChip);
+        }
+
+        var sepChip = window.EmWpV4Chip.build('sep_line', '');
+        if (sepChip) {
+            drop.appendChild(sepChip);
+        }
+
+        update();
+    }
+
+    function applyReleaseCompactMode(builder) {
+        var drop = releaseRightColumn(builder);
+        if (!drop) {
+            return;
+        }
+
+        var textTextChips = Array.prototype.slice.call(drop.querySelectorAll('.em-v4-chip[data-type="text_text"]'));
+        textTextChips.forEach(function (chip, index) {
+            chip.classList.toggle('em-v4-chip--release-title', index === 0);
+            chip.classList.toggle('em-v4-chip--release-credit', index > 0);
+
+            if (index > 0) {
+                var left = chip.querySelector('.em-v4-chip__titext');
+                var right = chip.querySelector('.em-v4-chip__titext2');
+                if (left) { left.placeholder = '<?php echo esc_js(__('Label crédit', 'em-wp')); ?>'; }
+                if (right) { right.placeholder = '<?php echo esc_js(__('Valeur crédit', 'em-wp')); ?>'; }
+            }
+        });
     }
 
     function startRowTitleEdit(box) {

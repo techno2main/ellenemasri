@@ -193,29 +193,128 @@ function em_site_release_font_stack(string $slug): string
 }
 
 /**
+ * @param array<string,mixed> $item
+ * @param array<string,mixed> $content
+ * @return array{intro_key:string,title_key:string,credit_keys:array<int,string>,sep_after:array<string,bool>}
+ */
+function em_site_release_structured_right_column(array $item, array $content): array
+{
+	$fields = is_array($item['fields'] ?? null) ? $item['fields'] : [];
+	$intro_key = '';
+	$title_key = '';
+	$credit_keys = [];
+	$sep_after = [];
+	$last_credit_key = '';
+
+	foreach ($fields as $field) {
+		if (!is_array($field)) {
+			continue;
+		}
+
+		if (!empty($field['hidden'])) {
+			continue;
+		}
+
+		$key = sanitize_key((string) ($field['key'] ?? ''));
+		$type = sanitize_key((string) ($field['type'] ?? ''));
+		$col = (int) ($field['col'] ?? 0);
+
+		if ($key === '' || $col !== 2) {
+			continue;
+		}
+
+		if ($type === 'text' && $intro_key === '') {
+			$intro_key = $key;
+			continue;
+		}
+
+		if ($type === 'text_text') {
+			if ($title_key === '') {
+				$title_key = $key;
+			} else {
+				$credit_keys[] = $key;
+				$last_credit_key = $key;
+			}
+			continue;
+		}
+
+		if ($type === 'sep_line' && $last_credit_key !== '') {
+			$sep_after[$last_credit_key] = true;
+		}
+	}
+
+	if ($intro_key === '' && array_key_exists('text', $content)) {
+		$intro_key = 'text';
+	}
+
+	if ($title_key === '' && array_key_exists('text_text_6', $content)) {
+		$title_key = 'text_text_6';
+	}
+
+	if ($credit_keys === []) {
+		foreach (['text_text', 'text_text_2', 'text_text_3', 'text_text_4', 'text_text_5'] as $legacy_key) {
+			if (array_key_exists($legacy_key, $content)) {
+				$credit_keys[] = $legacy_key;
+			}
+		}
+	}
+
+	if ($title_key === '' && $credit_keys !== []) {
+		$title_key = (string) array_shift($credit_keys);
+	}
+
+	return [
+		'intro_key' => $intro_key,
+		'title_key' => $title_key,
+		'credit_keys' => array_values(array_unique($credit_keys)),
+		'sep_after' => $sep_after,
+	];
+}
+
+/**
+ * @param array<string,mixed> $content
+ * @return array{left_text:string,right_text:string,left_color:string,right_color:string,left_size:int,right_size:int}
+ */
+function em_site_release_text_text_pair(array $content, string $key): array
+{
+	$meta = em_site_release_decode_json_field((string) ($content[$key] ?? ''));
+	$left_style = is_array($meta['style'] ?? null) ? $meta['style'] : [];
+	$right_style = is_array($meta['style2'] ?? null) ? $meta['style2'] : [];
+
+	return [
+		'left_text' => (string) ($meta['text'] ?? ''),
+		'right_text' => (string) ($meta['text2'] ?? ''),
+		'left_color' => (string) ($left_style['color'] ?? ''),
+		'right_color' => (string) ($right_style['color'] ?? ''),
+		'left_size' => (int) ($left_style['size'] ?? 0),
+		'right_size' => (int) ($right_style['size'] ?? 0),
+	];
+}
+
+/**
  * @return array<int, array{left_text:string,right_text:string,left_color:string,right_color:string,left_size:int,right_size:int}>
  */
-function em_site_release_collect_credit_rows(array $content): array
+function em_site_release_collect_credit_rows(array $content, array $keys = []): array
 {
-	$keys = ['text_text', 'text_text_2', 'text_text_3', 'text_text_4', 'text_text_5'];
+	if ($keys === []) {
+		$keys = ['text_text', 'text_text_2', 'text_text_3', 'text_text_4', 'text_text_5'];
+	}
 	$rows = [];
 
 	foreach ($keys as $key) {
-		$meta = em_site_release_decode_json_field((string) ($content[$key] ?? ''));
-		$left = (string) ($meta['text'] ?? '');
-		$right = (string) ($meta['text2'] ?? '');
+		$pair = em_site_release_text_text_pair($content, (string) $key);
+		$left = (string) ($pair['left_text'] ?? '');
+		$right = (string) ($pair['right_text'] ?? '');
 		if ($left === '' && $right === '') {
 			continue;
 		}
-		$left_style = is_array($meta['style'] ?? null) ? $meta['style'] : [];
-		$right_style = is_array($meta['style2'] ?? null) ? $meta['style2'] : [];
 		$rows[] = [
 			'left_text' => $left,
 			'right_text' => $right,
-			'left_color' => (string) ($left_style['color'] ?? ''),
-			'right_color' => (string) ($right_style['color'] ?? ''),
-			'left_size' => (int) ($left_style['size'] ?? 0),
-			'right_size' => (int) ($right_style['size'] ?? 0),
+			'left_color' => (string) ($pair['left_color'] ?? ''),
+			'right_color' => (string) ($pair['right_color'] ?? ''),
+			'left_size' => (int) ($pair['left_size'] ?? 0),
+			'right_size' => (int) ($pair['right_size'] ?? 0),
 		];
 	}
 
