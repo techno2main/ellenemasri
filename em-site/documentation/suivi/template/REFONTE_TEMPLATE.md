@@ -1,7 +1,7 @@
 # Refonte template unique avec multi-items
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 22:25:30
+Horodatage précis (Paris): 2026-07-05 22:43:47
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
 
@@ -227,3 +227,4 @@ Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) 
 - RELEASE front: mode Multi branché (items multiples, navigation, auto/manual, hash ciblé) avec récupération de la section rétablie après correction du fallback items.
 - RELEASE front: la colonne droite n'est plus figée sur des clés hardcodées ; extraction dynamique des blocs (intro/titre/lignes crédits/séparateurs) avec compatibilité legacy.
 - RELEASE admin: optimisation d'ergonomie en mode compact pour les lignes crédits, avec action rapide d'ajout de ligne crédit.
+- RELEASE admin: ajustement de la mise en forme vers une version compacte anti-scroll (moins de hauteur, meilleure lisibilité), sans modification du schéma de données.

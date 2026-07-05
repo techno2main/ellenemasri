@@ -1,7 +1,7 @@
 # PA - Refonte Gestion Template
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 22:25:30
+Horodatage précis (Paris): 2026-07-05 22:43:47
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
@@ -13,6 +13,7 @@ Mises à jour de session:
 - RELEASE front: correction de disparition de section via fallback robuste de résolution des items (`em_wp_v4_get_items` + store brut + slug sélectionné + slug par défaut).
 - RELEASE front: structuration dynamique de la colonne droite (intro, titre, lignes crédits, séparateurs) avec fallback legacy pour rollback immédiat.
 - RELEASE admin: premier niveau d'optimisation UX builder (mode compact crédits + ajout rapide d'une ligne crédit) pour réduire la complexité d'édition.
+- RELEASE admin (itération UX): remplacement du layout trop haut par une version compacte anti-scroll (lecture améliorée sans hausse de hauteur), en conservant strictement le même stockage de données.
 
 Règle de suivi: toujours inclure un horodatage précis temps réel (date + heure Paris) à chaque mise à jour.
 

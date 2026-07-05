@@ -367,16 +367,58 @@ require dirname(__DIR__) . '/slides-editor-script.php';
             return;
         }
 
-        var textTextChips = Array.prototype.slice.call(drop.querySelectorAll('.em-v4-chip[data-type="text_text"]'));
-        textTextChips.forEach(function (chip, index) {
-            chip.classList.toggle('em-v4-chip--release-title', index === 0);
-            chip.classList.toggle('em-v4-chip--release-credit', index > 0);
+        var chips = Array.prototype.slice.call(drop.querySelectorAll('.em-v4-chip'));
+        chips.forEach(function (chip) {
+            chip.classList.remove('em-v4-chip--release-intro', 'em-v4-chip--release-title', 'em-v4-chip--release-credit', 'em-v4-chip--release-credit-sep');
+        });
 
-            if (index > 0) {
+        var introDone = false;
+        var titleDone = false;
+        var lastCreditChip = null;
+
+        chips.forEach(function (chip) {
+            var type = chip.getAttribute('data-type') || '';
+
+            if (type === 'text' && !introDone) {
+                introDone = true;
+                chip.classList.add('em-v4-chip--release-intro');
+                var intro = chip.querySelector('.em-v4-chip__value');
+                if (intro) { intro.placeholder = '<?php echo esc_js(__('Intro section (ex: 04 / Release)', 'em-wp')); ?>'; }
+                return;
+            }
+
+            if (type === 'text_text' && !titleDone) {
+                titleDone = true;
+                chip.classList.add('em-v4-chip--release-title');
+                var titleLeft = chip.querySelector('.em-v4-chip__titext');
+                var titleRight = chip.querySelector('.em-v4-chip__titext2');
+                if (titleLeft) { titleLeft.placeholder = '<?php echo esc_js(__('Titre gauche', 'em-wp')); ?>'; }
+                if (titleRight) { titleRight.placeholder = '<?php echo esc_js(__('Titre droite', 'em-wp')); ?>'; }
+
+                var titleParts = chip.querySelectorAll('.em-v4-chip__tt-part');
+                if (titleParts[0]) { titleParts[0].classList.add('em-v4-chip__tt-part--left'); }
+                if (titleParts[1]) { titleParts[1].classList.add('em-v4-chip__tt-part--right'); }
+                return;
+            }
+
+            if (type === 'text_text') {
+                chip.classList.add('em-v4-chip--release-credit');
                 var left = chip.querySelector('.em-v4-chip__titext');
                 var right = chip.querySelector('.em-v4-chip__titext2');
                 if (left) { left.placeholder = '<?php echo esc_js(__('Label crédit', 'em-wp')); ?>'; }
                 if (right) { right.placeholder = '<?php echo esc_js(__('Valeur crédit', 'em-wp')); ?>'; }
+
+                var parts = chip.querySelectorAll('.em-v4-chip__tt-part');
+                if (parts[0]) { parts[0].classList.add('em-v4-chip__tt-part--left'); }
+                if (parts[1]) { parts[1].classList.add('em-v4-chip__tt-part--right'); }
+
+                lastCreditChip = chip;
+                return;
+            }
+
+            if (type === 'sep_line' && lastCreditChip) {
+                chip.classList.add('em-v4-chip--release-credit-sep');
+                lastCreditChip = null;
             }
         });
     }
