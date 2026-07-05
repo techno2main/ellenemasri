@@ -41,6 +41,17 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
     .em-wp-instance-picker__mode-option { display:inline-flex; align-items:center; gap:6px; font-weight:600; color:#1d2327; cursor:pointer; }
     .em-wp-instance-picker__mode-locked { margin:0; font-weight:600; color:#1d2327; }
     .em-wp-instance-picker__mode-help { margin:8px 0 0; font-size:12px; color:#6b7280; }
+    .em-wp-instance-picker__multi { margin:0 0 10px; padding:10px; background:#fff; border:1px solid #e6d9dc; border-radius:6px; }
+    .em-wp-instance-picker__multi-title { margin:0 0 8px; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#6b7280; }
+    .em-wp-instance-picker__multi-switch { display:flex; align-items:center; gap:10px; }
+    .em-wp-instance-picker__multi-timer { display:inline-flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:#1d2327; }
+    .em-wp-instance-picker__multi-timer input { width:80px; }
+    .em-wp-instance-picker__badge--first { background:#e5eef8; color:#0b4f85; }
+    .em-wp-instance-picker[data-display-mode="multi"] .em-wp-instance-picker__single-radio { display:none; }
+    .em-wp-instance-picker[data-display-mode="single"] .em-wp-instance-picker__multi-include,
+    .em-wp-instance-picker[data-display-mode="single"] .em-wp-instance-picker__multi-first { display:none !important; }
+    .em-wp-instance-picker[data-display-mode="multi"][data-transition-mode="manual"] .em-wp-instance-picker__multi-include,
+    .em-wp-instance-picker[data-display-mode="multi"][data-transition-mode="manual"] .em-wp-instance-picker__multi-first { display:none !important; }
     .em-wp-instance-picker { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; }
     .em-wp-instance-picker__row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 10px; background:#fff; border:1px solid #e6d9dc; border-radius:6px; }
     .em-wp-instance-picker__row:has(input:checked) { border-color:#751820; box-shadow:inset 0 0 0 1px #751820; }
@@ -79,28 +90,146 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             el.insertBefore(document.createTextNode(text), el.firstChild);
         }
 
-        function reflectSelection(list, radio) {
+        function isStreamList(list) {
+            return !!list && (list.getAttribute('data-type') || '') === 'stream';
+        }
+
+        function findItemName(list, itemSlug) {
+            if (!list || !itemSlug) { return ''; }
+            var row = list.querySelector('.em-wp-instance-picker__row .em-wp-instance-picker__single-radio[value="' + itemSlug + '"]')
+                || list.querySelector('.em-wp-instance-picker__row input[type="radio"][value="' + itemSlug + '"]');
+            if (!row) { return ''; }
+            var nameSpan = row.closest('.em-wp-instance-picker__label').querySelector('.em-wp-instance-picker__name');
+            return nameSpan ? nameSpan.textContent.trim() : '';
+        }
+
+        function reflectSectionTitle(list, itemSlug) {
             var type = list.getAttribute('data-type') || '';
-            var nameSpan = radio.parentNode.querySelector('.em-wp-instance-picker__name');
-            // Le nom du span contient déjà le nom complet (ex. « TOP-BAR MAYAMI »).
-            var composite = nameSpan ? nameSpan.textContent.trim() : '';
+            var composite = findItemName(list, itemSlug);
+            if (!composite) { return; }
 
-            // Déplace le badge « Utilisée » sur la section choisie.
-            list.querySelectorAll('.em-wp-instance-picker__badge').forEach(function (b) { b.remove(); });
-            if (nameSpan) {
-                var badge = document.createElement('span');
-                badge.className = 'em-wp-instance-picker__badge';
-                badge.textContent = BADGE;
-                nameSpan.insertAdjacentElement('afterend', badge);
-            }
-
-            // Titre de la rubrique dans la liste du squelette.
             var row = document.querySelector('.em-wp-rubriques-admin__list-item[data-module-slug="' + type + '"] .em-wp-rubriques-admin__list-label');
             setLeadingText(row, composite);
 
-            // Libellé de la zone correspondante dans le wireframe.
             var zone = document.querySelector('.em-wp-admin-landing-map [data-module-slug="' + type + '"]:not([data-header-part]) .em-wp-admin-landing-map__zone-label');
             setLeadingText(zone, composite);
+        }
+
+        function updateSingleBadge(list, itemSlug) {
+            list.querySelectorAll('.em-wp-instance-picker__badge').forEach(function (b) { b.remove(); });
+            if (!itemSlug) { return; }
+            var input = list.querySelector('.em-wp-instance-picker__single-radio[value="' + itemSlug + '"]')
+                || list.querySelector('input[type="radio"][value="' + itemSlug + '"]');
+            if (!input) { return; }
+            var nameSpan = input.closest('.em-wp-instance-picker__label').querySelector('.em-wp-instance-picker__name');
+            if (!nameSpan) { return; }
+            var badge = document.createElement('span');
+            badge.className = 'em-wp-instance-picker__badge';
+            badge.textContent = BADGE;
+            nameSpan.insertAdjacentElement('afterend', badge);
+        }
+
+        function updateStreamMultiBadges(list, firstItem) {
+            list.querySelectorAll('.em-wp-instance-picker__badge').forEach(function (b) { b.remove(); });
+            if (!firstItem) { return; }
+            var first = list.querySelector('.em-wp-instance-picker__multi-first[value="' + firstItem + '"]');
+            if (!first) { return; }
+            var nameSpan = first.closest('.em-wp-instance-picker__label').querySelector('.em-wp-instance-picker__name');
+            if (!nameSpan) { return; }
+            var badge = document.createElement('span');
+            badge.className = 'em-wp-instance-picker__badge em-wp-instance-picker__badge--first';
+            badge.textContent = '<?php echo esc_js(__('Premier item', 'em-wp')); ?>';
+            nameSpan.insertAdjacentElement('afterend', badge);
+        }
+
+        function clearStreamBadges(list) {
+            list.querySelectorAll('.em-wp-instance-picker__badge').forEach(function (b) { b.remove(); });
+        }
+
+        function parseHiddenItems(list) {
+            var raw = list.getAttribute('data-hidden-items') || '[]';
+            try {
+                var parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function streamVisibleItems(list) {
+            var visible = [];
+            list.querySelectorAll('.em-wp-instance-picker__multi-include').forEach(function (cb) {
+                if (cb.checked) {
+                    visible.push(cb.getAttribute('data-item') || '');
+                }
+            });
+            return visible.filter(Boolean);
+        }
+
+        function syncStreamMultiControls(list, mode) {
+            if (!isStreamList(list)) { return; }
+            var root = list.closest('.em-wp-rubriques-admin__picker-inner');
+            if (!root) { return; }
+            var multiWrap = root.querySelector('[data-em-stream-multi-options]');
+            var timerWrap = root.querySelector('[data-em-stream-timer-wrap]');
+            var transitionAuto = root.querySelector('input[name^="em-wp-stream-transition-"][value="auto"]');
+            var transitionManual = root.querySelector('input[name^="em-wp-stream-transition-"][value="manual"]');
+            var isMulti = mode === 'multi';
+            var isAuto = !!(transitionAuto && transitionAuto.checked);
+            var isMultiAuto = isMulti && isAuto;
+
+            if (multiWrap) { multiWrap.hidden = !isMulti; }
+            list.querySelectorAll('.em-wp-instance-picker__single-radio').forEach(function (el) { el.hidden = isMulti; });
+            list.querySelectorAll('.em-wp-instance-picker__multi-include, .em-wp-instance-picker__multi-first').forEach(function (el) {
+                el.hidden = !isMultiAuto;
+                el.disabled = !isMultiAuto;
+            });
+
+            if (timerWrap) {
+                timerWrap.hidden = !isMultiAuto;
+            }
+
+            if (transitionManual) { transitionManual.disabled = !isMulti; }
+            if (transitionAuto) { transitionAuto.disabled = !isMulti; }
+
+            if (!isMulti) {
+                updateSingleBadge(list, list.getAttribute('data-current') || '');
+                return;
+            }
+
+            if (!isMultiAuto) {
+                clearStreamBadges(list);
+                reflectSectionTitle(list, list.getAttribute('data-current') || list.getAttribute('data-first-item') || '');
+                return;
+            }
+
+            var visible = streamVisibleItems(list);
+            if (visible.length === 0) {
+                var firstCb = list.querySelector('.em-wp-instance-picker__multi-include');
+                if (firstCb) { firstCb.checked = true; visible = [firstCb.getAttribute('data-item') || '']; }
+            }
+
+            list.querySelectorAll('.em-wp-instance-picker__multi-first').forEach(function (radio) {
+                var item = radio.getAttribute('data-item') || '';
+                var enabled = visible.indexOf(item) !== -1;
+                radio.disabled = !enabled;
+                if (!enabled && radio.checked) {
+                    radio.checked = false;
+                }
+            });
+
+            var first = list.querySelector('.em-wp-instance-picker__multi-first:checked');
+            if (!first || first.disabled) {
+                var fallback = list.querySelector('.em-wp-instance-picker__multi-first:not(:disabled)');
+                if (fallback) { fallback.checked = true; first = fallback; }
+            }
+
+            var firstItem = first ? (first.value || '') : '';
+            if (firstItem) {
+                list.setAttribute('data-first-item', firstItem);
+                updateStreamMultiBadges(list, firstItem);
+                reflectSectionTitle(list, firstItem);
+            }
         }
 
         // Œil : affiche l'aperçu de la section DANS le wireframe, à la place de la
@@ -134,7 +263,10 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             var list = root.querySelector('.em-wp-instance-picker');
             if (!list) { return; }
             var type = list.getAttribute('data-type') || '';
-            var current = list.getAttribute('data-current') || '';
+            var mode = list.getAttribute('data-display-mode') || 'single';
+            var current = mode === 'multi' && type === 'stream'
+                ? (list.getAttribute('data-first-item') || list.getAttribute('data-current') || '')
+                : (list.getAttribute('data-current') || '');
             var inner = list.closest('.em-wp-rubriques-admin__picker-inner');
             if (!type || !current || !inner) { return; }
             var eye = inner.querySelector('.em-wp-instance-picker__eye[data-item="' + current + '"]');
@@ -163,17 +295,89 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             status.hidden = false;
         }
 
-        function saveInstance(list, radio, status) {
+        function getDisplayModeValue(list) {
+            if (!list) { return ''; }
+            var root = list.closest('.em-wp-rubriques-admin__picker-inner');
+            if (!root) { return ''; }
+            var radio = root.querySelector('.em-wp-instance-picker__mode input[type="radio"]:checked');
+            return radio ? String(radio.value || '') : '';
+        }
+
+        function appendStreamPayload(body, list, mode) {
+            if (!isStreamList(list)) { return; }
+            var root = list.closest('.em-wp-rubriques-admin__picker-inner');
+            if (!root) { return; }
+
+            var transition = root.querySelector('input[name^="em-wp-stream-transition-"]:checked');
+            var timerInput = root.querySelector('[data-em-stream-timer-input]');
+            var timer = timerInput ? parseInt(timerInput.value || '6', 10) : 6;
+            if (isNaN(timer)) { timer = 6; }
+            var transitionMode = transition ? String(transition.value || 'manual') : 'manual';
+
+            var hidden = [];
+            list.querySelectorAll('.em-wp-instance-picker__multi-include').forEach(function (cb) {
+                var item = cb.getAttribute('data-item') || '';
+                if (item && !cb.checked) {
+                    hidden.push(item);
+                }
+            });
+
+            var first = list.querySelector('.em-wp-instance-picker__multi-first:checked');
+            var firstItem = first ? String(first.value || '') : '';
+
+            if (mode === 'multi' && transitionMode !== 'auto') {
+                hidden = [];
+                firstItem = list.getAttribute('data-current') || firstItem;
+            }
+
+            body.set('transition_mode', transitionMode);
+            body.set('transition_timer', String(timer));
+            body.set('first_item', firstItem);
+            body.set('hidden_items', JSON.stringify(hidden));
+
+            if (mode === 'multi' && firstItem !== '') {
+                body.set('item', firstItem);
+            }
+        }
+
+        function applySavedResponse(list, res) {
+            var mode = String((res && res.display_mode) || getDisplayModeValue(list) || 'single');
+            list.setAttribute('data-display-mode', mode);
+
+            if (isStreamList(list)) {
+                var firstItem = String((res && res.first_item) || (list.getAttribute('data-first-item') || ''));
+                var hiddenItems = Array.isArray(res && res.hidden_items) ? res.hidden_items : parseHiddenItems(list);
+                list.setAttribute('data-transition-mode', String((res && res.transition_mode) || (list.getAttribute('data-transition-mode') || 'manual')));
+                list.setAttribute('data-transition-timer', String((res && res.transition_timer) || (list.getAttribute('data-transition-timer') || '6')));
+                list.setAttribute('data-first-item', firstItem);
+                list.setAttribute('data-hidden-items', JSON.stringify(hiddenItems));
+                syncStreamMultiControls(list, mode);
+                if (mode === 'multi') {
+                    var transitionMode = list.getAttribute('data-transition-mode') || 'manual';
+                    reflectSectionTitle(list, transitionMode === 'auto' ? firstItem : (list.getAttribute('data-current') || firstItem));
+                }
+            }
+
+            if (mode === 'single') {
+                var current = String((res && res.item) || (list.getAttribute('data-current') || ''));
+                list.setAttribute('data-current', current);
+                updateSingleBadge(list, current);
+                reflectSectionTitle(list, current);
+            }
+        }
+
+        function saveInstance(list, itemValue, status) {
             var body = new URLSearchParams();
             body.set('action', 'em_wp_v4_set_instance');
             body.set('_ajax_nonce', NONCE);
             body.set('template', list.getAttribute('data-template') || '');
             body.set('type', list.getAttribute('data-type') || '');
-            body.set('item', radio.value || '');
+            body.set('item', itemValue || '');
             var mode = getDisplayModeValue(list);
             if (mode) {
                 body.set('display_mode', mode);
             }
+            appendStreamPayload(body, list, mode);
 
             fetch(window.ajaxurl, {
                 method: 'POST',
@@ -182,8 +386,7 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
                 body: body.toString()
             }).then(function (r) { return r.json(); }).then(function (res) {
                 if (res && res.success) {
-                    list.setAttribute('data-current', radio.value || '');
-                    reflectSelection(list, radio);
+                    applySavedResponse(list, res);
                     setStatus(status, SAVED, '#2f7a37');
                 } else {
                     revertSelection(list);
@@ -195,14 +398,6 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             });
         }
 
-        function getDisplayModeValue(list) {
-            if (!list) { return ''; }
-            var root = list.closest('.em-wp-rubriques-admin__picker-inner');
-            if (!root) { return ''; }
-            var radio = root.querySelector('.em-wp-instance-picker__mode input[type="radio"]:checked');
-            return radio ? String(radio.value || '') : '';
-        }
-
         function saveDisplayMode(list, mode, status) {
             var body = new URLSearchParams();
             body.set('action', 'em_wp_v4_set_instance');
@@ -211,6 +406,7 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             body.set('type', list.getAttribute('data-type') || '');
             body.set('item', list.getAttribute('data-current') || '');
             body.set('display_mode', mode);
+            appendStreamPayload(body, list, mode);
 
             fetch(window.ajaxurl, {
                 method: 'POST',
@@ -219,7 +415,7 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
                 body: body.toString()
             }).then(function (r) { return r.json(); }).then(function (res) {
                 if (res && res.success) {
-                    list.setAttribute('data-display-mode', mode);
+                    applySavedResponse(list, res);
                     setStatus(status, '<?php echo esc_js(__('Mode d\'affichage enregistré.', 'em-wp')); ?>', '#2f7a37');
                 } else {
                     revertDisplayMode(list);
@@ -237,18 +433,20 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             if (!root) { return; }
             var prev = root.querySelector('.em-wp-instance-picker__mode input[type="radio"][value="' + current + '"]');
             if (prev) { prev.checked = true; }
+            syncStreamMultiControls(list, current);
         }
 
         function revertSelection(list) {
             var current = list.getAttribute('data-current') || '';
-            var prev = list.querySelector('input[type="radio"][value="' + current + '"]');
+            var prev = list.querySelector('.em-wp-instance-picker__single-radio[value="' + current + '"]')
+                || list.querySelector('input[type="radio"][value="' + current + '"]');
             if (prev) { prev.checked = true; }
         }
 
         // Changement de section branchée : confirmation OBLIGATOIRE avant d'enregistrer
         // (avertissement renforcé si le template est LIVE). Annulation = retour au choix.
         document.addEventListener('change', function (e) {
-            var radio = e.target.closest('.em-wp-instance-picker input[type="radio"]');
+            var radio = e.target.closest('.em-wp-instance-picker__single-radio');
             if (!radio) { return; }
             var list = radio.closest('.em-wp-instance-picker');
             if (!list) { return; }
@@ -263,7 +461,7 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
                 + ASK_MSG.replace('%1$s', itemName).replace('%2$s', tplLabel || '<?php echo esc_js(__('ce template', 'em-wp')); ?>');
 
             function onChoice(ok) {
-                if (ok) { saveInstance(list, radio, status); }
+                if (ok) { saveInstance(list, radio.value || '', status); }
                 else { revertSelection(list); }
             }
 
@@ -289,7 +487,39 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
             var status = root.querySelector('.em-wp-instance-picker__status');
             var mode = String(modeRadio.value || 'single');
             if ((list.getAttribute('data-display-mode') || 'single') === mode) { return; }
+            syncStreamMultiControls(list, mode);
             saveDisplayMode(list, mode, status);
+        });
+
+        document.addEventListener('change', function (e) {
+            var control = e.target.closest('.em-wp-instance-picker__multi-include, .em-wp-instance-picker__multi-first, [data-em-stream-timer-input], [name^="em-wp-stream-transition-"]');
+            if (!control) { return; }
+            var root = control.closest('.em-wp-rubriques-admin__picker-inner');
+            if (!root) { return; }
+            var list = root.querySelector('.em-wp-instance-picker');
+            if (!isStreamList(list)) { return; }
+            if ((list.getAttribute('data-display-mode') || 'single') !== 'multi') { return; }
+
+            syncStreamMultiControls(list, 'multi');
+
+            var transition = root.querySelector('input[name^="em-wp-stream-transition-"]:checked');
+            var transitionMode = transition ? String(transition.value || 'manual') : 'manual';
+            var firstItem = list.getAttribute('data-current') || '';
+
+            if (transitionMode === 'auto') {
+                var first = list.querySelector('.em-wp-instance-picker__multi-first:checked');
+                firstItem = first ? String(first.value || '') : '';
+                if (!firstItem) {
+                    setStatus(root.querySelector('.em-wp-instance-picker__status'), ERR, '#b32d2e');
+                    return;
+                }
+            }
+
+            saveInstance(list, firstItem, root.querySelector('.em-wp-instance-picker__status'));
+        });
+
+        document.querySelectorAll('.em-wp-instance-picker').forEach(function (list) {
+            syncStreamMultiControls(list, list.getAttribute('data-display-mode') || 'single');
         });
     })();
     </script>
@@ -311,6 +541,10 @@ function em_wp_v4_handle_ajax_set_instance(): void
     $type = sanitize_key((string) ($_POST['type'] ?? ''));
     $item = sanitize_key((string) ($_POST['item'] ?? ''));
     $display_mode = sanitize_key((string) ($_POST['display_mode'] ?? 'single'));
+    $transition_mode = sanitize_key((string) ($_POST['transition_mode'] ?? 'manual'));
+    $transition_timer = (int) ($_POST['transition_timer'] ?? 6);
+    $first_item = sanitize_key((string) ($_POST['first_item'] ?? ''));
+    $hidden_items_raw = (string) ($_POST['hidden_items'] ?? '[]');
     $single_only_modules = ['top-bar', 'footer'];
 
     if (!in_array($display_mode, ['single', 'multi'], true)) {
@@ -326,21 +560,80 @@ function em_wp_v4_handle_ajax_set_instance(): void
     }
 
     $items = em_wp_v4_get_items($type);
+    $item_slugs = array_map('strval', array_keys($items));
 
     if ($item !== '' && !isset($items[$item])) {
         wp_send_json_error(['message' => 'unknown_item'], 400);
     }
 
-    em_wp_v4_save_instance($template, $type, [
+    $hidden_items = [];
+    $decoded_hidden = json_decode(wp_unslash($hidden_items_raw), true);
+    if (is_array($decoded_hidden)) {
+        foreach ($decoded_hidden as $hidden_slug) {
+            $hidden_slug = sanitize_key((string) $hidden_slug);
+            if ($hidden_slug !== '' && in_array($hidden_slug, $item_slugs, true)) {
+                $hidden_items[] = $hidden_slug;
+            }
+        }
+        $hidden_items = array_values(array_unique($hidden_items));
+    }
+
+    if (!in_array($transition_mode, ['manual', 'auto'], true)) {
+        $transition_mode = 'manual';
+    }
+    if ($transition_timer < 2 || $transition_timer > 120) {
+        $transition_timer = 6;
+    }
+
+    $multi_items = [];
+
+    if ($type === 'stream' && $display_mode === 'multi') {
+        $visible_items = array_values(array_diff($item_slugs, $hidden_items));
+        if ($visible_items === []) {
+            $hidden_items = [];
+            $visible_items = $item_slugs;
+        }
+        if ($first_item === '' || !in_array($first_item, $visible_items, true)) {
+            $first_item = (string) ($visible_items[0] ?? '');
+        }
+        $item = $first_item;
+        $multi_items = $visible_items;
+    } else {
+        $hidden_items = [];
+        if ($first_item === '') {
+            $first_item = $item;
+        }
+
+        if ($type === 'stream') {
+            $multi_items = $item_slugs;
+        }
+    }
+
+    $instance_data = [
         'item'         => $item,
         'display_mode' => $display_mode,
-    ]);
+    ];
+
+    if ($type === 'stream') {
+        $instance_data['transition_mode'] = $transition_mode;
+        $instance_data['transition_timer'] = $transition_timer;
+        $instance_data['first_item'] = $first_item;
+        $instance_data['hidden_items'] = $hidden_items;
+        $instance_data['multi_items'] = $multi_items;
+    }
+
+    em_wp_v4_save_instance($template, $type, $instance_data);
 
     wp_send_json_success([
         'template'     => $template,
         'type'         => $type,
         'item'         => $item,
         'display_mode' => $display_mode,
+        'transition_mode' => $transition_mode,
+        'transition_timer' => $transition_timer,
+        'first_item'      => $first_item,
+        'hidden_items'    => $hidden_items,
+        'multi_items'     => $multi_items,
     ]);
 }
 add_action('wp_ajax_em_wp_v4_set_instance', 'em_wp_v4_handle_ajax_set_instance');

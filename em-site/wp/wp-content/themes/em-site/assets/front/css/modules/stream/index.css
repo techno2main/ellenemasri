@@ -1,5 +1,68 @@
 /* Rubrique STREAM : règles spécifiques (cartes plateformes, players, responsive). */
 
+.em-section--stream {
+	position: relative;
+}
+
+.em-stream-switch {
+	position: absolute;
+	top: 16px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 3;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 2px 4px;
+	border-radius: 999px;
+	background: transparent;
+	box-shadow: none;
+}
+
+.em-stream-switch__btn {
+	width: 28px;
+	height: 28px;
+	border: 1px solid rgba(255, 255, 255, 0.75);
+	border-radius: 999px;
+	background: transparent;
+	color: #fff;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.em-stream-switch__btn:hover {
+	background: rgba(255, 255, 255, 0.14);
+}
+
+.em-stream-switch__dots {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.em-stream-switch__dot {
+	width: 10px;
+	height: 10px;
+	padding: 0;
+	border: 0;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.45);
+	cursor: pointer;
+}
+
+.em-stream-switch__dot.is-active {
+	background: #fff;
+}
+
+.em-stream-instance {
+	transition: opacity .2s ease;
+}
+
+.em-stream-instance:not(.is-active) {
+	opacity: 0;
+}
+
 .em-section--stream .em-rubrique__platform-card {
 	display: flex;
 	align-items: center;

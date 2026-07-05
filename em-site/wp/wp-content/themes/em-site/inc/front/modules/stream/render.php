@@ -13,55 +13,94 @@ require_once __DIR__ . '/helpers.php';
 
 function em_wp_render_stream(): void
 {
-	$item = em_site_stream_item();
-	$content = is_array($item['content'] ?? null) ? $item['content'] : [];
-	if ($content === []) {
+	$config = em_site_stream_resolved_config();
+	$item_slugs = (array) ($config['item_slugs'] ?? []);
+	$entries = [];
+
+	foreach ($item_slugs as $slug) {
+		$slug = sanitize_key((string) $slug);
+		if ($slug === '') {
+			continue;
+		}
+
+		$item = em_site_stream_item_by_slug($slug);
+		$content = is_array($item['content'] ?? null) ? $item['content'] : [];
+		if ($content === []) {
+			continue;
+		}
+
+		$cards = em_site_stream_collect_platform_cards($content, $item);
+		if ($cards === []) {
+			continue;
+		}
+
+		$entries[] = [
+			'slug' => $slug,
+			'item' => $item,
+			'content' => $content,
+			'cards' => $cards,
+		];
+	}
+
+	if ($entries === []) {
 		return;
 	}
 
-	$cards = em_site_stream_collect_platform_cards($content);
-	if ($cards === []) {
-		return;
+	$is_multi = (string) ($config['display_mode'] ?? 'single') === 'multi' && count($entries) > 1;
+	$transition_mode = $is_multi ? (string) ($config['transition_mode'] ?? 'manual') : 'manual';
+	$transition_timer = $is_multi ? (int) ($config['transition_timer'] ?? 6) : 6;
+	if ($transition_timer < 2 || $transition_timer > 120) {
+		$transition_timer = 6;
 	}
-
-	$item_option_name = em_site_stream_item_option_name(em_site_stream_active_template());
-	$item_slug = str_replace('em_wp_v4_item_stream_', '', $item_option_name);
-
-	$arrow_down = em_site_stream_decode_json_field((string) ($content['arrow_down'] ?? ''));
-	$arrow_up = em_site_stream_decode_json_field((string) ($content['arrow_up'] ?? ''));
-	$stream_logo = em_site_stream_decode_json_field((string) ($content['stream_logo'] ?? ''));
-
-	$logo_image = is_array($stream_logo['image'] ?? null) ? $stream_logo['image'] : [];
-	$logo_id = (int) ($logo_image['id'] ?? 0);
-	$logo_src = $logo_id > 0 ? (string) wp_get_attachment_image_url($logo_id, 'full') : '';
-	$logo_link = (string) ($logo_image['link'] ?? '');
-	$logo_width = (int) ($logo_image['w'] ?? 250);
-	if ($logo_width <= 0) {
-		$logo_width = 250;
-	}
-	$stream_text = (string) ($stream_logo['text'] ?? 'Stream');
-	$stream_style = is_array($stream_logo['style'] ?? null) ? $stream_logo['style'] : [];
-	$stream_size = (int) ($stream_style['size'] ?? 55);
-
-	$spacer_height = (int) ($content['sep_blank'] ?? 0);
-	$row4 = array_slice($cards, 0, 3);
-	$row5 = array_slice($cards, 3, 3);
-
-	$style_vars = [
-		'--em-rubrique-bg:' . (string) ($content['bg_color'] ?? '#6a1a78'),
-		'--em-rubrique-text:' . (string) ($content['text_color'] ?? '#e2e8f0'),
-		'--em-rubrique-link:' . (string) ($content['link_color'] ?? '#38bdf8'),
-		'--em-rubrique-link-hover:' . (string) ($content['link_hover_color'] ?? '#7dd3fc'),
-		'--em-rubrique-underline:' . (!empty($content['link_underline']) ? 'underline' : 'none'),
-		'--em-rubrique-pt:' . ((int) ($content['space_top'] ?? 40)) . 'px',
-		'--em-rubrique-pb:' . ((int) ($content['space_bottom'] ?? 40)) . 'px',
-		'--em-rubrique-pl:' . ((int) ($content['space_left'] ?? 180)) . 'px',
-		'--em-rubrique-pr:' . ((int) ($content['space_right'] ?? 180)) . 'px',
-		'--em-rubrique-font:' . em_site_stream_font_stack((string) ($content['font_family'] ?? 'archivo_black')),
-	];
 	?>
-	<section id="stream" class="em-section em-section--stream" data-em-rubrique="stream">
-		<footer id="em-rubrique-stream-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--stream" style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
+	<section id="stream" class="em-section em-section--stream" data-em-rubrique="stream" data-em-stream-mode="<?php echo esc_attr($is_multi ? 'multi' : 'single'); ?>" data-em-stream-transition="<?php echo esc_attr($transition_mode); ?>" data-em-stream-timer="<?php echo esc_attr((string) $transition_timer); ?>">
+		<?php if ($is_multi) : ?>
+			<nav class="em-stream-switch" aria-label="<?php esc_attr_e('Navigation Stream', 'em-wp'); ?>">
+				<button type="button" class="em-stream-switch__btn" data-em-stream-prev aria-label="<?php esc_attr_e('Item précédent', 'em-wp'); ?>">&larr;</button>
+				<div class="em-stream-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Stream', 'em-wp'); ?>">
+					<?php foreach ($entries as $idx => $entry) : ?>
+						<button type="button" class="em-stream-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-stream-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-wp'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
+					<?php endforeach; ?>
+				</div>
+				<button type="button" class="em-stream-switch__btn" data-em-stream-next aria-label="<?php esc_attr_e('Item suivant', 'em-wp'); ?>">&rarr;</button>
+			</nav>
+		<?php endif; ?>
+
+		<?php foreach ($entries as $entry_index => $entry) :
+			$item_slug = (string) $entry['slug'];
+			$content = (array) $entry['content'];
+			$cards = (array) $entry['cards'];
+			$arrow_down = em_site_stream_decode_json_field((string) ($content['arrow_down'] ?? ''));
+			$arrow_up = em_site_stream_decode_json_field((string) ($content['arrow_up'] ?? ''));
+			$stream_logo = em_site_stream_decode_json_field((string) ($content['stream_logo'] ?? ''));
+			$logo_image = is_array($stream_logo['image'] ?? null) ? $stream_logo['image'] : [];
+			$logo_id = (int) ($logo_image['id'] ?? 0);
+			$logo_src = $logo_id > 0 ? (string) wp_get_attachment_image_url($logo_id, 'full') : '';
+			$logo_link = (string) ($logo_image['link'] ?? '');
+			$logo_width = (int) ($logo_image['w'] ?? 250);
+			if ($logo_width <= 0) {
+				$logo_width = 250;
+			}
+			$stream_text = (string) ($stream_logo['text'] ?? 'Stream');
+			$stream_style = is_array($stream_logo['style'] ?? null) ? $stream_logo['style'] : [];
+			$stream_size = (int) ($stream_style['size'] ?? 55);
+			$spacer_height = (int) ($content['sep_blank'] ?? 0);
+			$row4 = array_slice($cards, 0, 3);
+			$row5 = array_slice($cards, 3, 3);
+			$style_vars = [
+				'--em-rubrique-bg:' . (string) ($content['bg_color'] ?? '#6a1a78'),
+				'--em-rubrique-text:' . (string) ($content['text_color'] ?? '#e2e8f0'),
+				'--em-rubrique-link:' . (string) ($content['link_color'] ?? '#38bdf8'),
+				'--em-rubrique-link-hover:' . (string) ($content['link_hover_color'] ?? '#7dd3fc'),
+				'--em-rubrique-underline:' . (!empty($content['link_underline']) ? 'underline' : 'none'),
+				'--em-rubrique-pt:' . ((int) ($content['space_top'] ?? 40)) . 'px',
+				'--em-rubrique-pb:' . ((int) ($content['space_bottom'] ?? 40)) . 'px',
+				'--em-rubrique-pl:' . ((int) ($content['space_left'] ?? 180)) . 'px',
+				'--em-rubrique-pr:' . ((int) ($content['space_right'] ?? 180)) . 'px',
+				'--em-rubrique-font:' . em_site_stream_font_stack((string) ($content['font_family'] ?? 'archivo_black')),
+			];
+			?>
+			<footer id="em-rubrique-stream-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--stream em-stream-instance<?php echo $entry_index === 0 ? ' is-active' : ''; ?>" data-stream-item="<?php echo esc_attr($item_slug); ?>" <?php echo $entry_index === 0 ? '' : 'hidden'; ?> style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
 			<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 				<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
 					<?php if (!empty($arrow_down['link'])) : ?>
@@ -128,17 +167,18 @@ function em_wp_render_stream(): void
 						continue;
 					}
 					?>
-					<div id="player-mobile-<?php echo esc_attr((string) $card['platform_slug']); ?>" class="em-stream__player platform-player-mobile"><iframe title="<?php echo esc_attr((string) $card['title']); ?> player" src="<?php echo esc_url((string) $card['embed_src']); ?>" width="100%" height="<?php echo esc_attr((string) $card['player_height']); ?>" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+					<div id="player-mobile-<?php echo esc_attr($item_slug . '-' . (string) $card['platform_slug']); ?>" class="em-stream__player platform-player-mobile" data-platform-player="mobile" data-platform="<?php echo esc_attr((string) $card['platform_slug']); ?>"><iframe title="<?php echo esc_attr((string) $card['title']); ?> player" src="<?php echo esc_url((string) $card['embed_src']); ?>" width="100%" height="<?php echo esc_attr((string) $card['player_height']); ?>" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
 				<?php endforeach; ?>
 				<?php foreach ($cards as $card) :
 					if (empty($card['has_player']) || (string) $card['embed_src'] === '') {
 						continue;
 					}
 					?>
-					<div id="player-desktop-<?php echo esc_attr((string) $card['platform_slug']); ?>" class="em-stream__player platform-player-desktop"><iframe title="<?php echo esc_attr((string) $card['title']); ?> player" src="<?php echo esc_url((string) $card['embed_src']); ?>" width="100%" height="<?php echo esc_attr((string) $card['player_height']); ?>" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+					<div id="player-desktop-<?php echo esc_attr($item_slug . '-' . (string) $card['platform_slug']); ?>" class="em-stream__player platform-player-desktop" data-platform-player="desktop" data-platform="<?php echo esc_attr((string) $card['platform_slug']); ?>"><iframe title="<?php echo esc_attr((string) $card['title']); ?> player" src="<?php echo esc_url((string) $card['embed_src']); ?>" width="100%" height="<?php echo esc_attr((string) $card['player_height']); ?>" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
 				<?php endforeach; ?>
 			</div>
 		</footer>
+		<?php endforeach; ?>
 	</section>
 	<?php
 }

@@ -1,7 +1,7 @@
 # PA - Refonte Gestion Template
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 19:04:58
+Horodatage précis (Paris): 2026-07-05 19:25:07
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
@@ -699,3 +699,9 @@ Critères de sortie Phase 7:
 - HEADER: le sélecteur "Principe d'affichage" (Unique/Multi) est affiché avant la zone "Composition du HEADER".
 - Correction confusion HEADER: le mode Unique/Multi est désormais indépendant de la composition HERO/SLIDER (plus de bascule automatique).
 - Fix UI couleur (builder Rubriques): compat variables CSS `--em-wp-color-swatch` / `--em-color-swatch` pour éviter les swatches gris et rétablir la mise à jour live dans la modale.
+- STREAM Multi finalisé: config branchée (manuel/auto + timer), premier item par défaut, masquage d'items dans la rotation, persistance AJAX et rendu front multi-items.
+- Ajustement UI STREAM: en mode Multi la radio gauche (mode Unique) est masquée; en Multi+Manuelle, les checkbox d'inclusion et le choix "Premier item" sont masqués.
+- Règle UI renforcée: en mode Unique, seule la radio gauche reste visible (aucun contrôle Multi affiché).
+- Branchement front Multi STREAM: persistance explicite de la liste d'items visibles (`multi_items`) + fallback lecture option pour garantir le rendu multi-items en front.
+- Ajustement front STREAM: contrôles prev/next intégrés visuellement au bloc STREAM actif (overlay), suppression de l'effet de bandeau séparé.
+- Ajustement front STREAM (itération UI): capsule de contrôle passée en fond transparent pour se fondre dans la couleur de chaque item.

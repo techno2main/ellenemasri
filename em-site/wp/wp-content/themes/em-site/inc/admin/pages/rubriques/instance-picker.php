@@ -86,7 +86,46 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug, bool $wit
                 if ($is_single_only) {
                     $display_mode = 'single';
                 }
+                $is_stream_module = $module_slug === 'stream';
+                $transition_mode = sanitize_key((string) ($instance['transition_mode'] ?? 'manual'));
+                if (!in_array($transition_mode, ['manual', 'auto'], true)) {
+                    $transition_mode = 'manual';
+                }
+                $is_stream_multi_auto = $is_stream_module && $display_mode === 'multi' && $transition_mode === 'auto';
+                $transition_timer = (int) ($instance['transition_timer'] ?? 6);
+                if ($transition_timer < 2 || $transition_timer > 120) {
+                    $transition_timer = 6;
+                }
                 $effective = $selected !== '' ? $selected : em_wp_rubrique_default_item_slug($module_slug);
+
+                $item_slugs = array_map('strval', array_keys($items));
+                $hidden_items = [];
+                if ($is_stream_module && is_array($instance['hidden_items'] ?? null)) {
+                    foreach ((array) $instance['hidden_items'] as $hidden_slug) {
+                        $hidden_slug = sanitize_key((string) $hidden_slug);
+                        if ($hidden_slug !== '' && in_array($hidden_slug, $item_slugs, true)) {
+                            $hidden_items[] = $hidden_slug;
+                        }
+                    }
+                    $hidden_items = array_values(array_unique($hidden_items));
+                }
+                $first_item = sanitize_key((string) ($instance['first_item'] ?? ''));
+                if ($first_item === '' || !in_array($first_item, $item_slugs, true)) {
+                    $first_item = $effective;
+                }
+                if ($display_mode === 'multi' && $item_slugs !== []) {
+                    $visible_items = array_values(array_diff($item_slugs, $hidden_items));
+                    if ($visible_items === []) {
+                        $hidden_items = [];
+                        $visible_items = $item_slugs;
+                    }
+                    if (!in_array($first_item, $visible_items, true)) {
+                        $first_item = (string) ($visible_items[0] ?? '');
+                    }
+                }
+                if ($first_item === '' && $item_slugs !== []) {
+                    $first_item = (string) $item_slugs[0];
+                }
 
                 // La section branchée (utilisée par le template) toujours en premier.
                 if ($effective !== '' && isset($items[$effective])) {
@@ -133,6 +172,27 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug, bool $wit
                     <?php } ?>
                 </div>
 
+                <?php if ($is_stream_module) : ?>
+                    <div class="em-wp-instance-picker__multi" data-em-stream-multi-options <?php echo $display_mode === 'multi' ? '' : 'hidden'; ?>>
+                        <p class="em-wp-instance-picker__multi-title"><?php esc_html_e('Transition Multi', 'em-wp'); ?></p>
+                        <div class="em-wp-instance-picker__multi-switch" role="group" aria-label="<?php esc_attr_e('Mode de transition', 'em-wp'); ?>">
+                            <label class="em-wp-instance-picker__mode-option">
+                                <input type="radio" name="em-wp-stream-transition-<?php echo esc_attr($module_slug); ?>" value="manual" <?php checked($transition_mode === 'manual'); ?>>
+                                <span><?php esc_html_e('Manuelle', 'em-wp'); ?></span>
+                            </label>
+                            <label class="em-wp-instance-picker__mode-option">
+                                <input type="radio" name="em-wp-stream-transition-<?php echo esc_attr($module_slug); ?>" value="auto" <?php checked($transition_mode === 'auto'); ?>>
+                                <span><?php esc_html_e('Auto', 'em-wp'); ?></span>
+                            </label>
+                        </div>
+                        <label class="em-wp-instance-picker__multi-timer" data-em-stream-timer-wrap <?php echo $transition_mode === 'auto' ? '' : 'hidden'; ?>>
+                            <span><?php esc_html_e('Timer (secondes)', 'em-wp'); ?></span>
+                            <input type="number" min="2" max="120" step="1" value="<?php echo esc_attr((string) $transition_timer); ?>" data-em-stream-timer-input>
+                        </label>
+                        <p class="em-wp-instance-picker__mode-help"><?php esc_html_e('Multi: coche les items inclus, choisis le premier affiché, puis règle la transition.', 'em-wp'); ?></p>
+                    </div>
+                <?php endif; ?>
+
                 <?php if ($items === []) : ?>
                     <p class="em-wp-rubriques-admin__picker-empty">
                         <?php esc_html_e('Aucune section pour cette rubrique.', 'em-wp'); ?>
@@ -152,24 +212,65 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug, bool $wit
                         data-template-label="<?php echo esc_attr($template_label); ?>"
                         data-current="<?php echo esc_attr($effective); ?>"
                         data-display-mode="<?php echo esc_attr($display_mode); ?>"
+                        data-transition-mode="<?php echo esc_attr($transition_mode); ?>"
+                        data-transition-timer="<?php echo esc_attr((string) $transition_timer); ?>"
+                        data-first-item="<?php echo esc_attr($first_item); ?>"
+                        data-hidden-items="<?php echo esc_attr((string) wp_json_encode($hidden_items)); ?>"
                         data-live="<?php echo $is_live ? '1' : '0'; ?>"
                     >
                         <?php foreach ($items as $slug => $item_label) :
                             $slug = (string) $slug;
                             $radio_id = 'em-wp-instance-' . sanitize_html_class($module_slug . '-' . $slug);
+                            $multi_toggle_id = 'em-wp-instance-multi-toggle-' . sanitize_html_class($module_slug . '-' . $slug);
+                            $multi_first_id = 'em-wp-instance-multi-first-' . sanitize_html_class($module_slug . '-' . $slug);
+                            $is_hidden_in_multi = in_array($slug, $hidden_items, true);
+                            $is_first_in_multi = $slug === $first_item;
                             ?>
                             <li class="em-wp-instance-picker__row">
                                 <label class="em-wp-instance-picker__label" for="<?php echo esc_attr($radio_id); ?>">
-                                    <input
-                                        type="radio"
-                                        id="<?php echo esc_attr($radio_id); ?>"
-                                        name="em-wp-instance-<?php echo esc_attr($module_slug); ?>"
-                                        value="<?php echo esc_attr($slug); ?>"
-                                        <?php checked($slug === $effective); ?>
-                                    >
+                                    <?php if ($is_stream_module) : ?>
+                                        <input
+                                            type="radio"
+                                            id="<?php echo esc_attr($radio_id); ?>"
+                                            class="em-wp-instance-picker__single-radio"
+                                            name="em-wp-instance-<?php echo esc_attr($module_slug); ?>"
+                                            value="<?php echo esc_attr($slug); ?>"
+                                            <?php checked($slug === $effective); ?>
+                                            <?php echo $display_mode === 'single' ? '' : 'hidden'; ?>
+                                        >
+                                        <input
+                                            type="checkbox"
+                                            id="<?php echo esc_attr($multi_toggle_id); ?>"
+                                            class="em-wp-instance-picker__multi-include"
+                                            data-item="<?php echo esc_attr($slug); ?>"
+                                            <?php checked(!$is_hidden_in_multi); ?>
+                                            <?php echo $is_stream_multi_auto ? '' : 'hidden'; ?>
+                                        >
+                                        <input
+                                            type="radio"
+                                            id="<?php echo esc_attr($multi_first_id); ?>"
+                                            class="em-wp-instance-picker__multi-first"
+                                            name="em-wp-instance-first-<?php echo esc_attr($module_slug); ?>"
+                                            value="<?php echo esc_attr($slug); ?>"
+                                            data-item="<?php echo esc_attr($slug); ?>"
+                                            <?php checked($is_first_in_multi); ?>
+                                            <?php echo $is_stream_multi_auto ? '' : 'hidden'; ?>
+                                        >
+                                    <?php else : ?>
+                                        <input
+                                            type="radio"
+                                            id="<?php echo esc_attr($radio_id); ?>"
+                                            name="em-wp-instance-<?php echo esc_attr($module_slug); ?>"
+                                            value="<?php echo esc_attr($slug); ?>"
+                                            <?php checked($slug === $effective); ?>
+                                        >
+                                    <?php endif; ?>
                                     <span class="em-wp-instance-picker__name"><?php echo esc_html($label . ' ' . $item_label); ?></span>
-                                    <?php if ($slug === $effective) : ?>
+                                    <?php if ($slug === $effective && (!$is_stream_module || $display_mode === 'single')) : ?>
                                         <span class="em-wp-instance-picker__badge"><?php esc_html_e('Item en ligne actuellement', 'em-wp'); ?></span>
+                                    <?php endif; ?>
+                                    <?php if ($is_stream_module && $is_stream_multi_auto && $is_first_in_multi) : ?>
+                                        <span class="em-wp-instance-picker__badge em-wp-instance-picker__badge--first"><?php esc_html_e('Premier item', 'em-wp'); ?></span>
                                     <?php endif; ?>
                                 </label>
                                 <span class="em-wp-instance-picker__actions">
