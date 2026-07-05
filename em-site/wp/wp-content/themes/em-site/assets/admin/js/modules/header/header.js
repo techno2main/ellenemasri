@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    var runtime = window.EmAdminRuntime || null;
+
     function getCatalogChoiceLabel(form, part, attributeName) {
         var field = form.querySelector('[data-catalog-part="' + part + '"]');
 
@@ -149,7 +151,7 @@
         syncHeaderLayoutWireframeLabels(form);
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    function boot() {
         initHeaderLayoutSwitcher();
 
         document.querySelectorAll('.em-wp-header-media-button').forEach(function (button) {
@@ -184,5 +186,13 @@
                 frame.open();
             });
         });
-    });
+    }
+
+    if (runtime && typeof runtime.domReady === 'function') {
+        runtime.domReady(boot);
+    } else if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
 })();

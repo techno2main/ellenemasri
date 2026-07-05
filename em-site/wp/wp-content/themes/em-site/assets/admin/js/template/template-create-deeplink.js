@@ -1,7 +1,9 @@
 (function () {
     'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
+    var runtime = window.EmAdminRuntime || null;
+
+    function boot() {
         var params = new URLSearchParams(window.location.search);
 
         if (params.get('em_wp_open') !== 'template-create') {
@@ -31,5 +33,13 @@
                 window.location.pathname + (query ? '?' + query : '') + window.location.hash
             );
         }
-    });
+    }
+
+    if (runtime && typeof runtime.domReady === 'function') {
+        runtime.domReady(boot);
+    } else if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
 })();

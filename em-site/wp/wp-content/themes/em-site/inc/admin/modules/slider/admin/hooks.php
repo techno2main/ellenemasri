@@ -33,9 +33,9 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
-        $theme_uri . '/assets/admin/js/shared/slide-sortable.js',
+        $theme_uri . '/assets/admin/js/shared/media/slide-sortable.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/slide-sortable.js'),
+        em_wp_admin_asset_version('assets/admin/js/shared/media/slide-sortable.js'),
         true
     );
 
@@ -47,9 +47,25 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
     );
 
     wp_enqueue_script(
+        'em-wp-slider-admin-media-type',
+        $theme_uri . '/assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-media-and-type.js',
+        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker'],
+        em_wp_admin_asset_version('assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-media-and-type.js'),
+        true
+    );
+
+    wp_enqueue_script(
+        'em-wp-slider-admin-list-manager',
+        $theme_uri . '/assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-list-manager.js',
+        ['jquery', 'em-wp-admin-confirm-modal', 'em-wp-admin-slide-sortable', 'em-wp-slider-admin-media-type'],
+        em_wp_admin_asset_version('assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-list-manager.js'),
+        true
+    );
+
+    wp_enqueue_script(
         'em-wp-slider-admin',
         $theme_uri . '/assets/admin/js/modules/slider/' . $view_slug . '/slider.js',
-        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-accordion', 'em-wp-admin-confirm-modal', 'em-wp-admin-slide-sortable', 'em-wp-admin-module-style-preview'],
+        ['jquery', 'em-wp-slider-admin-media-type', 'em-wp-slider-admin-list-manager'],
         em_wp_admin_asset_version('assets/admin/js/modules/slider/' . $view_slug . '/slider.js'),
         true
     );

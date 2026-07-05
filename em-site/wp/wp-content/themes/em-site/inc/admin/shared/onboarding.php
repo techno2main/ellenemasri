@@ -1,6 +1,6 @@
 <?php
 /**
- * Onboarding admin : contexte template, gating menu, garde d'accès.
+ * Onboarding admin : contexte template, gating menu, garde d'accÃ¨s.
  *
  * @package em-wp
  */
@@ -100,7 +100,7 @@ function em_wp_admin_neutral_page_slugs(): array
 }
 
 /**
- * Pages nécessitant un contexte template explicite.
+ * Pages nÃ©cessitant un contexte template explicite.
  *
  * @return string[]
  */
@@ -138,7 +138,7 @@ function em_wp_admin_template_scoped_page_slugs(): array
 }
 
 /**
- * Slug de la page admin courante (admin.php?page=…).
+ * Slug de la page admin courante (admin.php?page=â€¦).
  */
 function em_wp_admin_current_admin_page_slug(): string
 {
@@ -153,7 +153,7 @@ function em_wp_admin_current_admin_page_slug(): string
 }
 
 /**
- * Page « zone neutre » (sommaire templates, dashboard, catalogues…) — pas en édition rubriques.
+ * Page Â« zone neutre Â» (sommaire templates, dashboard, cataloguesâ€¦) â€” pas en Ã©dition rubriques.
  */
 function em_wp_admin_is_neutral_admin_page(?string $page_slug = null): bool
 {
@@ -171,11 +171,11 @@ function em_wp_admin_is_neutral_admin_page(?string $page_slug = null): bool
 }
 
 /**
- * Indique si l'ancien bloc « Rubriques du site » (entrées par module : TOP-BAR,
- * HEADER, STREAM…) doit être visible dans le menu latéral.
+ * Indique si l'ancien bloc Â« Rubriques du site Â» (entrÃ©es par module : TOP-BAR,
+ * HEADER, STREAMâ€¦) doit Ãªtre visible dans le menu latÃ©ral.
  *
- * Déprécié : l'édition des rubriques se fait désormais sous le squelette via la
- * nouvelle gestion (V4, menu « RUBRIQUES » dédié). On masque donc toujours
+ * DÃ©prÃ©ciÃ© : l'Ã©dition des rubriques se fait dÃ©sormais sous le squelette via la
+ * nouvelle gestion (V4, menu Â« RUBRIQUES Â» dÃ©diÃ©). On masque donc toujours
  * l'ancien bloc par module dans la sidebar. La page squelette reste accessible
  * depuis les cartes TEMPLATES.
  */
@@ -185,7 +185,7 @@ function em_wp_admin_should_show_rubrique_menus(): bool
 }
 
 /**
- * Slugs menu à masquer sans contexte template.
+ * Slugs menu Ã  masquer sans contexte template.
  *
  * @return string[]
  */
@@ -195,7 +195,7 @@ function em_wp_admin_rubrique_menu_slugs_to_hide(): array
 }
 
 /**
- * Masque les entrées Rubriques Template + modules sans contexte.
+ * Masque les entrÃ©es Rubriques Template + modules sans contexte.
  */
 function em_wp_admin_hide_rubrique_menus_without_context(): void
 {
@@ -271,7 +271,7 @@ function em_wp_admin_guard_template_scoped_pages(): void
         'em_wp_template_admin_notice_' . get_current_user_id(),
         [
             'type'    => 'warning',
-            'message' => __('Choisis d’abord un template à éditer depuis le menu TEMPLATES.', 'em-wp'),
+            'message' => __('Choisis dâ€™abord un template Ã  Ã©diter depuis le menu TEMPLATES.', 'em-wp'),
         ],
         30
     );
@@ -320,7 +320,7 @@ function em_wp_admin_should_show_template_editing_banner(): bool
 }
 
 /**
- * URL de navigation avec confirmation « quitter l'édition » (menu admin).
+ * URL de navigation avec confirmation Â« quitter l'Ã©dition Â» (menu admin).
  */
 function em_wp_admin_quit_editing_nav_url(string $target_url): string
 {
@@ -337,7 +337,7 @@ function em_wp_admin_quit_editing_nav_url(string $target_url): string
 }
 
 /**
- * Quitte l'édition template puis redirige (navigation menu hors rubriques).
+ * Quitte l'Ã©dition template puis redirige (navigation menu hors rubriques).
  */
 function em_wp_admin_handle_quit_editing_nav_request(): void
 {
@@ -350,8 +350,8 @@ function em_wp_admin_handle_quit_editing_nav_request(): void
         return;
     }
 
-    // Ne jamais bloquer la navigation admin sur un nonce expiré : on redirige
-    // proprement vers la cible demandée pour éviter un écran blanc en cours de clic menu.
+    // Ne jamais bloquer la navigation admin sur un nonce expirÃ© : on redirige
+    // proprement vers la cible demandÃ©e pour Ã©viter un Ã©cran blanc en cours de clic menu.
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $nonce = (string) ($_GET['_wpnonce'] ?? '');
     if (!wp_verify_nonce($nonce, 'em_wp_quit_editing_nav')) {
@@ -375,7 +375,7 @@ function em_wp_admin_handle_quit_editing_nav_request(): void
 add_action('admin_init', 'em_wp_admin_handle_quit_editing_nav_request', 0);
 
 /**
- * Intercepte les clics menu admin hors rubriques quand une édition est en cours.
+ * Intercepte les clics menu admin hors rubriques quand une Ã©dition est en cours.
  */
 function em_wp_admin_enqueue_quit_editing_nav_guard(): void
 {
@@ -387,17 +387,25 @@ function em_wp_admin_enqueue_quit_editing_nav_guard(): void
 
     wp_enqueue_script(
         'em-wp-admin-confirm-modal',
-        $theme_uri . '/assets/admin/js/shared/confirm-modal.js',
+        $theme_uri . '/assets/admin/js/shared/modals/confirm-modal.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/confirm-modal.js'),
+        em_wp_admin_asset_version('assets/admin/js/shared/modals/confirm-modal.js'),
+        true
+    );
+
+    wp_enqueue_script(
+        'em-wp-admin-module-form-dirty-engine',
+        $theme_uri . '/assets/admin/js/shared/state/module-form-dirty/engine.js',
+        ['em-wp-admin-confirm-modal'],
+        em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty/engine.js'),
         true
     );
 
     wp_enqueue_script(
         'em-wp-admin-module-form-dirty',
-        $theme_uri . '/assets/admin/js/shared/module-form-dirty.js',
-        ['em-wp-admin-confirm-modal'],
-        em_wp_admin_asset_version('assets/admin/js/shared/module-form-dirty.js'),
+        $theme_uri . '/assets/admin/js/shared/state/module-form-dirty.js',
+        ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty-engine'],
+        em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty.js'),
         true
     );
 
@@ -415,9 +423,9 @@ function em_wp_admin_enqueue_quit_editing_nav_guard(): void
 
     wp_enqueue_script(
         'em-wp-admin-quit-editing-nav',
-        $theme_uri . '/assets/admin/js/shared/quit-editing-nav.js',
+        $theme_uri . '/assets/admin/js/shared/navigation/quit-editing-nav.js',
         ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty'],
-        em_wp_admin_asset_version('assets/admin/js/shared/quit-editing-nav.js'),
+        em_wp_admin_asset_version('assets/admin/js/shared/navigation/quit-editing-nav.js'),
         true
     );
 
@@ -433,7 +441,7 @@ function em_wp_admin_enqueue_quit_editing_nav_guard(): void
             'quitEndpoint'  => admin_url('admin.php'),
             'nonce'         => wp_create_nonce('em_wp_quit_editing_nav'),
             'strings'       => [
-                'messageTemplate' => __('Tu vas quitter l\'édition de ton template « %s ».', 'em-wp'),
+                'messageTemplate' => __('Tu vas quitter l\'Ã©dition de ton template Â« %s Â».', 'em-wp'),
                 'templateLabel'   => $template_label,
                 'confirmQuit'     => __('Quitter', 'em-wp'),
                 'confirmSaveQuit' => __('Enregistrer & Quitter', 'em-wp'),

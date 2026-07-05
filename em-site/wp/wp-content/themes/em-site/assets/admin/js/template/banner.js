@@ -1,7 +1,9 @@
 (function () {
     'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
+    var runtime = window.EmAdminRuntime || null;
+
+    function boot() {
         var config = window.EmWpTemplateBanner || {};
         var i18n = config.i18n || {};
         var confirmApi = window.EmWpAdminConfirm;
@@ -201,5 +203,13 @@
                 });
             });
         }
-    });
+    }
+
+    if (runtime && typeof runtime.domReady === 'function') {
+        runtime.domReady(boot);
+    } else if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
 })();

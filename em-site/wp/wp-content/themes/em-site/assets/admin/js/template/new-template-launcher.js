@@ -1,7 +1,9 @@
 (function ($) {
     'use strict';
 
-    document.addEventListener('DOMContentLoaded', function () {
+    var runtime = window.EmAdminRuntime || null;
+
+    function boot() {
         var modal = document.getElementById('em-wp-new-template-modal');
 
         if (!modal) {
@@ -193,5 +195,13 @@
                 }
             });
         }
-    });
+    }
+
+    if (runtime && typeof runtime.domReady === 'function') {
+        runtime.domReady(boot);
+    } else if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        boot();
+    }
 }(jQuery));

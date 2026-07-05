@@ -1,6 +1,6 @@
 <?php
 /**
- * Bandeau sélecteur « Template en édition » (toutes pages em-wp).
+ * Bandeau sÃ©lecteur Â« Template en Ã©dition Â» (toutes pages em-wp).
  *
  * @package em-wp
  */
@@ -10,9 +10,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Indique si l'écran admin courant est une page catalogue Hero/Slider.
+ * Indique si l'Ã©cran admin courant est une page catalogue Hero/Slider.
  *
- * Les catalogues ne sont pas rattachés à un template : pas de bandeau template.
+ * Les catalogues ne sont pas rattachÃ©s Ã  un template : pas de bandeau template.
  */
 function em_wp_admin_is_catalog_screen(): bool
 {
@@ -69,7 +69,7 @@ function em_wp_admin_is_catalog_screen(): bool
 }
 
 /**
- * Indique si le bandeau template doit s'afficher sur l'écran courant.
+ * Indique si le bandeau template doit s'afficher sur l'Ã©cran courant.
  */
 function em_wp_admin_should_show_template_banner(): bool
 {
@@ -81,7 +81,7 @@ function em_wp_admin_should_show_template_banner(): bool
 }
 
 /**
- * Indique si l'écran admin courant est une page em-wp.
+ * Indique si l'Ã©cran admin courant est une page em-wp.
  */
 function em_wp_admin_is_em_wp_screen(): bool
 {
@@ -115,9 +115,9 @@ function em_wp_admin_template_banner_enqueue(): void
     if (!wp_script_is('em-wp-admin-confirm-modal', 'registered')) {
         wp_register_script(
             'em-wp-admin-confirm-modal',
-            $theme_uri . '/assets/admin/js/shared/confirm-modal.js',
+            $theme_uri . '/assets/admin/js/shared/modals/confirm-modal.js',
             [],
-            em_wp_admin_asset_version('assets/admin/js/shared/confirm-modal.js'),
+            em_wp_admin_asset_version('assets/admin/js/shared/modals/confirm-modal.js'),
             true
         );
     }
@@ -141,10 +141,18 @@ function em_wp_admin_template_banner_enqueue(): void
     );
 
     wp_enqueue_script(
-        'em-wp-admin-module-form-dirty',
-        $theme_uri . '/assets/admin/js/shared/module-form-dirty.js',
+        'em-wp-admin-module-form-dirty-engine',
+        $theme_uri . '/assets/admin/js/shared/state/module-form-dirty/engine.js',
         ['em-wp-admin-confirm-modal'],
-        em_wp_admin_asset_version('assets/admin/js/shared/module-form-dirty.js'),
+        em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty/engine.js'),
+        true
+    );
+
+    wp_enqueue_script(
+        'em-wp-admin-module-form-dirty',
+        $theme_uri . '/assets/admin/js/shared/state/module-form-dirty.js',
+        ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty-engine'],
+        em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty.js'),
         true
     );
 
@@ -181,13 +189,13 @@ function em_wp_admin_template_banner_enqueue(): void
             'i18n'     => [
                 'saveConfirm'           => __('Enregistrer la configuration actuelle et rester sur cette page ?', 'em-wp'),
                 'saveLabel'             => __('Enregistrer', 'em-wp'),
-                'saveAutoMessage'       => __('Les modifications sont enregistrées automatiquement.', 'em-wp'),
+                'saveAutoMessage'       => __('Les modifications sont enregistrÃ©es automatiquement.', 'em-wp'),
                 'saveAutoOk'            => __('OK', 'em-wp'),
                 'quitConfirm'           => __('Quitter et retourner au sommaire Rubriques ?', 'em-wp'),
                 'quitExitConfirm'       => __('Quitter et retourner au sommaire Templates ?', 'em-wp'),
                 'quitLabel'             => __('Quitter', 'em-wp'),
                 'cancelLabel'           => __('Annuler', 'em-wp'),
-                'switchConfirmTemplate' => __('Tu vas basculer l\'édition vers le template « %s ».', 'em-wp'),
+                'switchConfirmTemplate' => __('Tu vas basculer l\'Ã©dition vers le template Â« %s Â».', 'em-wp'),
                 'switchConfirm'         => __('Basculer', 'em-wp'),
                 'switchConfirmSave'     => __('Enregistrer & Basculer', 'em-wp'),
                 'activateConfirm'       => __('Activer le template %s sur le site public ?', 'em-wp'),
@@ -199,7 +207,7 @@ function em_wp_admin_template_banner_enqueue(): void
 add_action('admin_enqueue_scripts', 'em_wp_admin_template_banner_enqueue');
 
 /**
- * Classe body pour décaler le contenu sous le bandeau.
+ * Classe body pour dÃ©caler le contenu sous le bandeau.
  */
 function em_wp_admin_template_banner_body_class(string $classes): string
 {
@@ -212,7 +220,7 @@ function em_wp_admin_template_banner_body_class(string $classes): string
 add_filter('admin_body_class', 'em_wp_admin_template_banner_body_class');
 
 /**
- * Configuration du bouton « Quitter » selon la page courante.
+ * Configuration du bouton Â« Quitter Â» selon la page courante.
  *
  * @return array{mode:string,url:string}
  */
@@ -239,7 +247,7 @@ function em_wp_admin_template_banner_quit_config(string $current_page): array
 }
 
 /**
- * Rendu HTML du bandeau (inline sous l'en-tête de page).
+ * Rendu HTML du bandeau (inline sous l'en-tÃªte de page).
  */
 function em_wp_admin_template_render_banner(): void
 {
@@ -273,14 +281,14 @@ function em_wp_admin_template_render_banner(): void
             <div class="em-wp-template-banner__block em-wp-template-banner__block--editing">
                 <span class="em-wp-template-banner__label">
                     <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
-                    <?php esc_html_e('Template en cours d\'édition', 'em-wp'); ?>
+                    <?php esc_html_e('Template en cours d\'Ã©dition', 'em-wp'); ?>
                 </span>
                 <form class="em-wp-template-banner__form em-wp-template-banner__form--editing" method="post" action="">
                     <?php wp_nonce_field('em_wp_template_set_editing'); ?>
                     <input type="hidden" name="em_wp_template_action" value="set_editing">
                     <input type="hidden" name="em_wp_template_redirect_page" value="<?php echo esc_attr($current_page); ?>">
                     <label class="screen-reader-text" for="em-wp-template-editing-select">
-                        <?php esc_html_e('Choisir le template à éditer', 'em-wp'); ?>
+                        <?php esc_html_e('Choisir le template Ã  Ã©diter', 'em-wp'); ?>
                     </label>
                     <select
                         id="em-wp-template-editing-select"
@@ -301,12 +309,12 @@ function em_wp_admin_template_render_banner(): void
                         target="_blank"
                         title="<?php echo esc_attr(sprintf(
                             /* translators: %s: template label */
-                            __('Prévisualiser le template %s dans un nouvel onglet', 'em-wp'),
+                            __('PrÃ©visualiser le template %s dans un nouvel onglet', 'em-wp'),
                             $editing_label
                         )); ?>"
                     >
                         <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                        <?php esc_html_e('Aperçu', 'em-wp'); ?>
+                        <?php esc_html_e('AperÃ§u', 'em-wp'); ?>
                     </a>
                     <button type="button" class="em-wp-template-banner__save" id="em-wp-template-banner-save" disabled aria-disabled="true">
                         <?php esc_html_e('Enregistrer', 'em-wp'); ?>

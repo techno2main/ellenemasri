@@ -27,7 +27,7 @@ function em_wp_stream_register_admin(): void
 add_action('admin_menu', 'em_wp_stream_register_admin');
 
 /**
- * Retire le sous-menu dupliqué.
+ * Retire le sous-menu dupliquÃ©.
  */
 function em_wp_stream_remove_duplicate_submenu(): void
 {
@@ -76,9 +76,9 @@ function em_wp_stream_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
-        $theme_uri . '/assets/admin/js/shared/slide-sortable.js',
+        $theme_uri . '/assets/admin/js/shared/media/slide-sortable.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/slide-sortable.js'),
+        em_wp_admin_asset_version('assets/admin/js/shared/media/slide-sortable.js'),
         true
     );
 

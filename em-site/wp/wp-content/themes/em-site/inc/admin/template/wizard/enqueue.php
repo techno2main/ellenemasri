@@ -23,9 +23,9 @@ function em_wp_admin_template_wizard_enqueue(): void
 
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
-        $theme_uri . '/assets/admin/js/shared/slide-sortable.js',
+        $theme_uri . '/assets/admin/js/shared/media/slide-sortable.js',
         [],
-        $ver('assets/admin/js/shared/slide-sortable.js'),
+        $ver('assets/admin/js/shared/media/slide-sortable.js'),
         true
     );
 
@@ -53,8 +53,27 @@ function em_wp_admin_template_wizard_enqueue(): void
     wp_enqueue_script(
         'em-wp-template-wizard-skeleton',
         $theme_uri . '/' . $base . 'wizard-skeleton.js',
-        ['em-wp-template-wizard-state', 'em-wp-template-wizard-confirm', 'em-wp-admin-slide-sortable'],
+        ['em-wp-template-wizard-skeleton-core'],
         $ver($base . 'wizard-skeleton.js'),
+        true
+    );
+    wp_enqueue_script(
+        'em-wp-template-wizard-skeleton-helpers',
+        $theme_uri . '/' . $base . 'skeleton/wizard-skeleton-helpers.js',
+        ['em-wp-template-wizard-state', 'em-wp-template-wizard-guide'],
+        $ver($base . 'skeleton/wizard-skeleton-helpers.js'),
+        true
+    );
+    wp_enqueue_script(
+        'em-wp-template-wizard-skeleton-core',
+        $theme_uri . '/' . $base . 'skeleton/wizard-skeleton-core.js',
+        [
+            'em-wp-template-wizard-state',
+            'em-wp-template-wizard-confirm',
+            'em-wp-admin-slide-sortable',
+            'em-wp-template-wizard-skeleton-helpers',
+        ],
+        $ver($base . 'skeleton/wizard-skeleton-core.js'),
         true
     );
     wp_enqueue_script(
@@ -86,8 +105,8 @@ function em_wp_admin_template_wizard_enqueue(): void
         true
     );
     wp_enqueue_script(
-        'em-wp-template-wizard-navigation',
-        $theme_uri . '/' . $base . 'wizard-navigation.js',
+        'em-wp-template-wizard-navigation-core',
+        $theme_uri . '/' . $base . 'navigation/wizard-navigation-core.js',
         [
             'em-wp-template-wizard-state',
             'em-wp-template-wizard-confirm',
@@ -96,6 +115,20 @@ function em_wp_admin_template_wizard_enqueue(): void
             'em-wp-template-wizard-guide',
             'em-wp-template-wizard-draft',
         ],
+        $ver($base . 'navigation/wizard-navigation-core.js'),
+        true
+    );
+    wp_enqueue_script(
+        'em-wp-template-wizard-navigation-flow',
+        $theme_uri . '/' . $base . 'navigation/wizard-navigation-flow.js',
+        ['em-wp-template-wizard-navigation-core'],
+        $ver($base . 'navigation/wizard-navigation-flow.js'),
+        true
+    );
+    wp_enqueue_script(
+        'em-wp-template-wizard-navigation',
+        $theme_uri . '/' . $base . 'wizard-navigation.js',
+        ['em-wp-template-wizard-navigation-flow'],
         $ver($base . 'wizard-navigation.js'),
         true
     );

@@ -29,9 +29,9 @@ function em_wp_admin_hub_cards_enqueue_assets(): void
 
     wp_enqueue_script(
         'em-wp-admin-hub-sommaire-preview',
-        get_template_directory_uri() . '/assets/admin/js/shared/hub-sommaire-preview.js',
+        get_template_directory_uri() . '/assets/admin/js/shared/preview/hub-sommaire-preview.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/hub-sommaire-preview.js'),
+        em_wp_admin_asset_version('assets/admin/js/shared/preview/hub-sommaire-preview.js'),
         true
     );
 
