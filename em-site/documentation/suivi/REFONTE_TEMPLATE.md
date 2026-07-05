@@ -165,3 +165,188 @@ Ce bloc Interface admin couvre explicitement les 6 actions produit validées en 
 - Le modèle final attendu est un template unique avec rubriques génériques uniquement.
 - Le nettoyage de la nomenclature technique reste un chantier explicite de refonte.
 - Le modèle cible retenu est unifié: une seule logique de slug et aucun découpage natif/custom.
+
+## 7) PA détaillé par phase (refonte gestion Template)
+
+### Phase 0 - Cadrage final et gel du périmètre
+
+Objectif:
+
+- Verrouiller le contrat fonctionnel du template unique avant tout dev.
+
+Actions:
+
+- Valider la liste finale des rubriques gérées.
+- Valider les 6 actions cœur de la page Squelette (visibilité, ordre, ajout, retrait, preview, mode single/multi).
+- Valider la terminologie unique (single/multi, rubrique, item).
+
+Livrables:
+
+- Spécification fonctionnelle gelée dans ce document.
+
+Critères de sortie:
+
+- Aucune ambiguïté produit restante.
+- Aucun nouveau besoin "hors périmètre" non arbitré.
+
+### Phase 1 - Contrat de données cible
+
+Objectif:
+
+- Définir la structure de données unique supportant single/multi pour toutes les rubriques.
+
+Actions:
+
+- Définir le schéma cible par rubrique: mode, item actif, liste d'items, réglages multi.
+- Définir les clés de stockage stables (sans variation par ancien template).
+- Définir la politique de slug canonique et de propagation au renommage.
+
+Livrables:
+
+- Contrat de données versionné (mapping ancien -> nouveau).
+
+Critères de sortie:
+
+- Toutes les rubriques peuvent être représentées avec le même modèle.
+- Les règles de slug couvrent création, renommage et suppression.
+
+### Phase 2 - Migration et compatibilité
+
+Objectif:
+
+- Migrer l'existant vers le modèle template unique sans casser le front.
+
+Actions:
+
+- Écrire les scripts/mécanismes de migration de données.
+- Prévoir les alias de compatibilité strictement temporaires.
+- Définir un plan de rollback technique.
+
+Livrables:
+
+- Procédure de migration exécutable et testable.
+
+Critères de sortie:
+
+- Données historiques reprises sans perte.
+- Rollback documenté et validé sur un jeu d'essai.
+
+### Phase 3 - Refonte interface Squelette (admin)
+
+Objectif:
+
+- Livrer l'UI unique qui pilote tout le comportement front rubrique par rubrique.
+
+Actions:
+
+- Implémenter la gestion visibilité/ordre/ajout/retrait sur page unique.
+- Implémenter le switch single/multi par rubrique.
+- Implémenter les réglages multi (timer, navigation manuelle, ordre des items).
+- Conserver les previews (rubrique + global) avec performances stables.
+
+Livrables:
+
+- Page Squelette v2 fonctionnelle.
+
+Critères de sortie:
+
+- Les 6 actions cœur sont opérationnelles sans navigation annexe obligatoire.
+- Temps de réponse UI conforme (pas de régression perceptible).
+
+### Phase 4 - Rendu front unifié
+
+Objectif:
+
+- Aligner le rendu public sur le contrat single/multi unifié.
+
+Actions:
+
+- Adapter le pipeline front pour lire le nouveau modèle.
+- Uniformiser les comportements d'affichage rubrique par rubrique.
+- Garantir l'ordre/visibilité/mode configurés dans Squelette.
+
+Livrables:
+
+- Rendu front branché 100% sur le modèle cible.
+
+Critères de sortie:
+
+- Le front reflète exactement l'état configuré dans Squelette.
+- Aucun fallback legacy non maîtrisé sur le parcours principal.
+
+### Phase 5 - Nettoyage technique et nomenclature
+
+Objectif:
+
+- Simplifier le codebase après bascule pour réduire la dette.
+
+Actions:
+
+- Retirer les chemins legacy devenus inutiles.
+- Harmoniser la nomenclature des modules/fonctions/assets.
+- Supprimer les duplications liées à l'ancien mode multi-template.
+
+Livrables:
+
+- Base technique nettoyée, cohérente et maintenable.
+
+Critères de sortie:
+
+- Réduction mesurable de la complexité (moins de branches de compatibilité).
+- Plus de références actives à l'ancien modèle multi-template.
+
+### Phase 6 - Validation QA et recette
+
+Objectif:
+
+- Valider fonctionnellement et techniquement la refonte avant mise en ligne.
+
+Actions:
+
+- Exécuter la recette complète des rubriques (single/multi, ordre, visibilité, preview).
+- Tester cas limites: rubrique vide, multi sans item, renommage, retrait puis ajout.
+- Vérifier régression admin/front sur desktop et mobile.
+
+Livrables:
+
+- PV de recette et liste des correctifs bloquants/non bloquants.
+
+Critères de sortie:
+
+- 0 bug bloquant en recette.
+- Parcours principal validé de bout en bout.
+
+### Phase 7 - Déploiement contrôlé
+
+Objectif:
+
+- Basculer en production avec risque maîtrisé.
+
+Actions:
+
+- Préparer le runbook de déploiement et de rollback.
+- Déployer sur environnement de pré-prod puis prod.
+- Monitorer erreurs et signaux post-release.
+
+Livrables:
+
+- Mise en production stable de la gestion Template refondue.
+
+Critères de sortie:
+
+- Aucun incident majeur post-déploiement.
+- Monitoring stable sur la fenêtre de surveillance.
+
+## 8) Priorités d'exécution
+
+1. Priorité haute: Phases 0, 1, 2 (contrat + migration).
+2. Priorité haute: Phases 3, 4 (UI admin + rendu front).
+3. Priorité moyenne: Phase 5 (nettoyage technique).
+4. Priorité haute: Phases 6, 7 (qualité et déploiement sécurisé).
+
+## 9) Points de vigilance
+
+- Ne pas recoder le front avant validation complète du contrat de données.
+- Ne pas supprimer la compatibilité legacy avant validation migration + recette.
+- Garder une traçabilité claire des changements de slug.
+- Éviter tout retour implicite vers une logique multi-template.
