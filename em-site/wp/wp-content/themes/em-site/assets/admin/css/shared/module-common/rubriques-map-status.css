@@ -223,7 +223,7 @@ a.em-admin-landing-map__zone.has-structure:focus {
     pointer-events: none;
 }
 
-/* HERO seul : SLIDER masquÃ©, HERO en pleine largeur (matrice du sÃ©lecteur HEADER). */
+/* HERO seul : SLIDER masqué, HERO en pleine largeur (matrice du sélecteur HEADER). */
 .em-admin-landing-map__header-group.is-hero-only .em-admin-landing-map__header-slider {
     display: none !important;
 }

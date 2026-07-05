@@ -1,4 +1,4 @@
-/* Wizard â€” modale + wireframe (extrait de list-page.css) */
+/* Wizard — modale + wireframe (extrait de list-page.css) */
 
 .em-template-wizard {
     position: fixed;
@@ -123,7 +123,7 @@ body.em-template-wizard-open {
     overflow: hidden;
 }
 
-/* Wizard â€” page dÃ©diÃ©e (sans overlay modale) */
+/* Wizard — page dédiée (sans overlay modale) */
 
 .em-template-wizard--page {
     position: static;

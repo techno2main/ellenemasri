@@ -7,7 +7,7 @@ function em_wp_admin_catalog_choice_switch_color(string $catalog_slug): string
 }
 
 /**
- * Module catalogue associÃ© Ã  un identifiant rubrique (hero, slider, videoâ€¦).
+ * Module catalogue associé à un identifiant rubrique (hero, slider, video…).
  */
 function em_wp_admin_catalog_part_to_module_slug(string $catalog_part): string
 {
@@ -35,7 +35,7 @@ function em_wp_admin_catalog_part_to_module_slug(string $catalog_part): string
 }
 
 /**
- * URL admin d'Ã©dition d'une entrÃ©e catalogue (depuis une rubrique template).
+ * URL admin d'édition d'une entrée catalogue (depuis une rubrique template).
  */
 function em_wp_admin_catalog_entry_edit_url(string $catalog_part, string $catalog_slug): string
 {
@@ -67,7 +67,7 @@ function em_wp_admin_catalog_entry_edit_url(string $catalog_part, string $catalo
 }
 
 /**
- * SÃ©lecteur catalogue hero/slider (toggles exclusifs, style template live).
+ * Sélecteur catalogue hero/slider (toggles exclusifs, style template live).
  *
  * @param array<string, string> $choices slug => label
  */
@@ -96,7 +96,7 @@ function em_wp_admin_render_catalog_slug_switcher(
 
         <div class="em-wp-header-admin__catalog-switcher-control">
         <?php if ($choices === []) { ?>
-            <p class="description"><?php esc_html_e('Aucune entrÃ©e catalogue disponible.', 'em-wp'); ?></p>
+            <p class="description"><?php esc_html_e('Aucune entrée catalogue disponible.', 'em-wp'); ?></p>
             <input type="hidden" name="<?php echo esc_attr($input_name); ?>" value="">
         <?php } else {
             $catalog_accent = em_wp_admin_catalog_choice_switch_color('');
@@ -105,7 +105,7 @@ function em_wp_admin_render_catalog_slug_switcher(
                 id="<?php echo esc_attr($switch_group_id); ?>"
                 class="em-wp-hub__live-switches em-wp-admin-catalog-slug-switches"
                 role="group"
-                aria-label="<?php echo esc_attr($group_label !== '' ? $group_label : __('SÃ©lection catalogue', 'em-wp')); ?>"
+                aria-label="<?php echo esc_attr($group_label !== '' ? $group_label : __('Sélection catalogue', 'em-wp')); ?>"
                 style="--em-wp-live-color: <?php echo esc_attr($catalog_accent); ?>;"
             >
                 <?php foreach ($choices as $slug => $label) {
@@ -176,7 +176,7 @@ function em_wp_admin_render_catalog_slug_switcher(
 }
 
 /**
- * Enqueue JS des toggles catalogue (hero/slider HEADERâ€¦).
+ * Enqueue JS des toggles catalogue (hero/slider HEADER…).
  */
 function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
 {
@@ -235,8 +235,8 @@ function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
             'quitNonce'          => wp_create_nonce('em_wp_quit_editing_nav'),
             'templateLabel'      => $template_label,
             'strings'            => [
-                'openConfirm'         => __('Tu vas quitter l\'Ã©dition en cours pour ouvrir Â« %s Â» dans le catalogue.', 'em-wp'),
-                'openConfirmTemplate' => __('Tu vas quitter l\'Ã©dition du template Â« %1$s Â» pour ouvrir Â« %2$s Â» dans le catalogue.', 'em-wp'),
+                'openConfirm'         => __('Tu vas quitter l\'édition en cours pour ouvrir « %s » dans le catalogue.', 'em-wp'),
+                'openConfirmTemplate' => __('Tu vas quitter l\'édition du template « %1$s » pour ouvrir « %2$s » dans le catalogue.', 'em-wp'),
                 'confirmOpen'         => __('Ouvrir le catalogue', 'em-wp'),
                 'confirmSaveOpen'     => __('Enregistrer & Ouvrir', 'em-wp'),
                 'stay'                => __('Rester', 'em-wp'),

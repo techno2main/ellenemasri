@@ -1,6 +1,6 @@
 # ETAPE 07 - REFACTOR CSS ADMIN
 
-Date de mise à jour : 2026-07-04 17:04:54
+Date de mise à jour : 2026-07-05 16:51:14
 
 ## État
 
@@ -13,6 +13,8 @@ Date de mise à jour : 2026-07-04 17:04:54
 - Ajustement du menu gauche (alignement icônes/libellés, espacements).
 - Nettoyage de l'encodage CSS admin sur les fichiers impactés (accents/commentaires lisibles).
 - Suppression des BOM détectés dans les assets CSS/JS/PHP du thème.
+- Passe complémentaire de correction d'encodage sur le thème admin/front: commentaires et libellés restaurés (accents, guillemets, apostrophes typographiques).
+- Validation finale du périmètre thème em-site: plus d'occurrence mojibake détectée (`Ã`, `Â`, `â`, `�`).
 
 ## Vérification
 

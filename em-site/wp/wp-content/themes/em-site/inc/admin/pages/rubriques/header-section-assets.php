@@ -359,17 +359,30 @@ function em_wp_admin_render_header_section_assets(): void
         // À l'ouverture du HEADER : aperçu d'office, dans le wireframe, de l'item HERO
         // branché (comme les autres rubriques) — au lieu de la simple structure.
         // L'aperçu d'un autre item HERO/SLIDER reste accessible via l'œil.
-        function showHeaderUsedPreview() {
+        function showHeaderUsedPreview(scope) {
             if (!window.EmWpSkeletonPreview) { return; }
-            var root = document.querySelector('.em-wp-header-picker'); if (!root) { return; }
+            var host = scope && scope.querySelector ? scope : document;
+            var root = host.querySelector('.em-wp-header-picker'); if (!root) { return; }
             var list = root.querySelector('.em-wp-header-picker__items[data-part="hero"]'); if (!list) { return; }
             var current = list.getAttribute('data-current') || '';
             var eye = root.querySelector('.em-wp-instance-picker__eye[data-part="hero"][data-item="' + current + '"]');
             var source = root.querySelector('.em-wp-header-picker__previews[data-part="hero"] .em-wp-instance-picker__preview[data-item="' + current + '"] .em-wp-instance-picker__stage');
             if (eye && source) { window.EmWpSkeletonPreview.showSingle('header', source, eye); }
         }
-        if (document.readyState !== 'loading') { showHeaderUsedPreview(); }
-        else { document.addEventListener('DOMContentLoaded', showHeaderUsedPreview); }
+
+        function handlePickerMounted(event) {
+            var container = event && event.detail ? event.detail.container : null;
+            if (container) {
+                showHeaderUsedPreview(container);
+            }
+        }
+
+        if (document.readyState !== 'loading') { showHeaderUsedPreview(document); }
+        else {
+            document.addEventListener('DOMContentLoaded', function () { showHeaderUsedPreview(document); });
+        }
+
+        document.addEventListener('emWpRubriquePickerMounted', handlePickerMounted);
     })();
     </script>
     <?php

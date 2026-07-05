@@ -231,7 +231,7 @@
     transition: color 0.15s ease;
 }
 
-/* OEIL centrÃ© verticalement par rapport au badge dans le pied de carte */
+/* OEIL centré verticalement par rapport au badge dans le pied de carte */
 .em-templates-sommaire__card-live-footer .em-templates-admin__template-preview {
     align-self: center;
 }

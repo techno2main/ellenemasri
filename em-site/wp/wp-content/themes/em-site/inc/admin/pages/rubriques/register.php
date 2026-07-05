@@ -27,7 +27,7 @@ function em_wp_admin_rubriques_add_admin_page(): void
 add_action('admin_menu', 'em_wp_admin_rubriques_add_admin_page');
 
 /**
- * Retire le sous-menu dupliquÃ© crÃ©Ã© automatiquement par WordPress.
+ * Retire le sous-menu dupliqué créé automatiquement par WordPress.
  */
 function em_wp_admin_rubriques_remove_duplicate_submenu(): void
 {
@@ -58,11 +58,11 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
         return;
     }
 
-    // MÃ©diathÃ¨que WP : choix de l'image de fond partagÃ©e du HEADER.
+    // Médiathèque WP : choix de l'image de fond partagée du HEADER.
     wp_enqueue_media();
 
     // CSS du SLIDER front (mayami) : le wireframe du squelette rend de vraies
-    // rubriques V4, dont le champ Â« Slider Â» (template mayami). Sans ce CSS, les
+    // rubriques V4, dont le champ « Slider » (template mayami). Sans ce CSS, les
     // slides s'empilent en pleine hauteur au lieu d'occuper le cadre du slider.
     $slider_css_rel = '/assets/front/css/modules/slider/mayami/slider.css';
     $slider_css_path = get_template_directory() . $slider_css_rel;
@@ -133,17 +133,17 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
                 ? em_wp_get_editing_template_slug()
                 : '',
             'i18n'    => [
-                'saved'                 => __('Ordre enregistrÃ©.', 'em-wp'),
+                'saved'                 => __('Ordre enregistré.', 'em-wp'),
                 'error'                 => __('Impossible d\'enregistrer l\'ordre.', 'em-wp'),
-                'handle'                => __('RÃ©ordonner', 'em-wp'),
+                'handle'                => __('Réordonner', 'em-wp'),
                 'swapHeroSlider'        => __('Inverser Hero et Slider dans HEADER', 'em-wp'),
-                'layoutSaved'           => __('Layout HEADER enregistrÃ©.', 'em-wp'),
+                'layoutSaved'           => __('Layout HEADER enregistré.', 'em-wp'),
                 'layoutError'           => __('Impossible d\'enregistrer le layout HEADER.', 'em-wp'),
                 'visibilityShown'       => __('Afficher sur le site', 'em-wp'),
                 'visibilityHidden'      => __('Masquer sur le site', 'em-wp'),
-                'visibilityHiddenLabel' => __('MasquÃ©', 'em-wp'),
-                'visibilitySaved'       => __('VisibilitÃ© enregistrÃ©e.', 'em-wp'),
-                'visibilityError'       => __('Impossible d\'enregistrer la visibilitÃ©.', 'em-wp'),
+                'visibilityHiddenLabel' => __('Masqué', 'em-wp'),
+                'visibilitySaved'       => __('Visibilité enregistrée.', 'em-wp'),
+                'visibilityError'       => __('Impossible d\'enregistrer la visibilité.', 'em-wp'),
             ],
         ]
     );
@@ -164,19 +164,21 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
                 && function_exists('em_wp_get_active_template_slug')
                 && em_wp_get_editing_template_slug() === em_wp_get_active_template_slug(),
             'i18n'           => [
-                'saved'                => __('Rubrique mise Ã  jour.', 'em-wp'),
-                'error'                => __('Impossible de mettre Ã  jour le squelette.', 'em-wp'),
-                'confirmRemove'          => __('Retirer Â« %s Â» du squelette de ce template ?', 'em-wp'),
+                'saved'                => __('Rubrique mise à jour.', 'em-wp'),
+                'error'                => __('Impossible de mettre à jour le squelette.', 'em-wp'),
+                'confirmRemove'          => __('Retirer « %s » du squelette de ce template ?', 'em-wp'),
                 'confirmRemoveTitle'     => __('Retirer du squelette', 'em-wp'),
                 'confirmRemoveLive'      => __(
-                    "Le template %1\$s est actuellement en ligne.\n\nRetirer Â« %2\$s Â» du squelette modifiera le site public immÃ©diatement.",
+                    "Le template %1\$s est actuellement en ligne.\n\nRetirer « %2\$s » du squelette modifiera le site public immédiatement.",
                     'em-wp'
                 ),
-                'confirmRemoveLiveTitle' => __('Template en ligne â€” attention', 'em-wp'),
-                'confirmRemoveLiveAck'   => __('J\'ai bien compris que cette modification sera visible immÃ©diatement sur le site public.', 'em-wp'),
+                'confirmRemoveLiveTitle' => __('Template en ligne — attention', 'em-wp'),
+                'confirmRemoveLiveAck'   => __('J\'ai bien compris que cette modification sera visible immédiatement sur le site public.', 'em-wp'),
                 'confirmRemoveLabel'     => __('Retirer du squelette', 'em-wp'),
                 'confirmRemoveLiveLabel' => __('Oui, modifier le site', 'em-wp'),
                 'cancelLabel'            => __('Annuler', 'em-wp'),
+                'loadingPicker'          => __('Chargement de la rubrique…', 'em-wp'),
+                'pickerLoadError'        => __('Impossible d\'ouvrir cette rubrique.', 'em-wp'),
             ],
         ]
     );
@@ -184,7 +186,7 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
 add_action('admin_enqueue_scripts', 'em_wp_admin_rubriques_enqueue');
 
 /**
- * Onglets Rubriques sur les pages d'Ã©dition (TOP-BAR, HEADER, STREAMâ€¦).
+ * Onglets Rubriques sur les pages d'édition (TOP-BAR, HEADER, STREAM…).
  */
 function em_wp_admin_rubrique_modules_nav_enqueue(string $hook_suffix): void
 {

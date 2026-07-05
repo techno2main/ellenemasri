@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-05 03:09:52.
+3. Dernière mise à jour : 2026-07-05 16:51:14.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -62,7 +62,10 @@
 6. Parité page Apparence restaurée : métadonnées du thème et screenshot importés (correction de la carte thème vide/Anonymous).
 7. Validation infra faite : le back actif sur `localhost:8290` écrit bien dans la nouvelle base `em_site_bdd` (préfixe `wpem_`).
 8. Parité rubriques renforcée : correction des décalages visuels sur les lignes d'édition (titre rubrique, titre item, ligne CONTENU, lignes L1/L2/...) avec réalignement structurel sur la source.
-9. Demande utilisateur en cours : flow GH avant grande pause.
+9. Lot Rubriques optimisé : ouverture/fermeture des rubriques sans reload via AJAX, cache local des panneaux, synchronisation URL `open` sans navigation complète.
+10. Wireframe synchronisé automatiquement à l'ouverture d'une rubrique : affichage immédiat de l'item branché sans clic sur l'œil.
+11. Correction globale des textes mojibake côté thème em-site : accents/guillemets restaurés sur CSS, JS et PHP (scan final sans occurrence `Ã`, `Â`, `â`, `�`).
+12. Demande utilisateur en cours : flow GH.
 
 ## Plan phase ADMIN (itératif et sécurisé)
 1. Lot A - Inventaire et cartographie

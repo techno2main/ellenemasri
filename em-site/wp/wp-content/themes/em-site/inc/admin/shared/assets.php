@@ -1,6 +1,6 @@
 <?php
 /**
- * Enqueue des assets admin partagÃ©s (tous modules em-wp).
+ * Enqueue des assets admin partagés (tous modules em-wp).
  *
  * @package em-wp
  */
@@ -24,7 +24,7 @@ function em_wp_admin_asset_version(string $relative_path): string
 }
 
 /**
- * Enqueue styles/scripts communs Ã  tous les modules admin.
+ * Enqueue styles/scripts communs à tous les modules admin.
  *
  * @return array{styles: string[], scripts: string[]}
  */
@@ -140,7 +140,7 @@ function em_wp_admin_enqueue_shared_assets(): array
 }
 
 /**
- * Auto-dismiss des notices admin (toasts) aprÃ¨s 3 s sur les Ã©crans em-wp.
+ * Auto-dismiss des notices admin (toasts) après 3 s sur les écrans em-wp.
  */
 function em_wp_admin_enqueue_notice_autodismiss(): void
 {
@@ -168,8 +168,8 @@ function em_wp_admin_enqueue_notice_autodismiss(): void
 add_action('admin_enqueue_scripts', 'em_wp_admin_enqueue_notice_autodismiss', 5);
 
 /**
- * CompatibilitÃ© des classes admin: ajoute des alias "em-" quand le markup
- * expose encore des classes "em-wp-" (transition de prÃ©fixe).
+ * Compatibilité des classes admin: ajoute des alias "em-" quand le markup
+ * expose encore des classes "em-wp-" (transition de préfixe).
  */
 function em_wp_admin_enqueue_class_prefix_compat(): void
 {
@@ -191,13 +191,13 @@ function em_wp_admin_enqueue_class_prefix_compat(): void
         get_template_directory_uri() . '/assets/admin/js/shared/compat/class-prefix-compat.js',
         [],
         em_wp_admin_asset_version('assets/admin/js/shared/compat/class-prefix-compat.js'),
-        true
+        false
     );
 }
 add_action('admin_enqueue_scripts', 'em_wp_admin_enqueue_class_prefix_compat', 6);
 
 /**
- * Enqueue d'un module admin (CSS + JS spÃ©cifiques).
+ * Enqueue d'un module admin (CSS + JS spécifiques).
  */
 function em_wp_admin_enqueue_module_assets(
     string $style_handle,

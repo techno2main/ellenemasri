@@ -188,6 +188,7 @@ function em_wp_admin_render_skeleton_preview_assets(): void
         var FRONT_W = 1280;
         var open = [];   // [{ zone, holder }]
         var full = false;
+        var relayoutTimers = [];
 
         function zoneFor(type) {
             return document.querySelector('.em-wp-admin-landing-map [data-module-slug="' + type + '"]:not([data-header-part])');
@@ -217,11 +218,19 @@ function em_wp_admin_render_skeleton_preview_assets(): void
             });
         }
 
+        function clearRelayoutTimers() {
+            relayoutTimers.forEach(function (id) { clearTimeout(id); });
+            relayoutTimers = [];
+        }
+
         // Plusieurs passes : double rAF (layout posé) + délais de sécurité (polices,
         // images, iframes/vidéos qui changent la hauteur après coup).
         function relayoutPasses() {
+            clearRelayoutTimers();
             requestAnimationFrame(function () { requestAnimationFrame(relayout); });
-            [120, 350, 700, 1300].forEach(function (d) { setTimeout(relayout, d); });
+            [120, 320, 700].forEach(function (d) {
+                relayoutTimers.push(setTimeout(relayout, d));
+            });
         }
 
         // Injecte un stage (cloné) dans une zone, en masquant son contenu propre.
@@ -298,6 +307,7 @@ function em_wp_admin_render_skeleton_preview_assets(): void
 
         // Restaure toutes les zones (referme aperçu unique ET aperçu complet).
         function restoreAll() {
+            clearRelayoutTimers();
             open.forEach(function (o) {
                 if (o.ro) { o.ro.disconnect(); }
                 o.zone.classList.remove('em-wp-admin-landing-map__zone--previewing');

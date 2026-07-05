@@ -1,6 +1,6 @@
 <?php
 /**
- * DÃ©finitions des rubriques (sommaire + menu latÃ©ral).
+ * Définitions des rubriques (sommaire + menu latéral).
  *
  * @package em-wp
  */
@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * DÃ©finitions statiques des rubriques intÃ©grÃ©es au thÃ¨me.
+ * Définitions statiques des rubriques intégrées au thème.
  *
  * @return array<string, array<string, mixed>>
  */
@@ -88,7 +88,7 @@ function em_wp_admin_site_rubrique_static_definitions(): array
 }
 
 /**
- * Rubriques dÃ©rivÃ©es des catalogues crÃ©Ã©s dans l'admin (CONTACTS, â€¦).
+ * Rubriques dérivées des catalogues créés dans l'admin (CONTACTS, …).
  *
  * @return array<string, array<string, mixed>>
  */
@@ -133,13 +133,13 @@ function em_wp_admin_catalog_rubrique_definitions(): array
 }
 
 /**
- * Rubriques dÃ©rivÃ©es des types V4 crÃ©Ã©s dans l'admin (ABOUT, â€¦) absentes des
- * dÃ©finitions statiques.
+ * Rubriques dérivées des types V4 créés dans l'admin (ABOUT, …) absentes des
+ * définitions statiques.
  *
- * Les sous-types consommÃ©s par le composite HEADER (HERO / SLIDER) sont exclus :
- * ils ne s'ajoutent pas seuls au squelette, ils se rÃ¨glent dans la rubrique
- * HEADER. Sans cela une rubrique V4 crÃ©Ã©e par le client (ex. ABOUT) n'apparaÃ®t
- * jamais dans la liste Â« Ajouter une rubrique Â».
+ * Les sous-types consommés par le composite HEADER (HERO / SLIDER) sont exclus :
+ * ils ne s'ajoutent pas seuls au squelette, ils se règlent dans la rubrique
+ * HEADER. Sans cela une rubrique V4 créée par le client (ex. ABOUT) n'apparaît
+ * jamais dans la liste « Ajouter une rubrique ».
  *
  * @return array<string, array<string, mixed>>
  */
@@ -149,17 +149,17 @@ function em_wp_admin_v4_extra_rubrique_definitions(): array
         return [];
     }
 
-    // DÃ©finitions dÃ©jÃ  connues (statiques + catalogues). On ne rÃ©injecte un type
-    // V4 QUE s'il n'est pas dÃ©jÃ  couvert : sinon une entrÃ©e synthÃ©tique
-    // Ã©craserait la dÃ©finition existante (ex. le type V4 Â« contacts Â» Ã©crasait le
-    // module catalogue Â« contacts Â» et son page_slug Â« em-contacts Â», ce qui
-    // empÃªchait le purge de retirer le lien isolÃ© CONTACT du menu).
+    // Définitions déjà connues (statiques + catalogues). On ne réinjecte un type
+    // V4 QUE s'il n'est pas déjà couvert : sinon une entrée synthétique
+    // écraserait la définition existante (ex. le type V4 « contacts » écrasait le
+    // module catalogue « contacts » et son page_slug « em-contacts », ce qui
+    // empêchait le purge de retirer le lien isolé CONTACT du menu).
     $existing = array_merge(
         em_wp_admin_site_rubrique_static_definitions(),
         em_wp_admin_catalog_rubrique_definitions()
     );
 
-    // Sous-types du composite HEADER Ã  ne pas proposer seuls.
+    // Sous-types du composite HEADER à ne pas proposer seuls.
     $excluded = [];
 
     if (function_exists('em_wp_admin_header_part_type_slug')) {
@@ -181,8 +181,8 @@ function em_wp_admin_v4_extra_rubrique_definitions(): array
             continue;
         }
 
-        // Filet de sÃ©curitÃ© : exclure tout type Â« hero Â»/Â« slider Â» mÃªme si la
-        // dÃ©tection ci-dessus n'a pas pu tourner (header-section.php non chargÃ©).
+        // Filet de sécurité : exclure tout type « hero »/« slider » même si la
+        // détection ci-dessus n'a pas pu tourner (header-section.php non chargé).
         $label_raw = strtolower((string) ($type['label'] ?? '') . ' ' . (string) ($type['label_plural'] ?? ''));
 
         if (strpos($slug, 'hero') !== false || strpos($slug, 'slider') !== false
@@ -205,7 +205,7 @@ function em_wp_admin_v4_extra_rubrique_definitions(): array
             // IMPORTANT : pas de page_slug. Un page_slug 'em-rubriques-overview'
             // entrerait en collision avec le menu top-level RUBRIQUES et le ferait
             // PURGER par em_wp_admin_menu_layout_purge_out_of_context_rubriques().
-            // La carte Â« Ajouter une rubrique Â» n'utilise que le slug + le label.
+            // La carte « Ajouter une rubrique » n'utilise que le slug + le label.
             'page_slug'    => '',
             'preview_zone' => 'section_' . $slug,
             'accent_color' => '#751820',
@@ -216,7 +216,7 @@ function em_wp_admin_v4_extra_rubrique_definitions(): array
 }
 
 /**
- * Toutes les rubriques connues (intÃ©grÃ©es + catalogues + types V4 custom).
+ * Toutes les rubriques connues (intégrées + catalogues + types V4 custom).
  *
  * @return array<string, array<string, mixed>>
  */
@@ -230,7 +230,7 @@ function em_wp_admin_site_rubrique_all_definitions(): array
 }
 
 /**
- * Indique si une rubrique est liÃ©e Ã  un catalogue (pas une section intÃ©grÃ©e seule).
+ * Indique si une rubrique est liée à un catalogue (pas une section intégrée seule).
  */
 function em_wp_admin_rubrique_is_catalog_linked(string $rubrique_slug): bool
 {
@@ -255,7 +255,7 @@ function em_wp_admin_site_rubrique_modules_for_context(): array
 }
 
 /**
- * Rubriques proposables Ã  l'ajout au squelette d'un template.
+ * Rubriques proposables à l'ajout au squelette d'un template.
  *
  * @return array<string, array<string, mixed>>
  */

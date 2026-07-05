@@ -168,7 +168,7 @@
     align-content: start;
 }
 
-/* Badge rubriques cliquables dans la carte template : style mutualisÃ© contenu */
+/* Badge rubriques cliquables dans la carte template : style mutualisé contenu */
 .em-templates-sommaire__card-desc > .em-hub__live--entry-links {
     justify-self: start;
     align-self: start;
@@ -209,7 +209,7 @@
     gap: 10px;
 }
 
-/* Badge entrÃ©es (DUPLIQUER â€¢ WIZARD, â€¦) : style mutualisÃ© contenu, pas pleine largeur */
+/* Badge entrées (DUPLIQUER • WIZARD, …) : style mutualisé contenu, pas pleine largeur */
 .em-templates-sommaire__card-live-footer > .em-hub__live--entry-links {
     width: auto;
     max-width: 100%;

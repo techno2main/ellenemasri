@@ -13,6 +13,9 @@
     var statusDismissTimer = null;
     var lastStatusEl = null;
     var STATUS_DISMISS_MS = 3000;
+    var listRoot = adminRoot.querySelector('.em-wp-rubriques-admin__list');
+    var pickerCache = Object.create(null);
+    var activePickerRequestToken = 0;
 
     function setStatus(message, isError) {
         var statusEl = document.getElementById('em-wp-rubrique-skeleton-add-status')
@@ -113,6 +116,154 @@
             });
     }
 
+    function currentUrl() {
+        return new window.URL(window.location.href);
+    }
+
+    function syncOpenQueryParam(moduleSlug) {
+        var url = currentUrl();
+
+        if (moduleSlug) {
+            url.searchParams.set('open', moduleSlug);
+        } else {
+            url.searchParams.delete('open');
+        }
+
+        window.history.replaceState({}, '', url.toString());
+    }
+
+    function removeExistingPicker() {
+        if (!listRoot) {
+            return;
+        }
+
+        var picker = listRoot.querySelector('.em-wp-rubriques-admin__picker');
+        if (picker && picker.parentNode) {
+            picker.parentNode.removeChild(picker);
+        }
+    }
+
+    function closeOpenRubrique() {
+        if (!listRoot) {
+            return;
+        }
+
+        listRoot.querySelectorAll('.em-wp-rubriques-admin__list-item.is-open').forEach(function (item) {
+            item.classList.remove('is-open');
+        });
+
+        removeExistingPicker();
+        syncOpenQueryParam('');
+
+        if (window.EmWpSkeletonPreview && typeof window.EmWpSkeletonPreview.restoreAll === 'function') {
+            window.EmWpSkeletonPreview.restoreAll();
+        }
+    }
+
+    function notifyPickerMounted(container, moduleSlug) {
+        document.dispatchEvent(new window.CustomEvent('emWpRubriquePickerMounted', {
+            detail: {
+                container: container,
+                moduleSlug: moduleSlug || '',
+            },
+        }));
+    }
+
+    function mountPickerHtml(listItem, moduleSlug, html) {
+        if (!listRoot || !listItem || !html) {
+            return false;
+        }
+
+        var mount = document.createElement('ul');
+        mount.innerHTML = html;
+        var picker = mount.querySelector('.em-wp-rubriques-admin__picker');
+
+        if (!picker) {
+            return false;
+        }
+
+        if (listItem.nextSibling) {
+            listRoot.insertBefore(picker, listItem.nextSibling);
+        } else {
+            listRoot.appendChild(picker);
+        }
+
+        notifyPickerMounted(picker, moduleSlug);
+        return true;
+    }
+
+    function fetchRubriquePicker(moduleSlug) {
+        var body = new window.FormData();
+        body.append('action', 'em_wp_load_rubrique_picker');
+        body.append('nonce', config.nonce);
+        body.append('module_slug', moduleSlug);
+
+        return window.fetch(config.ajaxUrl, {
+            method: 'POST',
+            credentials: 'same-origin',
+            body: body,
+        }).then(function (response) {
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+
+            return response.json();
+        }).then(function (payload) {
+            if (!payload || !payload.success || !payload.data || !payload.data.html) {
+                throw new Error((payload && payload.data && payload.data.message) || (config.i18n && config.i18n.pickerLoadError) || 'Picker load error');
+            }
+
+            return payload.data.html;
+        });
+    }
+
+    function openRubriquePanel(listItem, moduleSlug) {
+        if (!listRoot || !listItem || !moduleSlug) {
+            return;
+        }
+
+        closeOpenRubrique();
+        listItem.classList.add('is-open');
+        syncOpenQueryParam(moduleSlug);
+
+        if (pickerCache[moduleSlug]) {
+            mountPickerHtml(listItem, moduleSlug, pickerCache[moduleSlug]);
+            return;
+        }
+
+        activePickerRequestToken += 1;
+        var requestToken = activePickerRequestToken;
+        setStatus((config.i18n && config.i18n.loadingPicker) || '', false);
+
+        fetchRubriquePicker(moduleSlug)
+            .then(function (html) {
+                if (requestToken !== activePickerRequestToken) {
+                    return;
+                }
+
+                pickerCache[moduleSlug] = html;
+
+                if (!listItem.classList.contains('is-open')) {
+                    return;
+                }
+
+                if (!mountPickerHtml(listItem, moduleSlug, html)) {
+                    throw new Error((config.i18n && config.i18n.pickerLoadError) || 'Picker mount error');
+                }
+
+                setStatus('', false);
+            })
+            .catch(function (error) {
+                if (requestToken !== activePickerRequestToken) {
+                    return;
+                }
+
+                listItem.classList.remove('is-open');
+                syncOpenQueryParam('');
+                setStatus((error && error.message) || (config.i18n && config.i18n.pickerLoadError) || '', true);
+            });
+    }
+
     if (addToggle && addPanel) {
         addToggle.addEventListener('click', function () {
             if (addPanel.hidden) {
@@ -204,6 +355,25 @@
     }
 
     adminRoot.addEventListener('click', function (event) {
+        var listLink = event.target.closest('.em-wp-rubriques-admin__list-link');
+
+        if (listLink && listRoot && listRoot.contains(listLink)) {
+            var listItem = listLink.closest('.em-wp-rubriques-admin__list-item[data-module-slug]');
+            var moduleSlug = listItem ? (listItem.getAttribute('data-module-slug') || '') : '';
+
+            if (moduleSlug !== '') {
+                event.preventDefault();
+
+                if (listItem.classList.contains('is-open')) {
+                    closeOpenRubrique();
+                } else {
+                    openRubriquePanel(listItem, moduleSlug);
+                }
+
+                return;
+            }
+        }
+
         var addButton = event.target.closest('.em-wp-rubriques-admin__add-button');
 
         if (addButton) {

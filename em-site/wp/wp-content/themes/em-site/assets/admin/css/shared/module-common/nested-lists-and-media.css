@@ -4,7 +4,7 @@
     display: none;
 }
 
-/* Listes imbriquÃ©es (slides, plateformes streamâ€¦) */
+/* Listes imbriquées (slides, plateformes stream…) */
 .em-admin-nested-list {
     display: grid;
     gap: 10px;
@@ -97,7 +97,7 @@
     }
 }
 
-/* Boutons Enregistrer WordPress (submit_button) â€” thÃ¨me marron */
+/* Boutons Enregistrer WordPress (submit_button) — thème marron */
 .wp-core-ui .em-admin-module .button-primary,
 .wp-core-ui .em-hub-sommaire .button-primary {
     border-color: #4e080e;
@@ -161,7 +161,7 @@
     transform: none;
 }
 
-/* Boutons media "Modifier" â€” thÃ¨me marron global */
+/* Boutons media "Modifier" — thème marron global */
 .wp-core-ui .em-admin-module .em-admin-media-button.button,
 .wp-core-ui .em-admin-module .em-admin-media-button.button-secondary {
     border: 1px solid #751820;

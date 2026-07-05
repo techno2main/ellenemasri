@@ -128,7 +128,7 @@ button.em-hub__template-live-pill--activate {
         box-shadow 0.15s ease;
 }
 
-/* Badge Â« Activer Â» (template non actif) : contour couleur template, sans fond */
+/* Badge « Activer » (template non actif) : contour couleur template, sans fond */
 .em-hub__template-live-pill--activate {
     background: transparent;
     color: var(--em-template-accent, #751820);

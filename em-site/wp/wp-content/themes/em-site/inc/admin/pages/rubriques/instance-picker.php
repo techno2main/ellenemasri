@@ -31,7 +31,7 @@ function em_wp_admin_rubrique_v4_edit_url(string $type_slug, string $item_slug =
 /**
  * Rendu du sélecteur d'items sous une rubrique du squelette (élément <li>).
  */
-function em_wp_admin_render_rubrique_items_picker(string $module_slug): void
+function em_wp_admin_render_rubrique_items_picker(string $module_slug, bool $with_assets = true): void
 {
     if (!current_user_can('manage_options')) {
         return;
@@ -59,7 +59,9 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug): void
             </div>
         </li>
         <?php
-        em_wp_admin_render_header_section_assets();
+        if ($with_assets) {
+            em_wp_admin_render_header_section_assets();
+        }
         return;
     }
 
@@ -174,6 +176,40 @@ function em_wp_admin_render_rubrique_items_picker(string $module_slug): void
         </div>
     </li>
     <?php
-    em_wp_admin_render_rubrique_items_picker_assets();
+    if ($with_assets) {
+        em_wp_admin_render_rubrique_items_picker_assets();
+    }
 }
+
+/**
+ * AJAX: charge le picker d'une rubrique sans recharger la page squelette.
+ */
+function em_wp_v4_handle_ajax_load_rubrique_picker(): void
+{
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'forbidden'], 403);
+    }
+
+    check_ajax_referer('em_wp_rubrique_order', 'nonce');
+
+    $module_slug = sanitize_key((string) ($_POST['module_slug'] ?? ''));
+
+    if ($module_slug === '') {
+        wp_send_json_error(['message' => 'invalid_module'], 400);
+    }
+
+    ob_start();
+    em_wp_admin_render_rubrique_items_picker($module_slug, false);
+    $html = trim((string) ob_get_clean());
+
+    if ($html === '') {
+        wp_send_json_error(['message' => 'empty_picker'], 404);
+    }
+
+    wp_send_json_success([
+        'moduleSlug' => $module_slug,
+        'html'       => $html,
+    ]);
+}
+add_action('wp_ajax_em_wp_load_rubrique_picker', 'em_wp_v4_handle_ajax_load_rubrique_picker');
 

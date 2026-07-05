@@ -136,6 +136,8 @@ function em_wp_admin_render_rubriques_page(): void
     $template_accent = function_exists('em_wp_get_template_color')
         ? em_wp_get_template_color($template_slug)
         : '';
+    $has_proposable_rubriques = function_exists('em_wp_admin_template_proposable_rubrique_definitions')
+        && em_wp_admin_template_proposable_rubrique_definitions() !== [];
     ?>
     <div class="wrap em-wp-rubriques-admin em-wp-admin-module em-wp-hub-sommaire" data-template-slug="<?php echo esc_attr($template_slug); ?>">
         <?php
@@ -151,7 +153,7 @@ function em_wp_admin_render_rubriques_page(): void
         ?>
         <div class="em-wp-rubriques-admin__layout">
             <div class="em-wp-rubriques-admin__main">
-                <?php if (current_user_can('manage_options')) { ?>
+                <?php if (current_user_can('manage_options') && $has_proposable_rubriques) { ?>
                     <button
                         type="button"
                         class="button button-primary em-v4-savebar__btn em-wp-rubriques-admin__add-rubrique-toggle"
@@ -160,7 +162,7 @@ function em_wp_admin_render_rubriques_page(): void
                         aria-expanded="false"
                     >
                         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                        <?php esc_html_e('+ Nouvelle Rubrique', 'em-wp'); ?>
+                        <?php esc_html_e('Nouvelle Rubrique', 'em-wp'); ?>
                     </button>
 
                     <?php
@@ -250,6 +252,17 @@ function em_wp_admin_render_rubriques_page(): void
                     </div>
                 </aside>
             <?php } ?>
+
+            <?php
+            // Charge les handlers/styles du picker (items + header) même sans
+            // rubrique ouverte au premier affichage, pour permettre l'ouverture AJAX.
+            if (function_exists('em_wp_admin_render_rubrique_items_picker_assets')) {
+                em_wp_admin_render_rubrique_items_picker_assets();
+            }
+            if (function_exists('em_wp_admin_render_header_section_assets')) {
+                em_wp_admin_render_header_section_assets();
+            }
+            ?>
         </div>
     </div>
     <?php

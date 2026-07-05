@@ -122,20 +122,33 @@ function em_wp_admin_render_rubrique_items_picker_assets(): void
 
         // À l'ouverture d'une rubrique : affiche d'office, dans le wireframe, l'aperçu
         // de la section UTILISÉE (item branché). L'admin voit tout de suite le rendu.
-        function showUsedPreview() {
+        function showUsedPreview(scope) {
             if (!window.EmWpSkeletonPreview) { return; }
-            var list = document.querySelector('.em-wp-instance-picker');
+            var root = scope && scope.querySelector ? scope : document;
+            var list = root.querySelector('.em-wp-instance-picker');
             if (!list) { return; }
+            var type = list.getAttribute('data-type') || '';
             var current = list.getAttribute('data-current') || '';
             var inner = list.closest('.em-wp-rubriques-admin__picker-inner');
-            if (!current || !inner) { return; }
+            if (!type || !current || !inner) { return; }
             var eye = inner.querySelector('.em-wp-instance-picker__eye[data-item="' + current + '"]');
             var source = inner.querySelector('.em-wp-instance-picker__preview[data-item="' + current + '"] .em-wp-instance-picker__stage');
-            if (eye && source) { window.EmWpSkeletonPreview.showSingle(current, source, eye); }
+            if (eye && source) { window.EmWpSkeletonPreview.showSingle(type, source, eye); }
         }
 
-        if (document.readyState !== 'loading') { showUsedPreview(); }
-        else { document.addEventListener('DOMContentLoaded', showUsedPreview); }
+        function handlePickerMounted(event) {
+            var container = event && event.detail ? event.detail.container : null;
+            if (container) {
+                showUsedPreview(container);
+            }
+        }
+
+        if (document.readyState !== 'loading') { showUsedPreview(document); }
+        else {
+            document.addEventListener('DOMContentLoaded', function () { showUsedPreview(document); });
+        }
+
+        document.addEventListener('emWpRubriquePickerMounted', handlePickerMounted);
 
         function setStatus(status, msg, color) {
             if (!status) { return; }

@@ -1,3 +1,4 @@
+.em-hub__action {
     width: auto;
     max-width: 100%;
     min-height: 42px;
@@ -126,7 +127,7 @@
     color: #a85560;
 }
 
-/* Accueil â€” grille alignÃ©e sur le sommaire Catalogues (hors rangÃ©e Templates) */
+/* Accueil — grille alignée sur le sommaire Catalogues (hors rangée Templates) */
 .em-dashboard .em-hub__rows {
     max-width: min(100%, 960px);
 }
@@ -135,7 +136,7 @@
     line-height: 1.35;
 }
 
-/* Accueil â€” survol synchronisÃ© onglets â†” cartes */
+/* Accueil — survol synchronisé onglets ↔ cartes */
 .em-dashboard .em-hub__card[data-dashboard-section] {
     transition:
         border-color 0.15s ease,
@@ -170,7 +171,7 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
-/* Accueil â€” base onglets (fallback aprÃ¨s retrait des CSS catalog legacy). */
+/* Accueil — base onglets (fallback après retrait des CSS catalog legacy). */
 .em-dashboard .em-catalog-edit__nav,
 .em-templates-sommaire .em-catalog-edit__nav {
     margin: 8px 0 18px;
@@ -266,7 +267,7 @@
     color: #111827;
 }
 
-/* Templates â€” survol synchronisÃ© onglets â†” cartes */
+/* Templates — survol synchronisé onglets ↔ cartes */
 .em-templates-sommaire .em-hub__card[data-template-section]:not([data-template-section="create"]) {
     align-content: start;
     transition:

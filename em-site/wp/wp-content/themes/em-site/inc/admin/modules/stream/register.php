@@ -27,7 +27,7 @@ function em_wp_stream_register_admin(): void
 add_action('admin_menu', 'em_wp_stream_register_admin');
 
 /**
- * Retire le sous-menu dupliquÃ©.
+ * Retire le sous-menu dupliqué.
  */
 function em_wp_stream_remove_duplicate_submenu(): void
 {

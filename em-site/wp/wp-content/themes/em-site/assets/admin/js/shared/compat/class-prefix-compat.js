@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    var observerAttached = false;
+
     function applyClassPrefixCompat(root) {
         if (!root || typeof root.querySelectorAll !== 'function') {
             return;
@@ -21,8 +23,17 @@
         });
     }
 
-    function initCompat() {
-        applyClassPrefixCompat(document);
+    function attachObserver() {
+        if (observerAttached) {
+            return;
+        }
+
+        var target = document.documentElement || document.body;
+        if (!target) {
+            return;
+        }
+
+        observerAttached = true;
 
         var observer = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
@@ -41,15 +52,20 @@
             });
         });
 
-        observer.observe(document.body, {
+        observer.observe(target, {
             childList: true,
             subtree: true,
         });
     }
 
+    // Apply as early as possible, then keep syncing future nodes.
+    applyClassPrefixCompat(document);
+    attachObserver();
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initCompat);
-    } else {
-        initCompat();
+        document.addEventListener('DOMContentLoaded', function () {
+            applyClassPrefixCompat(document);
+            attachObserver();
+        });
     }
 })();

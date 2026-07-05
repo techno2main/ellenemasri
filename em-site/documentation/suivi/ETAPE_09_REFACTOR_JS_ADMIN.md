@@ -1,6 +1,6 @@
 # ETAPE 09 - REFACTOR JS ADMIN
 
-Date de mise à jour : 2026-07-05 02:47:57
+Date de mise à jour : 2026-07-05 16:51:14
 
 ## État
 
@@ -75,6 +75,14 @@ Date de mise à jour : 2026-07-05 02:47:57
 	- `wizard/skeleton/wizard-skeleton-core.js`
 	- wrappers compatibles conservés (`wizard-navigation.js`, `wizard-skeleton.js`)
 - Vérifications de syntaxe globales au moment de cette mise à jour: **0 erreur détectée**.
+
+## Lot Rubriques - performance/UX (2026-07-05)
+
+- Ouverture/fermeture des rubriques sans rechargement complet de page (AJAX) depuis la liste du squelette.
+- Cache client des panneaux rubrique pour accélérer les réouvertures successives.
+- Synchronisation de l'URL (`open=<slug>`) via `history.replaceState` sans navigation complète.
+- Correction du comportement wireframe: auto-affichage de l'item branché à l'ouverture d'une rubrique (plus besoin de cliquer l'œil).
+- Ajustement du moteur de relayout wireframe pour éviter l'empilement de timers et réduire la latence perçue.
 
 ## Points bloquants restants (important)
 

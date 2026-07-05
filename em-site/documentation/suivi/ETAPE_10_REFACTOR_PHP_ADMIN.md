@@ -1,10 +1,17 @@
 # ETAPE 10 - REFACTOR PHP ADMIN
 
-Date de mise à jour : 2026-07-04 17:03:46
+Date de mise à jour : 2026-07-05 16:51:14
 
 ## État
 
-⚪ **À lancer en dernier**
+⏳ **Démarré (lots ciblés)**
+
+## Réalisé (lots ciblés)
+
+- Ajout d'un endpoint AJAX dédié au chargement du picker rubrique sans reload de page.
+- Adaptation du rendu picker pour injection dynamique (mode avec/sans assets inline).
+- Chargement anticipé des assets picker/header sur la page Rubriques pour supporter l'ouverture AJAX dès le premier clic.
+- Nettoyage d'encodage PHP sur les fichiers admin impactés (mojibake supprimé sur les textes visibles).
 
 ## Périmètre prévu
 

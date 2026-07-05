@@ -15,7 +15,7 @@
     gap: 20px;
 }
 
-/* Preview live Style de base â†’ bloc titre (mutualisÃ© toutes rubriques) */
+/* Preview live Style de base → bloc titre (mutualisé toutes rubriques) */
 .em-admin-module[data-em-admin-style] {
     --em-module-admin-bg: #100421;
     --em-module-admin-text: #ffffff;
@@ -277,4 +277,4 @@
     line-height: 1;
 }
 
-/* Toggle module (Afficher) + checkbox inline (Masquer, Actifâ€¦) */
+/* Toggle module (Afficher) + checkbox inline (Masquer, Actif…) */

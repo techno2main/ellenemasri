@@ -1,6 +1,6 @@
 <?php
 /**
- * Registre des templates (d�finitions, CRUD basique).
+ * Registre des templates (d?finitions, CRUD basique).
  *
  * @package em-wp
  */
@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Option WordPress stockant les d�finitions de templates.
+ * Option WordPress stockant les d?finitions de templates.
  */
 function em_wp_template_definitions_option_name(): string
 {
@@ -18,7 +18,7 @@ function em_wp_template_definitions_option_name(): string
 }
 
 /**
- * Slug du template par d�faut V1 / migration Mayami.
+ * Slug du template par d?faut V1 / migration Mayami.
  */
 function em_wp_template_default_slug(): string
 {
@@ -26,7 +26,7 @@ function em_wp_template_default_slug(): string
 }
 
 /**
- * D�finitions par d�faut au premier boot.
+ * D?finitions par d?faut au premier boot.
  *
  * @return array<string, array{slug:string,label:string,created_at:string,color:string}>
  */
@@ -63,7 +63,7 @@ function em_wp_template_maybe_bootstrap_options(): void
 add_action('init', 'em_wp_template_maybe_bootstrap_options', 4);
 
 /**
- * Liste des templates enregistr�s.
+ * Liste des templates enregistr?s.
  *
  * @return array<string, array{slug:string,label:string,created_at:string,color:string}>
  */
@@ -110,7 +110,7 @@ function em_wp_template_registry(): array
 }
 
 /**
- * Indique si une d�finition de template correspond au template � Default �.
+ * Indique si une d?finition de template correspond au template ? Default ?.
  *
  * @param array{slug?:string,label?:string} $definition
  */
@@ -126,7 +126,7 @@ function em_wp_template_is_default(string $slug, array $definition = []): bool
 }
 
 /**
- * R�ordonne un registre de templates pour placer � Default � en premier.
+ * R?ordonne un registre de templates pour placer ? Default ? en premier.
  *
  * @param array<string, array<string, mixed>> $registry
  * @return array<string, array<string, mixed>>
@@ -159,7 +159,7 @@ function em_wp_template_sanitize_slug(string $raw_slug): string
 }
 
 /**
- * Retourne une d�finition template ou null.
+ * Retourne une d?finition template ou null.
  *
  * @return array{slug:string,label:string,created_at:string,color:string}|null
  */
@@ -222,7 +222,7 @@ function em_wp_template_save_registry(array $definitions): bool
 }
 
 /**
- * Cr�e un template � partir d'un libell�.
+ * Cr?e un template ? partir d'un libell?.
  *
  * @return array{slug:string,label:string,created_at:string,color:string}|WP_Error
  */
@@ -237,7 +237,7 @@ function em_wp_template_create(string $label, string $color = '')
     $base_slug = em_wp_template_sanitize_slug(sanitize_title($label));
 
     if ($base_slug === '') {
-        return new WP_Error('em_wp_template_invalid_slug', __('Impossible de générer un identifiant pour ce template.', 'em-wp'));
+        return new WP_Error('em_wp_template_invalid_slug', __('Impossible de g?n?rer un identifiant pour ce template.', 'em-wp'));
     }
 
     $registry = em_wp_template_registry();
@@ -261,7 +261,7 @@ function em_wp_template_create(string $label, string $color = '')
     ];
 
     if (!em_wp_template_save_registry($registry)) {
-        return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
+        return new WP_Error('em_wp_template_save_failed', __('Impossible d?enregistrer le template.', 'em-wp'));
     }
 
     if (function_exists('em_wp_v4_ensure_template_instances')) {
@@ -272,7 +272,7 @@ function em_wp_template_create(string $label, string $color = '')
 }
 
 /**
- * Duplique un template (identit� neuve, plan + r�glages rubriques copi�s).
+ * Duplique un template (identit? neuve, plan + r?glages rubriques copi?s).
  *
  * @return array{slug:string,label:string,created_at:string,color:string}|WP_Error
  */
@@ -293,7 +293,7 @@ function em_wp_template_duplicate(string $source_slug, string $label, string $co
     $target_slug = em_wp_template_sanitize_slug((string) ($created['slug'] ?? ''));
 
     if ($target_slug === '') {
-        return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
+        return new WP_Error('em_wp_template_save_failed', __('Impossible d?enregistrer le template.', 'em-wp'));
     }
 
     $order = em_wp_get_template_skeleton_order($source_slug);
@@ -338,7 +338,7 @@ function em_wp_template_duplicate(string $source_slug, string $label, string $co
 }
 
 /**
- * G�n�re un slug de template unique � partir d'une base (exclut un slug donn�).
+ * G?n?re un slug de template unique ? partir d'une base (exclut un slug donn?).
  */
 function em_wp_template_unique_slug(string $base_slug, string $exclude_slug = ''): string
 {
@@ -362,10 +362,10 @@ function em_wp_template_unique_slug(string $base_slug, string $exclude_slug = ''
 }
 
 /**
- * Migre l'identifiant (slug) d'un template et toutes ses donn�es associ�es.
+ * Migre l'identifiant (slug) d'un template et toutes ses donn?es associ?es.
  *
- * P�rim�tre : registre, option du template actif, m�ta � template en �dition �
- * de chaque utilisateur, options de rubriques par template, squelette, visibilit�.
+ * P?rim?tre : registre, option du template actif, m?ta ? template en ?dition ?
+ * de chaque utilisateur, options de rubriques par template, squelette, visibilit?.
  *
  * @return true|WP_Error
  */
@@ -393,10 +393,10 @@ function em_wp_template_change_slug(string $old_slug, string $new_slug)
     }
 
     if (isset($registry[$new_slug])) {
-        return new WP_Error('em_wp_template_duplicate_slug', __('Cet identifiant de template est déjà utilisé.', 'em-wp'));
+        return new WP_Error('em_wp_template_duplicate_slug', __('Cet identifiant de template est d?j? utilis?.', 'em-wp'));
     }
 
-    // 1. Registre (on pr�serve l'ordre des entr�es).
+    // 1. Registre (on pr?serve l'ordre des entr?es).
     $migrated_registry = [];
     foreach ($registry as $slug => $entry) {
         if ($slug === $old_slug) {
@@ -410,7 +410,7 @@ function em_wp_template_change_slug(string $old_slug, string $new_slug)
     }
 
     if (!em_wp_template_save_registry($migrated_registry)) {
-        return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
+        return new WP_Error('em_wp_template_save_failed', __('Impossible d?enregistrer le template.', 'em-wp'));
     }
 
     // 2. Options de rubriques par template (em_wp_{rubrique}_{template}_options).
@@ -445,7 +445,7 @@ function em_wp_template_change_slug(string $old_slug, string $new_slug)
         }
     }
 
-    // 4. Visibilit�.
+    // 4. Visibilit?.
     if (function_exists('em_wp_template_visibility_store')) {
         $visibility = em_wp_template_visibility_store();
 
@@ -461,7 +461,7 @@ function em_wp_template_change_slug(string $old_slug, string $new_slug)
         update_option(em_wp_active_template_option_name(), $new_slug, false);
     }
 
-    // 6. M�ta � template en �dition � de chaque utilisateur.
+    // 6. M?ta ? template en ?dition ? de chaque utilisateur.
     $meta_key = em_wp_editing_template_user_meta_key();
     $editing_users = get_users([
         'meta_key'   => $meta_key,
@@ -482,8 +482,8 @@ function em_wp_template_change_slug(string $old_slug, string $new_slug)
 
 /**
  * Rattrapage unique : aligne l'identifiant des templates existants sur leur
- * libell� (ex. un template renomm� � Default � mais rest� en slug � ellene �).
- * Ne s'ex�cute qu'une seule fois gr�ce � un flag d'option.
+ * libell? (ex. un template renomm? ? Default ? mais rest? en slug ? ellene ?).
+ * Ne s'ex?cute qu'une seule fois gr?ce ? un flag d'option.
  */
 function em_wp_template_maybe_reconcile_slugs(): void
 {
@@ -516,7 +516,7 @@ function em_wp_template_maybe_reconcile_slugs(): void
 add_action('admin_init', 'em_wp_template_maybe_reconcile_slugs', 4);
 
 /**
- * Renomme un template : met � jour le libell� ET r�g�n�re l'identifiant.
+ * Renomme un template : met ? jour le libell? ET r?g?n?re l'identifiant.
  *
  * @return true|WP_Error
  */
@@ -541,10 +541,10 @@ function em_wp_template_rename(string $slug, string $label)
     $registry[$slug]['label'] = $label;
 
     if (!em_wp_template_save_registry($registry)) {
-        return new WP_Error('em_wp_template_save_failed', __('Impossible d’enregistrer le template.', 'em-wp'));
+        return new WP_Error('em_wp_template_save_failed', __('Impossible d?enregistrer le template.', 'em-wp'));
     }
 
-    // L'identifiant suit le libell� (comme les items de catalogue).
+    // L'identifiant suit le libell? (comme les items de catalogue).
     $new_slug = em_wp_template_unique_slug(sanitize_title($label), $slug);
 
     if ($new_slug !== '' && $new_slug !== $slug) {

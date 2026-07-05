@@ -11,7 +11,7 @@
     margin-left: 0;
 }
 
-/* Ligne horizontale de champs (Label + Lien + Masquer, plateformes, itemsâ€¦) */
+/* Ligne horizontale de champs (Label + Lien + Masquer, plateformes, items…) */
 .em-admin-panel-body--row {
     display: flex;
     align-items: end;
@@ -172,7 +172,7 @@
     flex-shrink: 0;
 }
 
-/* Champs larges (titres, URLs mediaâ€¦) */
+/* Champs larges (titres, URLs media…) */
 .em-admin-field-input--wide {
     width: 360px !important;
     min-width: 360px !important;
@@ -185,7 +185,7 @@
     max-width: 90px !important;
 }
 
-/* Ligne flex interne (slides, boutons heroâ€¦) */
+/* Ligne flex interne (slides, boutons hero…) */
 .em-admin-field-row {
     display: flex;
     align-items: center;
@@ -207,7 +207,7 @@
     margin-top: 8px;
 }
 
-/* Groupe label + contrÃ´le sur une ligne */
+/* Groupe label + contrôle sur une ligne */
 .em-admin-field-group {
     display: inline-flex;
     align-items: center;
