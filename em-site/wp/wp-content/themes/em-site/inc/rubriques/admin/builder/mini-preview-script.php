@@ -17,6 +17,7 @@ if (!defined('ABSPATH')) {
 window.EmWpV4Mini = (function () {
     var EMPTY_SECTION = '<?php echo esc_js(__('Section vide', 'em-wp')); ?>';
     var EMPTY_COL = '<?php echo esc_js(__('Colonne vide', 'em-wp')); ?>';
+    var ENABLE_HOVER_ZOOM = false;
 
     function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
 
@@ -184,18 +185,20 @@ window.EmWpV4Mini = (function () {
         z.style.top = Math.max(window.pageYOffset + 8, top) + 'px';
     }
 
-    document.addEventListener('mouseover', function (e) {
-        var host = e.target.closest ? e.target.closest('.em-v4-miniprev') : null;
-        if (host && !host.hidden && host !== zoomHost) { zoomHost = host; showZoom(host); }
-    });
-    document.addEventListener('mouseout', function (e) {
-        var host = e.target.closest ? e.target.closest('.em-v4-miniprev') : null;
-        if (host && host === zoomHost) {
-            var to = e.relatedTarget;
-            if (!to || !host.contains(to)) { hideZoom(); }
-        }
-    });
-    window.addEventListener('scroll', hideZoom, true);
+    if (ENABLE_HOVER_ZOOM) {
+        document.addEventListener('mouseover', function (e) {
+            var host = e.target.closest ? e.target.closest('.em-v4-miniprev') : null;
+            if (host && !host.hidden && host !== zoomHost) { zoomHost = host; showZoom(host); }
+        });
+        document.addEventListener('mouseout', function (e) {
+            var host = e.target.closest ? e.target.closest('.em-v4-miniprev') : null;
+            if (host && host === zoomHost) {
+                var to = e.relatedTarget;
+                if (!to || !host.contains(to)) { hideZoom(); }
+            }
+        });
+        window.addEventListener('scroll', hideZoom, true);
+    }
 
     // À l'ouverture d'une carte/item/section, (re)calcule les vignettes visibles
     // (les dimensions ne sont fiables qu'une fois l'élément affiché).

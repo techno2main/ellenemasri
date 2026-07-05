@@ -233,7 +233,7 @@ if (!defined('ABSPATH')) {
     /* Vignette d'aperçu RÉDUIT, INTÉGRÉE à la ligne « Contenu » (à droite de l'œil), temps réel */
     .em-v4-miniprev { display:inline-block; margin-left:8px; vertical-align:middle; background:#fff; border:1px solid #c3c4c7; border-radius:6px; box-shadow:0 1px 4px rgba(16,24,40,.12); overflow:hidden; }
     .em-v4-miniprev[hidden] { display:none; }
-    .em-v4-miniprev { cursor:zoom-in; }
+   .em-v4-miniprev { cursor:default; }
     /* Aperçu de la PARTIE en édition (colonne de la ligne ouverte), à droite du
        total : même gabarit, bordure pointillée pour signaler le focus colonne. */
     .em-v4-partprev { border-style:dashed; border-color:#b9c0c9; }
