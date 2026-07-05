@@ -1,10 +1,10 @@
 # PA - Refonte Gestion Template
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 18:18:10
+Horodatage précis (Paris): 2026-07-05 18:27:16
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
-Statut: Phase 1 en cours (Étape 1.3 prioritaire)
+Statut: Implémentation admin template unique en cours (jalon UI atteint)
 
 Règle de suivi: toujours inclure un horodatage précis temps réel (date + heure Paris) à chaque mise à jour.
 
@@ -666,15 +666,23 @@ Critères de sortie Phase 7:
 - Étape 1.3: journal d'erreurs niveau standard (code, étape, timestamp, slug rubrique/item).
 - Étape 1.3: format code erreur = double format (ex: TMP-001 + INVALID_ACTIVE_ITEM_SLUG).
 
-## 12) Exécution en cours - Phase 1 (priorité Étape 1.3)
+## 12) Exécution en cours - Implémentation admin template unique
 
 ### 12.1 Objectif immédiat
 
-- Produire la matrice de compatibilité et les règles de migration/reprise en détail complet.
+- Supprimer la navigation multi-template en admin et ouvrir directement le squelette unique.
 
 ### 12.2 Contenu attendu dans la prochaine mise à jour
 
-- Tableau de mapping ancien -> cible par type de donnée.
-- Règles de blocage strict et messages d'erreur.
-- Procédure de backup complet pré-run.
-- Procédure de reprise à l'étape en erreur.
+- Nettoyage final des libellés/template context dans toute l'interface Rubriques.
+- Vérification des derniers points UI encore orientés multi-template.
+
+### 12.3 Réalisé (session)
+
+- Mode template unique activé côté handlers admin (création/duplication/wizard bloqués).
+- Entrée menu Template redirigée directement vers la page Rubriques (squelette).
+- Menu latéral simplifié: Template (singulier), sans sous-menu template.
+- Sommaire templates neutralisé dans le flux principal.
+- Libellés rubriques rendus génériques en mode unique (sans suffixe MAYAMI/DEFAULT).
+- Fil d'Ariane ajusté en mode unique (suppression du segment template nommé).
+- Titre panneau droit ajusté: "Squelette" (sans suffixe template).

@@ -108,6 +108,18 @@ function em_wp_admin_template_wizard_persist_configuration(string $template_slug
  */
 function em_wp_admin_template_handle_create_wizard(): void
 {
+    if (function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled()) {
+        $redirect = function_exists('em_wp_admin_template_choice_admin_url')
+            ? em_wp_admin_template_choice_admin_url()
+            : em_wp_admin_templates_manage_admin_url();
+
+        em_wp_admin_template_redirect_with_notice(
+            $redirect,
+            'warning',
+            __('Mode template unique actif : assistant de création désactivé.', 'em-wp')
+        );
+    }
+
     check_admin_referer('em_wp_template_create_wizard');
 
     $payload = em_wp_admin_template_wizard_decode_payload();

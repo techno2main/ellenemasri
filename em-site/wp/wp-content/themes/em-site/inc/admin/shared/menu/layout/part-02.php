@@ -170,7 +170,8 @@ function em_wp_admin_menu_layout_ensure_template_entries(array $relocate): array
 
     $capability = em_wp_admin_menu_capability();
     $parent_slug = em_wp_admin_template_parent_page_slug();
-    $parent_label = __('TEMPLATES', 'em-wp');
+    $parent_label = __('TEMPLATE', 'em-wp');
+    $unique_mode = function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled();
     $editing_template_slug = function_exists('em_wp_get_explicit_editing_template_slug')
         ? em_wp_get_explicit_editing_template_slug()
         : '';
@@ -179,11 +180,15 @@ function em_wp_admin_menu_layout_ensure_template_entries(array $relocate): array
         $parent_label,
         $capability,
         $parent_slug,
-        __('Templates', 'em-wp'),
+        __('Template', 'em-wp'),
         'menu-top em-wp-menu-accordion-parent em-wp-menu-accordion-templates-parent',
         $parent_slug,
         'dashicons-layout',
     ];
+
+    if ($unique_mode) {
+        return $relocate;
+    }
 
     if (!function_exists('em_wp_template_registry') || !function_exists('em_wp_admin_template_entry_page_slug')) {
         return $relocate;

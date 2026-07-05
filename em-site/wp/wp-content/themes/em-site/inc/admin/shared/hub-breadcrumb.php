@@ -92,6 +92,8 @@ function em_wp_admin_hub_breadcrumb_html(array $crumbs): string
 function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug): array
 {
     $page_slug = sanitize_key($page_slug);
+    $unique_mode = function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled();
+    $templates_label = $unique_mode ? __('TEMPLATE', 'em-wp') : __('MES TEMPLATES', 'em-wp');
 
     if ($page_slug === '') {
         return [];
@@ -102,7 +104,7 @@ function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug):
         && $page_slug === em_wp_admin_template_choice_page_slug()
     ) {
         return [
-            em_wp_admin_hub_breadcrumb_crumb(__('MES TEMPLATES', 'em-wp')),
+            em_wp_admin_hub_breadcrumb_crumb($templates_label),
         ];
     }
 
@@ -118,15 +120,15 @@ function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug):
             ? em_wp_admin_template_choice_admin_url()
             : '';
 
-        if ($template_label === '') {
+        if ($unique_mode || $template_label === '') {
             return [
-                em_wp_admin_hub_breadcrumb_crumb(__('MES TEMPLATES', 'em-wp')),
+                em_wp_admin_hub_breadcrumb_crumb($templates_label),
                 em_wp_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-wp')),
             ];
         }
 
         return [
-            em_wp_admin_hub_breadcrumb_crumb(__('MES TEMPLATES', 'em-wp'), $templates_url),
+            em_wp_admin_hub_breadcrumb_crumb($templates_label, $templates_url),
             em_wp_admin_hub_breadcrumb_crumb($template_label, function_exists('em_wp_admin_rubriques_admin_url') ? em_wp_admin_rubriques_admin_url() : ''),
             em_wp_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-wp')),
         ];
@@ -157,11 +159,9 @@ function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug):
             ? em_wp_admin_rubriques_admin_url()
             : '';
 
-        $crumbs = [
-            em_wp_admin_hub_breadcrumb_crumb(__('MES TEMPLATES', 'em-wp'), $templates_url),
-        ];
+        $crumbs = [em_wp_admin_hub_breadcrumb_crumb($templates_label, $templates_url)];
 
-        if ($template_label !== '') {
+        if (!$unique_mode && $template_label !== '') {
             $crumbs[] = em_wp_admin_hub_breadcrumb_crumb($template_label);
         }
 

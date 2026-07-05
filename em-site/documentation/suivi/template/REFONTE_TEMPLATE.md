@@ -1,9 +1,9 @@
 # Refonte template unique avec multi-items
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 18:09:39
+Horodatage précis (Paris): 2026-07-05 18:27:16
 Périmètre: em-site/wp/wp-content/themes/em-site
-Statut: Phase 0 en cours (démarrage méthodique)
+Statut: Implémentation admin template unique en cours
 
 Règle de suivi: toujours inclure un horodatage précis temps réel (date + heure Paris) à chaque mise à jour de ce document.
 
@@ -184,3 +184,11 @@ Ce bloc Interface admin couvre explicitement les 6 actions produit validées en 
 Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) est maintenant centralisé dans:
 
 - em-site/documentation/suivi/template/PA-REFONTE-TEMPLATE.md
+
+## 8) État implémenté (session)
+
+- Le menu gauche "Template" est en singulier et n'affiche plus de sous-menu template.
+- Le clic sur "Template" ouvre directement la page Rubriques/Squelette.
+- Les actions de création/duplication/wizard sont neutralisées dans le flux principal.
+- Les rubriques du squelette sont affichées en générique (sans suffixe artiste/template).
+- Le fil d'Ariane et le titre du panneau squelette sont alignés sur la logique template unique.

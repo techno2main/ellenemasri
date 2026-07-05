@@ -132,6 +132,21 @@ function em_wp_admin_render_rubriques_page(): void
     $is_template_live = function_exists('em_wp_get_active_template_slug')
         && $template_slug !== ''
         && em_wp_get_active_template_slug() === $template_slug;
+    $unique_mode = function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled();
+    $map_title_default = $unique_mode
+        ? __('Squelette', 'em-wp')
+        : sprintf(
+            /* translators: %s: template label */
+            __('Squelette %s', 'em-wp'),
+            $editing_template_label
+        );
+    $map_title_preview = $unique_mode
+        ? __('Aperçu', 'em-wp')
+        : sprintf(
+            /* translators: %s: template label */
+            __('Aperçu %s', 'em-wp'),
+            $editing_template_label
+        );
     // Couleur d'accent du template (violet pour Mayami…) pour le badge LIVE.
     $template_accent = function_exists('em_wp_get_template_color')
         ? em_wp_get_template_color($template_slug)
@@ -192,23 +207,9 @@ function em_wp_admin_render_rubriques_page(): void
                             <span class="em-wp-rubriques-admin__map-title">
                                 <span
                                     class="em-wp-rubriques-admin__map-label"
-                                    data-title-default="<?php echo esc_attr(sprintf(
-                                        /* translators: %s: template label */
-                                        __('Squelette %s', 'em-wp'),
-                                        $editing_template_label
-                                    )); ?>"
-                                    data-title-preview="<?php echo esc_attr(sprintf(
-                                        /* translators: %s: template label */
-                                        __('Aperçu %s', 'em-wp'),
-                                        $editing_template_label
-                                    )); ?>"
-                                ><?php
-                                printf(
-                                    /* translators: %s: template label */
-                                    esc_html__('Squelette %s', 'em-wp'),
-                                    esc_html($editing_template_label)
-                                );
-                                ?></span>
+                                    data-title-default="<?php echo esc_attr($map_title_default); ?>"
+                                    data-title-preview="<?php echo esc_attr($map_title_preview); ?>"
+                                ><?php echo esc_html($map_title_default); ?></span>
                                 <?php if ($is_template_live) { ?>
                                     <span
                                         class="em-wp-rubriques-admin__live-badge"
