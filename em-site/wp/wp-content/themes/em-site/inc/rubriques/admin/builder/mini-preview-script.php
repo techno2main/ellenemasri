@@ -110,6 +110,9 @@ window.EmWpV4Mini = (function () {
 
         var rl = (data.layout.rows || [])[info.rIdx] || {};
         var columns = Math.min(4, Math.max(1, parseInt(rl.columns || 1, 10)));
+        // Sur une ligne mono-colonne, l'aperçu "partie" duplique exactement
+        // l'aperçu de section : on le masque pour éviter la double vignette.
+        if (columns <= 1) { c.hidden = true; return; }
         var col = Math.min(columns, Math.max(1, info.col));
         var align = (rl.align || {})[col] || 'left';
         var rowNum = info.rIdx + 1;

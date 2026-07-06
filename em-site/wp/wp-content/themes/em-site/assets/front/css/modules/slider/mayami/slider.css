@@ -1,5 +1,7 @@
 .em-slider--mayami {
     --em-slider-ink: #100421;
+    --em-slider-border-color: #100421;
+    --em-slider-shadow-color: #100421;
     --em-slider-frame-bg: #12338f;
     --em-slider-footer-bg: #f2ebd1;
     --em-slider-footer-text: #100421;
@@ -13,11 +15,11 @@
 
 .em-slider--mayami .em-slider__frame {
     position: relative;
-    border: 2px solid var(--em-slider-ink);
+    border: 2px solid var(--em-slider-border-color);
     border-radius: 24px;
     overflow: hidden;
     background: var(--em-slider-frame-bg);
-    box-shadow: 10px 10px 0 var(--em-slider-ink);
+    box-shadow: 10px 10px 0 var(--em-slider-shadow-color);
     z-index: 1;
 }
 

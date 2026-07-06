@@ -1,8 +1,11 @@
 .em-slider--mayami {
 	--em-slider-ink: #100421;
+	--em-slider-border-color: #100421;
+	--em-slider-shadow-color: #100421;
 	--em-slider-frame-bg: #12338f;
 	--em-slider-footer-bg: #f2ebd1;
 	--em-slider-footer-text: #100421;
+	--em-slider-tape-color: #39c7ca;
 	width: 100%;
 	max-width: 430px;
 }
@@ -13,11 +16,11 @@
 
 .em-slider--mayami .em-slider__frame {
 	position: relative;
-	border: 2px solid var(--em-slider-ink);
+	border: 2px solid var(--em-slider-border-color);
 	border-radius: 24px;
 	overflow: hidden;
 	background: var(--em-slider-frame-bg);
-	box-shadow: 10px 10px 0 var(--em-slider-ink);
+	box-shadow: 10px 10px 0 var(--em-slider-shadow-color);
 	z-index: 1;
 }
 
@@ -26,7 +29,7 @@
 	top: -14px;
 	width: 86px;
 	height: 22px;
-	background: #39c7ca;
+	background: var(--em-slider-tape-color);
 	border: 1px dashed oklch(0.15 0.08 280 / 0.2);
 	opacity: 0.92;
 	z-index: 5;

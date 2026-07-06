@@ -197,7 +197,6 @@ function em_wp_admin_render_color_field(array $args): void
                     aria-hidden="true"
                 ></span>
             <?php } ?>
-            <code class="em-wp-admin-color-trigger__hex"><?php echo esc_html($display); ?></code>
             <button
                 type="button"
                 class="em-wp-catalog-sommaire__edit em-wp-admin-color-trigger__edit"

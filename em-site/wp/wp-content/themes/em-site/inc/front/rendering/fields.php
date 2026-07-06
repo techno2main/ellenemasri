@@ -175,6 +175,19 @@ function em_site_front_item_field(array $item, string $key): array
 /**
  * @param array<string,mixed> $item
  */
+function em_site_front_item_field_is_visible(array $item, string $key): bool
+{
+	$field = em_site_front_item_field($item, $key);
+	if ($field === []) {
+		return true;
+	}
+
+	return empty($field['hidden']);
+}
+
+/**
+ * @param array<string,mixed> $item
+ */
 function em_site_front_text_style_css(array $item, string $key): string
 {
 	$field = em_site_front_item_field($item, $key);

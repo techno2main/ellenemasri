@@ -28,8 +28,12 @@ window.EmWpV4Slides = (function () {
             title: v(editor, '.em-v4-slides__title'),
             title_hidden: ck(editor, '.em-v4-slides__title-hidden'),
             frame_bg: v(editor, '.em-v4-slides__frame'),
+            border_color: v(editor, '.em-v4-slides__border-color'),
+            shadow_color: v(editor, '.em-v4-slides__shadow-color'),
             footer_bg: v(editor, '.em-v4-slides__footerbg'),
             footer_text: v(editor, '.em-v4-slides__footertext'),
+            tapes_hidden: ck(editor, '.em-v4-slides__tapes-hidden'),
+            tapes_color: v(editor, '.em-v4-slides__tapes-color'),
             slides: []
         };
         editor.querySelectorAll('.em-v4-slide').forEach(function (row) {
@@ -56,6 +60,14 @@ window.EmWpV4Slides = (function () {
         var hidden = editor.querySelector('.em-v4-chip__value');
         if (hidden) { hidden.dispatchEvent(new Event('input', { bubbles: true })); }
     }
+
+    document.addEventListener('dragstart', function (e) {
+        var target = e.target;
+        if (!target || !target.closest || !target.closest('.em-v4-slides')) { return; }
+        if (target.matches('input, textarea, select, button, label') || target.closest('.em-v4-slides__titlegroup')) {
+            e.preventDefault();
+        }
+    }, true);
 
     function openPick(pick) {
         if (!window.wp || !window.wp.media) { return; }

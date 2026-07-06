@@ -49,6 +49,11 @@ if (!defined('ABSPATH')) {
    /* Hiérarchie Rubriques : les rubriques standards sont décalées à droite,
       TOP-BAR/FOOTER restent alignées à gauche (rubriques spéciales). */
    .em-v4-card { margin-left:14px; }
+   .em-v4-card--header-linked {
+      margin-left:44px;
+      border-left:3px solid #d7b2b7;
+   }
+   .em-v4-card--header-linked > .em-v4-card__head { padding-left:10px; }
    .em-v4-card--fixed-single { margin-left:0; border-left:3px solid #751820; }
    .em-v4-card--fixed-single > .em-v4-card__head { padding-left:10px; }
     .em-v4-item, .em-v4-step, .em-v4-create { background:#fbfbfc; }
@@ -340,12 +345,27 @@ if (!defined('ABSPATH')) {
     .em-v4-chip__slide-del { position:absolute; top:0; right:0; border:0; background:rgba(0,0,0,.6); color:#fff; cursor:pointer; line-height:1; padding:0 3px; border-bottom-left-radius:4px; }
     /* Éditeur de slides riche (champ Slider V4) : prend toute la largeur de la chip. */
     .em-v4-slides { flex:1 1 100%; min-width:0; display:flex; flex-direction:column; gap:8px; background:#f8fafc; border:1px solid #eef0f3; border-radius:6px; padding:8px; }
-    .em-v4-slides__opts { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding-bottom:6px; border-bottom:1px solid #e9edf2; }
+   .em-v4-slides__section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; }
+   .em-v4-slides__opts { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; }
+   .em-v4-slides__opts--row1 { flex-wrap:nowrap; align-items:flex-end; padding-bottom:6px; border-bottom:1px solid #e9edf2; overflow-x:auto; }
+   .em-v4-slides__opts--row2 { padding-top:2px; align-items:center; }
+   .em-v4-slides__titlegroup { display:flex; flex:0 0 320px; min-width:0; align-items:center; gap:12px; flex-wrap:nowrap; }
+   .em-v4-slides__group-label { display:inline-flex; align-items:center; min-height:28px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; }
     .em-v4-slides__opt { display:inline-flex; align-items:center; gap:6px; font-size:11px; color:#475569; }
     .em-v4-slides__opt > span { font-weight:600; }
     .em-v4-slides__opt--check { gap:4px; }
-    .em-v4-slides__title { min-height:28px; min-width:180px; }
-    .em-v4-slides__opt input[type="color"] { width:30px; height:24px; padding:0; border:1px solid #dcdcde; border-radius:4px; background:none; cursor:pointer; }
+   .em-v4-slides__opt--title { flex:0 1 190px; min-width:180px; display:flex; flex-direction:column; align-items:flex-start; gap:4px; }
+   .em-v4-slides__opt--title > span { font-size:13px; font-weight:600; text-transform:none; letter-spacing:0; color:#1d2327; }
+   .em-v4-slides__title { min-height:28px; width:190px; max-width:190px; min-width:0; user-select:text; -webkit-user-select:text; }
+   .em-v4-slides__opts--row1 .em-v4-slides__opt--check { white-space:nowrap; flex:0 0 auto; align-self:flex-end; padding-bottom:1px; }
+   .em-v4-slides__opts--row1 .em-v4-slides__colorfield { flex:0 0 auto; }
+   .em-v4-slides__opts--row1 .em-v4-slides__opt--check-tapes { margin-left:4px; }
+   .em-v4-slides__slides-label { margin-top:2px; }
+   .em-v4-slides__opts--row2 .em-wp-admin-color-field { flex:0 0 auto; }
+   .em-v4-slides__colorfield { margin:0; }
+   .em-v4-slides__colorfield .em-wp-admin-color-field-row__label { min-width:0; }
+   .em-v4-slides__colorfield .em-wp-admin-color-trigger { min-height:28px; }
+   .em-v4-slides__colorfield .em-wp-admin-color-trigger__swatch { border-radius:4px; }
     .em-v4-slides__list { display:flex; flex-direction:column; gap:6px; }
     .em-v4-slide { display:flex; align-items:center; gap:6px; flex-wrap:wrap; background:#fff; border:1px solid #e3e7ec; border-radius:6px; padding:6px 8px; }
     .em-v4-slide.is-hidden { opacity:.55; }
@@ -353,7 +373,7 @@ if (!defined('ABSPATH')) {
     .em-v4-slide__move button { border:0; background:#eef2f7; color:#475569; cursor:pointer; line-height:1; padding:1px 5px; border-radius:3px; font-size:9px; }
     .em-v4-slide__move button:hover { background:#dde6f1; }
     .em-v4-slide__type { flex:0 0 auto; min-height:28px; }
-    .em-v4-slide__name { flex:1 1 130px; min-width:80px; min-height:28px; }
+      .em-v4-slide__name { flex:1 1 180px; min-width:180px; min-height:28px; }
     .em-v4-slide__videourl, .em-v4-slide__tiktokurl { flex:0 1 200px; min-width:120px; min-height:28px; }
     .em-v4-slide__duration { width:56px; min-height:28px; }
     .em-v4-slide__media { display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }

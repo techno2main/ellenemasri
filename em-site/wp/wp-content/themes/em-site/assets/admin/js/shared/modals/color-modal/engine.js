@@ -10,6 +10,7 @@
     var modalSaveBtn = document.getElementById('em-wp-admin-color-modal-save');
     var colorPickerReady = false;
     var activeContext = null;
+    var activeTriggerButton = null;
     function normalizeColor(color, fallback) {
         if (helpers.normalizeColor) { return helpers.normalizeColor(color, fallback); }
         var value = String(color || '').trim();
@@ -96,11 +97,18 @@
         if (!modal) {
             return;
         }
+        if (document.activeElement && modal.contains(document.activeElement) && typeof document.activeElement.blur === 'function') {
+            document.activeElement.blur();
+        }
         modal.hidden = true;
         modal.setAttribute('aria-hidden', 'true');
         document.body.classList.remove('em-wp-admin-color-modal-open');
         activeContext = null;
         setModalPreviewMode(false);
+        if (activeTriggerButton && typeof activeTriggerButton.focus === 'function') {
+            activeTriggerButton.focus();
+        }
+        activeTriggerButton = null;
     }
     function openModal(context) {
         if (!modal || !modalInput || !context || !context.targetInput) {
@@ -116,6 +124,7 @@
             targetInput.getAttribute('data-default-color') || ''
         );
         activeContext = context;
+        activeTriggerButton = context.triggerButton || null;
         modalInput.value = color;
         updateModalPreview(color, context);
         if (modalLabel) {

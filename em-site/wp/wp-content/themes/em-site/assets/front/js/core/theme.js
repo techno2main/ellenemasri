@@ -48,6 +48,61 @@
         window.history.replaceState(null, '', cleanUrl);
     }
 
+    // Mutualisé: aligne la couleur d'une navigation multi (prev/next/dots)
+    // sur la couleur texte de l'instance active.
+    function syncSectionSwitchColor(sectionEl, instances, activeIndex, cssVarName, fallbackColor) {
+        if (!sectionEl || !instances || !instances.length || !cssVarName) {
+            return;
+        }
+
+        var activeInstance = instances[activeIndex] || instances[0];
+        if (!activeInstance) {
+            return;
+        }
+
+        var inlineColor = (activeInstance.style && activeInstance.style.getPropertyValue('--em-rubrique-text') || '').trim();
+        var computedStyles = window.getComputedStyle(activeInstance);
+        var varColor = (computedStyles.getPropertyValue('--em-rubrique-text') || '').trim();
+
+        var rubrique = activeInstance.querySelector('.em-rubrique');
+        var rubriqueInlineColor = (rubrique && rubrique.style && rubrique.style.getPropertyValue('--em-rubrique-text') || '').trim();
+        var rubriqueComputedColor = '';
+        if (rubrique) {
+            var rubriqueStyles = window.getComputedStyle(rubrique);
+            rubriqueComputedColor = (rubriqueStyles.getPropertyValue('--em-rubrique-text') || '').trim();
+        }
+
+        // Si une flèche est configurée dans l'item actif (cas HEADER), sa couleur
+        // est la référence visuelle attendue pour le composant de transition.
+        var arrowColor = '';
+        var arrowEl = activeInstance.querySelector('.em-rubrique__arrow--down, .em-rubrique__arrow--up');
+        if (arrowEl) {
+            arrowColor = (arrowEl.style && arrowEl.style.color || '').trim();
+            if (!arrowColor) {
+                arrowColor = (window.getComputedStyle(arrowEl).color || '').trim();
+            }
+        }
+        if (!arrowColor) {
+            var arrowLink = activeInstance.querySelector('.em-rubrique__arrow-link');
+            if (arrowLink) {
+                arrowColor = (arrowLink.style && arrowLink.style.color || '').trim();
+                if (!arrowColor) {
+                    arrowColor = (window.getComputedStyle(arrowLink).color || '').trim();
+                }
+            }
+        }
+
+        var textColor = (computedStyles.color || '').trim();
+        var navColor = arrowColor || inlineColor || varColor || rubriqueInlineColor || rubriqueComputedColor || textColor || (fallbackColor || '');
+
+        if (navColor) {
+            sectionEl.style.setProperty(cssVarName, navColor);
+            return;
+        }
+
+        sectionEl.style.removeProperty(cssVarName);
+    }
+
     function getSamePageHash(anchor) {
         var href = anchor.getAttribute('href');
         if (!href || href === '#') {
@@ -147,6 +202,7 @@
 
     window.emWpGetStickyScrollOffset = getStickyScrollOffset;
     window.emWpScrollToElement = scrollToElement;
+    window.emWpSyncSectionSwitchColor = syncSectionSwitchColor;
 
     document.addEventListener('DOMContentLoaded', function () {
         updateStickyScrollOffset();

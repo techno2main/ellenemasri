@@ -95,11 +95,20 @@ function em_site_render_header_slider_html(string $item_slug): string
 	if ((string) ($meta['frame_bg'] ?? '') !== '') {
 		$slider_style .= '--em-slider-frame-bg: ' . (string) $meta['frame_bg'] . ';';
 	}
+	if ((string) ($meta['border_color'] ?? '') !== '') {
+		$slider_style .= '--em-slider-border-color: ' . (string) $meta['border_color'] . ';';
+	}
+	if ((string) ($meta['shadow_color'] ?? '') !== '') {
+		$slider_style .= '--em-slider-shadow-color: ' . (string) $meta['shadow_color'] . ';';
+	}
 	if ((string) ($meta['footer_bg'] ?? '') !== '') {
 		$slider_style .= '--em-slider-footer-bg: ' . (string) $meta['footer_bg'] . ';';
 	}
 	if ((string) ($meta['footer_text'] ?? '') !== '') {
 		$slider_style .= '--em-slider-footer-text: ' . (string) $meta['footer_text'] . ';';
+	}
+	if ((string) ($meta['tapes_color'] ?? '') !== '') {
+		$slider_style .= '--em-slider-tape-color: ' . (string) $meta['tapes_color'] . ';';
 	}
 
 	$style_vars = [
@@ -124,8 +133,10 @@ function em_site_render_header_slider_html(string $item_slug): string
 			<div class="em-rubrique__col em-rubrique__col--center" data-em-col="1" data-em-has-button="0">
 				<div id="<?php echo esc_attr($slider_uid); ?>" class="em-slider em-slider--mayami" data-em-slider style="<?php echo esc_attr($slider_style); ?>">
 					<div class="em-slider__shell">
-						<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span>
-						<span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>
+						<?php if (empty($meta['tapes_hidden'])) : ?>
+							<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span>
+							<span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>
+						<?php endif; ?>
 
 						<div class="em-slider__frame">
 							<div class="em-slider__media">

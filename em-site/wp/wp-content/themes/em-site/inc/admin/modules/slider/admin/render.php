@@ -147,6 +147,17 @@ function em_wp_slider_render_style_setup(array $context, array $options, string 
                             'bg_target_id'  => $slider_color_base . '-footer-bg',
                         ]);
                         ?>
+                        <label class="em-wp-admin-inline-check"><span><?php esc_html_e('Masquer les scotchs', 'em-wp'); ?></span><input type="checkbox" name="<?php echo esc_attr($context['option_name']); ?>[tapes_hidden]" value="1" <?php checked(!empty($options['tapes_hidden'])); ?>></label>
+                        <?php
+                        em_wp_admin_render_color_field([
+                            'id'            => $slider_color_base . '-tapes-color',
+                            'name'          => $context['option_name'] . '[tapes_color]',
+                            'value'         => (string) ($options['tapes_color'] ?? ''),
+                            'default'       => '#39c7ca',
+                            'field_label'   => __('Couleur des scotchs', 'em-wp'),
+                            'preview_label' => __('Couleur des scotchs', 'em-wp'),
+                        ]);
+                        ?>
                     </div>
                 </section>
 

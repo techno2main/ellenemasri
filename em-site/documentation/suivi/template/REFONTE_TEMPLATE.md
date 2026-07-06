@@ -1,7 +1,7 @@
 # Refonte template unique avec multi-items
 
 Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 22:43:47
+Horodatage précis (Paris): 2026-07-06 17:46:59
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
 
@@ -218,6 +218,8 @@ Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) 
 - Harmonisation de la logique Unique/Multi hors STREAM: mode Multi sans renommage de rubrique par item et sans badge "en ligne" (réservé au mode Unique).
 - Modale de confirmation admin: formulation mise à jour pour le modèle template unique (référence à la rubrique, sans "Mayami").
 - Multi non-stream aligné sur STREAM manuel: plus de sélection radio "active" ni de confirmation "section branchée" quand le mode est Multi.
+- Rubriques V4 (builder): en ligne contenant un slider, le bouton "Ajouter une colonne" est masqué pour garder la contrainte mono-colonne sans retirer l'icône de drag.
+- Rubriques V4 (preview mini): correction du doublon de vignettes près de "Contenu" en masquant la vignette "colonne" quand la ligne ouverte est en 1 colonne.
 - Harmonisation Multi globale: contrôles "items inclus" + "premier item" + "transition" appliqués de manière cohérente à STREAM et aux rubriques non single-only (ex: VIDEO).
 - Harmonisation back/front effective: VIDEO dispose maintenant du rendu Multi front complet (navigation + transition + hash ciblé), et la disponibilité du mode Multi est alignée côté admin/backend sur les rubriques réellement branchées front (STREAM + VIDEO).
 - VIDEO row description: support complet du type "Texte enrichi" côté front (HTML + lien), avec fallback sur l'ancien champ legacy.

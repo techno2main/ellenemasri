@@ -133,6 +133,11 @@ window.EmWpV4Rows = (function () {
         return panelsEl(row).querySelectorAll('.em-v4-col').length || 1;
     }
 
+    // Une ligne qui contient un champ slider doit rester mono-colonne.
+    function rowHasSlider(row) {
+        return !!row.querySelector('.em-v4-chip[data-type="slider"]');
+    }
+
     // Nombre de colonnes = nombre réel de panneaux (plus de menu déroulant).
     function rowColumns(row) {
         return Math.min(MAXCOL, Math.max(1, currentColumns(row)));
@@ -307,7 +312,10 @@ window.EmWpV4Rows = (function () {
         });
         panelsEl(row).querySelectorAll('.em-v4-col').forEach(function (p, idx) { p.setAttribute('data-col', idx + 1); });
         var add = tabsEl(row).querySelector('.em-v4-col-tab__add');
-        if (add) { add.style.display = currentColumns(row) >= MAXCOL ? 'none' : ''; }
+        if (add) {
+            var mustHide = rowHasSlider(row) || currentColumns(row) >= MAXCOL;
+            add.style.display = mustHide ? 'none' : '';
+        }
         updateColcount(row);
         refreshRowTabNames(row);
     }

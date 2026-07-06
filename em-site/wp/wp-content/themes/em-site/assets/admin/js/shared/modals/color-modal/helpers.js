@@ -201,6 +201,7 @@
 
         return {
             targetInput: targetInput,
+            triggerButton: button,
             label: button.getAttribute('data-em-wp-color-modal-label') || '',
             title: button.getAttribute('data-em-wp-color-modal-title') || '',
             defaultColor: button.getAttribute('data-em-wp-color-modal-default') || '',

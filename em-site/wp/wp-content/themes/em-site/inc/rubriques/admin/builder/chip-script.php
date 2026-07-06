@@ -88,9 +88,12 @@ window.EmWpV4Chip = (function () {
         slTitle: '<?php echo esc_js(__('Titre du bandeau', 'em-wp')); ?>',
         slTitlePh: '<?php echo esc_js(__('Mayami, My Miami', 'em-wp')); ?>',
         slTitleHide: '<?php echo esc_js(__('Masquer le titre', 'em-wp')); ?>',
-        slFrame: '<?php echo esc_js(__('Cadre', 'em-wp')); ?>',
+        slBorder: '<?php echo esc_js(__('Bordure', 'em-wp')); ?>',
+        slShadow: '<?php echo esc_js(__('Ombre', 'em-wp')); ?>',
         slBand: '<?php echo esc_js(__('Bandeau', 'em-wp')); ?>',
         slBandText: '<?php echo esc_js(__('Texte titre', 'em-wp')); ?>',
+        slTapeHide: '<?php echo esc_js(__('Masquer les scotchs', 'em-wp')); ?>',
+        slTape: '<?php echo esc_js(__('Scotch', 'em-wp')); ?>',
         slImage: '<?php echo esc_js(__('Image', 'em-wp')); ?>',
         slVideo: '<?php echo esc_js(__('Vidéo YouTube', 'em-wp')); ?>',
         slYoutube: '<?php echo esc_js(__('URL YouTube', 'em-wp')); ?>',
@@ -162,12 +165,13 @@ window.EmWpV4Chip = (function () {
         return prefix + colorUid;
     }
 
-    function colorField(id, valueClass, title) {
+    function colorField(id, valueClass, title, previewType, bgTargetId) {
+        var previewAttr = previewType ? ' data-em-wp-color-modal-preview-type="' + esc(previewType) + '"' : ' data-em-wp-color-modal-preview-type="swatch"';
+        var bgAttr = bgTargetId ? ' data-em-wp-color-modal-bg-target="' + esc(bgTargetId) + '"' : '';
         return '<div class="em-wp-admin-color-field-row">' +
             '<div class="em-wp-admin-color-trigger" data-em-wp-color-trigger-for="' + id + '">' +
             '<span class="em-wp-admin-color-trigger__swatch" style="--em-wp-color-swatch:#cccccc;" aria-hidden="true"></span>' +
-            '<code class="em-wp-admin-color-trigger__hex"></code>' +
-            '<button type="button" class="em-wp-catalog-sommaire__edit em-wp-admin-color-trigger__edit" data-em-wp-color-modal-open data-em-wp-color-modal-target="' + id + '" data-em-wp-color-modal-preview-type="swatch" title="' + esc(title) + '" aria-label="' + esc(title) + '"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>' +
+            '<button type="button" class="em-wp-catalog-sommaire__edit em-wp-admin-color-trigger__edit" data-em-wp-color-modal-open data-em-wp-color-modal-target="' + id + '"' + previewAttr + bgAttr + ' title="' + esc(title) + '" aria-label="' + esc(title) + '"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>' +
             '<input type="hidden" id="' + id + '" value="" class="em-wp-admin-color-value ' + valueClass + '">' +
             '</div></div>';
     }
@@ -339,7 +343,7 @@ window.EmWpV4Chip = (function () {
             return chip;
         }
 
-        var labelInput = (type === 'platform_block' || type === 'network_block' || type === 'animated_badge' || isTextFamily(type))
+        var labelInput = (type === 'platform_block' || type === 'network_block' || type === 'animated_badge' || type === 'slider' || isTextFamily(type))
             ? '<input type="hidden" class="em-v4-chip__label">'
             : '<input type="text" class="em-v4-chip__label" placeholder="' + esc(TXT.label) + '">';
         chip.innerHTML =

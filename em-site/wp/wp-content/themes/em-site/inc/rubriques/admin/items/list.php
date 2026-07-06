@@ -12,6 +12,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Le type HEADER réutilise le moteur de composition de la page squelette.
+$em_wp_header_section_file = get_template_directory() . '/inc/admin/pages/rubriques/header-section.php';
+if (is_readable($em_wp_header_section_file)) {
+    require_once $em_wp_header_section_file;
+}
+
+$em_wp_header_section_assets_file = get_template_directory() . '/inc/admin/pages/rubriques/header-section-assets.php';
+if (is_readable($em_wp_header_section_assets_file)) {
+    require_once $em_wp_header_section_assets_file;
+}
+
 /**
  * Affiche la section des footers d'un type.
  */
@@ -98,7 +109,16 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
             </span>
         </summary>
         <div class="em-v4-collapse__body">
-            <?php em_wp_v4_render_item_builder($type_slug, $item_slug); ?>
+            <?php
+            if ($type_slug === 'headers' && function_exists('em_wp_admin_render_header_item_editor')) {
+                em_wp_admin_render_header_item_editor($item_slug);
+                if (function_exists('em_wp_admin_render_header_section_assets')) {
+                    em_wp_admin_render_header_section_assets();
+                }
+            } else {
+                em_wp_v4_render_item_builder($type_slug, $item_slug);
+            }
+            ?>
             <form id="<?php echo esc_attr($del_form_id); ?>" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-v4-deleteform" hidden>
                 <?php wp_nonce_field('em_wp_v4_delete_item'); ?>
                 <input type="hidden" name="action" value="em_wp_v4_delete_item">

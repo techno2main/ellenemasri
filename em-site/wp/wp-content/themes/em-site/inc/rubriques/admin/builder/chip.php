@@ -97,7 +97,7 @@ function em_wp_v4_render_chip(array $field, array $content = []): void
         <span class="em-v4-chip__drag dashicons dashicons-move" aria-hidden="true"></span>
         <span class="em-v4-chip__type"><span class="em-v4-chip__typeicon dashicons <?php echo esc_attr(em_wp_v4_field_type_icon($type)); ?>" aria-hidden="true"></span><?php echo esc_html($type_label); ?></span>
         <span class="em-v4-chip__fields">
-            <?php if ($type === 'platform_block' || $type === 'network_block' || $type === 'animated_badge' || em_wp_rubrique_field_is_text_family($type)) : ?>
+                <?php if ($type === 'platform_block' || $type === 'network_block' || $type === 'animated_badge' || $type === 'slider' || em_wp_rubrique_field_is_text_family($type)) : ?>
                 <input type="hidden" class="em-v4-chip__label" value="<?php echo esc_attr((string) $field['label']); ?>">
             <?php else : ?>
                 <input type="text" class="em-v4-chip__label" value="<?php echo esc_attr((string) $field['label']); ?>" placeholder="<?php esc_attr_e('Libellé', 'em-wp'); ?>">

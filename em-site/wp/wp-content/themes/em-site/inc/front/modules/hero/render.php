@@ -33,8 +33,8 @@ function em_site_header_hero_button(array $content, string $key, string $label):
 function em_site_render_header_hero_html(array $content, string $item_slug, bool $embed_slider = false): string
 {
 	$item = ['fields' => []];
-	if (function_exists('em_site_header_item')) {
-		$maybe_item = em_site_header_item();
+	if (function_exists('em_site_header_hero_item')) {
+		$maybe_item = em_site_header_hero_item($item_slug);
 		if (is_array($maybe_item)) {
 			$item = $maybe_item;
 		}
@@ -45,6 +45,9 @@ function em_site_render_header_hero_html(array $content, string $item_slug, bool
 	$image_meta = em_site_header_decode_json_field((string) ($content['image'] ?? ''));
 	$textarea_html = em_site_front_text_field_html($item, $content, ['textarea'], '');
 	$text2_html = em_site_front_text_field_html($item, $content, ['text_2'], '');
+	$text2_visible = function_exists('em_site_front_item_field_is_visible')
+		? em_site_front_item_field_is_visible($item, 'text_2')
+		: true;
 	$stream = em_site_header_hero_button($content, 'stream', 'STREAM');
 	$watch = em_site_header_hero_button($content, 'watch', 'WATCH');
 
@@ -74,7 +77,7 @@ function em_site_render_header_hero_html(array $content, string $item_slug, bool
 	<footer id="em-rubrique-header-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--header" style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
 		<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 			<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-				<?php if (!empty($arrow_down['link'])) : ?><a class="em-rubrique__link em-rubrique__link--media em-rubrique__arrow-link" href="<?php echo esc_url((string) $arrow_down['link']); ?>"<?php echo $embed_slider ? ' data-mobile-target="#hero-slider"' : ''; ?>><span class="em-rubrique__arrow em-rubrique__arrow--down" aria-hidden="true">&darr;</span></a><?php endif; ?>
+				<?php if (!empty($arrow_down['link'])) : ?><a class="em-rubrique__link em-rubrique__link--media em-rubrique__arrow-link" href="<?php echo esc_url((string) $arrow_down['link']); ?>" style="color:<?php echo esc_attr((string) ($arrow_down['color'] ?? '#000000')); ?>"<?php echo $embed_slider ? ' data-mobile-target="#hero-slider"' : ''; ?>><span class="em-rubrique__arrow em-rubrique__arrow--down" aria-hidden="true" style="color:<?php echo esc_attr((string) ($arrow_down['color'] ?? '#000000')); ?>">&darr;</span></a><?php endif; ?>
 			</div>
 		</div>
 
@@ -88,7 +91,7 @@ function em_site_render_header_hero_html(array $content, string $item_slug, bool
 
 		<div class="em-rubrique__row" data-em-row="3" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 			<div class="em-rubrique__col em-rubrique__col--left" data-em-col="1" data-em-has-button="0">
-				<?php if (trim(wp_strip_all_tags($text2_html)) !== '') : ?><p class="em-rubrique__field em-rubrique__field--text_2"><?php echo wp_kses_post($text2_html); ?></p><?php endif; ?>
+				<?php if ($text2_visible && trim(wp_strip_all_tags($text2_html)) !== '') : ?><p class="em-rubrique__field em-rubrique__field--text_2"><?php echo wp_kses_post($text2_html); ?></p><?php endif; ?>
 			</div>
 		</div>
 

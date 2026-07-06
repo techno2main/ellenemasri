@@ -169,7 +169,7 @@
     position: relative;
     display: inline-flex;
     align-items: center;
-    width: 320px;
+    width: 220px;
     max-width: 100%;
 }
 .em-slider-name-field__icon {
@@ -214,7 +214,7 @@
 /* Groupes flexibles + ligne unique (URL TikTok + MP4) */
 .em-slider-head-row {
     flex-wrap: wrap;
-    gap: 14px 22px;
+    gap: 14px 16px;
 }
 .em-slider-field--grow {
     display: flex;

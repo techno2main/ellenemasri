@@ -102,7 +102,7 @@ function em_wp_site_rubrique_is_extra_v4_module(string $module_slug): bool
         return false;
     }
 
-    if (strpos($module_slug, 'hero') !== false || strpos($module_slug, 'slider') !== false) {
+    if ($module_slug === 'headers' || strpos($module_slug, 'hero') !== false || strpos($module_slug, 'slider') !== false) {
         return false;
     }
 

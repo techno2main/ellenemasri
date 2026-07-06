@@ -129,33 +129,76 @@ function em_wp_v4_render_network_select(string $selected): void
 function em_wp_v4_render_slider_value(string $value): void
 {
     $cfg = em_wp_rubrique_slides_config($value);
+    $frame_id = 'em-v4-slides-frame-' . wp_unique_id();
+    $border_id = 'em-v4-slides-border-' . wp_unique_id();
+    $shadow_id = 'em-v4-slides-shadow-' . wp_unique_id();
+    $footer_bg_id = 'em-v4-slides-footerbg-' . wp_unique_id();
+    $footer_text_id = 'em-v4-slides-footertext-' . wp_unique_id();
+    $tapes_id = 'em-v4-slides-tapes-' . wp_unique_id();
     $frame = $cfg['frame_bg'] !== '' ? $cfg['frame_bg'] : '#12338f';
+    $border_color = $cfg['border_color'] !== '' ? $cfg['border_color'] : '#100421';
+    $shadow_color = $cfg['shadow_color'] !== '' ? $cfg['shadow_color'] : '#100421';
     $footer_bg = $cfg['footer_bg'] !== '' ? $cfg['footer_bg'] : '#f2ebd1';
     $footer_text = $cfg['footer_text'] !== '' ? $cfg['footer_text'] : '#100421';
+    $tapes_color = $cfg['tapes_color'] !== '' ? $cfg['tapes_color'] : '#39c7ca';
     ?>
     <span class="em-v4-slides">
-        <span class="em-v4-slides__opts">
-            <label class="em-v4-slides__opt">
-                <span><?php esc_html_e('Titre du bandeau', 'em-wp'); ?></span>
-                <input type="text" class="em-v4-slides__title" value="<?php echo esc_attr($cfg['title']); ?>" placeholder="<?php esc_attr_e('Mayami, My Miami', 'em-wp'); ?>">
-            </label>
-            <label class="em-v4-slides__opt em-v4-slides__opt--check">
-                <input type="checkbox" class="em-v4-slides__title-hidden" <?php checked($cfg['title_hidden']); ?>>
-                <?php esc_html_e('Masquer le titre', 'em-wp'); ?>
-            </label>
-            <label class="em-v4-slides__opt">
-                <span><?php esc_html_e('Cadre', 'em-wp'); ?></span>
-                <input type="color" class="em-v4-slides__frame" value="<?php echo esc_attr($frame); ?>">
-            </label>
-            <label class="em-v4-slides__opt">
-                <span><?php esc_html_e('Bandeau', 'em-wp'); ?></span>
-                <input type="color" class="em-v4-slides__footerbg" value="<?php echo esc_attr($footer_bg); ?>">
-            </label>
-            <label class="em-v4-slides__opt">
-                <span><?php esc_html_e('Texte titre', 'em-wp'); ?></span>
-                <input type="color" class="em-v4-slides__footertext" value="<?php echo esc_attr($footer_text); ?>">
+        <span class="em-v4-slides__section-title"><?php esc_html_e('Style du Slider', 'em-wp'); ?></span>
+        <span class="em-v4-slides__opts em-v4-slides__opts--row1">
+            <span class="em-v4-slides__titlegroup">
+                <label class="em-v4-slides__opt em-v4-slides__opt--title">
+                    <span><?php esc_html_e('Titre', 'em-wp'); ?></span>
+                    <input type="text" class="em-v4-slides__title" value="<?php echo esc_attr($cfg['title']); ?>" placeholder="<?php esc_attr_e('Mayami, My Miami', 'em-wp'); ?>">
+                </label>
+                <label class="em-v4-slides__opt em-v4-slides__opt--check">
+                    <input type="checkbox" class="em-v4-slides__title-hidden" <?php checked($cfg['title_hidden']); ?>>
+                    <?php esc_html_e('Masquer le titre', 'em-wp'); ?>
+                </label>
+            </span>
+            <?php em_wp_admin_render_color_field([
+                'id'          => $footer_bg_id,
+                'value'       => $footer_bg,
+                'field_label' => __('Bandeau', 'em-wp'),
+                'wrap_class'  => 'em-v4-slides__colorfield',
+                'input_class' => 'em-v4-slides__footerbg',
+            ]); ?>
+            <?php em_wp_admin_render_color_field([
+                'id'           => $footer_text_id,
+                'value'        => $footer_text,
+                'field_label'  => __('Texte titre', 'em-wp'),
+                'wrap_class'   => 'em-v4-slides__colorfield',
+                'input_class'  => 'em-v4-slides__footertext em-v4-slides__footertext-text',
+                'preview_type' => 'text',
+                'bg_target_id' => $footer_bg_id,
+            ]); ?>
+            <input type="hidden" class="em-v4-slides__frame" value="<?php echo esc_attr($frame); ?>">
+            <?php em_wp_admin_render_color_field([
+                'id'          => $border_id,
+                'value'       => $border_color,
+                'field_label' => __('Bordure', 'em-wp'),
+                'wrap_class'  => 'em-v4-slides__colorfield',
+                'input_class' => 'em-v4-slides__border-color',
+            ]); ?>
+            <?php em_wp_admin_render_color_field([
+                'id'          => $shadow_id,
+                'value'       => $shadow_color,
+                'field_label' => __('Ombre', 'em-wp'),
+                'wrap_class'  => 'em-v4-slides__colorfield',
+                'input_class' => 'em-v4-slides__shadow-color',
+            ]); ?>
+            <?php em_wp_admin_render_color_field([
+                'id'          => $tapes_id,
+                'value'       => $tapes_color,
+                'field_label' => __('Scotch', 'em-wp'),
+                'wrap_class'  => 'em-v4-slides__colorfield',
+                'input_class' => 'em-v4-slides__tapes-color',
+            ]); ?>
+            <label class="em-v4-slides__opt em-v4-slides__opt--check em-v4-slides__opt--check-tapes">
+                <input type="checkbox" class="em-v4-slides__tapes-hidden" <?php checked($cfg['tapes_hidden']); ?>>
+                <?php esc_html_e('Masquer les scotchs', 'em-wp'); ?>
             </label>
         </span>
+        <span class="em-v4-slides__group-label em-v4-slides__slides-label"><?php esc_html_e('Slides', 'em-wp'); ?></span>
         <span class="em-v4-slides__list">
             <?php foreach ($cfg['slides'] as $slide) {
                 echo em_wp_v4_slide_row_html($slide); // déjà échappé

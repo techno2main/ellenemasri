@@ -137,8 +137,12 @@ function em_wp_rubrique_slides_config($value): array
         'title'        => '',
         'title_hidden' => false,
         'frame_bg'     => '',
+        'border_color' => '',
+        'shadow_color' => '',
         'footer_bg'    => '',
         'footer_text'  => '',
+        'tapes_hidden' => false,
+        'tapes_color'  => '',
         'slides'       => [],
     ];
 
@@ -165,8 +169,12 @@ function em_wp_rubrique_slides_config($value): array
     $config['title']        = sanitize_text_field((string) ($decoded['title'] ?? ''));
     $config['title_hidden'] = !empty($decoded['title_hidden']);
     $config['frame_bg']     = sanitize_hex_color((string) ($decoded['frame_bg'] ?? '')) ?: '';
+    $config['border_color'] = sanitize_hex_color((string) ($decoded['border_color'] ?? '')) ?: '';
+    $config['shadow_color'] = sanitize_hex_color((string) ($decoded['shadow_color'] ?? '')) ?: '';
     $config['footer_bg']    = sanitize_hex_color((string) ($decoded['footer_bg'] ?? '')) ?: '';
     $config['footer_text']  = sanitize_hex_color((string) ($decoded['footer_text'] ?? '')) ?: '';
+    $config['tapes_hidden']  = !empty($decoded['tapes_hidden']);
+    $config['tapes_color']   = sanitize_hex_color((string) ($decoded['tapes_color'] ?? '')) ?: '';
 
     $slides = is_array($decoded['slides'] ?? null) ? $decoded['slides'] : [];
     foreach ($slides as $slide) {
@@ -191,8 +199,12 @@ function em_wp_field_sanitize_slides($value): string
         $config['slides'] === []
         && $config['title'] === ''
         && $config['frame_bg'] === ''
+        && $config['border_color'] === ''
+        && $config['shadow_color'] === ''
         && $config['footer_bg'] === ''
         && $config['footer_text'] === ''
+        && !$config['tapes_hidden']
+        && $config['tapes_color'] === ''
     ) {
         return '';
     }
@@ -316,6 +328,8 @@ function em_wp_rubrique_slides_front_html(array $config): string
         'footer_title'        => (string) ($config['title'] ?? ''),
         'slider_title_hidden' => !empty($config['title_hidden']),
         'frame_bg_color'      => (string) ($config['frame_bg'] ?? ''),
+        'border_color'        => (string) ($config['border_color'] ?? ''),
+        'shadow_color'        => (string) ($config['shadow_color'] ?? ''),
         'footer_bg_color'     => (string) ($config['footer_bg'] ?? ''),
         'footer_text'         => (string) ($config['footer_text'] ?? ''),
     ];

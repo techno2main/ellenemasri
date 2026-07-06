@@ -98,6 +98,14 @@ function em_wp_v4_ordered_types(): array
     $types = em_wp_rubrique_type_registry();
     $ordered = [];
 
+    // Priorité UX: TOP-BAR puis HEADER avant HERO/SLIDERS.
+    foreach (['top-bar', 'headers', 'header', 'sliders'] as $priority_slug) {
+        if (isset($types[$priority_slug])) {
+            $ordered[$priority_slug] = $types[$priority_slug];
+            unset($types[$priority_slug]);
+        }
+    }
+
     // 1) Ordre personnalisé enregistré (glisser-déposer de l'aperçu) — prioritaire.
     foreach (em_wp_v4_get_rubrique_order() as $slug) {
         if (isset($types[$slug])) {
@@ -302,7 +310,15 @@ function em_wp_v4_overview_render_type(string $slug, array $type, bool $open): v
     $is_special_fixed = function_exists('em_wp_v4_is_fixed_single_item_type')
         && em_wp_v4_is_fixed_single_item_type($slug);
     $can_add_items = !$is_special_fixed;
-    $card_classes = 'em-v4-collapse em-v4-card' . ($is_special_fixed ? ' em-v4-card--fixed-single' : '');
+    $label_for_match = strtolower(remove_accents($label));
+    $is_header_linked = in_array($slug, ['hero', 'heros', 'heroes', 'slider', 'sliders'], true)
+        || strpos($slug, 'hero') !== false
+        || strpos($slug, 'slider') !== false
+        || strpos($label_for_match, 'hero') !== false
+        || strpos($label_for_match, 'slider') !== false;
+    $card_classes = 'em-v4-collapse em-v4-card'
+        . ($is_special_fixed ? ' em-v4-card--fixed-single' : '')
+        . ($is_header_linked ? ' em-v4-card--header-linked' : '');
     ?>
     <details class="<?php echo esc_attr($card_classes); ?>" id="em-v4-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-v4-collapse__summary em-v4-card__head">

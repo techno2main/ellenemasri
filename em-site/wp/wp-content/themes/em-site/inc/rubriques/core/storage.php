@@ -291,6 +291,7 @@ function em_wp_v4_item_slug_prefix(string $type_slug): string
 
     $map = [
         'header' => 'hero',
+        'headers' => 'header',
         'contacts' => 'contact',
         'sliders' => 'slider',
     ];
@@ -655,6 +656,13 @@ function em_wp_v4_ensure_template_instances(string $template_slug): void
 
     foreach ($candidate_types as $type_slug) {
         $type_slug = sanitize_key((string) $type_slug);
+
+        // `header` est une section composite (squelette) qui sélectionne un item
+        // du catalogue `headers`. La sync générique V4 ne doit pas la remapper,
+        // sinon elle écrase le choix utilisateur (mode Unique/Multi).
+        if ($type_slug === 'header') {
+            continue;
+        }
 
         if ($type_slug === '' || !em_wp_rubrique_type_exists($type_slug)) {
             continue;

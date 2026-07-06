@@ -137,8 +137,11 @@ function em_wp_v4_render_preview_script(): void
             var slides = (cfg.slides || []).filter(function (sl) { return sl && !sl.hidden; });
             var vars = '';
             if (cfg.frame_bg) { vars += '--em-slider-frame-bg:' + esc(cfg.frame_bg) + ';'; }
+            if (cfg.border_color) { vars += '--em-slider-border-color:' + esc(cfg.border_color) + ';'; }
+            if (cfg.shadow_color) { vars += '--em-slider-shadow-color:' + esc(cfg.shadow_color) + ';'; }
             if (cfg.footer_bg) { vars += '--em-slider-footer-bg:' + esc(cfg.footer_bg) + ';'; }
             if (cfg.footer_text) { vars += '--em-slider-footer-text:' + esc(cfg.footer_text) + ';'; }
+            if (cfg.tapes_color) { vars += '--em-slider-tape-color:' + esc(cfg.tapes_color) + ';'; }
             var figs = '';
             var hasTikTokVideo = false;
             if (slides.length) {
@@ -183,8 +186,7 @@ function em_wp_v4_render_preview_script(): void
             }
             return '<div class="em-slider em-slider--mayami"' + (vars ? ' style="' + vars + '"' : '') + '>' +
                 '<div class="em-slider__shell">' +
-                '<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span>' +
-                '<span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>' +
+                (cfg.tapes_hidden ? '' : '<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span><span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>') +
                 '<div class="em-slider__frame">' +
                 '<div class="em-slider__media">' + figs + nav + audio + '</div>' +
                 '<div class="em-slider__footer">' + titleHtml + '</div>' +

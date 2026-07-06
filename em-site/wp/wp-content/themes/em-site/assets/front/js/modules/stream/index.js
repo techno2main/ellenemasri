@@ -99,6 +99,9 @@
 
 			hideAllPlayers();
 			renderDots();
+			if (typeof window.emWpSyncSectionSwitchColor === 'function') {
+				window.emWpSyncSectionSwitchColor(streamSection, instances, activeInstanceIndex, '--em-stream-switch-color', '#ffffff');
+			}
 		}
 
 		function startAutoTransition() {

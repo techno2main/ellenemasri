@@ -27,12 +27,24 @@ if (!defined('ABSPATH')) {
     }
 
     function slidesOptsHtml() {
-        return '<span class="em-v4-slides__opts">' +
-            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slTitle) + '</span><input type="text" class="em-v4-slides__title" placeholder="' + esc(TXT.slTitlePh) + '"></label>' +
+        var borderId = colorId('emv4slbdr-');
+        var shadowId = colorId('emv4slsh-');
+        var footerBgId = colorId('emv4slb-');
+        var footerTextId = colorId('emv4slt-');
+        var tapeId = colorId('emv4sls-');
+        return '<span class="em-v4-slides__section-title">' + esc(TXT.slStyle || 'Style du Slider') + '</span>' +
+            '<span class="em-v4-slides__opts em-v4-slides__opts--row1">' +
+            '<span class="em-v4-slides__titlegroup">' +
+            '<label class="em-v4-slides__opt em-v4-slides__opt--title"><span>' + esc(TXT.slTitleLabel || 'Titre') + '</span><input type="text" class="em-v4-slides__title" placeholder="' + esc(TXT.slTitlePh) + '"></label>' +
             '<label class="em-v4-slides__opt em-v4-slides__opt--check"><input type="checkbox" class="em-v4-slides__title-hidden"> ' + esc(TXT.slTitleHide) + '</label>' +
-            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slFrame) + '</span><input type="color" class="em-v4-slides__frame" value="#12338f"></label>' +
-            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slBand) + '</span><input type="color" class="em-v4-slides__footerbg" value="#f2ebd1"></label>' +
-            '<label class="em-v4-slides__opt"><span>' + esc(TXT.slBandText) + '</span><input type="color" class="em-v4-slides__footertext" value="#100421"></label>' +
+            '</span>' +
+            '<input type="hidden" class="em-v4-slides__frame" value="#12338f">' +
+            colorField(footerBgId, 'em-v4-slides__footerbg', TXT.slBand) +
+            colorField(footerTextId, 'em-v4-slides__footertext em-v4-slides__footertext-text', TXT.slBandText, 'text', footerBgId) +
+            colorField(borderId, 'em-v4-slides__border-color', TXT.slBorder || 'Bordure') +
+            colorField(shadowId, 'em-v4-slides__shadow-color', TXT.slShadow || 'Ombre') +
+            '<label class="em-v4-slides__opt em-v4-slides__opt--check"><input type="checkbox" class="em-v4-slides__tapes-hidden"> ' + esc(TXT.slTapeHide) + '</label>' +
+            colorField(tapeId, 'em-v4-slides__tapes-color', TXT.slTape) +
             '</span>';
     }
 
@@ -54,6 +66,7 @@ if (!defined('ABSPATH')) {
 
     function sliderHtml() {
         return '<span class="em-v4-slides">' + slidesOptsHtml() +
+            '<span class="em-v4-slides__group-label em-v4-slides__slides-label">' + esc(TXT.slSlides || 'Slides') + '</span>' +
             '<span class="em-v4-slides__list"></span>' +
             '<button type="button" class="button button-small em-v4-slides__add">' + esc(TXT.slAdd) + '</button>' +
             '<input type="hidden" class="em-v4-chip__value"></span>';
