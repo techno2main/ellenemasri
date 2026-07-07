@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-07 12:56:24.
+3. Dernière mise à jour : 2026-07-07 14:12:20.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -21,6 +21,15 @@
 13. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
 
 ## Journal d'avancement
+
+### 2026-07-07 14:12:20 (Paris)
+
+- Migration effective des assets partagés admin `assets/admin/css/shared` + `assets/admin/js/shared` vers `assets/admin/shared/css` + `assets/admin/shared/js`, avec recâblage des enqueues.
+- Migration effective des assets front partagés `assets/front/css/core` + JS core/slider vers `assets/front/shared/css` + `assets/front/shared/js`.
+- Suppression du dossier fantôme `assets/front/css/rubriques-v4` et recâblage des dépendances front/admin vers les nouveaux chemins.
+- Purge du namespace legacy gate `ellene` côté admin et bascule vers le namespace `client`.
+- Correction de régression sur la logique d'accès par admin connecté: mapping actif rétabli sur `admin-ellene` (restreint) et `admin-tyson` (complet).
+- Hotfix CSS admin: correction des imports cassés dans `assets/admin/shared/css/hub-cards.css` et `assets/admin/shared/css/module-common.css` pour restaurer l'alignement logo/pseudo et le rendu BO.
 
 ### 2026-07-07 12:56:24 (Paris)
 
