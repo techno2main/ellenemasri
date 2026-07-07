@@ -61,12 +61,6 @@
 		height: auto;
 	}
 
-	.em-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__imgwrap .em-rubrique__tape {
-		width: 76px;
-		height: 16px;
-		top: -8px;
-	}
-
 	.em-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="3"] {
 		display: flex !important;
 		flex-wrap: wrap;

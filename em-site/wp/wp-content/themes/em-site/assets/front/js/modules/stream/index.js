@@ -2,18 +2,48 @@
 	'use strict';
 
 	document.addEventListener('DOMContentLoaded', function () {
-		var platformLinks = document.querySelectorAll('.platform-card');
+		var streamSection = document.querySelector('.em-section--stream[data-em-rubrique="stream"]');
+		if (!streamSection) {
+			return;
+		}
+
+		var instances = Array.from(streamSection.querySelectorAll('.em-stream-instance'));
+		if (instances.length === 0) {
+			instances = [streamSection];
+		}
+
+		var dots = Array.from(streamSection.querySelectorAll('[data-em-stream-dot]'));
+		var prevButton = streamSection.querySelector('[data-em-stream-prev]');
+		var nextButton = streamSection.querySelector('[data-em-stream-next]');
+		var mode = streamSection.getAttribute('data-em-stream-mode') || 'single';
+		var transitionMode = streamSection.getAttribute('data-em-stream-transition') || 'manual';
+		var timerSeconds = parseInt(streamSection.getAttribute('data-em-stream-timer') || '6', 10);
+		if (isNaN(timerSeconds) || timerSeconds < 2) {
+			timerSeconds = 6;
+		}
+
 		var topBarPlatformLinks = document.querySelectorAll('.top-bar-platform-link[data-open-platform]');
 		var activePlatform = null;
+		var activeInstanceIndex = 0;
+		var autoTimer = null;
 
 		function isMobileViewport() {
 			return window.matchMedia('(max-width: 639px)').matches;
 		}
 
+		function getCurrentInstance() {
+			return instances[activeInstanceIndex] || null;
+		}
+
 		function getPlayerElements(platformName) {
+			var scope = getCurrentInstance();
+			if (!scope) {
+				return { mobile: null, desktop: null };
+			}
+
 			return {
-				mobile: document.getElementById('player-mobile-' + platformName),
-				desktop: document.getElementById('player-desktop-' + platformName),
+				mobile: scope.querySelector('[data-platform-player="mobile"][data-platform="' + platformName + '"]'),
+				desktop: scope.querySelector('[data-platform-player="desktop"][data-platform="' + platformName + '"]'),
 			};
 		}
 
@@ -23,9 +53,66 @@
 		}
 
 		function hideAllPlayers() {
-			document.querySelectorAll('.platform-player-mobile, .platform-player-desktop').forEach(function (player) {
+			var scope = getCurrentInstance() || streamSection;
+			scope.querySelectorAll('.platform-player-mobile, .platform-player-desktop').forEach(function (player) {
 				player.classList.remove('is-active');
 			});
+		}
+
+		function stopAutoTransition() {
+			if (autoTimer) {
+				window.clearInterval(autoTimer);
+				autoTimer = null;
+			}
+		}
+
+		function renderDots() {
+			dots.forEach(function (dot, index) {
+				var isActive = index === activeInstanceIndex;
+				dot.classList.toggle('is-active', isActive);
+				dot.setAttribute('aria-selected', isActive ? 'true' : 'false');
+			});
+		}
+
+		function showInstance(index) {
+			if (!instances.length) {
+				return;
+			}
+			if (index < 0) {
+				index = instances.length - 1;
+			}
+			if (index >= instances.length) {
+				index = 0;
+			}
+
+			activeInstanceIndex = index;
+			activePlatform = null;
+
+			instances.forEach(function (instance, idx) {
+				var isActive = idx === activeInstanceIndex;
+				instance.classList.toggle('is-active', isActive);
+				instance.hidden = !isActive;
+				instance.querySelectorAll('.platform-card').forEach(function (card) {
+					card.setAttribute('aria-expanded', 'false');
+				});
+			});
+
+			hideAllPlayers();
+			renderDots();
+			if (typeof window.emWpSyncSectionSwitchColor === 'function') {
+				window.emWpSyncSectionSwitchColor(streamSection, instances, activeInstanceIndex, '--em-stream-switch-color', '#ffffff');
+			}
+		}
+
+		function startAutoTransition() {
+			stopAutoTransition();
+			if (mode !== 'multi' || transitionMode !== 'auto' || instances.length < 2) {
+				return;
+			}
+
+			autoTimer = window.setInterval(function () {
+				showInstance(activeInstanceIndex + 1);
+			}, timerSeconds * 1000);
 		}
 
 		function scrollToTarget(target, behavior) {
@@ -39,8 +126,9 @@
 
 		function openPlatform(platformName, sourceCard) {
 			var visiblePlayer = getVisiblePlayer(platformName);
+			var scope = getCurrentInstance();
 
-			if (!visiblePlayer) {
+			if (!visiblePlayer || !scope) {
 				return false;
 			}
 
@@ -54,7 +142,7 @@
 			}
 
 			hideAllPlayers();
-			platformLinks.forEach(function (card) {
+			scope.querySelectorAll('.platform-card').forEach(function (card) {
 				card.setAttribute('aria-expanded', 'false');
 			});
 
@@ -71,21 +159,83 @@
 			return true;
 		}
 
-		platformLinks.forEach(function (link) {
-			link.addEventListener('click', function (event) {
-				if (this.dataset.hasPlayer !== '1') {
-					return;
+		function findInstanceIndexForPlatform(platformName) {
+			for (var i = 0; i < instances.length; i++) {
+				if (instances[i].querySelector('.platform-card[data-platform="' + platformName + '"]')) {
+					return i;
 				}
+			}
+			return -1;
+		}
 
-				event.preventDefault();
-				openPlatform(this.dataset.platform, this);
-			});
+		function findInstanceIndexBySlug(itemSlug) {
+			if (!itemSlug) {
+				return -1;
+			}
+
+			for (var i = 0; i < instances.length; i++) {
+				if ((instances[i].getAttribute('data-stream-item') || '') === itemSlug) {
+					return i;
+				}
+			}
+
+			return -1;
+		}
+
+		function handleStreamHash(rawHash, behavior) {
+			rawHash = rawHash || window.location.hash || '';
+			if (!rawHash) {
+				return false;
+			}
+
+			var hash = rawHash.replace(/^#/, '').trim().toLowerCase();
+			if (!hash) {
+				return false;
+			}
+
+			if (hash === 'stream') {
+				scrollToTarget(streamSection, behavior || 'smooth');
+				return true;
+			}
+
+			if (hash.indexOf('stream-') !== 0) {
+				return false;
+			}
+
+			var targetIndex = findInstanceIndexBySlug(hash);
+			if (targetIndex < 0) {
+				return false;
+			}
+
+			showInstance(targetIndex);
+			startAutoTransition();
+			scrollToTarget(streamSection, behavior || 'smooth');
+			return true;
+		}
+
+		streamSection.addEventListener('click', function (event) {
+			var link = event.target.closest('.platform-card');
+			if (!link) {
+				return;
+			}
+
+			if (link.dataset.hasPlayer !== '1') {
+				return;
+			}
+
+			event.preventDefault();
+			openPlatform(link.dataset.platform, link);
 		});
 
 		function openFromTopBar(platformName) {
-			var streamSection = document.querySelector('#stream');
-			if (streamSection) {
-				scrollToTarget(streamSection, 'smooth');
+			var streamAnchor = document.querySelector('#stream');
+			if (streamAnchor) {
+				scrollToTarget(streamAnchor, 'smooth');
+			}
+
+			var targetIndex = findInstanceIndexForPlatform(platformName);
+			if (targetIndex >= 0) {
+				showInstance(targetIndex);
 			}
 
 			window.setTimeout(function () {
@@ -93,7 +243,8 @@
 					return;
 				}
 
-				var matchingCard = document.querySelector('.platform-card[data-platform="' + platformName + '"]');
+				var scope = getCurrentInstance() || streamSection;
+				var matchingCard = scope.querySelector('.platform-card[data-platform="' + platformName + '"]');
 				if (!matchingCard) {
 					return;
 				}
@@ -131,6 +282,29 @@
 			});
 		});
 
+		dots.forEach(function (dot) {
+			dot.addEventListener('click', function () {
+				var idx = parseInt(this.getAttribute('data-em-stream-dot') || '0', 10);
+				if (isNaN(idx)) { return; }
+				showInstance(idx);
+				startAutoTransition();
+			});
+		});
+
+		if (prevButton) {
+			prevButton.addEventListener('click', function () {
+				showInstance(activeInstanceIndex - 1);
+				startAutoTransition();
+			});
+		}
+
+		if (nextButton) {
+			nextButton.addEventListener('click', function () {
+				showInstance(activeInstanceIndex + 1);
+				startAutoTransition();
+			});
+		}
+
 		window.addEventListener('resize', function () {
 			if (!activePlatform) {
 				return;
@@ -143,5 +317,17 @@
 				visiblePlayer.classList.add('is-active');
 			}
 		});
+
+		window.addEventListener('hashchange', function () {
+			handleStreamHash('', 'smooth');
+		});
+
+		window.emWpHandleStreamHash = function (hash, behavior) {
+			return handleStreamHash(hash || '', behavior || 'smooth');
+		};
+
+		showInstance(0);
+		handleStreamHash('', 'auto');
+		startAutoTransition();
 	});
 })();

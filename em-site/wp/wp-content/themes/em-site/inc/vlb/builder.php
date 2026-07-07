@@ -3,7 +3,7 @@
 /**
  * Visual Links builder and publish workflow.
  *
- * @package ElleneWp
+ * @package ClientWp
  */
 
 if (!defined('ABSPATH')) {
@@ -317,7 +317,7 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                             <span>Texte alternatif de l'image</span>
 
-                            <input type="text" class="regular-text mayami-vlb-input" data-vlb-field="imageAlt" placeholder="Visuel cliquable de ellene-wp">
+                            <input type="text" class="regular-text mayami-vlb-input" data-vlb-field="imageAlt" placeholder="Visuel cliquable de client-wp">
 
                         </label>
 
@@ -381,7 +381,7 @@ function mayami_render_visual_links_builder_field($field, $escaped_value, $objec
 
                         <div class="mayami-vlb-validation-host"></div>
 
-                        <p class="mayami-vlb-workflow-note">Prévisualisation et publication utilisent la dernière version enregistrée. Sauvegardez ellene-wp Landing avant ces actions.</p>
+                        <p class="mayami-vlb-workflow-note">Prévisualisation et publication utilisent la dernière version enregistrée. Sauvegardez client-wp Landing avant ces actions.</p>
 
                     </div>
 

@@ -50,6 +50,11 @@ function em_wp_admin_rubrique_skeleton_label_with_item(string $module_slug): str
     $module_slug = sanitize_key($module_slug);
     $base = em_wp_admin_rubrique_skeleton_label($module_slug);
 
+    // En mode template unique, on garde des intitulés 100% génériques.
+    if (function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled()) {
+        return $base;
+    }
+
     if (!function_exists('em_wp_rubrique_type_exists') || !em_wp_rubrique_type_exists($module_slug)) {
         return $base;
     }

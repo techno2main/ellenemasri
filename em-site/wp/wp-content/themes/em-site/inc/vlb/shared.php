@@ -2,7 +2,7 @@
 /**
  * Visual Links shared payload helpers.
  *
- * @package ElleneWp
+ * @package ClientWp
  */
 
 if (!defined('ABSPATH')) {

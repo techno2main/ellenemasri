@@ -11,7 +11,7 @@
             display: block !important;
         }
 
-        /* Entrées catalogue (Mayami, Ellene…) : masquées sur le hub CATALOGUES */
+        /* Entrées catalogue (Mayami, Client…) : masquées sur le hub CATALOGUES */
         body.em-wp-accordion-catalog-open #adminmenu li.em-wp-menu-accordion-catalog-entry-child {
             display: none !important;
         }

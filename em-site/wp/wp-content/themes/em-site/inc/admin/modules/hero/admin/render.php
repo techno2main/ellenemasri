@@ -212,7 +212,7 @@ function em_wp_hero_render_mayami_item_panel(string $key, string $label, string 
                     <div class="em-wp-hero-badge-preview" aria-hidden="true">
                         <div class="em-wp-hero-badge-preview__badge em-wiggle" data-em-hero-badge-preview>
                             <span class="em-wp-hero-badge-preview__dot"></span>
-                            <span data-em-hero-badge-preview-text><?php echo esc_html((string) $value !== '' ? (string) $value : __('New Single · Available!', 'em-wp')); ?></span>
+                            <span data-em-hero-badge-preview-text><?php echo esc_html((string) $value !== '' ? (string) $value : __('New Unique · Available!', 'em-wp')); ?></span>
                         </div>
                     </div>
                 </div>

@@ -482,7 +482,7 @@ function em_wp_template_change_slug(string $old_slug, string $new_slug)
 
 /**
  * Rattrapage unique : aligne l'identifiant des templates existants sur leur
- * libell? (ex. un template renomm? ? Default ? mais rest? en slug ? ellene ?).
+ * libell? (ex. un template renomm? ? Default ? mais rest? en slug ? client ?).
  * Ne s'ex?cute qu'une seule fois gr?ce ? un flag d'option.
  */
 function em_wp_template_maybe_reconcile_slugs(): void

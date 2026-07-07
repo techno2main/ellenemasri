@@ -10,9 +10,17 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Mode cible: template unique (wizard + multi-template désactivés).
+ */
+function em_wp_template_unique_mode_enabled(): bool
+{
+    return true;
+}
+
+/**
  * Indique si l'utilisateur peut gérer les templates (CRUD + actif live).
  *
- * ellene-admin et admin-my : tous deux manage_options sur em-wp.
+ * client-admin et admin-my : tous deux manage_options sur em-wp.
  */
 function em_wp_admin_can_manage_templates(): bool
 {
@@ -147,6 +155,14 @@ function em_wp_admin_template_handle_clear_editing(): void
  */
 function em_wp_admin_template_handle_create(): void
 {
+    if (em_wp_template_unique_mode_enabled()) {
+        em_wp_admin_template_redirect_with_notice(
+            em_wp_admin_template_choice_admin_url(),
+            'warning',
+            __('Mode template unique actif : création de template désactivée.', 'em-wp')
+        );
+    }
+
     check_admin_referer('em_wp_template_create');
 
     $label = sanitize_text_field((string) ($_POST['em_wp_template_label'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -229,6 +245,14 @@ function em_wp_admin_template_handle_set_active(): void
  */
 function em_wp_admin_template_handle_duplicate(): void
 {
+    if (em_wp_template_unique_mode_enabled()) {
+        em_wp_admin_template_redirect_with_notice(
+            em_wp_admin_template_choice_admin_url(),
+            'warning',
+            __('Mode template unique actif : duplication désactivée.', 'em-wp')
+        );
+    }
+
     check_admin_referer('em_wp_template_duplicate');
 
     $source_slug = em_wp_template_sanitize_slug((string) ($_POST['em_wp_template_source_slug'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing

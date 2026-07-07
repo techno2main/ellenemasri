@@ -36,6 +36,20 @@ function em_wp_admin_render_header_section_assets(): void
     .em-wp-rubriques-admin__picker-inner { margin:-2px 0 8px; padding:14px 16px; background:#fbf8f9; border:1px solid #e6d9dc; border-radius:8px; }
     .em-wp-rubriques-admin__picker-head { margin:0 0 8px; font-weight:600; color:#4e080e; }
     .em-wp-rubriques-admin__picker-empty { margin:0; color:#666; }
+    .em-wp-header-picker__mode { margin:0 0 12px; }
+    .em-wp-header-picker__mode-title { margin:0 0 6px; font-size:12px; font-weight:600; color:#4e080e; }
+    .em-wp-header-picker__mode-switch { display:flex; align-items:center; gap:12px; }
+    .em-wp-header-picker__mode-option { display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-weight:600; color:#1d2327; }
+    .em-wp-header-picker .em-wp-instance-picker__mode-help { margin:8px 0 0; font-size:12px; color:#6b7280; }
+    .em-wp-header-picker .em-wp-instance-picker__multi { margin:0 0 10px; padding:10px; background:#fff; border:1px solid #e6d9dc; border-radius:6px; }
+    .em-wp-header-picker .em-wp-instance-picker__multi-title { margin:0 0 8px; font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:#6b7280; }
+    .em-wp-header-picker .em-wp-instance-picker__multi-switch { display:flex; align-items:center; gap:10px; }
+    .em-wp-header-picker .em-wp-instance-picker__multi-timer { display:inline-flex; align-items:center; gap:8px; margin-top:8px; font-size:12px; color:#1d2327; }
+    .em-wp-header-picker .em-wp-instance-picker__multi-timer input { width:80px; }
+    .em-wp-header-picker .em-wp-instance-picker__badge--first { background:#e5eef8; color:#0b4f85; }
+    .em-wp-header-picker .em-wp-header-picker__items[data-display-mode="multi"] .em-wp-instance-picker__single-radio { display:none; }
+    .em-wp-header-picker .em-wp-header-picker__items[data-display-mode="single"] .em-wp-instance-picker__multi-include,
+    .em-wp-header-picker .em-wp-header-picker__items[data-display-mode="single"] .em-wp-instance-picker__multi-first { display:none !important; }
     /* Lignes d'items (mêmes visuels que le sélecteur d'instance). */
     .em-wp-header-picker .em-wp-instance-picker { margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px; max-width:560px; }
     .em-wp-header-picker .em-wp-instance-picker__row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 10px; background:#fff; border:1px solid #e6d9dc; border-radius:6px; }
@@ -75,7 +89,9 @@ function em_wp_admin_render_header_section_assets(): void
     .em-wp-header-appr__field--image { gap:6px; }
     .em-wp-header-appr__media { display:inline-flex; align-items:center; gap:6px; }
     .em-wp-header-appr__thumb { width:46px; height:30px; object-fit:cover; border:1px solid #d3c3c6; border-radius:6px; display:block; }
-    .em-wp-header-appr__clear { background:none; border:none; padding:0 2px; margin:0; cursor:pointer; color:#b32d2e; font-size:18px; line-height:1; }
+    .em-wp-header-appr__thumb[hidden] { display:none !important; }
+    .em-wp-header-appr__clear { color:#b32d2e !important; border-color:#e3c3c7 !important; }
+    .em-wp-header-appr__image-opt[hidden] { display:none !important; }
     /* Barre « Sauvegarder » : enregistrement groupé (pas de save à chaque changement). */
     .em-wp-header-picker__savebar { display:flex; align-items:center; gap:14px; margin-top:14px; }
     .em-wp-header-picker__savebar .em-wp-instance-picker__status { margin:0; }
@@ -94,15 +110,108 @@ function em_wp_admin_render_header_section_assets(): void
         var ASK_CANCEL = '<?php echo esc_js(__('Annuler', 'em-wp')); ?>';
         var TPL_FALLBACK = '<?php echo esc_js(__('ce template', 'em-wp')); ?>';
         var NOCHANGE = '<?php echo esc_js(__('Aucune modification.', 'em-wp')); ?>';
+        var BADGE_FIRST = '<?php echo esc_js(__('Premier item', 'em-wp')); ?>';
 
         function partList(root, part) { return root.querySelector('.em-wp-header-picker__items[data-part="' + part + '"]'); }
+        function headerList(root) { return partList(root, 'header-item'); }
+        function headerMode(root) { return radioVal(root, 'em-wp-header-display-mode') || 'single'; }
+        function headerTransition(root) { return radioVal(root, 'em-wp-header-transition') || 'manual'; }
         function partVal(root, part) {
             var l = partList(root, part);
             if (!l) { return ''; }
-            var r = l.querySelector('input[type="radio"]:checked');
+            var r = part === 'header-item'
+                ? l.querySelector('.em-wp-instance-picker__single-radio:checked')
+                : l.querySelector('input[type="radio"]:checked');
             return r ? r.value : (l.getAttribute('data-current') || '');
         }
+        function headerVisibleItems(list) {
+            var visible = [];
+            if (!list) { return visible; }
+            list.querySelectorAll('.em-wp-instance-picker__multi-include').forEach(function (cb) {
+                if (cb.checked) { visible.push(cb.getAttribute('data-item') || ''); }
+            });
+            return visible.filter(Boolean);
+        }
+        function headerUpdateBadge(list, mode, current, firstItem) {
+            if (!list) { return; }
+            list.querySelectorAll('.em-wp-instance-picker__badge').forEach(function (b) { b.remove(); });
+            var target = mode === 'multi' ? firstItem : current;
+            if (!target) { return; }
+            var selector = mode === 'multi'
+                ? '.em-wp-instance-picker__multi-first[value="' + target + '"]'
+                : '.em-wp-instance-picker__single-radio[value="' + target + '"]';
+            var input = list.querySelector(selector);
+            if (!input) { return; }
+            var name = input.closest('.em-wp-instance-picker__label').querySelector('.em-wp-instance-picker__name');
+            if (!name) { return; }
+            var badge = document.createElement('span');
+            badge.className = mode === 'multi'
+                ? 'em-wp-instance-picker__badge em-wp-instance-picker__badge--first'
+                : 'em-wp-instance-picker__badge';
+            badge.textContent = mode === 'multi' ? BADGE_FIRST : BADGE;
+            name.insertAdjacentElement('afterend', badge);
+        }
+        function ensureHeaderFirstRow(list, firstItem) {
+            if (!list || !firstItem) { return; }
+            var firstRadio = list.querySelector('.em-wp-instance-picker__multi-first[value="' + firstItem + '"]');
+            if (!firstRadio) { return; }
+            var row = firstRadio.closest('.em-wp-instance-picker__row');
+            if (!row || row === list.firstElementChild) { return; }
+            list.insertBefore(row, list.firstElementChild);
+        }
+        function syncHeaderMultiControls(root, mode) {
+            var list = headerList(root);
+            if (!list) { return; }
+            list.setAttribute('data-display-mode', mode);
+
+            var multiWrap = root.querySelector('[data-em-header-multi-options]');
+            var timerWrap = root.querySelector('[data-em-header-multi-timer-wrap]');
+            var isMulti = mode === 'multi';
+            var isAuto = headerTransition(root) === 'auto';
+
+            if (multiWrap) { multiWrap.hidden = !isMulti; }
+            if (timerWrap) { timerWrap.hidden = !(isMulti && isAuto); }
+
+            list.querySelectorAll('.em-wp-instance-picker__single-radio').forEach(function (el) { el.hidden = isMulti; });
+            list.querySelectorAll('.em-wp-instance-picker__multi-include, .em-wp-instance-picker__multi-first').forEach(function (el) {
+                el.hidden = !isMulti;
+                el.disabled = !isMulti;
+            });
+
+            if (!isMulti) {
+                var current = partVal(root, 'header-item');
+                list.setAttribute('data-current', current || '');
+                headerUpdateBadge(list, 'single', current || '', '');
+                return;
+            }
+
+            var visible = headerVisibleItems(list);
+            if (visible.length === 0) {
+                var firstCb = list.querySelector('.em-wp-instance-picker__multi-include');
+                if (firstCb) { firstCb.checked = true; visible = [firstCb.getAttribute('data-item') || '']; }
+            }
+
+            list.querySelectorAll('.em-wp-instance-picker__multi-first').forEach(function (radio) {
+                var item = radio.getAttribute('data-item') || '';
+                var enabled = visible.indexOf(item) !== -1;
+                radio.disabled = !enabled;
+                if (!enabled && radio.checked) { radio.checked = false; }
+            });
+
+            var first = list.querySelector('.em-wp-instance-picker__multi-first:checked');
+            if (!first || first.disabled) {
+                var fallback = list.querySelector('.em-wp-instance-picker__multi-first:not(:disabled)');
+                if (fallback) { fallback.checked = true; first = fallback; }
+            }
+            var firstItem = first ? (first.value || '') : '';
+            list.setAttribute('data-first-item', firstItem);
+            headerUpdateBadge(list, 'multi', '', firstItem);
+            ensureHeaderFirstRow(list, firstItem);
+        }
         function radioVal(root, name) { var r = root.querySelector('input[name="' + name + '"]:checked'); return r ? r.value : ''; }
+        function setPrevConfig(root, cfg) {
+            root.setAttribute('data-config', JSON.stringify(cfg || {}));
+        }
 
         function apprInputs(root) {
             return {
@@ -145,14 +254,52 @@ function em_wp_admin_render_header_section_assets(): void
             };
         }
         function collectConfig(root) {
+            var prev = prevConfig(root) || {};
             var i = apprInputs(root);
+            var matrix = radioVal(root, 'em-wp-header-matrix') || prev.matrix || 'hero';
+            var position = radioVal(root, 'em-wp-header-position') || prev.position || 'hero_left';
+            var hero = partVal(root, 'hero') || prev.hero || '';
+            var slider = partVal(root, 'slider') || prev.slider || '';
+            var ratio = i.ratio ? i.ratio.value : (prev.ratio || '75-25');
+            var appearance = root.querySelector('.em-wp-header-picker__appearance')
+                ? collectAppearance(root)
+                : (prev.appearance || {});
+            var mode = headerMode(root);
+            var transitionMode = headerTransition(root);
+            var timerInput = root.querySelector('[data-em-header-multi-timer-input]');
+            var transitionTimer = intVal(timerInput, prev.transition_timer || 6);
+            if (transitionTimer < 2) { transitionTimer = 2; }
+            if (transitionTimer > 120) { transitionTimer = 120; }
+            var firstItem = '';
+            var hiddenItems = [];
+            var headerItem = radioVal(root, 'em-wp-header-item') || prev.header_item || '';
+            var hList = headerList(root);
+            if (mode === 'multi' && hList) {
+                hList.querySelectorAll('.em-wp-instance-picker__multi-include').forEach(function (cb) {
+                    var item = cb.getAttribute('data-item') || '';
+                    if (item && !cb.checked) { hiddenItems.push(item); }
+                });
+                var first = hList.querySelector('.em-wp-instance-picker__multi-first:checked');
+                firstItem = first ? String(first.value || '') : '';
+                if (!firstItem) {
+                    var fallback = hList.querySelector('.em-wp-instance-picker__multi-first:not(:disabled)');
+                    firstItem = fallback ? String(fallback.value || '') : '';
+                }
+                headerItem = firstItem || headerItem;
+            }
             return {
-                matrix: radioVal(root, 'em-wp-header-matrix') || 'hero',
-                position: radioVal(root, 'em-wp-header-position') || 'hero_left',
-                hero: partVal(root, 'hero'),
-                slider: partVal(root, 'slider'),
-                ratio: i.ratio ? i.ratio.value : '75-25',
-                appearance: collectAppearance(root)
+                header_item: headerItem,
+                display_mode: mode,
+                transition_mode: transitionMode,
+                transition_timer: transitionTimer,
+                first_item: firstItem,
+                hidden_items: hiddenItems,
+                matrix: matrix,
+                position: position,
+                hero: hero,
+                slider: slider,
+                ratio: ratio,
+                appearance: appearance
             };
         }
         function prevConfig(root) {
@@ -161,6 +308,12 @@ function em_wp_admin_render_header_section_assets(): void
         function normalize(c) {
             c = c || {}; var a = c.appearance || {};
             return JSON.stringify({
+                header_item: c.header_item || '',
+                display_mode: c.display_mode || 'single',
+                transition_mode: c.transition_mode || 'manual',
+                transition_timer: parseInt(c.transition_timer, 10) || 6,
+                first_item: c.first_item || '',
+                hidden_items: Array.isArray(c.hidden_items) ? c.hidden_items.slice().sort() : [],
                 matrix: c.matrix || 'hero', position: c.position || 'hero_left',
                 hero: c.hero || '', slider: c.slider || '', ratio: c.ratio || '75-25',
                 appearance: {
@@ -183,20 +336,6 @@ function em_wp_admin_render_header_section_assets(): void
             var group = document.querySelector('.em-wp-admin-landing-map .em-wp-admin-landing-map__header-group[data-module-slug="header"]');
             if (!group) { return; }
             group.setAttribute('data-header-layout', position);
-            var inner = group.querySelector('.em-wp-admin-landing-map__header-group-inner');
-            var hero = group.querySelector('.em-wp-admin-landing-map__header-part[data-header-part="hero"]');
-            var slider = group.querySelector('.em-wp-admin-landing-map__header-part[data-header-part="slider"]');
-            if (matrix === 'hero_slider') {
-                group.classList.remove('is-hero-only');
-                if (inner) { inner.classList.remove('is-single'); }
-                if (inner && hero && slider) {
-                    if (position === 'slider_left') { inner.insertBefore(slider, hero); }
-                    else { inner.insertBefore(hero, slider); }
-                }
-            } else {
-                group.classList.add('is-hero-only');
-                if (inner) { inner.classList.add('is-single'); }
-            }
         }
         function checkRadio(root, name, value) {
             var r = root.querySelector('input[name="' + name + '"][value="' + value + '"]');
@@ -216,6 +355,24 @@ function em_wp_admin_render_header_section_assets(): void
         // Restaure tous les contrôles depuis la config serveur (annulation/échec).
         function revert(root) {
             var c = prevConfig(root), a = c.appearance || {}, i = apprInputs(root);
+            checkRadio(root, 'em-wp-header-item', c.header_item || '');
+            checkRadio(root, 'em-wp-header-display-mode', c.display_mode || 'single');
+            checkRadio(root, 'em-wp-header-transition', c.transition_mode || 'manual');
+            var timerInput = root.querySelector('[data-em-header-multi-timer-input]');
+            if (timerInput) { timerInput.value = c.transition_timer != null ? c.transition_timer : 6; }
+            var list = headerList(root);
+            if (list) {
+                var hidden = Array.isArray(c.hidden_items) ? c.hidden_items : [];
+                list.querySelectorAll('.em-wp-instance-picker__multi-include').forEach(function (cb) {
+                    var item = cb.getAttribute('data-item') || '';
+                    cb.checked = hidden.indexOf(item) === -1;
+                });
+                if (c.first_item) {
+                    var firstRadio = list.querySelector('.em-wp-instance-picker__multi-first[value="' + c.first_item + '"]');
+                    if (firstRadio) { firstRadio.checked = true; }
+                }
+            }
+            syncHeaderMultiControls(root, c.display_mode || 'single');
             checkRadio(root, 'em-wp-header-matrix', c.matrix || 'hero');
             checkRadio(root, 'em-wp-header-position', c.position || 'hero_left');
             setPartCurrent(root, 'hero', c.hero || '');
@@ -240,12 +397,19 @@ function em_wp_admin_render_header_section_assets(): void
             status.style.color = color; status.textContent = msg; status.hidden = false;
         }
 
+
         function saveHeader(root, cfg) {
             var a = cfg.appearance || {};
             var body = new URLSearchParams();
             body.set('action', 'em_wp_v4_set_header');
             body.set('_ajax_nonce', NONCE);
             body.set('template', root.getAttribute('data-template') || '');
+            body.set('header_item', cfg.header_item || '');
+            body.set('display_mode', cfg.display_mode || 'single');
+            body.set('transition_mode', cfg.transition_mode || 'manual');
+            body.set('transition_timer', cfg.transition_timer || 6);
+            body.set('first_item', cfg.first_item || '');
+            body.set('hidden_items', JSON.stringify(Array.isArray(cfg.hidden_items) ? cfg.hidden_items : []));
             body.set('matrix', cfg.matrix);
             body.set('position', cfg.position);
             body.set('hero', cfg.hero);
@@ -264,7 +428,10 @@ function em_wp_admin_render_header_section_assets(): void
                 body: body.toString()
             }).then(function (r) { return r.json(); }).then(function (res) {
                 // Recharge pour régénérer le composite (fond partagé) + wireframe à jour.
-                if (res && res.success) { window.location.reload(); }
+                if (res && res.success) {
+                    setPrevConfig(root, cfg);
+                    window.location.reload();
+                }
                 else { revert(root); setStatus(root, ERR, '#b32d2e'); }
             }).catch(function () { revert(root); setStatus(root, ERR, '#b32d2e'); });
         }
@@ -282,7 +449,15 @@ function em_wp_admin_render_header_section_assets(): void
             var ctrl = e.target.closest('.em-wp-header-picker input, .em-wp-header-picker select');
             if (!ctrl) { return; }
             var root = ctrl.closest('.em-wp-header-picker'); if (!root) { return; }
-            if ((ctrl.getAttribute('name') || '') === 'em-wp-header-matrix') {
+            if (root.classList.contains('em-wp-header-item-editor')) { return; }
+            var ctrlName = ctrl.getAttribute('name') || '';
+            if (ctrlName === 'em-wp-header-display-mode') {
+                syncHeaderMultiControls(root, ctrl.value || 'single');
+            }
+            if (ctrlName === 'em-wp-header-transition') {
+                syncHeaderMultiControls(root, headerMode(root));
+            }
+            if (ctrlName === 'em-wp-header-matrix') {
                 toggleBoth(root, ctrl.value === 'hero_slider');
             }
             var cfg = collectConfig(root);
@@ -292,7 +467,10 @@ function em_wp_admin_render_header_section_assets(): void
 
         // Le composant couleur mutualisé notifie via un événement custom (input caché).
         document.addEventListener('emWpAdminColorFieldChanged', function () {
-            document.querySelectorAll('.em-wp-header-picker').forEach(markDirty);
+            document.querySelectorAll('.em-wp-header-picker').forEach(function (root) {
+                if (root.classList.contains('em-wp-header-item-editor')) { return; }
+                markDirty(root);
+            });
         });
 
         // Bouton « Sauvegarder » : enregistre TOUTE la composition d'un coup.
@@ -312,77 +490,238 @@ function em_wp_admin_render_header_section_assets(): void
             } else { onChoice(window.confirm(message)); }
         });
 
-        // Image de fond HEADER : choix via la médiathèque + retrait.
-        document.addEventListener('click', function (e) {
-            var pick = e.target.closest('.em-wp-header-appr__pick');
-            var clear = e.target.closest('.em-wp-header-appr__clear');
-            if (!pick && !clear) { return; }
-            e.preventDefault();
-            var root = (pick || clear).closest('.em-wp-header-picker'); if (!root) { return; }
+        // Init de l'état « à enregistrer » (bouton désactivé tant que rien ne change).
+        document.querySelectorAll('.em-wp-header-picker').forEach(function (root) {
+            if (!root.classList.contains('em-wp-header-item-editor')) {
+                syncHeaderMultiControls(root, headerMode(root));
+            }
+            markDirty(root);
+        });
+    })();
+    </script>
+    <script>
+    (function () {
+        var ITEM_NONCE = '<?php echo esc_js(wp_create_nonce('em_wp_v4_set_header_item_config')); ?>';
+        var SAVED = '<?php echo esc_js(__('Composition du HEADER enregistrée.', 'em-wp')); ?>';
+        var ERR = '<?php echo esc_js(__('Échec de l’enregistrement.', 'em-wp')); ?>';
+
+        function readJsonAttr(el, attr) {
+            try { return JSON.parse(el.getAttribute(attr) || '{}'); } catch (e) { return {}; }
+        }
+        function asInt(v, fallback) {
+            var n = parseInt(v, 10);
+            return isNaN(n) ? fallback : n;
+        }
+        function setStatus(root, msg, color) {
+            var status = root.querySelector('.em-wp-instance-picker__status');
+            if (!status) { return; }
+            status.textContent = msg || '';
+            status.style.color = color || '#6b7280';
+            status.hidden = msg === '';
+        }
+        function setDirty(root, dirty) {
+            var btn = root.querySelector('.em-wp-header-item-editor__save');
+            if (!btn) { return; }
+            btn.disabled = !dirty;
+        }
+        function currentConfig(root) {
+            var matrixInput = root.querySelector('input[name="em-wp-header-matrix-' + root.getAttribute('data-header-item') + '"]:checked');
+            var posInput = root.querySelector('input[name="em-wp-header-position-' + root.getAttribute('data-header-item') + '"]:checked');
+            var heroChecked = root.querySelector('.em-wp-header-picker__items[data-part="hero"] input[type="radio"]:checked');
+            var sliderChecked = root.querySelector('.em-wp-header-picker__items[data-part="slider"] input[type="radio"]:checked');
             var media = root.querySelector('.em-wp-header-appr__media');
-            if (clear) {
-                setMediaThumb(media, 0, '');
-                markDirty(root);
+            var appearanceWrap = root.querySelector('.em-wp-header-picker__appearance');
+
+            var appearance = {};
+            if (appearanceWrap) {
+                appearance = {
+                    bg: (root.querySelector('.em-wp-header-appr__bg') || {}).value || '',
+                    bg_image_id: media ? (asInt(media.getAttribute('data-id'), 0) || 0) : 0,
+                    bg_image_pos: (root.querySelector('.em-wp-header-appr__pos') || {}).value || 'cover',
+                    bg_image_opacity: asInt((root.querySelector('.em-wp-header-appr__op') || {}).value, 32),
+                    bg_image_mirror: !!((root.querySelector('.em-wp-header-appr__mirror') || {}).checked),
+                    pt: asInt((root.querySelector('.em-wp-header-appr__pt') || {}).value, 0),
+                    pb: asInt((root.querySelector('.em-wp-header-appr__pb') || {}).value, 0),
+                    pl: asInt((root.querySelector('.em-wp-header-appr__pl') || {}).value, 0),
+                    pr: asInt((root.querySelector('.em-wp-header-appr__pr') || {}).value, 0)
+                };
+            }
+
+            return {
+                matrix: matrixInput ? matrixInput.value : 'hero',
+                position: posInput ? posInput.value : 'hero_left',
+                hero: heroChecked ? heroChecked.value : '',
+                slider: sliderChecked ? sliderChecked.value : '',
+                ratio: ((root.querySelector('.em-wp-header-appr__ratio') || {}).value || '75-25'),
+                appearance: appearance
+            };
+        }
+        function normalizeConfig(cfg) {
+            cfg = cfg || {};
+            var a = cfg.appearance || {};
+            return JSON.stringify({
+                matrix: cfg.matrix || 'hero',
+                position: cfg.position || 'hero_left',
+                hero: cfg.hero || '',
+                slider: cfg.slider || '',
+                ratio: cfg.ratio || '75-25',
+                appearance: {
+                    bg: (a.bg || '').toLowerCase(),
+                    img: asInt(a.bg_image_id, 0),
+                    pos: a.bg_image_pos || 'cover',
+                    op: asInt(a.bg_image_opacity, 32),
+                    mirror: !!a.bg_image_mirror,
+                    pt: asInt(a.pt, 0),
+                    pb: asInt(a.pb, 0),
+                    pl: asInt(a.pl, 0),
+                    pr: asInt(a.pr, 0)
+                }
+            });
+        }
+        function isDirty(root) {
+            var prev = readJsonAttr(root, 'data-config');
+            var cur = currentConfig(root);
+            return normalizeConfig(prev) !== normalizeConfig(cur);
+        }
+        function toggleMatrix(root, matrix) {
+            var pos = root.querySelector('.em-wp-header-picker__position');
+            var heroWrap = root.querySelector('.em-wp-header-item-editor__hero-wrap');
+            var sliderWrap = root.querySelector('.em-wp-header-item-editor__slider-wrap');
+            if (pos) { pos.hidden = matrix !== 'hero_slider'; }
+            if (heroWrap) { heroWrap.hidden = !(matrix === 'hero' || matrix === 'hero_slider'); }
+            if (sliderWrap) { sliderWrap.hidden = !(matrix === 'slider' || matrix === 'hero_slider'); }
+        }
+        function toggleImageOptions(root, hasImage) {
+            root.querySelectorAll('.em-wp-header-appr__image-opt').forEach(function (el) {
+                el.hidden = !hasImage;
+            });
+        }
+        function setMediaThumb(media, id, url) {
+            if (!media) { return; }
+            id = asInt(id, 0);
+            media.setAttribute('data-id', String(id || 0));
+            var thumb = media.querySelector('.em-wp-header-appr__thumb');
+            if (id > 0) {
+                if (thumb) { if (url) { thumb.src = url; } thumb.hidden = !(thumb.src); }
+            } else {
+                if (thumb) { thumb.hidden = true; thumb.removeAttribute('src'); }
+            }
+            var root = media.closest('.em-wp-header-item-editor');
+            if (root) { toggleImageOptions(root, id > 0); }
+        }
+        function saveItem(root) {
+            var cfg = currentConfig(root);
+            var itemSlug = root.getAttribute('data-header-item') || '';
+            var template = root.getAttribute('data-template') || '';
+            if (!itemSlug) { return; }
+
+            var a = cfg.appearance || {};
+            var body = new URLSearchParams();
+            body.set('action', 'em_wp_v4_set_header_item_config');
+            body.set('_ajax_nonce', ITEM_NONCE);
+            body.set('header_item', itemSlug);
+            body.set('template', template);
+            body.set('matrix', cfg.matrix || 'hero');
+            body.set('position', cfg.position || 'hero_left');
+            body.set('hero', cfg.hero || '');
+            body.set('slider', cfg.slider || '');
+            body.set('ratio', cfg.ratio || '75-25');
+            body.set('a_bg', a.bg || '');
+            body.set('a_bg_image_id', a.bg_image_id || 0);
+            body.set('a_pos', a.bg_image_pos || 'cover');
+            body.set('a_op', a.bg_image_opacity);
+            body.set('a_mirror', a.bg_image_mirror ? '1' : '0');
+            body.set('a_pt', a.pt || 0);
+            body.set('a_pb', a.pb || 0);
+            body.set('a_pl', a.pl || 0);
+            body.set('a_pr', a.pr || 0);
+
+            setStatus(root, SAVED, '#6b7280');
+            fetch(window.ajaxurl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (res && res.success) {
+                    root.setAttribute('data-config', JSON.stringify(cfg));
+                    if (res.data && typeof res.data.preview_html === 'string') {
+                        var bodyWrap = root.closest('.em-v4-collapse__body');
+                        var preview = bodyWrap ? bodyWrap.querySelector('.em-v4-livepreview') : null;
+                        if (preview) {
+                            preview.innerHTML = res.data.preview_html;
+                        }
+                    }
+                    setDirty(root, false);
+                    setStatus(root, SAVED, '#2f7a37');
+                } else {
+                    setStatus(root, ERR, '#b32d2e');
+                }
+            }).catch(function () {
+                setStatus(root, ERR, '#b32d2e');
+            });
+        }
+
+        document.addEventListener('change', function (e) {
+            var root = e.target.closest('.em-wp-header-item-editor');
+            if (!root) { return; }
+            var m = e.target.closest('input[name^="em-wp-header-matrix-"]');
+            if (m) {
+                toggleMatrix(root, m.value || 'hero');
+            }
+            setDirty(root, isDirty(root));
+        });
+
+        document.addEventListener('emWpAdminColorFieldChanged', function () {
+            document.querySelectorAll('.em-wp-header-item-editor').forEach(function (root) {
+                setDirty(root, isDirty(root));
+            });
+        });
+
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('.em-wp-header-item-editor__save');
+            if (btn) {
+                var root = btn.closest('.em-wp-header-item-editor');
+                if (root) { saveItem(root); }
                 return;
             }
+
+            var pick = e.target.closest('.em-wp-header-item-editor .em-wp-header-appr__pick');
+            var clear = e.target.closest('.em-wp-header-item-editor .em-wp-header-appr__clear');
+            if (!pick && !clear) { return; }
+
+            e.preventDefault();
+            var root2 = (pick || clear).closest('.em-wp-header-item-editor');
+            if (!root2) { return; }
+            var media = root2.querySelector('.em-wp-header-appr__media');
+
+            if (clear) {
+                setMediaThumb(media, 0, '');
+                setDirty(root2, isDirty(root2));
+                return;
+            }
+
             if (!window.wp || !window.wp.media) { return; }
             var frame = window.wp.media({ title: '<?php echo esc_js(__('Image de fond du HEADER', 'em-wp')); ?>', multiple: false, library: { type: 'image' } });
             frame.on('select', function () {
                 var att = frame.state().get('selection').first().toJSON();
                 var sizes = att.sizes || {};
                 var url = sizes.medium ? sizes.medium.url : att.url;
-                setMediaThumb(media, parseInt(att.id, 10) || 0, url);
-                markDirty(root);
+                setMediaThumb(media, asInt(att.id, 0), url);
+                setDirty(root2, isDirty(root2));
             });
             frame.open();
         });
 
-        // Œil : aperçu de l'item HERO/SLIDER dans la zone HEADER du wireframe.
-        document.addEventListener('click', function (e) {
-            var eye = e.target.closest('.em-wp-header-picker .em-wp-instance-picker__eye');
-            if (!eye || !window.EmWpSkeletonPreview) { return; }
-            var root = eye.closest('.em-wp-header-picker'); if (!root) { return; }
-            var part = eye.getAttribute('data-part') || 'hero';
-            var item = eye.getAttribute('data-item') || '';
-            var wasActive = eye.classList.contains('is-active');
-            window.EmWpSkeletonPreview.restoreAll();
-            if (wasActive) { return; }
-            var source = root.querySelector('.em-wp-header-picker__previews[data-part="' + part + '"] .em-wp-instance-picker__preview[data-item="' + item + '"] .em-wp-instance-picker__stage');
-            window.EmWpSkeletonPreview.showSingle('header', source, eye);
-            var aside = document.querySelector('.em-wp-rubriques-admin__aside');
-            if (aside && aside.scrollIntoView) { aside.scrollIntoView({ block: 'nearest' }); }
+        document.querySelectorAll('.em-wp-header-item-editor').forEach(function (root) {
+            var cfg = readJsonAttr(root, 'data-config');
+            toggleMatrix(root, (cfg.matrix || root.getAttribute('data-matrix') || 'hero'));
+            var media = root.querySelector('.em-wp-header-appr__media');
+            var hasImage = media ? asInt(media.getAttribute('data-id'), 0) > 0 : false;
+            toggleImageOptions(root, hasImage);
+            setDirty(root, false);
+            setStatus(root, '', '#6b7280');
         });
-
-        // Init de l'état « à enregistrer » (bouton désactivé tant que rien ne change).
-        document.querySelectorAll('.em-wp-header-picker').forEach(markDirty);
-
-        // À l'ouverture du HEADER : aperçu d'office, dans le wireframe, de l'item HERO
-        // branché (comme les autres rubriques) — au lieu de la simple structure.
-        // L'aperçu d'un autre item HERO/SLIDER reste accessible via l'œil.
-        function showHeaderUsedPreview(scope) {
-            if (!window.EmWpSkeletonPreview) { return; }
-            var host = scope && scope.querySelector ? scope : document;
-            var root = host.querySelector('.em-wp-header-picker'); if (!root) { return; }
-            var list = root.querySelector('.em-wp-header-picker__items[data-part="hero"]'); if (!list) { return; }
-            var current = list.getAttribute('data-current') || '';
-            var eye = root.querySelector('.em-wp-instance-picker__eye[data-part="hero"][data-item="' + current + '"]');
-            var source = root.querySelector('.em-wp-header-picker__previews[data-part="hero"] .em-wp-instance-picker__preview[data-item="' + current + '"] .em-wp-instance-picker__stage');
-            if (eye && source) { window.EmWpSkeletonPreview.showSingle('header', source, eye); }
-        }
-
-        function handlePickerMounted(event) {
-            var container = event && event.detail ? event.detail.container : null;
-            if (container) {
-                showHeaderUsedPreview(container);
-            }
-        }
-
-        if (document.readyState !== 'loading') { showHeaderUsedPreview(document); }
-        else {
-            document.addEventListener('DOMContentLoaded', function () { showHeaderUsedPreview(document); });
-        }
-
-        document.addEventListener('emWpRubriquePickerMounted', handlePickerMounted);
     })();
     </script>
     <?php
@@ -405,7 +744,76 @@ function em_wp_v4_handle_ajax_set_header(): void
         wp_send_json_error(['message' => 'invalid'], 400);
     }
 
-    $matrix = ($_POST['matrix'] ?? '') === 'hero_slider' ? 'hero_slider' : 'hero';
+    $display_mode = sanitize_key((string) ($_POST['display_mode'] ?? 'single'));
+    if (!in_array($display_mode, ['single', 'multi'], true)) {
+        $display_mode = 'single';
+    }
+    $transition_mode = sanitize_key((string) ($_POST['transition_mode'] ?? 'manual'));
+    if (!in_array($transition_mode, ['manual', 'auto'], true)) {
+        $transition_mode = 'manual';
+    }
+    $transition_timer = max(2, min(120, (int) ($_POST['transition_timer'] ?? 6)));
+    $first_item = sanitize_key((string) ($_POST['first_item'] ?? ''));
+    $hidden_items_raw = wp_unslash((string) ($_POST['hidden_items'] ?? '[]'));
+    $hidden_items = json_decode($hidden_items_raw, true);
+    if (!is_array($hidden_items)) {
+        $hidden_items = [];
+    }
+    $hidden_items = array_values(array_filter(array_map('sanitize_key', $hidden_items), static function ($slug): bool {
+        return is_string($slug) && $slug !== '';
+    }));
+
+    $header_item = sanitize_key((string) ($_POST['header_item'] ?? ''));
+    $header_type = function_exists('em_wp_admin_header_catalog_type_slug') ? em_wp_admin_header_catalog_type_slug() : 'headers';
+    if ($header_item !== '' && function_exists('em_wp_v4_get_items') && !isset(em_wp_v4_get_items($header_type)[$header_item])) {
+        wp_send_json_error(['message' => 'unknown_header_item'], 400);
+    }
+
+    em_wp_admin_header_section_save($template, [
+        'header_item'  => $header_item,
+        'display_mode' => $display_mode,
+        'transition_mode' => $transition_mode,
+        'transition_timer' => $transition_timer,
+        'first_item' => $first_item,
+        'hidden_items' => $hidden_items,
+    ]);
+
+    $saved = em_wp_admin_header_section_get($template);
+    wp_send_json_success([
+        'template' => $template,
+        'header_item' => (string) ($saved['header_item'] ?? $header_item),
+        'display_mode' => (string) ($saved['display_mode'] ?? $display_mode),
+        'transition_mode' => (string) ($saved['transition_mode'] ?? $transition_mode),
+        'transition_timer' => (int) ($saved['transition_timer'] ?? $transition_timer),
+        'first_item' => (string) ($saved['first_item'] ?? $first_item),
+        'hidden_items' => array_values((array) ($saved['hidden_items'] ?? $hidden_items)),
+    ]);
+}
+add_action('wp_ajax_em_wp_v4_set_header', 'em_wp_v4_handle_ajax_set_header');
+
+/**
+ * AJAX : enregistre la composition d'un item HEADER depuis la page RUBRIQUES.
+ */
+function em_wp_v4_handle_ajax_set_header_item_config(): void
+{
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(['message' => 'forbidden'], 403);
+    }
+
+    check_ajax_referer('em_wp_v4_set_header_item_config');
+
+    $header_item = sanitize_key((string) ($_POST['header_item'] ?? ''));
+    if ($header_item === '') {
+        wp_send_json_error(['message' => 'invalid_header_item'], 400);
+    }
+
+    $header_type = function_exists('em_wp_admin_header_catalog_type_slug') ? em_wp_admin_header_catalog_type_slug() : 'headers';
+    if (!function_exists('em_wp_v4_get_items') || !isset(em_wp_v4_get_items($header_type)[$header_item])) {
+        wp_send_json_error(['message' => 'unknown_header_item'], 400);
+    }
+
+    $matrix_raw = sanitize_key((string) ($_POST['matrix'] ?? 'hero'));
+    $matrix = in_array($matrix_raw, ['hero', 'hero_slider', 'slider'], true) ? $matrix_raw : 'hero';
     $position = ($_POST['position'] ?? '') === 'slider_left' ? 'slider_left' : 'hero_left';
     $hero = sanitize_key((string) ($_POST['hero'] ?? ''));
     $slider = sanitize_key((string) ($_POST['slider'] ?? ''));
@@ -415,14 +823,22 @@ function em_wp_v4_handle_ajax_set_header(): void
         wp_send_json_error(['message' => 'unknown_hero'], 400);
     }
 
-    if ($matrix === 'hero_slider') {
-        $slider_type = em_wp_admin_header_part_type_slug('slider');
-        if ($slider_type !== '' && $slider !== '' && function_exists('em_wp_v4_get_items') && !isset(em_wp_v4_get_items($slider_type)[$slider])) {
-            wp_send_json_error(['message' => 'unknown_slider'], 400);
-        }
+    $slider_type = em_wp_admin_header_part_type_slug('slider');
+    if ($slider_type !== '' && $slider !== '' && function_exists('em_wp_v4_get_items') && !isset(em_wp_v4_get_items($slider_type)[$slider])) {
+        wp_send_json_error(['message' => 'unknown_slider'], 400);
     }
 
-    $ratio = sanitize_text_field((string) ($_POST['ratio'] ?? ''));
+    $ratio = sanitize_text_field((string) ($_POST['ratio'] ?? '75-25'));
+    $template = sanitize_key((string) ($_POST['template'] ?? ''));
+    if ($template === '' && function_exists('em_wp_get_editing_template_slug')) {
+        $template = sanitize_key((string) em_wp_get_editing_template_slug());
+    }
+    if ($template === '') {
+        $template = sanitize_key((string) get_option('em_wp_active_template', ''));
+    }
+    if ($template === '') {
+        $template = 'mayami';
+    }
     $appearance = [
         'bg'               => sanitize_hex_color((string) ($_POST['a_bg'] ?? '')) ?: '',
         'bg_image_id'      => max(0, (int) ($_POST['a_bg_image_id'] ?? 0)),
@@ -435,15 +851,29 @@ function em_wp_v4_handle_ajax_set_header(): void
         'pr'               => max(0, (int) ($_POST['a_pr'] ?? 0)),
     ];
 
-    em_wp_admin_header_section_save($template, [
-        'matrix'     => $matrix,
-        'position'   => $position,
-        'hero'       => $hero,
-        'slider'     => $slider,
-        'ratio'      => $ratio,
-        'appearance' => $appearance,
-    ]);
+    if (function_exists('em_wp_admin_header_item_config_save')) {
+        em_wp_admin_header_item_config_save($header_item, [
+            'matrix'     => $matrix,
+            'position'   => $position,
+            'hero'       => $hero,
+            'slider'     => $slider,
+            'ratio'      => $ratio,
+            'appearance' => $appearance,
+        ]);
+    }
 
-    wp_send_json_success(['template' => $template, 'matrix' => $matrix, 'position' => $position, 'hero' => $hero, 'slider' => $slider]);
+    $preview_html = function_exists('em_wp_admin_header_composite_html_for_item')
+        ? em_wp_admin_header_composite_html_for_item($template, $header_item)
+        : '';
+
+    wp_send_json_success([
+        'header_item' => $header_item,
+        'matrix'      => $matrix,
+        'position'    => $position,
+        'hero'        => $hero,
+        'slider'      => $slider,
+        'template'    => $template,
+        'preview_html'=> $preview_html,
+    ]);
 }
-add_action('wp_ajax_em_wp_v4_set_header', 'em_wp_v4_handle_ajax_set_header');
+add_action('wp_ajax_em_wp_v4_set_header_item_config', 'em_wp_v4_handle_ajax_set_header_item_config');

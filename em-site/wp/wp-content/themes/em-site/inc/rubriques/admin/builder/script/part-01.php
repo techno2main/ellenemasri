@@ -15,9 +15,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require dirname(__DIR__) . '/rows-script.php';
-require dirname(__DIR__) . '/chip-script.php';
-require dirname(__DIR__) . '/slides-editor-script.php';
+require dirname(__DIR__) . '/builder-rows-script.php';
+require dirname(__DIR__) . '/builder-chip-script.php';
+require dirname(__DIR__) . '/builder-slider-slides-script.php';
 ?>
 <script>
 (function () {
@@ -49,6 +49,7 @@ require dirname(__DIR__) . '/slides-editor-script.php';
             return;
         }
         builder.dataset.emV4SetupDone = '1';
+        var isReleaseBuilder = (builder.getAttribute('data-item-type') || '') === 'release';
 
         var formId = builder.getAttribute('data-form');
         var structureInput = document.getElementById(formId + '-structure');
@@ -91,6 +92,9 @@ require dirname(__DIR__) . '/slides-editor-script.php';
 
 
         function update() {
+            if (isReleaseBuilder) {
+                applyReleaseCompactMode(builder);
+            }
             if (window.EmWpV4Rows && window.EmWpV4Rows.refreshAllTabNames) {
                 window.EmWpV4Rows.refreshAllTabNames(builder);
             }
@@ -293,10 +297,130 @@ require dirname(__DIR__) . '/slides-editor-script.php';
         if (form) { form.addEventListener('submit', update); }
 
         window.EmWpV4Rows.singleOpen(builder);
+        if (isReleaseBuilder) {
+            installReleaseTools(builder, update);
+        }
         builder.querySelectorAll('.em-v4-chip').forEach(function (chip) { syncRichAlign(chip); });
         builder.querySelectorAll('.em-v4-row__title').forEach(function (box) { renderRowTitleText(box); });
         update();
         ready = true;
+    }
+
+    function installReleaseTools(builder, update) {
+        var actions = builder.querySelector('.em-v4-builder__actions');
+        if (!actions || actions.querySelector('.em-v4-release-tools')) {
+            return;
+        }
+
+        var wrap = document.createElement('span');
+        wrap.className = 'em-v4-release-tools';
+
+        var addBtn = document.createElement('button');
+        addBtn.type = 'button';
+        addBtn.className = 'button em-v4-release-tools__add';
+        addBtn.textContent = '<?php echo esc_js(__('Ajouter une ligne crédit', 'em-wp')); ?>';
+        addBtn.addEventListener('click', function () {
+            addReleaseCreditLine(builder, update);
+        });
+
+        var hint = document.createElement('span');
+        hint.className = 'em-v4-release-tools__hint';
+        hint.textContent = '<?php echo esc_js(__('Mode compact: les lignes crédit masquent les options avancées (liens, taille, police, alignement).', 'em-wp')); ?>';
+
+        wrap.appendChild(addBtn);
+        wrap.appendChild(hint);
+        actions.appendChild(wrap);
+    }
+
+    function releaseRightColumn(builder) {
+        var row = builder.querySelector('.em-v4-row');
+        if (!row) { return null; }
+        return row.querySelector('.em-v4-col[data-col="2"] .em-v4-col__drop');
+    }
+
+    function addReleaseCreditLine(builder, update) {
+        var drop = releaseRightColumn(builder);
+        if (!drop || !window.EmWpV4Chip || typeof window.EmWpV4Chip.build !== 'function') {
+            return;
+        }
+
+        var creditChip = window.EmWpV4Chip.build('text_text', '');
+        if (creditChip) {
+            var left = creditChip.querySelector('.em-v4-chip__titext');
+            var right = creditChip.querySelector('.em-v4-chip__titext2');
+            if (left) { left.value = '<?php echo esc_js(__('Label:', 'em-wp')); ?>'; }
+            if (right) { right.value = ''; }
+            drop.appendChild(creditChip);
+        }
+
+        var sepChip = window.EmWpV4Chip.build('sep_line', '');
+        if (sepChip) {
+            drop.appendChild(sepChip);
+        }
+
+        update();
+    }
+
+    function applyReleaseCompactMode(builder) {
+        var drop = releaseRightColumn(builder);
+        if (!drop) {
+            return;
+        }
+
+        var chips = Array.prototype.slice.call(drop.querySelectorAll('.em-v4-chip'));
+        chips.forEach(function (chip) {
+            chip.classList.remove('em-v4-chip--release-intro', 'em-v4-chip--release-title', 'em-v4-chip--release-credit', 'em-v4-chip--release-credit-sep');
+        });
+
+        var introDone = false;
+        var titleDone = false;
+        var lastCreditChip = null;
+
+        chips.forEach(function (chip) {
+            var type = chip.getAttribute('data-type') || '';
+
+            if (type === 'text' && !introDone) {
+                introDone = true;
+                chip.classList.add('em-v4-chip--release-intro');
+                var intro = chip.querySelector('.em-v4-chip__value');
+                if (intro) { intro.placeholder = '<?php echo esc_js(__('Intro section (ex: 04 / Release)', 'em-wp')); ?>'; }
+                return;
+            }
+
+            if (type === 'text_text' && !titleDone) {
+                titleDone = true;
+                chip.classList.add('em-v4-chip--release-title');
+                var titleLeft = chip.querySelector('.em-v4-chip__titext');
+                var titleRight = chip.querySelector('.em-v4-chip__titext2');
+                if (titleLeft) { titleLeft.placeholder = '<?php echo esc_js(__('Titre gauche', 'em-wp')); ?>'; }
+                if (titleRight) { titleRight.placeholder = '<?php echo esc_js(__('Titre droite', 'em-wp')); ?>'; }
+
+                var titleParts = chip.querySelectorAll('.em-v4-chip__tt-part');
+                if (titleParts[0]) { titleParts[0].classList.add('em-v4-chip__tt-part--left'); }
+                if (titleParts[1]) { titleParts[1].classList.add('em-v4-chip__tt-part--right'); }
+                return;
+            }
+
+            if (type === 'text_text') {
+                chip.classList.add('em-v4-chip--release-credit');
+                var left = chip.querySelector('.em-v4-chip__titext');
+                var right = chip.querySelector('.em-v4-chip__titext2');
+                if (left) { left.placeholder = '<?php echo esc_js(__('Label crédit', 'em-wp')); ?>'; }
+                if (right) { right.placeholder = '<?php echo esc_js(__('Valeur crédit', 'em-wp')); ?>'; }
+
+                var parts = chip.querySelectorAll('.em-v4-chip__tt-part');
+                if (parts[0]) { parts[0].classList.add('em-v4-chip__tt-part--left'); }
+                if (parts[1]) { parts[1].classList.add('em-v4-chip__tt-part--right'); }
+
+                lastCreditChip = chip;
+                return;
+            }
+
+            if (type === 'sep_line' && lastCreditChip) {
+                chip.classList.add('em-v4-chip--release-credit-sep');
+                lastCreditChip = null;
+            }
+        });
     }
 
     function startRowTitleEdit(box) {
@@ -490,12 +614,16 @@ require dirname(__DIR__) . '/slides-editor-script.php';
     function readImage(chip) {
         var hid = chip.querySelector('.em-v4-chip__value');
         var lnk = chip.querySelector('.em-v4-chip__url');
+        var tapeHidden = chip.querySelector('.em-v4-chip__itape-hidden');
         var tape = chip.querySelector('.em-v4-chip__itape');
+        var tapeColor = chip.querySelector('.em-v4-chip__itape-color');
+        var tapeVisible = tapeHidden ? !tapeHidden.checked : !!(tape && tape.checked);
         return {
             id: hid ? hid.value : '', link: lnk ? lnk.value : '',
             w: parseInt(val(chip, '.em-v4-chip__w'), 10) || 0, h: parseInt(val(chip, '.em-v4-chip__h'), 10) || 0,
             fx: parseInt(val(chip, '.em-v4-chip__fx'), 10) || 50, fy: parseInt(val(chip, '.em-v4-chip__fy'), 10) || 50,
-            tape: !!(tape && tape.checked)
+            tape: tapeVisible,
+            tape_color: tapeColor ? tapeColor.value : ''
         };
     }
 

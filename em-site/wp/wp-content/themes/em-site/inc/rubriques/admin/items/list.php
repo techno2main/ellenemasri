@@ -12,6 +12,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Le type HEADER réutilise le moteur de composition de la page squelette.
+$em_wp_header_section_file = get_template_directory() . '/inc/admin/pages/rubriques/header-section.php';
+if (is_readable($em_wp_header_section_file)) {
+    require_once $em_wp_header_section_file;
+}
+
+$em_wp_header_section_assets_file = get_template_directory() . '/inc/admin/pages/rubriques/header-section-assets.php';
+if (is_readable($em_wp_header_section_assets_file)) {
+    require_once $em_wp_header_section_assets_file;
+}
+
 /**
  * Affiche la section des footers d'un type.
  */
@@ -20,6 +31,7 @@ function em_wp_v4_render_items_section(string $type_slug): void
     $items = em_wp_v4_get_items($type_slug);
     $open_item = sanitize_key((string) ($_GET['item'] ?? ''));
     $n = em_wp_rubrique_type_nouns($type_slug);
+    $can_add_items = !(function_exists('em_wp_v4_is_fixed_single_item_type') && em_wp_v4_is_fixed_single_item_type($type_slug));
     ?>
     <div class="em-v4-items">
         <?php if ($items === []) : ?>
@@ -30,7 +42,7 @@ function em_wp_v4_render_items_section(string $type_slug): void
             <?php endforeach; ?>
         <?php endif; ?>
 
-        <?php em_wp_v4_render_create_footer_form($type_slug); ?>
+        <?php if ($can_add_items) { em_wp_v4_render_create_footer_form($type_slug); } ?>
     </div>
     <?php
 }
@@ -97,7 +109,29 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
             </span>
         </summary>
         <div class="em-v4-collapse__body">
-            <?php em_wp_v4_render_item_builder($type_slug, $item_slug); ?>
+            <?php
+            if ($type_slug === 'headers' && function_exists('em_wp_admin_render_header_item_editor')) {
+                $preview_template = function_exists('em_wp_get_editing_template_slug')
+                    ? sanitize_key((string) em_wp_get_editing_template_slug())
+                    : sanitize_key((string) get_option('em_wp_active_template', ''));
+                if ($preview_template === '') {
+                    $preview_template = 'mayami';
+                }
+                $header_preview_html = function_exists('em_wp_admin_header_composite_html_for_item')
+                    ? em_wp_admin_header_composite_html_for_item($preview_template, $item_slug)
+                    : '';
+                ?>
+                <div class="em-v4-livepreview" hidden><?php echo $header_preview_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+                <?php
+
+                em_wp_admin_render_header_item_editor($item_slug);
+                if (function_exists('em_wp_admin_render_header_section_assets')) {
+                    em_wp_admin_render_header_section_assets();
+                }
+            } else {
+                em_wp_v4_render_item_builder($type_slug, $item_slug);
+            }
+            ?>
             <form id="<?php echo esc_attr($del_form_id); ?>" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-v4-deleteform" hidden>
                 <?php wp_nonce_field('em_wp_v4_delete_item'); ?>
                 <input type="hidden" name="action" value="em_wp_v4_delete_item">

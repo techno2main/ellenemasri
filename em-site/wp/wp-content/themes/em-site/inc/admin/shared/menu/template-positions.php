@@ -22,7 +22,7 @@ function em_wp_admin_menu_templates_position(): float
 }
 
 /**
- * Position menu d'un template enregistré (MAYAMI, ELLENE, …).
+ * Position menu d'un template enregistré (MAYAMI, CLIENT, …).
  */
 function em_wp_admin_menu_position_for_template(string $template_slug): int
 {

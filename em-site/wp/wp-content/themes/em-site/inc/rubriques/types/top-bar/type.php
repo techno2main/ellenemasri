@@ -23,7 +23,7 @@ function em_wp_rubrique_type_top_bar(array $types): array
 {
     $types['top-bar'] = [
         'label'        => __('TOP-BAR', 'em-wp'),
-        'label_plural' => __('TOP-BARS', 'em-wp'),
+        'label_plural' => __('TOP-BAR', 'em-wp'),
         'noun'         => __('Top-Bar', 'em-wp'),
         'icon'         => 'dashicons-menu-alt3',
         'layout'       => ['columns' => 1, 'align' => [1 => 'center']],

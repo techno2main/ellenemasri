@@ -47,13 +47,14 @@ unset($em_wp_rubrique_type_file);
 // Admin : assets, builder (une étape : structure + contenu), page V4.
 if (is_admin()) {
     require_once __DIR__ . '/admin/assets.php';
-    require_once __DIR__ . '/admin/builder/preview.php';
-    require_once __DIR__ . '/admin/builder/save.php';
-    require_once __DIR__ . '/admin/builder/chip-media.php';
-    require_once __DIR__ . '/admin/builder/chip.php';
-    require_once __DIR__ . '/admin/builder/chip-value.php';
-    require_once __DIR__ . '/admin/builder/appearance.php';
-    require_once __DIR__ . '/admin/builder/structure.php';
+    require_once __DIR__ . '/admin/builder/builder-preview-script.php';
+    require_once __DIR__ . '/admin/builder/builder-save-handler.php';
+    require_once __DIR__ . '/../admin/shared/components/scotchs-control/scotchs-control.php';
+    require_once __DIR__ . '/admin/builder/builder-chip-media-render.php';
+    require_once __DIR__ . '/admin/builder/builder-chip-render.php';
+    require_once __DIR__ . '/admin/builder/builder-chip-value-render.php';
+    require_once __DIR__ . '/admin/builder/builder-appearance-render.php';
+    require_once __DIR__ . '/admin/builder/builder-item-render.php';
     require_once __DIR__ . '/admin/items/save.php';
     require_once __DIR__ . '/admin/items/list.php';
     require_once __DIR__ . '/admin/items/list-scripts.php';

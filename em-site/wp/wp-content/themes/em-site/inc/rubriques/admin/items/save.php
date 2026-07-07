@@ -14,6 +14,16 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Rubriques verrouillées: création/duplication d'items désactivée.
+ */
+function em_wp_v4_is_fixed_single_item_type(string $type_slug): bool
+{
+    $type_slug = sanitize_key($type_slug);
+
+    return in_array($type_slug, ['top-bar', 'footer'], true);
+}
+
+/**
  * Crée un footer (item) avec la structure de départ du type.
  */
 function em_wp_v4_handle_create_item(): void
@@ -23,6 +33,10 @@ function em_wp_v4_handle_create_item(): void
     $type = sanitize_key((string) ($_POST['type'] ?? ''));
     $label = sanitize_text_field(wp_unslash((string) ($_POST['item_label'] ?? '')));
     $slug = sanitize_key((string) ($_POST['item_slug'] ?? ''));
+
+    if (em_wp_v4_is_fixed_single_item_type($type)) {
+        em_wp_v4_builder_redirect(['v4_error' => 'create', 'type' => $type]);
+    }
 
     if ($slug === '' && $label !== '') {
         $slug = $label;
@@ -117,6 +131,10 @@ function em_wp_v4_handle_duplicate_item(): void
     $type = sanitize_key((string) ($_POST['type'] ?? ''));
     $source = sanitize_key((string) ($_POST['item'] ?? ''));
     $label = sanitize_text_field(wp_unslash((string) ($_POST['item_label'] ?? '')));
+    if (em_wp_v4_is_fixed_single_item_type($type)) {
+        em_wp_v4_builder_redirect(['v4_error' => 'duplicate', 'type' => $type]);
+    }
+
     $items = em_wp_v4_get_items($type);
 
     if (!em_wp_rubrique_type_exists($type) || !isset($items[$source])) {

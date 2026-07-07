@@ -132,3 +132,5 @@ em-wp/documentation/*
 
 # em-site — exports SQL locaux (sensibles/volumineux)
 em-site/documentation/bdd/export/*
+
+em-wp_old/

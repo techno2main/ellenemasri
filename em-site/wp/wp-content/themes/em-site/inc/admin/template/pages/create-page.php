@@ -316,6 +316,14 @@ function em_wp_admin_render_template_create_page(): void
         return;
     }
 
+    if (function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled()) {
+        em_wp_admin_template_redirect_with_notice(
+            em_wp_admin_template_choice_admin_url(),
+            'warning',
+            __('Mode template unique actif : page assistant indisponible.', 'em-wp')
+        );
+    }
+
     if (!em_wp_admin_can_manage_templates()) {
         em_wp_admin_safe_redirect(em_wp_admin_template_choice_admin_url());
         return;

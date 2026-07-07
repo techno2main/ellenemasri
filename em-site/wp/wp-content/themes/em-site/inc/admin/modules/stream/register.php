@@ -53,9 +53,9 @@ function em_wp_stream_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_style(
         'em-wp-header-admin',
-        get_template_directory_uri() . '/assets/admin/css/modules/header/header.css',
+        get_template_directory_uri() . '/assets/admin/css/modules/header/admin-preview-render-header.css',
         ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
-        em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
+        em_wp_admin_asset_version('assets/admin/css/modules/header/admin-preview-render-header.css')
     );
 
     $theme_uri = get_template_directory_uri();
@@ -76,9 +76,9 @@ function em_wp_stream_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
-        $theme_uri . '/assets/admin/js/shared/media/slide-sortable.js',
+        $theme_uri . '/assets/admin/shared/js/media/slide-sortable.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/media/slide-sortable.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/media/slide-sortable.js'),
         true
     );
 

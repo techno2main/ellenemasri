@@ -50,7 +50,7 @@ function em_wp_v4_enqueue_assets(): void
     // CSS du SLIDER front (mayami) pour que l'aperçu temps réel du champ
     // « Slider » ait le LOOK COMPLET du site (cadre, scotch, flèches, bandeau,
     // pastilles…) au lieu d'un simple visuel.
-    $slider_css_rel = '/assets/front/css/modules/slider/mayami/slider.css';
+    $slider_css_rel = '/assets/front/shared/css/slider.css';
     $slider_css_path = get_template_directory() . $slider_css_rel;
     if (file_exists($slider_css_path)) {
         wp_enqueue_style(

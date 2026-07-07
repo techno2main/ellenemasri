@@ -434,9 +434,9 @@ function em_wp_admin_enqueue_menu_accordion(): void
 
     wp_enqueue_script(
         'em-wp-admin-menu-accordion',
-        get_template_directory_uri() . '/assets/admin/js/shared/navigation/menu-accordion.js',
+        get_template_directory_uri() . '/assets/admin/shared/js/navigation/menu-accordion.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/navigation/menu-accordion.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/navigation/menu-accordion.js'),
         true
     );
 }

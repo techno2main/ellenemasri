@@ -64,7 +64,7 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
     // CSS du SLIDER front (mayami) : le wireframe du squelette rend de vraies
     // rubriques V4, dont le champ « Slider » (template mayami). Sans ce CSS, les
     // slides s'empilent en pleine hauteur au lieu d'occuper le cadre du slider.
-    $slider_css_rel = '/assets/front/css/modules/slider/mayami/slider.css';
+    $slider_css_rel = '/assets/front/shared/css/slider.css';
     $slider_css_path = get_template_directory() . $slider_css_rel;
     if (file_exists($slider_css_path)) {
         wp_enqueue_style(
@@ -77,9 +77,9 @@ function em_wp_admin_rubriques_enqueue(string $hook_suffix): void
 
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
-        $theme_uri . '/assets/admin/js/shared/media/slide-sortable.js',
+        $theme_uri . '/assets/admin/shared/js/media/slide-sortable.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/media/slide-sortable.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/media/slide-sortable.js'),
         true
     );
 

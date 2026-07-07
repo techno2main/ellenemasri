@@ -137,8 +137,12 @@ function em_wp_rubrique_slides_config($value): array
         'title'        => '',
         'title_hidden' => false,
         'frame_bg'     => '',
+        'border_color' => '',
+        'shadow_color' => '',
         'footer_bg'    => '',
         'footer_text'  => '',
+        'tapes_hidden' => false,
+        'tapes_color'  => '',
         'slides'       => [],
     ];
 
@@ -165,8 +169,12 @@ function em_wp_rubrique_slides_config($value): array
     $config['title']        = sanitize_text_field((string) ($decoded['title'] ?? ''));
     $config['title_hidden'] = !empty($decoded['title_hidden']);
     $config['frame_bg']     = sanitize_hex_color((string) ($decoded['frame_bg'] ?? '')) ?: '';
+    $config['border_color'] = sanitize_hex_color((string) ($decoded['border_color'] ?? '')) ?: '';
+    $config['shadow_color'] = sanitize_hex_color((string) ($decoded['shadow_color'] ?? '')) ?: '';
     $config['footer_bg']    = sanitize_hex_color((string) ($decoded['footer_bg'] ?? '')) ?: '';
     $config['footer_text']  = sanitize_hex_color((string) ($decoded['footer_text'] ?? '')) ?: '';
+    $config['tapes_hidden']  = !empty($decoded['tapes_hidden']);
+    $config['tapes_color']   = sanitize_hex_color((string) ($decoded['tapes_color'] ?? '')) ?: '';
 
     $slides = is_array($decoded['slides'] ?? null) ? $decoded['slides'] : [];
     foreach ($slides as $slide) {
@@ -191,8 +199,12 @@ function em_wp_field_sanitize_slides($value): string
         $config['slides'] === []
         && $config['title'] === ''
         && $config['frame_bg'] === ''
+        && $config['border_color'] === ''
+        && $config['shadow_color'] === ''
         && $config['footer_bg'] === ''
         && $config['footer_text'] === ''
+        && !$config['tapes_hidden']
+        && $config['tapes_color'] === ''
     ) {
         return '';
     }
@@ -316,6 +328,8 @@ function em_wp_rubrique_slides_front_html(array $config): string
         'footer_title'        => (string) ($config['title'] ?? ''),
         'slider_title_hidden' => !empty($config['title_hidden']),
         'frame_bg_color'      => (string) ($config['frame_bg'] ?? ''),
+        'border_color'        => (string) ($config['border_color'] ?? ''),
+        'shadow_color'        => (string) ($config['shadow_color'] ?? ''),
         'footer_bg_color'     => (string) ($config['footer_bg'] ?? ''),
         'footer_text'         => (string) ($config['footer_text'] ?? ''),
     ];
@@ -326,7 +340,7 @@ function em_wp_rubrique_slides_front_html(array $config): string
     // au lieu d'occuper le cadre du slider. WP imprime les styles tardifs en
     // pied de page (front comme admin), donc l'appel reste valide pendant le rendu.
     if (function_exists('wp_enqueue_style')) {
-        $slider_css_rel = 'assets/front/css/modules/slider/mayami/slider.css';
+        $slider_css_rel = 'assets/front/shared/css/slider.css';
         $slider_css_path = get_template_directory() . '/' . $slider_css_rel;
         if (file_exists($slider_css_path)) {
             wp_enqueue_style(
@@ -380,30 +394,32 @@ function em_wp_rubrique_video_provider(string $url): array
 }
 
 /**
- * Décode la valeur d'un champ « Vidéo URL » en { url, thumb, clickable }.
+ * Décode la valeur d'un champ « Vidéo URL » en { url, thumb, clickable, tapes_hidden, tapes_color }.
  *
  * Rétrocompatible : une simple URL (legacy) → embed cliquable désactivé.
  *
  * @param mixed $value
- * @return array{url:string, thumb:int, clickable:bool}
+ * @return array{url:string, thumb:int, clickable:bool, tapes_hidden:bool, tapes_color:string}
  */
 function em_wp_rubrique_video_url_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['url' => trim((string) $value), 'thumb' => 0, 'clickable' => false];
+        return ['url' => trim((string) $value), 'thumb' => 0, 'clickable' => false, 'tapes_hidden' => false, 'tapes_color' => ''];
     }
 
     return [
         'url'       => trim((string) ($decoded['url'] ?? '')),
         'thumb'     => absint($decoded['thumb'] ?? 0),
         'clickable' => !empty($decoded['clickable']),
+        'tapes_hidden' => !empty($decoded['tapes_hidden']),
+        'tapes_color'  => sanitize_hex_color((string) ($decoded['tapes_color'] ?? '')) ?: '',
     ];
 }
 
 /**
- * Sanitise un champ « Vidéo URL » : URL + miniature (ID média) + lien cliquable.
+ * Sanitise un champ « Vidéo URL » : URL + miniature (ID média) + lien cliquable + options scotchs.
  *
  * @param mixed $value
  */
@@ -417,7 +433,13 @@ function em_wp_field_sanitize_video_url($value): string
         return '';
     }
 
-    return (string) wp_json_encode(['url' => $url, 'thumb' => $thumb, 'clickable' => $v['clickable'] ? 1 : 0]);
+    return (string) wp_json_encode([
+        'url' => $url,
+        'thumb' => $thumb,
+        'clickable' => $v['clickable'] ? 1 : 0,
+        'tapes_hidden' => !empty($v['tapes_hidden']) ? 1 : 0,
+        'tapes_color' => sanitize_hex_color((string) ($v['tapes_color'] ?? '')) ?: '',
+    ]);
 }
 
 /**

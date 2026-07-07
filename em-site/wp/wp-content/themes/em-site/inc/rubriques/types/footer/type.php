@@ -26,7 +26,7 @@ function em_wp_rubrique_type_footer(array $types): array
 {
     $types['footer'] = [
         'label'        => __('FOOTER', 'em-wp'),
-        'label_plural' => __('FOOTERS', 'em-wp'),
+        'label_plural' => __('FOOTER', 'em-wp'),
         'noun'         => __('Footer', 'em-wp'),
         'icon'         => 'dashicons-align-center',
         'layout'  => ['columns' => 3, 'align' => [1 => 'left', 2 => 'center', 3 => 'right']],

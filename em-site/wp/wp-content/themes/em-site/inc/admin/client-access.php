@@ -1,6 +1,6 @@
 <?php
 /**
- * Accès admin client (ellene-admin) vs accès total (admin-my).
+ * Accès admin client (client-admin) vs accès total (admin-my).
  *
  * @package em-wp
  */
@@ -24,19 +24,19 @@ function em_wp_admin_user_login(): string
 }
 
 /**
- * Alias login: admin total (ancien + nouveau).
+ * Login admin total (accès complet).
  */
 function em_wp_admin_power_user_logins(): array
 {
-    return ['admin-my', 'admin-tyson'];
+    return ['admin-tyson'];
 }
 
 /**
- * Alias login: compte client Ellene (ancien + nouveau).
+ * Login admin client (accès restreint).
  */
-function em_wp_admin_ellene_user_logins(): array
+function em_wp_admin_client_user_logins(): array
 {
-    return ['ellene-admin', 'admin-ellene'];
+    return ['admin-ellene'];
 }
 
 /**
@@ -48,30 +48,30 @@ function em_wp_admin_is_power_user(): bool
 }
 
 /**
- * Compte client Ellene.
+ * Compte client Client.
  */
-function em_wp_admin_is_ellene_admin(): bool
+function em_wp_admin_is_client_admin(): bool
 {
-    return in_array(em_wp_admin_user_login(), em_wp_admin_ellene_user_logins(), true);
+    return in_array(em_wp_admin_user_login(), em_wp_admin_client_user_logins(), true);
 }
 
 /**
- * Appliquer les restrictions ellene-admin.
+ * Appliquer les restrictions client-admin.
  */
-function em_wp_admin_should_limit_ellene_client(): bool
+function em_wp_admin_should_limit_client_admin(): bool
 {
     return is_admin()
         && current_user_can('manage_options')
-        && em_wp_admin_is_ellene_admin()
+        && em_wp_admin_is_client_admin()
         && !em_wp_admin_is_power_user();
 }
 
 /**
- * Menus latéraux masqués pour ellene-admin.
+ * Menus latéraux masqués pour client-admin.
  */
-function em_wp_limit_admin_menu_for_ellene_admin(): void
+function em_wp_limit_admin_menu_for_client_admin(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -90,14 +90,14 @@ function em_wp_limit_admin_menu_for_ellene_admin(): void
         remove_menu_page($slug);
     }
 }
-add_action('admin_menu', 'em_wp_limit_admin_menu_for_ellene_admin', 999);
+add_action('admin_menu', 'em_wp_limit_admin_menu_for_client_admin', 999);
 
 /**
  * Apparence : ne garder que la liste des thèmes.
  */
-function em_wp_limit_appearance_submenu_for_ellene_admin(): void
+function em_wp_limit_appearance_submenu_for_client_admin(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -115,14 +115,14 @@ function em_wp_limit_appearance_submenu_for_ellene_admin(): void
         }
     }
 }
-add_action('admin_menu', 'em_wp_limit_appearance_submenu_for_ellene_admin', 1001);
+add_action('admin_menu', 'em_wp_limit_appearance_submenu_for_client_admin', 1001);
 
 /**
  * Paramètres : ne garder que Réglages généraux (options-general.php).
  */
-function em_wp_limit_settings_submenu_for_ellene_admin(): void
+function em_wp_limit_settings_submenu_for_client_admin(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -140,14 +140,14 @@ function em_wp_limit_settings_submenu_for_ellene_admin(): void
         }
     }
 }
-add_action('admin_menu', 'em_wp_limit_settings_submenu_for_ellene_admin', 1000);
+add_action('admin_menu', 'em_wp_limit_settings_submenu_for_client_admin', 1000);
 
 /**
  * Redirige les écrans WP natifs interdits vers Apparence → Thèmes.
  */
-function em_wp_redirect_blocked_admin_pages_for_ellene_admin(): void
+function em_wp_redirect_blocked_admin_pages_for_client_admin(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -194,14 +194,14 @@ function em_wp_redirect_blocked_admin_pages_for_ellene_admin(): void
         exit;
     }
 }
-add_action('admin_init', 'em_wp_redirect_blocked_admin_pages_for_ellene_admin', 20);
+add_action('admin_init', 'em_wp_redirect_blocked_admin_pages_for_client_admin', 20);
 
 /**
  * Barre admin : masquer + New et menu WordPress (logo WP).
  */
-function em_wp_limit_admin_bar_for_ellene_admin($wp_admin_bar): void
+function em_wp_limit_admin_bar_for_client_admin($wp_admin_bar): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -226,7 +226,7 @@ function em_wp_limit_admin_bar_for_ellene_admin($wp_admin_bar): void
         $wp_admin_bar->remove_node($node_id);
     }
 }
-add_action('admin_bar_menu', 'em_wp_limit_admin_bar_for_ellene_admin', 999);
+add_action('admin_bar_menu', 'em_wp_limit_admin_bar_for_client_admin', 999);
 
 /**
  * Barre admin : retirer le préfixe « Howdy, » du menu compte (conserve l'avatar).
@@ -244,27 +244,27 @@ function em_wp_strip_admin_bar_howdy($wp_admin_bar): void
 add_action('admin_bar_menu', 'em_wp_strip_admin_bar_howdy', 9999);
 
 /**
- * ellene-admin : désactiver la recherche Ctrl+K (Command Palette).
+ * client-admin : désactiver la recherche Ctrl+K (Command Palette).
  *
  * @param mixed $load
  * @return mixed
  */
-function em_wp_ellene_admin_disable_command_palette($load)
+function em_wp_client_admin_disable_command_palette($load)
 {
-    if (em_wp_admin_should_limit_ellene_client()) {
+    if (em_wp_admin_should_limit_client_admin()) {
         return false;
     }
 
     return $load;
 }
-add_filter('should_load_command_palette', 'em_wp_ellene_admin_disable_command_palette');
+add_filter('should_load_command_palette', 'em_wp_client_admin_disable_command_palette');
 
 /**
- * ellene-admin : retirer les onglets Help (profil, apparence…).
+ * client-admin : retirer les onglets Help (profil, apparence…).
  */
-function em_wp_ellene_admin_remove_help_tabs(): void
+function em_wp_client_admin_remove_help_tabs(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -280,18 +280,18 @@ function em_wp_ellene_admin_remove_help_tabs(): void
         $screen->remove_help_tabs();
     }
 }
-add_action('admin_head', 'em_wp_ellene_admin_remove_help_tabs', 999);
+add_action('admin_head', 'em_wp_client_admin_remove_help_tabs', 999);
 
 /**
  * Filet CSS admin (menus résiduels + barre du haut).
  */
-function em_wp_ellene_admin_access_fallback_css(): void
+function em_wp_client_admin_access_fallback_css(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
     ?>
-    <style id="em-wp-ellene-admin-access">
+    <style id="em-wp-client-admin-access">
         #wpadminbar #wp-admin-bar-wp-logo,
         #wpadminbar #wp-admin-bar-new-content,
         #wpadminbar #wp-admin-bar-new-post,
@@ -326,15 +326,15 @@ function em_wp_ellene_admin_access_fallback_css(): void
     </style>
     <?php
 }
-add_action('admin_head', 'em_wp_ellene_admin_access_fallback_css', 100);
-add_action('wp_head', 'em_wp_ellene_admin_access_fallback_css', 100);
+add_action('admin_head', 'em_wp_client_admin_access_fallback_css', 100);
+add_action('wp_head', 'em_wp_client_admin_access_fallback_css', 100);
 
 /**
- * Profil ellene-admin : retirer Application Passwords (PHP).
+ * Profil client-admin : retirer Application Passwords (PHP).
  */
-function em_wp_ellene_admin_remove_profile_sections(): void
+function em_wp_client_admin_remove_profile_sections(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -347,14 +347,14 @@ function em_wp_ellene_admin_remove_profile_sections(): void
     remove_action('show_user_profile', 'wp_application_passwords_profile_section');
     remove_action('edit_user_profile', 'wp_application_passwords_profile_section');
 }
-add_action('admin_init', 'em_wp_ellene_admin_remove_profile_sections');
+add_action('admin_init', 'em_wp_client_admin_remove_profile_sections');
 
 /**
- * Profil ellene-admin : masquer options personnelles avancées (CSS).
+ * Profil client-admin : masquer options personnelles avancées (CSS).
  */
-function em_wp_ellene_admin_profile_page_css(): void
+function em_wp_client_admin_profile_page_css(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -364,7 +364,7 @@ function em_wp_ellene_admin_profile_page_css(): void
         return;
     }
     ?>
-    <style id="em-wp-ellene-admin-profile">
+    <style id="em-wp-client-admin-profile">
         .user-syntax-highlighting-wrap,
         .user-admin-color-wrap,
         .user-comment-shortcuts-wrap,
@@ -377,14 +377,14 @@ function em_wp_ellene_admin_profile_page_css(): void
     </style>
     <?php
 }
-add_action('admin_head', 'em_wp_ellene_admin_profile_page_css', 100);
+add_action('admin_head', 'em_wp_client_admin_profile_page_css', 100);
 
 /**
- * ellene-admin : Apparence (themes.php) — sans Add Theme ni Help.
+ * client-admin : Apparence (themes.php) — sans Add Theme ni Help.
  */
-function em_wp_ellene_admin_themes_page_css(): void
+function em_wp_client_admin_themes_page_css(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -394,7 +394,7 @@ function em_wp_ellene_admin_themes_page_css(): void
         return;
     }
     ?>
-    <style id="em-wp-ellene-admin-themes">
+    <style id="em-wp-client-admin-themes">
         .themes-php .page-title-action,
         .themes-php .wrap .page-title-action,
         #contextual-help-link-wrap,
@@ -404,14 +404,14 @@ function em_wp_ellene_admin_themes_page_css(): void
     </style>
     <?php
 }
-add_action('admin_head', 'em_wp_ellene_admin_themes_page_css', 100);
+add_action('admin_head', 'em_wp_client_admin_themes_page_css', 100);
 
 /**
- * ellene-admin : Réglages généraux — masquer Membership et New User Default Role.
+ * client-admin : Réglages généraux — masquer Membership et New User Default Role.
  */
-function em_wp_ellene_admin_settings_page_css(): void
+function em_wp_client_admin_settings_page_css(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client()) {
+    if (!em_wp_admin_should_limit_client_admin()) {
         return;
     }
 
@@ -421,7 +421,7 @@ function em_wp_ellene_admin_settings_page_css(): void
         return;
     }
     ?>
-    <style id="em-wp-ellene-admin-settings">
+    <style id="em-wp-client-admin-settings">
         .options-general-php tr:has(#users_can_register),
         .options-general-php tr:has(#default_role) {
             display: none !important;
@@ -429,50 +429,50 @@ function em_wp_ellene_admin_settings_page_css(): void
     </style>
     <?php
 }
-add_action('admin_head', 'em_wp_ellene_admin_settings_page_css', 100);
+add_action('admin_head', 'em_wp_client_admin_settings_page_css', 100);
 
 /**
- * Slug de la page intermédiaire dédiée à ellene-admin.
+ * Slug de la page intermédiaire dédiée à client-admin.
  */
-function em_wp_ellene_admin_gate_page_slug(): string
+function em_wp_client_admin_gate_page_slug(): string
 {
-    return 'em-ellene-admin-gate';
+    return 'em-client-admin-gate';
 }
 
 /**
- * Nom d'option stockant l'état + message du verrou ellene-admin.
+ * Nom d'option stockant l'état + message du verrou client-admin.
  */
-function em_wp_ellene_admin_gate_option_name(): string
+function em_wp_client_admin_gate_option_name(): string
 {
-    return 'em_wp_ellene_admin_gate';
+    return 'em_wp_client_admin_gate';
 }
 
 /**
  * Slug page de réglages du verrou (réservée à admin-my).
  */
-function em_wp_ellene_admin_gate_settings_page_slug(): string
+function em_wp_client_admin_gate_settings_page_slug(): string
 {
-    return 'em-ellene-admin-gate-settings';
+    return 'em-client-admin-gate-settings';
 }
 
 /**
- * Message par défaut du verrou ellene-admin.
+ * Message par défaut du verrou client-admin.
  */
-function em_wp_ellene_admin_gate_default_message(): string
+function em_wp_client_admin_gate_default_message(): string
 {
-    return "Bonjour Ellene,\n\n"
+    return "Bonjour Client,\n\n"
         . "Une intervention technique est en cours. Merci de ne pas modifier le back-office pour le moment.\n\n"
         . "Tu peux revenir plus tard, ou contacter l'équipe si besoin.";
 }
 
 /**
- * Configuration complète du verrou ellene-admin.
+ * Configuration complète du verrou client-admin.
  *
  * @return array{enabled:bool,message:string}
  */
-function em_wp_ellene_admin_gate_config(): array
+function em_wp_client_admin_gate_config(): array
 {
-    $saved = get_option(em_wp_ellene_admin_gate_option_name(), []);
+    $saved = get_option(em_wp_client_admin_gate_option_name(), []);
 
     if (!is_array($saved)) {
         $saved = [];
@@ -481,7 +481,7 @@ function em_wp_ellene_admin_gate_config(): array
     $message = trim((string) ($saved['message'] ?? ''));
 
     if ($message === '') {
-        $message = em_wp_ellene_admin_gate_default_message();
+        $message = em_wp_client_admin_gate_default_message();
     }
 
     return [
@@ -491,11 +491,11 @@ function em_wp_ellene_admin_gate_config(): array
 }
 
 /**
- * Indique si le verrou ellene-admin est actif.
+ * Indique si le verrou client-admin est actif.
  */
-function em_wp_ellene_admin_gate_is_enabled(): bool
+function em_wp_client_admin_gate_is_enabled(): bool
 {
-    $cfg = em_wp_ellene_admin_gate_config();
+    $cfg = em_wp_client_admin_gate_config();
 
     return (bool) $cfg['enabled'];
 }
@@ -503,28 +503,28 @@ function em_wp_ellene_admin_gate_is_enabled(): bool
 /**
  * URL page de réglages du verrou (admin-my).
  */
-function em_wp_ellene_admin_gate_settings_admin_url(): string
+function em_wp_client_admin_gate_settings_admin_url(): string
 {
-    return admin_url('admin.php?page=' . em_wp_ellene_admin_gate_settings_page_slug());
+    return admin_url('admin.php?page=' . em_wp_client_admin_gate_settings_page_slug());
 }
 
 /**
- * Indique si l'écran admin courant est la page intermédiaire ellene-admin.
+ * Indique si l'écran admin courant est la page intermédiaire client-admin.
  */
-function em_wp_ellene_admin_is_gate_screen(): bool
+function em_wp_client_admin_is_gate_screen(): bool
 {
     global $pagenow;
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $current_page = sanitize_key((string) ($_GET['page'] ?? ''));
 
-    return $pagenow === 'admin.php' && $current_page === em_wp_ellene_admin_gate_page_slug();
+    return $pagenow === 'admin.php' && $current_page === em_wp_client_admin_gate_page_slug();
 }
 
 /**
- * URL de la page intermédiaire dédiée à ellene-admin.
+ * URL de la page intermédiaire dédiée à client-admin.
  */
-function em_wp_ellene_admin_gate_admin_url(): string
+function em_wp_client_admin_gate_admin_url(): string
 {
     return home_url('/wp-login-off/');
 }
@@ -534,9 +534,9 @@ function em_wp_ellene_admin_gate_admin_url(): string
  *
  * Personnalise ce bloc librement selon le message à transmettre.
  */
-function em_wp_ellene_admin_gate_message_html(): string
+function em_wp_client_admin_gate_message_html(): string
 {
-    $cfg = em_wp_ellene_admin_gate_config();
+    $cfg = em_wp_client_admin_gate_config();
     $safe = esc_html((string) $cfg['message']);
 
     return (string) wpautop($safe);
@@ -545,7 +545,7 @@ function em_wp_ellene_admin_gate_message_html(): string
 /**
  * Enregistre la page intermédiaire (menu masqué).
  */
-function em_wp_ellene_admin_register_gate_page(): void
+function em_wp_client_admin_register_gate_page(): void
 {
     if (!current_user_can('manage_options')) {
         return;
@@ -555,8 +555,8 @@ function em_wp_ellene_admin_register_gate_page(): void
         __('Information', 'em-wp'),
         __('Information', 'em-wp'),
         'manage_options',
-        em_wp_ellene_admin_gate_page_slug(),
-        'em_wp_ellene_admin_render_gate_page',
+        em_wp_client_admin_gate_page_slug(),
+        'em_wp_client_admin_render_gate_page',
         'dashicons-info-outline',
         2
     );
@@ -565,7 +565,7 @@ function em_wp_ellene_admin_register_gate_page(): void
 /**
  * Enregistre la page de réglages du verrou (admin-my uniquement).
  */
-function em_wp_ellene_admin_register_gate_settings_page(): void
+function em_wp_client_admin_register_gate_settings_page(): void
 {
     if (!current_user_can('manage_options')) {
         return;
@@ -573,29 +573,29 @@ function em_wp_ellene_admin_register_gate_settings_page(): void
 
     add_submenu_page(
         'options-general.php',
-        __('Verrou ellene-admin', 'em-wp'),
-        __('Verrou ellene-admin', 'em-wp'),
+        __('Verrou client-admin', 'em-wp'),
+        __('Verrou client-admin', 'em-wp'),
         'manage_options',
-        em_wp_ellene_admin_gate_settings_page_slug(),
-        'em_wp_ellene_admin_render_gate_settings_page'
+        em_wp_client_admin_gate_settings_page_slug(),
+        'em_wp_client_admin_render_gate_settings_page'
     );
 }
-add_action('admin_menu', 'em_wp_ellene_admin_register_gate_settings_page', 30);
+add_action('admin_menu', 'em_wp_client_admin_register_gate_settings_page', 30);
 
 /**
  * Retire l'entrée menu de la page intermédiaire.
  */
-function em_wp_ellene_admin_hide_gate_menu_entry(): void
+function em_wp_client_admin_hide_gate_menu_entry(): void
 {
-    remove_menu_page(em_wp_ellene_admin_gate_page_slug());
+    remove_menu_page(em_wp_client_admin_gate_page_slug());
 }
 
 /**
  * Rendu de la page intermédiaire (bloc message personnalisable).
  */
-function em_wp_ellene_admin_render_gate_page(): void
+function em_wp_client_admin_render_gate_page(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client() || !em_wp_ellene_admin_gate_is_enabled()) {
+    if (!em_wp_admin_should_limit_client_admin() || !em_wp_client_admin_gate_is_enabled()) {
         wp_safe_redirect(admin_url());
         exit;
     }
@@ -605,7 +605,7 @@ function em_wp_ellene_admin_render_gate_page(): void
     $site_url = home_url('/');
     $logout_url = wp_logout_url(home_url('/'));
     ?>
-    <div id="login" class="em-wp-ellene-gate-login">
+    <div id="login" class="em-wp-client-gate-login">
         <h1>
             <?php if ($logo_url !== '') { ?>
                 <img
@@ -618,12 +618,12 @@ function em_wp_ellene_admin_render_gate_page(): void
             <?php } ?>
         </h1>
 
-        <form id="loginform" class="em-wp-ellene-gate-form" action="#" method="post">
+        <form id="loginform" class="em-wp-client-gate-form" action="#" method="post">
             <p>
                 <label><?php esc_html_e('Information', 'em-wp'); ?></label>
             </p>
-            <div class="em-wp-ellene-gate-message">
-                <?php echo wp_kses_post(em_wp_ellene_admin_gate_message_html()); ?>
+            <div class="em-wp-client-gate-message">
+                <?php echo wp_kses_post(em_wp_client_admin_gate_message_html()); ?>
             </div>
             <p class="submit">
                 <a class="button button-primary" href="<?php echo esc_url($logout_url); ?>"><?php esc_html_e('Se déconnecter', 'em-wp'); ?></a>
@@ -643,26 +643,26 @@ function em_wp_ellene_admin_render_gate_page(): void
 /**
  * Rendu page de réglages du verrou (admin-my).
  */
-function em_wp_ellene_admin_render_gate_settings_page(): void
+function em_wp_client_admin_render_gate_settings_page(): void
 {
     if (!current_user_can('manage_options') || !em_wp_admin_is_power_user()) {
         wp_die(esc_html__('Accès refusé.', 'em-wp'));
     }
 
-    $cfg = em_wp_ellene_admin_gate_config();
+    $cfg = em_wp_client_admin_gate_config();
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $updated = sanitize_key((string) ($_GET['updated'] ?? '')) === '1';
     ?>
     <div class="wrap">
-        <h1><?php esc_html_e('Verrou ellene-admin', 'em-wp'); ?></h1>
+        <h1><?php esc_html_e('Verrou client-admin', 'em-wp'); ?></h1>
 
         <?php if ($updated) { ?>
             <div class="notice notice-success is-dismissible"><p><?php esc_html_e('Réglages enregistrés.', 'em-wp'); ?></p></div>
         <?php } ?>
 
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-            <?php wp_nonce_field('em_wp_ellene_gate_save'); ?>
-            <input type="hidden" name="action" value="em_wp_ellene_gate_save">
+            <?php wp_nonce_field('em_wp_client_gate_save'); ?>
+            <input type="hidden" name="action" value="em_wp_client_gate_save">
 
             <table class="form-table" role="presentation">
                 <tbody>
@@ -671,15 +671,15 @@ function em_wp_ellene_admin_render_gate_settings_page(): void
                         <td>
                             <label>
                                 <input type="checkbox" name="enabled" value="1" <?php checked(!empty($cfg['enabled'])); ?>>
-                                <?php esc_html_e('Activer la page intermédiaire pour ellene-admin', 'em-wp'); ?>
+                                <?php esc_html_e('Activer la page intermédiaire pour client-admin', 'em-wp'); ?>
                             </label>
-                            <p class="description"><?php esc_html_e('Activé: ellene-admin est bloquée sur la page message. Désactivé: connexion normale à son admin.', 'em-wp'); ?></p>
+                            <p class="description"><?php esc_html_e('Activé: client-admin est bloquée sur la page message. Désactivé: connexion normale à son admin.', 'em-wp'); ?></p>
                         </td>
                     </tr>
                     <tr>
-                        <th scope="row"><label for="em-wp-ellene-gate-message"><?php esc_html_e('Message', 'em-wp'); ?></label></th>
+                        <th scope="row"><label for="em-wp-client-gate-message"><?php esc_html_e('Message', 'em-wp'); ?></label></th>
                         <td>
-                            <textarea id="em-wp-ellene-gate-message" name="message" rows="10" class="large-text"><?php echo esc_textarea((string) $cfg['message']); ?></textarea>
+                            <textarea id="em-wp-client-gate-message" name="message" rows="10" class="large-text"><?php echo esc_textarea((string) $cfg['message']); ?></textarea>
                             <p class="description"><?php esc_html_e('Texte affiché dans le bloc message de la page intermédiaire.', 'em-wp'); ?></p>
                         </td>
                     </tr>
@@ -695,40 +695,40 @@ function em_wp_ellene_admin_render_gate_settings_page(): void
 /**
  * Sauvegarde des réglages du verrou (admin-my).
  */
-function em_wp_ellene_admin_save_gate_settings(): void
+function em_wp_client_admin_save_gate_settings(): void
 {
     if (!current_user_can('manage_options') || !em_wp_admin_is_power_user()) {
         wp_die(esc_html__('Accès refusé.', 'em-wp'));
     }
 
-    check_admin_referer('em_wp_ellene_gate_save');
+    check_admin_referer('em_wp_client_gate_save');
 
     $enabled = !empty($_POST['enabled']); // phpcs:ignore WordPress.Security.NonceVerification.Missing
     $message = sanitize_textarea_field((string) wp_unslash($_POST['message'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
     if (trim($message) === '') {
-        $message = em_wp_ellene_admin_gate_default_message();
+        $message = em_wp_client_admin_gate_default_message();
     }
 
-    update_option(em_wp_ellene_admin_gate_option_name(), [
+    update_option(em_wp_client_admin_gate_option_name(), [
         'enabled' => $enabled ? 1 : 0,
         'message' => $message,
     ], false);
 
-    wp_safe_redirect(add_query_arg(['page' => em_wp_ellene_admin_gate_settings_page_slug(), 'updated' => '1'], admin_url('admin.php')));
+    wp_safe_redirect(add_query_arg(['page' => em_wp_client_admin_gate_settings_page_slug(), 'updated' => '1'], admin_url('admin.php')));
     exit;
 }
-add_action('admin_post_em_wp_ellene_gate_save', 'em_wp_ellene_admin_save_gate_settings');
+add_action('admin_post_em_wp_client_gate_save', 'em_wp_client_admin_save_gate_settings');
 
 /**
- * Après connexion, ellene-admin arrive toujours sur la page intermédiaire.
+ * Après connexion, client-admin arrive toujours sur la page intermédiaire.
  *
  * @param mixed $redirect_to
  * @param mixed $requested_redirect_to
  * @param mixed $user
  * @return mixed
  */
-function em_wp_ellene_admin_login_redirect_to_gate($redirect_to, $requested_redirect_to, $user)
+function em_wp_client_admin_login_redirect_to_gate($redirect_to, $requested_redirect_to, $user)
 {
     unset($requested_redirect_to);
 
@@ -736,7 +736,7 @@ function em_wp_ellene_admin_login_redirect_to_gate($redirect_to, $requested_redi
         return $redirect_to;
     }
 
-    if (!in_array(strtolower((string) $user->user_login), em_wp_admin_ellene_user_logins(), true)) {
+    if (!in_array(strtolower((string) $user->user_login), em_wp_admin_client_user_logins(), true)) {
         return $redirect_to;
     }
 
@@ -744,20 +744,20 @@ function em_wp_ellene_admin_login_redirect_to_gate($redirect_to, $requested_redi
         return $redirect_to;
     }
 
-    if (!em_wp_ellene_admin_gate_is_enabled()) {
+    if (!em_wp_client_admin_gate_is_enabled()) {
         return $redirect_to;
     }
 
-    return em_wp_ellene_admin_gate_admin_url();
+    return em_wp_client_admin_gate_admin_url();
 }
-add_filter('login_redirect', 'em_wp_ellene_admin_login_redirect_to_gate', 5, 3);
+add_filter('login_redirect', 'em_wp_client_admin_login_redirect_to_gate', 5, 3);
 
 /**
- * Verrouille ellene-admin sur la page intermédiaire (aucun autre écran admin).
+ * Verrouille client-admin sur la page intermédiaire (aucun autre écran admin).
  */
-function em_wp_ellene_admin_lock_to_gate_page(): void
+function em_wp_client_admin_lock_to_gate_page(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client() || !em_wp_ellene_admin_gate_is_enabled()) {
+    if (!em_wp_admin_should_limit_client_admin() || !em_wp_client_admin_gate_is_enabled()) {
         return;
     }
 
@@ -769,41 +769,41 @@ function em_wp_ellene_admin_lock_to_gate_page(): void
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $current_page = sanitize_key((string) ($_GET['page'] ?? ''));
-    $is_gate = $pagenow === 'admin.php' && $current_page === em_wp_ellene_admin_gate_page_slug();
+    $is_gate = $pagenow === 'admin.php' && $current_page === em_wp_client_admin_gate_page_slug();
 
     if ($is_gate) {
         return;
     }
 
-    wp_safe_redirect(em_wp_ellene_admin_gate_admin_url());
+    wp_safe_redirect(em_wp_client_admin_gate_admin_url());
     exit;
 }
-add_action('admin_init', 'em_wp_ellene_admin_lock_to_gate_page', 0);
+add_action('admin_init', 'em_wp_client_admin_lock_to_gate_page', 0);
 
 /**
- * Désactive l'admin bar pour ellene-admin.
+ * Désactive l'admin bar pour client-admin.
  */
-function em_wp_ellene_admin_disable_admin_bar(bool $show): bool
+function em_wp_client_admin_disable_admin_bar(bool $show): bool
 {
-    if (em_wp_admin_should_limit_ellene_client() && em_wp_ellene_admin_gate_is_enabled()) {
+    if (em_wp_admin_should_limit_client_admin() && em_wp_client_admin_gate_is_enabled()) {
         return false;
     }
 
     return $show;
 }
-add_filter('show_admin_bar', 'em_wp_ellene_admin_disable_admin_bar', 100);
+add_filter('show_admin_bar', 'em_wp_client_admin_disable_admin_bar', 100);
 
 /**
  * Charge les assets de la page login sur la page intermédiaire.
  */
-function em_wp_ellene_admin_gate_enqueue_login_assets(): void
+function em_wp_client_admin_gate_enqueue_login_assets(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client() || !em_wp_ellene_admin_gate_is_enabled() || !em_wp_ellene_admin_is_gate_screen()) {
+    if (!em_wp_admin_should_limit_client_admin() || !em_wp_client_admin_gate_is_enabled() || !em_wp_client_admin_is_gate_screen()) {
         return;
     }
 
     $theme_uri = get_template_directory_uri();
-    $login_css_path = 'assets/css/login.css';
+    $login_css_path = 'assets/front/css/login.css';
 
     wp_enqueue_style(
         'em-wp-login',
@@ -812,7 +812,7 @@ function em_wp_ellene_admin_gate_enqueue_login_assets(): void
         function_exists('em_wp_login_asset_version') ? em_wp_login_asset_version($login_css_path) : wp_get_theme()->get('Version')
     );
 }
-add_action('admin_enqueue_scripts', 'em_wp_ellene_admin_gate_enqueue_login_assets', 20);
+add_action('admin_enqueue_scripts', 'em_wp_client_admin_gate_enqueue_login_assets', 20);
 
 /**
  * Ajoute les classes body pour réutiliser strictement le layout login.
@@ -820,30 +820,30 @@ add_action('admin_enqueue_scripts', 'em_wp_ellene_admin_gate_enqueue_login_asset
  * @param mixed $classes
  * @return mixed
  */
-function em_wp_ellene_admin_gate_body_class($classes)
+function em_wp_client_admin_gate_body_class($classes)
 {
-    if (!em_wp_admin_should_limit_ellene_client() || !em_wp_ellene_admin_gate_is_enabled() || !em_wp_ellene_admin_is_gate_screen()) {
+    if (!em_wp_admin_should_limit_client_admin() || !em_wp_client_admin_gate_is_enabled() || !em_wp_client_admin_is_gate_screen()) {
         return $classes;
     }
 
     return trim((string) $classes . ' login wp-core-ui');
 }
-add_filter('admin_body_class', 'em_wp_ellene_admin_gate_body_class');
+add_filter('admin_body_class', 'em_wp_client_admin_gate_body_class');
 
 /**
  * Masque complètement le chrome admin (menu gauche + footer) sur la page intermédiaire.
  */
-function em_wp_ellene_admin_gate_chrome_css(): void
+function em_wp_client_admin_gate_chrome_css(): void
 {
-    if (!em_wp_admin_should_limit_ellene_client() || !em_wp_ellene_admin_gate_is_enabled()) {
+    if (!em_wp_admin_should_limit_client_admin() || !em_wp_client_admin_gate_is_enabled()) {
         return;
     }
 
-    if (!em_wp_ellene_admin_is_gate_screen()) {
+    if (!em_wp_client_admin_is_gate_screen()) {
         return;
     }
     ?>
-    <style id="em-wp-ellene-gate-only">
+    <style id="em-wp-client-gate-only">
         #adminmenumain,
         #wpfooter,
         #screen-meta-links,
@@ -880,30 +880,30 @@ function em_wp_ellene_admin_gate_chrome_css(): void
             min-height: 100vh;
         }
 
-        .em-wp-ellene-gate-login {
+        .em-wp-client-gate-login {
             margin: 0 auto;
         }
 
-        body.login #login .em-wp-ellene-gate-message {
+        body.login #login .em-wp-client-gate-message {
             color: #ffffff;
             font-size: 15px;
             line-height: 1.6;
             margin-top: 6px;
         }
 
-        body.login #login .em-wp-ellene-gate-message p {
+        body.login #login .em-wp-client-gate-message p {
             margin: 0 0 10px;
         }
 
-        body.login #login .em-wp-ellene-gate-form label {
+        body.login #login .em-wp-client-gate-form label {
             color: #ffffff !important;
         }
 
-        body.login #login .em-wp-ellene-gate-form .submit {
+        body.login #login .em-wp-client-gate-form .submit {
             margin-top: 18px;
         }
     </style>
     <?php
 }
-add_action('admin_head', 'em_wp_ellene_admin_gate_chrome_css', 1000);
+add_action('admin_head', 'em_wp_client_admin_gate_chrome_css', 1000);
 

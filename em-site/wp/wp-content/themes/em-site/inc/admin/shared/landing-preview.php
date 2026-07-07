@@ -62,16 +62,24 @@ function em_wp_admin_header_preview_subzones(?array $header = null): array
     if ($header === null) {
         $header = em_wp_admin_header_preview_config();
     }
-    $hero_slug = sanitize_key((string) ($header['hero_slug'] ?? ''));
-    $slider_slug = sanitize_key((string) ($header['slider_slug'] ?? ''));
+    $hero_slug = sanitize_key((string) ($header['hero_slug'] ?? ($header['hero'] ?? '')));
+    $slider_slug = sanitize_key((string) ($header['slider_slug'] ?? ($header['slider'] ?? '')));
     $layout = (string) ($header['layout'] ?? 'hero_left');
+    $matrix = sanitize_key((string) ($header['matrix'] ?? ''));
+    $hero_enabled = $matrix !== 'slider';
+    $slider_enabled = $matrix !== 'hero';
+    if ($matrix !== 'hero' && $matrix !== 'hero_slider' && $matrix !== 'slider') {
+        // Compat legacy: si la matrice n'est pas fournie, on déduit via les slugs.
+        $hero_enabled = $hero_slug !== '';
+        $slider_enabled = $slider_slug !== '';
+    }
     $parts = [];
 
-    if ($hero_slug !== '') {
+    if ($hero_enabled && $hero_slug !== '') {
         $parts[] = ['zone' => 'header_hero', 'part' => 'hero', 'slug' => $hero_slug];
     }
 
-    if ($slider_slug !== '') {
+    if ($slider_enabled && $slider_slug !== '') {
         $parts[] = ['zone' => 'header_slider', 'part' => 'slider', 'slug' => $slider_slug];
     }
 
@@ -452,25 +460,22 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
     $header = isset($args['header_config']) && is_array($args['header_config'])
         ? wp_parse_args($args['header_config'], em_wp_header_default_options())
         : em_wp_admin_header_preview_config();
+    $header_entry_label = trim((string) ($args['header_entry_label'] ?? ''));
     $subzones = em_wp_admin_header_preview_subzones($header);
     // Matrice V4 (composite HERO/SLIDER) : si fournie, les deux sous-zones sont
     // toujours rendues mais SLIDER est masqué en mode « HERO seul » (permet la
     // bascule en direct depuis le sélecteur sans recharger).
-    $header_matrix = sanitize_key((string) ($args['header_matrix'] ?? ''));
-    $hero_only = $header_matrix === 'hero';
     $is_hidden = array_key_exists('is_hidden', $args)
         ? !empty($args['is_hidden'])
         : !em_wp_get_site_rubrique_visibility('header');
     $layout = (string) ($header['layout'] ?? 'hero_left');
-    // La position est pilotée par le sélecteur HEADER quand header_matrix est fourni.
-    $can_swap = $interactive && count($subzones) === 2 && $header_matrix === '' && empty($args['disable_swap']);
+    $can_swap = $interactive && count($subzones) === 2 && empty($args['disable_swap']);
     $header_style = is_array($args['zone_style'] ?? null)
         ? wp_parse_args($args['zone_style'], ['background' => '#100421', 'text' => '#ffffff'])
         : em_wp_admin_landing_preview_zone_style('header');
     $group_classes = 'em-wp-admin-landing-map__header-group'
         . ($interactive ? ' is-sortable' : ' is-static')
         . ($layout_only ? ' is-layout-mode' : '')
-        . ($hero_only ? ' is-hero-only' : '')
         . em_wp_admin_landing_zone_active_class('header', $active_zone)
         . ($show_hidden_badge && $is_hidden ? ' is-rubrique-hidden' : '');
     $group_attrs = 'data-module-slug="header"'
@@ -516,15 +521,29 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
                 title="<?php echo esc_attr(em_wp_admin_landing_preview_zone_label('header')); ?>"
             >
         <?php } ?>
-        <div class="em-wp-admin-landing-map__header-group-inner<?php echo count($subzones) === 1 || $hero_only ? ' is-single' : ''; ?>">
+        <div class="em-wp-admin-landing-map__header-group-inner<?php echo ($layout_only || count($subzones) === 1) ? ' is-single' : ''; ?>">
             <?php
-            if ($subzones === []) {
+            if ($layout_only) {
+                $placeholder = $header_entry_label !== ''
+                    ? sprintf(
+                        /* translators: %s: label d'item HEADER */
+                        __('HEADER %s', 'em-wp'),
+                        $header_entry_label
+                    )
+                    : __('HEADER', 'em-wp');
+                ?>
+                <span class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-empty" style="grid-column:1 / -1; --em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;" aria-hidden="true">
+                    <span class="em-wp-admin-landing-map__zone-label"><?php echo esc_html($placeholder); ?></span>
+                </span>
+                <?php
+            } elseif ($subzones === []) {
                 ?>
                 <a
                     class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-empty"
                     href="<?php echo esc_url(function_exists('em_wp_admin_rubrique_open_url') ? em_wp_admin_rubrique_open_url('header') : em_wp_admin_site_rubrique_entry_url('header')); ?>"
                     data-preview-zone="header"
                     data-module-slug="header"
+                    style="--em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;"
                     title="<?php esc_attr_e('Configurer HEADER', 'em-wp'); ?>"
                 >
                     <span class="em-wp-admin-landing-map__zone-label"><?php esc_html_e('HEADER (non configuré)', 'em-wp'); ?></span>
@@ -537,45 +556,6 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
                     $catalog_slug = sanitize_key((string) ($subzone['slug'] ?? ''));
                     $entry_label = (string) ($subzone['label'] ?? '');
                     $class_suffix = $part === 'hero' ? 'header-hero' : 'header-slider';
-
-                    if ($layout_only) {
-                        if ($part === 'hero') {
-                            $placeholder = __('HERO', 'em-wp');
-                            if ($editing_part === 'hero' && $editing_entry_label !== '') {
-                                $placeholder = sprintf(
-                                    /* translators: %s: hero catalog entry label */
-                                    __('HERO %s', 'em-wp'),
-                                    $editing_entry_label
-                                );
-                            }
-                        } else {
-                            $placeholder = __('SLIDE', 'em-wp');
-                            if ($editing_part === 'slider' && $editing_entry_label !== '') {
-                                $placeholder = sprintf(
-                                    /* translators: %s: slider catalog entry label */
-                                    __('SLIDE %s', 'em-wp'),
-                                    $editing_entry_label
-                                );
-                            }
-                        }
-                        $part_active_class = em_wp_admin_landing_zone_active_class($zone, $active_zone);
-                        ?>
-                        <span
-                            class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-part em-wp-admin-landing-map__<?php echo esc_attr($class_suffix); ?><?php echo esc_attr($part_active_class); ?>"
-                            data-header-part="<?php echo esc_attr($part); ?>"
-                            aria-hidden="true"
-                        >
-                            <span class="em-wp-admin-landing-map__zone-label"><?php echo esc_html($placeholder); ?></span>
-                            <?php if ($part === 'slider') { ?>
-                                <span class="em-wp-admin-landing-map__header-part-slider-hints" aria-hidden="true">
-                                    <i class="fa-solid fa-chevron-left"></i>
-                                    <i class="fa-solid fa-chevron-right"></i>
-                                </span>
-                            <?php } ?>
-                        </span>
-                        <?php
-                        continue;
-                    }
 
                     $inner_html = '';
 
@@ -673,27 +653,47 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
                 $module_slug = sanitize_key((string) $module_slug);
 
                 if ($module_slug === 'header') {
+                    $header_active = in_array($active_zone, ['header', 'header_hero', 'header_slider'], true);
                     $header_args = [
                         'interactive'        => true,
+                        // Le switch gauche/droite n'est plus affiché dans le wireframe
+                        // de la page Rubriques (reliquat historique).
+                        'disable_swap'       => true,
                         'subzones_clickable' => false,
-                        'subzone_display'    => 'placeholders',
+                        // Wireframe global: placeholder par défaut. La vraie structure
+                        // n'est affichée que lorsque la zone HEADER est active.
+                        'subzone_display'    => $header_active ? 'structure' : 'placeholders',
                     ];
 
                     // Reflète la composition HEADER V4 (matrice + position) si dispo.
-                    if (function_exists('em_wp_admin_header_section_get') && function_exists('em_wp_get_editing_template_slug')) {
+                    if ($header_active && function_exists('em_wp_admin_header_section_get') && function_exists('em_wp_get_editing_template_slug')) {
                         $tpl = (string) em_wp_get_editing_template_slug();
 
                         if ($tpl !== '') {
                             $cfg = em_wp_admin_header_section_get($tpl);
-                            // Les deux slugs toujours non vides => les 2 sous-zones
-                            // sont rendues (SLIDER masqué via is-hero-only si besoin).
-                            $header_args['header_config'] = [
-                                'enabled'     => true,
-                                'hero_slug'   => $cfg['hero'] !== '' ? $cfg['hero'] : 'hero',
-                                'slider_slug' => $cfg['slider'] !== '' ? $cfg['slider'] : 'slider',
-                                'layout'      => $cfg['position'],
-                            ];
-                            $header_args['header_matrix'] = $cfg['matrix'];
+                            $header_items = function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items('headers') : [];
+                            $preview_header_item = sanitize_key((string) ($cfg['header_item'] ?? ''));
+                            if (($cfg['display_mode'] ?? 'single') === 'multi') {
+                                $candidate_first = sanitize_key((string) ($cfg['first_item'] ?? ''));
+                                if ($candidate_first !== '' && isset($header_items[$candidate_first])) {
+                                    $preview_header_item = $candidate_first;
+                                }
+                            }
+                            if ($preview_header_item !== '' && isset($header_items[$preview_header_item])) {
+                                $header_args['header_entry_label'] = (string) $header_items[$preview_header_item];
+                                if (function_exists('em_wp_admin_header_item_config_get')) {
+                                    $header_item_cfg = em_wp_admin_header_item_config_get($preview_header_item);
+                                    // On alimente le wireframe directement avec la composition
+                                    // de l'item HEADER sélectionné, sans dépendre du contexte.
+                                    $header_args['header_config'] = [
+                                        'enabled'     => true,
+                                        'matrix'      => (string) ($header_item_cfg['matrix'] ?? 'hero'),
+                                        'hero_slug'   => (string) ($header_item_cfg['hero'] ?? ''),
+                                        'slider_slug' => (string) ($header_item_cfg['slider'] ?? ''),
+                                        'layout'      => (string) ($header_item_cfg['position'] ?? 'hero_left'),
+                                    ];
+                                }
+                            }
                         }
                     }
 

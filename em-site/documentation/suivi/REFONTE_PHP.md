@@ -3,6 +3,23 @@
 Date (Paris) : 2026-07-05 17:11:19
 Périmètre scanné : em-site/wp/wp-content/themes/em-site
 
+## Mise à jour structurelle (Paris) : 2026-07-07 12:56:24
+
+- Migration de composants BO partagés vers `inc/admin/shared/components/` avec sous-dossier dédié par composant.
+- Composants migrés et recâblés : `color-picker`, `scotchs-control`, `style-panel`, `hub-cards`, `hub-breadcrumb`.
+- Renommage explicite du builder Rubriques : fichiers `chip*`, `structure*`, `preview`, `save`, `script*` renommés en `builder-...`.
+- Recâblage des includes et loaders Rubriques après renommage pour éviter toute rupture.
+- Correctif de mutualisation Scotchs : neutralisation des variations de layout contextuelles via classes dédiées de composant (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`).
+
+## Mise à jour structurelle (Paris) : 2026-07-07 14:12:20
+
+- Migration des assets partagés admin vers `assets/admin/shared/*` avec recâblage des enqueues côté `inc/admin`.
+- Migration des assets partagés front vers `assets/front/shared/*` avec recâblage des enqueues côté `inc/core` et pages Rubriques.
+- Purge des chemins legacy `assets/front/css/rubriques-v4/*` et suppression du dossier fantôme.
+- Purge du namespace gate legacy `ellene` dans les points d'entrée admin.
+- Correctif de régression des accès admin: règles rétablies avec comptes réels `admin-ellene` et `admin-tyson`.
+- Hotfix imports CSS admin cassés: correction des chemins dans `hub-cards.css` et `module-common.css`.
+
 ## 1) Méthode de scan (calcul réel des lignes)
 
 - Scan récursif réel sur le dossier complet du thème.

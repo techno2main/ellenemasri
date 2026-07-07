@@ -33,9 +33,9 @@ function em_wp_slider_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
-        $theme_uri . '/assets/admin/js/shared/media/slide-sortable.js',
+        $theme_uri . '/assets/admin/shared/js/media/slide-sortable.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/media/slide-sortable.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/media/slide-sortable.js'),
         true
     );
 

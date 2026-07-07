@@ -169,7 +169,7 @@ function em_wp_rubrique_image_value($value): array
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['id' => absint($value), 'link' => '', 'w' => 0, 'h' => 0, 'fx' => 50, 'fy' => 50, 'tape' => false];
+        return ['id' => absint($value), 'link' => '', 'w' => 0, 'h' => 0, 'fx' => 50, 'fy' => 50, 'tape' => false, 'tape_color' => ''];
     }
 
     return [
@@ -180,6 +180,7 @@ function em_wp_rubrique_image_value($value): array
         'fx'   => max(0, min(100, (int) ($decoded['fx'] ?? 50))),
         'fy'   => max(0, min(100, (int) ($decoded['fy'] ?? 50))),
         'tape' => !empty($decoded['tape']),
+        'tape_color' => sanitize_hex_color((string) ($decoded['tape_color'] ?? '')) ?: '',
     ];
 }
 
@@ -206,6 +207,7 @@ function em_wp_field_sanitize_image($value): string
         'fx'   => max(0, min(100, (int) $parsed['fx'])),
         'fy'   => max(0, min(100, (int) $parsed['fy'])),
         'tape' => !empty($parsed['tape']),
+        'tape_color' => sanitize_hex_color((string) ($parsed['tape_color'] ?? '')) ?: '',
     ]);
 }
 

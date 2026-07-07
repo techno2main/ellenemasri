@@ -291,6 +291,7 @@ function em_wp_v4_item_slug_prefix(string $type_slug): string
 
     $map = [
         'header' => 'hero',
+        'headers' => 'header',
         'contacts' => 'contact',
         'sliders' => 'slider',
     ];
@@ -656,6 +657,13 @@ function em_wp_v4_ensure_template_instances(string $template_slug): void
     foreach ($candidate_types as $type_slug) {
         $type_slug = sanitize_key((string) $type_slug);
 
+        // `header` est une section composite (squelette) qui sélectionne un item
+        // du catalogue `headers`. La sync générique V4 ne doit pas la remapper,
+        // sinon elle écrase le choix utilisateur (mode Unique/Multi).
+        if ($type_slug === 'header') {
+            continue;
+        }
+
         if ($type_slug === '' || !em_wp_rubrique_type_exists($type_slug)) {
             continue;
         }
@@ -749,3 +757,64 @@ function em_wp_v4_maybe_reconcile_item_slugs(): void
     update_option('em_wp_v4_item_slugs_reconciled_v4', '1', false);
 }
 add_action('admin_init', 'em_wp_v4_maybe_reconcile_item_slugs', 5);
+
+/**
+ * Renomme les items legacy MAYAMI de TOP-BAR/FOOTER en "default".
+ *
+ * Objectif produit template unique:
+ * - top-bar-mayami -> top-bar-default
+ * - footer-mayami -> footer-default
+ */
+function em_wp_v4_maybe_force_default_topbar_footer_items(): void
+{
+    if (!(function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled())) {
+        return;
+    }
+
+    if (get_option('em_wp_v4_default_topbar_footer_items_v1', false)) {
+        return;
+    }
+
+    $targets = ['top-bar', 'footer'];
+
+    foreach ($targets as $type_slug) {
+        $items = em_wp_v4_get_items($type_slug);
+
+        if ($items === []) {
+            continue;
+        }
+
+        $candidate_slug = '';
+
+        foreach ($items as $item_slug => $item_label) {
+            $item_slug = sanitize_key((string) $item_slug);
+            $item_label = sanitize_text_field((string) $item_label);
+
+            if ($item_slug === '') {
+                continue;
+            }
+
+            if (strcasecmp($item_label, 'default') === 0) {
+                $candidate_slug = $item_slug;
+                break;
+            }
+
+            if (stripos($item_label, 'mayami') !== false || stripos($item_slug, 'mayami') !== false) {
+                $candidate_slug = $item_slug;
+            }
+        }
+
+        if ($candidate_slug === '') {
+            $candidate_slug = (string) array_key_first($items);
+        }
+
+        if ($candidate_slug === '') {
+            continue;
+        }
+
+        em_wp_v4_rename_item($type_slug, $candidate_slug, 'default');
+    }
+
+    update_option('em_wp_v4_default_topbar_footer_items_v1', '1', false);
+}
+add_action('admin_init', 'em_wp_v4_maybe_force_default_topbar_footer_items', 8);

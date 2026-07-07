@@ -34,7 +34,7 @@ function em_wp_admin_template_choice_admin_url(): string
 }
 
 /**
- * Slug page admin d'un template enregistré (MAYAMI, ELLENE, …).
+ * Slug page admin d'un template enregistré (MAYAMI, CLIENT, …).
  */
 function em_wp_admin_template_entry_page_slug(string $template_slug): string
 {
@@ -48,6 +48,10 @@ function em_wp_admin_template_entry_page_slug(string $template_slug): string
  */
 function em_wp_admin_template_entry_page_slugs(): array
 {
+    if (function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled()) {
+        return [];
+    }
+
     $slugs = [];
 
     foreach (array_keys(em_wp_template_registry()) as $template_slug) {
@@ -107,7 +111,15 @@ function em_wp_admin_render_template_choice_page(): void
         return;
     }
 
-    em_wp_admin_render_rubriques_template_picker();
+    $target_slug = function_exists('em_wp_get_active_template_slug')
+        ? em_wp_template_sanitize_slug((string) em_wp_get_active_template_slug())
+        : '';
+
+    if ($target_slug !== '' && function_exists('em_wp_set_editing_template_slug')) {
+        em_wp_set_editing_template_slug($target_slug);
+    }
+
+    em_wp_admin_safe_redirect(em_wp_admin_rubriques_admin_url());
 }
 
 /**
@@ -140,8 +152,8 @@ function em_wp_admin_templates_page_url(): string
 function em_wp_admin_templates_register_menu(): void
 {
     add_menu_page(
-        __('Templates', 'em-wp'),
-        __('TEMPLATES', 'em-wp'),
+        __('Template', 'em-wp'),
+        __('TEMPLATE', 'em-wp'),
         'manage_options',
         em_wp_admin_template_parent_page_slug(),
         'em_wp_admin_render_template_choice_page',
@@ -149,18 +161,22 @@ function em_wp_admin_templates_register_menu(): void
         em_wp_admin_menu_templates_position()
     );
 
-    foreach (em_wp_template_registry() as $slug => $definition) {
-        $menu_label = mb_strtoupper((string) ($definition['label'] ?? $slug));
+    $unique_mode = function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled();
 
-        add_menu_page(
-            $menu_label,
-            $menu_label,
-            'manage_options',
-            em_wp_admin_template_entry_page_slug($slug),
-            'em_wp_admin_render_template_entry_page',
-            'dashicons-admin-appearance',
-            em_wp_admin_menu_position_for_template($slug)
-        );
+    if (!$unique_mode) {
+        foreach (em_wp_template_registry() as $slug => $definition) {
+            $menu_label = mb_strtoupper((string) ($definition['label'] ?? $slug));
+
+            add_menu_page(
+                $menu_label,
+                $menu_label,
+                'manage_options',
+                em_wp_admin_template_entry_page_slug($slug),
+                'em_wp_admin_render_template_entry_page',
+                'dashicons-admin-appearance',
+                em_wp_admin_menu_position_for_template($slug)
+            );
+        }
     }
 
     add_submenu_page(
@@ -200,7 +216,7 @@ function em_wp_admin_templates_remove_duplicate_submenu(): void
 add_action('admin_menu', 'em_wp_admin_templates_remove_duplicate_submenu', 999);
 
 /**
- * Démarre l'édition d'un template depuis son entrée menu (MAYAMI, ELLENE, …).
+ * Démarre l'édition d'un template depuis son entrée menu (MAYAMI, CLIENT, …).
  */
 function em_wp_admin_template_entry_start_editing(): void
 {
@@ -328,6 +344,10 @@ function em_wp_admin_template_redirect_legacy_create_deeplink(): void
 
     if (!in_array($page_slug, $legacy_pages, true)) {
         return;
+    }
+
+    if (function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled()) {
+        em_wp_admin_safe_redirect(em_wp_admin_template_choice_admin_url());
     }
 
     em_wp_admin_safe_redirect(em_wp_admin_template_create_admin_url());

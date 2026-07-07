@@ -2,7 +2,7 @@
 /**
  * Visual Links bootstrap (admin only).
  *
- * @package ElleneWp
+ * @package ClientWp
  */
 
 if (!defined('ABSPATH')) {

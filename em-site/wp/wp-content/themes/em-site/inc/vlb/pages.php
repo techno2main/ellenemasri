@@ -9,7 +9,7 @@ function mayami_render_visual_links_html_builder_page() {
 
     $builder_path = wp_parse_url(get_theme_file_uri('/visual-links-builder/admin/index.php'), PHP_URL_PATH);
     if (!is_string($builder_path) || $builder_path === '') {
-        $builder_path = '/wp-content/themes/ellene-wp/visual-links-builder/admin/index.php';
+        $builder_path = '/wp-content/themes/client-wp/visual-links-builder/admin/index.php';
     }
 
     $html_builder_url = add_query_arg(array(

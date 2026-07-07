@@ -98,6 +98,14 @@ function em_wp_v4_ordered_types(): array
     $types = em_wp_rubrique_type_registry();
     $ordered = [];
 
+    // Priorité UX: TOP-BAR puis HEADER avant HERO/SLIDERS.
+    foreach (['top-bar', 'headers', 'header', 'sliders'] as $priority_slug) {
+        if (isset($types[$priority_slug])) {
+            $ordered[$priority_slug] = $types[$priority_slug];
+            unset($types[$priority_slug]);
+        }
+    }
+
     // 1) Ordre personnalisé enregistré (glisser-déposer de l'aperçu) — prioritaire.
     foreach (em_wp_v4_get_rubrique_order() as $slug) {
         if (isset($types[$slug])) {
@@ -299,8 +307,20 @@ function em_wp_v4_overview_render_type(string $slug, array $type, bool $open): v
     $label = (string) ($type['label_plural'] ?? $type['label']);
     $label_singular = (string) ($type['label'] ?? $label);
     $add_label = sprintf(__('Ajouter une Section %s', 'em-wp'), $label_singular);
+    $is_special_fixed = function_exists('em_wp_v4_is_fixed_single_item_type')
+        && em_wp_v4_is_fixed_single_item_type($slug);
+    $can_add_items = !$is_special_fixed;
+    $label_for_match = strtolower(remove_accents($label));
+    $is_header_linked = in_array($slug, ['hero', 'heros', 'heroes', 'slider', 'sliders'], true)
+        || strpos($slug, 'hero') !== false
+        || strpos($slug, 'slider') !== false
+        || strpos($label_for_match, 'hero') !== false
+        || strpos($label_for_match, 'slider') !== false;
+    $card_classes = 'em-v4-collapse em-v4-card'
+        . ($is_special_fixed ? ' em-v4-card--fixed-single' : '')
+        . ($is_header_linked ? ' em-v4-card--header-linked' : '');
     ?>
-    <details class="em-v4-collapse em-v4-card" id="em-v4-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" <?php echo $open ? 'open' : ''; ?>>
+    <details class="<?php echo esc_attr($card_classes); ?>" id="em-v4-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-v4-collapse__summary em-v4-card__head">
             <span class="em-v4-card__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour réordonner', 'em-wp'); ?>" aria-hidden="true"></span>
             <span class="em-v4-collapse__chevron" aria-hidden="true"></span>
@@ -317,10 +337,12 @@ function em_wp_v4_overview_render_type(string $slug, array $type, bool $open): v
                 <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
             </button>
             <span class="em-v4-card__count" title="<?php echo esc_attr(sprintf(_n('%d section', '%d sections', $count, 'em-wp'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
-            <button type="button" class="em-v4-card__additem" data-create-target="em-v4-create-<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($add_label); ?>" aria-label="<?php echo esc_attr($add_label); ?>" aria-expanded="false">
-                <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
-                <span><?php echo esc_html($add_label); ?></span>
-            </button>
+            <?php if ($can_add_items) { ?>
+                <button type="button" class="em-v4-card__additem" data-create-target="em-v4-create-<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($add_label); ?>" aria-label="<?php echo esc_attr($add_label); ?>" aria-expanded="false">
+                    <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+                    <span><?php echo esc_html($add_label); ?></span>
+                </button>
+            <?php } ?>
         </summary>
         <div class="em-v4-collapse__body">
             <?php em_wp_v4_render_items_section($slug); ?>
@@ -409,10 +431,10 @@ function em_wp_admin_rubriques_preview_css(): string
     foreach (
         [
             'admin-preview-render-base.css',
-            'admin-preview-render-media.css',
-            'admin-preview-render-components.css',
-            'admin-preview-render-header.css',
-            'admin-preview-render-layout.css',
+            'admin-preview-render-admin-preview-render-media.css',
+            'admin-preview-render-admin-preview-render-components.css',
+            'admin-preview-render-admin-preview-render-header.css',
+            'admin-preview-render-admin-preview-render-layout.css',
         ] as $file
     ) {
         $path = $base . $file;

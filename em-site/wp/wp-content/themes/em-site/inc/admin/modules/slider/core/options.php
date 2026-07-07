@@ -14,17 +14,16 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_slider_default_options(string $style_slug = 'mayami'): array
 {
-    $footer_titles = [
-        'mayami' => __('MAYAMI, MY MIAMI', 'em-wp'),
-        'ellene' => __('ELLENE', 'em-wp'),
-    ];
+    $footer_title = __('MAYAMI, MY MIAMI', 'em-wp');
 
     return [
         'enabled'             => true,
         'frame_bg_color'      => '#12338f',
         'footer_bg_color'     => '#f2ebd1',
         'footer_text'         => '#100421',
-        'footer_title'        => $footer_titles[$style_slug] ?? $footer_titles['mayami'],
+        'tapes_hidden'        => false,
+        'tapes_color'         => '#39c7ca',
+        'footer_title'        => $footer_title,
         'slider_title_hidden' => false,
         'slides'              => [em_wp_slider_default_slide()],
     ];
@@ -79,6 +78,7 @@ function em_wp_slider_sanitize_options_for_style($input, string $style_slug): ar
     $frame_bg_color = sanitize_hex_color($input['frame_bg_color'] ?? '');
     $footer_bg_color = sanitize_hex_color($input['footer_bg_color'] ?? '');
     $footer_text = sanitize_hex_color($input['footer_text'] ?? '');
+    $tapes_color = sanitize_hex_color($input['tapes_color'] ?? '');
     $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
 
     if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
@@ -96,6 +96,10 @@ function em_wp_slider_sanitize_options_for_style($input, string $style_slug): ar
         'footer_text'         => $footer_text !== null && $footer_text !== false && $footer_text !== ''
             ? $footer_text
             : (string) ($existing['footer_text'] ?? ''),
+        'tapes_hidden'        => !empty($input['tapes_hidden']),
+        'tapes_color'         => $tapes_color !== null && $tapes_color !== false && $tapes_color !== ''
+            ? $tapes_color
+            : (string) ($existing['tapes_color'] ?? ''),
         'footer_title'        => sanitize_text_field($input['footer_title'] ?? ($existing['footer_title'] ?? '')),
         'slider_title_hidden' => !empty($input['slider_title_hidden']),
         'slides'              => isset($input['slides']) && is_array($input['slides'])

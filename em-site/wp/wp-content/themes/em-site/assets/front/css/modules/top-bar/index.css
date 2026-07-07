@@ -100,18 +100,6 @@ body.admin-bar .em-section--top-bar {
 		height: auto;
 	}
 
-	.em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape {
-		width: 54px;
-		height: 12px;
-		opacity: .58;
-		border-width: 0;
-	}
-
-	.em-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape--left {
-		top: -6px;
-		left: 16px;
-	}
-
 	.em-section--top-bar > .em-rubrique .top-bar-platform-link .em-rubrique__icon {
 		font-size: 22px;
 		line-height: 22px;

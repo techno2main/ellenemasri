@@ -91,9 +91,14 @@ function em_site_render_header_slider_html(string $item_slug): string
 
 	$title = trim((string) ($meta['title'] ?? 'MAYAMI, MY MIAMI'));
 	$title_hidden = !empty($meta['title_hidden']);
+	$band_hidden_class = $title_hidden ? ' em-slider--band-hidden' : '';
 	$slider_style = '';
-	if ((string) ($meta['frame_bg'] ?? '') !== '') {
-		$slider_style .= '--em-slider-frame-bg: ' . (string) $meta['frame_bg'] . ';';
+	$slider_style .= '--em-slider-frame-bg:transparent;';
+	if ((string) ($meta['border_color'] ?? '') !== '') {
+		$slider_style .= '--em-slider-border-color: ' . (string) $meta['border_color'] . ';';
+	}
+	if ((string) ($meta['shadow_color'] ?? '') !== '') {
+		$slider_style .= '--em-slider-shadow-color: ' . (string) $meta['shadow_color'] . ';';
 	}
 	if ((string) ($meta['footer_bg'] ?? '') !== '') {
 		$slider_style .= '--em-slider-footer-bg: ' . (string) $meta['footer_bg'] . ';';
@@ -101,19 +106,14 @@ function em_site_render_header_slider_html(string $item_slug): string
 	if ((string) ($meta['footer_text'] ?? '') !== '') {
 		$slider_style .= '--em-slider-footer-text: ' . (string) $meta['footer_text'] . ';';
 	}
+	if ((string) ($meta['tapes_color'] ?? '') !== '') {
+		$slider_style .= '--em-slider-tape-color: ' . (string) $meta['tapes_color'] . ';';
+	}
 
-	$style_vars = [
-		'--em-rubrique-bg:' . (string) ($content['bg_color'] ?? '#0f172a'),
-		'--em-rubrique-text:' . (string) ($content['text_color'] ?? '#e2e8f0'),
-		'--em-rubrique-link:' . (string) ($content['link_color'] ?? '#38bdf8'),
-		'--em-rubrique-link-hover:' . (string) ($content['link_hover_color'] ?? '#7dd3fc'),
-		'--em-rubrique-underline:' . (!empty($content['link_underline']) ? 'underline' : 'none'),
-		'--em-rubrique-pt:' . ((int) ($content['space_top'] ?? 40)) . 'px',
-		'--em-rubrique-pb:' . ((int) ($content['space_bottom'] ?? 40)) . 'px',
-		'--em-rubrique-pl:' . ((int) ($content['space_left'] ?? 180)) . 'px',
-		'--em-rubrique-pr:' . ((int) ($content['space_right'] ?? 180)) . 'px',
-		'--em-rubrique-font:' . em_site_header_font_stack((string) ($content['font_family'] ?? 'archivo_black')),
-	];
+	$style_vars = em_site_front_rubrique_style_vars(
+		$content,
+		static fn(string $font_slug): string => em_site_header_font_stack($font_slug)
+	);
 
 	$slider_uid = 'em-wp-slider-' . wp_unique_id();
 
@@ -122,10 +122,12 @@ function em_site_render_header_slider_html(string $item_slug): string
 	<footer id="em-rubrique-sliders-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--sliders" style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
 		<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 			<div class="em-rubrique__col em-rubrique__col--center" data-em-col="1" data-em-has-button="0">
-				<div id="<?php echo esc_attr($slider_uid); ?>" class="em-slider em-slider--mayami" data-em-slider style="<?php echo esc_attr($slider_style); ?>">
+				<div id="<?php echo esc_attr($slider_uid); ?>" class="em-slider em-slider--mayami<?php echo esc_attr($band_hidden_class); ?>" data-em-slider style="<?php echo esc_attr($slider_style); ?>">
 					<div class="em-slider__shell">
-						<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span>
-						<span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>
+						<?php if (empty($meta['tapes_hidden'])) : ?>
+							<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span>
+							<span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>
+						<?php endif; ?>
 
 						<div class="em-slider__frame">
 							<div class="em-slider__media">
@@ -153,9 +155,11 @@ function em_site_render_header_slider_html(string $item_slug): string
 								<button type="button" class="em-slider__audio-btn is-muted is-hidden" aria-label="<?php esc_attr_e('Activer le son', 'em-wp'); ?>" aria-pressed="false"><span class="em-slider__audio-btn-label"><?php esc_html_e('Activer le son', 'em-wp'); ?></span><span class="em-slider__audio-icon em-slider__audio-icon-muted" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path><path d="M17 10l4 4m0-4l-4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg></span><span class="em-slider__audio-icon em-slider__audio-icon-live" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path><path d="M17 9a5 5 0 0 1 0 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path><path d="M19.5 6.5a8.5 8.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg></span></button>
 							</div>
 
-							<div class="em-slider__footer">
-								<?php if (!$title_hidden) : ?><span class="em-slider__title"><?php echo esc_html($title !== '' ? $title : 'MAYAMI, MY MIAMI'); ?></span><?php endif; ?>
-							</div>
+							<?php if (!$title_hidden) : ?>
+								<div class="em-slider__footer">
+									<span class="em-slider__title"><?php echo esc_html($title !== '' ? $title : 'MAYAMI, MY MIAMI'); ?></span>
+								</div>
+							<?php endif; ?>
 						</div>
 					</div>
 

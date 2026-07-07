@@ -185,7 +185,8 @@ function em_wp_admin_v4_extra_rubrique_definitions(): array
         // détection ci-dessus n'a pas pu tourner (header-section.php non chargé).
         $label_raw = strtolower((string) ($type['label'] ?? '') . ' ' . (string) ($type['label_plural'] ?? ''));
 
-        if (strpos($slug, 'hero') !== false || strpos($slug, 'slider') !== false
+        if ($slug === 'headers'
+            || strpos($slug, 'hero') !== false || strpos($slug, 'slider') !== false
             || strpos($label_raw, 'hero') !== false || strpos($label_raw, 'slider') !== false) {
             continue;
         }

@@ -15,10 +15,15 @@ function em_site_admin_login_redirect_to_dashboard($redirect_to, $requested_redi
         return $redirect_to;
     }
 
+    $user_login = strtolower((string) $user->user_login);
+    $client_logins = function_exists('em_wp_admin_client_user_logins')
+        ? em_wp_admin_client_user_logins()
+        : ['admin-ellene'];
+
     if (
-        function_exists('em_site_ellene_admin_gate_is_enabled')
-        && em_site_ellene_admin_gate_is_enabled()
-        && strtolower((string) $user->user_login) === 'admin-ellene'
+        function_exists('em_wp_client_admin_gate_is_enabled')
+        && em_wp_client_admin_gate_is_enabled()
+        && in_array($user_login, $client_logins, true)
     ) {
         return $redirect_to;
     }
