@@ -1,0 +1,3 @@
+/* List page styles split by responsibility (<=300 lines per file). */
+@import url('./list-page/list-overview-and-thumbnail.css');
+@import url('./list-page/list-inline-edit-and-table-actions.css');

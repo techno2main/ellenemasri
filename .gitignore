@@ -3,8 +3,21 @@ _sources/
 .copilot-snapshots/
 .github/
 docker/ellene-local/
+em-wp/docker/
+em-site/docker/
+old_docker/
+old_wp/
 website/
-docker/
+
+# Sensitive files
+**/.env
+!**/.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
 
 # Logs
 logs
@@ -40,6 +53,7 @@ website/*.local
 .dev.vars
 
 # Editor directories and files
+.cursor/
 .vscode/
 **/.vscode/
 website/.vscode/
@@ -82,9 +96,39 @@ wp/wp-content/themes/ellene-wp/node_modules/
 wp/wp-content/themes/ellene-wp/migration-ovh/
 wp/wp-content/themes/ellene-wp/migration-ovh/*.zip
 
+# Ignore full WordPress tree em-wp, keep only the custom theme
+em-wp/wp/*
+!em-wp/wp/wp-content/
+em-wp/wp/wp-content/*
+!em-wp/wp/wp-content/themes/
+em-wp/wp/wp-content/themes/*
+!em-wp/wp/wp-content/themes/em-wp/
+!em-wp/wp/wp-content/themes/em-wp/**
+em-wp/wp/wp-content/themes/em-wp/node_modules/
+em-wp/wp/AGENTS.md
+
+# Ignore full WordPress tree em-site, keep only the custom theme
+em-site/wp/*
+!em-site/wp/wp-content/
+em-site/wp/wp-content/*
+!em-site/wp/wp-content/themes/
+em-site/wp/wp-content/themes/*
+!em-site/wp/wp-content/themes/em-site/
+!em-site/wp/wp-content/themes/em-site/**
+em-site/wp/wp-content/themes/em-site/node_modules/
+em-site/wp/wp-config.php
+
 # Deployment-only root files
 /.htaccess
 /index.php
 
 # Instructions & local audit documentation
 /documentation/
+
+# em-wp — doc V2 suivie en repo (reste de em-wp/documentation/ hors repo)
+em-wp/documentation/*
+!em-wp/documentation/TEMPLATE_V2.md
+!em-wp/documentation/PURGE_EM_WP_SCAN_V4.md
+
+# em-site — exports SQL locaux (sensibles/volumineux)
+em-site/documentation/bdd/export/*

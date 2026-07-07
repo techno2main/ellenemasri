@@ -1,0 +1,662 @@
+<?php
+/**
+ * Composants admin partagés — panneau "Style de base".
+ *
+ * Pattern unique pour toutes les rubriques em-wp (OBLIGATOIRE pour chaque nouvelle rubrique) :
+ * - em_wp_admin_render_base_style_panel() + preview bloc titre (data-em-admin-style)
+ * - em_wp_admin_render_module_panel() / em_wp_admin_module_panel_classes() (fermés par défaut)
+ * - em_wp_admin_module_style_data_attributes() + em_wp_admin_module_style_inline_vars()
+ * - Champs empilés : em-wp-admin-panel-body--stack | ligne : em-wp-admin-panel-body--row
+ * - button.em-wp-admin-module__panel-header
+ * - div.em-wp-admin-module__panel-body (replié si pas .is-open)
+ *
+ * @package em-wp
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Classes du bouton d'en-tête de panneau accordion.
+ */
+function em_wp_admin_panel_header_class(string $panel_class = ''): string
+{
+    $classes = ['em-wp-admin-module__panel-header'];
+
+    if ($panel_class !== '') {
+        $classes[] = sanitize_html_class($panel_class . '__header');
+    }
+
+    return implode(' ', $classes);
+}
+
+/**
+ * Bouton visuel d'édition (icône) en tête de ligne d'un panneau accordion.
+ */
+function em_wp_admin_render_panel_edit_trigger(): void
+{
+    ?>
+    <span class="em-wp-admin-module__panel-edit-trigger" title="<?php esc_attr_e('Modifier', 'em-wp'); ?>">
+        <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
+    </span>
+    <?php
+}
+
+/**
+ * Indique si les panneaux accordion admin sont ouverts au chargement.
+ */
+function em_wp_admin_module_panel_is_open_by_default(): bool
+{
+    return false;
+}
+
+/**
+ * Classes d'un panneau accordion module (fermé par défaut).
+ */
+function em_wp_admin_module_panel_classes(string $panel_class = ''): string
+{
+    $classes = ['em-wp-admin-module__panel'];
+
+    if ($panel_class !== '') {
+        $classes[] = sanitize_html_class($panel_class);
+    }
+
+    if (em_wp_admin_module_panel_is_open_by_default()) {
+        $classes[] = 'is-open';
+    }
+
+    return implode(' ', $classes);
+}
+
+/**
+ * Valeur aria-expanded d'un panneau accordion module.
+ */
+function em_wp_admin_module_panel_aria_expanded(): string
+{
+    return em_wp_admin_module_panel_is_open_by_default() ? 'true' : 'false';
+}
+
+/**
+ * Rendu d'un panneau accordion module (pattern mutualisé, fermé par défaut).
+ *
+ * @param callable $body_callback Contenu du panel-body.
+ */
+function em_wp_admin_render_module_panel(
+    string $title,
+    string $panel_class,
+    callable $body_callback,
+    string $body_classes = '',
+    bool $open_by_default = false
+): void {
+    $body_class_attr = trim('em-wp-admin-module__panel-body ' . $body_classes);
+    $panel_classes = em_wp_admin_module_panel_classes($panel_class);
+    if ($open_by_default) {
+        $panel_classes .= ' is-open';
+    }
+    ?>
+    <section class="<?php echo esc_attr($panel_classes); ?>"<?php echo $open_by_default ? ' data-default-open' : ''; ?>>
+        <button class="<?php echo esc_attr(em_wp_admin_panel_header_class($panel_class)); ?>" type="button" aria-expanded="<?php echo esc_attr($open_by_default ? 'true' : em_wp_admin_module_panel_aria_expanded()); ?>">
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
+            <?php if ($title !== '') { ?>
+                <span class="em-wp-admin-module__panel-header-title"><?php echo esc_html($title); ?></span>
+            <?php } ?>
+        </button>
+        <div class="<?php echo esc_attr($body_class_attr); ?>">
+            <?php call_user_func($body_callback); ?>
+        </div>
+    </section>
+    <?php
+}
+
+/**
+ * Titre de section « Items de {rubrique} » sous Style de base.
+ *
+ * @param string      $module_slug  Slug rubrique (stream, cta, hero…).
+ * @param string      $items_label  Libellé avant « de » (Items, Slides…).
+ * @param string|null $module_label Libellé dans la pastille (défaut = label rubrique).
+ */
+function em_wp_admin_render_module_items_section_title(
+    string $module_slug,
+    string $items_label = '',
+    ?string $module_label = null
+): void {
+    if ($items_label === '') {
+        $items_label = __('Items', 'em-wp');
+    }
+
+    $definitions = function_exists('em_wp_admin_site_rubrique_definitions')
+        ? em_wp_admin_site_rubrique_definitions()
+        : [];
+
+    if ($module_label === null) {
+        $module_label = (string) ($definitions[$module_slug]['label'] ?? strtoupper($module_slug));
+    }
+
+    ?>
+    <div class="em-wp-admin-module__section-title">
+        <span><?php echo esc_html($items_label); ?></span>
+        <span class="em-wp-admin-module__section-title-sep"><?php esc_html_e('de', 'em-wp'); ?></span>
+        <span class="em-wp-admin-module__section-module-pill"><?php echo esc_html($module_label); ?></span>
+    </div>
+    <?php
+}
+
+/**
+ * Rendu des champs couleur (sans wrapper panel-body).
+ *
+ * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $fields
+ */
+function em_wp_admin_render_color_fields_wrap(array $fields, string $option_name, string $group_label = ''): void
+{
+    if ($fields === []) {
+        return;
+    }
+
+    $open_group = $group_label !== '';
+    if ($open_group) {
+        echo '<div class="em-wp-admin-color-field-group">';
+        echo '<p class="em-wp-admin-color-field-group__title">' . esc_html($group_label) . '</p>';
+    }
+    ?>
+    <div class="em-wp-admin-color-field-wrap">
+        <?php
+        $bg_field_id = '';
+
+        foreach ($fields as $field) {
+            $candidate_name = sanitize_key((string) ($field['name'] ?? ''));
+
+            if ($candidate_name === 'background_color') {
+                $bg_field_id = sanitize_html_class($option_name . '-background_color');
+                break;
+            }
+        }
+
+        foreach ($fields as $field) {
+            $name = sanitize_key((string) ($field['name'] ?? ''));
+            if ($name === '') {
+                continue;
+            }
+            $label = (string) ($field['label'] ?? '');
+            $value = (string) ($field['value'] ?? '');
+            $placeholder = (string) ($field['placeholder'] ?? '');
+            $field_id = sanitize_html_class($option_name . '-' . $name);
+            $field_name = $option_name . '[' . $name . ']';
+            $field_args = [
+                'id'           => $field_id,
+                'name'         => $field_name,
+                'value'        => $value,
+                'default'      => $placeholder,
+                'field_label'  => $label,
+                'preview_label'=> $label,
+                'modal_title'  => $label !== '' ? $label : em_wp_admin_color_modal_default_title(),
+            ];
+
+            if (em_wp_admin_color_field_preview_type(['name' => $field_name], $name) === 'text' && $bg_field_id !== '') {
+                $field_args['preview_type'] = 'text';
+                $field_args['bg_target_id'] = $bg_field_id;
+            }
+
+            em_wp_admin_render_color_field($field_args);
+        } ?>
+    </div>
+    <?php
+    if ($open_group) {
+        echo '</div>';
+    }
+}
+
+/**
+ * Valeur affichée d'un champ couleur (Styles de base).
+ *
+ * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $color_fields
+ * @return array{value:string,default:string,display:string,input_suffix:string}
+ */
+function em_wp_admin_color_field_display_value(array $color_fields, string $field_name, string $fallback = '#100421'): array
+{
+    $field_name = sanitize_key($field_name);
+
+    foreach ($color_fields as $field) {
+        if (sanitize_key((string) ($field['name'] ?? '')) !== $field_name) {
+            continue;
+        }
+
+        $value = trim((string) ($field['value'] ?? ''));
+        $default = trim((string) ($field['placeholder'] ?? $fallback));
+
+        if ($default === '') {
+            $default = $fallback;
+        }
+
+        return [
+            'value'        => $value,
+            'default'      => $default,
+            'display'      => $value !== '' ? $value : $default,
+            'input_suffix' => '[' . $field_name . ']',
+        ];
+    }
+
+    return [
+        'value'        => '',
+        'default'      => $fallback,
+        'display'      => $fallback,
+        'input_suffix' => '[' . $field_name . ']',
+    ];
+}
+
+/**
+ * Titre du panneau couleurs rubrique (accordion Styles de base).
+ */
+function em_wp_admin_rubrique_inline_colors_panel_title(): string
+{
+    return __('COULEURS', 'em-wp');
+}
+
+/**
+ * Champs couleur compacts pour le panneau d'ajout au squelette template.
+ */
+function em_wp_admin_render_skeleton_add_rubrique_colors(string $rubrique_slug): void
+{
+    $rubrique_slug = sanitize_key($rubrique_slug);
+    $defaults = em_wp_admin_module_default_style_colors($rubrique_slug);
+    $bg = sanitize_hex_color((string) ($defaults['background'] ?? '#100421')) ?: '#100421';
+    $text = sanitize_hex_color((string) ($defaults['text'] ?? '#ffffff')) ?: '#ffffff';
+    $bg_id = 'em-wp-rubrique-skeleton-bg-' . sanitize_html_class($rubrique_slug);
+    $text_id = 'em-wp-rubrique-skeleton-text-' . sanitize_html_class($rubrique_slug);
+    ?>
+    <div class="em-wp-rubrique-skeleton-add-panel__color-fields">
+        <?php
+        em_wp_admin_render_color_field([
+            'id'           => $bg_id,
+            'value'        => $bg,
+            'default'      => $bg,
+            'field_label'  => __('Couleur de fond', 'em-wp'),
+            'preview_label'=> __('Couleur de fond', 'em-wp'),
+            'input_class'  => 'em-wp-rubrique-skeleton-add-panel__bg',
+        ]);
+        em_wp_admin_render_color_field([
+            'id'           => $text_id,
+            'value'        => $text,
+            'default'      => $text,
+            'field_label'  => __('Couleur du texte', 'em-wp'),
+            'preview_label'=> __('Couleur du texte', 'em-wp'),
+            'input_class'  => 'em-wp-rubrique-skeleton-add-panel__text',
+            'preview_type' => 'text',
+            'bg_target_id' => $bg_id,
+        ]);
+        ?>
+    </div>
+    <?php
+}
+
+/**
+ * Rendu du panneau accordion couleurs rubrique avec champs couleur.
+ *
+ * @param array<int, array{name:string,label:string,value:string,placeholder?:string}> $color_fields
+ * @param string $panel_class Classe module (ex. em-wp-hero-panel) pour ciblage CSS/JS optionnel.
+ * @param callable|null $extra_body Contenu additionnel dans le même panel-body (ex. image de fond Top Bar).
+ */
+function em_wp_admin_render_base_style_panel(
+    string $title,
+    array $color_fields,
+    string $option_name,
+    string $panel_class = '',
+    ?callable $extra_body = null
+): void {
+    $panel_classes = em_wp_admin_module_panel_classes($panel_class);
+    $bg_color = em_wp_admin_color_field_display_value($color_fields, 'background_color');
+    $text_color = em_wp_admin_color_field_display_value($color_fields, 'text_color', '#ffffff');
+    $bg_display = sanitize_hex_color($bg_color['display']) ?: $bg_color['default'];
+    $text_display = sanitize_hex_color($text_color['display']) ?: $text_color['default'];
+    ?>
+    <section
+        class="<?php echo esc_attr(trim($panel_classes . ' em-wp-rubrique-colors-panel')); ?>"
+        data-em-rubrique-bg-field="<?php echo esc_attr($bg_color['input_suffix']); ?>"
+        data-em-rubrique-bg-default="<?php echo esc_attr($bg_color['default']); ?>"
+        data-em-rubrique-text-field="<?php echo esc_attr($text_color['input_suffix']); ?>"
+        data-em-rubrique-text-default="<?php echo esc_attr($text_color['default']); ?>"
+    >
+        <button class="<?php echo esc_attr(em_wp_admin_panel_header_class($panel_class)); ?>" type="button" aria-expanded="<?php echo esc_attr(em_wp_admin_module_panel_aria_expanded()); ?>">
+            <?php em_wp_admin_render_panel_edit_trigger(); ?>
+            <span class="em-wp-rubrique-colors-panel__header-label">
+                <span><?php echo esc_html(em_wp_admin_rubrique_inline_colors_panel_title()); ?></span>
+                <span class="em-wp-rubrique-colors-panel__preview" aria-hidden="true">
+                    <span
+                        class="em-wp-rubrique-colors-panel__preview-surface"
+                        style="<?php echo esc_attr('background-color:' . $bg_display . ';'); ?>"
+                    >
+                        <span
+                            class="em-wp-rubrique-colors-panel__preview-text"
+                            style="<?php echo esc_attr('color:' . $text_display . ';'); ?>"
+                        ><?php esc_html_e('Texte', 'em-wp'); ?></span>
+                    </span>
+                </span>
+            </span>
+        </button>
+        <div class="em-wp-admin-module__panel-body">
+            <?php em_wp_admin_render_color_fields_wrap($color_fields, $option_name); ?>
+            <?php
+            if (is_callable($extra_body)) {
+                call_user_func($extra_body);
+            }
+            ?>
+        </div>
+    </section>
+    <?php
+}
+
+/**
+ * Attributs data pour le preview live Style de base → bloc titre.
+ *
+ * @param array{background?:string,text?:string} $defaults
+ * @param array{bg?:string,text?:string}|null $field_keys
+ */
+function em_wp_admin_module_style_data_attributes(string $option_name, array $defaults = [], ?array $field_keys = null): string
+{
+    $bg_default = (string) ($defaults['background'] ?? '#100421');
+    $text_default = (string) ($defaults['text'] ?? '#ffffff');
+    $bg_key = (string) ($field_keys['bg'] ?? 'background_color');
+    $text_key = (string) ($field_keys['text'] ?? 'text_color');
+    $bg_field = $option_name !== '' ? $option_name . '[' . $bg_key . ']' : '[' . $bg_key . ']';
+    $text_field = $option_name !== '' ? $option_name . '[' . $text_key . ']' : '[' . $text_key . ']';
+
+    return sprintf(
+        'data-em-admin-style data-em-admin-bg-field="%s" data-em-admin-text-field="%s" data-em-admin-bg-default="%s" data-em-admin-text-default="%s"',
+        esc_attr($bg_field),
+        esc_attr($text_field),
+        esc_attr($bg_default),
+        esc_attr($text_default)
+    );
+}
+
+/**
+ * Attributs preview Style de base mappés par slug rubrique (hero, slider, stream…).
+ *
+ * @param array<string, mixed> $options
+ */
+function em_wp_admin_module_style_data_attributes_for_module(string $module_slug, string $option_name, array $options = []): string
+{
+    $defaults = em_wp_admin_module_default_style_colors($module_slug);
+    $field_map = em_wp_admin_module_style_color_fields($module_slug);
+
+    return em_wp_admin_module_style_data_attributes($option_name, $defaults, $field_map);
+}
+
+/**
+ * Variables CSS inline initiales pour le bloc titre admin.
+ *
+ * @param array<string, mixed> $options
+ * @param array{background?:string,text?:string} $defaults
+ * @param array{bg?:string,text?:string}|null $field_keys
+ */
+function em_wp_admin_module_style_inline_vars(array $options, array $defaults = [], ?array $field_keys = null): string
+{
+    $bg_key = (string) ($field_keys['bg'] ?? 'background_color');
+    $text_key = (string) ($field_keys['text'] ?? 'text_color');
+    $bg = trim((string) ($options[$bg_key] ?? ''));
+    $text = trim((string) ($options[$text_key] ?? ''));
+
+    if ($bg === '') {
+        $bg = (string) ($defaults['background'] ?? '#100421');
+    }
+    if ($text === '') {
+        $text = (string) ($defaults['text'] ?? '#ffffff');
+    }
+
+    return '--em-module-admin-bg:' . $bg . ';--em-module-admin-text:' . $text . ';';
+}
+
+/**
+ * Variables CSS inline mappées par slug rubrique.
+ *
+ * @param array<string, mixed> $options
+ */
+function em_wp_admin_module_style_inline_vars_for_module(string $module_slug, array $options): string
+{
+    $defaults = em_wp_admin_module_default_style_colors($module_slug);
+    $field_map = em_wp_admin_module_style_color_fields($module_slug);
+
+    return em_wp_admin_module_style_inline_vars($options, $defaults, $field_map);
+}
+
+/**
+ * Couleurs par défaut du Style de base pour une rubrique.
+ *
+ * @return array{background:string,text:string}
+ */
+function em_wp_admin_module_default_style_colors(string $module_slug): array
+{
+    $map = [
+        'top-bar' => ['background' => '#13061f', 'text' => '#ffffff'],
+        'header'  => ['background' => '#ff6f00', 'text' => '#100421'],
+        'hero'    => ['background' => '#13061f', 'text' => '#ffffff'],
+        'slider'  => ['background' => '#12338f', 'text' => '#100421'],
+        'stream'  => ['background' => '#6a1b78', 'text' => '#fff6ea'],
+        'social'  => ['background' => '#db2777', 'text' => '#100421'],
+        'video'   => ['background' => '#f5e06a', 'text' => '#100421'],
+        'release' => ['background' => '#fff6ea', 'text' => '#100421'],
+        'cta'     => ['background' => '#0d9488', 'text' => '#100421'],
+        'footer'  => ['background' => '#100421', 'text' => '#fff6ea'],
+    ];
+
+    if (isset($map[$module_slug])) {
+        return $map[$module_slug];
+    }
+
+    $definitions = function_exists('em_wp_admin_site_rubrique_all_definitions')
+        ? em_wp_admin_site_rubrique_all_definitions()
+        : [];
+    $accent = sanitize_hex_color((string) ($definitions[$module_slug]['accent_color'] ?? '')) ?: '#100421';
+
+    return [
+        'background' => $accent,
+        'text'       => '#ffffff',
+    ];
+}
+
+/**
+ * Mapping des champs Style de base par rubrique (plan / sommaire).
+ *
+ * @return array{bg:string,text:string}|null
+ */
+function em_wp_admin_module_style_color_fields(string $module_slug): ?array
+{
+    $maps = [
+        'top-bar' => ['bg' => 'background_color', 'text' => 'text_color'],
+        'header'  => ['bg' => 'background_color', 'text' => 'text_color'],
+        'hero'    => ['bg' => 'background_color', 'text' => 'text_color'],
+        'stream'  => ['bg' => 'background_color', 'text' => 'text_color'],
+        'slider'  => ['bg' => 'frame_bg_color', 'text' => 'footer_text'],
+        'social'  => ['bg' => 'background_color', 'text' => 'text_color'],
+        'video'   => ['bg' => 'background_color', 'text' => 'text_color'],
+        'release' => ['bg' => 'background_color', 'text' => 'text_color'],
+        'cta'     => ['bg' => 'background_color', 'text' => 'text_color'],
+        'footer'  => ['bg' => 'background_color', 'text' => 'text_color'],
+    ];
+
+    if (isset($maps[$module_slug])) {
+        return $maps[$module_slug];
+    }
+
+    if (function_exists('em_wp_admin_rubrique_is_catalog_linked')
+        && em_wp_admin_rubrique_is_catalog_linked($module_slug)) {
+        return ['bg' => 'background_color', 'text' => 'text_color'];
+    }
+
+    $definitions = function_exists('em_wp_admin_site_rubrique_all_definitions')
+        ? em_wp_admin_site_rubrique_all_definitions()
+        : [];
+
+    if (isset($definitions[$module_slug])) {
+        return ['bg' => 'background_color', 'text' => 'text_color'];
+    }
+
+    return null;
+}
+
+/**
+ * Options enregistrées d'une rubrique (style actif pour hero/slider).
+ *
+ * @return array<string, mixed>
+ */
+function em_wp_admin_get_module_options_for_preview(string $module_slug): array
+{
+    switch ($module_slug) {
+        case 'top-bar':
+            return function_exists('em_wp_top_bar_get_options') ? em_wp_top_bar_get_options() : [];
+        case 'stream':
+            return function_exists('em_wp_stream_get_options') ? em_wp_stream_get_options() : [];
+        case 'social':
+            return function_exists('em_wp_social_get_options') ? em_wp_social_get_options() : [];
+        case 'video':
+            return function_exists('em_wp_video_get_options') ? em_wp_video_get_options() : [];
+        case 'release':
+            return function_exists('em_wp_release_get_options') ? em_wp_release_get_options() : [];
+        case 'cta':
+            return function_exists('em_wp_cta_get_options') ? em_wp_cta_get_options() : [];
+        case 'footer':
+            return function_exists('em_wp_footer_get_options') ? em_wp_footer_get_options() : [];
+        case 'header':
+            return function_exists('em_wp_header_get_options') ? em_wp_header_get_options() : [];
+        case 'hero':
+            if (function_exists('em_wp_hero_get_options') && function_exists('em_wp_hero_active_style_slug')) {
+                return em_wp_hero_get_options(em_wp_hero_active_style_slug());
+            }
+            break;
+        case 'slider':
+            if (function_exists('em_wp_slider_get_options') && function_exists('em_wp_slider_active_style_slug')) {
+                return em_wp_slider_get_options(em_wp_slider_active_style_slug());
+            }
+            break;
+        default:
+            if (function_exists('em_wp_custom_catalog_is_module')
+                && em_wp_custom_catalog_is_module($module_slug)
+                && function_exists('em_wp_custom_catalog_rubrique_get_options')) {
+                return em_wp_custom_catalog_rubrique_get_options($module_slug);
+            }
+
+            if (function_exists('em_wp_get_template_rubrique_options') && function_exists('em_wp_get_editing_template_slug')) {
+                $template_slug = em_wp_get_editing_template_slug();
+
+                if ($template_slug !== '') {
+                    return wp_parse_args(
+                        em_wp_get_template_rubrique_options($module_slug, $template_slug),
+                        function_exists('em_wp_admin_rubrique_default_template_options')
+                            ? em_wp_admin_rubrique_default_template_options($module_slug, $template_slug)
+                            : []
+                    );
+                }
+            }
+            break;
+    }
+
+    return [];
+}
+
+/**
+ * Couleurs Style de base réelles pour le plan du site / sommaire.
+ *
+ * @return array{background:string,text:string}
+ */
+function em_wp_admin_module_style_colors_for_preview(string $module_slug): array
+{
+    $definitions = function_exists('em_wp_admin_site_rubrique_definitions')
+        ? em_wp_admin_site_rubrique_definitions()
+        : [];
+    $fallback_accent = (string) ($definitions[$module_slug]['accent_color'] ?? '#100421');
+    $defaults = em_wp_admin_module_default_style_colors($module_slug);
+    $default_bg = (string) ($defaults['background'] ?? $fallback_accent);
+    $default_text = (string) ($defaults['text'] ?? '#ffffff');
+    $field_map = em_wp_admin_module_style_color_fields($module_slug);
+
+    if ($field_map === null) {
+        return [
+            'background' => $fallback_accent,
+            'text'       => $default_text,
+        ];
+    }
+
+    $options = em_wp_admin_get_module_options_for_preview($module_slug);
+    $bg = trim((string) ($options[$field_map['bg']] ?? ''));
+    $text = trim((string) ($options[$field_map['text']] ?? ''));
+
+    return [
+        'background' => $bg !== '' ? (sanitize_hex_color($bg) ?: $default_bg) : $default_bg,
+        'text'       => $text !== '' ? (sanitize_hex_color($text) ?: $default_text) : $default_text,
+    ];
+}
+
+/**
+ * Nom du champ POST pour la visibilité sommaire d'une rubrique (barre principale admin).
+ */
+function em_wp_admin_rubrique_visibility_field_name(string $module_slug): string
+{
+    return 'em_wp_rubrique_visible_' . str_replace('-', '_', sanitize_key($module_slug));
+}
+
+/**
+ * Toggle Afficher / Masquer sur la barre principale d'une rubrique.
+ */
+function em_wp_admin_render_rubrique_visibility_toggle(string $module_slug, string $form_id): void
+{
+    $field_name = em_wp_admin_rubrique_visibility_field_name($module_slug);
+    $visible = function_exists('em_wp_get_site_rubrique_visibility')
+        ? em_wp_get_site_rubrique_visibility($module_slug)
+        : true;
+    ?>
+    <label class="em-wp-admin-module__toggle">
+        <span><?php esc_html_e('Afficher', 'em-wp'); ?></span>
+        <input type="hidden" name="<?php echo esc_attr($field_name); ?>" value="0" form="<?php echo esc_attr($form_id); ?>">
+        <input
+            type="checkbox"
+            name="<?php echo esc_attr($field_name); ?>"
+            value="1"
+            form="<?php echo esc_attr($form_id); ?>"
+            <?php checked($visible); ?>
+        >
+    </label>
+    <?php
+}
+
+/**
+ * Badge ACTIF sur la barre d'une variante (hero, slider…).
+ */
+function em_wp_admin_render_variant_active_badge(string $style_slug, string $active_style_slug): void
+{
+    if ($style_slug === '' || $style_slug !== $active_style_slug) {
+        return;
+    }
+    ?>
+    <span class="em-wp-admin-module-hub__badge em-wp-admin-module-hub__badge--active em-wp-admin-module__active-badge"><?php esc_html_e('Actif', 'em-wp'); ?></span>
+    <?php
+}
+
+/**
+ * Lit la visibilité sommaire depuis le champ POST admin (null = absent).
+ */
+function em_wp_admin_rubrique_visibility_from_post(string $module_slug): ?bool
+{
+    $field_name = em_wp_admin_rubrique_visibility_field_name($module_slug);
+
+    if (!isset($_POST[$field_name])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        return null;
+    }
+
+    return (string) wp_unslash($_POST[$field_name]) === '1'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+}
+
+/**
+ * Enregistre la visibilité sommaire depuis le champ POST admin.
+ */
+function em_wp_admin_sync_rubrique_visibility_from_post(string $module_slug): void
+{
+    $visible = em_wp_admin_rubrique_visibility_from_post($module_slug);
+
+    if ($visible === null) {
+        return;
+    }
+
+    if (function_exists('em_wp_rubrique_sync_visibility_from_module_save')) {
+        em_wp_rubrique_sync_visibility_from_module_save($module_slug, $visible);
+    }
+}

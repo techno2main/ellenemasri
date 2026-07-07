@@ -1,0 +1,52 @@
+.em-release-rows-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.em-release-row-item {
+    align-items: flex-end;
+    flex-wrap: nowrap;
+    padding: 10px 12px;
+    border: 1px solid #d0d5dd;
+    background: #fff;
+}
+
+.em-release-row-item.is-row-hidden {
+    opacity: 0.55;
+}
+
+.em-release-row-item__handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 36px;
+    color: #6b7280;
+    cursor: grab;
+    flex: 0 0 auto;
+}
+
+.em-release-row-item__handle:active {
+    cursor: grabbing;
+}
+
+.em-release-row-item__actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    white-space: nowrap;
+    flex: 0 0 auto;
+}
+
+.em-release-row-item__actions .button-link-delete {
+    margin: 0;
+    padding: 0 4px;
+    height: 36px;
+    line-height: 36px;
+}
+
+.em-release-row-item.is-dragging {
+    opacity: 0.88;
+}

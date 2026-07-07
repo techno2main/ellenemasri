@@ -1,0 +1,138 @@
+/*
+ * V4 front — CONTENANT (design-system).
+ *
+ * Gouverne la FORME GLOBALE commune à toutes les rubriques V4 sur le front :
+ * largeur de section, conteneur centré, responsive, top-bar collante.
+ * L'apparence V4 (par rubrique) gouverne fond / couleurs / image de fond / typo
+ * et espacement VERTICAL. Les marges latérales fixes de l'apparence sont
+ * neutralisées ici (largeur commune, comme le site actuel).
+ *
+ * Dossier rubriques-v4/ : 100% nouveau, isolé et purgeable.
+ */
+
+.emv4-section {
+    width: 100%;
+}
+
+/* La rubrique porte le fond PLEINE LARGEUR ; marges latérales fixes annulées,
+   padding vertical (haut/bas de l'apparence) conservé. */
+.emv4-section > .em-rubrique {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* Conteneur centré commun à TOUTES les sections (largeur identique partout). */
+.emv4-section > .em-rubrique > .em-rubrique__row,
+.emv4-section > .em-rubrique > .em-rubrique__sep,
+.emv4-section > .em-rubrique > .em-rubrique__spacer {
+    width: min(1100px, 92vw);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+/* Top-bar collante, comme sur le site actuel. */
+.emv4-section--top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.emv4-section--top-bar > .em-rubrique {
+    overflow: visible;
+}
+
+/* Responsive : sous 760px les colonnes s'empilent. */
+@media (max-width: 760px) {
+    /* TOP-BAR mobile: une seule ligne (logo gauche + icones droite). */
+    .emv4-section--top-bar > .em-rubrique {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        column-gap: 12px;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        padding-left: 18px;
+        padding-right: 14px;
+    }
+
+    .emv4-section--top-bar > .em-rubrique > .em-rubrique__row {
+        display: none !important;
+        width: 100%;
+    }
+
+    .emv4-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) {
+        display: block !important;
+        grid-column: 1;
+        margin-top: 0;
+    }
+
+    .emv4-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) {
+        display: block !important;
+        grid-column: 2;
+        margin-top: 0;
+    }
+
+    .emv4-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col,
+    .emv4-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col {
+        display: none;
+    }
+
+    .emv4-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col:has(.em-rubrique__imgwrap),
+    .emv4-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col:has(.top-bar-platform-link) {
+        display: block;
+    }
+
+    .emv4-section--top-bar > .em-rubrique .em-rubrique__col:has(.em-rubrique__imgwrap) {
+        text-align: left;
+    }
+
+    .emv4-section--top-bar > .em-rubrique .em-rubrique__col:has(.top-bar-platform-link) {
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .emv4-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__image {
+        width: 108px;
+        max-width: 108px;
+        height: auto;
+    }
+
+    .emv4-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape {
+        width: 54px;
+        height: 12px;
+        opacity: .58;
+        border-width: 0;
+    }
+
+    .emv4-section--top-bar > .em-rubrique .em-rubrique__imgwrap .em-rubrique__tape--left {
+        top: -6px;
+        left: 16px;
+    }
+
+    .emv4-section--top-bar > .em-rubrique .top-bar-platform-link .em-rubrique__icon {
+        font-size: 22px;
+        line-height: 22px;
+        margin: 0 6px;
+    }
+
+    .emv4-section--top-bar > .em-rubrique .em-rubrique__col:has(.top-bar-platform-link)::after {
+        content: "Mayami, My Miami";
+        display: block;
+        margin-top: 10px;
+        padding-right: 6px;
+        color: #f4d03c;
+        font-family: "Brush Script MT", "Segoe Script", cursive;
+        font-size: 0.95rem;
+        font-weight: 400;
+        line-height: 1;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .emv4-section > .em-rubrique > .em-rubrique__row {
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 14px;
+    }
+}

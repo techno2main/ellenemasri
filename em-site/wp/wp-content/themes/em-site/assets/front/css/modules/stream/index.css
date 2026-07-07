@@ -1,0 +1,167 @@
+/* Rubrique STREAM : règles spécifiques (cartes plateformes, players, responsive). */
+
+.em-section--stream .em-rubrique__platform-card {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 20px 24px;
+	border: 2px solid #100421;
+	border-radius: 16px;
+	background: #fff6ea;
+	color: #100421;
+	text-align: left;
+	text-decoration: none;
+	box-shadow: 6px 6px 0 #100421;
+	transition: transform .12s ease;
+}
+
+.em-section--stream .em-rubrique__platform-card:hover {
+	transform: translate(-2px, -4px);
+	color: #100421;
+}
+
+.em-section--stream .em-rubrique__platform-card-body {
+	min-width: 0;
+}
+
+.em-section--stream .em-rubrique__platform-card-label {
+	display: block;
+	margin: 0 0 4px;
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-size: 10px;
+	letter-spacing: .25em;
+	text-transform: uppercase;
+	opacity: .7;
+}
+
+.em-section--stream .em-rubrique__platform-card-title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-size: 24px;
+	line-height: 1;
+}
+
+.em-section--stream .em-rubrique__platform-card-icon {
+	font-size: .9em;
+}
+
+.em-section--stream .em-rubrique__platform-card-arrow {
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-size: 24px;
+	transition: transform .12s ease;
+}
+
+.em-section--stream .em-rubrique__platform-card:hover .em-rubrique__platform-card-arrow {
+	transform: translateX(4px);
+}
+
+.em-section--stream .em-rubrique__textimg--stream-title {
+	flex-wrap: nowrap;
+	align-items: flex-end;
+}
+
+.em-section--stream .em-rubrique__textimg--stream-title .em-rubrique__field {
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-weight: 400;
+	white-space: nowrap;
+}
+
+.em-section--stream .em-rubrique__textimg--stream-title .em-rubrique__image {
+	flex: 0 0 auto;
+	max-width: 250px;
+	height: auto;
+}
+
+.em-section--stream .em-rubrique__field--01_listen,
+.em-section--stream .em-rubrique__field--avalaible_everywhere,
+.em-section--stream .em-rubrique__platform-card-label,
+.em-section--stream .em-rubrique__platform-card-title,
+.em-section--stream .em-rubrique__platform-card-arrow {
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-weight: 400;
+}
+
+.em-section__players {
+	width: min(1100px, 92vw);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.em-stream__player {
+	display: none;
+	margin-top: 24px;
+	overflow: hidden;
+	border: 2px solid #100421;
+	border-radius: 16px;
+	background: #fff6ea;
+	padding: 0;
+	box-shadow: 6px 6px 0 #100421;
+}
+
+.em-stream__player iframe {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	border: 0;
+	vertical-align: top;
+}
+
+.platform-player-mobile,
+.platform-player-desktop {
+	display: none;
+}
+
+.platform-player-mobile.is-active,
+.platform-player-desktop.is-active {
+	display: block;
+}
+
+@media (max-width: 760px) {
+	/* Masque la cellule droite de la ligne d'accroche sur mobile. */
+	.em-section--stream > .em-rubrique > .em-rubrique__row[data-em-row="3"] > .em-rubrique__col[data-em-col="2"] {
+		display: none;
+	}
+}
+
+@media (max-width: 639px) {
+	.em-section--stream .em-rubrique__textimg--stream-title {
+		align-items: center;
+		gap: 14px;
+	}
+
+	.em-section--stream .em-rubrique__textimg--stream-title .em-rubrique__field {
+		font-size: clamp(2rem, 5vw, 3.75rem) !important;
+		line-height: .9;
+	}
+
+	.em-section--stream .em-rubrique__textimg--stream-title .em-rubrique__image {
+		width: min(43vw, 170px) !important;
+		max-width: 170px;
+	}
+
+	.platform-player-desktop,
+	.platform-player-desktop.is-active {
+		display: none !important;
+	}
+
+	.platform-player-mobile.is-active {
+		display: block;
+	}
+}
+
+@media (min-width: 640px) {
+	.platform-player-mobile,
+	.platform-player-mobile.is-active {
+		display: none !important;
+	}
+
+	.platform-player-desktop.is-active {
+		display: block;
+	}
+}

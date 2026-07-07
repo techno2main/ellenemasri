@@ -1,0 +1,240 @@
+
+.em-template-wizard-context__reset-btn:hover,
+.em-template-wizard-context__reset-btn:focus {
+    border-color: #9ca3af;
+    background: #f9fafb;
+    color: #1d2327;
+}
+
+.em-template-wizard-context__reset-btn .fa-rotate-left {
+    font-size: 13px;
+}
+
+.em-template-wizard-context__reset-btn[hidden] {
+    display: none !important;
+}
+
+.em-template-wizard-context__meta {
+    margin: 0;
+    color: #50575e;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.em-template-wizard-progress {
+    margin: 0 0 18px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.em-templates-create-page--edit .em-template-wizard-progress {
+    margin-bottom: 0;
+}
+
+.em-template-wizard-progress__inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 16px;
+    background: linear-gradient(
+        135deg,
+        var(--em-wizard-banner-from, #4e080e) 0%,
+        var(--em-wizard-banner-to, #751820) 100%
+    );
+    box-shadow: 0 2px 8px rgba(78, 8, 14, 0.22);
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.em-template-wizard-progress__inner.is-template-colored {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+
+.em-template-wizard-progress__step-complete {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    align-self: center;
+    color: #86efac;
+    font-size: 28px;
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+}
+
+.em-template-wizard-progress__step-complete[hidden] {
+    display: none;
+}
+
+.em-template-wizard-progress__badge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 52px;
+    max-width: min(100%, 220px);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.em-template-wizard-progress__body {
+    min-width: 0;
+}
+
+.em-template-wizard-progress__title {
+    margin: 0 0 6px;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.em-template-wizard-progress__title-lead {
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.em-template-wizard-progress__checklist {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.em-template-wizard-progress__checklist[hidden] {
+    display: none;
+}
+
+.em-template-wizard-progress__checklist-sep {
+    color: rgba(255, 255, 255, 0.45);
+    font-weight: 400;
+}
+
+.em-template-wizard-progress__checklist-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.em-template-wizard-progress__checklist-item strong {
+    font-weight: 800;
+}
+
+.em-template-wizard-progress__checklist-item.is-pending strong {
+    color: #fde68a;
+}
+
+.em-template-wizard-progress__checklist-item.is-current {
+    outline: 1px solid rgba(255, 255, 255, 0.45);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+.em-template-wizard-progress__checklist-item.is-done .em-template-wizard-progress__checklist-code,
+.em-template-wizard-progress__checklist-item.is-upcoming .em-template-wizard-progress__checklist-code {
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 800;
+}
+
+.em-template-wizard-progress__checklist-item.is-done .em-template-wizard-progress__action-text,
+.em-template-wizard-progress__checklist-item.is-upcoming .em-template-wizard-progress__action-text {
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 400;
+}
+
+.em-template-wizard-progress__checklist-item.is-done .em-template-wizard-progress__action-text strong {
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 400;
+}
+
+.em-template-wizard-progress__checklist-item.is-upcoming {
+    opacity: 0.62;
+}
+
+.em-template-wizard-progress__checklist-item.is-upcoming .em-template-wizard-progress__action-validate {
+    opacity: 0.45;
+}
+
+.em-template-wizard-progress__checklist-swatch {
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    margin-left: 2px;
+    border: 2px solid #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.em-template-wizard-progress__action-text strong {
+    font-weight: 800;
+}
+
+.em-template-wizard-progress__checklist-item.is-pending .em-template-wizard-progress__action-text {
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.em-template-wizard-progress__checklist-code {
+    font-weight: 800;
+    letter-spacing: 0.03em;
+}
+
+.em-template-wizard-progress__action-validate {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+    line-height: 1;
+    cursor: not-allowed;
+    vertical-align: middle;
+}
+
+.em-template-wizard-progress__action-validate.is-ready:not(.is-validated) {
+    border-color: rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.em-template-wizard-progress__action-validate.is-ready:not(.is-validated):hover,
+.em-template-wizard-progress__action-validate.is-ready:not(.is-validated):focus {
+    background: rgba(255, 255, 255, 0.32);
+    color: #ffffff;
+    outline: none;
+}
+
+.em-template-wizard-progress__action-validate.is-validated {
+    border-color: #86efac;
+    background: rgba(134, 239, 172, 0.2);
+    color: #86efac;
+    cursor: default;
+}

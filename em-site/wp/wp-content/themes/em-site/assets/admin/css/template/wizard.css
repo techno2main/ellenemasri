@@ -1,0 +1,8 @@
+/* Wizard styles split by responsibility (<=300 lines per file). */
+@import url('./wizard/modal-page-shell-and-overview.css');
+@import url('./wizard/context-header-and-progress-banner.css');
+@import url('./wizard/progress-workspace-and-field-flow.css');
+@import url('./wizard/edit-mode-guide-and-drafts.css');
+@import url('./wizard/skeleton-list-and-picker.css');
+@import url('./wizard/wireframe-controls-and-actions.css');
+@import url('./wizard/wireframe-preview-edit-and-plan.css');

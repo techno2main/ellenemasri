@@ -1,0 +1,75 @@
+/* Rubrique SOCIAL : règles spécifiques (titre dual et cartes réseaux). */
+
+.em-section--social .em-rubrique__field--02_follow,
+.em-section--social .em-rubrique__texttext .em-rubrique__field,
+.em-section--social .em-rubrique__field--textarea,
+.em-section--social .em-rubrique__network-card-badge,
+.em-section--social .em-rubrique__network-card-label,
+.em-section--social .em-rubrique__network-card-account {
+	font-family: "Archivo Black", Arial, sans-serif;
+	font-weight: 400;
+}
+
+.em-section--social .em-rubrique__texttext {
+	align-items: flex-end;
+	gap: 14px;
+}
+
+.em-section--social .em-rubrique__field--textarea {
+	max-width: 860px;
+	font-size: clamp(16px, 1.55vw, 24px);
+	line-height: 1.35;
+}
+
+.em-section--social .em-rubrique__network-card {
+	position: relative;
+	overflow: hidden;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 20px;
+	border: 2px solid #fff6ea;
+	border-radius: 16px;
+	color: #fff6ea;
+	text-align: left;
+	text-decoration: none;
+	transition: transform .12s ease;
+}
+
+.em-section--social .em-rubrique__network-card:hover {
+	transform: translateY(-4px);
+	color: #fff6ea;
+}
+
+.em-section--social .em-rubrique__network-card-badge {
+	display: block;
+	margin: 0;
+	font-size: 11px;
+	letter-spacing: .3em;
+	text-transform: uppercase;
+	opacity: .85;
+}
+
+.em-section--social .em-rubrique__network-card-label {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 4px 0 0;
+	font-size: clamp(1.5rem, 4vw, 2rem);
+	line-height: 1.1;
+}
+
+.em-section--social .em-rubrique__network-card-account {
+	display: block;
+	margin: 8px 0 0;
+	font-size: 12px;
+	letter-spacing: normal;
+	text-transform: none;
+	opacity: .85;
+}
+
+@media (max-width: 760px) {
+	.em-section--social .em-rubrique__field--textarea {
+		max-width: none;
+	}
+}

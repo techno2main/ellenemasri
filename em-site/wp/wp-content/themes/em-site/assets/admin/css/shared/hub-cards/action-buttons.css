@@ -1,0 +1,281 @@
+.em-hub__action {
+    width: auto;
+    max-width: 100%;
+    min-height: 42px;
+    margin: 0;
+    padding: 0 18px;
+    border: 1px solid #4e080e;
+    border-radius: 12px;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.18) inset,
+        0 2px 8px rgba(78, 8, 14, 0.28);
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease,
+        transform 0.15s ease;
+}
+
+.em-hub__action:hover,
+.em-hub__action:focus {
+    border-color: #3d060b;
+    background: linear-gradient(180deg, #651620 0%, #3d060b 100%);
+    color: #ffffff;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.14) inset,
+        0 4px 12px rgba(78, 8, 14, 0.34);
+    transform: translateY(-1px);
+}
+
+.em-hub__action:focus {
+    outline: 2px solid rgba(117, 24, 32, 0.35);
+    outline-offset: 2px;
+}
+
+.em-hub__action-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.em-hub__action-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.em-hub__action .dashicons {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    font-size: 18px;
+    line-height: 18px;
+    color: #ffffff;
+}
+
+.em-hub__action--secondary {
+    width: auto;
+    max-width: 100%;
+    text-transform: none;
+    border-color: #c3c4c7;
+    background: linear-gradient(180deg, #ffffff 0%, #f3f4f5 100%);
+    color: #646970;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 1px 3px rgba(0, 0, 0, 0.06);
+    cursor: not-allowed;
+    transform: none;
+}
+
+.em-hub__action--secondary .dashicons {
+    color: #787c82;
+}
+
+.em-hub__action--secondary .em-hub__action-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    white-space: nowrap;
+}
+
+.em-hub__action--secondary:hover,
+.em-hub__action--secondary:focus {
+    border-color: #c3c4c7;
+    background: linear-gradient(180deg, #ffffff 0%, #f3f4f5 100%);
+    color: #646970;
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, 0.9) inset,
+        0 1px 3px rgba(0, 0, 0, 0.06);
+    transform: none;
+}
+
+.em-hub__card--disabled {
+    opacity: 0.78;
+}
+
+.em-hub__action--secondary.em-hub__action--compact.em-hub__action--icon-only {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.em-hub__action--secondary.em-hub__action--compact.em-hub__action--icon-only .dashicons {
+    width: 32px;
+    height: 32px;
+    font-size: 28px;
+    line-height: 22px;
+    color: #a85560;
+}
+
+/* Accueil — grille alignée sur le sommaire Catalogues (hors rangée Templates) */
+.em-dashboard .em-hub__rows {
+    max-width: min(100%, 960px);
+}
+
+.em-dashboard .em-dashboard__row--hub-cards .em-hub__card-desc {
+    line-height: 1.35;
+}
+
+/* Accueil — survol synchronisé onglets ↔ cartes */
+.em-dashboard .em-hub__card[data-dashboard-section] {
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.em-dashboard .em-hub__card.is-preview-active {
+    border-color: #4e080e;
+    box-shadow:
+        0 0 0 2px rgba(78, 8, 14, 0.24),
+        0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.em-hub__card-live-status--rubriques {
+    margin-top: 0;
+}
+
+.em-hub__live--rubriques-empty {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.em-hub__template-live-pill--rubriques-link,
+.em-hub__template-live-pill--rubriques-link:hover,
+.em-hub__template-live-pill--rubriques-link:focus,
+.em-hub__template-live-pill--rubriques-link:focus-visible,
+.em-hub__template-live-pill--rubriques-link:active,
+.em-hub__template-live-pill--rubriques-link:visited {
+    color: var(--em-template-text, #ffffff);
+    text-decoration: none;
+    background: var(--em-template-accent, #751820);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+/* Accueil — base onglets (fallback après retrait des CSS catalog legacy). */
+.em-dashboard .em-catalog-edit__nav,
+.em-templates-sommaire .em-catalog-edit__nav {
+    margin: 8px 0 18px;
+}
+
+.em-dashboard .em-catalog-edit__nav-list,
+.em-templates-sommaire .em-catalog-edit__nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.em-dashboard .em-catalog-edit__nav-item,
+.em-templates-sommaire .em-catalog-edit__nav-item {
+    margin: 0;
+}
+
+.em-dashboard .em-catalog-edit__nav-link,
+.em-templates-sommaire .em-catalog-edit__nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 34px;
+    padding: 6px 12px;
+    border: 1px solid #d0d5dd;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #111827;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    box-shadow: none;
+}
+
+.em-dashboard .em-catalog-edit__nav-link .em-catalog-edit__nav-icon,
+.em-templates-sommaire .em-catalog-edit__nav-link .em-catalog-edit__nav-icon {
+    font-size: 14px;
+    color: #7a0f1f;
+}
+
+.em-dashboard .em-catalog-edit__nav-link--list,
+.em-templates-sommaire .em-catalog-edit__nav-link--list {
+    width: 34px;
+    min-width: 34px;
+    padding: 0;
+}
+
+.em-dashboard .em-catalog-edit__nav-item.is-active .em-catalog-edit__nav-link,
+.em-dashboard .em-catalog-edit__nav-link.is-preview-active,
+.em-templates-sommaire .em-catalog-edit__nav-item.is-active .em-catalog-edit__nav-link,
+.em-templates-sommaire .em-catalog-edit__nav-link.is-preview-active {
+    border-color: #4e080e;
+    background: #4e080e;
+    color: #ffffff;
+}
+
+.em-dashboard .em-catalog-edit__nav-item.is-active .em-catalog-edit__nav-link .em-catalog-edit__nav-icon,
+.em-dashboard .em-catalog-edit__nav-link.is-preview-active .em-catalog-edit__nav-icon,
+.em-templates-sommaire .em-catalog-edit__nav-item.is-active .em-catalog-edit__nav-link .em-catalog-edit__nav-icon,
+.em-templates-sommaire .em-catalog-edit__nav-link.is-preview-active .em-catalog-edit__nav-icon {
+    color: #ffffff;
+}
+
+.em-dashboard .em-catalog-edit__nav .em-catalog-edit__nav-link:not(.em-catalog-edit__nav-link--list):hover,
+.em-dashboard .em-catalog-edit__nav .em-catalog-edit__nav-link.is-preview-active:not(.em-catalog-edit__nav-link--list),
+.em-templates-sommaire .em-catalog-edit__nav .em-catalog-edit__nav-link:not(.em-catalog-edit__nav-link--list):hover,
+.em-templates-sommaire .em-catalog-edit__nav .em-catalog-edit__nav-link.is-preview-active:not(.em-catalog-edit__nav-link--list) {
+    border-color: #4e080e;
+    background: #4e080e;
+    color: #ffffff;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.em-dashboard .em-catalog-edit__nav .em-catalog-edit__nav-link--add:hover .em-catalog-edit__nav-icon,
+.em-dashboard .em-catalog-edit__nav .em-catalog-edit__nav-link--add.is-preview-active .em-catalog-edit__nav-icon,
+.em-dashboard .em-catalog-edit__nav .em-catalog-edit__nav-link--add:focus-visible .em-catalog-edit__nav-icon,
+.em-templates-sommaire .em-catalog-edit__nav .em-catalog-edit__nav-link--add:hover .em-catalog-edit__nav-icon,
+.em-templates-sommaire .em-catalog-edit__nav .em-catalog-edit__nav-link--add.is-preview-active .em-catalog-edit__nav-icon,
+.em-templates-sommaire .em-catalog-edit__nav .em-catalog-edit__nav-link--add:focus-visible .em-catalog-edit__nav-icon {
+    color: #ffffff;
+}
+
+.em-dashboard.has-dashboard-preview .em-catalog-edit__nav-item.is-active .em-catalog-edit__nav-link:not(.is-preview-active):not(.em-catalog-edit__nav-link--list) {
+    border-color: #d0d5dd;
+    background: #ffffff;
+    color: #111827;
+}
+
+/* Templates — survol synchronisé onglets ↔ cartes */
+.em-templates-sommaire .em-hub__card[data-template-section]:not([data-template-section="create"]) {
+    align-content: start;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.em-templates-sommaire .em-hub__card[data-template-section] {
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;

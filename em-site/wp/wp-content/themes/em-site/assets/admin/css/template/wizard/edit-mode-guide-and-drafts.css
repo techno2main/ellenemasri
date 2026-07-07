@@ -1,0 +1,242 @@
+
+.em-template-wizard-progress__label {
+    display: block;
+    margin: 0 0 4px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.em-template-wizard-progress__hint {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.em-template-wizard-progress__workspace {
+    padding: 14px 16px 16px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.em-template-wizard-progress__fields {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    padding-top: 0;
+}
+
+.em-template-wizard-progress__fields[hidden] {
+    display: none;
+}
+
+.em-template-wizard-progress__fields .em-templates-admin__create-label {
+    order: 0;
+    color: #646970;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 600;
+}
+
+.em-template-wizard-progress__fields .em-templates-admin__create-input,
+.em-template-wizard-progress__fields .wp-picker-container {
+    order: 1;
+}
+
+.em-template-wizard-progress__fields .em-templates-admin__create-input {
+    background: #ffffff;
+}
+
+.em-template-wizard-progress__fields .em-template-wizard-progress__field-active {
+    position: relative;
+}
+
+.em-template-wizard-progress__fields .em-template-wizard-progress__field-active::after {
+    content: '';
+    display: inline-block;
+    flex-shrink: 0;
+    order: 2;
+    width: 0;
+    height: 0;
+    margin-left: 8px;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-right: 10px solid #751820;
+}
+
+.em-template-wizard-progress__action-counter {
+    flex-shrink: 0;
+    order: 3;
+    margin-left: 8px;
+    color: #751820;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.em-template-wizard-progress__fields .em-template-wizard-guide__target--focus:not(.em-template-wizard-progress__continue) {
+    outline: none;
+    background: transparent;
+}
+
+.em-template-wizard-progress__continue {
+    flex-shrink: 0;
+    border-color: var(--em-wizard-continue-from, #4e080e);
+    background: linear-gradient(
+        180deg,
+        var(--em-wizard-continue-to, #751820) 0%,
+        var(--em-wizard-continue-from, #4e080e) 100%
+    );
+    color: #ffffff;
+}
+
+.em-template-wizard-progress__continue .em-hub__action-label {
+    color: #ffffff;
+}
+
+.em-template-wizard-progress__continue:focus,
+.em-template-wizard-progress__continue:focus-visible {
+    color: #ffffff;
+    outline: 2px solid var(--em-wizard-continue-from, #4e080e);
+    outline-offset: 2px;
+    background: linear-gradient(
+        180deg,
+        var(--em-wizard-continue-to, #751820) 0%,
+        var(--em-wizard-continue-from, #4e080e) 100%
+    );
+}
+
+.em-template-wizard-progress__continue[hidden] {
+    display: none;
+}
+
+.em-template-wizard-progress__color-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.em-template-wizard-progress__color-preview[hidden] {
+    display: none;
+}
+
+.em-template-wizard-progress__color-preview-label {
+    color: #646970;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.em-template-wizard-progress__color-preview-swatch {
+    flex-shrink: 0;
+    width: 36px;
+    height: 28px;
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px #c3c4c7, 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.em-template-wizard-progress__color-preview-value {
+    color: #1d2327;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: 0.02em;
+}
+
+
+.em-templates-create-page--edit #em-template-wizard-identity {
+    display: none;
+}
+
+.em-templates-create-page--edit .em-templates-admin__create-actions:empty {
+    display: none;
+}
+
+.em-templates-create-page--edit .em-catalog-sommaire__section {
+    background: #ffffff;
+}
+
+.em-templates-create-page--edit .em-catalog-sommaire__section[hidden] {
+    display: none !important;
+}
+
+.em-templates-create-page--edit .em-catalog-sommaire__section-body {
+    margin: 0;
+    padding: 12px 14px 14px;
+    border: none;
+    background: transparent;
+}
+
+.em-hub-sommaire.em-templates-create-page--edit .em-hub__sticky-head {
+    padding-bottom: 14px;
+    box-shadow: none;
+}
+
+.em-hub-sommaire.em-templates-create-page--edit .em-hub__sticky-head .em-template-create__nav {
+    margin-bottom: 12px;
+}
+
+.em-hub-sommaire.em-templates-create-page--edit .em-hub__sticky-head .em-template-wizard-context,
+.em-hub-sommaire.em-templates-create-page--edit .em-hub__sticky-head .em-template-wizard-progress {
+    box-sizing: border-box;
+    width: min(100%, 960px);
+    max-width: none;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.em-hub-sommaire.em-templates-create-page--edit .em-hub__sticky-head .em-template-wizard-context {
+    margin-bottom: 12px;
+    padding: 0 0 12px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.em-hub-sommaire.em-templates-create-page--edit .em-hub__sticky-head .em-template-wizard-context__kicker {
+    padding-top: 0;
+}
+
+.em-hub-sommaire.em-templates-create-page--edit .em-hub__sticky-head .em-template-wizard-progress {
+    margin-bottom: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.em-templates-create-page--edit .em-template-wizard-context {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.em-template-wizard--compact.em-template-wizard--page {
+    margin-top: 0;
+}
+
+.em-templates-create-page--edit .em-template-wizard--compact .em-template-wizard__body {
+    padding: 0;
+}
+
+.em-templates-create-page--edit .em-template-wizard--compact .em-template-wizard__body[hidden],
+.em-templates-create-page--edit .em-template-wizard--compact .em-template-wizard__actions[hidden] {
+    display: none !important;
+}
+
+.em-template-wizard--compact .em-template-wizard__helper {
+    display: none;
+}
+
+.em-template-wizard-guide {
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid #c7d2fe;
+    border-radius: 6px;
+    background: #eef2ff;
+}
