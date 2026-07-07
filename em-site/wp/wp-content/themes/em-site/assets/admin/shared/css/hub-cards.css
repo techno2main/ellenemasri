@@ -1,0 +1,8 @@
+/* Hub cards styles split by responsibility (<=300 lines per file). */
+@import url('./hub-cards/layout-sticky-header.css');
+@import url('./hub-cards/live-status-indicators.css');
+@import url('./hub-cards/catalog-entry-links.css');
+@import url('./hub-cards/catalog-card-header.css');
+@import url('./hub-cards/action-buttons.css');
+@import url('./hub-cards/templates-preview-state.css');
+@import url('./hub-cards/templates-title-dashboard-spacing.css');

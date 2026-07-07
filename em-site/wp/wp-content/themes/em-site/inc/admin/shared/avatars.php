@@ -1,6 +1,6 @@
 <?php
 /**
- * Avatars admin personnalisés (alignés prod : ellene-admin, admin-my).
+ * Avatars admin personnalisés (alignés prod : client-admin, admin-my).
  *
  * @package em-wp
  */
@@ -83,13 +83,13 @@ function em_wp_admin_customize_account_avatars(array $args, $id_or_email): array
 
     $custom_url = '';
 
-    if (in_array($user_login, ['ellene-admin', 'admin-ellene'], true)) {
+    if (in_array($user_login, ['admin-ellene'], true)) {
         $custom_url = get_site_icon_url((int) ($args['size'] ?? 96));
 
         if (!$custom_url) {
             $custom_url = get_site_icon_url(96);
         }
-    } elseif (in_array($user_login, ['admin-my', 'admin-tyson'], true)) {
+    } elseif (in_array($user_login, ['admin-tyson'], true)) {
         $custom_url = em_wp_admin_my_avatar_url((int) ($args['size'] ?? 96));
 
         if ($custom_url === '') {

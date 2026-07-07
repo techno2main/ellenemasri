@@ -16,7 +16,7 @@ function em_wp_is_login_off_request(): bool
 {
     $request_path = wp_parse_url((string) ($_SERVER['REQUEST_URI'] ?? ''), PHP_URL_PATH);
     $target_path = wp_parse_url(
-        function_exists('em_wp_ellene_admin_gate_admin_url') ? em_wp_ellene_admin_gate_admin_url() : home_url('/wp-login-off/'),
+        function_exists('em_wp_client_admin_gate_admin_url') ? em_wp_client_admin_gate_admin_url() : home_url('/wp-login-off/'),
         PHP_URL_PATH
     );
 
@@ -27,7 +27,7 @@ function em_wp_is_login_off_request(): bool
 }
 
 /**
- * Rend la page dédiée si ellene-admin est verrouillée.
+ * Rend la page dédiée si client-admin est verrouillée.
  */
 function em_wp_maybe_render_login_off_page(): void
 {
@@ -35,35 +35,35 @@ function em_wp_maybe_render_login_off_page(): void
         return;
     }
 
-    if (!function_exists('em_wp_ellene_admin_gate_is_enabled') || !em_wp_ellene_admin_gate_is_enabled()) {
+    if (!function_exists('em_wp_client_admin_gate_is_enabled') || !em_wp_client_admin_gate_is_enabled()) {
         wp_safe_redirect(wp_login_url());
         exit;
     }
 
     if (!is_user_logged_in()) {
-        wp_safe_redirect(wp_login_url(em_wp_ellene_admin_gate_admin_url()));
+        wp_safe_redirect(wp_login_url(em_wp_client_admin_gate_admin_url()));
         exit;
     }
 
     $user = wp_get_current_user();
 
-    $allowed_ellene_logins = function_exists('em_wp_admin_ellene_user_logins')
-        ? em_wp_admin_ellene_user_logins()
-        : ['ellene-admin', 'admin-ellene'];
+    $allowed_client_logins = function_exists('em_wp_admin_client_user_logins')
+        ? em_wp_admin_client_user_logins()
+        : ['admin-ellene'];
 
-    if (!($user instanceof WP_User) || !in_array(strtolower((string) $user->user_login), $allowed_ellene_logins, true)) {
+    if (!($user instanceof WP_User) || !in_array(strtolower((string) $user->user_login), $allowed_client_logins, true)) {
         wp_safe_redirect(admin_url());
         exit;
     }
 
     $logo_url = function_exists('em_wp_get_login_logo_url') ? em_wp_get_login_logo_url() : '';
-    $login_css_path = 'assets/css/login.css';
+    $login_css_path = 'assets/front/css/login.css';
     $login_css_url = get_template_directory_uri() . '/' . $login_css_path;
     $version = function_exists('em_wp_login_asset_version') ? em_wp_login_asset_version($login_css_path) : wp_get_theme()->get('Version');
     $logout_url = wp_logout_url(home_url('/'));
     $site_url = home_url('/');
-    $message_html = function_exists('em_wp_ellene_admin_gate_message_html')
-        ? em_wp_ellene_admin_gate_message_html()
+    $message_html = function_exists('em_wp_client_admin_gate_message_html')
+        ? em_wp_client_admin_gate_message_html()
         : '<p>Information.</p>';
 
     nocache_headers();
@@ -81,7 +81,7 @@ function em_wp_maybe_render_login_off_page(): void
                 margin: 0;
             }
 
-            body.login #login.em-wp-ellene-gate-login {
+            body.login #login.em-wp-client-gate-login {
                 width: 560px !important;
                 max-width: 560px !important;
                 min-width: 560px !important;
@@ -103,7 +103,7 @@ function em_wp_maybe_render_login_off_page(): void
                 height: auto;
             }
 
-            body.login #loginform.em-wp-ellene-gate-form {
+            body.login #loginform.em-wp-client-gate-form {
                 width: 560px !important;
                 max-width: 560px !important;
                 min-width: 560px !important;
@@ -115,7 +115,7 @@ function em_wp_maybe_render_login_off_page(): void
                 margin: 0;
             }
 
-            body.login #login .em-wp-ellene-gate-message {
+            body.login #login .em-wp-client-gate-message {
                 width: 100%;
                 color: #ffffff;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -127,7 +127,7 @@ function em_wp_maybe_render_login_off_page(): void
                 box-sizing: border-box;
             }
 
-            body.login #login .em-wp-ellene-gate-message p {
+            body.login #login .em-wp-client-gate-message p {
                 margin: 0 0 16px;
                 font-family: inherit;
                 font-size: 16px;
@@ -135,16 +135,16 @@ function em_wp_maybe_render_login_off_page(): void
                 font-weight: 400;
             }
 
-            body.login #login .em-wp-ellene-gate-message p:last-child {
+            body.login #login .em-wp-client-gate-message p:last-child {
                 margin-bottom: 0;
             }
 
-            body.login #login .em-wp-ellene-gate-form .submit {
+            body.login #login .em-wp-client-gate-form .submit {
                 margin: 22px 28px 10px;
                 padding: 0 0 10px;
             }
 
-            body.login #login .em-wp-ellene-gate-form .button.button-primary {
+            body.login #login .em-wp-client-gate-form .button.button-primary {
                 appearance: none;
                 -webkit-appearance: none;
                 display: inline-block;
@@ -165,14 +165,14 @@ function em_wp_maybe_render_login_off_page(): void
                 line-height: 2.15384615;
             }
 
-            body.login #login .em-wp-ellene-gate-form .button.button-primary:hover,
-            body.login #login .em-wp-ellene-gate-form .button.button-primary:focus {
+            body.login #login .em-wp-client-gate-form .button.button-primary:hover,
+            body.login #login .em-wp-client-gate-form .button.button-primary:focus {
                 background: #50575e;
                 border-color: #50575e;
                 color: #ffffff;
             }
 
-            body.login #login .em-wp-ellene-gate-form .button.button-primary:focus {
+            body.login #login .em-wp-client-gate-form .button.button-primary:focus {
                 outline: 2px solid transparent;
                 box-shadow: 0 0 0 1px #ffffff;
             }
@@ -204,8 +204,8 @@ function em_wp_maybe_render_login_off_page(): void
             }
 
             @media (max-width: 620px) {
-                body.login #login.em-wp-ellene-gate-login,
-                body.login #loginform.em-wp-ellene-gate-form,
+                body.login #login.em-wp-client-gate-login,
+                body.login #loginform.em-wp-client-gate-form,
                 body.login #backtoblog {
                     width: calc(100% - 40px) !important;
                     max-width: calc(100% - 40px) !important;
@@ -215,7 +215,7 @@ function em_wp_maybe_render_login_off_page(): void
         </style>
     </head>
     <body class="login wp-core-ui">
-        <div id="login" class="em-wp-ellene-gate-login">
+        <div id="login" class="em-wp-client-gate-login">
             <h1>
                 <?php if ($logo_url !== '') { ?>
                     <img
@@ -228,8 +228,8 @@ function em_wp_maybe_render_login_off_page(): void
                 <?php } ?>
             </h1>
 
-            <form id="loginform" class="em-wp-ellene-gate-form" action="#" method="post">
-                <div class="em-wp-ellene-gate-message">
+            <form id="loginform" class="em-wp-client-gate-form" action="#" method="post">
+                <div class="em-wp-client-gate-message">
                     <?php echo wp_kses_post($message_html); ?>
                 </div>
 
