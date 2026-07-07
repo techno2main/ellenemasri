@@ -2,21 +2,21 @@
 /**
  * Defaults et identifiants admin Stream.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-function em_wp_stream_page_slug(): string
+function em_site_stream_page_slug(): string
 {
     return 'em-stream';
 }
 
-function em_wp_stream_form_option_key(): string
+function em_site_stream_form_option_key(): string
 {
-    return em_wp_stream_option_name(em_wp_stream_admin_template_slug());
+    return em_site_stream_option_name(em_site_stream_admin_template_slug());
 }
 
 /**
@@ -24,7 +24,7 @@ function em_wp_stream_form_option_key(): string
  *
  * @return array{enabled:bool,stream_slug:string,background_color:string,text_color:string}
  */
-function em_wp_stream_rubrique_default_options(): array
+function em_site_stream_rubrique_default_options(): array
 {
     return [
         'enabled'          => true,
@@ -39,20 +39,20 @@ function em_wp_stream_rubrique_default_options(): array
  *
  * @return array<string, mixed>
  */
-function em_wp_stream_catalog_default_options(): array
+function em_site_stream_catalog_default_options(): array
 {
     $platforms = [];
 
-    foreach (array_keys(em_wp_stream_platform_definitions()) as $slug) {
-        $platforms[] = em_wp_stream_default_platform_item($slug);
+    foreach (array_keys(em_site_stream_platform_definitions()) as $slug) {
+        $platforms[] = em_site_stream_default_platform_item($slug);
     }
 
     return [
-        'kicker'            => __('01 / Listen', 'em-wp'),
-        'title_prefix'      => __('Stream', 'em-wp'),
+        'kicker'            => __('01 / Listen', 'em-site'),
+        'title_prefix'      => __('Stream', 'em-site'),
         'title_logo'        => '',
-        'availability_text' => __('Available everywhere', 'em-wp'),
-        'card_label'        => __('Listen on', 'em-wp'),
+        'availability_text' => __('Available everywhere', 'em-site'),
+        'card_label'        => __('Listen on', 'em-site'),
         'platforms'         => $platforms,
     ];
 }

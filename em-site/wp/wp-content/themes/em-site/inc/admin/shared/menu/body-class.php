@@ -1,8 +1,8 @@
 <?php
 /**
- * Body class sidebar marron em-wp.
+ * Body class sidebar marron em-site.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -10,17 +10,17 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Body class : sidebar marron em-wp sur tout le BO admin.
+ * Body class : sidebar marron em-site sur tout le BO admin.
  *
  * @param mixed $classes
  * @return mixed
  */
-function em_wp_admin_sidebar_chrome_body_class($classes)
+function em_site_admin_sidebar_chrome_body_class($classes)
 {
-    if (!current_user_can(em_wp_admin_menu_capability())) {
+    if (!current_user_can(em_site_admin_menu_capability())) {
         return $classes;
     }
 
-    return $classes . ' em-wp-admin-sidebar-chrome';
+    return $classes . ' em-site-admin-sidebar-chrome';
 }
-add_filter('admin_body_class', 'em_wp_admin_sidebar_chrome_body_class');
+add_filter('admin_body_class', 'em_site_admin_sidebar_chrome_body_class');

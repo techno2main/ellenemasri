@@ -1,6 +1,6 @@
 <?php
 /**
- * Bootstrap page Accueil (Dashboard em-wp).
+ * Bootstrap page Accueil (Dashboard em-site).
  *
  * Où modifier quoi :
  *   slug.php              → slug / URL page Accueil
@@ -10,11 +10,11 @@
  *   helpers.php           → prénom admin, détection écran Accueil
  *   components.php        → titres cartes, boutons, badges
  *   render-page.php       → assemblage page Accueil
- *   rows/rubriques.php    → rangée carte Rubriques (V4)
+ *   rows/rubriques.php    → rangée carte Rubriques (EM-SITE)
  *   rows/templates.php    → rangée cartes Templates
  *   rows/medias-settings.php → rangée Médias + Settings
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

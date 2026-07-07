@@ -1,11 +1,11 @@
 <?php
 /**
- * Éditeur de slides riche du builder (V4) : bandeau titre + liste de slides
+ * Éditeur de slides riche du builder (EM-SITE) : bandeau titre + liste de slides
  * (image / TikTok / vidéo YouTube). Sérialise toute la configuration en JSON
- * dans l'input caché `.em-v4-chip__value` du champ « Slider », et déclenche la
+ * dans l'input caché `.em-site-chip__value` du champ « Slider », et déclenche la
  * mise à jour du builder (aperçu + savebar) via un événement `input`.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -13,10 +13,10 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <script>
-window.EmWpV4Slides = (function () {
+window.EmSiteSlides = (function () {
     var TXT = {
-        pickImage: '<?php echo esc_js(__('Choisir une image', 'em-wp')); ?>',
-        pickVideo: '<?php echo esc_js(__('Choisir une vidéo', 'em-wp')); ?>'
+        pickImage: '<?php echo esc_js(__('Choisir une image', 'em-site')); ?>',
+        pickVideo: '<?php echo esc_js(__('Choisir une vidéo', 'em-site')); ?>'
     };
 
     function v(scope, sel) { var el = scope.querySelector(sel); return el ? el.value : ''; }
@@ -25,46 +25,46 @@ window.EmWpV4Slides = (function () {
     // Lit l'éditeur (DOM) → configuration → input caché JSON.
     function serialize(editor) {
         var cfg = {
-            title: v(editor, '.em-v4-slides__title'),
-            title_hidden: ck(editor, '.em-v4-slides__title-hidden'),
-            frame_bg: v(editor, '.em-v4-slides__frame'),
-            border_color: v(editor, '.em-v4-slides__border-color'),
-            shadow_color: v(editor, '.em-v4-slides__shadow-color'),
-            footer_bg: v(editor, '.em-v4-slides__footerbg'),
-            footer_text: v(editor, '.em-v4-slides__footertext'),
-            tapes_hidden: ck(editor, '.em-v4-slides__tapes-hidden'),
-            tapes_color: v(editor, '.em-v4-slides__tapes-color'),
+            title: v(editor, '.em-site-slides__title'),
+            title_hidden: ck(editor, '.em-site-slides__title-hidden'),
+            frame_bg: v(editor, '.em-site-slides__frame'),
+            border_color: v(editor, '.em-site-slides__border-color'),
+            shadow_color: v(editor, '.em-site-slides__shadow-color'),
+            footer_bg: v(editor, '.em-site-slides__footerbg'),
+            footer_text: v(editor, '.em-site-slides__footertext'),
+            tapes_hidden: ck(editor, '.em-site-slides__tapes-hidden'),
+            tapes_color: v(editor, '.em-site-slides__tapes-color'),
             slides: []
         };
-        editor.querySelectorAll('.em-v4-slide').forEach(function (row) {
-            var eye = row.querySelector('.em-v4-slide__eye');
+        editor.querySelectorAll('.em-site-slide').forEach(function (row) {
+            var eye = row.querySelector('.em-site-slide__eye');
             cfg.slides.push({
-                type: v(row, '.em-v4-slide__type') || 'image',
-                name: v(row, '.em-v4-slide__name'),
-                image: v(row, '.em-v4-slide__image'),
-                video_url: v(row, '.em-v4-slide__videourl'),
-                tiktok_url: v(row, '.em-v4-slide__tiktokurl'),
-                tiktok_video_url: v(row, '.em-v4-slide__tiktokvideo'),
+                type: v(row, '.em-site-slide__type') || 'image',
+                name: v(row, '.em-site-slide__name'),
+                image: v(row, '.em-site-slide__image'),
+                video_url: v(row, '.em-site-slide__videourl'),
+                tiktok_url: v(row, '.em-site-slide__tiktokurl'),
+                tiktok_video_url: v(row, '.em-site-slide__tiktokvideo'),
                 alt_text: '',
-                duration: parseInt(v(row, '.em-v4-slide__duration'), 10) || 5,
+                duration: parseInt(v(row, '.em-site-slide__duration'), 10) || 5,
                 hidden: eye ? eye.getAttribute('data-hidden') === '1' : false
             });
         });
-        var hidden = editor.querySelector('.em-v4-chip__value');
+        var hidden = editor.querySelector('.em-site-chip__value');
         if (hidden) { hidden.value = JSON.stringify(cfg); }
     }
 
     // Sérialise puis notifie le builder (aperçu + détection de modif).
     function commit(editor) {
         serialize(editor);
-        var hidden = editor.querySelector('.em-v4-chip__value');
+        var hidden = editor.querySelector('.em-site-chip__value');
         if (hidden) { hidden.dispatchEvent(new Event('input', { bubbles: true })); }
     }
 
     document.addEventListener('dragstart', function (e) {
         var target = e.target;
-        if (!target || !target.closest || !target.closest('.em-v4-slides')) { return; }
-        if (target.matches('input, textarea, select, button, label') || target.closest('.em-v4-slides__titlegroup')) {
+        if (!target || !target.closest || !target.closest('.em-site-slides')) { return; }
+        if (target.matches('input, textarea, select, button, label') || target.closest('.em-site-slides__titlegroup')) {
             e.preventDefault();
         }
     }, true);
@@ -72,8 +72,8 @@ window.EmWpV4Slides = (function () {
     function openPick(pick) {
         if (!window.wp || !window.wp.media) { return; }
         var target = pick.getAttribute('data-target') || 'image';
-        var row = pick.closest('.em-v4-slide');
-        var editor = pick.closest('.em-v4-slides');
+        var row = pick.closest('.em-site-slide');
+        var editor = pick.closest('.em-site-slides');
         if (!row || !editor) { return; }
         var lib = target === 'ttvid' ? 'video' : 'image';
         var frame = window.wp.media({ title: lib === 'video' ? TXT.pickVideo : TXT.pickImage, multiple: false, library: { type: lib } });
@@ -82,13 +82,13 @@ window.EmWpV4Slides = (function () {
             var sizes = att.sizes || {};
             if (target === 'image') {
                 var url = sizes.large ? sizes.large.url : att.url;
-                var hid = row.querySelector('.em-v4-slide__image');
-                var img = row.querySelector('.em-v4-slide__thumb');
+                var hid = row.querySelector('.em-site-slide__image');
+                var img = row.querySelector('.em-site-slide__thumb');
                 if (hid) { hid.value = url; }
                 if (img) { img.src = sizes.thumbnail ? sizes.thumbnail.url : url; img.hidden = false; }
             } else {
-                var hid2 = row.querySelector('.em-v4-slide__tiktokvideo');
-                var name = row.querySelector('.em-v4-slide__media--ttvid .em-v4-slide__medianame');
+                var hid2 = row.querySelector('.em-site-slide__tiktokvideo');
+                var name = row.querySelector('.em-site-slide__media--ttvid .em-site-slide__medianame');
                 if (hid2) { hid2.value = att.url; }
                 if (name) { name.textContent = att.filename || att.title || ''; }
             }
@@ -99,18 +99,18 @@ window.EmWpV4Slides = (function () {
 
     // Capture : sérialise AVANT que le builder (bulle) ne lise la valeur.
     document.addEventListener('input', function (e) {
-        var editor = e.target.closest ? e.target.closest('.em-v4-slides') : null;
+        var editor = e.target.closest ? e.target.closest('.em-site-slides') : null;
         if (editor) { serialize(editor); }
     }, true);
 
     document.addEventListener('change', function (e) {
         var t = e.target;
         if (!t.closest) { return; }
-        var row = t.closest('.em-v4-slide');
-        if (row && t.classList && t.classList.contains('em-v4-slide__type')) {
+        var row = t.closest('.em-site-slide');
+        if (row && t.classList && t.classList.contains('em-site-slide__type')) {
             row.setAttribute('data-type', t.value);
         }
-        var editor = t.closest('.em-v4-slides');
+        var editor = t.closest('.em-site-slides');
         if (editor) { serialize(editor); }
     }, true);
 
@@ -118,62 +118,62 @@ window.EmWpV4Slides = (function () {
         var t = e.target;
         if (!t.closest) { return; }
 
-        var add = t.closest('.em-v4-slides__add');
+        var add = t.closest('.em-site-slides__add');
         if (add) {
             e.preventDefault();
-            var ed = add.closest('.em-v4-slides');
-            var list = ed ? ed.querySelector('.em-v4-slides__list') : null;
-            if (list && window.EmWpV4Chip && window.EmWpV4Chip.slideRowHtml) {
-                list.insertAdjacentHTML('beforeend', window.EmWpV4Chip.slideRowHtml());
+            var ed = add.closest('.em-site-slides');
+            var list = ed ? ed.querySelector('.em-site-slides__list') : null;
+            if (list && window.EmSiteChip && window.EmSiteChip.slideRowHtml) {
+                list.insertAdjacentHTML('beforeend', window.EmSiteChip.slideRowHtml());
                 commit(ed);
             }
             return;
         }
 
-        var del = t.closest('.em-v4-slide__del');
+        var del = t.closest('.em-site-slide__del');
         if (del) {
             e.preventDefault();
-            var ed2 = del.closest('.em-v4-slides');
-            var rowDel = del.closest('.em-v4-slide');
+            var ed2 = del.closest('.em-site-slides');
+            var rowDel = del.closest('.em-site-slide');
             if (rowDel) { rowDel.remove(); }
             if (ed2) { commit(ed2); }
             return;
         }
 
-        var up = t.closest('.em-v4-slide__up');
+        var up = t.closest('.em-site-slide__up');
         if (up) {
             e.preventDefault();
-            var ru = up.closest('.em-v4-slide');
+            var ru = up.closest('.em-site-slide');
             var prev = ru ? ru.previousElementSibling : null;
-            if (ru && prev && prev.classList.contains('em-v4-slide')) { ru.parentNode.insertBefore(ru, prev); }
-            commit(up.closest('.em-v4-slides'));
+            if (ru && prev && prev.classList.contains('em-site-slide')) { ru.parentNode.insertBefore(ru, prev); }
+            commit(up.closest('.em-site-slides'));
             return;
         }
 
-        var down = t.closest('.em-v4-slide__down');
+        var down = t.closest('.em-site-slide__down');
         if (down) {
             e.preventDefault();
-            var rd = down.closest('.em-v4-slide');
+            var rd = down.closest('.em-site-slide');
             var next = rd ? rd.nextElementSibling : null;
-            if (rd && next && next.classList.contains('em-v4-slide')) { rd.parentNode.insertBefore(next, rd); }
-            commit(down.closest('.em-v4-slides'));
+            if (rd && next && next.classList.contains('em-site-slide')) { rd.parentNode.insertBefore(next, rd); }
+            commit(down.closest('.em-site-slides'));
             return;
         }
 
-        var eye = t.closest('.em-v4-slide__eye');
+        var eye = t.closest('.em-site-slide__eye');
         if (eye) {
             e.preventDefault();
             var wasHidden = eye.getAttribute('data-hidden') === '1';
             eye.setAttribute('data-hidden', wasHidden ? '0' : '1');
             var ic = eye.querySelector('.dashicons');
             if (ic) { ic.className = 'dashicons dashicons-' + (wasHidden ? 'visibility' : 'hidden'); }
-            var rowEye = eye.closest('.em-v4-slide');
+            var rowEye = eye.closest('.em-site-slide');
             if (rowEye) { rowEye.classList.toggle('is-hidden', !wasHidden); }
-            commit(eye.closest('.em-v4-slides'));
+            commit(eye.closest('.em-site-slides'));
             return;
         }
 
-        var pick = t.closest('.em-v4-slide__pick');
+        var pick = t.closest('.em-site-slide__pick');
         if (pick) { e.preventDefault(); openPick(pick); return; }
     });
 

@@ -2,7 +2,7 @@
 /**
  * Paramétrage du module Video (admin) — loader V2.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

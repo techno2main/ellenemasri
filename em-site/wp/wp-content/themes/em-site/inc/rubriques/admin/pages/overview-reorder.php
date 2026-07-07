@@ -1,12 +1,12 @@
 <?php
 /**
- * Réordonnancement des rubriques (V4) — glisser-déposer + persistance.
+ * Réordonnancement des rubriques (EM-SITE) — glisser-déposer + persistance.
  *
  * L'ordre choisi est stocké en option et appliqué à la fois à la liste de
  * l'aperçu et au sous-menu de gauche (les deux passent par
- * em_wp_v4_ordered_types()). Sauvegarde immédiate via AJAX.
+ * em_site_ordered_types()). Sauvegarde immédiate via AJAX.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -16,9 +16,9 @@ if (!defined('ABSPATH')) {
 /**
  * Nom d'option de l'ordre personnalisé des rubriques.
  */
-function em_wp_v4_rubrique_order_option_name(): string
+function em_site_rubrique_order_option_name(): string
 {
-    return 'em_wp_v4_rubrique_order';
+    return 'em_site_rubrique_order';
 }
 
 /**
@@ -26,9 +26,9 @@ function em_wp_v4_rubrique_order_option_name(): string
  *
  * @return array<int, string>
  */
-function em_wp_v4_get_rubrique_order(): array
+function em_site_get_rubrique_order(): array
 {
-    $order = get_option(em_wp_v4_rubrique_order_option_name(), []);
+    $order = get_option(em_site_rubrique_order_option_name(), []);
 
     if (!is_array($order)) {
         return [];
@@ -40,51 +40,51 @@ function em_wp_v4_get_rubrique_order(): array
 /**
  * AJAX : enregistre le nouvel ordre des rubriques.
  */
-function em_wp_v4_handle_ajax_reorder_types(): void
+function em_site_handle_ajax_reorder_types(): void
 {
     if (!current_user_can('manage_options')) {
         wp_send_json_error('forbidden', 403);
     }
 
-    check_ajax_referer('em_wp_v4_reorder_types');
+    check_ajax_referer('em_site_reorder_types');
 
     $raw = isset($_POST['order']) && is_array($_POST['order']) ? wp_unslash($_POST['order']) : [];
-    $order = array_values(array_filter(array_map('sanitize_key', $raw), 'em_wp_rubrique_type_exists'));
+    $order = array_values(array_filter(array_map('sanitize_key', $raw), 'em_site_rubrique_type_exists'));
 
-    update_option(em_wp_v4_rubrique_order_option_name(), $order);
+    update_option(em_site_rubrique_order_option_name(), $order);
     wp_send_json_success(['order' => $order]);
 }
-add_action('wp_ajax_em_wp_v4_reorder_types', 'em_wp_v4_handle_ajax_reorder_types');
+add_action('wp_ajax_em_site_reorder_types', 'em_site_handle_ajax_reorder_types');
 
 /**
  * Script (une fois) : glisser-déposer des cartes de rubrique via la poignée,
  * puis persistance de l'ordre en AJAX (le menu de gauche suit au rechargement).
  */
-function em_wp_v4_overview_render_reorder_script(): void
+function em_site_overview_render_reorder_script(): void
 {
     ?>
     <script>
     (function () {
-        var list = document.getElementById('em-v4-cards');
+        var list = document.getElementById('em-site-cards');
         if (!list) { return; }
-        var NONCE = '<?php echo esc_js(wp_create_nonce('em_wp_v4_reorder_types')); ?>';
+        var NONCE = '<?php echo esc_js(wp_create_nonce('em_site_reorder_types')); ?>';
         var dragged = null;
 
         list.addEventListener('mousedown', function (e) {
-            var handle = e.target.closest('.em-v4-card__drag');
-            var card = handle ? handle.closest('.em-v4-card') : null;
+            var handle = e.target.closest('.em-site-card__drag');
+            var card = handle ? handle.closest('.em-site-card') : null;
             if (card) { card.setAttribute('draggable', 'true'); }
         });
         // La poignée ne doit pas ouvrir/fermer la carte.
         list.addEventListener('click', function (e) {
-            if (e.target.closest('.em-v4-card__drag')) { e.preventDefault(); e.stopPropagation(); }
+            if (e.target.closest('.em-site-card__drag')) { e.preventDefault(); e.stopPropagation(); }
         });
         list.addEventListener('mouseup', function () {
-            list.querySelectorAll('.em-v4-card[draggable]').forEach(function (c) { c.removeAttribute('draggable'); });
+            list.querySelectorAll('.em-site-card[draggable]').forEach(function (c) { c.removeAttribute('draggable'); });
         });
 
         list.addEventListener('dragstart', function (e) {
-            var card = e.target.closest('.em-v4-card');
+            var card = e.target.closest('.em-site-card');
             if (!card || card.getAttribute('draggable') !== 'true') { return; }
             dragged = card;
             card.classList.add('is-dragging');
@@ -92,7 +92,7 @@ function em_wp_v4_overview_render_reorder_script(): void
         });
         list.addEventListener('dragover', function (e) {
             if (!dragged) { return; }
-            var over = e.target.closest('.em-v4-card');
+            var over = e.target.closest('.em-site-card');
             if (!over || over === dragged || over.parentNode !== list) { return; }
             e.preventDefault();
             var r = over.getBoundingClientRect();
@@ -129,7 +129,7 @@ function em_wp_v4_overview_render_reorder_script(): void
 
         function persist() {
             var order = [];
-            list.querySelectorAll('.em-v4-card').forEach(function (card) {
+            list.querySelectorAll('.em-site-card').forEach(function (card) {
                 var slug = card.getAttribute('data-slug');
                 if (slug) { order.push(slug); }
             });
@@ -137,7 +137,7 @@ function em_wp_v4_overview_render_reorder_script(): void
             syncMenu(order);
 
             var body = new URLSearchParams();
-            body.set('action', 'em_wp_v4_reorder_types');
+            body.set('action', 'em_site_reorder_types');
             body.set('_ajax_nonce', NONCE);
             order.forEach(function (slug) { body.append('order[]', slug); });
             fetch(window.ajaxurl, {

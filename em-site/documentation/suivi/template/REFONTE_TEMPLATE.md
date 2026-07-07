@@ -1,7 +1,7 @@
 # Refonte template unique avec multi-items
 
-Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-06 17:46:59
+Date: 2026-07-07
+Horodatage précis (Paris): 2026-07-07 20:06:01
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
 
@@ -100,7 +100,7 @@ Détail:
 
 Convention cible validée:
 
-- aucune référence em_wp ou em_wp_v4 dans le modèle final
+- aucune référence legacy ni em_site_v4 dans le modèle final
 - aucun suffixe versionné dans le nommage métier
 - aucune branche fonctionnelle séparée natif/custom pour les slugs
 
@@ -230,3 +230,6 @@ Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) 
 - RELEASE front: la colonne droite n'est plus figée sur des clés hardcodées ; extraction dynamique des blocs (intro/titre/lignes crédits/séparateurs) avec compatibilité legacy.
 - RELEASE admin: optimisation d'ergonomie en mode compact pour les lignes crédits, avec action rapide d'ajout de ligne crédit.
 - RELEASE admin: ajustement de la mise en forme vers une version compacte anti-scroll (moins de hauteur, meilleure lisibilité), sans modification du schéma de données.
+- Purge nomenclature: les occurrences `em_wp` résiduelles ont été supprimées du thème `em-site` (code, JS admin, variables internes), avec vérification de recherche globale à 0 dans ce périmètre.
+- Correctif runtime admin: suppression d'une collision de fonction stream et neutralisation de fichiers legacy redondants pour éviter les écrans "critical error" sur Dashboard/Rubriques.
+- Rétablissement front: ajout d'une migration one-shot de compatibilité base de données pour recopier les options `em_wp_*` / `em_wp_v4_*` vers `em_site_*` et restaurer les contenus front existants.

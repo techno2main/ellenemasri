@@ -11,7 +11,7 @@
     function reindexRows() {
         list.querySelectorAll('[data-release-row-item]').forEach(function (item, index) {
             item.querySelectorAll('[name]').forEach(function (field) {
-                field.name = field.name.replace(/em-site_release_options\[rows\]\[\d+\]/, 'em-site_release_options[rows][' + index + ']');
+                field.name = field.name.replace(/em_site_release_options\[rows\]\[\d+\]/, 'em_site_release_options[rows][' + index + ']');
             });
         });
     }

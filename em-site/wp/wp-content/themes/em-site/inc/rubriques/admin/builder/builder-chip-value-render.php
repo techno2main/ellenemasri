@@ -1,12 +1,12 @@
 <?php
 /**
- * Contrôles de VALEUR d'une chip du builder (V4).
+ * Contrôles de VALEUR d'une chip du builder (EM-SITE).
  *
  * Extrait de chip.php : rendu du contrôle d'édition selon le type de champ
  * (texte, média, plateforme, réseau, bouton…) + listes déroulantes plateforme /
  * réseaux. Séparé pour garder chaque fichier sous 300 lignes.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -16,105 +16,105 @@ if (!defined('ABSPATH')) {
 /**
  * Contrôle de valeur d'une chip selon le type (image = média, icône = liste).
  */
-function em_wp_v4_render_chip_value(string $type, string $value, string $key = ''): void
+function em_site_render_chip_value(string $type, string $value, string $key = ''): void
 {
-    if (em_wp_v4_render_chip_media_value($type, $value)) {
+    if (em_site_render_chip_media_value($type, $value)) {
         return;
     }
 
     if ($type === 'text') {
-        $tv = em_wp_rubrique_text_value($value);
+        $tv = em_site_rubrique_text_value($value);
         ?>
-        <input type="text" class="em-v4-chip__value" value="<?php echo esc_attr($tv['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-wp'); ?>">
-        <input type="url" class="em-v4-chip__tlink" value="<?php echo esc_url($tv['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+        <input type="text" class="em-site-chip__value" value="<?php echo esc_attr($tv['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-site'); ?>">
+        <input type="url" class="em-site-chip__tlink" value="<?php echo esc_url($tv['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
         <?php
         return;
     }
 
     if ($type === 'textarea') {
-        $tv = em_wp_rubrique_text_value($value);
-        $editor_html = em_wp_rubrique_textarea_editor_html((string) $tv['text']);
+        $tv = em_site_rubrique_text_value($value);
+        $editor_html = em_site_rubrique_textarea_editor_html((string) $tv['text']);
         ?>
-        <span class="em-v4-chip__rich">
-            <span class="em-v4-chip__richbar">
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="bold" title="<?php esc_attr_e('Gras', 'em-wp'); ?>"><strong>B</strong></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="italic" title="<?php esc_attr_e('Italique', 'em-wp'); ?>"><em>I</em></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="underline" title="<?php esc_attr_e('Souligné', 'em-wp'); ?>"><span style="text-decoration:underline;">U</span></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="insertUnorderedList" title="<?php esc_attr_e('Liste', 'em-wp'); ?>">•</button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyLeft" title="<?php esc_attr_e('Aligner à gauche', 'em-wp'); ?>"><span class="dashicons dashicons-editor-alignleft" aria-hidden="true"></span></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyCenter" title="<?php esc_attr_e('Centrer', 'em-wp'); ?>"><span class="dashicons dashicons-editor-aligncenter" aria-hidden="true"></span></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyRight" title="<?php esc_attr_e('Aligner à droite', 'em-wp'); ?>"><span class="dashicons dashicons-editor-alignright" aria-hidden="true"></span></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyFull" title="<?php esc_attr_e('Justifier', 'em-wp'); ?>"><span class="dashicons dashicons-editor-justify" aria-hidden="true"></span></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-action="link" title="<?php esc_attr_e('Ajouter un lien sur la sélection', 'em-wp'); ?>"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-cmd="unlink" title="<?php esc_attr_e('Retirer le lien', 'em-wp'); ?>"><span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span></button>
-                <button type="button" class="button button-small em-v4-richbtn" data-action="anchor" title="<?php esc_attr_e('Ajouter une ancre sur la sélection', 'em-wp'); ?>">#</button>
-                <span class="em-v4-chip__richcolor" title="<?php esc_attr_e('Couleur du texte', 'em-wp'); ?>">
-                    <?php em_wp_admin_render_color_field([
-                        'id'            => em_wp_v4_chip_color_id('emv4rc-', $key),
+        <span class="em-site-chip__rich">
+            <span class="em-site-chip__richbar">
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="bold" title="<?php esc_attr_e('Gras', 'em-site'); ?>"><strong>B</strong></button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="italic" title="<?php esc_attr_e('Italique', 'em-site'); ?>"><em>I</em></button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="underline" title="<?php esc_attr_e('Souligné', 'em-site'); ?>"><span style="text-decoration:underline;">U</span></button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="insertUnorderedList" title="<?php esc_attr_e('Liste', 'em-site'); ?>">•</button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="justifyLeft" title="<?php esc_attr_e('Aligner à gauche', 'em-site'); ?>"><span class="dashicons dashicons-editor-alignleft" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="justifyCenter" title="<?php esc_attr_e('Centrer', 'em-site'); ?>"><span class="dashicons dashicons-editor-aligncenter" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="justifyRight" title="<?php esc_attr_e('Aligner à droite', 'em-site'); ?>"><span class="dashicons dashicons-editor-alignright" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="justifyFull" title="<?php esc_attr_e('Justifier', 'em-site'); ?>"><span class="dashicons dashicons-editor-justify" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-site-richbtn" data-action="link" title="<?php esc_attr_e('Ajouter un lien sur la sélection', 'em-site'); ?>"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-site-richbtn" data-cmd="unlink" title="<?php esc_attr_e('Retirer le lien', 'em-site'); ?>"><span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span></button>
+                <button type="button" class="button button-small em-site-richbtn" data-action="anchor" title="<?php esc_attr_e('Ajouter une ancre sur la sélection', 'em-site'); ?>">#</button>
+                <span class="em-site-chip__richcolor" title="<?php esc_attr_e('Couleur du texte', 'em-site'); ?>">
+                    <?php em_site_admin_render_color_field([
+                        'id'            => em_site_chip_color_id('emv4rc-', $key),
                         'value'         => '#000000',
-                        'input_class'   => 'em-v4-richcolor',
-                        'preview_label' => __('Couleur du texte', 'em-wp'),
+                        'input_class'   => 'em-site-richcolor',
+                        'preview_label' => __('Couleur du texte', 'em-site'),
                     ]); ?>
                 </span>
             </span>
-            <div class="em-v4-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="<?php esc_attr_e('Contenu enrichi…', 'em-wp'); ?>"><?php echo $editor_html; ?></div>
-            <input type="hidden" class="em-v4-chip__value" value="<?php echo esc_attr((string) $tv['text']); ?>">
+            <div class="em-site-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="<?php esc_attr_e('Contenu enrichi…', 'em-site'); ?>"><?php echo $editor_html; ?></div>
+            <input type="hidden" class="em-site-chip__value" value="<?php echo esc_attr((string) $tv['text']); ?>">
         </span>
         <?php
         return;
     }
 
     if ($type === 'text_image') {
-        $ti = em_wp_rubrique_text_image_value($value);
+        $ti = em_site_rubrique_text_image_value($value);
         ?>
-        <input type="text" class="em-v4-chip__titext" value="<?php echo esc_attr($ti['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-wp'); ?>">
-        <input type="url" class="em-v4-chip__tlink" value="<?php echo esc_url($ti['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
-        <?php em_wp_v4_render_chip_textstyle($key, $ti['style']); ?>
-        <?php em_wp_v4_render_chip_value('image', (string) wp_json_encode($ti['image'])); ?>
+        <input type="text" class="em-site-chip__titext" value="<?php echo esc_attr($ti['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-site'); ?>">
+        <input type="url" class="em-site-chip__tlink" value="<?php echo esc_url($ti['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
+        <?php em_site_render_chip_textstyle($key, $ti['style']); ?>
+        <?php em_site_render_chip_value('image', (string) wp_json_encode($ti['image'])); ?>
         <?php
         return;
     }
 
     if ($type === 'text_text') {
-        $tt = em_wp_rubrique_text_text_value($value);
+        $tt = em_site_rubrique_text_text_value($value);
         ?>
-        <span class="em-v4-chip__tt-part">
-            <input type="text" class="em-v4-chip__titext" value="<?php echo esc_attr($tt['text']); ?>" placeholder="<?php esc_attr_e('Contenu 1…', 'em-wp'); ?>">
-            <input type="url" class="em-v4-chip__tlink" value="<?php echo esc_url($tt['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
-            <?php em_wp_v4_render_chip_textstyle($key, $tt['style']); ?>
+        <span class="em-site-chip__tt-part">
+            <input type="text" class="em-site-chip__titext" value="<?php echo esc_attr($tt['text']); ?>" placeholder="<?php esc_attr_e('Contenu 1…', 'em-site'); ?>">
+            <input type="url" class="em-site-chip__tlink" value="<?php echo esc_url($tt['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
+            <?php em_site_render_chip_textstyle($key, $tt['style']); ?>
         </span>
-        <span class="em-v4-chip__tt-part">
-            <input type="text" class="em-v4-chip__titext2" value="<?php echo esc_attr($tt['text2']); ?>" placeholder="<?php esc_attr_e('Contenu 2…', 'em-wp'); ?>">
-            <input type="url" class="em-v4-chip__tlink2" value="<?php echo esc_url($tt['link2']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
-            <?php em_wp_v4_render_chip_textstyle($key . '-2', $tt['style2']); ?>
+        <span class="em-site-chip__tt-part">
+            <input type="text" class="em-site-chip__titext2" value="<?php echo esc_attr($tt['text2']); ?>" placeholder="<?php esc_attr_e('Contenu 2…', 'em-site'); ?>">
+            <input type="url" class="em-site-chip__tlink2" value="<?php echo esc_url($tt['link2']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
+            <?php em_site_render_chip_textstyle($key . '-2', $tt['style2']); ?>
         </span>
         <?php
         return;
     }
 
     if ($type === 'image') {
-        $img = em_wp_rubrique_image_value($value);
+        $img = em_site_rubrique_image_value($value);
         $id = $img['id'];
         $thumb = $id ? wp_get_attachment_image_url($id, 'medium') : '';
         $full = $id ? wp_get_attachment_image_url($id, 'large') : '';
         ?>
-        <span class="em-v4-chip__media" data-url="<?php echo esc_attr((string) $full); ?>">
-            <img class="em-v4-chip__thumb" src="<?php echo esc_url((string) $thumb); ?>" alt="" <?php echo $thumb ? '' : 'hidden'; ?>>
-            <button type="button" class="button button-small em-v4-chip__pick"><?php esc_html_e('Choisir une image', 'em-wp'); ?></button>
-            <input type="hidden" class="em-v4-chip__value" value="<?php echo esc_attr((string) $id); ?>">
+        <span class="em-site-chip__media" data-url="<?php echo esc_attr((string) $full); ?>">
+            <img class="em-site-chip__thumb" src="<?php echo esc_url((string) $thumb); ?>" alt="" <?php echo $thumb ? '' : 'hidden'; ?>>
+            <button type="button" class="button button-small em-site-chip__pick"><?php esc_html_e('Choisir une image', 'em-site'); ?></button>
+            <input type="hidden" class="em-site-chip__value" value="<?php echo esc_attr((string) $id); ?>">
         </span>
-        <span class="em-v4-chip__size">
-            <label class="em-v4-chip__sizelabel"><?php esc_html_e('Taille', 'em-wp'); ?>
-                <input type="range" class="em-v4-chip__w" min="0" max="600" step="5" value="<?php echo (int) $img['w']; ?>" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+'px':'auto')">
-                <output class="em-v4-chip__wout"><?php echo $img['w'] ? (int) $img['w'] . 'px' : esc_html__('auto', 'em-wp'); ?></output>
+        <span class="em-site-chip__size">
+            <label class="em-site-chip__sizelabel"><?php esc_html_e('Taille', 'em-site'); ?>
+                <input type="range" class="em-site-chip__w" min="0" max="600" step="5" value="<?php echo (int) $img['w']; ?>" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+'px':'auto')">
+                <output class="em-site-chip__wout"><?php echo $img['w'] ? (int) $img['w'] . 'px' : esc_html__('auto', 'em-site'); ?></output>
             </label>
         </span>
-        <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($img['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
-        <?php em_wp_v4_render_scotchs_component([
-            'hidden_class' => 'em-v4-chip__itape-hidden',
+        <input type="url" class="em-site-chip__url" value="<?php echo esc_url($img['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
+        <?php em_site_render_scotchs_component([
+            'hidden_class' => 'em-site-chip__itape-hidden',
             'hidden_checked' => empty($img['tape']),
-            'hidden_title' => __('Masquer le scotch décoratif de l’image', 'em-wp'),
-            'color_class' => 'em-v4-chip__itape-color',
+            'hidden_title' => __('Masquer le scotch décoratif de l’image', 'em-site'),
+            'color_class' => 'em-site-chip__itape-color',
             'color_value' => (string) ($img['tape_color'] ?? ''),
             'color_prefix' => 'emv4itp-',
             'key' => $key,
@@ -124,125 +124,125 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
     }
 
     if ($type === 'button') {
-        $btn = em_wp_rubrique_button_value($value);
+        $btn = em_site_rubrique_button_value($value);
         ?>
-        <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($btn['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
-        <span class="em-v4-chip__btncolor">
-            <span class="em-v4-chip__btncolor-label"><?php esc_html_e('Fond', 'em-wp'); ?></span>
-            <?php em_wp_admin_render_color_field([
-                'id'            => em_wp_v4_chip_color_id('emv4bbg-', $key),
+        <input type="url" class="em-site-chip__url" value="<?php echo esc_url($btn['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
+        <span class="em-site-chip__btncolor">
+            <span class="em-site-chip__btncolor-label"><?php esc_html_e('Fond', 'em-site'); ?></span>
+            <?php em_site_admin_render_color_field([
+                'id'            => em_site_chip_color_id('emv4bbg-', $key),
                 'value'         => $btn['bg'],
-                'input_class'   => 'em-v4-chip__btnbg',
-                'preview_label' => __('Fond du bouton', 'em-wp'),
+                'input_class'   => 'em-site-chip__btnbg',
+                'preview_label' => __('Fond du bouton', 'em-site'),
             ]); ?>
         </span>
-        <span class="em-v4-chip__btncolor">
-            <span class="em-v4-chip__btncolor-label"><?php esc_html_e('Texte', 'em-wp'); ?></span>
-            <?php em_wp_admin_render_color_field([
-                'id'            => em_wp_v4_chip_color_id('emv4btx-', $key),
+        <span class="em-site-chip__btncolor">
+            <span class="em-site-chip__btncolor-label"><?php esc_html_e('Texte', 'em-site'); ?></span>
+            <?php em_site_admin_render_color_field([
+                'id'            => em_site_chip_color_id('emv4btx-', $key),
                 'value'         => $btn['text'],
-                'input_class'   => 'em-v4-chip__btntext',
-                'preview_label' => __('Texte du bouton', 'em-wp'),
+                'input_class'   => 'em-site-chip__btntext',
+                'preview_label' => __('Texte du bouton', 'em-site'),
             ]); ?>
         </span>
-        <label class="em-v4-chip__btnmargin" title="<?php esc_attr_e('Marge à gauche du bouton (px)', 'em-wp'); ?>">
-            <span><?php esc_html_e('Marge avant', 'em-wp'); ?></span>
-            <input type="number" class="em-v4-chip__btnml" min="0" max="200" value="<?php echo (int) $btn['ml']; ?>">
+        <label class="em-site-chip__btnmargin" title="<?php esc_attr_e('Marge à gauche du bouton (px)', 'em-site'); ?>">
+            <span><?php esc_html_e('Marge avant', 'em-site'); ?></span>
+            <input type="number" class="em-site-chip__btnml" min="0" max="200" value="<?php echo (int) $btn['ml']; ?>">
         </label>
-        <label class="em-v4-chip__btnmargin" title="<?php esc_attr_e('Marge à droite du bouton (px)', 'em-wp'); ?>">
-            <span><?php esc_html_e('Marge après', 'em-wp'); ?></span>
-            <input type="number" class="em-v4-chip__btnmr" min="0" max="200" value="<?php echo (int) $btn['mr']; ?>">
+        <label class="em-site-chip__btnmargin" title="<?php esc_attr_e('Marge à droite du bouton (px)', 'em-site'); ?>">
+            <span><?php esc_html_e('Marge après', 'em-site'); ?></span>
+            <input type="number" class="em-site-chip__btnmr" min="0" max="200" value="<?php echo (int) $btn['mr']; ?>">
         </label>
-        <label class="em-v4-chip__badgeopt" title="<?php esc_attr_e('Forme du bouton', 'em-wp'); ?>">
-            <span><?php esc_html_e('Forme', 'em-wp'); ?></span>
-            <select class="em-v4-chip__btnshape">
-                <?php foreach (em_wp_rubrique_badge_shapes() as $slug => $label) : ?>
+        <label class="em-site-chip__badgeopt" title="<?php esc_attr_e('Forme du bouton', 'em-site'); ?>">
+            <span><?php esc_html_e('Forme', 'em-site'); ?></span>
+            <select class="em-site-chip__btnshape">
+                <?php foreach (em_site_rubrique_badge_shapes() as $slug => $label) : ?>
                     <option value="<?php echo esc_attr($slug); ?>"<?php selected($btn['shape'], $slug); ?>><?php echo esc_html($label); ?></option>
                 <?php endforeach; ?>
             </select>
         </label>
-        <label class="em-v4-chip__badgeopt" title="<?php esc_attr_e('Animation du bouton', 'em-wp'); ?>">
-            <span><?php esc_html_e('Animation', 'em-wp'); ?></span>
-            <select class="em-v4-chip__btnanim">
-                <?php foreach (em_wp_rubrique_badge_anims() as $slug => $label) : ?>
+        <label class="em-site-chip__badgeopt" title="<?php esc_attr_e('Animation du bouton', 'em-site'); ?>">
+            <span><?php esc_html_e('Animation', 'em-site'); ?></span>
+            <select class="em-site-chip__btnanim">
+                <?php foreach (em_site_rubrique_badge_anims() as $slug => $label) : ?>
                     <option value="<?php echo esc_attr($slug); ?>"<?php selected($btn['anim'], $slug); ?>><?php echo esc_html($label); ?></option>
                 <?php endforeach; ?>
             </select>
         </label>
-        <label class="em-v4-chip__badgeopt" title="<?php esc_attr_e('Arrondi des coins (forme carrée), en px', 'em-wp'); ?>">
-            <span><?php esc_html_e('Arrondi', 'em-wp'); ?></span>
-            <input type="number" class="em-v4-chip__btnradius" min="0" max="40" value="<?php echo (int) $btn['radius']; ?>">
+        <label class="em-site-chip__badgeopt" title="<?php esc_attr_e('Arrondi des coins (forme carrée), en px', 'em-site'); ?>">
+            <span><?php esc_html_e('Arrondi', 'em-site'); ?></span>
+            <input type="number" class="em-site-chip__btnradius" min="0" max="40" value="<?php echo (int) $btn['radius']; ?>">
         </label>
         <?php
         return;
     }
 
     if ($type === 'animated_badge') {
-        $badge = em_wp_rubrique_animated_badge_value($value);
+        $badge = em_site_rubrique_animated_badge_value($value);
         ?>
-        <input type="text" class="em-v4-chip__btext" value="<?php echo esc_attr($badge['text']); ?>" placeholder="<?php esc_attr_e('Texte du badge…', 'em-wp'); ?>">
-        <span class="em-v4-chip__btncolor">
-            <span class="em-v4-chip__btncolor-label"><?php esc_html_e('Fond', 'em-wp'); ?></span>
-            <?php em_wp_admin_render_color_field([
-                'id'            => em_wp_v4_chip_color_id('emv4babg-', $key),
+        <input type="text" class="em-site-chip__btext" value="<?php echo esc_attr($badge['text']); ?>" placeholder="<?php esc_attr_e('Texte du badge…', 'em-site'); ?>">
+        <span class="em-site-chip__btncolor">
+            <span class="em-site-chip__btncolor-label"><?php esc_html_e('Fond', 'em-site'); ?></span>
+            <?php em_site_admin_render_color_field([
+                'id'            => em_site_chip_color_id('emv4babg-', $key),
                 'value'         => $badge['bg'],
-                'input_class'   => 'em-v4-chip__badgebg',
-                'preview_label' => __('Fond du badge', 'em-wp'),
+                'input_class'   => 'em-site-chip__badgebg',
+                'preview_label' => __('Fond du badge', 'em-site'),
             ]); ?>
         </span>
-        <span class="em-v4-chip__btncolor">
-            <span class="em-v4-chip__btncolor-label"><?php esc_html_e('Texte', 'em-wp'); ?></span>
-            <?php em_wp_admin_render_color_field([
-                'id'            => em_wp_v4_chip_color_id('emv4baink-', $key),
+        <span class="em-site-chip__btncolor">
+            <span class="em-site-chip__btncolor-label"><?php esc_html_e('Texte', 'em-site'); ?></span>
+            <?php em_site_admin_render_color_field([
+                'id'            => em_site_chip_color_id('emv4baink-', $key),
                 'value'         => $badge['ink'],
-                'input_class'   => 'em-v4-chip__badgeink',
-                'preview_label' => __('Texte du badge', 'em-wp'),
+                'input_class'   => 'em-site-chip__badgeink',
+                'preview_label' => __('Texte du badge', 'em-site'),
             ]); ?>
         </span>
-        <label class="em-v4-chip__badgeopt" title="<?php esc_attr_e('Forme du badge', 'em-wp'); ?>">
-            <span><?php esc_html_e('Forme', 'em-wp'); ?></span>
-            <select class="em-v4-chip__badgeshape">
-                <?php foreach (em_wp_rubrique_badge_shapes() as $slug => $label) : ?>
+        <label class="em-site-chip__badgeopt" title="<?php esc_attr_e('Forme du badge', 'em-site'); ?>">
+            <span><?php esc_html_e('Forme', 'em-site'); ?></span>
+            <select class="em-site-chip__badgeshape">
+                <?php foreach (em_site_rubrique_badge_shapes() as $slug => $label) : ?>
                     <option value="<?php echo esc_attr($slug); ?>"<?php selected($badge['shape'], $slug); ?>><?php echo esc_html($label); ?></option>
                 <?php endforeach; ?>
             </select>
         </label>
-        <label class="em-v4-chip__badgeopt" title="<?php esc_attr_e('Animation du badge', 'em-wp'); ?>">
-            <span><?php esc_html_e('Animation', 'em-wp'); ?></span>
-            <select class="em-v4-chip__badgeanim">
-                <?php foreach (em_wp_rubrique_badge_anims() as $slug => $label) : ?>
+        <label class="em-site-chip__badgeopt" title="<?php esc_attr_e('Animation du badge', 'em-site'); ?>">
+            <span><?php esc_html_e('Animation', 'em-site'); ?></span>
+            <select class="em-site-chip__badgeanim">
+                <?php foreach (em_site_rubrique_badge_anims() as $slug => $label) : ?>
                     <option value="<?php echo esc_attr($slug); ?>"<?php selected($badge['anim'], $slug); ?>><?php echo esc_html($label); ?></option>
                 <?php endforeach; ?>
             </select>
         </label>
-        <label class="em-v4-chip__badgeopt" title="<?php esc_attr_e('Arrondi des coins (forme carrée), en px', 'em-wp'); ?>">
-            <span><?php esc_html_e('Arrondi', 'em-wp'); ?></span>
-            <input type="number" class="em-v4-chip__badgeradius" min="0" max="40" value="<?php echo (int) $badge['radius']; ?>">
+        <label class="em-site-chip__badgeopt" title="<?php esc_attr_e('Arrondi des coins (forme carrée), en px', 'em-site'); ?>">
+            <span><?php esc_html_e('Arrondi', 'em-site'); ?></span>
+            <input type="number" class="em-site-chip__badgeradius" min="0" max="40" value="<?php echo (int) $badge['radius']; ?>">
         </label>
         <?php
         return;
     }
 
     if ($type === 'platform_block') {
-        $block = em_wp_rubrique_platform_block_value($value);
+        $block = em_site_rubrique_platform_block_value($value);
         ?>
-        <input type="text" class="em-v4-chip__ptitle" value="<?php echo esc_attr($block['label']); ?>" placeholder="<?php esc_attr_e('Titre (ex. LISTEN ON)', 'em-wp'); ?>" title="<?php esc_attr_e('Sur-titre de la carte', 'em-wp'); ?>">
-        <?php em_wp_v4_render_platform_select($block['platform']); ?>
-        <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($block['url']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+        <input type="text" class="em-site-chip__ptitle" value="<?php echo esc_attr($block['label']); ?>" placeholder="<?php esc_attr_e('Titre (ex. LISTEN ON)', 'em-site'); ?>" title="<?php esc_attr_e('Sur-titre de la carte', 'em-site'); ?>">
+        <?php em_site_render_platform_select($block['platform']); ?>
+        <input type="url" class="em-site-chip__url" value="<?php echo esc_url($block['url']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
         <?php
         return;
     }
 
     if ($type === 'icon') {
-        $icon = em_wp_rubrique_icon_value($value);
-        em_wp_v4_render_platform_select($icon['platform']);
+        $icon = em_site_rubrique_icon_value($value);
+        em_site_render_platform_select($icon['platform']);
         ?>
-        <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($icon['url']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
+        <input type="url" class="em-site-chip__url" value="<?php echo esc_url($icon['url']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
         <?php
         return;
     }
     ?>
-    <input type="text" class="em-v4-chip__value" value="<?php echo esc_attr($value); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-wp'); ?>">
+    <input type="text" class="em-site-chip__value" value="<?php echo esc_attr($value); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-site'); ?>">
     <?php
 }
 
@@ -250,12 +250,12 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
  * Liste déroulante des plateformes (icône + couleur + libellé), mutualisée par
  * les champs « icône » et « Bloc Plateforme ».
  */
-function em_wp_v4_render_platform_select(string $selected): void
+function em_site_render_platform_select(string $selected): void
 {
     ?>
-    <select class="em-v4-chip__platform">
-        <option value=""><?php esc_html_e('— Choisir —', 'em-wp'); ?></option>
-        <?php foreach (em_wp_rubrique_platform_choices() as $pkey => $choice) : ?>
+    <select class="em-site-chip__platform">
+        <option value=""><?php esc_html_e('— Choisir —', 'em-site'); ?></option>
+        <?php foreach (em_site_rubrique_platform_choices() as $pkey => $choice) : ?>
             <option value="<?php echo esc_attr($pkey); ?>" data-icon="<?php echo esc_attr($choice['icon']); ?>" data-color="<?php echo esc_attr((string) ($choice['color'] ?? '')); ?>" data-label="<?php echo esc_attr($choice['label']); ?>" <?php selected($selected, $pkey); ?>><?php echo esc_html($choice['group'] . ' — ' . $choice['label']); ?></option>
         <?php endforeach; ?>
     </select>

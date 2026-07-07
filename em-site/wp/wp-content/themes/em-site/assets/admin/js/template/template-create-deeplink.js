@@ -6,7 +6,7 @@
     function boot() {
         var params = new URLSearchParams(window.location.search);
 
-        if (params.get('em-site_open') !== 'template-create') {
+        if (params.get('em_site_open') !== 'template-create') {
             return;
         }
 
@@ -23,7 +23,7 @@
             }, 200);
         }
 
-        params.delete('em-site_open');
+        params.delete('em_site_open');
 
         if (window.history && window.history.replaceState) {
             var query = params.toString();

@@ -1,13 +1,13 @@
 <?php
 /**
- * Builder de STRUCTURE d'un item (admin-post) — V4.
+ * Builder de STRUCTURE d'un item (admin-post) — EM-SITE.
  *
  * Enregistre en un seul appel la structure complète d'un footer composée côté
  * client : champs (type + libellé) positionnés en lignes × colonnes + nom du
  * footer (forcé en MAJUSCULES). Les couleurs globales (fond/texte) ne sont pas
  * dans la grille : elles sont conservées telles quelles. `manage_options`.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -15,11 +15,11 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * URL retour vers la page V4 (avec ancre type/item).
+ * URL retour vers la page EM-SITE (avec ancre type/item).
  *
  * @param array<string, string> $args
  */
-function em_wp_v4_overview_redirect_url(array $args = []): string
+function em_site_overview_redirect_url(array $args = []): string
 {
     return add_query_arg($args, admin_url('admin.php?page=em-rubriques-overview'));
 }
@@ -27,10 +27,10 @@ function em_wp_v4_overview_redirect_url(array $args = []): string
 /**
  * Vérifie capacité + nonce.
  */
-function em_wp_v4_items_guard(string $nonce_action): void
+function em_site_items_guard(string $nonce_action): void
 {
     if (!current_user_can('manage_options')) {
-        wp_die(esc_html__('Accès refusé.', 'em-wp'));
+        wp_die(esc_html__('Accès refusé.', 'em-site'));
     }
 
     check_admin_referer($nonce_action);
@@ -41,9 +41,9 @@ function em_wp_v4_items_guard(string $nonce_action): void
  *
  * @param array<string, string> $args
  */
-function em_wp_v4_builder_redirect(array $args): void
+function em_site_builder_redirect(array $args): void
 {
-    wp_safe_redirect(em_wp_v4_overview_redirect_url($args));
+    wp_safe_redirect(em_site_overview_redirect_url($args));
     exit;
 }
 
@@ -52,7 +52,7 @@ function em_wp_v4_builder_redirect(array $args): void
  *
  * @param array<int, array<string, mixed>> $fields
  */
-function em_wp_v4_unique_field_key(array $fields, string $label): string
+function em_site_unique_field_key(array $fields, string $label): string
 {
     $base = sanitize_key(str_replace('-', '_', sanitize_title($label)));
     $base = $base !== '' ? $base : 'champ';
@@ -74,24 +74,24 @@ function em_wp_v4_unique_field_key(array $fields, string $label): string
  * (champs positionnés) + contenu (valeurs) + couleurs globales + nom (forcé
  * MAJUSCULES), en un seul appel.
  */
-function em_wp_v4_handle_save_item(): void
+function em_site_handle_save_item(): void
 {
-    em_wp_v4_items_guard('em_wp_v4_save_item');
+    em_site_items_guard('em_site_save_item');
 
     $type = sanitize_key((string) ($_POST['type'] ?? ''));
     $item = sanitize_key((string) ($_POST['item'] ?? ''));
 
-    if (!em_wp_rubrique_type_exists($type) || $item === '') {
-        em_wp_v4_builder_redirect(['v4_error' => 'save']);
+    if (!em_site_rubrique_type_exists($type) || $item === '') {
+        em_site_builder_redirect(['v4_error' => 'save']);
     }
 
-    $payload = em_wp_v4_decode_payload();
+    $payload = em_site_decode_payload();
     $rows_raw = is_array($payload['rows'] ?? null) ? array_values($payload['rows']) : [];
 
-    [$global] = em_wp_rubrique_split_global_fields(em_wp_v4_get_item_fields($type, $item));
+    [$global] = em_site_rubrique_split_global_fields(em_site_get_item_fields($type, $item));
 
     $current = [];
-    foreach (em_wp_v4_get_item_fields($type, $item) as $field) {
+    foreach (em_site_get_item_fields($type, $item) as $field) {
         $current[(string) $field['key']] = $field;
     }
 
@@ -100,8 +100,8 @@ function em_wp_v4_handle_save_item(): void
 
     foreach (is_array($payload['fields'] ?? null) ? $payload['fields'] : [] as $entry) {
         $erow = max(1, (int) (is_array($entry) ? ($entry['row'] ?? 1) : 1));
-        $clamp = em_wp_v4_payload_row_columns($rows_raw, $erow);
-        $built = em_wp_v4_build_structure_field((array) $entry, $current, $fields, $clamp);
+        $clamp = em_site_payload_row_columns($rows_raw, $erow);
+        $built = em_site_build_structure_field((array) $entry, $current, $fields, $clamp);
 
         if ($built === null) {
             continue;
@@ -111,32 +111,32 @@ function em_wp_v4_handle_save_item(): void
         $raw_content[$built['key']] = is_array($entry) ? ($entry['value'] ?? '') : '';
     }
 
-    $layout = em_wp_rubrique_normalize_layout(['rows' => $rows_raw], $fields);
+    $layout = em_site_rubrique_normalize_layout(['rows' => $rows_raw], $fields);
 
     $posted = isset($_POST['fields']) && is_array($_POST['fields']) ? wp_unslash($_POST['fields']) : [];
-    $content = em_wp_rubrique_sanitize_content($fields, array_merge($posted, $raw_content));
+    $content = em_site_rubrique_sanitize_content($fields, array_merge($posted, $raw_content));
 
-    $data = em_wp_v4_get_item($type, $item);
+    $data = em_site_get_item($type, $item);
     $data['fields'] = $fields;
     $data['layout'] = $layout;
     $data['content'] = $content;
-    em_wp_v4_save_item($type, $item, $data);
+    em_site_save_item($type, $item, $data);
 
     $label = sanitize_text_field(wp_unslash((string) ($_POST['item_label'] ?? '')));
     $label = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
-    $renamed = em_wp_v4_rename_item($type, $item, $label);
+    $renamed = em_site_rename_item($type, $item, $label);
     $target_item = (string) ($renamed['item'] ?? $item);
 
-    em_wp_v4_builder_redirect(['v4_updated' => 'saved', 'type' => $type, 'item' => $target_item]);
+    em_site_builder_redirect(['v4_updated' => 'saved', 'type' => $type, 'item' => $target_item]);
 }
-add_action('admin_post_em_wp_v4_save_item', 'em_wp_v4_handle_save_item');
+add_action('admin_post_em_site_save_item', 'em_site_handle_save_item');
 
 /**
  * Décode le payload JSON du builder : { rows:[{columns,align}], fields }.
  *
  * @return array<string, mixed>
  */
-function em_wp_v4_decode_payload(): array
+function em_site_decode_payload(): array
 {
     $json = (string) wp_unslash($_POST['structure'] ?? '');
     $decoded = json_decode($json, true);
@@ -149,12 +149,12 @@ function em_wp_v4_decode_payload(): array
  *
  * @param array<int, mixed> $rows_raw
  */
-function em_wp_v4_payload_row_columns(array $rows_raw, int $row): int
+function em_site_payload_row_columns(array $rows_raw, int $row): int
 {
     $entry = $rows_raw[$row - 1] ?? null;
     $cols = is_array($entry) ? (int) ($entry['columns'] ?? 0) : 0;
 
-    return $cols > 0 ? min(em_wp_rubrique_max_columns(), max(1, $cols)) : em_wp_rubrique_max_columns();
+    return $cols > 0 ? min(em_site_rubrique_max_columns(), max(1, $cols)) : em_site_rubrique_max_columns();
 }
 
 /**
@@ -165,7 +165,7 @@ function em_wp_v4_payload_row_columns(array $rows_raw, int $row): int
  * @param array<int, array<string, mixed>> $fields déjà placés (pour clé unique)
  * @return array<string, mixed>|null
  */
-function em_wp_v4_build_structure_field(array $entry, array $current, array $fields, int $columns): ?array
+function em_site_build_structure_field(array $entry, array $current, array $fields, int $columns): ?array
 {
     $ftype = sanitize_key((string) ($entry['type'] ?? ''));
     $label = sanitize_text_field((string) ($entry['label'] ?? ''));
@@ -173,12 +173,12 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
     // Les couleurs (fond/texte) sont globales : jamais insérées dans la grille.
     // Le libellé n'est plus requis : un champ inséré est conservé tel quel, on le
     // personnalise (libellé, contenu, lien…) ensuite, même sur plusieurs passages.
-    if (!em_wp_field_type_exists($ftype) || $ftype === 'color') {
+    if (!em_site_field_type_exists($ftype) || $ftype === 'color') {
         return null;
     }
 
     $row = max(1, (int) ($entry['row'] ?? 1));
-    $col = em_wp_rubrique_valid_col((int) ($entry['col'] ?? 1), $columns);
+    $col = em_site_rubrique_valid_col((int) ($entry['col'] ?? 1), $columns);
     $key = sanitize_key((string) ($entry['key'] ?? ''));
 
     if ($key !== '' && isset($current[$key]) && (string) ($current[$key]['type'] ?? '') === $ftype) {
@@ -186,10 +186,10 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
         $field['label'] = $label;
     } else {
         $field = [
-            'key'     => em_wp_v4_unique_field_key($fields, $label !== '' ? $label : $ftype),
+            'key'     => em_site_unique_field_key($fields, $label !== '' ? $label : $ftype),
             'type'    => $ftype,
             'label'   => $label,
-            'default' => em_wp_field_type_default($ftype),
+            'default' => em_site_field_type_default($ftype),
             'options' => [],
         ];
     }
@@ -200,8 +200,8 @@ function em_wp_v4_build_structure_field(array $entry, array $current, array $fie
 
     // Style de texte propre au champ (taille/typo/couleur) conservé dans options.
     $field['options'] = is_array($field['options'] ?? null) ? $field['options'] : [];
-    if (em_wp_rubrique_field_supports_text_style($ftype)) {
-        $field['options']['style'] = em_wp_rubrique_normalize_text_style((array) ($entry['style'] ?? []));
+    if (em_site_rubrique_field_supports_text_style($ftype)) {
+        $field['options']['style'] = em_site_rubrique_normalize_text_style((array) ($entry['style'] ?? []));
     }
 
     return $field;

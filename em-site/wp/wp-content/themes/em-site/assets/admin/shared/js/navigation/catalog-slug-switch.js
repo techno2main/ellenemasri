@@ -13,7 +13,7 @@
         try {
             var url = new URL(config.quitEndpoint, window.location.origin);
 
-            url.searchParams.set('em-site_quit_editing', '1');
+            url.searchParams.set('em_site_quit_editing', '1');
             url.searchParams.set('redirect_to', targetHref);
             url.searchParams.set('_wpnonce', config.quitNonce);
 

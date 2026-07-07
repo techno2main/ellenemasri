@@ -1,12 +1,12 @@
 <?php
 /**
- * Style de contenu par champ (V4).
+ * Style de contenu par champ (EM-SITE).
  *
  * Réglages propres à un champ (et non globaux à la rubrique) :
  *   - Texte : taille (px), police (typo), couleur — indépendants par champ.
  *   - Séparateur vide : hauteur (px).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
  *
  * @return array<int, string>
  */
-function em_wp_rubrique_text_style_types(): array
+function em_site_rubrique_text_style_types(): array
 {
     return ['text', 'textarea'];
 }
@@ -26,9 +26,9 @@ function em_wp_rubrique_text_style_types(): array
 /**
  * Le type de champ supporte-t-il un style de texte par champ ?
  */
-function em_wp_rubrique_field_supports_text_style(string $type): bool
+function em_site_rubrique_field_supports_text_style(string $type): bool
 {
-    return in_array($type, em_wp_rubrique_text_style_types(), true);
+    return in_array($type, em_site_rubrique_text_style_types(), true);
 }
 
 /**
@@ -37,7 +37,7 @@ function em_wp_rubrique_field_supports_text_style(string $type): bool
  * @param mixed $raw
  * @return array{size:int, font:string, color:string, align:string}
  */
-function em_wp_rubrique_normalize_text_style($raw): array
+function em_site_rubrique_normalize_text_style($raw): array
 {
     $raw = is_array($raw) ? $raw : [];
     $font = sanitize_key((string) ($raw['font'] ?? ''));
@@ -47,14 +47,14 @@ function em_wp_rubrique_normalize_text_style($raw): array
         $align = '';
     }
 
-    if ($font !== '' && !isset(em_wp_rubrique_font_choices()[$font])) {
+    if ($font !== '' && !isset(em_site_rubrique_font_choices()[$font])) {
         $font = '';
     }
 
     return [
         'size'  => max(0, min(200, (int) ($raw['size'] ?? 0))),
         'font'  => $font,
-        'color' => em_wp_field_sanitize_color((string) ($raw['color'] ?? '')),
+        'color' => em_site_field_sanitize_color((string) ($raw['color'] ?? '')),
         'align' => $align,
     ];
 }
@@ -64,9 +64,9 @@ function em_wp_rubrique_normalize_text_style($raw): array
  *
  * @param array<string, mixed> $style
  */
-function em_wp_rubrique_text_style_css(array $style): string
+function em_site_rubrique_text_style_css(array $style): string
 {
-    $style = em_wp_rubrique_normalize_text_style($style);
+    $style = em_site_rubrique_normalize_text_style($style);
     $css = '';
 
     if ($style['size'] > 0) {
@@ -83,7 +83,7 @@ function em_wp_rubrique_text_style_css(array $style): string
     }
 
     if ($style['font'] !== '') {
-        $stack = em_wp_rubrique_font_stack($style['font']);
+        $stack = em_site_rubrique_font_stack($style['font']);
         if ($stack !== '') {
             $css .= 'font-family:' . $stack . ';';
         }
@@ -105,15 +105,15 @@ function em_wp_rubrique_text_style_css(array $style): string
  *
  * @return array<string, string>
  */
-function em_wp_rubrique_bg_position_choices(): array
+function em_site_rubrique_bg_position_choices(): array
 {
     return [
-        'cover'    => __('Étirée (remplir le cadre)', 'em-wp'),
-        'contain'  => __('Adaptée (entière visible)', 'em-wp'),
-        'center'   => __('Centrée (taille réelle)', 'em-wp'),
-        'repeat'   => __('Mosaïque (répétée)', 'em-wp'),
-        'repeat-x' => __('Répétée horizontalement', 'em-wp'),
-        'repeat-y' => __('Répétée verticalement', 'em-wp'),
+        'cover'    => __('Étirée (remplir le cadre)', 'em-site'),
+        'contain'  => __('Adaptée (entière visible)', 'em-site'),
+        'center'   => __('Centrée (taille réelle)', 'em-site'),
+        'repeat'   => __('Mosaïque (répétée)', 'em-site'),
+        'repeat-x' => __('Répétée horizontalement', 'em-site'),
+        'repeat-y' => __('Répétée verticalement', 'em-site'),
     ];
 }
 
@@ -122,7 +122,7 @@ function em_wp_rubrique_bg_position_choices(): array
  *
  * @return array{size:string, repeat:string, position:string}
  */
-function em_wp_rubrique_bg_position_css(string $pos): array
+function em_site_rubrique_bg_position_css(string $pos): array
 {
     switch ($pos) {
         case 'contain':
@@ -146,7 +146,7 @@ function em_wp_rubrique_bg_position_css(string $pos): array
  *
  * @param mixed $value
  */
-function em_wp_rubrique_sep_blank_height($value): int
+function em_site_rubrique_sep_blank_height($value): int
 {
     return max(0, min(400, (int) $value));
 }
@@ -158,9 +158,9 @@ function em_wp_rubrique_sep_blank_height($value): int
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_height($value): string
+function em_site_field_sanitize_height($value): string
 {
-    $h = em_wp_rubrique_sep_blank_height($value);
+    $h = em_site_rubrique_sep_blank_height($value);
 
     return $h > 0 ? (string) $h : '';
 }

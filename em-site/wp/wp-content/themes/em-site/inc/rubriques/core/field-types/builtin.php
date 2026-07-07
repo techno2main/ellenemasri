@@ -1,12 +1,12 @@
 <?php
 /**
- * Types de champ intégrés (V4).
+ * Types de champ intégrés (EM-SITE).
  *
  * Déclare le catalogue fermé de types de champ réutilisables via le filtre
- * `em_wp_field_types`. Chaque type reste volontairement simple ; le rendu admin
+ * `em_site_field_types`. Chaque type reste volontairement simple ; le rendu admin
  * et front sera branché lors des étapes ultérieures (moteur de rendu + UI).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -19,142 +19,142 @@ if (!defined('ABSPATH')) {
  * @param array<string, array<string, mixed>> $types
  * @return array<string, array<string, mixed>>
  */
-function em_wp_field_types_builtin(array $types): array
+function em_site_field_types_builtin(array $types): array
 {
     $builtin = [
         'text' => [
-            'label'    => __('Texte', 'em-wp'),
+            'label'    => __('Texte', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_text',
+            'sanitize' => 'em_site_field_sanitize_text',
         ],
         'textarea' => [
-            'label'    => __('Texte enrichi', 'em-wp'),
+            'label'    => __('Texte enrichi', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_textarea',
+            'sanitize' => 'em_site_field_sanitize_textarea',
         ],
         'url' => [
-            'label'    => __('Lien (URL)', 'em-wp'),
+            'label'    => __('Lien (URL)', 'em-site'),
             'default'  => '',
             'sanitize' => 'esc_url_raw',
         ],
         'email' => [
-            'label'    => __('Email', 'em-wp'),
+            'label'    => __('Email', 'em-site'),
             'default'  => '',
             'sanitize' => 'sanitize_email',
         ],
         'image' => [
-            'label'    => __('Image (média)', 'em-wp'),
+            'label'    => __('Image (média)', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_image',
+            'sanitize' => 'em_site_field_sanitize_image',
         ],
         'text_image' => [
-            'label'    => __('Texte + Image', 'em-wp'),
+            'label'    => __('Texte + Image', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_text_image',
+            'sanitize' => 'em_site_field_sanitize_text_image',
         ],
         'text_text' => [
-            'label'    => __('Texte + Texte', 'em-wp'),
+            'label'    => __('Texte + Texte', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_text_text',
+            'sanitize' => 'em_site_field_sanitize_text_text',
         ],
         'icon' => [
-            'label'    => __('Icône plateforme', 'em-wp'),
+            'label'    => __('Icône plateforme', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_icon',
+            'sanitize' => 'em_site_field_sanitize_icon',
         ],
         'platform_block' => [
-            'label'    => __('Bloc Plateforme', 'em-wp'),
+            'label'    => __('Bloc Plateforme', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_platform_block',
+            'sanitize' => 'em_site_field_sanitize_platform_block',
         ],
         'button' => [
-            'label'    => __('Bouton', 'em-wp'),
+            'label'    => __('Bouton', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_button',
+            'sanitize' => 'em_site_field_sanitize_button',
         ],
         'color' => [
-            'label'    => __('Couleur', 'em-wp'),
+            'label'    => __('Couleur', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_color',
+            'sanitize' => 'em_site_field_sanitize_color',
         ],
         'toggle' => [
-            'label'    => __('Activer / Masquer', 'em-wp'),
+            'label'    => __('Activer / Masquer', 'em-site'),
             'default'  => false,
-            'sanitize' => 'em_wp_field_sanitize_bool',
+            'sanitize' => 'em_site_field_sanitize_bool',
         ],
         'number' => [
-            'label'    => __('Nombre', 'em-wp'),
+            'label'    => __('Nombre', 'em-site'),
             'default'  => 0,
-            'sanitize' => 'em_wp_field_sanitize_int',
+            'sanitize' => 'em_site_field_sanitize_int',
         ],
         'select' => [
-            'label'    => __('Liste de choix', 'em-wp'),
+            'label'    => __('Liste de choix', 'em-site'),
             'default'  => '',
             'sanitize' => 'sanitize_key',
         ],
         'repeater' => [
-            'label'    => __('Groupe répétable', 'em-wp'),
+            'label'    => __('Groupe répétable', 'em-site'),
             'default'  => [],
-            'sanitize' => 'em_wp_field_sanitize_repeater',
+            'sanitize' => 'em_site_field_sanitize_repeater',
         ],
         // Médias (vidéo / son / slider) et bloc réseau — avant les séparateurs.
         'video_url' => [
-            'label'    => __('Vidéo URL (YouTube ou TikTok)', 'em-wp'),
+            'label'    => __('Vidéo URL (YouTube ou TikTok)', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_video_url',
+            'sanitize' => 'em_site_field_sanitize_video_url',
         ],
         'video_file' => [
-            'label'    => __('Vidéo (fichier média)', 'em-wp'),
+            'label'    => __('Vidéo (fichier média)', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_media_id',
+            'sanitize' => 'em_site_field_sanitize_media_id',
         ],
         'audio_file' => [
-            'label'    => __('Son (fichier média)', 'em-wp'),
+            'label'    => __('Son (fichier média)', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_media_id',
+            'sanitize' => 'em_site_field_sanitize_media_id',
         ],
         'audio_url' => [
-            'label'    => __('Son URL', 'em-wp'),
+            'label'    => __('Son URL', 'em-site'),
             'default'  => '',
             'sanitize' => 'esc_url_raw',
         ],
         'network_block' => [
-            'label'    => __('Bloc Réseau', 'em-wp'),
+            'label'    => __('Bloc Réseau', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_platform_block',
+            'sanitize' => 'em_site_field_sanitize_platform_block',
         ],
         'slider' => [
-            'label'    => __('Slider', 'em-wp'),
+            'label'    => __('Slider', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_slides',
+            'sanitize' => 'em_site_field_sanitize_slides',
         ],
         // Champs décoratifs : pas de libellé. Filet et flèches portent une couleur.
         'sep_line' => [
-            'label'    => __('Séparateur (filet)', 'em-wp'),
+            'label'    => __('Séparateur (filet)', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_color',
+            'sanitize' => 'em_site_field_sanitize_color',
         ],
         'sep_blank' => [
-            'label'    => __('Séparateur (vide)', 'em-wp'),
+            'label'    => __('Séparateur (vide)', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_height',
+            'sanitize' => 'em_site_field_sanitize_height',
         ],
         'arrow_up' => [
-            'label'    => __('Flèche vers le haut', 'em-wp'),
+            'label'    => __('Flèche vers le haut', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_arrow',
+            'sanitize' => 'em_site_field_sanitize_arrow',
         ],
         'arrow_down' => [
-            'label'    => __('Flèche vers le bas', 'em-wp'),
+            'label'    => __('Flèche vers le bas', 'em-site'),
             'default'  => '',
-            'sanitize' => 'em_wp_field_sanitize_arrow',
+            'sanitize' => 'em_site_field_sanitize_arrow',
         ],
     ];
 
     // Les types intégrés ne doivent pas écraser une éventuelle surcharge tierce.
     return $builtin + $types;
 }
-add_filter('em_wp_field_types', 'em_wp_field_types_builtin');
+add_filter('em_site_field_types', 'em_site_field_types_builtin');
 
 /**
  * Décode la valeur d'un champ image en { id, link }.
@@ -164,7 +164,7 @@ add_filter('em_wp_field_types', 'em_wp_field_types_builtin');
  * @param mixed $value
  * @return array{id:int, link:string}
  */
-function em_wp_rubrique_image_value($value): array
+function em_site_rubrique_image_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -189,9 +189,9 @@ function em_wp_rubrique_image_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_image($value): string
+function em_site_field_sanitize_image($value): string
 {
-    $parsed = em_wp_rubrique_image_value($value);
+    $parsed = em_site_rubrique_image_value($value);
     $id = absint($parsed['id']);
     $link = esc_url_raw($parsed['link']);
 
@@ -214,7 +214,7 @@ function em_wp_field_sanitize_image($value): string
 /**
  * Sanitise une couleur hex (#rgb / #rrggbb), '' si invalide.
  */
-function em_wp_field_sanitize_color($value): string
+function em_site_field_sanitize_color($value): string
 {
     $color = sanitize_text_field((string) $value);
     $sanitized = function_exists('sanitize_hex_color') ? sanitize_hex_color($color) : null;
@@ -225,7 +225,7 @@ function em_wp_field_sanitize_color($value): string
 /**
  * Sanitise un booléen tolérant ('1','true','on'…).
  */
-function em_wp_field_sanitize_bool($value): bool
+function em_site_field_sanitize_bool($value): bool
 {
     if (is_bool($value)) {
         return $value;
@@ -237,7 +237,7 @@ function em_wp_field_sanitize_bool($value): bool
 /**
  * Sanitise un entier (>= 0).
  */
-function em_wp_field_sanitize_int($value): int
+function em_site_field_sanitize_int($value): int
 {
     return max(0, (int) $value);
 }
@@ -249,7 +249,7 @@ function em_wp_field_sanitize_int($value): int
  * @param mixed $value
  * @return array<int, array<string, mixed>>
  */
-function em_wp_field_sanitize_repeater($value): array
+function em_site_field_sanitize_repeater($value): array
 {
     if (!is_array($value)) {
         return [];

@@ -2,7 +2,7 @@
 /**
  * Partial : panneau Infos release (admin).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,15 +12,15 @@ if (!defined('ABSPATH')) {
 /**
  * @param array<int, array{key:string,value:string,hidden?:bool}> $rows
  */
-function em_wp_release_render_rows_panel_body(array $rows, ?string $field = null): void
+function em_site_release_render_rows_panel_body(array $rows, ?string $field = null): void
 {
-    $field = $field ?? em_wp_release_form_option_key();
+    $field = $field ?? em_site_release_form_option_key();
     ?>
-    <div class="em-wp-release-rows-list" id="em-wp-release-rows-list" data-option-name="<?php echo esc_attr($field); ?>" data-field-key="rows">
+    <div class="em-site-release-rows-list" id="em-site-release-rows-list" data-option-name="<?php echo esc_attr($field); ?>" data-field-key="rows">
         <?php foreach ($rows as $index => $row) {
-            em_wp_release_render_row_item((int) $index, $row, $field);
+            em_site_release_render_row_item((int) $index, $row, $field);
         } ?>
     </div>
-    <p><button type="button" class="button button-secondary" id="em-wp-release-add-row"><?php esc_html_e('+ Ajouter une info', 'em-wp'); ?></button></p>
+    <p><button type="button" class="button button-secondary" id="em-site-release-add-row"><?php esc_html_e('+ Ajouter une info', 'em-site'); ?></button></p>
     <?php
 }

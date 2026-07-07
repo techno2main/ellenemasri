@@ -2,7 +2,7 @@
 /**
  * Point d'entree du theme em-site.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

@@ -171,7 +171,7 @@
 
         var activateButton = document.getElementById('em-site-template-banner-activate-live');
         var liveForm = document.getElementById('em-site-hub-set-live-template-form');
-        var slugInput = liveForm ? liveForm.querySelector('[name="em-site_template_active_slug"]') : null;
+        var slugInput = liveForm ? liveForm.querySelector('[name="em_site_template_active_slug"]') : null;
         var bannerRoot = document.querySelector('.em-site-template-banner');
 
         if (activateButton && liveForm && slugInput && bannerRoot) {

@@ -29,8 +29,8 @@
             return;
         }
 
-        const bgInput = document.querySelector('input[name="em-site_top_bar_options[background_color]"]');
-        const textInput = document.querySelector('input[name="em-site_top_bar_options[text_color]"]');
+        const bgInput = document.querySelector('input[name="em_site_top_bar_options[background_color]"]');
+        const textInput = document.querySelector('input[name="em_site_top_bar_options[text_color]"]');
         const bg = bgInput ? String(bgInput.value || '').trim() : '';
         const text = textInput ? String(textInput.value || '').trim() : '';
 
@@ -121,7 +121,7 @@
             return;
         }
 
-        const optionName = list.getAttribute('data-option-name') || 'em-site_stream_options';
+        const optionName = list.getAttribute('data-option-name') || 'em_site_stream_options';
         const fieldKey = list.getAttribute('data-field-key') || 'platforms';
         const fieldPattern = new RegExp('^[^\\[]+\\[' + fieldKey + '\\]\\[\\d+\\]');
         const items = Array.from(list.querySelectorAll('[data-stream-link-item]'));

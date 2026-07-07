@@ -2,7 +2,7 @@
 /**
  * Rendu de la page front rubrique par rubrique.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_site_front_active_template_slug(): string
 {
-	$slug = sanitize_key((string) get_option('em_wp_active_template', ''));
+	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
 }
@@ -48,7 +48,7 @@ function em_site_front_module_is_visible(string $module_slug): bool
 	}
 
 	// 1) Squelette template: si une rubrique est absente du plan, on ne la rend pas.
-	$plans = get_option('em_wp_template_plans', []);
+	$plans = get_option('em_site_template_plans', []);
 	if (is_array($plans)
 		&& isset($plans[$template_slug]['order'])
 		&& is_array($plans[$template_slug]['order'])
@@ -72,7 +72,7 @@ function em_site_front_module_is_visible(string $module_slug): bool
 	}
 
 	// 2) Store visibilité explicite par template.
-	$visibility_store = get_option('em_wp_template_visibility', []);
+	$visibility_store = get_option('em_site_template_visibility', []);
 	if (is_array($visibility_store) && isset($visibility_store[$template_slug]) && is_array($visibility_store[$template_slug])) {
 		$bucket = $visibility_store[$template_slug];
 		$seen_value = false;
@@ -101,7 +101,7 @@ function em_site_front_module_is_visible(string $module_slug): bool
 			continue;
 		}
 
-		$option_name = 'em_wp_' . $option_slug . '_' . $template_slug . '_options';
+		$option_name = 'em_site_' . $option_slug . '_' . $template_slug . '_options';
 		$saved = get_option($option_name, []);
 		if (is_array($saved) && array_key_exists('enabled', $saved) && !(bool) $saved['enabled']) {
 			return false;
@@ -229,44 +229,44 @@ function em_site_render_front_placeholders(): void
  */
 function em_site_render_front_page(): void
 {
-	if (function_exists('em_wp_render_top_bar') && em_site_front_module_is_visible('top-bar')) {
-		em_wp_render_top_bar();
+	if (function_exists('em_site_render_top_bar') && em_site_front_module_is_visible('top-bar')) {
+		em_site_render_top_bar();
 	}
 
-	if (function_exists('em_wp_render_header') && em_site_front_module_is_visible('header')) {
-		em_wp_render_header();
+	if (function_exists('em_site_render_header') && em_site_front_module_is_visible('header')) {
+		em_site_render_header();
 	}
 
-	if (function_exists('em_wp_render_stream') && em_site_front_module_is_visible('stream')) {
-		em_wp_render_stream();
+	if (function_exists('em_site_render_stream') && em_site_front_module_is_visible('stream')) {
+		em_site_render_stream();
 	}
 
-	if (function_exists('em_wp_render_social') && em_site_front_module_is_visible('social')) {
-		em_wp_render_social();
+	if (function_exists('em_site_render_social') && em_site_front_module_is_visible('social')) {
+		em_site_render_social();
 	}
 
-	if (function_exists('em_wp_render_video') && em_site_front_module_is_visible('video')) {
-		em_wp_render_video();
+	if (function_exists('em_site_render_video') && em_site_front_module_is_visible('video')) {
+		em_site_render_video();
 	}
 
-	if (function_exists('em_wp_render_release') && em_site_front_module_is_visible('release')) {
-		em_wp_render_release();
+	if (function_exists('em_site_render_release') && em_site_front_module_is_visible('release')) {
+		em_site_render_release();
 	}
 
-	if (function_exists('em_wp_render_cta') && em_site_front_module_is_visible('cta')) {
-		em_wp_render_cta();
+	if (function_exists('em_site_render_cta') && em_site_front_module_is_visible('cta')) {
+		em_site_render_cta();
 	}
 
-	if (function_exists('em_wp_render_contact') && em_site_front_module_is_visible('contact')) {
-		em_wp_render_contact();
+	if (function_exists('em_site_render_contact') && em_site_front_module_is_visible('contact')) {
+		em_site_render_contact();
 	}
 
-	if (function_exists('em_wp_render_about') && em_site_front_module_is_visible('about')) {
-		em_wp_render_about();
+	if (function_exists('em_site_render_about') && em_site_front_module_is_visible('about')) {
+		em_site_render_about();
 	}
 
-	if (function_exists('em_wp_render_footer') && em_site_front_module_is_visible('footer')) {
-		em_wp_render_footer();
+	if (function_exists('em_site_render_footer') && em_site_front_module_is_visible('footer')) {
+		em_site_render_footer();
 	}
 
 	em_site_render_front_placeholders();

@@ -15,7 +15,7 @@
             activeSlug = bar.getAttribute('data-active-slug') || '';
         }
         var form = document.getElementById('em-site-hub-set-live-template-form');
-        var slugInput = form ? form.querySelector('[name="em-site_template_active_slug"]') : null;
+        var slugInput = form ? form.querySelector('[name="em_site_template_active_slug"]') : null;
         var activateButtons = root.querySelectorAll('.em-site-templates-sommaire__activate-live');
         var i18n = (window.emWpTemplateLiveSwitch && window.emWpTemplateLiveSwitch.i18n) || {};
 

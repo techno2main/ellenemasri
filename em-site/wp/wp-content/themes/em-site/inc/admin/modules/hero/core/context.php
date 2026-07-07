@@ -2,7 +2,7 @@
 /**
  * Contexte et resolution de pages du module Hero (admin).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Retourne le slug de la page hub Heros.
  */
-function em_wp_hero_hub_menu_slug(): string
+function em_site_hero_hub_menu_slug(): string
 {
     return 'em-catalog-heros';
 }
@@ -22,7 +22,7 @@ function em_wp_hero_hub_menu_slug(): string
  *
  * @return array<string, string>
  */
-function em_wp_hero_legacy_page_slug_map(): array
+function em_site_hero_legacy_page_slug_map(): array
 {
     return [
         'em-hero-mayami' => 'hero-mayami-default',
@@ -33,10 +33,10 @@ function em_wp_hero_legacy_page_slug_map(): array
 /**
  * Retourne le slug catalogue hero actif (fallback V1).
  */
-function em_wp_hero_active_style_slug(): string
+function em_site_hero_active_style_slug(): string
 {
-    if (function_exists('em_wp_header_get_options_for_front')) {
-        $header = em_wp_header_get_options_for_front();
+    if (function_exists('em_site_header_get_options_for_front')) {
+        $header = em_site_header_get_options_for_front();
         $slug = sanitize_key((string) ($header['hero_slug'] ?? ''));
 
         if ($slug !== '') {
@@ -44,9 +44,9 @@ function em_wp_hero_active_style_slug(): string
         }
     }
 
-    $saved = get_option('em_wp_hero_active_style', 'mayami');
+    $saved = get_option('em_site_hero_active_style', 'mayami');
 
-    return em_wp_hero_sanitize_active_style($saved);
+    return em_site_hero_sanitize_active_style($saved);
 }
 
 /**
@@ -54,15 +54,15 @@ function em_wp_hero_active_style_slug(): string
  *
  * @param mixed $value
  */
-function em_wp_hero_sanitize_active_style($value): string
+function em_site_hero_sanitize_active_style($value): string
 {
     $slug = sanitize_key((string) $value);
 
-    if (function_exists('em_wp_hero_normalize_catalog_slug')) {
-        $slug = em_wp_hero_normalize_catalog_slug($slug);
+    if (function_exists('em_site_hero_normalize_catalog_slug')) {
+        $slug = em_site_hero_normalize_catalog_slug($slug);
     }
 
-    $definitions = em_wp_hero_style_definitions();
+    $definitions = em_site_hero_style_definitions();
 
     if (isset($definitions[$slug])) {
         return $slug;
@@ -76,13 +76,13 @@ function em_wp_hero_sanitize_active_style($value): string
 /**
  * Retourne la definition des entrees catalogue HERO.
  */
-function em_wp_hero_style_definitions(): array
+function em_site_hero_style_definitions(): array
 {
-    if (!function_exists('em_wp_hero_catalog_entries')) {
+    if (!function_exists('em_site_hero_catalog_entries')) {
         return [
             'hero-mayami-default' => [
                 'label'      => 'Mayami',
-                'menu_title' => __('Hero Mayami default', 'em-wp'),
+                'menu_title' => __('Hero Mayami default', 'em-site'),
                 'page_slug'  => 'em-ch-hero-mayami-default',
             ],
         ];
@@ -90,12 +90,12 @@ function em_wp_hero_style_definitions(): array
 
     $definitions = [];
 
-    foreach (em_wp_hero_catalog_entries() as $catalog_slug => $entry) {
+    foreach (em_site_hero_catalog_entries() as $catalog_slug => $entry) {
         $label = (string) ($entry['label'] ?? $catalog_slug);
         $definitions[$catalog_slug] = [
             'label'      => $label,
             'menu_title' => $label,
-            'page_slug'  => em_wp_hero_catalog_edit_page_slug($catalog_slug),
+            'page_slug'  => em_site_hero_catalog_edit_page_slug($catalog_slug),
         ];
     }
 
@@ -105,52 +105,52 @@ function em_wp_hero_style_definitions(): array
 /**
  * Retourne le slug du menu parent Hero.
  */
-function em_wp_hero_parent_menu_slug(): string
+function em_site_hero_parent_menu_slug(): string
 {
-    return em_wp_hero_hub_menu_slug();
+    return em_site_hero_hub_menu_slug();
 }
 
 /**
  * Retourne les slugs de page admin Hero.
  */
-function em_wp_hero_admin_page_slugs(): array
+function em_site_hero_admin_page_slugs(): array
 {
     $slugs = [
-        em_wp_hero_hub_menu_slug(),
+        em_site_hero_hub_menu_slug(),
     ];
 
-    if (function_exists('em_wp_catalog_parent_menu_slug')) {
-        $slugs[] = em_wp_catalog_parent_menu_slug();
+    if (function_exists('em_site_catalog_parent_menu_slug')) {
+        $slugs[] = em_site_catalog_parent_menu_slug();
     }
 
     return array_merge(
         $slugs,
-        wp_list_pluck(em_wp_hero_style_definitions(), 'page_slug')
+        wp_list_pluck(em_site_hero_style_definitions(), 'page_slug')
     );
 }
 
 /**
  * Retourne le slug HERO depuis la page admin.
  */
-function em_wp_hero_style_from_page_slug(string $page_slug): string
+function em_site_hero_style_from_page_slug(string $page_slug): string
 {
-    if ($page_slug === em_wp_hero_hub_menu_slug()) {
+    if ($page_slug === em_site_hero_hub_menu_slug()) {
         return '';
     }
 
-    if (function_exists('em_wp_hero_catalog_slug_from_page')) {
-        $from_catalog = em_wp_hero_catalog_slug_from_page($page_slug);
+    if (function_exists('em_site_hero_catalog_slug_from_page')) {
+        $from_catalog = em_site_hero_catalog_slug_from_page($page_slug);
         if ($from_catalog !== '') {
             return $from_catalog;
         }
     }
 
-    $legacy = em_wp_hero_legacy_page_slug_map();
+    $legacy = em_site_hero_legacy_page_slug_map();
     if (isset($legacy[$page_slug])) {
         return $legacy[$page_slug];
     }
 
-    foreach (em_wp_hero_style_definitions() as $style_slug => $definition) {
+    foreach (em_site_hero_style_definitions() as $style_slug => $definition) {
         if (($definition['page_slug'] ?? '') === $page_slug) {
             return $style_slug;
         }
@@ -162,17 +162,17 @@ function em_wp_hero_style_from_page_slug(string $page_slug): string
 /**
  * Retourne le contexte admin HERO courant.
  */
-function em_wp_hero_get_admin_context(): array
+function em_site_hero_get_admin_context(): array
 {
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-    $style_slug = em_wp_hero_style_from_page_slug($page_slug);
-    $definitions = em_wp_hero_style_definitions();
+    $style_slug = em_site_hero_style_from_page_slug($page_slug);
+    $definitions = em_site_hero_style_definitions();
 
     if ($style_slug === '') {
         return [
             'style_slug'  => '',
             'label'       => '',
-            'page_slug'   => em_wp_hero_hub_menu_slug(),
+            'page_slug'   => em_site_hero_hub_menu_slug(),
             'option_name' => '',
             'group'       => '',
         ];
@@ -184,28 +184,28 @@ function em_wp_hero_get_admin_context(): array
         'style_slug'  => $style_slug,
         'label'       => (string) ($definition['label'] ?? 'Mayami'),
         'page_slug'   => (string) ($definition['page_slug'] ?? 'em-hero-mayami'),
-        'option_name' => em_wp_hero_option_name($style_slug),
-        'group'       => em_wp_hero_group_name($style_slug),
+        'option_name' => em_site_hero_option_name($style_slug),
+        'group'       => em_site_hero_group_name($style_slug),
     ];
 }
 
 /**
  * Retourne le nom d'option WordPress pour une variante HERO.
  */
-function em_wp_hero_option_name(string $style_slug): string
+function em_site_hero_option_name(string $style_slug): string
 {
-    if (function_exists('em_wp_hero_catalog_item_option_name')) {
-        return em_wp_hero_catalog_item_option_name($style_slug);
+    if (function_exists('em_site_hero_catalog_item_option_name')) {
+        return em_site_hero_catalog_item_option_name($style_slug);
     }
 
-    return 'em_wp_hero_' . sanitize_key($style_slug) . '_options';
+    return 'em_site_hero_' . sanitize_key($style_slug) . '_options';
 }
 
 /**
  * Retourne le nom de groupe Settings API pour une variante HERO.
  */
-function em_wp_hero_group_name(string $style_slug): string
+function em_site_hero_group_name(string $style_slug): string
 {
-    return 'em_wp_hero_' . sanitize_key($style_slug) . '_group';
+    return 'em_site_hero_' . sanitize_key($style_slug) . '_group';
 }
 

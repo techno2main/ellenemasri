@@ -22,7 +22,7 @@
         var colorInitialized = false;
 
         function grantWorkspaceLaunch() {
-            var key = cfg.workspaceLaunchGrantKey || 'em-site_wizard_workspace_launch';
+            var key = cfg.workspaceLaunchGrantKey || 'em_site_wizard_workspace_launch';
 
             if (window.EmWpTemplateWizard
                 && EmWpTemplateWizard.Draft

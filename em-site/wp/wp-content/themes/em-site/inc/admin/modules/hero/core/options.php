@@ -2,7 +2,7 @@
 /**
  * Options et sanitization du module Hero (admin).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,28 +12,28 @@ if (!defined('ABSPATH')) {
 /**
  * Valeurs par defaut du module Hero.
  */
-function em_wp_hero_default_options(): array
+function em_site_hero_default_options(): array
 {
     return [
         'enabled'                  => true,
-        'badge_text'               => __('New Unique · Available!', 'em-wp'),
+        'badge_text'               => __('New Unique · Available!', 'em-site'),
         'badge_text_hidden'        => false,
         'badge_bg_color'           => '',
         'badge_text_color'         => '',
-        'subtitle'                 => __('Mayami, My Miami', 'em-wp'),
+        'subtitle'                 => __('Mayami, My Miami', 'em-site'),
         'subtitle_hidden'          => false,
-        'main_title'               => __('Mayami, My Miami', 'em-wp'),
+        'main_title'               => __('Mayami, My Miami', 'em-site'),
         'logo_image'               => '',
         'logo_hidden'              => false,
-        'logo_alt'                 => __('Mayami, My Miami', 'em-wp'),
-        'description'              => __('A sun-soaked love letter to the city. Stream it, watch it, share it and follow the journey from the painted walls of Miami.', 'em-wp'),
+        'logo_alt'                 => __('Mayami, My Miami', 'em-site'),
+        'description'              => __('A sun-soaked love letter to the city. Stream it, watch it, share it and follow the journey from the painted walls of Miami.', 'em-site'),
         'description_hidden'       => false,
-        'stream_label'             => __('◉ Stream', 'em-wp'),
+        'stream_label'             => __('◉ Stream', 'em-site'),
         'stream_hidden'            => false,
         'stream_href'              => '#stream',
         'stream_bg_color'          => '',
         'stream_text_color'        => '',
-        'watch_label'              => __('▶ Watch', 'em-wp'),
+        'watch_label'              => __('▶ Watch', 'em-site'),
         'watch_hidden'             => false,
         'watch_href'               => '#video',
         'watch_bg_color'           => '',
@@ -44,27 +44,27 @@ function em_wp_hero_default_options(): array
 /**
  * Retourne les options Hero normalisees.
  */
-function em_wp_hero_get_options(string $style_slug = 'hero-mayami-default'): array
+function em_site_hero_get_options(string $style_slug = 'hero-mayami-default'): array
 {
-    if (function_exists('em_wp_hero_normalize_catalog_slug')) {
-        $style_slug = em_wp_hero_normalize_catalog_slug($style_slug);
+    if (function_exists('em_site_hero_normalize_catalog_slug')) {
+        $style_slug = em_site_hero_normalize_catalog_slug($style_slug);
     }
 
-    $saved = get_option(em_wp_hero_option_name($style_slug), []);
+    $saved = get_option(em_site_hero_option_name($style_slug), []);
 
     if ($style_slug === 'hero-mayami-default' && empty($saved)) {
-        $saved = get_option('em_wp_hero_mayami_options', []);
+        $saved = get_option('em_site_hero_mayami_options', []);
     }
 
     if ($style_slug === 'hero-mayami-default' && empty($saved)) {
-        $saved = get_option('em_wp_hero_options', []);
+        $saved = get_option('em_site_hero_options', []);
     }
 
     if (!is_array($saved)) {
         $saved = [];
     }
 
-    return wp_parse_args($saved, em_wp_hero_default_options());
+    return wp_parse_args($saved, em_site_hero_default_options());
 }
 
 /**
@@ -72,9 +72,9 @@ function em_wp_hero_get_options(string $style_slug = 'hero-mayami-default'): arr
  *
  * @param mixed $input
  */
-function em_wp_hero_sanitize_options_for_style($input, string $style_slug): array
+function em_site_hero_sanitize_options_for_style($input, string $style_slug): array
 {
-    $existing = em_wp_hero_get_options($style_slug);
+    $existing = em_site_hero_get_options($style_slug);
 
     if (!is_array($input)) {
         return $existing;
@@ -82,7 +82,7 @@ function em_wp_hero_sanitize_options_for_style($input, string $style_slug): arra
 
     $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
 
-    if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
+    if (function_exists('em_site_admin_sync_rubrique_visibility_from_post')) {
         // Catalogue : pas de visibilite rubrique hero.
     }
 

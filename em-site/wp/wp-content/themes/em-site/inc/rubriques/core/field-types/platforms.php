@@ -5,7 +5,7 @@
  * Mutualise les choix d'icônes (streaming + réseaux sociaux) et le décodage /
  * la sanitisation de la valeur { platform, url }.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -19,28 +19,28 @@ if (!defined('ABSPATH')) {
  *
  * @return array<string, array{label:string, icon:string, color:string, group:string}>
  */
-function em_wp_rubrique_platform_choices(): array
+function em_site_rubrique_platform_choices(): array
 {
     $choices = [];
 
-    if (function_exists('em_wp_stream_platform_definitions')) {
-        foreach (em_wp_stream_platform_definitions() as $slug => $def) {
+    if (function_exists('em_site_stream_platform_definitions')) {
+        foreach (em_site_stream_platform_definitions() as $slug => $def) {
             $choices['stream:' . $slug] = [
                 'label' => (string) ($def['label'] ?? $slug),
                 'icon'  => (string) ($def['icon'] ?? 'fa-link'),
                 'color' => (string) ($def['color'] ?? ''),
-                'group' => __('Streaming', 'em-wp'),
+                'group' => __('Streaming', 'em-site'),
             ];
         }
     }
 
-    if (function_exists('em_wp_social_platform_definitions')) {
-        foreach (em_wp_social_platform_definitions() as $slug => $def) {
+    if (function_exists('em_site_social_platform_definitions')) {
+        foreach (em_site_social_platform_definitions() as $slug => $def) {
             $choices['social:' . $slug] = [
                 'label' => (string) ($def['label'] ?? $slug),
                 'icon'  => (string) ($def['icon'] ?? 'fa-link'),
                 'color' => (string) ($def['color'] ?? ''),
-                'group' => __('Réseaux sociaux', 'em-wp'),
+                'group' => __('Réseaux sociaux', 'em-site'),
             ];
         }
     }
@@ -51,9 +51,9 @@ function em_wp_rubrique_platform_choices(): array
 /**
  * Classe d'icône FontAwesome pour une clé de plateforme ('' si inconnue).
  */
-function em_wp_rubrique_platform_icon(string $key): string
+function em_site_rubrique_platform_icon(string $key): string
 {
-    $choices = em_wp_rubrique_platform_choices();
+    $choices = em_site_rubrique_platform_choices();
 
     return isset($choices[$key]) ? (string) $choices[$key]['icon'] : '';
 }
@@ -61,9 +61,9 @@ function em_wp_rubrique_platform_icon(string $key): string
 /**
  * Libellé d'une plateforme ('' si inconnue).
  */
-function em_wp_rubrique_platform_label(string $key): string
+function em_site_rubrique_platform_label(string $key): string
 {
-    $choices = em_wp_rubrique_platform_choices();
+    $choices = em_site_rubrique_platform_choices();
 
     return isset($choices[$key]) ? (string) $choices[$key]['label'] : '';
 }
@@ -71,9 +71,9 @@ function em_wp_rubrique_platform_label(string $key): string
 /**
  * Couleur de marque d'une plateforme ('' si inconnue).
  */
-function em_wp_rubrique_platform_color(string $key): string
+function em_site_rubrique_platform_color(string $key): string
 {
-    $choices = em_wp_rubrique_platform_choices();
+    $choices = em_site_rubrique_platform_choices();
 
     return isset($choices[$key]) ? (string) ($choices[$key]['color'] ?? '') : '';
 }
@@ -86,7 +86,7 @@ function em_wp_rubrique_platform_color(string $key): string
  * @param mixed $value
  * @return array{platform:string, url:string}
  */
-function em_wp_rubrique_icon_value($value): array
+function em_site_rubrique_icon_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -106,10 +106,10 @@ function em_wp_rubrique_icon_value($value): array
  * Décoratifs (séparateurs/flèches) et Bloc Plateforme (libellé = sur-titre
  * optionnel « LISTEN ON »).
  */
-function em_wp_rubrique_field_label_optional(string $type): bool
+function em_site_rubrique_field_label_optional(string $type): bool
 {
-    return em_wp_rubrique_field_is_decorative($type)
-        || em_wp_rubrique_field_is_text_family($type)
+    return em_site_rubrique_field_is_decorative($type)
+        || em_site_rubrique_field_is_text_family($type)
         || $type === 'platform_block'
         || $type === 'network_block'
         || $type === 'animated_badge'
@@ -128,7 +128,7 @@ function em_wp_rubrique_field_label_optional(string $type): bool
  * @param mixed $value
  * @return array{platform:string, url:string, label:string}
  */
-function em_wp_rubrique_platform_block_value($value): array
+function em_site_rubrique_platform_block_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -150,9 +150,9 @@ function em_wp_rubrique_platform_block_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_platform_block($value): string
+function em_site_field_sanitize_platform_block($value): string
 {
-    $parsed = em_wp_rubrique_platform_block_value($value);
+    $parsed = em_site_rubrique_platform_block_value($value);
     $platform = sanitize_text_field($parsed['platform']);
     $url = esc_url_raw($parsed['url']);
     $label = sanitize_text_field($parsed['label']);
@@ -175,9 +175,9 @@ function em_wp_field_sanitize_platform_block($value): string
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_icon($value): string
+function em_site_field_sanitize_icon($value): string
 {
-    $parsed = em_wp_rubrique_icon_value($value);
+    $parsed = em_site_rubrique_icon_value($value);
     $platform = sanitize_text_field($parsed['platform']);
     $url = esc_url_raw($parsed['url']);
 

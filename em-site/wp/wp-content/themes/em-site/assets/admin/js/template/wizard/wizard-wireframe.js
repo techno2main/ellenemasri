@@ -406,7 +406,7 @@
             payload.wireframeEditable = true;
 
             var body = new FormData();
-            body.append('action', 'em-site_template_wizard_wireframe');
+            body.append('action', 'em_site_template_wizard_wireframe');
             body.append('nonce', cfg.wireframeNonce || '');
             body.append('payload', JSON.stringify(payload));
 

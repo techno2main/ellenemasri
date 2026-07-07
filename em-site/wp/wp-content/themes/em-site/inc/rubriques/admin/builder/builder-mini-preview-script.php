@@ -1,12 +1,12 @@
 <?php
 /**
- * Aperçu RÉDUIT intégré (V4) — window.EmWpV4Mini.
+ * Aperçu RÉDUIT intégré (EM-SITE) — window.EmSiteMini.
  *
  * Distinct de l'aperçu pleine taille (œil du titre). Une vignette INLINE placée
  * dans l'en-tête « Contenu » (à droite de l'œil) : elle fait partie du flux,
  * scrolle avec la page, ne sort jamais de la div, et se met à jour en temps réel.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,15 +14,15 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <script>
-window.EmWpV4Mini = (function () {
-    var EMPTY_SECTION = '<?php echo esc_js(__('Section vide', 'em-wp')); ?>';
-    var EMPTY_COL = '<?php echo esc_js(__('Colonne vide', 'em-wp')); ?>';
+window.EmSiteMini = (function () {
+    var EMPTY_SECTION = '<?php echo esc_js(__('Section vide', 'em-site')); ?>';
+    var EMPTY_COL = '<?php echo esc_js(__('Colonne vide', 'em-site')); ?>';
     var ENABLE_HOVER_ZOOM = false;
 
     function esc(s) { var d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
 
-    function box(builder) { return builder ? builder.querySelector('.em-v4-miniprev:not(.em-v4-partprev)') : null; }
-    function partBox(builder) { return builder ? builder.querySelector('.em-v4-partprev') : null; }
+    function box(builder) { return builder ? builder.querySelector('.em-site-miniprev:not(.em-site-partprev)') : null; }
+    function partBox(builder) { return builder ? builder.querySelector('.em-site-partprev') : null; }
 
     function firstItemLabel(items, rowNum, col) {
         for (var i = 0; i < items.length; i++) {
@@ -43,10 +43,10 @@ window.EmWpV4Mini = (function () {
         return 'L' + rowNum + 'C' + col + ' - ' + (custom || fallback);
     }
 
-    // Scale une vignette (.em-v4-livepreview) à la HAUTEUR du grid, comme le total.
+    // Scale une vignette (.em-site-livepreview) à la HAUTEUR du grid, comme le total.
     function fit(builder, host, inner) {
         var realW = Math.round(builder.getBoundingClientRect().width) || 800;
-        var map = builder.querySelector('.em-v4-gridmap');
+        var map = builder.querySelector('.em-site-gridmap');
         var h = map ? Math.round(map.getBoundingClientRect().height) : 40;
         inner.style.cssText += ';width:' + realW + 'px;transform-origin:top left;transform:none;';
         var realH = inner.offsetHeight || 1;
@@ -61,7 +61,7 @@ window.EmWpV4Mini = (function () {
 
     // Met à jour l'état (icône/pressed) des yeux « Contenu » du builder.
     function setEye(builder, open) {
-        builder.querySelectorAll('.em-v4-gridmap__eye').forEach(function (e) {
+        builder.querySelectorAll('.em-site-gridmap__eye').forEach(function (e) {
             e.setAttribute('aria-pressed', open ? 'true' : 'false');
             var i = e.querySelector('.dashicons');
             if (i) { i.className = 'dashicons dashicons-' + (open ? 'hidden' : 'visibility'); }
@@ -71,14 +71,14 @@ window.EmWpV4Mini = (function () {
     // Rend la section en vignette calée sur la HAUTEUR du grid (intégrée à la ligne).
     function render(builder) {
         var c = box(builder);
-        if (!c || c.hidden || !window.EmWpV4Preview) { return; }
+        if (!c || c.hidden || !window.EmSitePreview) { return; }
         var data = builder.emv4Data;
         if (!data) { return; }
-        var stage = c.querySelector('.em-v4-miniprev__stage');
+        var stage = c.querySelector('.em-site-miniprev__stage');
         var inner = document.createElement('div');
-        inner.className = 'em-v4-livepreview';
-        window.EmWpV4Preview.render(inner, data.layout, data.items, data.colors);
-        if (!data.items.length) { (inner.querySelector('.em-rubrique') || inner).insertAdjacentHTML('beforeend', '<div class="em-v4-gridmap__pop-empty">' + esc(EMPTY_SECTION) + '</div>'); }
+        inner.className = 'em-site-livepreview';
+        window.EmSitePreview.render(inner, data.layout, data.items, data.colors);
+        if (!data.items.length) { (inner.querySelector('.em-rubrique') || inner).insertAdjacentHTML('beforeend', '<div class="em-site-gridmap__pop-empty">' + esc(EMPTY_SECTION) + '</div>'); }
         stage.innerHTML = '';
         stage.appendChild(inner);
         fit(builder, c, inner);
@@ -87,10 +87,10 @@ window.EmWpV4Mini = (function () {
 
     // Ligne actuellement ouverte (accordéon : une seule) + sa colonne active.
     function openRowInfo(builder) {
-        var rows = builder.querySelectorAll('.em-v4-rows > .em-v4-row');
+        var rows = builder.querySelectorAll('.em-site-rows > .em-site-row');
         for (var i = 0; i < rows.length; i++) {
             if (rows[i].open) {
-                var tab = rows[i].querySelector('.em-v4-col-tab.is-active');
+                var tab = rows[i].querySelector('.em-site-col-tab.is-active');
                 return { rIdx: i, col: tab ? (parseInt(tab.getAttribute('data-col'), 10) || 1) : 1 };
             }
         }
@@ -102,7 +102,7 @@ window.EmWpV4Mini = (function () {
     // ligne n'est ouverte.
     function renderPart(builder) {
         var c = partBox(builder);
-        if (!c || !window.EmWpV4Preview) { return; }
+        if (!c || !window.EmSitePreview) { return; }
         var total = box(builder);
         var data = builder.emv4Data;
         var info = (total && !total.hidden) ? openRowInfo(builder) : null;
@@ -122,11 +122,11 @@ window.EmWpV4Mini = (function () {
 
         c.hidden = false;
         c.setAttribute('title', partTitle(data, info.rIdx, col, columns));
-        var stage = c.querySelector('.em-v4-miniprev__stage');
+        var stage = c.querySelector('.em-site-miniprev__stage');
         var inner = document.createElement('div');
-        inner.className = 'em-v4-livepreview';
-        window.EmWpV4Preview.render(inner, { rows: [{ columns: 1, align: { 1: align } }] }, cellItems, data.colors);
-        if (!cellItems.length) { (inner.querySelector('.em-rubrique') || inner).insertAdjacentHTML('beforeend', '<div class="em-v4-gridmap__pop-empty">' + esc(EMPTY_COL) + '</div>'); }
+        inner.className = 'em-site-livepreview';
+        window.EmSitePreview.render(inner, { rows: [{ columns: 1, align: { 1: align } }] }, cellItems, data.colors);
+        if (!cellItems.length) { (inner.querySelector('.em-rubrique') || inner).insertAdjacentHTML('beforeend', '<div class="em-site-gridmap__pop-empty">' + esc(EMPTY_COL) + '</div>'); }
         stage.innerHTML = '';
         stage.appendChild(inner);
         fit(builder, c, inner);
@@ -153,7 +153,7 @@ window.EmWpV4Mini = (function () {
     var zoomHost = null;
 
     function ensureZoom() {
-        if (!zoomEl) { zoomEl = document.createElement('div'); zoomEl.className = 'em-v4-miniprev__zoom'; document.body.appendChild(zoomEl); }
+        if (!zoomEl) { zoomEl = document.createElement('div'); zoomEl.className = 'em-site-miniprev__zoom'; document.body.appendChild(zoomEl); }
         return zoomEl;
     }
 
@@ -163,8 +163,8 @@ window.EmWpV4Mini = (function () {
     }
 
     function showZoom(host) {
-        var stage = host.querySelector('.em-v4-miniprev__stage');
-        var inner = stage ? stage.querySelector('.em-v4-livepreview') : null;
+        var stage = host.querySelector('.em-site-miniprev__stage');
+        var inner = stage ? stage.querySelector('.em-site-livepreview') : null;
         if (!inner) { return; }
         var realW = parseFloat(host.dataset.realw) || Math.round(host.getBoundingClientRect().width) || 800;
         var realH = parseFloat(host.dataset.realh) || realW;
@@ -190,11 +190,11 @@ window.EmWpV4Mini = (function () {
 
     if (ENABLE_HOVER_ZOOM) {
         document.addEventListener('mouseover', function (e) {
-            var host = e.target.closest ? e.target.closest('.em-v4-miniprev') : null;
+            var host = e.target.closest ? e.target.closest('.em-site-miniprev') : null;
             if (host && !host.hidden && host !== zoomHost) { zoomHost = host; showZoom(host); }
         });
         document.addEventListener('mouseout', function (e) {
-            var host = e.target.closest ? e.target.closest('.em-v4-miniprev') : null;
+            var host = e.target.closest ? e.target.closest('.em-site-miniprev') : null;
             if (host && host === zoomHost) {
                 var to = e.relatedTarget;
                 if (!to || !host.contains(to)) { hideZoom(); }
@@ -208,10 +208,10 @@ window.EmWpV4Mini = (function () {
     document.addEventListener('toggle', function (e) {
         var t = e.target;
         if (!t || !t.querySelectorAll) { return; }
-        if (t.open) { t.querySelectorAll('.em-v4-builder').forEach(function (b) { refresh(b); }); }
+        if (t.open) { t.querySelectorAll('.em-site-builder').forEach(function (b) { refresh(b); }); }
         // Ouverture/fermeture d'une ligne → recalcul de l'aperçu de la partie.
-        if (t.classList && t.classList.contains('em-v4-row')) {
-            var b = t.closest('.em-v4-builder');
+        if (t.classList && t.classList.contains('em-site-row')) {
+            var b = t.closest('.em-site-builder');
             if (b) { refreshPart(b); }
         }
     }, true);

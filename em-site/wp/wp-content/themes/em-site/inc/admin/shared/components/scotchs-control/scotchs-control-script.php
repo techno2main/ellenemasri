@@ -2,12 +2,12 @@
         opts = opts || {};
         var hiddenClass = opts.hiddenClass || '';
         var hiddenLabel = opts.hiddenLabel || TXT.tapeHide;
-        var hiddenWrapClass = (opts.hiddenWrapClass || 'em-v4-slides__opt em-v4-slides__opt--check em-v4-slides__opt--check-tapes') + ' em-v4-scotchs-control__check';
+        var hiddenWrapClass = (opts.hiddenWrapClass || 'em-site-slides__opt em-site-slides__opt--check em-site-slides__opt--check-tapes') + ' em-site-scotchs-control__check';
         var hiddenChecked = !!opts.hiddenChecked;
-        var colorClass = opts.colorClass || 'em-v4-chip__tapes-color';
+        var colorClass = opts.colorClass || 'em-site-chip__tapes-color';
         var colorLabel = opts.colorLabel || TXT.tape;
-        var colorWrapClass = (opts.colorWrapClass || 'em-v4-slides__colorfield') + ' em-v4-scotchs-control__color';
-        var colorLabelClass = opts.colorLabelClass || 'em-wp-admin-color-field-row__label';
+        var colorWrapClass = (opts.colorWrapClass || 'em-site-slides__colorfield') + ' em-site-scotchs-control__color';
+        var colorLabelClass = opts.colorLabelClass || 'em-site-admin-color-field-row__label';
         var colorIdPrefix = opts.colorIdPrefix || 'emv4tp-';
         var html = '';
 

@@ -1,8 +1,8 @@
 <?php
 /**
- * Helpers TOP-BAR V4 front (source officielle V4).
+ * Helpers TOP-BAR EM-SITE front (source officielle EM-SITE).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,21 +11,21 @@ if (!defined('ABSPATH')) {
 
 function em_site_top_bar_v4_active_template(): string
 {
-	$slug = sanitize_key((string) get_option('em_wp_active_template', ''));
+	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
 }
 
 function em_site_top_bar_v4_item_option_name(string $template_slug): string
 {
-	$instance = get_option('em_wp_v4_instance_' . $template_slug . '_top-bar', []);
+	$instance = get_option('em_site_instance_' . $template_slug . '_top-bar', []);
 	$item_slug = is_array($instance) ? sanitize_key((string) ($instance['item'] ?? '')) : '';
 
 	if ($item_slug === '') {
 		$item_slug = 'top-bar-' . $template_slug;
 	}
 
-	return 'em_wp_v4_item_top-bar_' . $item_slug;
+	return 'em_site_item_top-bar_' . $item_slug;
 }
 
 function em_site_top_bar_v4_item(): array

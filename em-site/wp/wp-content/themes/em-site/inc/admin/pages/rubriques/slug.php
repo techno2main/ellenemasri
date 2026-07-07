@@ -2,7 +2,7 @@
 /**
  * Slug et URL page Rubriques.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Slug de la page sommaire Rubriques.
  */
-function em_wp_admin_rubriques_page_slug(): string
+function em_site_admin_rubriques_page_slug(): string
 {
     return 'em-rubriques';
 }
@@ -20,8 +20,8 @@ function em_wp_admin_rubriques_page_slug(): string
 /**
  * URL admin du sommaire Rubriques Template.
  */
-function em_wp_admin_rubriques_admin_url(): string
+function em_site_admin_rubriques_admin_url(): string
 {
-    return admin_url('admin.php?page=' . em_wp_admin_rubriques_page_slug());
+    return admin_url('admin.php?page=' . em_site_admin_rubriques_page_slug());
 }
 

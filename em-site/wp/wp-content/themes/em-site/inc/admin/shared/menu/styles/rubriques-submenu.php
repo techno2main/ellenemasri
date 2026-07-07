@@ -5,7 +5,7 @@
             gap: 8px;
         }
 
-        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu .em-wp-rubrique-submenu__icon {
+        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu .em-site-rubrique-submenu__icon {
             font-size: 16px;
             width: 16px;
             height: 16px;
@@ -13,7 +13,7 @@
             flex: 0 0 auto;
         }
 
-        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu .em-wp-rubrique-submenu__text {
+        #adminmenu #toplevel_page_em-rubriques-overview .wp-submenu .em-site-rubrique-submenu__text {
             flex: 1 1 auto;
         }
 

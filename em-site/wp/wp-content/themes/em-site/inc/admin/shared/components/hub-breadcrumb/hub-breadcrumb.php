@@ -1,8 +1,8 @@
 <?php
 /**
- * Fil d'Ariane mutualisé — pages sommaire admin em-wp.
+ * Fil d'Ariane mutualisé — pages sommaire admin em-site.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * @param array<int, array{label:string,url?:string}> $crumbs
  */
-function em_wp_admin_hub_breadcrumb_label_upper(string $label): string
+function em_site_admin_hub_breadcrumb_label_upper(string $label): string
 {
     $label = trim($label);
 
@@ -28,7 +28,7 @@ function em_wp_admin_hub_breadcrumb_label_upper(string $label): string
 /**
  * @return array{label:string,url?:string}
  */
-function em_wp_admin_hub_breadcrumb_crumb(string $label, string $url = ''): array
+function em_site_admin_hub_breadcrumb_crumb(string $label, string $url = ''): array
 {
     $crumb = ['label' => trim($label)];
 
@@ -42,7 +42,7 @@ function em_wp_admin_hub_breadcrumb_crumb(string $label, string $url = ''): arra
 /**
  * @param array<int, array{label:string,url?:string}> $crumbs
  */
-function em_wp_admin_hub_breadcrumb_html(array $crumbs): string
+function em_site_admin_hub_breadcrumb_html(array $crumbs): string
 {
     $parts = [];
 
@@ -50,7 +50,7 @@ function em_wp_admin_hub_breadcrumb_html(array $crumbs): string
     $index = 0;
 
     foreach ($crumbs as $crumb) {
-        $label = em_wp_admin_hub_breadcrumb_label_upper((string) ($crumb['label'] ?? ''));
+        $label = em_site_admin_hub_breadcrumb_label_upper((string) ($crumb['label'] ?? ''));
 
         if ($label === '') {
             ++$index;
@@ -62,12 +62,12 @@ function em_wp_admin_hub_breadcrumb_html(array $crumbs): string
         ++$index;
 
         if ($is_last || $url === '') {
-            $parts[] = '<span class="em-wp-hub__breadcrumb-current" aria-current="page">' . esc_html($label) . '</span>';
+            $parts[] = '<span class="em-site-hub__breadcrumb-current" aria-current="page">' . esc_html($label) . '</span>';
             continue;
         }
 
         $parts[] = sprintf(
-            '<a class="em-wp-hub__breadcrumb-link" href="%1$s">%2$s</a>',
+            '<a class="em-site-hub__breadcrumb-link" href="%1$s">%2$s</a>',
             esc_url($url),
             esc_html($label)
         );
@@ -78,9 +78,9 @@ function em_wp_admin_hub_breadcrumb_html(array $crumbs): string
     }
 
     return sprintf(
-        '<nav class="em-wp-hub__breadcrumb-nav" aria-label="%1$s">%2$s</nav>',
-        esc_attr__('Fil d\'Ariane', 'em-wp'),
-        implode('<span class="em-wp-hub__breadcrumb-sep" aria-hidden="true">&gt;</span>', $parts)
+        '<nav class="em-site-hub__breadcrumb-nav" aria-label="%1$s">%2$s</nav>',
+        esc_attr__('Fil d\'Ariane', 'em-site'),
+        implode('<span class="em-site-hub__breadcrumb-sep" aria-hidden="true">&gt;</span>', $parts)
     );
 }
 
@@ -89,56 +89,56 @@ function em_wp_admin_hub_breadcrumb_html(array $crumbs): string
  *
  * @return array<int, array{label:string,url?:string}>
  */
-function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug): array
+function em_site_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug): array
 {
     $page_slug = sanitize_key($page_slug);
-    $unique_mode = function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled();
-    $templates_label = $unique_mode ? __('TEMPLATE', 'em-wp') : __('MES TEMPLATES', 'em-wp');
+    $unique_mode = function_exists('em_site_template_unique_mode_enabled') && em_site_template_unique_mode_enabled();
+    $templates_label = $unique_mode ? __('TEMPLATE', 'em-site') : __('MES TEMPLATES', 'em-site');
 
     if ($page_slug === '') {
         return [];
     }
 
     if (
-        function_exists('em_wp_admin_template_choice_page_slug')
-        && $page_slug === em_wp_admin_template_choice_page_slug()
+        function_exists('em_site_admin_template_choice_page_slug')
+        && $page_slug === em_site_admin_template_choice_page_slug()
     ) {
         return [
-            em_wp_admin_hub_breadcrumb_crumb($templates_label),
+            em_site_admin_hub_breadcrumb_crumb($templates_label),
         ];
     }
 
     if (
-        function_exists('em_wp_admin_rubriques_page_slug')
-        && $page_slug === em_wp_admin_rubriques_page_slug()
+        function_exists('em_site_admin_rubriques_page_slug')
+        && $page_slug === em_site_admin_rubriques_page_slug()
     ) {
-        $template_label = function_exists('em_wp_admin_rubrique_editing_template_label')
-            ? em_wp_admin_rubrique_editing_template_label()
+        $template_label = function_exists('em_site_admin_rubrique_editing_template_label')
+            ? em_site_admin_rubrique_editing_template_label()
             : '';
 
-        $templates_url = function_exists('em_wp_admin_template_choice_admin_url')
-            ? em_wp_admin_template_choice_admin_url()
+        $templates_url = function_exists('em_site_admin_template_choice_admin_url')
+            ? em_site_admin_template_choice_admin_url()
             : '';
 
         if ($unique_mode || $template_label === '') {
             return [
-                em_wp_admin_hub_breadcrumb_crumb($templates_label),
-                em_wp_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-wp')),
+                em_site_admin_hub_breadcrumb_crumb($templates_label),
+                em_site_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-site')),
             ];
         }
 
         return [
-            em_wp_admin_hub_breadcrumb_crumb($templates_label, $templates_url),
-            em_wp_admin_hub_breadcrumb_crumb($template_label, function_exists('em_wp_admin_rubriques_admin_url') ? em_wp_admin_rubriques_admin_url() : ''),
-            em_wp_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-wp')),
+            em_site_admin_hub_breadcrumb_crumb($templates_label, $templates_url),
+            em_site_admin_hub_breadcrumb_crumb($template_label, function_exists('em_site_admin_rubriques_admin_url') ? em_site_admin_rubriques_admin_url() : ''),
+            em_site_admin_hub_breadcrumb_crumb(__('SQUELETTE', 'em-site')),
         ];
     }
 
-    if (!function_exists('em_wp_admin_site_rubrique_definitions')) {
+    if (!function_exists('em_site_admin_site_rubrique_definitions')) {
         return [];
     }
 
-    foreach (em_wp_admin_site_rubrique_definitions() as $module_slug => $definition) {
+    foreach (em_site_admin_site_rubrique_definitions() as $module_slug => $definition) {
         if (!is_array($definition)) {
             continue;
         }
@@ -147,31 +147,31 @@ function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug):
             continue;
         }
 
-        $template_label = function_exists('em_wp_admin_rubrique_editing_template_label')
-            ? em_wp_admin_rubrique_editing_template_label()
+        $template_label = function_exists('em_site_admin_rubrique_editing_template_label')
+            ? em_site_admin_rubrique_editing_template_label()
             : '';
 
-        $templates_url = function_exists('em_wp_admin_template_choice_admin_url')
-            ? em_wp_admin_template_choice_admin_url()
+        $templates_url = function_exists('em_site_admin_template_choice_admin_url')
+            ? em_site_admin_template_choice_admin_url()
             : '';
 
-        $rubriques_url = function_exists('em_wp_admin_rubriques_admin_url')
-            ? em_wp_admin_rubriques_admin_url()
+        $rubriques_url = function_exists('em_site_admin_rubriques_admin_url')
+            ? em_site_admin_rubriques_admin_url()
             : '';
 
-        $crumbs = [em_wp_admin_hub_breadcrumb_crumb($templates_label, $templates_url)];
+        $crumbs = [em_site_admin_hub_breadcrumb_crumb($templates_label, $templates_url)];
 
         if (!$unique_mode && $template_label !== '') {
-            $crumbs[] = em_wp_admin_hub_breadcrumb_crumb($template_label);
+            $crumbs[] = em_site_admin_hub_breadcrumb_crumb($template_label);
         }
 
-        $crumbs[] = em_wp_admin_hub_breadcrumb_crumb(__('RUBRIQUES', 'em-wp'), $rubriques_url);
+        $crumbs[] = em_site_admin_hub_breadcrumb_crumb(__('RUBRIQUES', 'em-site'), $rubriques_url);
 
-        $crumbs[] = em_wp_admin_hub_breadcrumb_crumb(
-            function_exists('em_wp_admin_rubrique_skeleton_label')
-                ? em_wp_admin_rubrique_skeleton_label((string) $module_slug)
-                : (function_exists('em_wp_admin_rubrique_label')
-                    ? em_wp_admin_rubrique_label((string) $module_slug)
+        $crumbs[] = em_site_admin_hub_breadcrumb_crumb(
+            function_exists('em_site_admin_rubrique_skeleton_label')
+                ? em_site_admin_rubrique_skeleton_label((string) $module_slug)
+                : (function_exists('em_site_admin_rubrique_label')
+                    ? em_site_admin_rubrique_label((string) $module_slug)
                     : (string) ($definition['label'] ?? $module_slug))
         );
 
@@ -186,7 +186,7 @@ function em_wp_admin_hub_template_breadcrumb_crumbs_for_page(string $page_slug):
  *
  * @return array<int, array{label:string,url?:string}>
  */
-function em_wp_admin_hub_resolve_breadcrumb_crumbs(string $page_slug = ''): array
+function em_site_admin_hub_resolve_breadcrumb_crumbs(string $page_slug = ''): array
 {
     if ($page_slug === '') {
         $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -198,29 +198,29 @@ function em_wp_admin_hub_resolve_breadcrumb_crumbs(string $page_slug = ''): arra
         return [];
     }
 
-    $crumbs = apply_filters('em_wp_admin_hub_breadcrumb_crumbs', [], $page_slug);
+    $crumbs = apply_filters('em_site_admin_hub_breadcrumb_crumbs', [], $page_slug);
 
     if ($crumbs !== []) {
         return $crumbs;
     }
 
     if (
-        function_exists('em_wp_admin_dashboard_page_slug')
-        && $page_slug === em_wp_admin_dashboard_page_slug()
+        function_exists('em_site_admin_dashboard_page_slug')
+        && $page_slug === em_site_admin_dashboard_page_slug()
     ) {
         return [
-            em_wp_admin_hub_breadcrumb_crumb(__('Mon Dashboard', 'em-wp')),
+            em_site_admin_hub_breadcrumb_crumb(__('Mon Dashboard', 'em-site')),
         ];
     }
 
-    $template_crumbs = em_wp_admin_hub_template_breadcrumb_crumbs_for_page($page_slug);
+    $template_crumbs = em_site_admin_hub_template_breadcrumb_crumbs_for_page($page_slug);
 
     if ($template_crumbs !== []) {
         return $template_crumbs;
     }
 
-    if (function_exists('em_wp_catalog_breadcrumb_crumbs_for_page')) {
-        return em_wp_catalog_breadcrumb_crumbs_for_page($page_slug);
+    if (function_exists('em_site_catalog_breadcrumb_crumbs_for_page')) {
+        return em_site_catalog_breadcrumb_crumbs_for_page($page_slug);
     }
 
     return [];

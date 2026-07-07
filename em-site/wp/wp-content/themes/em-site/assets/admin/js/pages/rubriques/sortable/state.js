@@ -148,7 +148,7 @@
         }
 
         var body = new window.FormData();
-        body.append('action', 'em-site_save_site_rubrique_visibility');
+        body.append('action', 'em_site_save_site_rubrique_visibility');
         body.append('nonce', ctx.config.nonce);
         body.append('module_slug', moduleSlug);
         body.append('visible', visible ? '1' : '0');

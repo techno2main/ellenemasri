@@ -2,7 +2,7 @@
 /**
  * Bootstrap module Stream (admin).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

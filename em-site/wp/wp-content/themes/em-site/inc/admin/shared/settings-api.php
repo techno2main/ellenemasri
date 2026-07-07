@@ -1,8 +1,8 @@
 <?php
 /**
- * Sauvegarde admin em-wp (admin.php, sans options.php).
+ * Sauvegarde admin em-site (admin.php, sans options.php).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * @var array<string, array<string, mixed>>
  */
-$GLOBALS['em_wp_admin_module_save_registry'] = [];
+$GLOBALS['em_site_admin_module_save_registry'] = [];
 
 /**
  * Enregistre un handler de sauvegarde module.
@@ -26,15 +26,15 @@ $GLOBALS['em_wp_admin_module_save_registry'] = [];
  *     value_field?:callable|string
  * } $config
  */
-function em_wp_admin_register_module_save(string $save_key, array $config): void
+function em_site_admin_register_module_save(string $save_key, array $config): void
 {
-    $GLOBALS['em_wp_admin_module_save_registry'][sanitize_key($save_key)] = $config;
+    $GLOBALS['em_site_admin_module_save_registry'][sanitize_key($save_key)] = $config;
 }
 
 /**
  * URL de soumission formulaire module.
  */
-function em_wp_admin_module_form_action(string $page_slug): string
+function em_site_admin_module_form_action(string $page_slug): string
 {
     return add_query_arg(['page' => sanitize_key($page_slug)], admin_url('admin.php'));
 }
@@ -44,12 +44,12 @@ function em_wp_admin_module_form_action(string $page_slug): string
  *
  * @param array<string, string> $extra_hidden
  */
-function em_wp_admin_render_form_save_fields(string $save_key, string $nonce_action, array $extra_hidden = []): void
+function em_site_admin_render_form_save_fields(string $save_key, string $nonce_action, array $extra_hidden = []): void
 {
     wp_nonce_field($nonce_action);
     wp_referer_field();
     ?>
-    <input type="hidden" name="em_wp_module_save" value="<?php echo esc_attr(sanitize_key($save_key)); ?>">
+    <input type="hidden" name="em_site_module_save" value="<?php echo esc_attr(sanitize_key($save_key)); ?>">
     <?php
     foreach ($extra_hidden as $name => $value) {
         $name = sanitize_key((string) $name);
@@ -65,7 +65,7 @@ function em_wp_admin_render_form_save_fields(string $save_key, string $nonce_act
 /**
  * Redirect avec fallback HTML si les en-têtes sont déjà envoyés (évite page blanche).
  */
-function em_wp_admin_safe_redirect(string $url): void
+function em_site_admin_safe_redirect(string $url): void
 {
     $url = esc_url_raw($url);
     if ($url === '') {
@@ -84,10 +84,10 @@ function em_wp_admin_safe_redirect(string $url): void
 
     echo '<!DOCTYPE html><html><head><meta charset="utf-8">';
     echo '<meta http-equiv="refresh" content="0;url=' . esc_attr($escaped) . '">';
-    echo '<title>' . esc_html__('Redirection…', 'em-wp') . '</title>';
+    echo '<title>' . esc_html__('Redirection…', 'em-site') . '</title>';
     echo '</head><body>';
     echo '<script>window.location.replace(' . $json . ');</script>';
-    echo '<p><a href="' . esc_attr($escaped) . '">' . esc_html__('Continuer', 'em-wp') . '</a></p>';
+    echo '<p><a href="' . esc_attr($escaped) . '">' . esc_html__('Continuer', 'em-site') . '</a></p>';
     echo '</body></html>';
     exit;
 }
@@ -95,17 +95,17 @@ function em_wp_admin_safe_redirect(string $url): void
 /**
  * Redirect vers une page module après enregistrement.
  */
-function em_wp_admin_redirect_after_module_save(string $page_slug): void
+function em_site_admin_redirect_after_module_save(string $page_slug): void
 {
     // phpcs:ignore WordPress.Security.NonceVerification.Missing
-    $redirect_to = esc_url_raw(wp_unslash((string) ($_POST['em_wp_redirect_after_save'] ?? '')));
+    $redirect_to = esc_url_raw(wp_unslash((string) ($_POST['em_site_redirect_after_save'] ?? '')));
 
     if ($redirect_to !== '' && wp_validate_redirect($redirect_to, false)) {
-        em_wp_admin_safe_redirect(add_query_arg('settings-updated', 'true', $redirect_to));
+        em_site_admin_safe_redirect(add_query_arg('settings-updated', 'true', $redirect_to));
         return;
     }
 
-    em_wp_admin_safe_redirect(add_query_arg([
+    em_site_admin_safe_redirect(add_query_arg([
         'page'             => sanitize_key($page_slug),
         'settings-updated' => 'true',
     ], admin_url('admin.php')));
@@ -114,14 +114,14 @@ function em_wp_admin_redirect_after_module_save(string $page_slug): void
 /**
  * Redirect vers referer ou page fallback.
  */
-function em_wp_admin_redirect_after_save_to_referer(string $fallback_page_slug): void
+function em_site_admin_redirect_after_save_to_referer(string $fallback_page_slug): void
 {
     $referer = wp_get_referer();
     $base = is_string($referer) && $referer !== '' && !str_contains($referer, 'options.php')
         ? $referer
-        : em_wp_admin_module_form_action($fallback_page_slug);
+        : em_site_admin_module_form_action($fallback_page_slug);
 
-    em_wp_admin_safe_redirect(add_query_arg('settings-updated', 'true', $base));
+    em_site_admin_safe_redirect(add_query_arg('settings-updated', 'true', $base));
 }
 
 /**
@@ -130,7 +130,7 @@ function em_wp_admin_redirect_after_save_to_referer(string $fallback_page_slug):
  * @param mixed $value
  * @return mixed
  */
-function em_wp_admin_resolve_save_config_value($value)
+function em_site_admin_resolve_save_config_value($value)
 {
     return is_callable($value) ? call_user_func($value) : $value;
 }
@@ -138,13 +138,13 @@ function em_wp_admin_resolve_save_config_value($value)
 /**
  * Traite toutes les sauvegardes modules (POST admin.php).
  */
-function em_wp_admin_handle_module_saves(): void
+function em_site_admin_handle_module_saves(): void
 {
     if (strtoupper((string) ($_SERVER['REQUEST_METHOD'] ?? '')) !== 'POST') {
         return;
     }
 
-    $save_key = sanitize_key((string) ($_POST['em_wp_module_save'] ?? ''));
+    $save_key = sanitize_key((string) ($_POST['em_site_module_save'] ?? ''));
     if ($save_key === '') {
         return;
     }
@@ -153,13 +153,13 @@ function em_wp_admin_handle_module_saves(): void
         return;
     }
 
-    $registry = $GLOBALS['em_wp_admin_module_save_registry'] ?? [];
+    $registry = $GLOBALS['em_site_admin_module_save_registry'] ?? [];
     if (!isset($registry[$save_key]) || !is_array($registry[$save_key])) {
         return;
     }
 
     $config = $registry[$save_key];
-    $nonce_action = (string) em_wp_admin_resolve_save_config_value($config['nonce_action'] ?? '');
+    $nonce_action = (string) em_site_admin_resolve_save_config_value($config['nonce_action'] ?? '');
     if ($nonce_action === '') {
         return;
     }
@@ -167,20 +167,20 @@ function em_wp_admin_handle_module_saves(): void
     check_admin_referer($nonce_action);
 
     $type = (string) ($config['type'] ?? 'options');
-    $option_name = (string) em_wp_admin_resolve_save_config_value($config['option_name'] ?? '');
+    $option_name = (string) em_site_admin_resolve_save_config_value($config['option_name'] ?? '');
     $sanitize = $config['sanitize'] ?? null;
 
     if ($type === 'rubrique_visibility') {
         $module_slug = sanitize_key((string) ($config['module_slug'] ?? ''));
-        if ($module_slug !== '' && function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
-            em_wp_admin_sync_rubrique_visibility_from_post($module_slug);
+        if ($module_slug !== '' && function_exists('em_site_admin_sync_rubrique_visibility_from_post')) {
+            em_site_admin_sync_rubrique_visibility_from_post($module_slug);
         }
     } elseif ($type === 'active_style') {
         if ($option_name === '' || !is_callable($sanitize)) {
             return;
         }
 
-        $value_field = (string) em_wp_admin_resolve_save_config_value($config['value_field'] ?? $option_name);
+        $value_field = (string) em_site_admin_resolve_save_config_value($config['value_field'] ?? $option_name);
         $raw = sanitize_key((string) ($_POST[$value_field] ?? ''));
         update_option($option_name, call_user_func($sanitize, $raw));
     } else {
@@ -188,48 +188,48 @@ function em_wp_admin_handle_module_saves(): void
             return;
         }
 
-        $value_field = (string) em_wp_admin_resolve_save_config_value($config['value_field'] ?? $option_name);
+        $value_field = (string) em_site_admin_resolve_save_config_value($config['value_field'] ?? $option_name);
         $input = isset($_POST[$value_field]) ? wp_unslash($_POST[$value_field]) : null;
         update_option($option_name, call_user_func($sanitize, $input));
     }
 
-    $page_slug = em_wp_admin_resolve_save_config_value($config['page_slug'] ?? '');
+    $page_slug = em_site_admin_resolve_save_config_value($config['page_slug'] ?? '');
     if ($page_slug === 'referer') {
-        $fallback = (string) em_wp_admin_resolve_save_config_value($config['fallback_page'] ?? '');
-        em_wp_admin_redirect_after_save_to_referer($fallback !== '' ? $fallback : 'em-wp-rubriques');
+        $fallback = (string) em_site_admin_resolve_save_config_value($config['fallback_page'] ?? '');
+        em_site_admin_redirect_after_save_to_referer($fallback !== '' ? $fallback : 'em-site-rubriques');
         return;
     }
 
     if ($page_slug !== '') {
-        em_wp_admin_redirect_after_module_save((string) $page_slug);
+        em_site_admin_redirect_after_module_save((string) $page_slug);
     }
 }
 
-add_action('admin_init', 'em_wp_admin_handle_module_saves', 1);
+add_action('admin_init', 'em_site_admin_handle_module_saves', 1);
 
 /**
  * Affiche les notices après enregistrement.
  */
-function em_wp_admin_render_settings_notices(): void
+function em_site_admin_render_settings_notices(): void
 {
-    em_wp_admin_render_save_notice();
+    em_site_admin_render_save_notice();
     settings_errors();
 }
 
 /**
  * Bandeau « template en édition » (sous l'en-tête de page).
  */
-function em_wp_admin_render_template_editing_banner(): void
+function em_site_admin_render_template_editing_banner(): void
 {
-    if (function_exists('em_wp_admin_template_render_banner')) {
-        em_wp_admin_template_render_banner();
+    if (function_exists('em_site_admin_template_render_banner')) {
+        em_site_admin_template_render_banner();
     }
 }
 
 /**
  * Bandeau succès après redirect admin.php?page=…&settings-updated=true.
  */
-function em_wp_admin_render_save_notice(): void
+function em_site_admin_render_save_notice(): void
 {
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     if (empty($_GET['settings-updated'])) {
@@ -237,6 +237,6 @@ function em_wp_admin_render_save_notice(): void
     }
 
     echo '<div class="notice notice-success is-dismissible"><p>'
-        . esc_html__('Réglages enregistrés.', 'em-wp')
+        . esc_html__('Réglages enregistrés.', 'em-site')
         . '</p></div>';
 }

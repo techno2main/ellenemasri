@@ -1,11 +1,11 @@
 <?php
 /**
- * Helpers des champs décoratifs (V4) : flèches haut/bas avec couleur + ancre.
+ * Helpers des champs décoratifs (EM-SITE) : flèches haut/bas avec couleur + ancre.
  *
  * Les flèches servent de navigation entre rubriques. Leur valeur est un JSON
  * { color, link } : couleur du glyphe + ancre/URL cible.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * Types de flèches (navigation par ancre). @return array<int, string>
  */
-function em_wp_rubrique_arrow_types(): array
+function em_site_rubrique_arrow_types(): array
 {
     return ['arrow_up', 'arrow_down'];
 }
@@ -28,16 +28,16 @@ function em_wp_rubrique_arrow_types(): array
  * @param mixed $value
  * @return array{color:string, link:string}
  */
-function em_wp_rubrique_arrow_value($value): array
+function em_site_rubrique_arrow_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['color' => em_wp_field_sanitize_color((string) $value), 'link' => ''];
+        return ['color' => em_site_field_sanitize_color((string) $value), 'link' => ''];
     }
 
     return [
-        'color' => em_wp_field_sanitize_color((string) ($decoded['color'] ?? '')),
+        'color' => em_site_field_sanitize_color((string) ($decoded['color'] ?? '')),
         'link'  => (string) ($decoded['link'] ?? ''),
     ];
 }
@@ -47,9 +47,9 @@ function em_wp_rubrique_arrow_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_arrow($value): string
+function em_site_field_sanitize_arrow($value): string
 {
-    $parsed = em_wp_rubrique_arrow_value($value);
+    $parsed = em_site_rubrique_arrow_value($value);
     $color = $parsed['color'];
     $link = esc_url_raw($parsed['link']);
 

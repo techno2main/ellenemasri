@@ -2,7 +2,7 @@
 /**
  * Template actif (live front) et template en édition (admin).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,17 +12,17 @@ if (!defined('ABSPATH')) {
 /**
  * Option WordPress : slug du template live sur le site.
  */
-function em_wp_active_template_option_name(): string
+function em_site_active_template_option_name(): string
 {
-    return 'em_wp_active_template';
+    return 'em_site_active_template';
 }
 
 /**
  * Meta utilisateur : slug du template en cours d'édition dans l'admin.
  */
-function em_wp_editing_template_user_meta_key(): string
+function em_site_editing_template_user_meta_key(): string
 {
-    return 'em_wp_editing_template_slug';
+    return 'em_site_editing_template_slug';
 }
 
 /**
@@ -31,15 +31,15 @@ function em_wp_editing_template_user_meta_key(): string
  * Conservé pour compatibilité ; l'aperçu repose désormais sur la capacité
  * `manage_options` (URL simplifiée `?preview=slug`).
  */
-function em_wp_template_preview_nonce_action(): string
+function em_site_template_preview_nonce_action(): string
 {
-    return 'em_wp_preview_template';
+    return 'em_site_preview_template';
 }
 
 /**
  * Nom du paramètre de requête pour l'aperçu d'un template.
  */
-function em_wp_template_preview_query_var(): string
+function em_site_template_preview_query_var(): string
 {
     return 'preview';
 }
@@ -47,9 +47,9 @@ function em_wp_template_preview_query_var(): string
 /**
  * Construit l'URL d'aperçu simplifiée d'un template (`?preview=slug`).
  */
-function em_wp_template_preview_url(string $slug, string $base_url = ''): string
+function em_site_template_preview_url(string $slug, string $base_url = ''): string
 {
-    $slug = em_wp_template_sanitize_slug($slug);
+    $slug = em_site_template_sanitize_slug($slug);
 
     if ($slug === '') {
         return '';
@@ -57,7 +57,7 @@ function em_wp_template_preview_url(string $slug, string $base_url = ''): string
 
     $base_url = $base_url !== '' ? $base_url : home_url('/');
 
-    return add_query_arg(em_wp_template_preview_query_var(), $slug, $base_url);
+    return add_query_arg(em_site_template_preview_query_var(), $slug, $base_url);
 }
 
 /**
@@ -67,7 +67,7 @@ function em_wp_template_preview_url(string $slug, string $base_url = ''): string
  * sur le front, pour un utilisateur autorisé (manage_options). Retourne '' si
  * aucun aperçu valide n'est demandé.
  */
-function em_wp_get_preview_template_slug(): string
+function em_site_get_preview_template_slug(): string
 {
     static $resolved = null;
 
@@ -83,10 +83,10 @@ function em_wp_get_preview_template_slug(): string
 
     $resolved = '';
 
-    $query_var = em_wp_template_preview_query_var();
+    $query_var = em_site_template_preview_query_var();
 
     // phpcs:disable WordPress.Security.NonceVerification.Recommended
-    $requested = $_GET[$query_var] ?? ($_GET['em_wp_preview_template'] ?? '');
+    $requested = $_GET[$query_var] ?? ($_GET['em_site_preview_template'] ?? '');
 
     if ($requested === '' || $requested === null) {
         return $resolved;
@@ -96,10 +96,10 @@ function em_wp_get_preview_template_slug(): string
         return $resolved;
     }
 
-    $preview = em_wp_template_sanitize_slug((string) wp_unslash($requested));
+    $preview = em_site_template_sanitize_slug((string) wp_unslash($requested));
     // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
-    if ($preview !== '' && em_wp_template_exists($preview)) {
+    if ($preview !== '' && em_site_template_exists($preview)) {
         $resolved = $preview;
     }
 
@@ -109,9 +109,9 @@ function em_wp_get_preview_template_slug(): string
 /**
  * Indique si la requête front courante est un aperçu de template.
  */
-function em_wp_front_is_template_preview(): bool
+function em_site_front_is_template_preview(): bool
 {
-    return em_wp_get_preview_template_slug() !== '';
+    return em_site_get_preview_template_slug() !== '';
 }
 
 /**
@@ -120,45 +120,45 @@ function em_wp_front_is_template_preview(): bool
  * Permet aux liens internes (ex. logo top-bar) de rester dans l'aperçu plutôt
  * que de renvoyer vers le site live.
  */
-function em_wp_front_preview_aware_url(string $url): string
+function em_site_front_preview_aware_url(string $url): string
 {
-    $preview_slug = em_wp_get_preview_template_slug();
+    $preview_slug = em_site_get_preview_template_slug();
 
     if ($preview_slug === '') {
         return $url;
     }
 
-    return em_wp_template_preview_url($preview_slug, $url);
+    return em_site_template_preview_url($preview_slug, $url);
 }
 
 /**
  * Barre flottante « Fermer l'aperçu » affichée en front lors d'un aperçu.
  */
-function em_wp_front_render_preview_close_bar(): void
+function em_site_front_render_preview_close_bar(): void
 {
-    if (is_admin() || !em_wp_front_is_template_preview()) {
+    if (is_admin() || !em_site_front_is_template_preview()) {
         return;
     }
 
-    $slug = em_wp_get_preview_template_slug();
-    $registry = function_exists('em_wp_template_registry') ? em_wp_template_registry() : [];
+    $slug = em_site_get_preview_template_slug();
+    $registry = function_exists('em_site_template_registry') ? em_site_template_registry() : [];
     $label = (string) ($registry[$slug]['label'] ?? $slug);
     // Repli si le navigateur refuse window.close() (aperçu ouvert manuellement) :
     // on revient sur la page d'édition du template dans l'admin.
     $close_url = admin_url('admin.php?page=em-rubriques');
     ?>
-    <div id="em-wp-preview-bar" class="em-wp-preview-bar" role="status">
-        <span class="em-wp-preview-bar__label">
-            <span class="em-wp-preview-bar__eye" aria-hidden="true">&#128065;</span>
-            <?php echo esc_html(sprintf(__('Aperçu : %s', 'em-wp'), $label)); ?>
+    <div id="em-site-preview-bar" class="em-site-preview-bar" role="status">
+        <span class="em-site-preview-bar__label">
+            <span class="em-site-preview-bar__eye" aria-hidden="true">&#128065;</span>
+            <?php echo esc_html(sprintf(__('Aperçu : %s', 'em-site'), $label)); ?>
         </span>
-        <a class="em-wp-preview-bar__close" href="<?php echo esc_url($close_url); ?>">
+        <a class="em-site-preview-bar__close" href="<?php echo esc_url($close_url); ?>">
             <span aria-hidden="true">&times;</span>
-            <?php esc_html_e('Fermer l\'aperçu', 'em-wp'); ?>
+            <?php esc_html_e('Fermer l\'aperçu', 'em-site'); ?>
         </a>
     </div>
     <style>
-        #em-wp-preview-bar {
+        #em-site-preview-bar {
             position: fixed;
             z-index: 99999;
             left: 50%;
@@ -177,7 +177,7 @@ function em_wp_front_render_preview_close_bar(): void
             line-height: 1;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
         }
-        #em-wp-preview-bar .em-wp-preview-bar__label {
+        #em-site-preview-bar .em-site-preview-bar__label {
             display: inline-flex;
             align-items: center;
             gap: 7px;
@@ -186,7 +186,7 @@ function em_wp_front_render_preview_close_bar(): void
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        #em-wp-preview-bar .em-wp-preview-bar__close {
+        #em-site-preview-bar .em-site-preview-bar__close {
             display: inline-flex;
             align-items: center;
             gap: 5px;
@@ -198,19 +198,19 @@ function em_wp_front_render_preview_close_bar(): void
             font-weight: 700;
             white-space: nowrap;
         }
-        #em-wp-preview-bar .em-wp-preview-bar__close:hover,
-        #em-wp-preview-bar .em-wp-preview-bar__close:focus {
+        #em-site-preview-bar .em-site-preview-bar__close:hover,
+        #em-site-preview-bar .em-site-preview-bar__close:focus {
             background: #8e0a05;
             color: #fff;
         }
-        #em-wp-preview-bar .em-wp-preview-bar__close span {
+        #em-site-preview-bar .em-site-preview-bar__close span {
             font-size: 18px;
             line-height: 1;
         }
     </style>
     <script>
         (function () {
-            var bar = document.getElementById('em-wp-preview-bar');
+            var bar = document.getElementById('em-site-preview-bar');
             if (!bar) { return; }
 
             // Aperçu chargé dans un iframe (miniature popover) : on masque la barre.
@@ -219,7 +219,7 @@ function em_wp_front_render_preview_close_bar(): void
                 return;
             }
 
-            var closeBtn = bar.querySelector('.em-wp-preview-bar__close');
+            var closeBtn = bar.querySelector('.em-site-preview-bar__close');
             if (!closeBtn) { return; }
 
             closeBtn.addEventListener('click', function (event) {
@@ -243,28 +243,28 @@ function em_wp_front_render_preview_close_bar(): void
     </script>
     <?php
 }
-add_action('wp_footer', 'em_wp_front_render_preview_close_bar');
+add_action('wp_footer', 'em_site_front_render_preview_close_bar');
 
 /**
  * Slug du template actif sur le site (front live).
  */
-function em_wp_get_active_template_slug(): string
+function em_site_get_active_template_slug(): string
 {
-    em_wp_template_maybe_bootstrap_options();
+    em_site_template_maybe_bootstrap_options();
 
-    $preview = em_wp_get_preview_template_slug();
+    $preview = em_site_get_preview_template_slug();
 
     if ($preview !== '') {
         return $preview;
     }
 
-    $slug = em_wp_template_sanitize_slug((string) get_option(em_wp_active_template_option_name(), ''));
+    $slug = em_site_template_sanitize_slug((string) get_option(em_site_active_template_option_name(), ''));
 
-    if ($slug !== '' && em_wp_template_exists($slug)) {
+    if ($slug !== '' && em_site_template_exists($slug)) {
         return $slug;
     }
 
-    return em_wp_template_default_slug();
+    return em_site_template_default_slug();
 }
 
 /**
@@ -272,15 +272,15 @@ function em_wp_get_active_template_slug(): string
  *
  * @return true|WP_Error
  */
-function em_wp_set_active_template_slug(string $slug)
+function em_site_set_active_template_slug(string $slug)
 {
-    $slug = em_wp_template_sanitize_slug($slug);
+    $slug = em_site_template_sanitize_slug($slug);
 
-    if ($slug === '' || !em_wp_template_exists($slug)) {
-        return new WP_Error('em_wp_template_invalid_active', __('Template invalide.', 'em-wp'));
+    if ($slug === '' || !em_site_template_exists($slug)) {
+        return new WP_Error('em_site_template_invalid_active', __('Template invalide.', 'em-site'));
     }
 
-    update_option(em_wp_active_template_option_name(), $slug, false);
+    update_option(em_site_active_template_option_name(), $slug, false);
 
     return true;
 }
@@ -288,7 +288,7 @@ function em_wp_set_active_template_slug(string $slug)
 /**
  * Indique si l'utilisateur a explicitement choisi un template en édition.
  */
-function em_wp_admin_has_template_context(): bool
+function em_site_admin_has_template_context(): bool
 {
     $user_id = get_current_user_id();
 
@@ -296,21 +296,21 @@ function em_wp_admin_has_template_context(): bool
         return false;
     }
 
-    $saved = get_user_meta($user_id, em_wp_editing_template_user_meta_key(), true);
+    $saved = get_user_meta($user_id, em_site_editing_template_user_meta_key(), true);
 
     if (!is_string($saved) || $saved === '') {
         return false;
     }
 
-    $slug = em_wp_template_sanitize_slug($saved);
+    $slug = em_site_template_sanitize_slug($saved);
 
-    return $slug !== '' && em_wp_template_exists($slug);
+    return $slug !== '' && em_site_template_exists($slug);
 }
 
 /**
  * Slug du template en édition enregistré explicitement (sans fallback).
  */
-function em_wp_get_explicit_editing_template_slug(): string
+function em_site_get_explicit_editing_template_slug(): string
 {
     $user_id = get_current_user_id();
 
@@ -318,15 +318,15 @@ function em_wp_get_explicit_editing_template_slug(): string
         return '';
     }
 
-    $saved = get_user_meta($user_id, em_wp_editing_template_user_meta_key(), true);
+    $saved = get_user_meta($user_id, em_site_editing_template_user_meta_key(), true);
 
     if (!is_string($saved) || $saved === '') {
         return '';
     }
 
-    $slug = em_wp_template_sanitize_slug($saved);
+    $slug = em_site_template_sanitize_slug($saved);
 
-    if ($slug !== '' && em_wp_template_exists($slug)) {
+    if ($slug !== '' && em_site_template_exists($slug)) {
         return $slug;
     }
 
@@ -336,7 +336,7 @@ function em_wp_get_explicit_editing_template_slug(): string
 /**
  * Efface le contexte template en édition (retour zone neutre).
  */
-function em_wp_clear_editing_template_context(): void
+function em_site_clear_editing_template_context(): void
 {
     $user_id = get_current_user_id();
 
@@ -344,7 +344,7 @@ function em_wp_clear_editing_template_context(): void
         return;
     }
 
-    delete_user_meta($user_id, em_wp_editing_template_user_meta_key());
+    delete_user_meta($user_id, em_site_editing_template_user_meta_key());
 }
 
 /**
@@ -352,15 +352,15 @@ function em_wp_clear_editing_template_context(): void
  *
  * Sans contexte explicite, retombe sur le template actif (saves / modules).
  */
-function em_wp_get_editing_template_slug(): string
+function em_site_get_editing_template_slug(): string
 {
-    $explicit = em_wp_get_explicit_editing_template_slug();
+    $explicit = em_site_get_explicit_editing_template_slug();
 
     if ($explicit !== '') {
         return $explicit;
     }
 
-    return em_wp_get_active_template_slug();
+    return em_site_get_active_template_slug();
 }
 
 /**
@@ -368,20 +368,20 @@ function em_wp_get_editing_template_slug(): string
  *
  * @return true|WP_Error
  */
-function em_wp_set_editing_template_slug(string $slug)
+function em_site_set_editing_template_slug(string $slug)
 {
-    $slug = em_wp_template_sanitize_slug($slug);
+    $slug = em_site_template_sanitize_slug($slug);
     $user_id = get_current_user_id();
 
     if ($user_id <= 0) {
-        return new WP_Error('em_wp_template_no_user', __('Utilisateur non connecté.', 'em-wp'));
+        return new WP_Error('em_site_template_no_user', __('Utilisateur non connecté.', 'em-site'));
     }
 
-    if ($slug === '' || !em_wp_template_exists($slug)) {
-        return new WP_Error('em_wp_template_invalid_editing', __('Template invalide.', 'em-wp'));
+    if ($slug === '' || !em_site_template_exists($slug)) {
+        return new WP_Error('em_site_template_invalid_editing', __('Template invalide.', 'em-site'));
     }
 
-    update_user_meta($user_id, em_wp_editing_template_user_meta_key(), $slug);
+    update_user_meta($user_id, em_site_editing_template_user_meta_key(), $slug);
 
     return true;
 }
@@ -389,18 +389,18 @@ function em_wp_set_editing_template_slug(string $slug)
 /**
  * Indique si le template en édition diffère du template live.
  */
-function em_wp_template_editing_differs_from_live(): bool
+function em_site_template_editing_differs_from_live(): bool
 {
-    return em_wp_get_editing_template_slug() !== em_wp_get_active_template_slug();
+    return em_site_get_editing_template_slug() !== em_site_get_active_template_slug();
 }
 
 /**
  * Libellé du template en cours d'édition (admin).
  */
-function em_wp_get_editing_template_label(): string
+function em_site_get_editing_template_label(): string
 {
-    $slug = em_wp_get_editing_template_slug();
-    $template = em_wp_template_get($slug);
+    $slug = em_site_get_editing_template_slug();
+    $template = em_site_template_get($slug);
 
     if ($template !== null) {
         $label = sanitize_text_field((string) ($template['label'] ?? ''));

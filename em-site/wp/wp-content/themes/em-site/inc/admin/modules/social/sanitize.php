@@ -6,7 +6,7 @@
 
  *
 
- * @package em-wp
+ * @package em-site
 
  */
 
@@ -32,13 +32,13 @@ if (!defined('ABSPATH')) {
 
  */
 
-function em_wp_social_sanitize_rubrique_options($input): array
+function em_site_social_sanitize_rubrique_options($input): array
 
 {
 
-    $template_slug = em_wp_social_resolve_template_slug();
+    $template_slug = em_site_social_resolve_template_slug();
 
-    $existing = em_wp_social_get_saved_rubrique_options($template_slug);
+    $existing = em_site_social_get_saved_rubrique_options($template_slug);
 
 
 
@@ -56,15 +56,15 @@ function em_wp_social_sanitize_rubrique_options($input): array
 
 
 
-    if ($social_slug !== '' && function_exists('em_wp_social_normalize_catalog_slug')) {
+    if ($social_slug !== '' && function_exists('em_site_social_normalize_catalog_slug')) {
 
-        $social_slug = em_wp_social_normalize_catalog_slug($social_slug);
+        $social_slug = em_site_social_normalize_catalog_slug($social_slug);
 
     }
 
 
 
-    if ($social_slug !== '' && function_exists('em_wp_social_catalog_has') && !em_wp_social_catalog_has($social_slug)) {
+    if ($social_slug !== '' && function_exists('em_site_social_catalog_has') && !em_site_social_catalog_has($social_slug)) {
 
         $social_slug = sanitize_key((string) ($existing['social_slug'] ?? ''));
 
@@ -78,9 +78,9 @@ function em_wp_social_sanitize_rubrique_options($input): array
 
 
 
-    if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
+    if (function_exists('em_site_admin_sync_rubrique_visibility_from_post')) {
 
-        em_wp_admin_sync_rubrique_visibility_from_post('social');
+        em_site_admin_sync_rubrique_visibility_from_post('social');
 
     }
 
@@ -122,13 +122,13 @@ function em_wp_social_sanitize_rubrique_options($input): array
 
  */
 
-function em_wp_social_sanitize_catalog_options($input): array
+function em_site_social_sanitize_catalog_options($input): array
 
 {
 
     if (!is_array($input)) {
 
-        return em_wp_social_catalog_default_options();
+        return em_site_social_catalog_default_options();
 
     }
 
@@ -144,7 +144,7 @@ function em_wp_social_sanitize_catalog_options($input): array
 
         'description'      => sanitize_textarea_field($input['description'] ?? ''),
 
-        'platforms'        => em_wp_social_sanitize_platforms_from_input($input['platforms'] ?? []),
+        'platforms'        => em_site_social_sanitize_platforms_from_input($input['platforms'] ?? []),
 
     ];
 
@@ -158,19 +158,19 @@ function em_wp_social_sanitize_catalog_options($input): array
 
  */
 
-function em_wp_social_sanitize_options($input, bool $sync_rubrique = true): array
+function em_site_social_sanitize_options($input, bool $sync_rubrique = true): array
 
 {
 
     if ($sync_rubrique) {
 
-        return em_wp_social_sanitize_rubrique_options($input);
+        return em_site_social_sanitize_rubrique_options($input);
 
     }
 
 
 
-    return em_wp_social_sanitize_catalog_options($input);
+    return em_site_social_sanitize_catalog_options($input);
 
 }
 

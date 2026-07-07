@@ -2,7 +2,7 @@
 /**
  * Menu latéral : entrée DASHBOARD, flèche, surbrillance Accueil.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,25 +12,25 @@ if (!defined('ABSPATH')) {
 /**
  * Slug entrée menu décorative (flèche sous DASHBOARD).
  */
-function em_wp_admin_dashboard_menu_arrow_slug(): string
+function em_site_admin_dashboard_menu_arrow_slug(): string
 {
-    return 'em-wp-menu-dashboard-arrow';
+    return 'em-site-menu-dashboard-arrow';
 }
 
 /**
  * Nom du thème WordPress actif pour le libellé sidebar « THÈME ACTIF ».
  */
-function em_wp_admin_sidebar_active_theme_label(): string
+function em_site_admin_sidebar_active_theme_label(): string
 {
     return (string) wp_get_theme()->display('Name');
 }
 
 /**
- * @deprecated Utiliser em_wp_admin_sidebar_active_theme_label() pour le menu latéral.
+ * @deprecated Utiliser em_site_admin_sidebar_active_theme_label() pour le menu latéral.
  */
-function em_wp_admin_dashboard_active_template_label(): string
+function em_site_admin_dashboard_active_template_label(): string
 {
-    return em_wp_admin_sidebar_active_theme_label();
+    return em_site_admin_sidebar_active_theme_label();
 }
 
 /**
@@ -39,31 +39,31 @@ function em_wp_admin_dashboard_active_template_label(): string
  * @param mixed $parent_file
  * @return mixed
  */
-function em_wp_admin_highlight_dashboard_menu($parent_file)
+function em_site_admin_highlight_dashboard_menu($parent_file)
 {
-    if (em_wp_admin_is_dashboard_admin_screen()) {
+    if (em_site_admin_is_dashboard_admin_screen()) {
         return 'index.php';
     }
 
     return $parent_file;
 }
-add_filter('parent_file', 'em_wp_admin_highlight_dashboard_menu');
+add_filter('parent_file', 'em_site_admin_highlight_dashboard_menu');
 
 /**
- * Évite l'ouverture du sous-menu natif Home / Updates sur l'Accueil em-wp.
+ * Évite l'ouverture du sous-menu natif Home / Updates sur l'Accueil em-site.
  *
  * @param mixed $submenu_file
  * @return mixed
  */
-function em_wp_admin_highlight_dashboard_submenu($submenu_file)
+function em_site_admin_highlight_dashboard_submenu($submenu_file)
 {
-    if (em_wp_admin_is_dashboard_admin_screen()) {
+    if (em_site_admin_is_dashboard_admin_screen()) {
         return '';
     }
 
     return $submenu_file;
 }
-add_filter('submenu_file', 'em_wp_admin_highlight_dashboard_submenu');
+add_filter('submenu_file', 'em_site_admin_highlight_dashboard_submenu');
 
 /**
  * Classe body sur la page Accueil (style menu DASHBOARD actif).
@@ -71,20 +71,20 @@ add_filter('submenu_file', 'em_wp_admin_highlight_dashboard_submenu');
  * @param mixed $classes
  * @return mixed
  */
-function em_wp_admin_dashboard_body_class($classes)
+function em_site_admin_dashboard_body_class($classes)
 {
-    if (!em_wp_admin_is_dashboard_admin_screen()) {
+    if (!em_site_admin_is_dashboard_admin_screen()) {
         return $classes;
     }
 
-    return $classes . ' em-wp-admin-dashboard-screen';
+    return $classes . ' em-site-admin-dashboard-screen';
 }
-add_filter('admin_body_class', 'em_wp_admin_dashboard_body_class');
+add_filter('admin_body_class', 'em_site_admin_dashboard_body_class');
 
 /**
  * Personnalise l'entrée Dashboard WP (libellé DASHBOARD, sans sous-menu natif).
  */
-function em_wp_admin_point_dashboard_to_home(): void
+function em_site_admin_point_dashboard_to_home(): void
 {
     if (!current_user_can('manage_options')) {
         return;
@@ -101,57 +101,57 @@ function em_wp_admin_point_dashboard_to_home(): void
             continue;
         }
 
-        $slug = function_exists('em_wp_admin_menu_item_slug')
-            ? em_wp_admin_menu_item_slug($item)
+        $slug = function_exists('em_site_admin_menu_item_slug')
+            ? em_site_admin_menu_item_slug($item)
             : sanitize_key((string) ($item[2] ?? ''));
 
-        if ($slug !== 'index.php' && $slug !== em_wp_admin_dashboard_page_slug()) {
+        if ($slug !== 'index.php' && $slug !== em_site_admin_dashboard_page_slug()) {
             continue;
         }
 
         $menu[$position][0] = 'DASHBOARD';
         $menu[$position][3] = 'DASHBOARD';
         $menu[$position][2] = 'index.php';
-        $menu[$position][4] = trim(((string) ($item[4] ?? 'menu-top')) . ' em-wp-menu-dashboard-entry');
+        $menu[$position][4] = trim(((string) ($item[4] ?? 'menu-top')) . ' em-site-menu-dashboard-entry');
         $menu[$position][6] = 'dashicons-dashboard';
     }
 
     foreach ($menu as $position => $item) {
-        if (!is_array($item) || (string) ($item[2] ?? '') !== em_wp_admin_dashboard_menu_arrow_slug()) {
+        if (!is_array($item) || (string) ($item[2] ?? '') !== em_site_admin_dashboard_menu_arrow_slug()) {
             continue;
         }
 
         unset($menu[$position]);
     }
 }
-add_action('admin_menu', 'em_wp_admin_point_dashboard_to_home', 1000002);
+add_action('admin_menu', 'em_site_admin_point_dashboard_to_home', 1000002);
 
 /**
  * Injecte la flèche sous DASHBOARD dans le menu latéral (thème actif = menu/layout.php).
  */
-function em_wp_admin_mount_sidebar_menu_chrome_scripts(): void
+function em_site_admin_mount_sidebar_menu_chrome_scripts(): void
 {
     if (!current_user_can('manage_options')) {
         return;
     }
     ?>
-    <script id="em-wp-sidebar-menu-chrome">
+    <script id="em-site-sidebar-menu-chrome">
         (function () {
             function getDashboardItem() {
                 return document.getElementById('menu-dashboard')
-                    || document.querySelector('#adminmenu li.em-wp-menu-dashboard-entry');
+                    || document.querySelector('#adminmenu li.em-site-menu-dashboard-entry');
             }
 
             function mountDashboardArrow() {
                 var item = getDashboardItem();
 
-                if (!item || item.querySelector('.em-wp-dashboard-menu-arrow')) {
+                if (!item || item.querySelector('.em-site-dashboard-menu-arrow')) {
                     return;
                 }
 
                 var link = item.querySelector('a.menu-top');
                 var arrow = document.createElement('span');
-                arrow.className = 'em-wp-dashboard-menu-arrow';
+                arrow.className = 'em-site-dashboard-menu-arrow';
                 arrow.setAttribute('aria-hidden', 'true');
 
                 if (link) {
@@ -173,5 +173,5 @@ function em_wp_admin_mount_sidebar_menu_chrome_scripts(): void
     </script>
     <?php
 }
-add_action('admin_footer', 'em_wp_admin_mount_sidebar_menu_chrome_scripts', 5);
+add_action('admin_footer', 'em_site_admin_mount_sidebar_menu_chrome_scripts', 5);
 

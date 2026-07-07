@@ -2,13 +2,13 @@
 /**
  * Helpers embed plateformes stream (partagés front).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
-function em_wp_stream_extract_youtube_id($url) {
+function em_site_stream_extract_youtube_id($url) {
 
     if (!is_string($url) || $url === '') {
 
@@ -42,7 +42,7 @@ function em_wp_stream_extract_youtube_id($url) {
 
 }
 
-function em_wp_stream_extract_iframe_src_from_html($html) {
+function em_site_stream_extract_iframe_src_from_html($html) {
 
     if (!is_string($html) || $html === '') {
 
@@ -64,7 +64,7 @@ function em_wp_stream_extract_iframe_src_from_html($html) {
 
 }
 
-function em_wp_stream_get_oembed_iframe_src($url) {
+function em_site_stream_get_oembed_iframe_src($url) {
 
     $url = trim((string) $url);
 
@@ -76,7 +76,7 @@ function em_wp_stream_get_oembed_iframe_src($url) {
 
 
 
-    $cache_key = 'em_wp_stream_stream_oembed_' . md5($url);
+    $cache_key = 'em_site_stream_stream_oembed_' . md5($url);
 
     $cached = get_transient($cache_key);
 
@@ -90,7 +90,7 @@ function em_wp_stream_get_oembed_iframe_src($url) {
 
     $html = wp_oembed_get($url);
 
-    $src = em_wp_stream_extract_iframe_src_from_html((string) $html);
+    $src = em_site_stream_extract_iframe_src_from_html((string) $html);
 
     if ($src !== '') {
 
@@ -104,7 +104,7 @@ function em_wp_stream_get_oembed_iframe_src($url) {
 
 }
 
-function em_wp_stream_extract_youtube_channel_id_from_html($html) {
+function em_site_stream_extract_youtube_channel_id_from_html($html) {
 
     if (!is_string($html) || $html === '') {
 
@@ -126,7 +126,7 @@ function em_wp_stream_extract_youtube_channel_id_from_html($html) {
 
 }
 
-function em_wp_stream_get_youtube_channel_id_from_url($url) {
+function em_site_stream_get_youtube_channel_id_from_url($url) {
 
     $url = trim((string) $url);
 
@@ -138,7 +138,7 @@ function em_wp_stream_get_youtube_channel_id_from_url($url) {
 
 
 
-    $cache_key = 'em_wp_stream_stream_yt_channel_' . md5($url);
+    $cache_key = 'em_site_stream_stream_yt_channel_' . md5($url);
 
     $cached = get_transient($cache_key);
 
@@ -174,7 +174,7 @@ function em_wp_stream_get_youtube_channel_id_from_url($url) {
 
         'sslverify' => false,
 
-        'user-agent' => 'WordPress/em-wp YouTube Resolver',
+        'user-agent' => 'WordPress/em-site YouTube Resolver',
 
     ));
 
@@ -188,7 +188,7 @@ function em_wp_stream_get_youtube_channel_id_from_url($url) {
 
     $body = wp_remote_retrieve_body($response);
 
-    $channel_id = em_wp_stream_extract_youtube_channel_id_from_html((string) $body);
+    $channel_id = em_site_stream_extract_youtube_channel_id_from_html((string) $body);
 
     if ($channel_id !== '') {
 
@@ -202,7 +202,7 @@ function em_wp_stream_get_youtube_channel_id_from_url($url) {
 
 }
 
-function em_wp_stream_resolve_stream_final_url($url) {
+function em_site_stream_resolve_stream_final_url($url) {
 
     $url = trim((string) $url);
 
@@ -214,7 +214,7 @@ function em_wp_stream_resolve_stream_final_url($url) {
 
 
 
-    $cache_key = 'em_wp_stream_stream_url_' . md5($url);
+    $cache_key = 'em_site_stream_stream_url_' . md5($url);
 
     $cached = get_transient($cache_key);
 
@@ -236,7 +236,7 @@ function em_wp_stream_resolve_stream_final_url($url) {
 
         'sslverify' => false,
 
-        'user-agent' => 'WordPress/em-wp Stream Resolver',
+        'user-agent' => 'WordPress/em-site Stream Resolver',
 
     );
 
@@ -312,7 +312,7 @@ function em_wp_stream_resolve_stream_final_url($url) {
 
 }
 
-function em_wp_stream_detect_stream_platform_key($platform_key, $href) {
+function em_site_stream_detect_stream_platform_key($platform_key, $href) {
 
     $platform_key = sanitize_title((string) $platform_key);
 
@@ -402,7 +402,7 @@ function em_wp_stream_detect_stream_platform_key($platform_key, $href) {
 
 }
 
-function em_wp_stream_build_stream_embed_src($platform_key, $href) {
+function em_site_stream_build_stream_embed_src($platform_key, $href) {
 
     $href = trim((string) $href);
 
@@ -414,7 +414,7 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
 
 
-    $resolved_href = em_wp_stream_resolve_stream_final_url($href);
+    $resolved_href = em_site_stream_resolve_stream_final_url($href);
 
     if ($resolved_href === '') {
 
@@ -476,11 +476,11 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $video_id = em_wp_stream_extract_youtube_id($href);
+            $video_id = em_site_stream_extract_youtube_id($href);
 
             if ($video_id === '') {
 
-                $video_id = em_wp_stream_extract_youtube_id($resolved_href);
+                $video_id = em_site_stream_extract_youtube_id($resolved_href);
 
             }
 
@@ -510,7 +510,7 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
             if (preg_match('#youtube\.com/@([^/?\#]+)#i', $resolved_href, $matches)) {
 
-                $channel_id = em_wp_stream_get_youtube_channel_id_from_url($resolved_href);
+                $channel_id = em_site_stream_get_youtube_channel_id_from_url($resolved_href);
 
                 if ($channel_id !== '') {
 
@@ -524,7 +524,7 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
             if (preg_match('#youtube\.com/c/([^/?\#]+)#i', $resolved_href)) {
 
-                $channel_id = em_wp_stream_get_youtube_channel_id_from_url($resolved_href);
+                $channel_id = em_site_stream_get_youtube_channel_id_from_url($resolved_href);
 
                 if ($channel_id !== '') {
 
@@ -536,7 +536,7 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $youtube_oembed_src = em_wp_stream_get_oembed_iframe_src($resolved_href);
+            $youtube_oembed_src = em_site_stream_get_oembed_iframe_src($resolved_href);
 
             if ($youtube_oembed_src !== '') {
 
@@ -576,7 +576,7 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $deezer_oembed_src = em_wp_stream_get_oembed_iframe_src($resolved_href);
+            $deezer_oembed_src = em_site_stream_get_oembed_iframe_src($resolved_href);
 
             if ($deezer_oembed_src !== '') {
 
@@ -586,7 +586,7 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
 
 
-            $deezer_oembed_src = em_wp_stream_get_oembed_iframe_src($href);
+            $deezer_oembed_src = em_site_stream_get_oembed_iframe_src($href);
 
             if ($deezer_oembed_src !== '') {
 
@@ -624,7 +624,7 @@ function em_wp_stream_build_stream_embed_src($platform_key, $href) {
 
 }
 
-function em_wp_stream_player_height($platform_key, $embed_src = '') {
+function em_site_stream_player_height($platform_key, $embed_src = '') {
 
     $embed_src = trim((string) $embed_src);
 

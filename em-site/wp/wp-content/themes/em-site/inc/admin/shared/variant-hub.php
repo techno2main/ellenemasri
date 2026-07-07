@@ -2,7 +2,7 @@
 /**
  * Hub admin pour modules multi-variantes (Videos, Releases, …).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -39,7 +39,7 @@ if (!defined('ABSPATH')) {
  *     get_options?:callable(string):array,
  * } $config
  */
-function em_wp_admin_boot_variant_hub(array $config): void
+function em_site_admin_boot_variant_hub(array $config): void
 {
     $module_slug = sanitize_key((string) ($config['module_slug'] ?? ''));
     if ($module_slug === '') {
@@ -47,7 +47,7 @@ function em_wp_admin_boot_variant_hub(array $config): void
     }
 
     add_action('admin_menu', static function () use ($config, $module_slug): void {
-        em_wp_admin_variant_hub_register_menu($config);
+        em_site_admin_variant_hub_register_menu($config);
     });
 
     add_action('admin_menu', static function () use ($config): void {
@@ -58,20 +58,20 @@ function em_wp_admin_boot_variant_hub(array $config): void
     }, 999);
 
     add_action('admin_init', static function () use ($config): void {
-        em_wp_admin_variant_hub_register_settings($config);
-        em_wp_admin_variant_hub_register_active_save($config);
+        em_site_admin_variant_hub_register_settings($config);
+        em_site_admin_variant_hub_register_active_save($config);
     });
 
     add_action('admin_enqueue_scripts', static function (string $hook_suffix) use ($config): void {
         unset($hook_suffix);
-        em_wp_admin_variant_hub_enqueue($config);
+        em_site_admin_variant_hub_enqueue($config);
     });
 }
 
 /**
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_style_definitions(array $config): array
+function em_site_admin_variant_hub_style_definitions(array $config): array
 {
     $callback = $config['style_definitions'] ?? null;
 
@@ -88,9 +88,9 @@ function em_wp_admin_variant_hub_style_definitions(array $config): array
  * @param array<string, mixed> $config
  * @return string[]
  */
-function em_wp_admin_variant_hub_admin_page_slugs(array $config): array
+function em_site_admin_variant_hub_admin_page_slugs(array $config): array
 {
-    $definitions = em_wp_admin_variant_hub_style_definitions($config);
+    $definitions = em_site_admin_variant_hub_style_definitions($config);
 
     return array_merge(
         [(string) ($config['hub_menu_slug'] ?? '')],
@@ -101,11 +101,11 @@ function em_wp_admin_variant_hub_admin_page_slugs(array $config): array
 /**
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_register_menu(array $config): void
+function em_site_admin_variant_hub_register_menu(array $config): void
 {
-    $definitions = em_wp_admin_variant_hub_style_definitions($config);
+    $definitions = em_site_admin_variant_hub_style_definitions($config);
     $parent_slug = (string) ($config['hub_menu_slug'] ?? '');
-    $position = $config['menu_position'] ?? em_wp_admin_site_rubrique_menu_base();
+    $position = $config['menu_position'] ?? em_site_admin_site_rubrique_menu_base();
 
     if (is_callable($position)) {
         $position = (int) call_user_func($position);
@@ -117,7 +117,7 @@ function em_wp_admin_variant_hub_register_menu(array $config): void
         'manage_options',
         $parent_slug,
         static function () use ($config): void {
-            em_wp_admin_variant_hub_render_page($config);
+            em_site_admin_variant_hub_render_page($config);
         },
         (string) ($config['menu_icon'] ?? 'dashicons-admin-generic'),
         (int) $position
@@ -131,7 +131,7 @@ function em_wp_admin_variant_hub_register_menu(array $config): void
             'manage_options',
             (string) ($definition['page_slug'] ?? ''),
             static function () use ($config): void {
-                em_wp_admin_variant_hub_render_page($config);
+                em_site_admin_variant_hub_render_page($config);
             }
         );
     }
@@ -140,9 +140,9 @@ function em_wp_admin_variant_hub_register_menu(array $config): void
 /**
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_register_settings(array $config): void
+function em_site_admin_variant_hub_register_settings(array $config): void
 {
-    $definitions = em_wp_admin_variant_hub_style_definitions($config);
+    $definitions = em_site_admin_variant_hub_style_definitions($config);
     $sanitize_active = static function ($value) use ($config, $definitions): string {
         $slug = sanitize_key((string) $value);
         $default = sanitize_key((string) ($config['default_active_style'] ?? ''));
@@ -197,18 +197,18 @@ function em_wp_admin_variant_hub_register_settings(array $config): void
  *
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_register_active_save(array $config): void
+function em_site_admin_variant_hub_register_active_save(array $config): void
 {
     $module_slug = sanitize_key((string) ($config['module_slug'] ?? ''));
     if ($module_slug === '') {
         return;
     }
 
-    $definitions = em_wp_admin_variant_hub_style_definitions($config);
+    $definitions = em_site_admin_variant_hub_style_definitions($config);
 
-    em_wp_admin_register_module_save($module_slug . '-active', [
+    em_site_admin_register_module_save($module_slug . '-active', [
         'type'          => 'active_style',
-        'nonce_action'  => 'em_wp_' . $module_slug . '_active_save',
+        'nonce_action'  => 'em_site_' . $module_slug . '_active_save',
         'option_name'   => (string) ($config['active_option'] ?? ''),
         'value_field'   => (string) ($config['active_option'] ?? ''),
         'page_slug'     => 'referer',
@@ -235,21 +235,21 @@ function em_wp_admin_variant_hub_register_active_save(array $config): void
 /**
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_enqueue(array $config): void
+function em_site_admin_variant_hub_enqueue(array $config): void
 {
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-    if (!in_array($page_slug, em_wp_admin_variant_hub_admin_page_slugs($config), true)) {
+    if (!in_array($page_slug, em_site_admin_variant_hub_admin_page_slugs($config), true)) {
         return;
     }
 
-    em_wp_admin_enqueue_shared_assets();
+    em_site_admin_enqueue_shared_assets();
 }
 
 /**
  * @param array<string, mixed> $config
  * @return array{style_slug:string,label:string,page_slug:string,option_name:string,group:string}
  */
-function em_wp_admin_variant_hub_get_context(array $config): array
+function em_site_admin_variant_hub_get_context(array $config): array
 {
     $page_slug = sanitize_key((string) ($_GET['page'] ?? '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $hub_slug = (string) ($config['hub_menu_slug'] ?? '');
@@ -264,7 +264,7 @@ function em_wp_admin_variant_hub_get_context(array $config): array
         ];
     }
 
-    foreach (em_wp_admin_variant_hub_style_definitions($config) as $style_slug => $definition) {
+    foreach (em_site_admin_variant_hub_style_definitions($config) as $style_slug => $definition) {
         if (($definition['page_slug'] ?? '') === $page_slug) {
             $option_name = $config['option_name'] ?? null;
             $group_name = $config['group_name'] ?? null;
@@ -291,10 +291,10 @@ function em_wp_admin_variant_hub_get_context(array $config): array
 /**
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_active_style_slug(array $config): string
+function em_site_admin_variant_hub_active_style_slug(array $config): string
 {
     $saved = get_option((string) ($config['active_option'] ?? ''), (string) ($config['default_active_style'] ?? ''));
-    $definitions = em_wp_admin_variant_hub_style_definitions($config);
+    $definitions = em_site_admin_variant_hub_style_definitions($config);
     $slug = sanitize_key((string) $saved);
 
     if ($slug !== '' && isset($definitions[$slug])) {
@@ -314,28 +314,28 @@ function em_wp_admin_variant_hub_active_style_slug(array $config): string
 /**
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_render_page(array $config): void
+function em_site_admin_variant_hub_render_page(array $config): void
 {
     if (!current_user_can('manage_options')) {
         return;
     }
 
-    $context = em_wp_admin_variant_hub_get_context($config);
+    $context = em_site_admin_variant_hub_get_context($config);
     $style_slug = (string) ($context['style_slug'] ?? '');
-    $active_style = em_wp_admin_variant_hub_active_style_slug($config);
-    $module_class = 'em-wp-' . sanitize_html_class((string) ($config['module_slug'] ?? 'module')) . '-admin';
+    $active_style = em_site_admin_variant_hub_active_style_slug($config);
+    $module_class = 'em-site-' . sanitize_html_class((string) ($config['module_slug'] ?? 'module')) . '-admin';
     ?>
-    <div class="wrap <?php echo esc_attr($module_class); ?> em-wp-admin-module em-wp-hub-sommaire">
-        <?php em_wp_admin_render_settings_notices(); ?>
-        <?php em_wp_admin_rubrique_render_editing_page_header((string) ($config['module_slug'] ?? '')); ?>
+    <div class="wrap <?php echo esc_attr($module_class); ?> em-site-admin-module em-site-hub-sommaire">
+        <?php em_site_admin_render_settings_notices(); ?>
+        <?php em_site_admin_rubrique_render_editing_page_header((string) ($config['module_slug'] ?? '')); ?>
 
-        <?php em_wp_admin_rubrique_open_section((string) ($config['module_slug'] ?? '')); ?>
-        <div class="em-wp-admin-module-hub">
-            <?php em_wp_admin_variant_hub_render_sidebar($config, $style_slug, $active_style); ?>
+        <?php em_site_admin_rubrique_open_section((string) ($config['module_slug'] ?? '')); ?>
+        <div class="em-site-admin-module-hub">
+            <?php em_site_admin_variant_hub_render_sidebar($config, $style_slug, $active_style); ?>
 
-            <div class="em-wp-admin-module-hub__content">
+            <div class="em-site-admin-module-hub__content">
                 <?php if ($style_slug === '') { ?>
-                    <div class="em-wp-admin-module-hub__empty">
+                    <div class="em-site-admin-module-hub__empty">
                         <p><?php echo esc_html((string) ($config['select_prompt'] ?? '')); ?></p>
                     </div>
                 <?php } else {
@@ -346,12 +346,12 @@ function em_wp_admin_variant_hub_render_page(array $config): void
                     if (is_callable($render_setup)) {
                         call_user_func($render_setup, $context, $options);
                     } else {
-                        em_wp_admin_variant_hub_render_coming_soon_setup($config, $context);
+                        em_site_admin_variant_hub_render_coming_soon_setup($config, $context);
                     }
                 } ?>
             </div>
         </div>
-        <?php em_wp_admin_rubrique_close_section(); ?>
+        <?php em_site_admin_rubrique_close_section(); ?>
     </div>
     <?php
 }
@@ -359,21 +359,21 @@ function em_wp_admin_variant_hub_render_page(array $config): void
 /**
  * @param array<string, mixed> $config
  */
-function em_wp_admin_variant_hub_render_sidebar(array $config, string $selected_style_slug, string $active_style_slug): void
+function em_site_admin_variant_hub_render_sidebar(array $config, string $selected_style_slug, string $active_style_slug): void
 {
-    $definitions = em_wp_admin_variant_hub_style_definitions($config);
+    $definitions = em_site_admin_variant_hub_style_definitions($config);
     $module_slug = sanitize_key((string) ($config['module_slug'] ?? ''));
     $form_page_slug = $selected_style_slug !== '' && isset($definitions[$selected_style_slug])
         ? (string) ($definitions[$selected_style_slug]['page_slug'] ?? ($config['hub_menu_slug'] ?? ''))
         : (string) ($config['hub_menu_slug'] ?? '');
     ?>
-    <aside class="em-wp-admin-module-hub__sidebar">
-        <h2 class="em-wp-admin-module-hub__title"><?php echo esc_html((string) ($config['sidebar_title'] ?? '')); ?></h2>
+    <aside class="em-site-admin-module-hub__sidebar">
+        <h2 class="em-site-admin-module-hub__title"><?php echo esc_html((string) ($config['sidebar_title'] ?? '')); ?></h2>
 
         <?php if ($definitions === []) { ?>
-            <p class="em-wp-admin-module-hub__empty-note"><?php echo esc_html((string) ($config['empty_variants_message'] ?? '')); ?></p>
+            <p class="em-site-admin-module-hub__empty-note"><?php echo esc_html((string) ($config['empty_variants_message'] ?? '')); ?></p>
         <?php } else { ?>
-            <ul class="em-wp-admin-module-hub__list">
+            <ul class="em-site-admin-module-hub__list">
                 <?php foreach ($definitions as $style_slug => $definition) {
                     $page_slug = (string) ($definition['page_slug'] ?? '');
                     $label = (string) ($definition['label'] ?? $style_slug);
@@ -382,25 +382,25 @@ function em_wp_admin_variant_hub_render_sidebar(array $config, string $selected_
                     $item_url = add_query_arg(['page' => $page_slug], admin_url('admin.php'));
                     $item_label = sprintf((string) ($config['item_label_pattern'] ?? '%s'), $label);
                     ?>
-                    <li class="em-wp-admin-module-hub__list-item<?php echo $is_selected ? ' is-selected' : ''; ?><?php echo $is_active ? ' is-active' : ''; ?>">
-                        <a class="em-wp-admin-module-hub__list-link" href="<?php echo esc_url($item_url); ?>">
-                            <span class="em-wp-admin-module-hub__list-label"><?php echo esc_html($item_label); ?></span>
+                    <li class="em-site-admin-module-hub__list-item<?php echo $is_selected ? ' is-selected' : ''; ?><?php echo $is_active ? ' is-active' : ''; ?>">
+                        <a class="em-site-admin-module-hub__list-link" href="<?php echo esc_url($item_url); ?>">
+                            <span class="em-site-admin-module-hub__list-label"><?php echo esc_html($item_label); ?></span>
                             <?php if ($is_active) { ?>
-                                <span class="em-wp-admin-module-hub__badge em-wp-admin-module-hub__badge--active"><?php esc_html_e('Actif', 'em-wp'); ?></span>
+                                <span class="em-site-admin-module-hub__badge em-site-admin-module-hub__badge--active"><?php esc_html_e('Actif', 'em-site'); ?></span>
                             <?php } ?>
                         </a>
                     </li>
                 <?php } ?>
             </ul>
 
-            <form class="em-wp-admin-module-hub__active-form" method="post" action="<?php echo esc_url(em_wp_admin_module_form_action($form_page_slug)); ?>">
-                <?php em_wp_admin_render_form_save_fields($module_slug . '-active', 'em_wp_' . $module_slug . '_active_save'); ?>
-                <fieldset class="em-wp-admin-module-hub__active-fieldset">
+            <form class="em-site-admin-module-hub__active-form" method="post" action="<?php echo esc_url(em_site_admin_module_form_action($form_page_slug)); ?>">
+                <?php em_site_admin_render_form_save_fields($module_slug . '-active', 'em_site_' . $module_slug . '_active_save'); ?>
+                <fieldset class="em-site-admin-module-hub__active-fieldset">
                     <legend><?php echo esc_html((string) ($config['active_legend'] ?? '')); ?></legend>
                     <?php foreach ($definitions as $style_slug => $definition) {
                         $label = (string) ($definition['label'] ?? $style_slug);
                         ?>
-                        <label class="em-wp-admin-module-hub__active-option">
+                        <label class="em-site-admin-module-hub__active-option">
                             <input type="radio" name="<?php echo esc_attr((string) ($config['active_option'] ?? '')); ?>" value="<?php echo esc_attr($style_slug); ?>" <?php checked($active_style_slug, $style_slug); ?>>
                             <span><?php echo esc_html($label); ?></span>
                         </label>
@@ -417,28 +417,28 @@ function em_wp_admin_variant_hub_render_sidebar(array $config, string $selected_
  * @param array<string, mixed> $config
  * @param array<string, mixed> $context
  */
-function em_wp_admin_variant_hub_render_coming_soon_setup(array $config, array $context): void
+function em_site_admin_variant_hub_render_coming_soon_setup(array $config, array $context): void
 {
     $variant_label = strtoupper((string) ($context['label'] ?? ''));
-    $module_class = 'em-wp-' . sanitize_html_class((string) ($config['module_slug'] ?? 'module')) . '-admin';
+    $module_class = 'em-site-' . sanitize_html_class((string) ($config['module_slug'] ?? 'module')) . '-admin';
     ?>
     <div class="<?php echo esc_attr($module_class . '__setup'); ?>">
-        <div class="<?php echo esc_attr($module_class . '__setup-header'); ?> em-wp-admin-module__hero">
+        <div class="<?php echo esc_attr($module_class . '__setup-header'); ?> em-site-admin-module__hero">
             <div>
-                <p class="em-wp-admin-module__eyebrow"><?php echo esc_html((string) ($config['eyebrow'] ?? '')); ?></p>
-                <h2 class="em-wp-admin-module__title">
+                <p class="em-site-admin-module__eyebrow"><?php echo esc_html((string) ($config['eyebrow'] ?? '')); ?></p>
+                <h2 class="em-site-admin-module__title">
                     <?php echo esc_html(sprintf('%s - %s', (string) ($config['hub_title'] ?? ''), $variant_label)); ?>
                 </h2>
             </div>
         </div>
 
-        <div class="em-wp-rubrique-soon__panel">
-            <p class="em-wp-rubrique-soon__message">
-                <?php echo esc_html((string) ($config['setup_coming_soon_message'] ?? __('Module en cours de développement. La configuration sera disponible prochainement.', 'em-wp'))); ?>
+        <div class="em-site-rubrique-soon__panel">
+            <p class="em-site-rubrique-soon__message">
+                <?php echo esc_html((string) ($config['setup_coming_soon_message'] ?? __('Module en cours de développement. La configuration sera disponible prochainement.', 'em-site'))); ?>
             </p>
             <p>
-                <a class="button button-secondary" href="<?php echo esc_url(admin_url('admin.php?page=' . em_wp_admin_rubriques_page_slug())); ?>">
-                    <?php esc_html_e('← Retour au sommaire', 'em-wp'); ?>
+                <a class="button button-secondary" href="<?php echo esc_url(admin_url('admin.php?page=' . em_site_admin_rubriques_page_slug())); ?>">
+                    <?php esc_html_e('← Retour au sommaire', 'em-site'); ?>
                 </a>
             </p>
         </div>

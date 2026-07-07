@@ -2,7 +2,7 @@
 /**
  * Options et sanitization du module Slider (admin).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 /**
  * Valeurs par defaut du module Slider.
  */
-function em_wp_slider_default_options(string $style_slug = 'mayami'): array
+function em_site_slider_default_options(string $style_slug = 'mayami'): array
 {
-    $footer_title = __('MAYAMI, MY MIAMI', 'em-wp');
+    $footer_title = __('MAYAMI, MY MIAMI', 'em-site');
 
     return [
         'enabled'             => true,
@@ -25,39 +25,39 @@ function em_wp_slider_default_options(string $style_slug = 'mayami'): array
         'tapes_color'         => '#39c7ca',
         'footer_title'        => $footer_title,
         'slider_title_hidden' => false,
-        'slides'              => [em_wp_slider_default_slide()],
+        'slides'              => [em_site_slider_default_slide()],
     ];
 }
 
 /**
  * Retourne les options Slider normalisees.
  */
-function em_wp_slider_get_options(string $style_slug = 'slider-mayami-default'): array
+function em_site_slider_get_options(string $style_slug = 'slider-mayami-default'): array
 {
-    if (function_exists('em_wp_slider_normalize_catalog_slug')) {
-        $style_slug = em_wp_slider_normalize_catalog_slug($style_slug);
+    if (function_exists('em_site_slider_normalize_catalog_slug')) {
+        $style_slug = em_site_slider_normalize_catalog_slug($style_slug);
     }
 
-    $saved = get_option(em_wp_slider_option_name($style_slug), []);
+    $saved = get_option(em_site_slider_option_name($style_slug), []);
 
     if ($style_slug === 'slider-mayami-default' && empty($saved)) {
-        $saved = get_option('em_wp_slider_mayami_options', []);
+        $saved = get_option('em_site_slider_mayami_options', []);
     }
 
     if ($style_slug === 'slider-mayami-default' && empty($saved)) {
-        $saved = get_option('em_wp_slider_options', []);
+        $saved = get_option('em_site_slider_options', []);
     }
 
     if (!is_array($saved)) {
         $saved = [];
     }
 
-    $defaults = em_wp_slider_default_options($style_slug);
+    $defaults = em_site_slider_default_options($style_slug);
     unset($defaults['slides']);
 
     $merged = wp_parse_args($saved, $defaults);
-    $merged = em_wp_slider_migrate_legacy_options($merged);
-    $merged['slides'] = em_wp_slider_get_slides_list($merged);
+    $merged = em_site_slider_migrate_legacy_options($merged);
+    $merged['slides'] = em_site_slider_get_slides_list($merged);
 
     return $merged;
 }
@@ -67,9 +67,9 @@ function em_wp_slider_get_options(string $style_slug = 'slider-mayami-default'):
  *
  * @param mixed $input
  */
-function em_wp_slider_sanitize_options_for_style($input, string $style_slug): array
+function em_site_slider_sanitize_options_for_style($input, string $style_slug): array
 {
-    $existing = em_wp_slider_get_options($style_slug);
+    $existing = em_site_slider_get_options($style_slug);
 
     if (!is_array($input)) {
         return $existing;
@@ -81,8 +81,8 @@ function em_wp_slider_sanitize_options_for_style($input, string $style_slug): ar
     $tapes_color = sanitize_hex_color($input['tapes_color'] ?? '');
     $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
 
-    if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
-        em_wp_admin_sync_rubrique_visibility_from_post('slider');
+    if (function_exists('em_site_admin_sync_rubrique_visibility_from_post')) {
+        em_site_admin_sync_rubrique_visibility_from_post('slider');
     }
 
     return [
@@ -103,7 +103,7 @@ function em_wp_slider_sanitize_options_for_style($input, string $style_slug): ar
         'footer_title'        => sanitize_text_field($input['footer_title'] ?? ($existing['footer_title'] ?? '')),
         'slider_title_hidden' => !empty($input['slider_title_hidden']),
         'slides'              => isset($input['slides']) && is_array($input['slides'])
-            ? em_wp_slider_sanitize_slides_from_input($input['slides'])
+            ? em_site_slider_sanitize_slides_from_input($input['slides'])
             : $existing['slides'],
     ];
 }

@@ -2,7 +2,7 @@
 /**
  * Persistance serveur des brouillons wizard (user meta).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,16 +12,16 @@ if (!defined('ABSPATH')) {
 /**
  * Clé user meta des brouillons wizard.
  */
-function em_wp_template_wizard_drafts_meta_key(): string
+function em_site_template_wizard_drafts_meta_key(): string
 {
-    return 'em_wp_template_wizard_drafts';
+    return 'em_site_template_wizard_drafts';
 }
 
 /**
  * @param mixed $raw
  * @return array{drafts: array<int, array<string, mixed>>}
  */
-function em_wp_template_wizard_drafts_normalize_store(mixed $raw): array
+function em_site_template_wizard_drafts_normalize_store(mixed $raw): array
 {
     if (!is_array($raw)) {
         return ['drafts' => []];
@@ -37,7 +37,7 @@ function em_wp_template_wizard_drafts_normalize_store(mixed $raw): array
 /**
  * @return array<int, array<string, mixed>>
  */
-function em_wp_template_wizard_drafts_get_all(): array
+function em_site_template_wizard_drafts_get_all(): array
 {
     $user_id = get_current_user_id();
 
@@ -45,8 +45,8 @@ function em_wp_template_wizard_drafts_get_all(): array
         return [];
     }
 
-    $store = em_wp_template_wizard_drafts_normalize_store(
-        get_user_meta($user_id, em_wp_template_wizard_drafts_meta_key(), true)
+    $store = em_site_template_wizard_drafts_normalize_store(
+        get_user_meta($user_id, em_site_template_wizard_drafts_meta_key(), true)
     );
 
     return $store['drafts'];
@@ -55,7 +55,7 @@ function em_wp_template_wizard_drafts_get_all(): array
 /**
  * @return array<string, mixed>|null
  */
-function em_wp_template_wizard_draft_get(string $draft_id): ?array
+function em_site_template_wizard_draft_get(string $draft_id): ?array
 {
     $draft_id = sanitize_key($draft_id);
 
@@ -63,7 +63,7 @@ function em_wp_template_wizard_draft_get(string $draft_id): ?array
         return null;
     }
 
-    foreach (em_wp_template_wizard_drafts_get_all() as $draft) {
+    foreach (em_site_template_wizard_drafts_get_all() as $draft) {
         if (sanitize_key((string) ($draft['id'] ?? '')) === $draft_id) {
             return $draft;
         }
@@ -76,12 +76,12 @@ function em_wp_template_wizard_draft_get(string $draft_id): ?array
  * @param array<string, mixed> $raw
  * @return array<string, mixed>|WP_Error
  */
-function em_wp_template_wizard_draft_sanitize_snapshot(array $raw): array|WP_Error
+function em_site_template_wizard_draft_sanitize_snapshot(array $raw): array|WP_Error
 {
     $label = sanitize_text_field((string) ($raw['label'] ?? ''));
 
     if ($label === '') {
-        return new WP_Error('em_wp_wizard_draft_no_label', __('Le nom du brouillon est requis.', 'em-wp'));
+        return new WP_Error('em_site_wizard_draft_no_label', __('Le nom du brouillon est requis.', 'em-site'));
     }
 
     $id = sanitize_key((string) ($raw['id'] ?? ''));
@@ -110,7 +110,7 @@ function em_wp_template_wizard_draft_sanitize_snapshot(array $raw): array|WP_Err
     $validated = $raw['validatedActions'] ?? [];
 
     if ($inner !== null && !is_array($inner)) {
-        return new WP_Error('em_wp_wizard_draft_invalid', __('Données du brouillon invalides.', 'em-wp'));
+        return new WP_Error('em_site_wizard_draft_invalid', __('Données du brouillon invalides.', 'em-site'));
     }
 
     if (!is_array($validated)) {
@@ -132,22 +132,22 @@ function em_wp_template_wizard_draft_sanitize_snapshot(array $raw): array|WP_Err
  * @param array<string, mixed> $snapshot
  * @return array<string, mixed>|WP_Error
  */
-function em_wp_template_wizard_draft_save(array $snapshot): array|WP_Error
+function em_site_template_wizard_draft_save(array $snapshot): array|WP_Error
 {
     $user_id = get_current_user_id();
 
     if ($user_id <= 0) {
-        return new WP_Error('em_wp_wizard_draft_no_user', __('Utilisateur non connecté.', 'em-wp'));
+        return new WP_Error('em_site_wizard_draft_no_user', __('Utilisateur non connecté.', 'em-site'));
     }
 
-    $clean = em_wp_template_wizard_draft_sanitize_snapshot($snapshot);
+    $clean = em_site_template_wizard_draft_sanitize_snapshot($snapshot);
 
     if (is_wp_error($clean)) {
         return $clean;
     }
 
-    $store = em_wp_template_wizard_drafts_normalize_store(
-        get_user_meta($user_id, em_wp_template_wizard_drafts_meta_key(), true)
+    $store = em_site_template_wizard_drafts_normalize_store(
+        get_user_meta($user_id, em_site_template_wizard_drafts_meta_key(), true)
     );
     $drafts = $store['drafts'];
     $index = -1;
@@ -185,7 +185,7 @@ function em_wp_template_wizard_draft_save(array $snapshot): array|WP_Error
 
     update_user_meta(
         $user_id,
-        em_wp_template_wizard_drafts_meta_key(),
+        em_site_template_wizard_drafts_meta_key(),
         ['drafts' => array_values($drafts)]
     );
 
@@ -195,7 +195,7 @@ function em_wp_template_wizard_draft_save(array $snapshot): array|WP_Error
 /**
  * @return bool
  */
-function em_wp_template_wizard_draft_delete(string $draft_id): bool
+function em_site_template_wizard_draft_delete(string $draft_id): bool
 {
     $user_id = get_current_user_id();
     $draft_id = sanitize_key($draft_id);
@@ -204,8 +204,8 @@ function em_wp_template_wizard_draft_delete(string $draft_id): bool
         return false;
     }
 
-    $store = em_wp_template_wizard_drafts_normalize_store(
-        get_user_meta($user_id, em_wp_template_wizard_drafts_meta_key(), true)
+    $store = em_site_template_wizard_drafts_normalize_store(
+        get_user_meta($user_id, em_site_template_wizard_drafts_meta_key(), true)
     );
     $before = count($store['drafts']);
 
@@ -220,18 +220,18 @@ function em_wp_template_wizard_draft_delete(string $draft_id): bool
         return false;
     }
 
-    return update_user_meta($user_id, em_wp_template_wizard_drafts_meta_key(), $store) !== false;
+    return update_user_meta($user_id, em_site_template_wizard_drafts_meta_key(), $store) !== false;
 }
 
 /**
  * AJAX — enregistrer un brouillon wizard.
  */
-function em_wp_ajax_template_wizard_save_draft(): void
+function em_site_ajax_template_wizard_save_draft(): void
 {
-    check_ajax_referer('em_wp_template_wizard_draft', 'nonce');
+    check_ajax_referer('em_site_template_wizard_draft', 'nonce');
 
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => __('Accès refusé.', 'em-wp')], 403);
+        wp_send_json_error(['message' => __('Accès refusé.', 'em-site')], 403);
     }
 
     // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -239,10 +239,10 @@ function em_wp_ajax_template_wizard_save_draft(): void
     $snapshot = json_decode(wp_unslash($raw), true);
 
     if (!is_array($snapshot)) {
-        wp_send_json_error(['message' => __('Données du brouillon invalides.', 'em-wp')], 400);
+        wp_send_json_error(['message' => __('Données du brouillon invalides.', 'em-site')], 400);
     }
 
-    $saved = em_wp_template_wizard_draft_save($snapshot);
+    $saved = em_site_template_wizard_draft_save($snapshot);
 
     if (is_wp_error($saved)) {
         wp_send_json_error(['message' => $saved->get_error_message()], 400);
@@ -250,35 +250,35 @@ function em_wp_ajax_template_wizard_save_draft(): void
 
     wp_send_json_success([
         'draft'  => $saved,
-        'drafts' => em_wp_template_wizard_drafts_get_all(),
+        'drafts' => em_site_template_wizard_drafts_get_all(),
     ]);
 }
-add_action('wp_ajax_em_wp_template_wizard_save_draft', 'em_wp_ajax_template_wizard_save_draft');
+add_action('wp_ajax_em_site_template_wizard_save_draft', 'em_site_ajax_template_wizard_save_draft');
 
 /**
  * AJAX — supprimer un brouillon wizard.
  */
-function em_wp_ajax_template_wizard_delete_draft(): void
+function em_site_ajax_template_wizard_delete_draft(): void
 {
-    check_ajax_referer('em_wp_template_wizard_draft', 'nonce');
+    check_ajax_referer('em_site_template_wizard_draft', 'nonce');
 
     if (!current_user_can('manage_options')) {
-        wp_send_json_error(['message' => __('Accès refusé.', 'em-wp')], 403);
+        wp_send_json_error(['message' => __('Accès refusé.', 'em-site')], 403);
     }
 
     // phpcs:ignore WordPress.Security.NonceVerification.Missing
     $draft_id = sanitize_key((string) ($_POST['draft_id'] ?? ''));
 
     if ($draft_id === '') {
-        wp_send_json_error(['message' => __('Brouillon introuvable.', 'em-wp')], 400);
+        wp_send_json_error(['message' => __('Brouillon introuvable.', 'em-site')], 400);
     }
 
-    if (!em_wp_template_wizard_draft_delete($draft_id)) {
-        wp_send_json_error(['message' => __('Impossible de supprimer le brouillon.', 'em-wp')], 400);
+    if (!em_site_template_wizard_draft_delete($draft_id)) {
+        wp_send_json_error(['message' => __('Impossible de supprimer le brouillon.', 'em-site')], 400);
     }
 
     wp_send_json_success([
-        'drafts' => em_wp_template_wizard_drafts_get_all(),
+        'drafts' => em_site_template_wizard_drafts_get_all(),
     ]);
 }
-add_action('wp_ajax_em_wp_template_wizard_delete_draft', 'em_wp_ajax_template_wizard_delete_draft');
+add_action('wp_ajax_em_site_template_wizard_delete_draft', 'em_site_ajax_template_wizard_delete_draft');

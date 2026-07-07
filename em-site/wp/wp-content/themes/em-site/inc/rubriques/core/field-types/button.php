@@ -1,6 +1,6 @@
 <?php
 /**
- * Helpers du champ « Bouton » (V4).
+ * Helpers du champ « Bouton » (EM-SITE).
  *
  * Le type « button » reste enregistré dans builtin.php ; seules les fonctions de
  * décodage/sanitisation vivent ici (fichier dédié pour rester sous 300 lignes).
@@ -8,7 +8,7 @@
  * Valeur stockée (JSON) : { link, bg, text, ml, mr, shape, anim, radius }. Forme,
  * animation et arrondi réutilisent les options/ helpers du Badge animé (badge.php).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -24,7 +24,7 @@ if (!defined('ABSPATH')) {
  * @param mixed $value
  * @return array{link:string, bg:string, text:string, ml:int, mr:int, shape:string, anim:string, radius:int}
  */
-function em_wp_rubrique_button_value($value): array
+function em_site_rubrique_button_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -34,15 +34,15 @@ function em_wp_rubrique_button_value($value): array
 
     return [
         'link'   => (string) ($decoded['link'] ?? ''),
-        'bg'     => em_wp_field_sanitize_color((string) ($decoded['bg'] ?? '')),
-        'text'   => em_wp_field_sanitize_color((string) ($decoded['text'] ?? '')),
+        'bg'     => em_site_field_sanitize_color((string) ($decoded['bg'] ?? '')),
+        'text'   => em_site_field_sanitize_color((string) ($decoded['text'] ?? '')),
         'ml'     => max(0, (int) ($decoded['ml'] ?? 0)),
         'mr'     => max(0, (int) ($decoded['mr'] ?? 0)),
         // Forme / animation / arrondi : mêmes options que le Badge animé (helpers
         // mutualisés). Défaut « pill » + aucune animation pour ne rien changer aux
         // boutons existants.
-        'shape'  => em_wp_rubrique_badge_valid_shape((string) ($decoded['shape'] ?? 'pill')),
-        'anim'   => em_wp_rubrique_badge_valid_anim((string) ($decoded['anim'] ?? 'none')),
+        'shape'  => em_site_rubrique_badge_valid_shape((string) ($decoded['shape'] ?? 'pill')),
+        'anim'   => em_site_rubrique_badge_valid_anim((string) ($decoded['anim'] ?? 'none')),
         'radius' => max(0, min(40, (int) ($decoded['radius'] ?? 6))),
     ];
 }
@@ -52,9 +52,9 @@ function em_wp_rubrique_button_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_button($value): string
+function em_site_field_sanitize_button($value): string
 {
-    $parsed = em_wp_rubrique_button_value($value);
+    $parsed = em_site_rubrique_button_value($value);
     $link = esc_url_raw($parsed['link']);
 
     if ($link === '' && $parsed['bg'] === '' && $parsed['text'] === '' && $parsed['ml'] === 0 && $parsed['mr'] === 0) {

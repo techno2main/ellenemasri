@@ -2,7 +2,7 @@
 /**
  * Catalogue et listes front des plateformes stream.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,36 +14,36 @@ if (!defined('ABSPATH')) {
  *
  * @return array<string, array{label:string,icon:string,color:string}>
  */
-function em_wp_stream_platform_definitions(): array
+function em_site_stream_platform_definitions(): array
 {
     return [
         'spotify' => [
-            'label' => __('Spotify', 'em-wp'),
+            'label' => __('Spotify', 'em-site'),
             'icon'  => 'fa-spotify',
             'color' => '#1DB954',
         ],
         'apple-music' => [
-            'label' => __('Apple Music', 'em-wp'),
+            'label' => __('Apple Music', 'em-site'),
             'icon'  => 'fa-apple',
             'color' => '#FC3C44',
         ],
         'youtube-music' => [
-            'label' => __('YouTube Music', 'em-wp'),
+            'label' => __('YouTube Music', 'em-site'),
             'icon'  => 'fa-youtube',
             'color' => '#FF0000',
         ],
         'deezer' => [
-            'label' => __('Deezer', 'em-wp'),
+            'label' => __('Deezer', 'em-site'),
             'icon'  => 'fa-deezer',
             'color' => '#A238FF',
         ],
         'amazon-music' => [
-            'label' => __('Amazon Music', 'em-wp'),
+            'label' => __('Amazon Music', 'em-site'),
             'icon'  => 'fa-amazon',
             'color' => '#00A8E1',
         ],
         'soundcloud' => [
-            'label' => __('SoundCloud', 'em-wp'),
+            'label' => __('SoundCloud', 'em-site'),
             'icon'  => 'fa-soundcloud',
             'color' => '#FF5500',
         ],
@@ -55,11 +55,11 @@ function em_wp_stream_platform_definitions(): array
  *
  * @return array<string, array{label:string,icon:string}>
  */
-function em_wp_top_bar_stream_platform_definitions(): array
+function em_site_top_bar_stream_platform_definitions(): array
 {
     $definitions = [];
 
-    foreach (em_wp_stream_platform_definitions() as $slug => $definition) {
+    foreach (em_site_stream_platform_definitions() as $slug => $definition) {
         $definitions[$slug] = [
             'label' => (string) ($definition['label'] ?? $slug),
             'icon'  => (string) ($definition['icon'] ?? 'fa-link'),
@@ -70,7 +70,7 @@ function em_wp_top_bar_stream_platform_definitions(): array
 }
 
 /**
- * Plateformes actives pour la section STREAM (source : em_wp_stream_options.platforms).
+ * Plateformes actives pour la section STREAM (source : em_site_stream_options.platforms).
  *
  * @return array<int, array{
  *     slug:string,
@@ -84,12 +84,12 @@ function em_wp_top_bar_stream_platform_definitions(): array
  *     player_height:int
  * }>
  */
-function em_wp_get_stream_platforms_for_front(): array
+function em_site_get_stream_platforms_for_front(): array
 {
     $platforms = [];
 
-    foreach (em_wp_stream_get_platforms_list() as $link) {
-        $item = em_wp_stream_build_front_platform_item($link);
+    foreach (em_site_stream_get_platforms_list() as $link) {
+        $item = em_site_stream_build_front_platform_item($link);
         if ($item !== null) {
             $platforms[] = $item;
         }
@@ -103,11 +103,11 @@ function em_wp_get_stream_platforms_for_front(): array
  *
  * @return array<int, array{slug:string,label:string,icon:string}>
  */
-function em_wp_get_top_bar_stream_icons_for_front(): array
+function em_site_get_top_bar_stream_icons_for_front(): array
 {
-    $top_bar_options = function_exists('em_wp_top_bar_get_options_for_front')
-        ? em_wp_top_bar_get_options_for_front()
-        : (function_exists('em_wp_top_bar_get_options') ? em_wp_top_bar_get_options() : []);
+    $top_bar_options = function_exists('em_site_top_bar_get_options_for_front')
+        ? em_site_top_bar_get_options_for_front()
+        : (function_exists('em_site_top_bar_get_options') ? em_site_top_bar_get_options() : []);
 
     if (!empty($top_bar_options['stream_icons_hidden'])) {
         return [];
@@ -115,7 +115,7 @@ function em_wp_get_top_bar_stream_icons_for_front(): array
 
     $icons = [];
 
-    foreach (em_wp_get_stream_platforms_for_front() as $platform) {
+    foreach (em_site_get_stream_platforms_for_front() as $platform) {
         $icons[] = [
             'slug'  => (string) ($platform['slug'] ?? ''),
             'label' => (string) ($platform['label'] ?? ''),

@@ -2,82 +2,82 @@
 /**
  * Menu et assets admin Release.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-function em_wp_release_register_admin(): void
+function em_site_release_register_admin(): void
 {
     add_menu_page(
-        __('RELEASE', 'em-wp'),
-        __('RELEASE', 'em-wp'),
+        __('RELEASE', 'em-site'),
+        __('RELEASE', 'em-site'),
         'manage_options',
-        em_wp_release_page_slug(),
-        'em_wp_release_render_admin_page',
+        em_site_release_page_slug(),
+        'em_site_release_render_admin_page',
         'dashicons-album',
-        em_wp_admin_menu_position_for_site_module('release')
+        em_site_admin_menu_position_for_site_module('release')
     );
 }
-add_action('admin_menu', 'em_wp_release_register_admin');
+add_action('admin_menu', 'em_site_release_register_admin');
 
-function em_wp_release_remove_duplicate_submenu(): void
+function em_site_release_remove_duplicate_submenu(): void
 {
-    remove_submenu_page(em_wp_release_page_slug(), em_wp_release_page_slug());
+    remove_submenu_page(em_site_release_page_slug(), em_site_release_page_slug());
 }
-add_action('admin_menu', 'em_wp_release_remove_duplicate_submenu', 999);
+add_action('admin_menu', 'em_site_release_remove_duplicate_submenu', 999);
 
-function em_wp_release_admin_enqueue(string $hook_suffix): void
+function em_site_release_admin_enqueue(string $hook_suffix): void
 {
     unset($hook_suffix);
 
-    if (sanitize_key((string) ($_GET['page'] ?? '')) !== em_wp_release_page_slug()) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    if (sanitize_key((string) ($_GET['page'] ?? '')) !== em_site_release_page_slug()) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         return;
     }
 
-    em_wp_admin_enqueue_shared_assets();
-    em_wp_admin_enqueue_catalog_slug_switch_assets();
+    em_site_admin_enqueue_shared_assets();
+    em_site_admin_enqueue_catalog_slug_switch_assets();
 
     wp_enqueue_style(
-        'em-wp-header-admin',
+        'em-site-header-admin',
         get_template_directory_uri() . '/assets/admin/css/modules/header/header.css',
-        ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
-        em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
+        ['em-site-admin-module-common', 'em-site-admin-hub-cards'],
+        em_site_admin_asset_version('assets/admin/css/modules/header/header.css')
     );
 
     $theme_uri = get_template_directory_uri();
 
     wp_enqueue_style(
-        'em-wp-release-admin',
+        'em-site-release-admin',
         $theme_uri . '/assets/admin/css/modules/release/release.css',
-        ['em-wp-admin-module-common'],
-        em_wp_admin_asset_version('assets/admin/css/modules/release/release.css')
+        ['em-site-admin-module-common'],
+        em_site_admin_asset_version('assets/admin/css/modules/release/release.css')
     );
 
     wp_enqueue_script(
-        'em-wp-admin-slide-sortable',
+        'em-site-admin-slide-sortable',
         $theme_uri . '/assets/admin/shared/js/media/slide-sortable.js',
         [],
-        em_wp_admin_asset_version('assets/admin/shared/js/media/slide-sortable.js'),
+        em_site_admin_asset_version('assets/admin/shared/js/media/slide-sortable.js'),
         true
     );
 
     wp_enqueue_script(
-        'em-wp-release-admin',
+        'em-site-release-admin',
         $theme_uri . '/assets/admin/js/modules/release/release.js',
-        ['em-wp-admin-slide-sortable', 'em-wp-admin-accordion', 'em-wp-admin-confirm-modal'],
-        em_wp_admin_asset_version('assets/admin/js/modules/release/release.js'),
+        ['em-site-admin-slide-sortable', 'em-site-admin-accordion', 'em-site-admin-confirm-modal'],
+        em_site_admin_asset_version('assets/admin/js/modules/release/release.js'),
         true
     );
 
     wp_enqueue_script(
-        'em-wp-stream-admin',
+        'em-site-stream-admin',
         $theme_uri . '/assets/admin/js/modules/top-bar/top-bar.js',
-        ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker'],
-        em_wp_admin_asset_version('assets/admin/js/modules/top-bar/top-bar.js'),
+        ['jquery', 'wp-color-picker', 'em-site-admin-color-picker'],
+        em_site_admin_asset_version('assets/admin/js/modules/top-bar/top-bar.js'),
         true
     );
 }
-add_action('admin_enqueue_scripts', 'em_wp_release_admin_enqueue');
+add_action('admin_enqueue_scripts', 'em_site_release_admin_enqueue');

@@ -2,14 +2,14 @@
 /**
  * Section HEADER du squelette (composite HERO + SLIDER).
  *
- * HEADER n'est PAS une rubrique V4 : c'est une « section » du squelette qui
+ * HEADER n'est PAS une rubrique EM-SITE : c'est une « section » du squelette qui
  * compose une rubrique HERO et, optionnellement, une rubrique SLIDER (toutes
- * deux gérées comme des rubriques V4 indépendantes). Avant d'afficher les items
+ * deux gérées comme des rubriques EM-SITE indépendantes). Avant d'afficher les items
  * disponibles, l'admin choisit une MATRICE (HERO seul / HERO + SLIDER) et, si
  * les deux, leur POSITION. La configuration est persistée par template dans
- * l'option `em_wp_v4_header_<template>`.
+ * l'option `em_site_header_<template>`.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -19,29 +19,29 @@ if (!defined('ABSPATH')) {
 /**
  * Slug de la section HEADER dans le squelette.
  */
-function em_wp_admin_header_section_slug(): string
+function em_site_admin_header_section_slug(): string
 {
     return 'header';
 }
 
 /**
- * Slug du type de rubrique V4 jouant le rôle « hero » ou « slider ».
+ * Slug du type de rubrique EM-SITE jouant le rôle « hero » ou « slider ».
  *
  * Détecté dynamiquement parmi les types enregistrés (l'admin a pu les nommer
  * « hero »/« heros »/« slider »…). Renvoie '' si aucun type ne correspond.
  */
-function em_wp_admin_header_part_type_slug(string $keyword): string
+function em_site_admin_header_part_type_slug(string $keyword): string
 {
     $keyword = $keyword === 'slider' ? 'slider' : 'hero';
     $candidates = $keyword === 'hero'
         ? ['header', 'hero', 'heros']
         : ['sliders', 'slider'];
 
-    if (!function_exists('em_wp_rubrique_type_registry')) {
+    if (!function_exists('em_site_rubrique_type_registry')) {
         return (string) ($candidates[0] ?? '');
     }
 
-    $registry = em_wp_rubrique_type_registry();
+    $registry = em_site_rubrique_type_registry();
     $slugs = array_map('strval', array_keys($registry));
 
     // 1) Candidats explicites (compat historique), puis mot-clé exact.
@@ -79,15 +79,15 @@ function em_wp_admin_header_part_type_slug(string $keyword): string
 /**
  * Nom d'option de la config HEADER pour un template.
  */
-function em_wp_admin_header_section_option_name(string $template): string
+function em_site_admin_header_section_option_name(string $template): string
 {
-    return 'em_wp_v4_header_' . sanitize_key($template);
+    return 'em_site_header_' . sanitize_key($template);
 }
 
 /**
- * Type V4 dédié au catalogue des assemblages HEADER.
+ * Type EM-SITE dédié au catalogue des assemblages HEADER.
  */
-function em_wp_admin_header_catalog_type_slug(): string
+function em_site_admin_header_catalog_type_slug(): string
 {
     return 'headers';
 }
@@ -95,9 +95,9 @@ function em_wp_admin_header_catalog_type_slug(): string
 /**
  * Option dédiée à la config d'un item HEADER (assemblage HERO/SLIDER + fond).
  */
-function em_wp_admin_header_item_config_option_name(string $header_item_slug): string
+function em_site_admin_header_item_config_option_name(string $header_item_slug): string
 {
-    return 'em_wp_v4_header_item_cfg_' . sanitize_key($header_item_slug);
+    return 'em_site_header_item_cfg_' . sanitize_key($header_item_slug);
 }
 
 /**
@@ -105,7 +105,7 @@ function em_wp_admin_header_item_config_option_name(string $header_item_slug): s
  *
  * @return array<int,string>
  */
-function em_wp_admin_header_slug_variants(string $slug): array
+function em_site_admin_header_slug_variants(string $slug): array
 {
     $slug = sanitize_key($slug);
 
@@ -127,7 +127,7 @@ function em_wp_admin_header_slug_variants(string $slug): array
 /**
  * Libellé par défaut d'un item HEADER lié au template.
  */
-function em_wp_admin_header_default_item_label(string $template): string
+function em_site_admin_header_default_item_label(string $template): string
 {
     return strtoupper($template !== '' ? $template : 'DEFAULT');
 }
@@ -135,32 +135,32 @@ function em_wp_admin_header_default_item_label(string $template): string
 /**
  * S'assure qu'un item HEADER existe et que l'instance template `header` est valide.
  */
-function em_wp_admin_header_ensure_catalog_item(string $template): string
+function em_site_admin_header_ensure_catalog_item(string $template): string
 {
     $template = sanitize_key($template);
 
-    if ($template === '' || !function_exists('em_wp_v4_get_items') || !function_exists('em_wp_v4_register_item')) {
+    if ($template === '' || !function_exists('em_site_get_items') || !function_exists('em_site_register_item')) {
         return '';
     }
 
-    $type = em_wp_admin_header_catalog_type_slug();
-    $items = em_wp_v4_get_items($type);
+    $type = em_site_admin_header_catalog_type_slug();
+    $items = em_site_get_items($type);
 
     if ($items === []) {
-        $seed_slug = em_wp_v4_unique_item_slug($type, em_wp_v4_item_slug_base($type, 'header-' . $template));
-        em_wp_v4_register_item($type, $seed_slug, em_wp_admin_header_default_item_label($template));
-        $items = em_wp_v4_get_items($type);
+        $seed_slug = em_site_unique_item_slug($type, em_site_item_slug_base($type, 'header-' . $template));
+        em_site_register_item($type, $seed_slug, em_site_admin_header_default_item_label($template));
+        $items = em_site_get_items($type);
     }
 
-    $instance = function_exists('em_wp_v4_get_instance') ? em_wp_v4_get_instance($template, em_wp_admin_header_section_slug()) : [];
+    $instance = function_exists('em_site_get_instance') ? em_site_get_instance($template, em_site_admin_header_section_slug()) : [];
     $selected = sanitize_key((string) ($instance['item'] ?? ''));
 
     if ($selected === '' || !isset($items[$selected])) {
         $selected = (string) array_key_first($items);
-        if ($selected !== '' && function_exists('em_wp_v4_save_instance')) {
+        if ($selected !== '' && function_exists('em_site_save_instance')) {
             $instance['item'] = $selected;
             $instance['display_mode'] = sanitize_key((string) ($instance['display_mode'] ?? 'single')) === 'multi' ? 'multi' : 'single';
-            em_wp_v4_save_instance($template, em_wp_admin_header_section_slug(), $instance);
+            em_site_save_instance($template, em_site_admin_header_section_slug(), $instance);
         }
     }
 
@@ -170,14 +170,14 @@ function em_wp_admin_header_ensure_catalog_item(string $template): string
 /**
  * Empêche les labels du catalogue HEADER d'être strictement identiques.
  */
-function em_wp_admin_header_ensure_unique_catalog_labels(): void
+function em_site_admin_header_ensure_unique_catalog_labels(): void
 {
-    if (!function_exists('em_wp_v4_get_items') || !function_exists('em_wp_v4_save_items')) {
+    if (!function_exists('em_site_get_items') || !function_exists('em_site_save_items')) {
         return;
     }
 
-    $type = em_wp_admin_header_catalog_type_slug();
-    $items = em_wp_v4_get_items($type);
+    $type = em_site_admin_header_catalog_type_slug();
+    $items = em_site_get_items($type);
 
     if ($items === []) {
         return;
@@ -216,7 +216,7 @@ function em_wp_admin_header_ensure_unique_catalog_labels(): void
     }
 
     if ($changed) {
-        em_wp_v4_save_items($type, $items);
+        em_site_save_items($type, $items);
     }
 }
 
@@ -224,18 +224,18 @@ function em_wp_admin_header_ensure_unique_catalog_labels(): void
  * Migration one-shot: remplace le préfixe legacy `headers-` par `header-`.
  *
  * Exemple: `headers-header-mayami` -> `header-mayami`.
- * La config item dédiée (`em_wp_v4_header_item_cfg_*`) est déplacée aussi.
+ * La config item dédiée (`em_site_header_item_cfg_*`) est déplacée aussi.
  */
-function em_wp_admin_header_maybe_migrate_headers_slug_prefix(): void
+function em_site_admin_header_maybe_migrate_headers_slug_prefix(): void
 {
-    $flag = 'em_wp_v4_header_slug_prefix_migrated_v1';
+    $flag = 'em_site_header_slug_prefix_migrated_v1';
 
-    if (!function_exists('em_wp_v4_get_items') || !function_exists('em_wp_v4_rename_item')) {
+    if (!function_exists('em_site_get_items') || !function_exists('em_site_rename_item')) {
         return;
     }
 
-    $type = em_wp_admin_header_catalog_type_slug();
-    $items = em_wp_v4_get_items($type);
+    $type = em_site_admin_header_catalog_type_slug();
+    $items = em_site_get_items($type);
 
     $has_legacy = false;
     foreach (array_keys($items) as $slug) {
@@ -262,30 +262,30 @@ function em_wp_admin_header_maybe_migrate_headers_slug_prefix(): void
             continue;
         }
 
-        $old_cfg_raw = get_option(em_wp_admin_header_item_config_option_name($item_slug), null);
-        $result = em_wp_v4_rename_item($type, $item_slug, $item_label);
+        $old_cfg_raw = get_option(em_site_admin_header_item_config_option_name($item_slug), null);
+        $result = em_site_rename_item($type, $item_slug, $item_label);
         $new_slug = sanitize_key((string) ($result['item'] ?? ''));
 
         // Rename avec conservation explicite de la config HEADER dédiée.
         if ($new_slug !== '' && $new_slug !== $item_slug) {
-            $new_cfg_option = em_wp_admin_header_item_config_option_name($new_slug);
+            $new_cfg_option = em_site_admin_header_item_config_option_name($new_slug);
             if (is_array($old_cfg_raw) && get_option($new_cfg_option, null) === null) {
-                update_option($new_cfg_option, em_wp_admin_header_item_config_normalize($old_cfg_raw), false);
+                update_option($new_cfg_option, em_site_admin_header_item_config_normalize($old_cfg_raw), false);
             }
-            delete_option(em_wp_admin_header_item_config_option_name($item_slug));
+            delete_option(em_site_admin_header_item_config_option_name($item_slug));
         }
     }
 
     update_option($flag, '1', false);
 }
-add_action('admin_init', 'em_wp_admin_header_maybe_migrate_headers_slug_prefix', 12);
+add_action('admin_init', 'em_site_admin_header_maybe_migrate_headers_slug_prefix', 12);
 
 /**
  * Config par défaut d'un item HEADER.
  *
  * @return array{matrix:string,position:string,hero:string,slider:string,ratio:string,appearance:array<string,mixed>}
  */
-function em_wp_admin_header_item_config_defaults(): array
+function em_site_admin_header_item_config_defaults(): array
 {
     return [
         'matrix'     => 'hero_slider',
@@ -293,7 +293,7 @@ function em_wp_admin_header_item_config_defaults(): array
         'hero'       => '',
         'slider'     => '',
         'ratio'      => '75-25',
-        'appearance' => em_wp_admin_header_appearance_defaults(),
+        'appearance' => em_site_admin_header_appearance_defaults(),
     ];
 }
 
@@ -303,9 +303,9 @@ function em_wp_admin_header_item_config_defaults(): array
  * @param array<string, mixed> $raw
  * @return array{matrix:string,position:string,hero:string,slider:string,ratio:string,appearance:array<string,mixed>}
  */
-function em_wp_admin_header_item_config_normalize(array $raw): array
+function em_site_admin_header_item_config_normalize(array $raw): array
 {
-    $defaults = em_wp_admin_header_item_config_defaults();
+    $defaults = em_site_admin_header_item_config_defaults();
     $hero_value = (string) ($raw['hero'] ?? ($raw['hero_slug'] ?? ''));
     $slider_value = (string) ($raw['slider'] ?? ($raw['slider_slug'] ?? ''));
     $position_value = (string) ($raw['position'] ?? ($raw['layout'] ?? 'hero_left'));
@@ -320,7 +320,7 @@ function em_wp_admin_header_item_config_normalize(array $raw): array
         }
     }
     $ratio = sanitize_key((string) ($raw['ratio'] ?? $defaults['ratio']));
-    if (!isset(em_wp_admin_header_ratio_choices()[$ratio])) {
+    if (!isset(em_site_admin_header_ratio_choices()[$ratio])) {
         $ratio = (string) $defaults['ratio'];
     }
 
@@ -332,7 +332,7 @@ function em_wp_admin_header_item_config_normalize(array $raw): array
         'hero'       => sanitize_key($hero_value),
         'slider'     => sanitize_key($slider_value),
         'ratio'      => $ratio,
-        'appearance' => em_wp_admin_header_appearance_normalize(is_array($raw['appearance'] ?? null) ? $raw['appearance'] : []),
+        'appearance' => em_site_admin_header_appearance_normalize(is_array($raw['appearance'] ?? null) ? $raw['appearance'] : []),
     ];
 }
 
@@ -341,20 +341,20 @@ function em_wp_admin_header_item_config_normalize(array $raw): array
  *
  * @return array{matrix:string,position:string,hero:string,slider:string,ratio:string,appearance:array<string,mixed>}
  */
-function em_wp_admin_header_item_config_get(string $header_item_slug): array
+function em_site_admin_header_item_config_get(string $header_item_slug): array
 {
     $header_item_slug = sanitize_key($header_item_slug);
 
     if ($header_item_slug === '') {
-        return em_wp_admin_header_item_config_defaults();
+        return em_site_admin_header_item_config_defaults();
     }
 
     $raw = [];
     $best_score = -1;
-    foreach (em_wp_admin_header_slug_variants($header_item_slug) as $candidate_slug) {
-        $candidate_raw = get_option(em_wp_admin_header_item_config_option_name($candidate_slug), []);
+    foreach (em_site_admin_header_slug_variants($header_item_slug) as $candidate_slug) {
+        $candidate_raw = get_option(em_site_admin_header_item_config_option_name($candidate_slug), []);
         if (is_array($candidate_raw) && $candidate_raw !== []) {
-            $candidate_norm = em_wp_admin_header_item_config_normalize($candidate_raw);
+            $candidate_norm = em_site_admin_header_item_config_normalize($candidate_raw);
             $score = 0;
             if (($candidate_norm['hero'] ?? '') !== '') {
                 $score += 1;
@@ -372,7 +372,7 @@ function em_wp_admin_header_item_config_get(string $header_item_slug): array
         }
     }
 
-    return em_wp_admin_header_item_config_normalize($raw);
+    return em_site_admin_header_item_config_normalize($raw);
 }
 
 /**
@@ -380,7 +380,7 @@ function em_wp_admin_header_item_config_get(string $header_item_slug): array
  *
  * @param array<string, mixed> $config
  */
-function em_wp_admin_header_item_config_save(string $header_item_slug, array $config): void
+function em_site_admin_header_item_config_save(string $header_item_slug, array $config): void
 {
     $header_item_slug = sanitize_key($header_item_slug);
 
@@ -388,49 +388,49 @@ function em_wp_admin_header_item_config_save(string $header_item_slug, array $co
         return;
     }
 
-    $normalized = em_wp_admin_header_item_config_normalize($config);
-    update_option(em_wp_admin_header_item_config_option_name($header_item_slug), $normalized, false);
+    $normalized = em_site_admin_header_item_config_normalize($config);
+    update_option(em_site_admin_header_item_config_option_name($header_item_slug), $normalized, false);
 
-    foreach (em_wp_admin_header_slug_variants($header_item_slug) as $candidate_slug) {
+    foreach (em_site_admin_header_slug_variants($header_item_slug) as $candidate_slug) {
         if ($candidate_slug === $header_item_slug) {
             continue;
         }
-        delete_option(em_wp_admin_header_item_config_option_name($candidate_slug));
+        delete_option(em_site_admin_header_item_config_option_name($candidate_slug));
     }
 }
 
 /**
  * Migration douce: ancienne config template unique -> item HEADER dédié.
  */
-function em_wp_admin_header_maybe_migrate_legacy_template_config(string $template): void
+function em_site_admin_header_maybe_migrate_legacy_template_config(string $template): void
 {
     $template = sanitize_key($template);
 
-    if ($template === '' || !function_exists('em_wp_v4_register_item')) {
+    if ($template === '' || !function_exists('em_site_register_item')) {
         return;
     }
 
-    $flag_option = 'em_wp_v4_header_migrated_' . $template;
+    $flag_option = 'em_site_header_migrated_' . $template;
     if (get_option($flag_option, false)) {
         return;
     }
 
-    $legacy = get_option(em_wp_admin_header_section_option_name($template), null);
-    $selected_item = em_wp_admin_header_ensure_catalog_item($template);
+    $legacy = get_option(em_site_admin_header_section_option_name($template), null);
+    $selected_item = em_site_admin_header_ensure_catalog_item($template);
 
     if (is_array($legacy) && $legacy !== []) {
         if ($selected_item === '') {
-            $selected_item = em_wp_admin_header_ensure_catalog_item($template);
+            $selected_item = em_site_admin_header_ensure_catalog_item($template);
         }
 
-        $instance = function_exists('em_wp_v4_get_instance') ? em_wp_v4_get_instance($template, em_wp_admin_header_section_slug()) : [];
+        $instance = function_exists('em_site_get_instance') ? em_site_get_instance($template, em_site_admin_header_section_slug()) : [];
         $instance['item'] = $selected_item;
         $instance['display_mode'] = sanitize_key((string) ($legacy['display_mode'] ?? 'single')) === 'multi' ? 'multi' : 'single';
-        if (function_exists('em_wp_v4_save_instance')) {
-            em_wp_v4_save_instance($template, em_wp_admin_header_section_slug(), $instance);
+        if (function_exists('em_site_save_instance')) {
+            em_site_save_instance($template, em_site_admin_header_section_slug(), $instance);
         }
 
-        em_wp_admin_header_item_config_save($selected_item, [
+        em_site_admin_header_item_config_save($selected_item, [
             'matrix'     => ($legacy['matrix'] ?? '') === 'hero_slider' ? 'hero_slider' : 'hero',
             'position'   => ($legacy['position'] ?? '') === 'slider_left' ? 'slider_left' : 'hero_left',
             'hero'       => sanitize_key((string) ($legacy['hero'] ?? '')),
@@ -448,7 +448,7 @@ function em_wp_admin_header_maybe_migrate_legacy_template_config(string $templat
  *
  * @return array<string, string>
  */
-function em_wp_admin_header_ratio_choices(): array
+function em_site_admin_header_ratio_choices(): array
 {
     return [
         '75-25' => '75 / 25',
@@ -464,9 +464,9 @@ function em_wp_admin_header_ratio_choices(): array
  * EXACTEMENT comme la hero-row du SITE (landing.css :
  * minmax(0,640px) minmax(320px,430px)) : le SLIDER (téléphone) garde sa largeur
  * native bornée (320–430px) et sa hauteur native (610px), le HERO prend le reste
- * (plafond variant selon le ratio). Le front de l'aperçu V4 = le vrai site.
+ * (plafond variant selon le ratio). Le front de l'aperçu EM-SITE = le vrai site.
  */
-function em_wp_admin_header_ratio_columns(string $ratio, bool $slider_left): string
+function em_site_admin_header_ratio_columns(string $ratio, bool $slider_left): string
 {
     $hero_max = ['75-25' => 1000, '70-30' => 860, '60-40' => 640, '50-50' => 430];
     $hmax = $hero_max[$ratio] ?? 640;
@@ -484,7 +484,7 @@ function em_wp_admin_header_ratio_columns(string $ratio, bool $slider_left): str
  *
  * @return array<string, mixed>
  */
-function em_wp_admin_header_appearance_defaults(): array
+function em_site_admin_header_appearance_defaults(): array
 {
     // Valeurs par défaut calquées sur le rendu du site (modules/header/admin-preview-render-header.css) :
     // fond orange via le repli CSS (.em-header-shell, FOND laissé vide), image de
@@ -508,7 +508,7 @@ function em_wp_admin_header_appearance_defaults(): array
  * @param array<string, mixed> $raw
  * @return array<string, mixed>
  */
-function em_wp_admin_header_appearance_normalize(array $raw): array
+function em_site_admin_header_appearance_normalize(array $raw): array
 {
     $bg = sanitize_hex_color((string) ($raw['bg'] ?? ''));
 
@@ -531,12 +531,12 @@ function em_wp_admin_header_appearance_normalize(array $raw): array
  *
  * @return array{display_mode:string,transition_mode:string,transition_timer:int,first_item:string,hidden_items:array<int,string>,header_item:string,matrix:string,position:string,hero:string,slider:string,ratio:string,appearance:array<string,mixed>}
  */
-function em_wp_admin_header_section_get(string $template): array
+function em_site_admin_header_section_get(string $template): array
 {
     $template = sanitize_key($template);
 
     if ($template === '') {
-        $defaults = em_wp_admin_header_item_config_defaults();
+        $defaults = em_site_admin_header_item_config_defaults();
         return [
             'display_mode' => 'single',
             'transition_mode' => 'manual',
@@ -553,11 +553,11 @@ function em_wp_admin_header_section_get(string $template): array
         ];
     }
 
-    em_wp_admin_header_maybe_migrate_headers_slug_prefix();
-    em_wp_admin_header_maybe_migrate_legacy_template_config($template);
-    em_wp_admin_header_ensure_unique_catalog_labels();
-    $header_item = em_wp_admin_header_ensure_catalog_item($template);
-    $instance = function_exists('em_wp_v4_get_instance') ? em_wp_v4_get_instance($template, em_wp_admin_header_section_slug()) : [];
+    em_site_admin_header_maybe_migrate_headers_slug_prefix();
+    em_site_admin_header_maybe_migrate_legacy_template_config($template);
+    em_site_admin_header_ensure_unique_catalog_labels();
+    $header_item = em_site_admin_header_ensure_catalog_item($template);
+    $instance = function_exists('em_site_get_instance') ? em_site_get_instance($template, em_site_admin_header_section_slug()) : [];
     $display_mode_raw = sanitize_key((string) ($instance['display_mode'] ?? 'single'));
     $display_mode = $display_mode_raw === 'multi' ? 'multi' : 'single';
     $transition_mode = sanitize_key((string) ($instance['transition_mode'] ?? 'manual'));
@@ -577,7 +577,7 @@ function em_wp_admin_header_section_get(string $template): array
     if ($first_item === '') {
         $first_item = sanitize_key((string) ($instance['item'] ?? ''));
     }
-    $item_cfg = em_wp_admin_header_item_config_get($header_item);
+    $item_cfg = em_site_admin_header_item_config_get($header_item);
 
     return [
         'display_mode' => $display_mode,
@@ -600,7 +600,7 @@ function em_wp_admin_header_section_get(string $template): array
  *
  * @param array<string, mixed> $data
  */
-function em_wp_admin_header_section_save(string $template, array $data): void
+function em_site_admin_header_section_save(string $template, array $data): void
 {
     $template = sanitize_key($template);
 
@@ -608,7 +608,7 @@ function em_wp_admin_header_section_save(string $template, array $data): void
         return;
     }
 
-    em_wp_admin_header_ensure_catalog_item($template);
+    em_site_admin_header_ensure_catalog_item($template);
 
     $display_mode = sanitize_key((string) ($data['display_mode'] ?? 'single'));
     if (!in_array($display_mode, ['single', 'multi'], true)) {
@@ -620,11 +620,11 @@ function em_wp_admin_header_section_save(string $template, array $data): void
     }
     $transition_timer = max(2, min(120, (int) ($data['transition_timer'] ?? 6)));
 
-    $type = em_wp_admin_header_catalog_type_slug();
-    $items = function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items($type) : [];
+    $type = em_site_admin_header_catalog_type_slug();
+    $items = function_exists('em_site_get_items') ? em_site_get_items($type) : [];
     $header_item = sanitize_key((string) ($data['header_item'] ?? ''));
     if ($header_item === '' || !isset($items[$header_item])) {
-        $header_item = em_wp_admin_header_ensure_catalog_item($template);
+        $header_item = em_site_admin_header_ensure_catalog_item($template);
     }
 
     if ($header_item === '') {
@@ -670,28 +670,28 @@ function em_wp_admin_header_section_save(string $template, array $data): void
         }
     }
 
-    $instance = function_exists('em_wp_v4_get_instance') ? em_wp_v4_get_instance($template, em_wp_admin_header_section_slug()) : [];
+    $instance = function_exists('em_site_get_instance') ? em_site_get_instance($template, em_site_admin_header_section_slug()) : [];
     $instance['item'] = $header_item;
     $instance['display_mode'] = $display_mode;
     $instance['transition_mode'] = $transition_mode;
     $instance['transition_timer'] = $transition_timer;
     $instance['first_item'] = $first_item;
     $instance['hidden_items'] = $hidden_items;
-    if (function_exists('em_wp_v4_save_instance')) {
-        em_wp_v4_save_instance($template, em_wp_admin_header_section_slug(), $instance);
+    if (function_exists('em_site_save_instance')) {
+        em_site_save_instance($template, em_site_admin_header_section_slug(), $instance);
     }
 
     // Le squelette ne pilote plus la composition des items HEADER.
     // On persiste uniquement la sélection d'item + le mode d'affichage.
-    $item_cfg = em_wp_admin_header_item_config_get($header_item);
-    update_option(em_wp_admin_header_section_option_name($template), [
+    $item_cfg = em_site_admin_header_item_config_get($header_item);
+    update_option(em_site_admin_header_section_option_name($template), [
         'display_mode' => $display_mode,
         'matrix'       => (string) ($item_cfg['matrix'] ?? 'hero'),
         'position'     => (string) ($item_cfg['position'] ?? 'hero_left'),
         'hero'         => (string) ($item_cfg['hero'] ?? ''),
         'slider'       => (string) ($item_cfg['slider'] ?? ''),
         'ratio'        => (string) ($item_cfg['ratio'] ?? '75-25'),
-        'appearance'   => (array) ($item_cfg['appearance'] ?? em_wp_admin_header_appearance_defaults()),
+        'appearance'   => (array) ($item_cfg['appearance'] ?? em_site_admin_header_appearance_defaults()),
         'header_item'  => $header_item,
     ], false);
 }
@@ -699,37 +699,37 @@ function em_wp_admin_header_section_save(string $template, array $data): void
 /**
  * Item effectif (branché ou défaut) pour une partie HERO/SLIDER d'un template.
  */
-function em_wp_admin_header_effective_item(string $template, string $part): string
+function em_site_admin_header_effective_item(string $template, string $part): string
 {
-    $type = em_wp_admin_header_part_type_slug($part);
+    $type = em_site_admin_header_part_type_slug($part);
 
-    if ($type === '' || !function_exists('em_wp_v4_get_items')) {
+    if ($type === '' || !function_exists('em_site_get_items')) {
         return '';
     }
 
-    $cfg = em_wp_admin_header_section_get($template);
+    $cfg = em_site_admin_header_section_get($template);
     $saved = (string) ($cfg[$part] ?? '');
-    $items = em_wp_v4_get_items($type);
+    $items = em_site_get_items($type);
 
     if ($saved !== '' && isset($items[$saved])) {
         return $saved;
     }
 
-    return function_exists('em_wp_rubrique_default_item_slug')
-        ? em_wp_rubrique_default_item_slug($type)
+    return function_exists('em_site_rubrique_default_item_slug')
+        ? em_site_rubrique_default_item_slug($type)
         : '';
 }
 
 /**
  * Rendu de la liste des items HEADER (assemblages) disponibles.
  */
-function em_wp_admin_render_header_catalog_items(string $template): void
+function em_site_admin_render_header_catalog_items(string $template): void
 {
-    em_wp_admin_header_maybe_migrate_headers_slug_prefix();
-    em_wp_admin_header_ensure_unique_catalog_labels();
-    $type = em_wp_admin_header_catalog_type_slug();
-    $items = function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items($type) : [];
-    $cfg = em_wp_admin_header_section_get($template);
+    em_site_admin_header_maybe_migrate_headers_slug_prefix();
+    em_site_admin_header_ensure_unique_catalog_labels();
+    $type = em_site_admin_header_catalog_type_slug();
+    $items = function_exists('em_site_get_items') ? em_site_get_items($type) : [];
+    $cfg = em_site_admin_header_section_get($template);
     $display_mode = in_array((string) ($cfg['display_mode'] ?? ''), ['single', 'multi'], true)
         ? (string) $cfg['display_mode']
         : 'single';
@@ -766,10 +766,10 @@ function em_wp_admin_render_header_catalog_items(string $template): void
         $items = [$head_item => $items[$head_item]] + $items;
     }
     ?>
-    <div class="em-wp-header-picker__part" data-part="header-item">
-        <p class="em-wp-header-picker__subhead"><?php esc_html_e('Items disponibles pour HEADER', 'em-wp'); ?></p>
-        <?php em_wp_admin_render_multi_transition_controls(
-            'em-wp-header-transition',
+    <div class="em-site-header-picker__part" data-part="header-item">
+        <p class="em-site-header-picker__subhead"><?php esc_html_e('Items disponibles pour HEADER', 'em-site'); ?></p>
+        <?php em_site_admin_render_multi_transition_controls(
+            'em-site-header-transition',
             $display_mode,
             $transition_mode,
             $transition_timer,
@@ -778,28 +778,28 @@ function em_wp_admin_render_header_catalog_items(string $template): void
             'data-em-header-multi-timer-input'
         ); ?>
         <?php if ($items === []) : ?>
-            <p class="em-wp-rubriques-admin__picker-empty"><?php esc_html_e('Aucun item HEADER disponible.', 'em-wp'); ?></p>
+            <p class="em-site-rubriques-admin__picker-empty"><?php esc_html_e('Aucun item HEADER disponible.', 'em-site'); ?></p>
         <?php else : ?>
-            <ul class="em-wp-instance-picker em-wp-header-picker__items" data-part="header-item" data-type="header" data-display-mode="<?php echo esc_attr($display_mode); ?>" data-current="<?php echo esc_attr($preview_item); ?>" data-first-item="<?php echo esc_attr($first_item); ?>" data-hidden-items="<?php echo esc_attr((string) wp_json_encode($hidden_items)); ?>">
+            <ul class="em-site-instance-picker em-site-header-picker__items" data-part="header-item" data-type="header" data-display-mode="<?php echo esc_attr($display_mode); ?>" data-current="<?php echo esc_attr($preview_item); ?>" data-first-item="<?php echo esc_attr($first_item); ?>" data-hidden-items="<?php echo esc_attr((string) wp_json_encode($hidden_items)); ?>">
                 <?php foreach ($items as $slug => $item_label) :
                     $slug = (string) $slug;
-                    $radio_id = 'em-wp-header-item-' . sanitize_html_class($slug);
-                    $multi_toggle_id = 'em-wp-header-item-multi-toggle-' . sanitize_html_class($slug);
-                    $multi_first_id = 'em-wp-header-item-multi-first-' . sanitize_html_class($slug);
+                    $radio_id = 'em-site-header-item-' . sanitize_html_class($slug);
+                    $multi_toggle_id = 'em-site-header-item-multi-toggle-' . sanitize_html_class($slug);
+                    $multi_first_id = 'em-site-header-item-multi-first-' . sanitize_html_class($slug);
                     $is_hidden_in_multi = in_array($slug, $hidden_items, true);
                     $is_first_in_multi = $slug === $first_item;
                     ?>
-                    <li class="em-wp-instance-picker__row">
-                        <label class="em-wp-instance-picker__label" for="<?php echo esc_attr($radio_id); ?>">
-                            <?php em_wp_admin_render_picker_row_selectors(
+                    <li class="em-site-instance-picker__row">
+                        <label class="em-site-instance-picker__label" for="<?php echo esc_attr($radio_id); ?>">
+                            <?php em_site_admin_render_picker_row_selectors(
                                 $slug,
                                 $radio_id,
-                                'em-wp-header-item',
+                                'em-site-header-item',
                                 $display_mode,
                                 true,
                                 $multi_toggle_id,
                                 $multi_first_id,
-                                'em-wp-header-first-item',
+                                'em-site-header-first-item',
                                 $is_hidden_in_multi,
                                 $is_first_in_multi,
                                 $current
@@ -810,27 +810,27 @@ function em_wp_admin_render_header_catalog_items(string $template): void
                                 $display_label = 'HEADER ' . $display_label;
                             }
                             ?>
-                            <span class="em-wp-instance-picker__name"><?php echo esc_html($display_label); ?></span>
-                            <?php em_wp_admin_render_picker_row_badges($slug, $display_mode, $current, true, $is_first_in_multi); ?>
+                            <span class="em-site-instance-picker__name"><?php echo esc_html($display_label); ?></span>
+                            <?php em_site_admin_render_picker_row_badges($slug, $display_mode, $current, true, $is_first_in_multi); ?>
                         </label>
-                        <span class="em-wp-instance-picker__actions">
-                            <button type="button" class="em-wp-instance-picker__eye" data-item="<?php echo esc_attr($slug); ?>" aria-pressed="false" title="<?php esc_attr_e('Aperçu de la section', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Aperçu de la section', 'em-wp'); ?>">
+                        <span class="em-site-instance-picker__actions">
+                            <button type="button" class="em-site-instance-picker__eye" data-item="<?php echo esc_attr($slug); ?>" aria-pressed="false" title="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>" aria-label="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>">
                                 <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
                             </button>
-                            <a class="em-wp-instance-picker__edit" href="<?php echo esc_url(em_wp_admin_rubrique_v4_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-wp'); ?>">
+                            <a class="em-site-instance-picker__edit" href="<?php echo esc_url(em_site_admin_rubrique_v4_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>">
                                 <span class="dashicons dashicons-edit" aria-hidden="true"></span>
                             </a>
                         </span>
                     </li>
                 <?php endforeach; ?>
             </ul>
-            <div class="em-wp-instance-picker__previews em-wp-header-picker__previews" data-part="header-item">
+            <div class="em-site-instance-picker__previews em-site-header-picker__previews" data-part="header-item">
                 <?php foreach ($items as $slug => $item_label) :
                     $slug = (string) $slug;
                     ?>
-                    <div class="em-wp-instance-picker__preview" data-item="<?php echo esc_attr($slug); ?>" hidden>
-                        <div class="em-wp-instance-picker__stage" data-module-slug="header">
-                            <?php echo em_wp_admin_header_composite_html_for_item($template, $slug); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                    <div class="em-site-instance-picker__preview" data-item="<?php echo esc_attr($slug); ?>" hidden>
+                        <div class="em-site-instance-picker__stage" data-module-slug="header">
+                            <?php echo em_site_admin_header_composite_html_for_item($template, $slug); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -846,7 +846,7 @@ function em_wp_admin_render_header_catalog_items(string $template): void
  *
  * @param array<string, mixed> $appearance
  */
-function em_wp_admin_header_shell_style(string $template, array $appearance): string
+function em_site_admin_header_shell_style(string $template, array $appearance): string
 {
     $style = '';
     $bg = sanitize_hex_color((string) ($appearance['bg'] ?? ''));
@@ -865,7 +865,7 @@ function em_wp_admin_header_shell_style(string $template, array $appearance): st
     $url = $bg_image_id > 0 ? (string) wp_get_attachment_image_url($bg_image_id, 'full') : '';
 
     if ($url !== '') {
-        $bp = em_wp_rubrique_bg_position_css((string) ($appearance['bg_image_pos'] ?? 'cover'));
+        $bp = em_site_rubrique_bg_position_css((string) ($appearance['bg_image_pos'] ?? 'cover'));
         $op = max(0, min(100, (int) ($appearance['bg_image_opacity'] ?? 100)));
         $style .= "--em-rubrique-bg-image:url('" . str_replace("'", '%27', esc_url($url)) . "');";
         $style .= '--em-rubrique-bg-size:' . $bp['size'] . ';--em-rubrique-bg-repeat:' . $bp['repeat'] . ';--em-rubrique-bg-position:' . $bp['position'] . ';';
@@ -881,13 +881,13 @@ function em_wp_admin_header_shell_style(string $template, array $appearance): st
  * sur lequel HERO (et SLIDER) sont posés en colonnes, rendus SANS fond propre
  * (transparents) — reproduit le rendu du site (un seul fond, deux colonnes).
  */
-function em_wp_admin_header_composite_html(string $template): string
+function em_site_admin_header_composite_html(string $template): string
 {
-    if (!function_exists('em_wp_rubrique_render')) {
+    if (!function_exists('em_site_rubrique_render')) {
         return '';
     }
 
-    $cfg = em_wp_admin_header_section_get($template);
+    $cfg = em_site_admin_header_section_get($template);
     $header_item = sanitize_key((string) ($cfg['header_item'] ?? ''));
     if (($cfg['display_mode'] ?? 'single') === 'multi') {
         $first_item = sanitize_key((string) ($cfg['first_item'] ?? ''));
@@ -897,20 +897,20 @@ function em_wp_admin_header_composite_html(string $template): string
     }
 
     if ($header_item !== '') {
-        return em_wp_admin_header_composite_html_for_item($template, $header_item);
+        return em_site_admin_header_composite_html_for_item($template, $header_item);
     }
 
-    $hero_type = em_wp_admin_header_part_type_slug('hero');
-    $hero_item = em_wp_admin_header_effective_item($template, 'hero');
+    $hero_type = em_site_admin_header_part_type_slug('hero');
+    $hero_item = em_site_admin_header_effective_item($template, 'hero');
     $hero_html = ($hero_type !== '' && $hero_item !== '')
-        ? em_wp_rubrique_render($hero_type, ['item' => $hero_item])
+        ? em_site_rubrique_render($hero_type, ['item' => $hero_item])
         : '';
     $hero_col = '<div class="em-header-shell__col em-header-shell__col--hero">' . $hero_html . '</div>';
 
-    $slider_type = em_wp_admin_header_part_type_slug('slider');
-    $slider_item = em_wp_admin_header_effective_item($template, 'slider');
+    $slider_type = em_site_admin_header_part_type_slug('slider');
+    $slider_item = em_site_admin_header_effective_item($template, 'slider');
     $slider_html = ($slider_type !== '' && $slider_item !== '')
-        ? em_wp_rubrique_render($slider_type, ['item' => $slider_item])
+        ? em_site_rubrique_render($slider_type, ['item' => $slider_item])
         : '';
     $slider_col = '<div id="hero-slider" class="em-header-shell__col em-header-shell__col--slider">' . $slider_html . '</div>';
 
@@ -927,7 +927,7 @@ function em_wp_admin_header_composite_html(string $template): string
     } elseif ($cfg['matrix'] === 'hero_slider') {
         if ($hero_html !== '' && $slider_html !== '') {
             $is_pair = true;
-            $cols = em_wp_admin_header_ratio_columns($cfg['ratio'], $slider_left);
+            $cols = em_site_admin_header_ratio_columns($cfg['ratio'], $slider_left);
             $inner = $slider_left ? ($slider_col . $hero_col) : ($hero_col . $slider_col);
         } elseif ($hero_html !== '') {
             $inner = $hero_col;
@@ -943,7 +943,7 @@ function em_wp_admin_header_composite_html(string $template): string
     // Le SHELL porte le fond partagé pleine largeur ; la grille HERO/SLIDER est
     // dans un conteneur centré (comme .em-landing-hero-row__inner du front :
     // max 1100px, gap, padding vertical, colonnes alignées en haut).
-    $shell_style = em_wp_admin_header_shell_style($template, $cfg['appearance']);
+    $shell_style = em_site_admin_header_shell_style($template, $cfg['appearance']);
     $nav_color = '';
     if (!empty($cfg['appearance']['nav_color'])) {
         $nav_color = sanitize_hex_color((string) $cfg['appearance']['nav_color']) ?: '';
@@ -965,9 +965,9 @@ function em_wp_admin_header_composite_html(string $template): string
 /**
  * HTML composite du HEADER pour un item spécifique (aperçu œil + mode multi).
  */
-function em_wp_admin_header_composite_html_for_item(string $template, string $header_item_slug): string
+function em_site_admin_header_composite_html_for_item(string $template, string $header_item_slug): string
 {
-    if (!function_exists('em_wp_rubrique_render')) {
+    if (!function_exists('em_site_rubrique_render')) {
         return '';
     }
 
@@ -977,30 +977,30 @@ function em_wp_admin_header_composite_html_for_item(string $template, string $he
         return '';
     }
 
-    $cfg = em_wp_admin_header_item_config_get($header_item_slug);
-    $hero_type = em_wp_admin_header_part_type_slug('hero');
+    $cfg = em_site_admin_header_item_config_get($header_item_slug);
+    $hero_type = em_site_admin_header_part_type_slug('hero');
     $hero_item = sanitize_key((string) ($cfg['hero'] ?? ''));
     if ($hero_item === '' && $template !== '') {
-        $hero_item = em_wp_admin_header_effective_item($template, 'hero');
+        $hero_item = em_site_admin_header_effective_item($template, 'hero');
     }
-    if ($hero_item === '' && $hero_type !== '' && function_exists('em_wp_rubrique_default_item_slug')) {
-        $hero_item = em_wp_rubrique_default_item_slug($hero_type);
+    if ($hero_item === '' && $hero_type !== '' && function_exists('em_site_rubrique_default_item_slug')) {
+        $hero_item = em_site_rubrique_default_item_slug($hero_type);
     }
     $hero_html = ($hero_type !== '' && $hero_item !== '')
-        ? em_wp_rubrique_render($hero_type, ['item' => $hero_item])
+        ? em_site_rubrique_render($hero_type, ['item' => $hero_item])
         : '';
     $hero_col = '<div class="em-header-shell__col em-header-shell__col--hero">' . $hero_html . '</div>';
 
-    $slider_type = em_wp_admin_header_part_type_slug('slider');
+    $slider_type = em_site_admin_header_part_type_slug('slider');
     $slider_item = sanitize_key((string) ($cfg['slider'] ?? ''));
     if ($slider_item === '' && $template !== '') {
-        $slider_item = em_wp_admin_header_effective_item($template, 'slider');
+        $slider_item = em_site_admin_header_effective_item($template, 'slider');
     }
-    if ($slider_item === '' && $slider_type !== '' && function_exists('em_wp_rubrique_default_item_slug')) {
-        $slider_item = em_wp_rubrique_default_item_slug($slider_type);
+    if ($slider_item === '' && $slider_type !== '' && function_exists('em_site_rubrique_default_item_slug')) {
+        $slider_item = em_site_rubrique_default_item_slug($slider_type);
     }
     $slider_html = ($slider_type !== '' && $slider_item !== '')
-        ? em_wp_rubrique_render($slider_type, ['item' => $slider_item])
+        ? em_site_rubrique_render($slider_type, ['item' => $slider_item])
         : '';
     $slider_col = '<div id="hero-slider" class="em-header-shell__col em-header-shell__col--slider">' . $slider_html . '</div>';
 
@@ -1018,7 +1018,7 @@ function em_wp_admin_header_composite_html_for_item(string $template, string $he
     } elseif ($matrix === 'hero_slider') {
         if ($hero_html !== '' && $slider_html !== '') {
             $is_pair = true;
-            $cols = em_wp_admin_header_ratio_columns((string) ($cfg['ratio'] ?? '75-25'), $slider_left);
+            $cols = em_site_admin_header_ratio_columns((string) ($cfg['ratio'] ?? '75-25'), $slider_left);
             $inner = $slider_left ? ($slider_col . $hero_col) : ($hero_col . $slider_col);
         } elseif ($hero_html !== '') {
             $inner = $hero_col;
@@ -1031,7 +1031,7 @@ function em_wp_admin_header_composite_html_for_item(string $template, string $he
         return '';
     }
 
-    $shell_style = em_wp_admin_header_shell_style($template, (array) ($cfg['appearance'] ?? []));
+    $shell_style = em_site_admin_header_shell_style($template, (array) ($cfg['appearance'] ?? []));
     $nav_color = '';
     if (!empty($cfg['appearance']['nav_color'])) {
         $nav_color = sanitize_hex_color((string) $cfg['appearance']['nav_color']) ?: '';
@@ -1053,26 +1053,26 @@ function em_wp_admin_header_composite_html_for_item(string $template, string $he
 /**
  * Rendu de la liste d'items d'une partie (HERO ou SLIDER) + sources d'aperçu.
  */
-function em_wp_admin_render_header_part_items(string $template, string $part, string $type): void
+function em_site_admin_render_header_part_items(string $template, string $part, string $type): void
 {
-    $part_label = $part === 'slider' ? __('SLIDER', 'em-wp') : __('HERO', 'em-wp');
+    $part_label = $part === 'slider' ? __('SLIDER', 'em-site') : __('HERO', 'em-site');
     ?>
-    <div class="em-wp-header-picker__part" data-part="<?php echo esc_attr($part); ?>">
-        <p class="em-wp-header-picker__subhead">
+    <div class="em-site-header-picker__part" data-part="<?php echo esc_attr($part); ?>">
+        <p class="em-site-header-picker__subhead">
             <?php
             /* translators: %s: HERO ou SLIDER. */
-            echo esc_html(sprintf(__('Items disponibles pour %s', 'em-wp'), $part_label));
+            echo esc_html(sprintf(__('Items disponibles pour %s', 'em-site'), $part_label));
             ?>
         </p>
         <?php
-        $items = $type !== '' && function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items($type) : [];
+        $items = $type !== '' && function_exists('em_site_get_items') ? em_site_get_items($type) : [];
 
         if ($type === '' || $items === []) {
             ?>
-            <p class="em-wp-rubriques-admin__picker-empty">
+            <p class="em-site-rubriques-admin__picker-empty">
                 <?php
                 /* translators: %s: HERO ou SLIDER. */
-                echo esc_html(sprintf(__('Crée d’abord une rubrique %s pour pouvoir la brancher.', 'em-wp'), $part_label));
+                echo esc_html(sprintf(__('Crée d’abord une rubrique %s pour pouvoir la brancher.', 'em-site'), $part_label));
                 ?>
             </p>
             </div>
@@ -1080,54 +1080,54 @@ function em_wp_admin_render_header_part_items(string $template, string $part, st
             return;
         }
 
-        $effective = em_wp_admin_header_effective_item($template, $part);
+        $effective = em_site_admin_header_effective_item($template, $part);
 
         if ($effective !== '' && isset($items[$effective])) {
             $items = [$effective => $items[$effective]] + $items;
         }
         ?>
         <ul
-            class="em-wp-instance-picker em-wp-header-picker__items"
+            class="em-site-instance-picker em-site-header-picker__items"
             data-part="<?php echo esc_attr($part); ?>"
             data-type="<?php echo esc_attr($type); ?>"
             data-current="<?php echo esc_attr($effective); ?>"
         >
             <?php foreach ($items as $slug => $item_label) :
                 $slug = (string) $slug;
-                $radio_id = 'em-wp-header-' . sanitize_html_class($part . '-' . $slug);
+                $radio_id = 'em-site-header-' . sanitize_html_class($part . '-' . $slug);
                 ?>
-                <li class="em-wp-instance-picker__row">
-                    <label class="em-wp-instance-picker__label" for="<?php echo esc_attr($radio_id); ?>">
+                <li class="em-site-instance-picker__row">
+                    <label class="em-site-instance-picker__label" for="<?php echo esc_attr($radio_id); ?>">
                         <input
                             type="radio"
                             id="<?php echo esc_attr($radio_id); ?>"
-                            name="em-wp-header-<?php echo esc_attr($part); ?>"
+                            name="em-site-header-<?php echo esc_attr($part); ?>"
                             value="<?php echo esc_attr($slug); ?>"
                             <?php checked($slug === $effective); ?>
                         >
-                        <span class="em-wp-instance-picker__name"><?php echo esc_html($part_label . ' ' . $item_label); ?></span>
+                        <span class="em-site-instance-picker__name"><?php echo esc_html($part_label . ' ' . $item_label); ?></span>
                         <?php if ($slug === $effective) : ?>
-                            <span class="em-wp-instance-picker__badge"><?php esc_html_e('Item en ligne actuellement', 'em-wp'); ?></span>
+                            <span class="em-site-instance-picker__badge"><?php esc_html_e('Item en ligne actuellement', 'em-site'); ?></span>
                         <?php endif; ?>
                     </label>
-                    <span class="em-wp-instance-picker__actions">
-                        <button type="button" class="em-wp-instance-picker__eye" data-part="<?php echo esc_attr($part); ?>" data-item="<?php echo esc_attr($slug); ?>" aria-pressed="false" title="<?php esc_attr_e('Aperçu de la section', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Aperçu de la section', 'em-wp'); ?>">
+                    <span class="em-site-instance-picker__actions">
+                        <button type="button" class="em-site-instance-picker__eye" data-part="<?php echo esc_attr($part); ?>" data-item="<?php echo esc_attr($slug); ?>" aria-pressed="false" title="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>" aria-label="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>">
                             <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
                         </button>
-                        <a class="em-wp-instance-picker__edit" href="<?php echo esc_url(em_wp_admin_rubrique_v4_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-wp'); ?>">
+                        <a class="em-site-instance-picker__edit" href="<?php echo esc_url(em_site_admin_rubrique_v4_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>">
                             <span class="dashicons dashicons-edit" aria-hidden="true"></span>
                         </a>
                     </span>
                 </li>
             <?php endforeach; ?>
         </ul>
-        <div class="em-wp-instance-picker__previews em-wp-header-picker__previews" data-part="<?php echo esc_attr($part); ?>">
+        <div class="em-site-instance-picker__previews em-site-header-picker__previews" data-part="<?php echo esc_attr($part); ?>">
             <?php foreach ($items as $slug => $item_label) :
                 $slug = (string) $slug;
                 ?>
-                <div class="em-wp-instance-picker__preview" data-part="<?php echo esc_attr($part); ?>" data-item="<?php echo esc_attr($slug); ?>" hidden>
-                    <div class="em-wp-instance-picker__stage">
-                        <?php echo em_wp_rubrique_render($type, ['item' => $slug]); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                <div class="em-site-instance-picker__preview" data-part="<?php echo esc_attr($part); ?>" data-item="<?php echo esc_attr($slug); ?>" hidden>
+                    <div class="em-site-instance-picker__stage">
+                        <?php echo em_site_rubrique_render($type, ['item' => $slug]); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -1139,46 +1139,46 @@ function em_wp_admin_render_header_part_items(string $template, string $part, st
 /**
  * Rendu d'une liste HERO/SLIDER dans l'éditeur d'un item HEADER.
  */
-function em_wp_admin_render_header_item_part_items(string $header_item_slug, string $part, string $type, string $selected): void
+function em_site_admin_render_header_item_part_items(string $header_item_slug, string $part, string $type, string $selected): void
 {
-    $part_label = $part === 'slider' ? __('SLIDER', 'em-wp') : __('HERO', 'em-wp');
+    $part_label = $part === 'slider' ? __('SLIDER', 'em-site') : __('HERO', 'em-site');
     $selected = sanitize_key($selected);
     ?>
-    <div class="em-wp-header-picker__part" data-part="<?php echo esc_attr($part); ?>">
-        <p class="em-wp-header-picker__subhead">
-            <?php echo esc_html(sprintf(__('Items disponibles pour %s', 'em-wp'), $part_label)); ?>
+    <div class="em-site-header-picker__part" data-part="<?php echo esc_attr($part); ?>">
+        <p class="em-site-header-picker__subhead">
+            <?php echo esc_html(sprintf(__('Items disponibles pour %s', 'em-site'), $part_label)); ?>
         </p>
         <?php
-        $items = $type !== '' && function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items($type) : [];
+        $items = $type !== '' && function_exists('em_site_get_items') ? em_site_get_items($type) : [];
 
         if ($type === '' || $items === []) {
             ?>
-            <p class="em-wp-rubriques-admin__picker-empty"><?php echo esc_html(sprintf(__('Crée d’abord une rubrique %s pour pouvoir la brancher.', 'em-wp'), $part_label)); ?></p>
+            <p class="em-site-rubriques-admin__picker-empty"><?php echo esc_html(sprintf(__('Crée d’abord une rubrique %s pour pouvoir la brancher.', 'em-site'), $part_label)); ?></p>
             </div>
             <?php
             return;
         }
 
-        if (($selected === '' || !isset($items[$selected])) && function_exists('em_wp_rubrique_default_item_slug')) {
-            $selected = em_wp_rubrique_default_item_slug($type);
+        if (($selected === '' || !isset($items[$selected])) && function_exists('em_site_rubrique_default_item_slug')) {
+            $selected = em_site_rubrique_default_item_slug($type);
         }
 
         if ($selected !== '' && isset($items[$selected])) {
             $items = [$selected => $items[$selected]] + $items;
         }
         ?>
-        <ul class="em-wp-instance-picker em-wp-header-picker__items" data-part="<?php echo esc_attr($part); ?>" data-type="<?php echo esc_attr($type); ?>" data-current="<?php echo esc_attr($selected); ?>">
+        <ul class="em-site-instance-picker em-site-header-picker__items" data-part="<?php echo esc_attr($part); ?>" data-type="<?php echo esc_attr($type); ?>" data-current="<?php echo esc_attr($selected); ?>">
             <?php foreach ($items as $slug => $item_label) :
                 $slug = (string) $slug;
-                $radio_id = 'em-wp-header-itemcfg-' . sanitize_html_class($header_item_slug . '-' . $part . '-' . $slug);
+                $radio_id = 'em-site-header-itemcfg-' . sanitize_html_class($header_item_slug . '-' . $part . '-' . $slug);
                 ?>
-                <li class="em-wp-instance-picker__row">
-                    <label class="em-wp-instance-picker__label" for="<?php echo esc_attr($radio_id); ?>">
-                        <input type="radio" id="<?php echo esc_attr($radio_id); ?>" name="em-wp-header-itemcfg-<?php echo esc_attr($header_item_slug . '-' . $part); ?>" value="<?php echo esc_attr($slug); ?>" <?php checked($slug === $selected); ?>>
-                        <span class="em-wp-instance-picker__name"><?php echo esc_html($part_label . ' ' . $item_label); ?></span>
+                <li class="em-site-instance-picker__row">
+                    <label class="em-site-instance-picker__label" for="<?php echo esc_attr($radio_id); ?>">
+                        <input type="radio" id="<?php echo esc_attr($radio_id); ?>" name="em-site-header-itemcfg-<?php echo esc_attr($header_item_slug . '-' . $part); ?>" value="<?php echo esc_attr($slug); ?>" <?php checked($slug === $selected); ?>>
+                        <span class="em-site-instance-picker__name"><?php echo esc_html($part_label . ' ' . $item_label); ?></span>
                     </label>
-                    <span class="em-wp-instance-picker__actions">
-                        <a class="em-wp-instance-picker__edit" href="<?php echo esc_url(em_wp_admin_rubrique_v4_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-wp'); ?>">
+                    <span class="em-site-instance-picker__actions">
+                        <a class="em-site-instance-picker__edit" href="<?php echo esc_url(em_site_admin_rubrique_v4_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>">
                             <span class="dashicons dashicons-edit" aria-hidden="true"></span>
                         </a>
                     </span>
@@ -1192,70 +1192,70 @@ function em_wp_admin_render_header_item_part_items(string $header_item_slug, str
 /**
  * Éditeur de composition d'un item HEADER dans la page RUBRIQUES.
  */
-function em_wp_admin_render_header_item_editor(string $header_item_slug): void
+function em_site_admin_render_header_item_editor(string $header_item_slug): void
 {
     $header_item_slug = sanitize_key($header_item_slug);
     if ($header_item_slug === '') {
         return;
     }
 
-    $cfg = em_wp_admin_header_item_config_get($header_item_slug);
-    $hero_type = em_wp_admin_header_part_type_slug('hero');
-    $slider_type = em_wp_admin_header_part_type_slug('slider');
+    $cfg = em_site_admin_header_item_config_get($header_item_slug);
+    $hero_type = em_site_admin_header_part_type_slug('hero');
+    $slider_type = em_site_admin_header_part_type_slug('slider');
     $matrix = in_array((string) ($cfg['matrix'] ?? ''), ['hero', 'hero_slider', 'slider'], true)
         ? (string) $cfg['matrix']
         : 'hero';
-    $editing_template = function_exists('em_wp_get_editing_template_slug')
-        ? sanitize_key((string) em_wp_get_editing_template_slug())
-        : sanitize_key((string) get_option('em_wp_active_template', ''));
+    $editing_template = function_exists('em_site_get_editing_template_slug')
+        ? sanitize_key((string) em_site_get_editing_template_slug())
+        : sanitize_key((string) get_option('em_site_active_template', ''));
     if ($editing_template === '') {
         $editing_template = 'mayami';
     }
     ?>
-    <div class="em-wp-header-picker em-wp-header-item-editor" data-header-item="<?php echo esc_attr($header_item_slug); ?>" data-template="<?php echo esc_attr($editing_template); ?>" data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>" data-matrix="<?php echo esc_attr($matrix); ?>" data-position="<?php echo esc_attr((string) ($cfg['position'] ?? 'hero_left')); ?>">
-        <p class="em-wp-rubriques-admin__picker-head"><?php esc_html_e('Composition du HEADER', 'em-wp'); ?></p>
-        <div class="em-wp-header-picker__compo">
-            <div class="em-wp-header-picker__matrix" role="radiogroup">
-                <label class="em-wp-header-picker__opt">
-                    <input type="radio" name="em-wp-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero" <?php checked($matrix === 'hero'); ?>>
-                    <span><?php esc_html_e('HERO seul', 'em-wp'); ?></span>
+    <div class="em-site-header-picker em-site-header-item-editor" data-header-item="<?php echo esc_attr($header_item_slug); ?>" data-template="<?php echo esc_attr($editing_template); ?>" data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>" data-matrix="<?php echo esc_attr($matrix); ?>" data-position="<?php echo esc_attr((string) ($cfg['position'] ?? 'hero_left')); ?>">
+        <p class="em-site-rubriques-admin__picker-head"><?php esc_html_e('Composition du HEADER', 'em-site'); ?></p>
+        <div class="em-site-header-picker__compo">
+            <div class="em-site-header-picker__matrix" role="radiogroup">
+                <label class="em-site-header-picker__opt">
+                    <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero" <?php checked($matrix === 'hero'); ?>>
+                    <span><?php esc_html_e('HERO seul', 'em-site'); ?></span>
                 </label>
-                <label class="em-wp-header-picker__opt">
-                    <input type="radio" name="em-wp-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero_slider" <?php checked($matrix === 'hero_slider'); ?>>
-                    <span><?php esc_html_e('HERO + SLIDER', 'em-wp'); ?></span>
+                <label class="em-site-header-picker__opt">
+                    <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero_slider" <?php checked($matrix === 'hero_slider'); ?>>
+                    <span><?php esc_html_e('HERO + SLIDER', 'em-site'); ?></span>
                 </label>
-                <label class="em-wp-header-picker__opt">
-                    <input type="radio" name="em-wp-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="slider" <?php checked($matrix === 'slider'); ?>>
-                    <span><?php esc_html_e('SLIDER seul', 'em-wp'); ?></span>
-                </label>
-            </div>
-
-            <div class="em-wp-header-picker__position"<?php echo $matrix === 'hero_slider' ? '' : ' hidden'; ?>>
-                <span class="em-wp-header-picker__poslabel"><?php esc_html_e('Position', 'em-wp'); ?></span>
-                <label class="em-wp-header-picker__opt">
-                    <input type="radio" name="em-wp-header-position-<?php echo esc_attr($header_item_slug); ?>" value="hero_left" <?php checked((string) ($cfg['position'] ?? 'hero_left') !== 'slider_left'); ?>>
-                    <span><?php esc_html_e('HERO à gauche', 'em-wp'); ?></span>
-                </label>
-                <label class="em-wp-header-picker__opt">
-                    <input type="radio" name="em-wp-header-position-<?php echo esc_attr($header_item_slug); ?>" value="slider_left" <?php checked((string) ($cfg['position'] ?? '') === 'slider_left'); ?>>
-                    <span><?php esc_html_e('SLIDER à gauche', 'em-wp'); ?></span>
+                <label class="em-site-header-picker__opt">
+                    <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="slider" <?php checked($matrix === 'slider'); ?>>
+                    <span><?php esc_html_e('SLIDER seul', 'em-site'); ?></span>
                 </label>
             </div>
+
+            <div class="em-site-header-picker__position"<?php echo $matrix === 'hero_slider' ? '' : ' hidden'; ?>>
+                <span class="em-site-header-picker__poslabel"><?php esc_html_e('Position', 'em-site'); ?></span>
+                <label class="em-site-header-picker__opt">
+                    <input type="radio" name="em-site-header-position-<?php echo esc_attr($header_item_slug); ?>" value="hero_left" <?php checked((string) ($cfg['position'] ?? 'hero_left') !== 'slider_left'); ?>>
+                    <span><?php esc_html_e('HERO à gauche', 'em-site'); ?></span>
+                </label>
+                <label class="em-site-header-picker__opt">
+                    <input type="radio" name="em-site-header-position-<?php echo esc_attr($header_item_slug); ?>" value="slider_left" <?php checked((string) ($cfg['position'] ?? '') === 'slider_left'); ?>>
+                    <span><?php esc_html_e('SLIDER à gauche', 'em-site'); ?></span>
+                </label>
+            </div>
         </div>
 
-        <div class="em-wp-header-item-editor__hero-wrap"<?php echo in_array($matrix, ['hero', 'hero_slider'], true) ? '' : ' hidden'; ?>>
-            <?php em_wp_admin_render_header_item_part_items($header_item_slug, 'hero', $hero_type, (string) ($cfg['hero'] ?? '')); ?>
+        <div class="em-site-header-item-editor__hero-wrap"<?php echo in_array($matrix, ['hero', 'hero_slider'], true) ? '' : ' hidden'; ?>>
+            <?php em_site_admin_render_header_item_part_items($header_item_slug, 'hero', $hero_type, (string) ($cfg['hero'] ?? '')); ?>
         </div>
 
-        <div class="em-wp-header-item-editor__slider-wrap"<?php echo in_array($matrix, ['slider', 'hero_slider'], true) ? '' : ' hidden'; ?>>
-            <?php em_wp_admin_render_header_item_part_items($header_item_slug, 'slider', $slider_type, (string) ($cfg['slider'] ?? '')); ?>
+        <div class="em-site-header-item-editor__slider-wrap"<?php echo in_array($matrix, ['slider', 'hero_slider'], true) ? '' : ' hidden'; ?>>
+            <?php em_site_admin_render_header_item_part_items($header_item_slug, 'slider', $slider_type, (string) ($cfg['slider'] ?? '')); ?>
         </div>
 
-        <?php em_wp_admin_render_header_appearance((array) ($cfg['appearance'] ?? []), (string) ($cfg['ratio'] ?? '75-25'), $header_item_slug); ?>
+        <?php em_site_admin_render_header_appearance((array) ($cfg['appearance'] ?? []), (string) ($cfg['ratio'] ?? '75-25'), $header_item_slug); ?>
 
-        <div class="em-wp-header-picker__savebar">
-            <button type="button" class="button button-primary em-wp-header-item-editor__save" disabled><?php esc_html_e('Enregistrer la composition', 'em-wp'); ?></button>
-            <p class="em-wp-instance-picker__status" aria-live="polite" hidden></p>
+        <div class="em-site-header-picker__savebar">
+            <button type="button" class="button button-primary em-site-header-item-editor__save" disabled><?php esc_html_e('Enregistrer la composition', 'em-site'); ?></button>
+            <p class="em-site-instance-picker__status" aria-live="polite" hidden></p>
         </div>
     </div>
     <?php
@@ -1266,7 +1266,7 @@ function em_wp_admin_render_header_item_editor(string $header_item_slug): void
  *
  * @param array<string, mixed> $appearance
  */
-function em_wp_admin_render_header_appearance(array $appearance, string $ratio, string $scope_key = ''): void
+function em_site_admin_render_header_appearance(array $appearance, string $ratio, string $scope_key = ''): void
 {
     $bg = (string) ($appearance['bg'] ?? '');
     $op = max(0, min(100, (int) ($appearance['bg_image_opacity'] ?? 100)));
@@ -1274,66 +1274,66 @@ function em_wp_admin_render_header_appearance(array $appearance, string $ratio, 
     $bg_image_id = (int) ($appearance['bg_image_id'] ?? 0);
     $bg_thumb = $bg_image_id > 0 ? (string) wp_get_attachment_image_url($bg_image_id, 'medium') : '';
     $has_bg_image = $bg_image_id > 0;
-    $bg_field_id = 'em-wp-header-appr-bg';
+    $bg_field_id = 'em-site-header-appr-bg';
     $scope_key = sanitize_html_class($scope_key);
     if ($scope_key !== '') {
         $bg_field_id .= '-' . $scope_key;
     }
     ?>
-    <div class="em-wp-header-picker__appearance">
-        <p class="em-wp-header-picker__subhead"><?php esc_html_e('Apparence du HEADER (fond partagé)', 'em-wp'); ?></p>
-        <div class="em-wp-header-appr">
-            <div class="em-wp-header-appr__row">
-                <span class="em-wp-header-appr__field">
-                    <span><?php esc_html_e('Fond', 'em-wp'); ?></span>
-                    <?php em_wp_admin_render_color_field([
+    <div class="em-site-header-picker__appearance">
+        <p class="em-site-header-picker__subhead"><?php esc_html_e('Apparence du HEADER (fond partagé)', 'em-site'); ?></p>
+        <div class="em-site-header-appr">
+            <div class="em-site-header-appr__row">
+                <span class="em-site-header-appr__field">
+                    <span><?php esc_html_e('Fond', 'em-site'); ?></span>
+                    <?php em_site_admin_render_color_field([
                         'id'            => $bg_field_id,
                         'value'         => $bg,
-                        'input_class'   => 'em-wp-header-appr__bg',
-                        'preview_label' => __('Fond du HEADER', 'em-wp'),
+                        'input_class'   => 'em-site-header-appr__bg',
+                        'preview_label' => __('Fond du HEADER', 'em-site'),
                     ]); ?>
                 </span>
-                <span class="em-wp-header-appr__field em-wp-header-appr__field--image">
-                    <span><?php esc_html_e('Image de fond', 'em-wp'); ?></span>
-                    <span class="em-wp-header-appr__media" data-id="<?php echo esc_attr((string) $bg_image_id); ?>">
-                        <img class="em-wp-header-appr__thumb"<?php echo $bg_thumb !== '' ? ' src="' . esc_url($bg_thumb) . '"' : ''; ?> alt=""<?php echo $bg_thumb === '' ? ' hidden' : ''; ?>>
-                        <button type="button" class="button button-small em-wp-header-appr__pick"><?php esc_html_e('Choisir', 'em-wp'); ?></button>
-                        <button type="button" class="button button-small em-wp-header-appr__clear" title="<?php esc_attr_e('Aucune image de fond', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Aucune image de fond', 'em-wp'); ?>"><?php esc_html_e('Aucune image', 'em-wp'); ?></button>
+                <span class="em-site-header-appr__field em-site-header-appr__field--image">
+                    <span><?php esc_html_e('Image de fond', 'em-site'); ?></span>
+                    <span class="em-site-header-appr__media" data-id="<?php echo esc_attr((string) $bg_image_id); ?>">
+                        <img class="em-site-header-appr__thumb"<?php echo $bg_thumb !== '' ? ' src="' . esc_url($bg_thumb) . '"' : ''; ?> alt=""<?php echo $bg_thumb === '' ? ' hidden' : ''; ?>>
+                        <button type="button" class="button button-small em-site-header-appr__pick"><?php esc_html_e('Choisir', 'em-site'); ?></button>
+                        <button type="button" class="button button-small em-site-header-appr__clear" title="<?php esc_attr_e('Aucune image de fond', 'em-site'); ?>" aria-label="<?php esc_attr_e('Aucune image de fond', 'em-site'); ?>"><?php esc_html_e('Aucune image', 'em-site'); ?></button>
                     </span>
                 </span>
-                <label class="em-wp-header-appr__field em-wp-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
-                    <span><?php esc_html_e('Position image', 'em-wp'); ?></span>
-                    <select class="em-wp-header-appr__pos">
-                        <?php foreach (em_wp_rubrique_bg_position_choices() as $key => $label) : ?>
+                <label class="em-site-header-appr__field em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
+                    <span><?php esc_html_e('Position image', 'em-site'); ?></span>
+                    <select class="em-site-header-appr__pos">
+                        <?php foreach (em_site_rubrique_bg_position_choices() as $key => $label) : ?>
                             <option value="<?php echo esc_attr($key); ?>" <?php selected($pos, $key); ?>><?php echo esc_html($label); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </label>
-                <label class="em-wp-header-appr__field">
-                    <span><?php esc_html_e('Ratio HERO/SLIDER', 'em-wp'); ?></span>
-                    <select class="em-wp-header-appr__ratio">
-                        <?php foreach (em_wp_admin_header_ratio_choices() as $key => $label) : ?>
+                <label class="em-site-header-appr__field">
+                    <span><?php esc_html_e('Ratio HERO/SLIDER', 'em-site'); ?></span>
+                    <select class="em-site-header-appr__ratio">
+                        <?php foreach (em_site_admin_header_ratio_choices() as $key => $label) : ?>
                             <option value="<?php echo esc_attr($key); ?>" <?php selected($ratio, $key); ?>><?php echo esc_html($label); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </label>
             </div>
-            <div class="em-wp-header-appr__row">
-                <label class="em-wp-header-appr__field em-wp-header-appr__field--range em-wp-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
-                    <span><?php esc_html_e('Opacité', 'em-wp'); ?></span>
-                    <input type="range" class="em-wp-header-appr__op" min="0" max="100" step="1" value="<?php echo esc_attr((string) $op); ?>" oninput="this.nextElementSibling.textContent=this.value+'%'">
+            <div class="em-site-header-appr__row">
+                <label class="em-site-header-appr__field em-site-header-appr__field--range em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
+                    <span><?php esc_html_e('Opacité', 'em-site'); ?></span>
+                    <input type="range" class="em-site-header-appr__op" min="0" max="100" step="1" value="<?php echo esc_attr((string) $op); ?>" oninput="this.nextElementSibling.textContent=this.value+'%'">
                     <output><?php echo esc_html($op . '%'); ?></output>
                 </label>
-                <label class="em-wp-header-appr__field em-wp-header-appr__field--check em-wp-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
-                    <input type="checkbox" class="em-wp-header-appr__mirror" <?php checked(!empty($appearance['bg_image_mirror'])); ?>>
-                    <span><?php esc_html_e('Miroir', 'em-wp'); ?></span>
+                <label class="em-site-header-appr__field em-site-header-appr__field--check em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
+                    <input type="checkbox" class="em-site-header-appr__mirror" <?php checked(!empty($appearance['bg_image_mirror'])); ?>>
+                    <span><?php esc_html_e('Miroir', 'em-site'); ?></span>
                 </label>
-                <span class="em-wp-header-appr__pads">
-                    <span class="em-wp-header-appr__padlabel"><?php esc_html_e('Marges', 'em-wp'); ?></span>
-                    <input type="number" class="em-wp-header-appr__pt" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pt'] ?? 0)); ?>" title="<?php esc_attr_e('Haut', 'em-wp'); ?>">
-                    <input type="number" class="em-wp-header-appr__pb" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pb'] ?? 0)); ?>" title="<?php esc_attr_e('Bas', 'em-wp'); ?>">
-                    <input type="number" class="em-wp-header-appr__pl" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pl'] ?? 0)); ?>" title="<?php esc_attr_e('Gauche', 'em-wp'); ?>">
-                    <input type="number" class="em-wp-header-appr__pr" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pr'] ?? 0)); ?>" title="<?php esc_attr_e('Droite', 'em-wp'); ?>">
+                <span class="em-site-header-appr__pads">
+                    <span class="em-site-header-appr__padlabel"><?php esc_html_e('Marges', 'em-site'); ?></span>
+                    <input type="number" class="em-site-header-appr__pt" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pt'] ?? 0)); ?>" title="<?php esc_attr_e('Haut', 'em-site'); ?>">
+                    <input type="number" class="em-site-header-appr__pb" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pb'] ?? 0)); ?>" title="<?php esc_attr_e('Bas', 'em-site'); ?>">
+                    <input type="number" class="em-site-header-appr__pl" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pl'] ?? 0)); ?>" title="<?php esc_attr_e('Gauche', 'em-site'); ?>">
+                    <input type="number" class="em-site-header-appr__pr" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pr'] ?? 0)); ?>" title="<?php esc_attr_e('Droite', 'em-site'); ?>">
                 </span>
             </div>
         </div>
@@ -1344,21 +1344,21 @@ function em_wp_admin_render_header_appearance(array $appearance, string $ratio, 
 /**
  * Rendu du sélecteur HEADER : matrice (HERO / HERO+SLIDER), position, items.
  */
-function em_wp_admin_render_header_section_picker(string $template): void
+function em_site_admin_render_header_section_picker(string $template): void
 {
-    $cfg = em_wp_admin_header_section_get($template);
+    $cfg = em_site_admin_header_section_get($template);
     $is_live = $template !== ''
-        && function_exists('em_wp_get_active_template_slug')
-        && em_wp_get_active_template_slug() === $template;
-    $template_label = function_exists('em_wp_get_editing_template_label')
-        ? (string) em_wp_get_editing_template_label()
+        && function_exists('em_site_get_active_template_slug')
+        && em_site_get_active_template_slug() === $template;
+    $template_label = function_exists('em_site_get_editing_template_label')
+        ? (string) em_site_get_editing_template_label()
         : '';
     $display_mode = in_array((string) ($cfg['display_mode'] ?? ''), ['single', 'multi'], true)
         ? (string) $cfg['display_mode']
         : 'single';
     ?>
     <div
-        class="em-wp-header-picker"
+        class="em-site-header-picker"
         data-template="<?php echo esc_attr($template); ?>"
         data-template-label="<?php echo esc_attr($template_label); ?>"
         data-live="<?php echo $is_live ? '1' : '0'; ?>"
@@ -1366,13 +1366,13 @@ function em_wp_admin_render_header_section_picker(string $template): void
         data-position="<?php echo esc_attr($cfg['position']); ?>"
         data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>"
     >
-        <?php em_wp_admin_render_display_mode_controls('em-wp-header-display-mode', $display_mode, false, true); ?>
+        <?php em_site_admin_render_display_mode_controls('em-site-header-display-mode', $display_mode, false, true); ?>
 
-        <?php em_wp_admin_render_header_catalog_items($template); ?>
+        <?php em_site_admin_render_header_catalog_items($template); ?>
 
-        <div class="em-wp-header-picker__savebar">
-            <button type="button" class="button button-primary em-wp-header-picker__save" disabled><?php esc_html_e('Sauvegarder', 'em-wp'); ?></button>
-            <p class="em-wp-instance-picker__status" aria-live="polite" hidden></p>
+        <div class="em-site-header-picker__savebar">
+            <button type="button" class="button button-primary em-site-header-picker__save" disabled><?php esc_html_e('Sauvegarder', 'em-site'); ?></button>
+            <p class="em-site-instance-picker__status" aria-live="polite" hidden></p>
         </div>
     </div>
     <?php

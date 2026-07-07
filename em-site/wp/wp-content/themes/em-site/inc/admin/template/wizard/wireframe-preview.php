@@ -6,7 +6,7 @@
 
  *
 
- * @package em-wp
+ * @package em-site
 
  */
 
@@ -32,7 +32,7 @@ if (!defined('ABSPATH')) {
 
  */
 
-function em_wp_admin_template_wizard_middle_order(array $order): array
+function em_site_admin_template_wizard_middle_order(array $order): array
 
 {
 
@@ -58,13 +58,13 @@ function em_wp_admin_template_wizard_middle_order(array $order): array
 
  */
 
-function em_wp_admin_template_wizard_header_config(array $catalog): array
+function em_site_admin_template_wizard_header_config(array $catalog): array
 
 {
 
     $header_row = is_array($catalog['header'] ?? null) ? $catalog['header'] : [];
 
-    $defaults = function_exists('em_wp_header_default_options') ? em_wp_header_default_options() : [];
+    $defaults = function_exists('em_site_header_default_options') ? em_site_header_default_options() : [];
 
     $layout = sanitize_key((string) ($header_row['layout'] ?? 'hero_left'));
 
@@ -96,13 +96,13 @@ function em_wp_admin_template_wizard_header_config(array $catalog): array
 
  */
 
-function em_wp_admin_template_wizard_preview_zone_for_module(string $module_slug): string
+function em_site_admin_template_wizard_preview_zone_for_module(string $module_slug): string
 
 {
 
     $module_slug = sanitize_key($module_slug);
 
-    $definitions = em_wp_admin_site_rubrique_all_definitions();
+    $definitions = em_site_admin_site_rubrique_all_definitions();
 
     $definition = $definitions[$module_slug] ?? null;
 
@@ -116,9 +116,9 @@ function em_wp_admin_template_wizard_preview_zone_for_module(string $module_slug
 
 
 
-    return function_exists('em_wp_admin_landing_preview_zone_for_module')
+    return function_exists('em_site_admin_landing_preview_zone_for_module')
 
-        ? em_wp_admin_landing_preview_zone_for_module($module_slug)
+        ? em_site_admin_landing_preview_zone_for_module($module_slug)
 
         : '';
 
@@ -132,7 +132,7 @@ function em_wp_admin_template_wizard_preview_zone_for_module(string $module_slug
 
  */
 
-function em_wp_admin_template_wizard_render_wireframe_html(array $payload): string
+function em_site_admin_template_wizard_render_wireframe_html(array $payload): string
 
 {
 
@@ -146,15 +146,15 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
     $template_label = sanitize_text_field((string) ($payload['label'] ?? ''));
 
-    $middle_order = em_wp_admin_template_wizard_middle_order($order);
+    $middle_order = em_site_admin_template_wizard_middle_order($order);
 
-    $map_modifier = $editable ? 'em-wp-admin-landing-map--wizard-edit' : 'em-wp-admin-landing-map--wizard-preview';
+    $map_modifier = $editable ? 'em-site-admin-landing-map--wizard-edit' : 'em-site-admin-landing-map--wizard-preview';
 
     $header_args = [
 
         'show_hidden_badge'   => false,
 
-        'header_config'       => em_wp_admin_template_wizard_header_config($catalog),
+        'header_config'       => em_site_admin_template_wizard_header_config($catalog),
 
         'subzones_clickable'  => false,
 
@@ -186,9 +186,9 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
     ?>
 
-    <div class="em-wp-template-wizard-global-wireframe">
+    <div class="em-site-template-wizard-global-wireframe">
 
-        <p class="em-wp-template-wizard-global-wireframe__label">
+        <p class="em-site-template-wizard-global-wireframe__label">
 
             <?php
 
@@ -200,7 +200,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
                         /* translators: %s: template label */
 
-                        esc_html__('Plan du template %s', 'em-wp'),
+                        esc_html__('Plan du template %s', 'em-site'),
 
                         esc_html(strtoupper($template_label))
 
@@ -212,7 +212,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
                         /* translators: %s: template label */
 
-                        esc_html__('Prévisualisation du template %s', 'em-wp'),
+                        esc_html__('Prévisualisation du template %s', 'em-site'),
 
                         esc_html(strtoupper($template_label))
 
@@ -222,11 +222,11 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
             } elseif ($editable) {
 
-                esc_html_e('Plan du template', 'em-wp');
+                esc_html_e('Plan du template', 'em-site');
 
             } else {
 
-                esc_html_e('Prévisualisation du template', 'em-wp');
+                esc_html_e('Prévisualisation du template', 'em-site');
 
             }
 
@@ -234,13 +234,13 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
         </p>
 
-        <div class="em-wp-template-wizard-global-wireframe__map">
+        <div class="em-site-template-wizard-global-wireframe__map">
 
             <div
 
-                class="em-wp-admin-landing-map <?php echo esc_attr($map_modifier); ?>"
+                class="em-site-admin-landing-map <?php echo esc_attr($map_modifier); ?>"
 
-                aria-label="<?php echo $editable ? esc_attr__('Plan du template', 'em-wp') : esc_attr__('Prévisualisation du template', 'em-wp'); ?>"
+                aria-label="<?php echo $editable ? esc_attr__('Plan du template', 'em-site') : esc_attr__('Prévisualisation du template', 'em-site'); ?>"
 
             >
 
@@ -248,7 +248,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
                 if (in_array('top-bar', $order, true)) {
 
-                    em_wp_admin_render_landing_map_zone(
+                    em_site_admin_render_landing_map_zone(
 
                         'top_bar',
 
@@ -280,7 +280,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
                 ?>
 
-                <div class="em-wp-admin-landing-map__body" id="em-wp-template-wizard-map-body">
+                <div class="em-site-admin-landing-map__body" id="em-site-template-wizard-map-body">
 
                     <?php
 
@@ -288,7 +288,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
                         if ($module_slug === 'header') {
 
-                            em_wp_admin_render_landing_map_header_group('', $header_args);
+                            em_site_admin_render_landing_map_header_group('', $header_args);
 
                             continue;
 
@@ -296,7 +296,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
 
 
-                        $zone = em_wp_admin_template_wizard_preview_zone_for_module($module_slug);
+                        $zone = em_site_admin_template_wizard_preview_zone_for_module($module_slug);
 
 
 
@@ -308,7 +308,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
 
 
-                        em_wp_admin_render_landing_map_zone(
+                        em_site_admin_render_landing_map_zone(
 
                             $zone,
 
@@ -346,7 +346,7 @@ function em_wp_admin_template_wizard_render_wireframe_html(array $payload): stri
 
                 if (in_array('footer', $order, true)) {
 
-                    em_wp_admin_render_landing_map_zone(
+                    em_site_admin_render_landing_map_zone(
 
                         'section_footer',
 

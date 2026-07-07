@@ -2,7 +2,7 @@
 /**
  * Contexte dynamique du dashboard admin em-site.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_site_admin_active_template_slug(): string
 {
-    $slug = sanitize_key((string) get_option('em_wp_active_template', ''));
+    $slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
     return $slug !== '' ? $slug : 'mayami';
 }

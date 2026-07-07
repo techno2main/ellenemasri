@@ -1,16 +1,20 @@
 # PA - Refonte Gestion Template
 
-Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 22:43:47
+Date: 2026-07-07
+Horodatage précis (Paris): 2026-07-07 20:06:01
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
 
 Mises à jour de session:
 
+- Purge nomenclature finalisée sur le thème actif: suppression des occurrences `em_wp_` résiduelles dans le code et les scripts admin/front.
+- Stabilisation runtime admin: correction d'une collision de fonction (`em_site_stream_player_height`) et neutralisation de fichiers legacy (`menu.php`, `dashboard-menus.php`, `dashboard-routing.php`) qui provoquaient des redéfinitions fatales.
+- Rétablissement front: ajout d'une migration one-shot des options WordPress legacy (`em_wp_*` / `em_wp_v4_*`) vers le préfixe cible `em_site_*` via `inc/core/legacy-option-prefix-migration.php` pour restaurer les données existantes.
+
 - Correction d'une régression admin: mode Multi rétabli pour toutes les rubriques sauf TOP-BAR et FOOTER (restent imposées en Unique).
 - RELEASE front: branchement du mode Multi (instances, navigation prev/next, dots, timer auto/manuelle, hash d'item).
-- RELEASE front: correction de disparition de section via fallback robuste de résolution des items (`em_wp_v4_get_items` + store brut + slug sélectionné + slug par défaut).
+- RELEASE front: correction de disparition de section via fallback robuste de résolution des items (`em_site_v4_get_items` + store brut + slug sélectionné + slug par défaut).
 - RELEASE front: structuration dynamique de la colonne droite (intro, titre, lignes crédits, séparateurs) avec fallback legacy pour rollback immédiat.
 - RELEASE admin: premier niveau d'optimisation UX builder (mode compact crédits + ajout rapide d'une ligne crédit) pour réduire la complexité d'édition.
 - RELEASE admin (itération UX): remplacement du layout trop haut par une version compacte anti-scroll (lecture améliorée sans hausse de hauteur), en conservant strictement le même stockage de données.
@@ -707,7 +711,7 @@ Critères de sortie Phase 7:
 - Règle UX affinée: en Unique imposé (TOP-BAR/FOOTER), le titre "Items disponibles pour ..." est masqué.
 - HEADER: le sélecteur "Principe d'affichage" (Unique/Multi) est affiché avant la zone "Composition du HEADER".
 - Correction confusion HEADER: le mode Unique/Multi est désormais indépendant de la composition HERO/SLIDER (plus de bascule automatique).
-- Fix UI couleur (builder Rubriques): compat variables CSS `--em-wp-color-swatch` / `--em-color-swatch` pour éviter les swatches gris et rétablir la mise à jour live dans la modale.
+- Fix UI couleur (builder Rubriques): compat variables CSS `--em-site-color-swatch` / `--em-color-swatch` pour éviter les swatches gris et rétablir la mise à jour live dans la modale.
 - STREAM Multi finalisé: config branchée (manuel/auto + timer), premier item par défaut, masquage d'items dans la rotation, persistance AJAX et rendu front multi-items.
 - Ajustement UI STREAM: en mode Multi la radio gauche (mode Unique) est masquée; en Multi+Manuelle, les checkbox d'inclusion et le choix "Premier item" sont masqués.
 - Règle UI renforcée: en mode Unique, seule la radio gauche reste visible (aucun contrôle Multi affiché).

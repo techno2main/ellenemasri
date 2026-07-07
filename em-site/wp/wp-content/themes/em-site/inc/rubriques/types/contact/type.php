@@ -1,10 +1,10 @@
 <?php
 /**
- * Type de rubrique CONTACTS (V4).
+ * Type de rubrique CONTACTS (EM-SITE).
  *
  * Rubrique configurable via le builder ; les items restent stockes en base.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -17,17 +17,17 @@ if (!defined('ABSPATH')) {
  * @param array<string, array<string, mixed>> $types
  * @return array<string, array<string, mixed>>
  */
-function em_wp_rubrique_type_contacts(array $types): array
+function em_site_rubrique_type_contacts(array $types): array
 {
     $types['contacts'] = [
-        'label'        => __('CONTACT', 'em-wp'),
-        'label_plural' => __('CONTACTS', 'em-wp'),
-        'noun'         => __('Contact', 'em-wp'),
+        'label'        => __('CONTACT', 'em-site'),
+        'label_plural' => __('CONTACTS', 'em-site'),
+        'noun'         => __('Contact', 'em-site'),
         'icon'         => 'dashicons-screenoptions',
         'layout'       => ['columns' => 1, 'align' => [1 => 'left']],
-        'starter'      => em_wp_rubrique_default_appearance_fields(),
+        'starter'      => em_site_rubrique_default_appearance_fields(),
     ];
 
     return $types;
 }
-add_filter('em_wp_rubrique_types', 'em_wp_rubrique_type_contacts');
+add_filter('em_site_rubrique_types', 'em_site_rubrique_type_contacts');

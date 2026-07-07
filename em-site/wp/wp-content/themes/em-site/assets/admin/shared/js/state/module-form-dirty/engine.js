@@ -59,17 +59,17 @@
         return entries.join('&');
     }
     function setRedirectAfterSave(form, redirectTo) {
-        var input = form.querySelector('input[name="em-site_redirect_after_save"]');
+        var input = form.querySelector('input[name="em_site_redirect_after_save"]');
         if (!input) {
             input = document.createElement('input');
             input.type = 'hidden';
-            input.name = 'em-site_redirect_after_save';
+            input.name = 'em_site_redirect_after_save';
             form.appendChild(input);
         }
         input.value = redirectTo || '';
     }
     function clearRedirectAfterSave(form) {
-        var input = form.querySelector('input[name="em-site_redirect_after_save"]');
+        var input = form.querySelector('input[name="em_site_redirect_after_save"]');
         if (input) {
             input.value = '';
         }
@@ -130,7 +130,7 @@
         }
         var formData = new FormData(moduleForm);
         if (redirectTo) {
-            formData.set('em-site_redirect_after_save', redirectTo);
+            formData.set('em_site_redirect_after_save', redirectTo);
         }
         return fetch(moduleForm.action, {
             method: 'POST',

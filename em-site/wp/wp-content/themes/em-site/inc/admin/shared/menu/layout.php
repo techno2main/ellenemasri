@@ -2,7 +2,7 @@
 /**
  * Loader decoupe pour layout.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

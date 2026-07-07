@@ -2,7 +2,7 @@
 /**
  * Enqueue minimal des assets front.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

@@ -2,7 +2,7 @@
 /**
  * Repositionnement des menus WP natifs hors place.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,12 +12,12 @@ if (!defined('ABSPATH')) {
 /**
  * Retire les séparateurs WordPress natifs (separator-last, separator1, etc.).
  */
-function em_wp_admin_purge_native_wp_menu_separators(): void
+function em_site_admin_purge_native_wp_menu_separators(): void
 {
     global $menu;
 
     foreach ($menu as $position => $item) {
-        if (!is_array($item) || !em_wp_admin_is_native_wp_menu_separator($item)) {
+        if (!is_array($item) || !em_site_admin_is_native_wp_menu_separator($item)) {
             continue;
         }
 
@@ -30,7 +30,7 @@ function em_wp_admin_purge_native_wp_menu_separators(): void
  *
  * @return array<int|float, array<int, string>>
  */
-function em_wp_admin_collect_menu_intruders_in_range(float $range_start, float $range_end, array $allowed_slugs): array
+function em_site_admin_collect_menu_intruders_in_range(float $range_start, float $range_end, array $allowed_slugs): array
 {
     global $menu;
 
@@ -54,14 +54,14 @@ function em_wp_admin_collect_menu_intruders_in_range(float $range_start, float $
         }
 
         if (
-            in_array($slug, em_wp_admin_menu_chrome_slugs(), true)
-            || str_starts_with($slug, 'em-wp-menu-')
+            in_array($slug, em_site_admin_menu_chrome_slugs(), true)
+            || str_starts_with($slug, 'em-site-menu-')
             || str_starts_with($slug, 'em-')
         ) {
             continue;
         }
 
-        if (em_wp_admin_is_native_wp_menu_separator($item)) {
+        if (em_site_admin_is_native_wp_menu_separator($item)) {
             unset($menu[$position]);
             continue;
         }
@@ -81,24 +81,24 @@ function em_wp_admin_collect_menu_intruders_in_range(float $range_start, float $
  *
  * @return array<int|float, array<int, string>>
  */
-function em_wp_admin_collect_intruding_menus(): array
+function em_site_admin_collect_intruding_menus(): array
 {
-    $intruders = em_wp_admin_collect_menu_intruders_in_range(
-        (float) em_wp_admin_menu_section_label_position(),
-        (float) (em_wp_admin_menu_separator_bottom_position() - 1),
-        em_wp_admin_rubrique_reserved_menu_slugs()
+    $intruders = em_site_admin_collect_menu_intruders_in_range(
+        (float) em_site_admin_menu_section_label_position(),
+        (float) (em_site_admin_menu_separator_bottom_position() - 1),
+        em_site_admin_rubrique_reserved_menu_slugs()
     );
 
-    $intruders += em_wp_admin_collect_menu_intruders_in_range(
-        (float) em_wp_admin_menu_position_catalog_parent(),
-        (float) (em_wp_admin_menu_catalog_separator_bottom_position() - 0.01),
-        em_wp_admin_catalog_reserved_menu_slugs()
+    $intruders += em_site_admin_collect_menu_intruders_in_range(
+        (float) em_site_admin_menu_position_catalog_parent(),
+        (float) (em_site_admin_menu_catalog_separator_bottom_position() - 0.01),
+        em_site_admin_catalog_reserved_menu_slugs()
     );
 
-    $intruders += em_wp_admin_collect_menu_intruders_in_range(
-        em_wp_admin_menu_templates_position(),
-        (float) (em_wp_admin_menu_templates_separator_bottom_position() - 1),
-        em_wp_admin_template_reserved_menu_slugs()
+    $intruders += em_site_admin_collect_menu_intruders_in_range(
+        em_site_admin_menu_templates_position(),
+        (float) (em_site_admin_menu_templates_separator_bottom_position() - 1),
+        em_site_admin_template_reserved_menu_slugs()
     );
 
     return $intruders;
@@ -110,9 +110,9 @@ function em_wp_admin_collect_intruding_menus(): array
  * @param array<int|float, array<int, string>> $intruders
  * @return array<int|float, array<int, string>>
  */
-function em_wp_admin_sort_intruders_for_settings(array $intruders): array
+function em_site_admin_sort_intruders_for_settings(array $intruders): array
 {
-    $order = array_flip(em_wp_admin_native_settings_menu_order());
+    $order = array_flip(em_site_admin_native_settings_menu_order());
 
     uasort(
         $intruders,
@@ -138,7 +138,7 @@ function em_wp_admin_sort_intruders_for_settings(array $intruders): array
  *
  * @param array<int, array<int, string>> $intruders
  */
-function em_wp_admin_insert_relocated_menus(array $intruders): void
+function em_site_admin_insert_relocated_menus(array $intruders): void
 {
     global $menu;
 
@@ -146,11 +146,11 @@ function em_wp_admin_insert_relocated_menus(array $intruders): void
         return;
     }
 
-    $intruders = em_wp_admin_sort_intruders_for_settings($intruders);
+    $intruders = em_site_admin_sort_intruders_for_settings($intruders);
 
     ksort($intruders, SORT_NUMERIC);
 
-    $insert_at = em_wp_admin_menu_wp_settings_label_position() + 1;
+    $insert_at = em_site_admin_menu_wp_settings_label_position() + 1;
 
     foreach ($intruders as $item) {
         while (isset($menu[$insert_at])) {

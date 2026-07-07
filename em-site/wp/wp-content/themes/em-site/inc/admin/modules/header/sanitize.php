@@ -2,7 +2,7 @@
 /**
  * Sanitize options HEADER.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -13,18 +13,18 @@ if (!defined('ABSPATH')) {
  * @param mixed $input
  * @return array<string, mixed>
  */
-function em_wp_header_sanitize_options($input): array
+function em_site_header_sanitize_options($input): array
 {
-    $template_slug = em_wp_header_resolve_template_slug();
-    $existing = em_wp_header_get_saved_options($template_slug);
+    $template_slug = em_site_header_resolve_template_slug();
+    $existing = em_site_header_get_saved_options($template_slug);
 
     if (!is_array($input)) {
         return $existing;
     }
 
     // Visibilité sommaire (checkbox « Afficher ») → store template, pas `enabled` contenu HEADER.
-    if (array_key_exists('enabled', $input) && function_exists('em_wp_set_header_rubrique_visibility')) {
-        em_wp_set_header_rubrique_visibility(!empty($input['enabled']), $template_slug);
+    if (array_key_exists('enabled', $input) && function_exists('em_site_set_header_rubrique_visibility')) {
+        em_site_set_header_rubrique_visibility(!empty($input['enabled']), $template_slug);
     }
 
     $enabled = !empty($existing['enabled']);
@@ -32,19 +32,19 @@ function em_wp_header_sanitize_options($input): array
     $slider_slug = sanitize_key((string) ($input['slider_slug'] ?? ($existing['slider_slug'] ?? '')));
     $layout = sanitize_key((string) ($input['layout'] ?? ($existing['layout'] ?? 'hero_left')));
 
-    if ($hero_slug !== '' && function_exists('em_wp_hero_normalize_catalog_slug')) {
-        $hero_slug = em_wp_hero_normalize_catalog_slug($hero_slug);
+    if ($hero_slug !== '' && function_exists('em_site_hero_normalize_catalog_slug')) {
+        $hero_slug = em_site_hero_normalize_catalog_slug($hero_slug);
     }
 
-    if ($slider_slug !== '' && function_exists('em_wp_slider_normalize_catalog_slug')) {
-        $slider_slug = em_wp_slider_normalize_catalog_slug($slider_slug);
+    if ($slider_slug !== '' && function_exists('em_site_slider_normalize_catalog_slug')) {
+        $slider_slug = em_site_slider_normalize_catalog_slug($slider_slug);
     }
 
-    if ($hero_slug !== '' && function_exists('em_wp_hero_catalog_has') && !em_wp_hero_catalog_has($hero_slug)) {
+    if ($hero_slug !== '' && function_exists('em_site_hero_catalog_has') && !em_site_hero_catalog_has($hero_slug)) {
         $hero_slug = sanitize_key((string) ($existing['hero_slug'] ?? ''));
     }
 
-    if ($slider_slug !== '' && function_exists('em_wp_slider_catalog_has') && !em_wp_slider_catalog_has($slider_slug)) {
+    if ($slider_slug !== '' && function_exists('em_site_slider_catalog_has') && !em_site_slider_catalog_has($slider_slug)) {
         $slider_slug = sanitize_key((string) ($existing['slider_slug'] ?? ''));
     }
 

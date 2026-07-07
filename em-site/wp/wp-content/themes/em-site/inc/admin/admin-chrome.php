@@ -2,7 +2,7 @@
 /**
  * Personnalisation chrome admin (tous les comptes admin).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,10 +12,10 @@ if (!defined('ABSPATH')) {
 /**
  * URL publique du site en production (lien « Aller sur … »).
  */
-function em_wp_admin_production_site_url(): string
+function em_site_admin_production_site_url(): string
 {
     $default = 'https://www.ellenemasri.com/';
-    $url = apply_filters('em_wp_admin_production_site_url', $default);
+    $url = apply_filters('em_site_admin_production_site_url', $default);
 
     return trailingslashit((string) $url);
 }
@@ -23,9 +23,9 @@ function em_wp_admin_production_site_url(): string
 /**
  * Host affiché dans le libellé « Aller sur example.com ».
  */
-function em_wp_admin_production_site_url_label(): string
+function em_site_admin_production_site_url_label(): string
 {
-    $parts = wp_parse_url(em_wp_admin_production_site_url());
+    $parts = wp_parse_url(em_site_admin_production_site_url());
     $host = trim((string) ($parts['host'] ?? ''));
 
     if ($host === '') {
@@ -44,7 +44,7 @@ function em_wp_admin_production_site_url_label(): string
 /**
  * Barre admin : « Visit Site » → « Aller sur {prod} » (nouvel onglet).
  */
-function em_wp_admin_customize_view_site_admin_bar($wp_admin_bar): void
+function em_site_admin_customize_view_site_admin_bar($wp_admin_bar): void
 {
     if (!is_user_logged_in() || !is_admin_bar_showing()) {
         return;
@@ -54,11 +54,11 @@ function em_wp_admin_customize_view_site_admin_bar($wp_admin_bar): void
         return;
     }
 
-    $prod_url = em_wp_admin_production_site_url();
+    $prod_url = em_site_admin_production_site_url();
     $label = sprintf(
         /* translators: %s: production site host (e.g. www.ellenemasri.com) */
-        __('Aller sur %s', 'em-wp'),
-        em_wp_admin_production_site_url_label()
+        __('Aller sur %s', 'em-site'),
+        em_site_admin_production_site_url_label()
     );
 
     foreach (['view-site', 'view'] as $node_id) {
@@ -80,12 +80,12 @@ function em_wp_admin_customize_view_site_admin_bar($wp_admin_bar): void
         ]);
     }
 }
-add_action('admin_bar_menu', 'em_wp_admin_customize_view_site_admin_bar', 9998);
+add_action('admin_bar_menu', 'em_site_admin_customize_view_site_admin_bar', 9998);
 
 /**
  * Menu latéral WP : « Appearance » → « Apparence ».
  */
-function em_wp_admin_rename_appearance_menu(): void
+function em_site_admin_rename_appearance_menu(): void
 {
     global $menu;
 
@@ -98,8 +98,8 @@ function em_wp_admin_rename_appearance_menu(): void
             continue;
         }
 
-        $menu[$index][0] = __('Apparence', 'em-wp');
+        $menu[$index][0] = __('Apparence', 'em-site');
         break;
     }
 }
-add_action('admin_menu', 'em_wp_admin_rename_appearance_menu', 999);
+add_action('admin_menu', 'em_site_admin_rename_appearance_menu', 999);

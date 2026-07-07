@@ -5,9 +5,9 @@
  * Nouvelle logique:
  * - le module HEADER (squelette) pointe vers des items du catalogue `headers`
  * - chaque item HEADER porte sa propre composition (hero/slider/ratio/fond)
- * - fallback legacy conservé sur `em_wp_v4_header_<template>`
+ * - fallback legacy conservé sur `em_site_header_<template>`
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -21,8 +21,8 @@ function em_site_header_font_stack(string $font_key): string
 {
     $font_key = sanitize_key($font_key);
 
-    if (function_exists('em_wp_rubrique_font_choices')) {
-        $choices = em_wp_rubrique_font_choices();
+    if (function_exists('em_site_rubrique_font_choices')) {
+        $choices = em_site_rubrique_font_choices();
 
         if ($font_key !== '' && isset($choices[$font_key]['stack']) && is_string($choices[$font_key]['stack'])) {
             return (string) $choices[$font_key]['stack'];
@@ -38,7 +38,7 @@ function em_site_header_font_stack(string $font_key): string
 
 function em_site_header_active_template(): string
 {
-    $slug = sanitize_key((string) get_option('em_wp_active_template', ''));
+    $slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
     return $slug !== '' ? $slug : 'mayami';
 }
@@ -66,15 +66,15 @@ function em_site_header_catalog_items(): array
 {
     $type = em_site_header_catalog_type_slug();
 
-    if (function_exists('em_wp_v4_get_items')) {
-        $items = em_wp_v4_get_items($type);
+    if (function_exists('em_site_get_items')) {
+        $items = em_site_get_items($type);
         return is_array($items) ? $items : [];
     }
 
-    $items = get_option('em_wp_v4_items_' . $type, []);
+    $items = get_option('em_site_items_' . $type, []);
     if (!is_array($items) || $items === []) {
         // Repli legacy tolérant si un ancien nom d'option existe encore.
-        $items = get_option('em_wp_v4_items_header', []);
+        $items = get_option('em_site_items_header', []);
     }
 
     if (!is_array($items)) {
@@ -133,11 +133,11 @@ function em_site_header_part_type_slug(string $keyword): string
     $keyword = $keyword === 'slider' ? 'slider' : 'hero';
     $candidates = em_site_header_part_type_candidates($keyword);
 
-    if (!function_exists('em_wp_rubrique_type_registry')) {
+    if (!function_exists('em_site_rubrique_type_registry')) {
         return (string) ($candidates[0] ?? '');
     }
 
-    $registry = em_wp_rubrique_type_registry();
+    $registry = em_site_rubrique_type_registry();
     $slugs = array_map('strval', array_keys($registry));
 
     foreach ($candidates as $candidate) {
@@ -233,7 +233,7 @@ function em_site_header_config_normalize(array $raw): array
  */
 function em_site_header_instance_config(string $template): array
 {
-    $instance = get_option('em_wp_v4_instance_' . sanitize_key($template) . '_header', []);
+    $instance = get_option('em_site_instance_' . sanitize_key($template) . '_header', []);
     $display_mode = is_array($instance) ? sanitize_key((string) ($instance['display_mode'] ?? 'single')) : 'single';
     $transition_mode = is_array($instance) ? sanitize_key((string) ($instance['transition_mode'] ?? 'manual')) : 'manual';
     if (!in_array($display_mode, ['single', 'multi'], true)) {
@@ -313,7 +313,7 @@ function em_site_header_instance_config(string $template): array
 function em_site_header_item_config(string $header_item_slug): array
 {
     foreach (em_site_header_slug_variants($header_item_slug) as $candidate_slug) {
-        $raw = get_option('em_wp_v4_header_item_cfg_' . $candidate_slug, []);
+        $raw = get_option('em_site_header_item_cfg_' . $candidate_slug, []);
         if (is_array($raw) && $raw !== []) {
             return [
                 'slug' => $candidate_slug,
@@ -322,7 +322,7 @@ function em_site_header_item_config(string $header_item_slug): array
         }
     }
 
-    $raw = get_option('em_wp_v4_header_item_cfg_' . sanitize_key($header_item_slug), []);
+    $raw = get_option('em_site_header_item_cfg_' . sanitize_key($header_item_slug), []);
 
     return [
         'slug' => sanitize_key($header_item_slug),
@@ -335,7 +335,7 @@ function em_site_header_item_config(string $header_item_slug): array
  */
 function em_site_header_entry_from_legacy(string $template): array
 {
-    $legacy = get_option('em_wp_v4_header_' . sanitize_key($template), []);
+    $legacy = get_option('em_site_header_' . sanitize_key($template), []);
     if (!is_array($legacy)) {
         $legacy = [];
     }
@@ -396,17 +396,17 @@ function em_site_header_part_item_slug(array $config, string $part): string
 
     $type = em_site_header_part_type_slug($part);
 
-    if ($type === '' || !function_exists('em_wp_v4_get_items')) {
+    if ($type === '' || !function_exists('em_site_get_items')) {
         return '';
     }
 
-    $items = em_wp_v4_get_items($type);
+    $items = em_site_get_items($type);
     if ($items === []) {
         return '';
     }
 
-    return function_exists('em_wp_rubrique_default_item_slug')
-        ? em_wp_rubrique_default_item_slug($type)
+    return function_exists('em_site_rubrique_default_item_slug')
+        ? em_site_rubrique_default_item_slug($type)
         : (string) array_key_first($items);
 }
 
@@ -441,20 +441,20 @@ function em_site_header_part_item(string $part, string $item_slug): array
             continue;
         }
 
-        $item = get_option('em_wp_v4_item_' . $candidate_type . '_' . $item_slug, []);
+        $item = get_option('em_site_item_' . $candidate_type . '_' . $item_slug, []);
         if (is_array($item) && $item !== []) {
             return $item;
         }
     }
 
     // Repli robuste: retrouve l'item par son slug dans tous les types connus.
-    if (function_exists('em_wp_rubrique_type_registry')) {
-        foreach (array_keys((array) em_wp_rubrique_type_registry()) as $candidate_type) {
+    if (function_exists('em_site_rubrique_type_registry')) {
+        foreach (array_keys((array) em_site_rubrique_type_registry()) as $candidate_type) {
             $candidate_type = sanitize_key((string) $candidate_type);
             if ($candidate_type === '') {
                 continue;
             }
-            $item = get_option('em_wp_v4_item_' . $candidate_type . '_' . $item_slug, []);
+            $item = get_option('em_site_item_' . $candidate_type . '_' . $item_slug, []);
             if (is_array($item) && $item !== []) {
                 return $item;
             }

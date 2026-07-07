@@ -2,7 +2,7 @@
 /**
  * Rangée Accueil : cartes Templates.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -15,21 +15,21 @@ if (!defined('ABSPATH')) {
  * @param string $active_label Libellé template actif live.
  * @param string $active_slug Slug template actif live.
  */
-function em_wp_admin_dashboard_render_templates_card(string $active_label, string $active_slug): void
+function em_site_admin_dashboard_render_templates_card(string $active_label, string $active_slug): void
 {
     ?>
-    <section class="em-wp-hub__card" data-dashboard-section="templates">
-        <header class="em-wp-hub__card-header">
-            <div class="em-wp-hub__card-heading">
-                <?php em_wp_admin_dashboard_render_card_title(__('MES TEMPLATES', 'em-wp'), 'templates'); ?>
+    <section class="em-site-hub__card" data-dashboard-section="templates">
+        <header class="em-site-hub__card-header">
+            <div class="em-site-hub__card-heading">
+                <?php em_site_admin_dashboard_render_card_title(__('MES TEMPLATES', 'em-site'), 'templates'); ?>
             </div>
-            <?php em_wp_admin_dashboard_render_card_gear_link(
-                em_wp_admin_template_choice_admin_url(),
-                __('Gérer mes templates', 'em-wp')
+            <?php em_site_admin_dashboard_render_card_gear_link(
+                em_site_admin_template_choice_admin_url(),
+                __('Gérer mes templates', 'em-site')
             ); ?>
         </header>
-        <?php em_wp_admin_dashboard_render_live_template_badge($active_label, $active_slug, true); ?>
-        <?php em_wp_admin_dashboard_render_templates_badge(); ?>
+        <?php em_site_admin_dashboard_render_live_template_badge($active_label, $active_slug, true); ?>
+        <?php em_site_admin_dashboard_render_templates_badge(); ?>
     </section>
     <?php
 }

@@ -2,7 +2,7 @@
 /**
  * Chrome menu admin (filets, libellés, purge).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,32 +14,32 @@ if (!defined('ABSPATH')) {
  *
  * @return string[]
  */
-function em_wp_admin_menu_chrome_slugs(): array
+function em_site_admin_menu_chrome_slugs(): array
 {
     return [
-        'separator-em-wp-site-top',
-        'separator-em-wp-bottom',
-        'separator-em-wp-before-vlb',
-        'separator-em-wp-after-medias',
-        'separator-em-wp-after-catalog',
-        'separator-em-wp-after-templates',
-        'separator-em-wp-before-settings',
-        'em-wp-menu-wp-settings-label',
-        'em-wp-menu-active-template-label',
+        'separator-em-site-site-top',
+        'separator-em-site-bottom',
+        'separator-em-site-before-vlb',
+        'separator-em-site-after-medias',
+        'separator-em-site-after-catalog',
+        'separator-em-site-after-templates',
+        'separator-em-site-before-settings',
+        'em-site-menu-wp-settings-label',
+        'em-site-menu-active-template-label',
     ];
 }
 
 /**
  * Retire les entrées chrome déjà présentes (évite doublons si admin_menu repasse).
  */
-function em_wp_admin_purge_menu_chrome_entries(): void
+function em_site_admin_purge_menu_chrome_entries(): void
 {
     global $menu;
 
     foreach ($menu as $position => $item) {
         $slug = (string) ($item[2] ?? '');
 
-        if (in_array($slug, em_wp_admin_menu_chrome_slugs(), true)) {
+        if (in_array($slug, em_site_admin_menu_chrome_slugs(), true)) {
             unset($menu[$position]);
         }
     }
@@ -50,7 +50,7 @@ function em_wp_admin_purge_menu_chrome_entries(): void
  *
  * @return array<int, string>|null
  */
-function em_wp_admin_extract_menu_item_by_slug(string $slug): ?array
+function em_site_admin_extract_menu_item_by_slug(string $slug): ?array
 {
     global $menu;
 
@@ -70,7 +70,7 @@ function em_wp_admin_extract_menu_item_by_slug(string $slug): ?array
 /**
  * Libellés de section, séparateurs et espace autour des blocs Rubriques / WP natif.
  */
-function em_wp_admin_register_menu_chrome(): void
+function em_site_admin_register_menu_chrome(): void
 {
     global $menu;
 
@@ -82,13 +82,13 @@ function em_wp_admin_register_menu_chrome(): void
 
     $registered = true;
 
-    em_wp_admin_purge_menu_chrome_entries();
-    em_wp_admin_purge_native_wp_menu_separators();
-    em_wp_admin_remove_native_media_menu();
+    em_site_admin_purge_menu_chrome_entries();
+    em_site_admin_purge_native_wp_menu_separators();
+    em_site_admin_remove_native_media_menu();
 
-    $intruders = em_wp_admin_collect_intruding_menus();
+    $intruders = em_site_admin_collect_intruding_menus();
 
-    em_wp_admin_shift_admin_menu_positions(em_wp_admin_menu_wp_settings_label_position(), 1);
-    em_wp_admin_insert_relocated_menus($intruders);
+    em_site_admin_shift_admin_menu_positions(em_site_admin_menu_wp_settings_label_position(), 1);
+    em_site_admin_insert_relocated_menus($intruders);
 }
-add_action('admin_menu', 'em_wp_admin_register_menu_chrome', 9999);
+add_action('admin_menu', 'em_site_admin_register_menu_chrome', 9999);

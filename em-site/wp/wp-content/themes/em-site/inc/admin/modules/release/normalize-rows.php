@@ -2,7 +2,7 @@
 /**
  * Normalisation lignes Release.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  * @param mixed $raw
  * @return array<int, array{key:string,value:string,hidden:bool}>
  */
-function em_wp_release_normalize_rows($raw): array
+function em_site_release_normalize_rows($raw): array
 {
     if (!is_array($raw)) {
         return [];

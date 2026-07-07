@@ -1,6 +1,6 @@
 <?php
 /**
- * Pont V4 → système d'ouverture des plateformes du site réel.
+ * Pont EM-SITE → système d'ouverture des plateformes du site réel.
  *
  * Reproduit EXACTEMENT le comportement legacy (assets/front/js/modules/stream/
  * stream.js) :
@@ -11,7 +11,7 @@
  *
  * Le moteur d'embed (URL → iframe) est mutualisé depuis inc/shared/stream-embed.php.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -19,9 +19,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Normalise une clé plateforme V4 (« stream:spotify » / « spotify ») en slug stream.
+ * Normalise une clé plateforme EM-SITE (« stream:spotify » / « spotify ») en slug stream.
  */
-function em_wp_v4_platform_stream_slug(string $platform_key): string
+function em_site_platform_stream_slug(string $platform_key): string
 {
     $slug = strpos($platform_key, ':') !== false
         ? substr($platform_key, (int) strpos($platform_key, ':') + 1)
@@ -35,32 +35,32 @@ function em_wp_v4_platform_stream_slug(string $platform_key): string
  *
  * @return array{slug:string, has_player:bool, embed:string, height:int, label:string}
  */
-function em_wp_v4_platform_player(string $platform_key, string $url): array
+function em_site_platform_player(string $platform_key, string $url): array
 {
-    $slug = em_wp_v4_platform_stream_slug($platform_key);
+    $slug = em_site_platform_stream_slug($platform_key);
     $url = trim($url);
     $empty = ['slug' => $slug, 'has_player' => false, 'embed' => '', 'height' => 352, 'label' => ''];
 
-    if ($slug === '' || $url === '' || !function_exists('em_wp_stream_build_stream_embed_src')) {
+    if ($slug === '' || $url === '' || !function_exists('em_site_stream_build_stream_embed_src')) {
         return $empty;
     }
 
-    $type = em_wp_stream_detect_stream_platform_key($slug, $url);
-    $embed = em_wp_stream_build_stream_embed_src($type, $url);
+    $type = em_site_stream_detect_stream_platform_key($slug, $url);
+    $embed = em_site_stream_build_stream_embed_src($type, $url);
 
     if ($embed === '') {
         return $empty;
     }
 
-    $label = function_exists('em_wp_rubrique_platform_label')
-        ? em_wp_rubrique_platform_label('stream:' . $slug)
+    $label = function_exists('em_site_rubrique_platform_label')
+        ? em_site_rubrique_platform_label('stream:' . $slug)
         : $slug;
 
     return [
         'slug'       => $slug,
         'has_player' => true,
         'embed'      => $embed,
-        'height'     => (int) em_wp_stream_player_height($type, $embed),
+        'height'     => (int) em_site_stream_player_height($type, $embed),
         'label'      => $label,
     ];
 }
@@ -71,7 +71,7 @@ function em_wp_v4_platform_player(string $platform_key, string $url): array
  * @param array<string, array<string, mixed>>|null $set
  * @return array<string, array<string, mixed>>
  */
-function em_wp_v4_players_acc(?array $set = null): array
+function em_site_players_acc(?array $set = null): array
 {
     static $acc = [];
 
@@ -85,9 +85,9 @@ function em_wp_v4_players_acc(?array $set = null): array
 /**
  * Réinitialise l'accumulateur (à appeler avant le rendu d'une section).
  */
-function em_wp_v4_players_reset(): void
+function em_site_players_reset(): void
 {
-    em_wp_v4_players_acc([]);
+    em_site_players_acc([]);
 }
 
 /**
@@ -95,24 +95,24 @@ function em_wp_v4_players_reset(): void
  *
  * @param array{slug:string, has_player:bool, embed:string, height:int, label:string} $player
  */
-function em_wp_v4_players_add(array $player): void
+function em_site_players_add(array $player): void
 {
     if (empty($player['has_player']) || (string) ($player['slug'] ?? '') === '') {
         return;
     }
 
-    $acc = em_wp_v4_players_acc();
+    $acc = em_site_players_acc();
     $acc[$player['slug']] = $player;
-    em_wp_v4_players_acc($acc);
+    em_site_players_acc($acc);
 }
 
 /**
  * HTML des players accumulés (variantes mobile + desktop, comme le site réel),
  * enveloppés dans un conteneur centré aligné sur la largeur des cartes.
  */
-function em_wp_v4_players_html(): string
+function em_site_players_html(): string
 {
-    $acc = em_wp_v4_players_acc();
+    $acc = em_site_players_acc();
 
     if ($acc === []) {
         return '';

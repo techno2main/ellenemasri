@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Rend un footer de rubrique via le renderer V4 dynamique.
+ * Rend un footer de rubrique via le renderer EM-SITE dynamique.
  *
  * @param array<string, mixed>|null $content_override
  * @param array<string, string|bool|int> $attrs
@@ -16,7 +16,7 @@ function em_site_front_render_rubrique_footer(
     array $attrs = [],
     ?array $content_override = null
 ): string {
-    if (!function_exists('em_wp_rubrique_render_item')) {
+    if (!function_exists('em_site_rubrique_render_item')) {
         return '';
     }
 
@@ -26,7 +26,7 @@ function em_site_front_render_rubrique_footer(
         return '';
     }
 
-    $html = em_wp_rubrique_render_item($type_slug, $item_slug, $content_override);
+    $html = em_site_rubrique_render_item($type_slug, $item_slug, $content_override);
     if ($html === '') {
         return '';
     }

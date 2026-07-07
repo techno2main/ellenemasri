@@ -194,7 +194,7 @@
 
     function fetchRubriquePicker(moduleSlug) {
         var body = new window.FormData();
-        body.append('action', 'em-site_load_rubrique_picker');
+        body.append('action', 'em_site_load_rubrique_picker');
         body.append('nonce', config.nonce);
         body.append('module_slug', moduleSlug);
 
@@ -393,7 +393,7 @@
             var insertAfter = positionSelect ? positionSelect.value : '';
 
             postSkeletonAction(
-                'em-site_template_skeleton_add_rubrique',
+                'em_site_template_skeleton_add_rubrique',
                 addTemplate,
                 addRubrique,
                 addButton,
@@ -424,7 +424,7 @@
                 return;
             }
 
-            postSkeletonAction('em-site_template_skeleton_remove_rubrique', removeTemplate, removeRubrique, removeButton);
+            postSkeletonAction('em_site_template_skeleton_remove_rubrique', removeTemplate, removeRubrique, removeButton);
         });
     });
 })(window, document);

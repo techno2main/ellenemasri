@@ -13,13 +13,13 @@
         navigation: null,
         legacyKeySuffix: '_legacy_single',
         isEditingDraftName: false,
-        restoreGrantKey: 'em-site_wizard_restore_grant',
-        newLaunchGrantKey: 'em-site_wizard_new_launch',
-        workspaceLaunchGrantKey: 'em-site_wizard_workspace_launch',
+        restoreGrantKey: 'em_site_wizard_restore_grant',
+        newLaunchGrantKey: 'em_site_wizard_new_launch',
+        workspaceLaunchGrantKey: 'em_site_wizard_workspace_launch',
         serverStore: null,
 
         getKey: function () {
-            return (State.config && State.config.draftStorageKey) || 'em-site_template_wizard_drafts';
+            return (State.config && State.config.draftStorageKey) || 'em_site_template_wizard_drafts';
         },
 
         getLegacyKey: function () {
@@ -179,7 +179,7 @@
             var config = State.config || {};
             var body = new URLSearchParams();
 
-            body.append('action', 'em-site_template_wizard_save_draft');
+            body.append('action', 'em_site_template_wizard_save_draft');
             body.append('nonce', config.draftNonce || '');
             body.append('snapshot', JSON.stringify(snapshot));
 
@@ -199,7 +199,7 @@
             var config = State.config || {};
             var body = new URLSearchParams();
 
-            body.append('action', 'em-site_template_wizard_delete_draft');
+            body.append('action', 'em_site_template_wizard_delete_draft');
             body.append('nonce', config.draftNonce || '');
             body.append('draft_id', String(draftId || ''));
 
@@ -224,8 +224,8 @@
 
             try {
                 var url = new URL(window.location.href);
-                url.searchParams.set('em-site_mode', 'edit');
-                url.searchParams.set('em-site_draft', String(draftId));
+                url.searchParams.set('em_site_mode', 'edit');
+                url.searchParams.set('em_site_draft', String(draftId));
                 window.history.replaceState({}, '', url.toString());
                 page.setAttribute('data-wizard-resume-id', String(draftId));
             } catch (err) {
@@ -305,9 +305,9 @@
         },
 
         editUrl: function (id) {
-            var base = (State.config && State.config.createHubUrl) || window.location.pathname + window.location.search.split('&em-site_')[0];
+            var base = (State.config && State.config.createHubUrl) || window.location.pathname + window.location.search.split('&em_site')[0];
             var join = base.indexOf('?') >= 0 ? '&' : '?';
-            return base + join + 'em-site_mode=edit&em-site_draft=' + encodeURIComponent(String(id || ''));
+            return base + join + 'em_site_mode=edit&em_site_draft=' + encodeURIComponent(String(id || ''));
         },
 
         hubUrl: function () {
@@ -380,7 +380,7 @@
 
             try {
                 var url = new URL(window.location.href);
-                url.searchParams.delete('em-site_draft');
+                url.searchParams.delete('em_site_draft');
                 window.history.replaceState({}, '', url.toString());
             } catch (err) {
                 /* noop */
@@ -507,7 +507,7 @@
                 return;
             }
 
-            root.querySelectorAll('a[href*="em-site_draft="]').forEach(function (link) {
+            root.querySelectorAll('a[href*="em_site_draft="]').forEach(function (link) {
                 if (link.dataset.resumeBound === '1') {
                     return;
                 }
@@ -517,7 +517,7 @@
                     var draftId = '';
 
                     try {
-                        draftId = new URL(link.href, window.location.origin).searchParams.get('em-site_draft') || '';
+                        draftId = new URL(link.href, window.location.origin).searchParams.get('em_site_draft') || '';
                     } catch (err) {
                         draftId = '';
                     }

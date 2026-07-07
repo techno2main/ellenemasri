@@ -2,7 +2,7 @@
 /**
  * Bootstrap minimal du theme pour rendu front par rubrique.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/core/assets.php';
+require_once __DIR__ . '/core/legacy-option-prefix-migration.php';
 require_once __DIR__ . '/core/login.php';
 require_once __DIR__ . '/core/login-off.php';
 require_once __DIR__ . '/admin/client-access.php';

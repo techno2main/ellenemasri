@@ -2,7 +2,7 @@
 /**
  * Panneau Style de base + image de fond HEADER.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,28 +14,28 @@ if (!defined('ABSPATH')) {
  *
  * @param array<string, mixed> $options
  */
-function em_wp_header_render_style_panel(array $options, string $option_name): void
+function em_site_header_render_style_panel(array $options, string $option_name): void
 {
-    em_wp_admin_render_base_style_panel(
-        __('Style de base', 'em-wp'),
+    em_site_admin_render_base_style_panel(
+        __('Style de base', 'em-site'),
         [
             [
                 'name'        => 'background_color',
-                'label'       => __('Couleur de fond', 'em-wp'),
+                'label'       => __('Couleur de fond', 'em-site'),
                 'value'       => (string) ($options['background_color'] ?? ''),
                 'placeholder' => '#ff6f00',
             ],
             [
                 'name'        => 'text_color',
-                'label'       => __('Couleur du texte', 'em-wp'),
+                'label'       => __('Couleur du texte', 'em-site'),
                 'value'       => (string) ($options['text_color'] ?? ''),
                 'placeholder' => '#100421',
             ],
         ],
         $option_name,
-        'em-wp-header-panel',
+        'em-site-header-panel',
         static function () use ($options, $option_name): void {
-            em_wp_header_render_background_image_fields($options, $option_name);
+            em_site_header_render_background_image_fields($options, $option_name);
         }
     );
 }
@@ -45,34 +45,34 @@ function em_wp_header_render_style_panel(array $options, string $option_name): v
  *
  * @param array<string, mixed> $options
  */
-function em_wp_header_render_background_image_fields(array $options, string $option_name): void
+function em_site_header_render_background_image_fields(array $options, string $option_name): void
 {
     $url = (string) ($options['background_image'] ?? '');
     $hidden = !empty($options['background_image_hidden']);
-    $input_id = 'em-wp-header-background-image';
-    $preview_id = 'em-wp-header-background-image-preview';
+    $input_id = 'em-site-header-background-image';
+    $preview_id = 'em-site-header-background-image-preview';
     ?>
-    <div class="em-wp-header-admin__bg-image">
-        <p class="em-wp-header-admin__bg-image-label"><?php esc_html_e('Image de fond', 'em-wp'); ?></p>
-        <p class="description"><?php esc_html_e('Couvre toute la largeur du HEADER (Hero + Slider).', 'em-wp'); ?></p>
-        <div class="em-wp-hero-media-row">
+    <div class="em-site-header-admin__bg-image">
+        <p class="em-site-header-admin__bg-image-label"><?php esc_html_e('Image de fond', 'em-site'); ?></p>
+        <p class="description"><?php esc_html_e('Couvre toute la largeur du HEADER (Hero + Slider).', 'em-site'); ?></p>
+        <div class="em-site-hero-media-row">
             <input
                 type="text"
                 id="<?php echo esc_attr($input_id); ?>"
                 name="<?php echo esc_attr($option_name); ?>[background_image]"
                 value="<?php echo esc_attr($url); ?>"
-                class="regular-text em-wp-hero-media-input"
+                class="regular-text em-site-hero-media-input"
             >
             <button
                 type="button"
-                class="button button-secondary em-wp-header-media-button"
+                class="button button-secondary em-site-header-media-button"
                 data-target="<?php echo esc_attr($input_id); ?>"
                 data-preview="<?php echo esc_attr($preview_id); ?>"
-                data-modal-title="<?php echo esc_attr__('Choisir l\'image de fond HEADER', 'em-wp'); ?>"
-                data-modal-button="<?php echo esc_attr__('Utiliser cette image', 'em-wp'); ?>"
-            ><?php esc_html_e('Modifier', 'em-wp'); ?></button>
-            <label class="em-wp-hero-inline-check">
-                <span><?php esc_html_e('Masquer', 'em-wp'); ?></span>
+                data-modal-title="<?php echo esc_attr__('Choisir l\'image de fond HEADER', 'em-site'); ?>"
+                data-modal-button="<?php echo esc_attr__('Utiliser cette image', 'em-site'); ?>"
+            ><?php esc_html_e('Modifier', 'em-site'); ?></button>
+            <label class="em-site-hero-inline-check">
+                <span><?php esc_html_e('Masquer', 'em-site'); ?></span>
                 <input
                     type="checkbox"
                     name="<?php echo esc_attr($option_name); ?>[background_image_hidden]"
@@ -83,7 +83,7 @@ function em_wp_header_render_background_image_fields(array $options, string $opt
         </div>
         <div
             id="<?php echo esc_attr($preview_id); ?>"
-            class="em-wp-hero-preview em-wp-header-admin__bg-preview<?php echo $url === '' ? ' is-empty' : ''; ?>"
+            class="em-site-hero-preview em-site-header-admin__bg-preview<?php echo $url === '' ? ' is-empty' : ''; ?>"
         ><?php if ($url !== '') { ?><img src="<?php echo esc_url($url); ?>" alt=""><?php } ?></div>
     </div>
     <?php

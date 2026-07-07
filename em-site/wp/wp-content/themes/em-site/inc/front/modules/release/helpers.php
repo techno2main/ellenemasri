@@ -2,7 +2,7 @@
 /**
  * Helpers front de la rubrique RELEASE.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,21 +11,21 @@ if (!defined('ABSPATH')) {
 
 function em_site_release_active_template(): string
 {
-	$slug = sanitize_key((string) get_option('em_wp_active_template', ''));
+	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
 }
 
 function em_site_release_item_option_name(string $template_slug): string
 {
-	$instance = get_option('em_wp_v4_instance_' . $template_slug . '_release', []);
+	$instance = get_option('em_site_instance_' . $template_slug . '_release', []);
 	$item_slug = is_array($instance) ? sanitize_key((string) ($instance['item'] ?? '')) : '';
 
 	if ($item_slug === '') {
 		$item_slug = 'release-' . $template_slug;
 	}
 
-	return 'em_wp_v4_item_release_' . $item_slug;
+	return 'em_site_item_release_' . $item_slug;
 }
 
 function em_site_release_item(): array
@@ -43,14 +43,14 @@ function em_site_release_item(): array
 function em_site_release_resolved_config(): array
 {
 	$template = em_site_release_active_template();
-	$instance = get_option('em_wp_v4_instance_' . $template . '_release', []);
+	$instance = get_option('em_site_instance_' . $template . '_release', []);
 	$instance = is_array($instance) ? $instance : [];
 
-	$items = function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items('release') : [];
+	$items = function_exists('em_site_get_items') ? em_site_get_items('release') : [];
 	$item_slugs = array_map('strval', array_keys($items));
 
 	if ($item_slugs === []) {
-		$raw_items = get_option('em_wp_v4_items_release', []);
+		$raw_items = get_option('em_site_items_release', []);
 		if (is_array($raw_items)) {
 			foreach ($raw_items as $raw_slug => $_label) {
 				$raw_slug = sanitize_key((string) $raw_slug);
@@ -68,7 +68,7 @@ function em_site_release_resolved_config(): array
 		$item_slugs[] = $selected;
 	}
 	if ($selected === '' || !in_array($selected, $item_slugs, true)) {
-		$selected = sanitize_key((string) str_replace('em_wp_v4_item_release_', '', em_site_release_item_option_name($template)));
+		$selected = sanitize_key((string) str_replace('em_site_item_release_', '', em_site_release_item_option_name($template)));
 	}
 	if ($selected !== '' && !in_array($selected, $item_slugs, true)) {
 		$item_slugs[] = $selected;
@@ -165,7 +165,7 @@ function em_site_release_item_by_slug(string $slug): array
 		return [];
 	}
 
-	$item = get_option('em_wp_v4_item_release_' . $slug, []);
+	$item = get_option('em_site_item_release_' . $slug, []);
 
 	return is_array($item) ? $item : [];
 }

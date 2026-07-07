@@ -2,7 +2,7 @@
 /**
  * Rendu HERO (colonne gauche du HEADER composite).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

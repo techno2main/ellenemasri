@@ -81,7 +81,7 @@
         ns.setStatus(ctx, '', false);
 
         var body = new window.FormData();
-        body.append('action', 'em-site_save_site_rubrique_order');
+        body.append('action', 'em_site_save_site_rubrique_order');
         body.append('nonce', ctx.config.nonce);
         body.append('order', JSON.stringify(getFullOrderFromList(ctx)));
 
@@ -120,7 +120,7 @@
         ctx.layoutSaving = true;
 
         var body = new window.FormData();
-        body.append('action', 'em-site_save_header_layout');
+        body.append('action', 'em_site_save_header_layout');
         body.append('nonce', ctx.config.nonce);
         body.append('layout', layout);
 

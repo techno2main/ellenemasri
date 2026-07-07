@@ -1,17 +1,17 @@
 <?php
-function em_wp_admin_hub_render_catalog_card_description(string $item_name, string $rubrique_name, string $module_slug = ''): void
+function em_site_admin_hub_render_catalog_card_description(string $item_name, string $rubrique_name, string $module_slug = ''): void
 {
-    $item_html = '<strong class="em-wp-hub__card-desc-item">' . esc_html(__('items', 'em-wp')) . '</strong>';
-    $rubrique_html = '<strong class="em-wp-hub__card-desc-rubrique">' . esc_html(mb_strtoupper(trim($rubrique_name))) . '</strong>';
+    $item_html = '<strong class="em-site-hub__card-desc-item">' . esc_html(__('items', 'em-site')) . '</strong>';
+    $rubrique_html = '<strong class="em-site-hub__card-desc-rubrique">' . esc_html(mb_strtoupper(trim($rubrique_name))) . '</strong>';
 
     $text = sprintf(
         /* translators: 1: literal "items", 2: rubrique name */
-        __('Liste des %1$s disponibles pour la rubrique %2$s.', 'em-wp'),
+        __('Liste des %1$s disponibles pour la rubrique %2$s.', 'em-site'),
         $item_html,
         $rubrique_html
     );
     ?>
-    <p class="em-wp-hub__card-desc">
+    <p class="em-site-hub__card-desc">
         <?php
         echo wp_kses(
             $text,
@@ -27,7 +27,7 @@ function em_wp_admin_hub_render_catalog_card_description(string $item_name, stri
 /**
  * Rendu d'un bouton d'action pill (lien).
  */
-function em_wp_admin_hub_render_action_link(
+function em_site_admin_hub_render_action_link(
     string $url,
     string $label,
     string $icon_class,
@@ -40,16 +40,16 @@ function em_wp_admin_hub_render_action_link(
         $icon_class = 'dashicons ' . $icon_class;
     }
 
-    $action_class = 'em-wp-hub__action';
+    $action_class = 'em-site-hub__action';
     $visible_label = trim($label);
     $aria_label = trim($accessible_label !== '' ? $accessible_label : $label);
 
     if ($compact) {
-        $action_class .= ' em-wp-hub__action--compact';
+        $action_class .= ' em-site-hub__action--compact';
     }
 
     if ($visible_label === '' && $icon_class !== '') {
-        $action_class .= ' em-wp-hub__action--icon-only';
+        $action_class .= ' em-site-hub__action--icon-only';
     }
     ?>
     <a
@@ -58,12 +58,12 @@ function em_wp_admin_hub_render_action_link(
         <?php echo $aria_label !== '' ? 'aria-label="' . esc_attr($aria_label) . '"' : ''; ?>
         <?php echo $aria_label !== '' ? 'title="' . esc_attr($aria_label) . '"' : ''; ?>
     >
-        <span class="em-wp-hub__action-inner">
+        <span class="em-site-hub__action-inner">
             <?php if ($icon_class !== '') { ?>
                 <span class="<?php echo esc_attr($icon_class); ?>" aria-hidden="true"></span>
             <?php } ?>
             <?php if ($visible_label !== '') { ?>
-                <span class="em-wp-hub__action-label"><?php echo esc_html($visible_label); ?></span>
+                <span class="em-site-hub__action-label"><?php echo esc_html($visible_label); ?></span>
             <?php } ?>
         </span>
     </a>
@@ -75,7 +75,7 @@ function em_wp_admin_hub_render_action_link(
  *
  * @param array<string, string> $attrs
  */
-function em_wp_admin_hub_render_catalog_name_edit_button(
+function em_site_admin_hub_render_catalog_name_edit_button(
     string $button_id,
     string $accessible_label,
     array $attrs = []
@@ -101,7 +101,7 @@ function em_wp_admin_hub_render_catalog_name_edit_button(
     ?>
     <button
         type="button"
-        class="em-wp-hub__card-name-edit"
+        class="em-site-hub__card-name-edit"
         id="<?php echo esc_attr($button_id); ?>"
         title="<?php echo esc_attr($accessible_label); ?>"
         <?php echo $accessible_label !== '' ? 'aria-label="' . esc_attr($accessible_label) . '"' : ''; ?>
@@ -115,7 +115,7 @@ function em_wp_admin_hub_render_catalog_name_edit_button(
 /**
  * Action « Ouvrir le catalogue » — libellé visible + icône dossier.
  */
-function em_wp_admin_hub_render_catalog_open_action(string $url, string $catalog_label = ''): void
+function em_site_admin_hub_render_catalog_open_action(string $url, string $catalog_label = ''): void
 {
     $url = trim($url);
     $catalog_label = trim($catalog_label);
@@ -127,20 +127,20 @@ function em_wp_admin_hub_render_catalog_open_action(string $url, string $catalog
     $accessible_label = $catalog_label !== ''
         ? sprintf(
             /* translators: %s: catalog name */
-            __('Ouvrir le catalogue %s', 'em-wp'),
+            __('Ouvrir le catalogue %s', 'em-site'),
             $catalog_label
         )
-        : __('Ouvrir le catalogue', 'em-wp');
+        : __('Ouvrir le catalogue', 'em-site');
     ?>
     <a
-        class="em-wp-hub__action em-wp-hub__action--compact em-wp-hub__action--catalog-open em-wp-hub__action--fa"
+        class="em-site-hub__action em-site-hub__action--compact em-site-hub__action--catalog-open em-site-hub__action--fa"
         href="<?php echo esc_url($url); ?>"
         aria-label="<?php echo esc_attr($accessible_label); ?>"
         title="<?php echo esc_attr($accessible_label); ?>"
     >
-        <span class="em-wp-hub__action-inner">
+        <span class="em-site-hub__action-inner">
             <i class="fa-solid fa-folder-open" aria-hidden="true"></i>
-            <span class="em-wp-hub__action-label"><?php esc_html_e('Ouvrir', 'em-wp'); ?></span>
+            <span class="em-site-hub__action-label"><?php esc_html_e('Ouvrir', 'em-site'); ?></span>
         </span>
     </a>
     <?php
@@ -149,7 +149,7 @@ function em_wp_admin_hub_render_catalog_open_action(string $url, string $catalog
 /**
  * Lien icône Font Awesome compact (cartes hub — voir, éditer…).
  */
-function em_wp_admin_hub_render_card_fa_action_link(
+function em_site_admin_hub_render_card_fa_action_link(
     string $url,
     string $fa_class,
     string $accessible_label
@@ -162,11 +162,11 @@ function em_wp_admin_hub_render_card_fa_action_link(
     }
     ?>
     <a
-        class="em-wp-hub__action em-wp-hub__action--compact em-wp-hub__action--icon-only em-wp-hub__action--fa"
+        class="em-site-hub__action em-site-hub__action--compact em-site-hub__action--icon-only em-site-hub__action--fa"
         href="<?php echo esc_url($url); ?>"
         <?php echo $accessible_label !== '' ? 'aria-label="' . esc_attr($accessible_label) . '"' : ''; ?>
     >
-        <span class="em-wp-hub__action-inner">
+        <span class="em-site-hub__action-inner">
             <i class="<?php echo esc_attr($fa_class); ?>" aria-hidden="true"></i>
         </span>
     </a>
@@ -178,7 +178,7 @@ function em_wp_admin_hub_render_card_fa_action_link(
  *
  * @param array<string, string> $attrs
  */
-function em_wp_admin_hub_render_card_fa_action_button(
+function em_site_admin_hub_render_card_fa_action_button(
     string $button_id,
     string $fa_class,
     string $accessible_label,
@@ -206,12 +206,12 @@ function em_wp_admin_hub_render_card_fa_action_button(
     ?>
     <button
         type="button"
-        class="em-wp-hub__action em-wp-hub__action--compact em-wp-hub__action--icon-only em-wp-hub__action--fa"
+        class="em-site-hub__action em-site-hub__action--compact em-site-hub__action--icon-only em-site-hub__action--fa"
         id="<?php echo esc_attr($button_id); ?>"
         <?php echo $accessible_label !== '' ? 'aria-label="' . esc_attr($accessible_label) . '"' : ''; ?>
         <?php echo $attr_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
     >
-        <span class="em-wp-hub__action-inner">
+        <span class="em-site-hub__action-inner">
             <i class="<?php echo esc_attr($fa_class); ?>" aria-hidden="true"></i>
         </span>
     </button>
@@ -221,26 +221,26 @@ function em_wp_admin_hub_render_card_fa_action_button(
 /**
  * Bouton secondaire désactivé (cartes « Nouveau … », prochaine étape).
  */
-function em_wp_admin_hub_render_disabled_action(string $label, string $icon_class = 'dashicons dashicons-plus-alt2', bool $compact = false): void
+function em_site_admin_hub_render_disabled_action(string $label, string $icon_class = 'dashicons dashicons-plus-alt2', bool $compact = false): void
 {
-    $action_class = 'em-wp-hub__action em-wp-hub__action--secondary';
+    $action_class = 'em-site-hub__action em-site-hub__action--secondary';
     $visible_label = trim($label);
 
     if ($compact) {
-        $action_class .= ' em-wp-hub__action--compact';
+        $action_class .= ' em-site-hub__action--compact';
     }
 
     if ($visible_label === '' && $icon_class !== '') {
-        $action_class .= ' em-wp-hub__action--icon-only';
+        $action_class .= ' em-site-hub__action--icon-only';
     }
     ?>
-    <button type="button" class="<?php echo esc_attr($action_class); ?>" disabled title="<?php esc_attr_e('Prochaine étape', 'em-wp'); ?>">
-        <span class="em-wp-hub__action-inner">
+    <button type="button" class="<?php echo esc_attr($action_class); ?>" disabled title="<?php esc_attr_e('Prochaine étape', 'em-site'); ?>">
+        <span class="em-site-hub__action-inner">
             <?php if ($icon_class !== '') { ?>
                 <span class="<?php echo esc_attr($icon_class); ?>" aria-hidden="true"></span>
             <?php } ?>
             <?php if ($visible_label !== '') { ?>
-                <span class="em-wp-hub__action-label"><?php echo esc_html($visible_label); ?></span>
+                <span class="em-site-hub__action-label"><?php echo esc_html($visible_label); ?></span>
             <?php } ?>
         </span>
     </button>

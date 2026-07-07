@@ -2,7 +2,7 @@
 /**
  * Rendu SLIDER (colonne droite du HEADER composite).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -36,7 +36,7 @@ function em_site_header_slider_collect_slides(array $meta): array
 			}
 			$slides[] = [
 				'type' => 'video',
-				'name' => $name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $position),
+				'name' => $name !== '' ? $name : sprintf(__('Slide %d', 'em-site'), $position),
 				'delay_ms' => $delay,
 				'video_id' => $video_id,
 			];
@@ -51,7 +51,7 @@ function em_site_header_slider_collect_slides(array $meta): array
 			}
 			$slides[] = [
 				'type' => 'tiktok',
-				'name' => $name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $position),
+				'name' => $name !== '' ? $name : sprintf(__('Slide %d', 'em-site'), $position),
 				'delay_ms' => $delay,
 				'tiktok_url' => $tiktok_url,
 				'tiktok_video_url' => $tiktok_video_url,
@@ -70,7 +70,7 @@ function em_site_header_slider_collect_slides(array $meta): array
 		$slides[] = [
 			'type' => 'image',
 			'image' => $image,
-			'name' => $name !== '' ? $name : sprintf(__('Slide %d', 'em-wp'), $position),
+			'name' => $name !== '' ? $name : sprintf(__('Slide %d', 'em-site'), $position),
 			'alt' => trim((string) ($item['alt_text'] ?? '')),
 			'delay_ms' => $delay,
 		];
@@ -115,7 +115,7 @@ function em_site_render_header_slider_html(string $item_slug): string
 		static fn(string $font_slug): string => em_site_header_font_stack($font_slug)
 	);
 
-	$slider_uid = 'em-wp-slider-' . wp_unique_id();
+	$slider_uid = 'em-site-slider-' . wp_unique_id();
 
 	ob_start();
 	?>
@@ -139,7 +139,7 @@ function em_site_render_header_slider_html(string $item_slug): string
 											<?php if (!empty($slide['tiktok_video_url'])) : ?>
 												<div class="em-slider__video-wrap"><video class="em-slider__tiktok-video" src="<?php echo esc_url((string) $slide['tiktok_video_url']); ?>" poster="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>" playsinline webkit-playsinline preload="metadata" controlslist="nodownload noplaybackrate noremoteplayback" disablepictureinpicture></video></div>
 											<?php else : ?>
-												<blockquote class="tiktok-embed"<?php if (!empty($slide['tiktok_url'])) : ?> cite="<?php echo esc_url((string) $slide['tiktok_url']); ?>"<?php endif; ?><?php if (!empty($slide['tiktok_video_id'])) : ?> data-video-id="<?php echo esc_attr((string) $slide['tiktok_video_id']); ?>"<?php endif; ?> data-embed-from="oembed"><section><?php if (!empty($slide['tiktok_url'])) : ?><a target="_blank" rel="noreferrer" href="<?php echo esc_url((string) $slide['tiktok_url']); ?>"><?php esc_html_e('Voir sur TikTok', 'em-wp'); ?></a><?php endif; ?></section></blockquote>
+												<blockquote class="tiktok-embed"<?php if (!empty($slide['tiktok_url'])) : ?> cite="<?php echo esc_url((string) $slide['tiktok_url']); ?>"<?php endif; ?><?php if (!empty($slide['tiktok_video_id'])) : ?> data-video-id="<?php echo esc_attr((string) $slide['tiktok_video_id']); ?>"<?php endif; ?> data-embed-from="oembed"><section><?php if (!empty($slide['tiktok_url'])) : ?><a target="_blank" rel="noreferrer" href="<?php echo esc_url((string) $slide['tiktok_url']); ?>"><?php esc_html_e('Voir sur TikTok', 'em-site'); ?></a><?php endif; ?></section></blockquote>
 											<?php endif; ?>
 										<?php else : ?>
 											<img src="<?php echo esc_url((string) ($slide['image'] ?? '')); ?>" alt="<?php echo esc_attr((string) ($slide['alt'] ?? '')); ?>" loading="lazy" decoding="async">
@@ -152,7 +152,7 @@ function em_site_render_header_slider_html(string $item_slug): string
 									<button class="em-slider__nav em-slider__nav--next" type="button" aria-label="Slide suivante">&#10095;</button>
 								<?php endif; ?>
 
-								<button type="button" class="em-slider__audio-btn is-muted is-hidden" aria-label="<?php esc_attr_e('Activer le son', 'em-wp'); ?>" aria-pressed="false"><span class="em-slider__audio-btn-label"><?php esc_html_e('Activer le son', 'em-wp'); ?></span><span class="em-slider__audio-icon em-slider__audio-icon-muted" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path><path d="M17 10l4 4m0-4l-4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg></span><span class="em-slider__audio-icon em-slider__audio-icon-live" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path><path d="M17 9a5 5 0 0 1 0 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path><path d="M19.5 6.5a8.5 8.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg></span></button>
+								<button type="button" class="em-slider__audio-btn is-muted is-hidden" aria-label="<?php esc_attr_e('Activer le son', 'em-site'); ?>" aria-pressed="false"><span class="em-slider__audio-btn-label"><?php esc_html_e('Activer le son', 'em-site'); ?></span><span class="em-slider__audio-icon em-slider__audio-icon-muted" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path><path d="M17 10l4 4m0-4l-4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg></span><span class="em-slider__audio-icon em-slider__audio-icon-live" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 9h4l5-4v14l-5-4H5z" fill="currentColor"></path><path d="M17 9a5 5 0 0 1 0 6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path><path d="M19.5 6.5a8.5 8.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"></path></svg></span></button>
 							</div>
 
 							<?php if (!$title_hidden) : ?>
@@ -165,7 +165,7 @@ function em_site_render_header_slider_html(string $item_slug): string
 
 					<?php if (count($slides) > 1) : ?>
 						<div class="em-slider__dots" role="tablist" aria-label="Navigation du slider">
-							<?php foreach ($slides as $index => $slide) : ?><button class="em-slider__dot<?php echo $index === 0 ? ' is-active' : ''; ?>" type="button" data-slide-to="<?php echo esc_attr((string) $index); ?>" aria-label="<?php echo esc_attr(sprintf(__('Aller a %s', 'em-wp'), (string) ($slide['name'] ?? ('Slide ' . ($index + 1))))); ?>"></button><?php endforeach; ?>
+							<?php foreach ($slides as $index => $slide) : ?><button class="em-slider__dot<?php echo $index === 0 ? ' is-active' : ''; ?>" type="button" data-slide-to="<?php echo esc_attr((string) $index); ?>" aria-label="<?php echo esc_attr(sprintf(__('Aller a %s', 'em-site'), (string) ($slide['name'] ?? ('Slide ' . ($index + 1))))); ?>"></button><?php endforeach; ?>
 						</div>
 					<?php endif; ?>
 				</div>

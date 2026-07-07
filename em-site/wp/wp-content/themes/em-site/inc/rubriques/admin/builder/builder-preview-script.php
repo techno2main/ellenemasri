@@ -1,12 +1,12 @@
 <?php
 /**
- * Aperçu temps réel partagé (V4) — window.EmWpV4Preview.
+ * Aperçu temps réel partagé (EM-SITE) — window.EmSitePreview.
  *
  * Rendu client identique au front : lignes × colonnes (gauche/centre/droite) +
  * couleurs globales. Utilisé par le builder (Étape 1, placeholders = libellés) et
  * par l'édition de contenu (Étape 2, vraies valeurs).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Imprime le script d'aperçu (une seule fois).
  */
-function em_wp_v4_render_preview_script(): void
+function em_site_render_preview_script(): void
 {
     static $done = false;
 
@@ -27,9 +27,9 @@ function em_wp_v4_render_preview_script(): void
     $done = true;
     ?>
     <script>
-    window.EmWpV4Preview = (function () {
-        var FONTS = <?php echo wp_json_encode(em_wp_rubrique_font_choices()); ?>;
-        var MASKED = '<?php echo esc_js(__('Masqué', 'em-wp')); ?>';
+    window.EmSitePreview = (function () {
+        var FONTS = <?php echo wp_json_encode(em_site_rubrique_font_choices()); ?>;
+        var MASKED = '<?php echo esc_js(__('Masqué', 'em-site')); ?>';
 
         function esc(value) {
             var d = document.createElement('div');
@@ -441,12 +441,12 @@ function em_wp_v4_render_preview_script(): void
         }
 
         // Élément de rubrique contenant l'aperçu lié à un bouton (œil/popout).
-        function ownerItem(btn) { return btn.closest('.em-v4-item') || btn.closest('.em-v4-builder'); }
+        function ownerItem(btn) { return btn.closest('.em-site-item') || btn.closest('.em-site-builder'); }
 
         // Ouvre/ferme l'aperçu pleine taille (sticky). Ouvre l'item si activé.
         function toggle(btn) {
             var item = ownerItem(btn);
-            var body = item ? item.querySelector('.em-v4-livepreview') : null;
+            var body = item ? item.querySelector('.em-site-livepreview') : null;
             if (!body) { return; }
             var wasOpen = !body.hidden;
             body.hidden = wasOpen;
@@ -471,33 +471,33 @@ function em_wp_v4_render_preview_script(): void
             win.document.write(
                 '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">' +
                 '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-                '<title>' + esc('<?php echo esc_js(__('Aperçu', 'em-wp')); ?>') + '</title>' +
+                '<title>' + esc('<?php echo esc_js(__('Aperçu', 'em-site')); ?>') + '</title>' +
                 popoutStyles() +
                 '<style>html,body{margin:0;padding:0;background:#f0f0f1;}' +
                 '.em-rubrique-popout{padding:24px;}' +
-                '.em-rubrique-popout .em-v4-livepreview{display:block!important;border:0;margin:0;}</style>' +
-                '</head><body><div class="em-rubrique-popout"><div class="em-v4-livepreview">' + inner + '</div></div></body></html>'
+                '.em-rubrique-popout .em-site-livepreview{display:block!important;border:0;margin:0;}</style>' +
+                '</head><body><div class="em-rubrique-popout"><div class="em-site-livepreview">' + inner + '</div></div></body></html>'
             );
             win.document.close();
         }
 
         function openWindow(previewNode) {
-            winRef = window.open('', 'emWpV4PreviewWin');
+            winRef = window.open('', 'emSitePreviewWin');
             if (winRef) { writeWindow(winRef, previewNode); winRef.focus(); }
         }
 
         // Rafraîchit la fenêtre détachée si elle est ouverte (sync temps réel).
         function syncWindow(previewNode) {
             if (!winRef || winRef.closed) { return; }
-            var stage = winRef.document.querySelector('.em-rubrique-popout .em-v4-livepreview');
+            var stage = winRef.document.querySelector('.em-rubrique-popout .em-site-livepreview');
             if (stage) { stage.innerHTML = previewNode ? previewNode.innerHTML : ''; }
         }
 
         // Contrôles d'aperçu dans l'en-tête de l'item (hors builder) : délégation globale.
         document.addEventListener('click', function (e) {
-            var tg = e.target.closest('.em-v4-preview__toggle'), po = e.target.closest('.em-v4-preview__popout');
+            var tg = e.target.closest('.em-site-preview__toggle'), po = e.target.closest('.em-site-preview__popout');
             if (tg) { e.preventDefault(); e.stopPropagation(); toggle(tg); }
-            else if (po) { e.preventDefault(); e.stopPropagation(); var it = ownerItem(po); openWindow(it ? it.querySelector('.em-v4-livepreview') : null); }
+            else if (po) { e.preventDefault(); e.stopPropagation(); var it = ownerItem(po); openWindow(it ? it.querySelector('.em-site-livepreview') : null); }
         });
 
         // Slider d'aperçu : comportement IDENTIQUE au front.
