@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/core/assets.php';
-require_once __DIR__ . '/core/legacy-option-prefix-migration.php';
 require_once __DIR__ . '/core/login.php';
 require_once __DIR__ . '/core/login-off.php';
 require_once __DIR__ . '/admin/client-access.php';

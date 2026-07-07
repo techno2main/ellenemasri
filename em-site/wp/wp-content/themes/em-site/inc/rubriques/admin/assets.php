@@ -41,7 +41,7 @@ function em_site_enqueue_assets(): void
     // Webfonts du sélecteur « Typos » (Archivo Black = police du site) afin que
     // l'aperçu temps réel affiche réellement la police choisie, pas un repli.
     wp_enqueue_style(
-        'em-site-v4-fonts',
+        'em-site-fonts',
         'https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700&family=Montserrat:wght@400;700&family=Oswald&family=Playfair+Display&family=Poppins:wght@400;600&family=Roboto&display=swap',
         [],
         null
@@ -54,7 +54,7 @@ function em_site_enqueue_assets(): void
     $slider_css_path = get_template_directory() . $slider_css_rel;
     if (file_exists($slider_css_path)) {
         wp_enqueue_style(
-            'em-site-v4-slider-mayami',
+            'em-site-slider-mayami',
             get_template_directory_uri() . $slider_css_rel,
             [],
             (string) filemtime($slider_css_path)

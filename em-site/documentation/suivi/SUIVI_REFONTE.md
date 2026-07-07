@@ -1,52 +1,58 @@
-# Suivi Refonte em-site
+﻿# Suivi Refonte em-site
 
-## Horodatage temps réel (Paris)
-1. Fuseau de référence : Europe/Paris.
+## Horodatage temps rÃ©el (Paris)
+1. Fuseau de rÃ©fÃ©rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-07 21:54:16.
+3. DerniÃ¨re mise Ã  jour : 2026-07-07 21:54:16.
 
-## Règles de suivi
-1. Une étape = un objectif concret vérifiable.
-2. Chaque étape contient statut, date, décisions, preuves.
-3. Pas de mélange entre actions faites et idées futures.
-4. Un fichier dédié par étape dans ce dossier.
-5. Exécution par phases avec sous-étapes claires.
-6. Suivi en temps réel pendant l'exécution.
-7. Mise à jour des documents de suivi après chaque validation d'étape.
-8. Flow GitHub uniquement sur demande explicite : commits atomiques par logique métier, puis push sur la branche dédiée.
-9. Toute action de suivi est horodatée en heure de Paris.
-10. Mot-clé MAJ docs : scanner tous les documents de suivi concernés par l'avancement en temps réel, puis les mettre à jour.
-11. Mot-clé flow GH : lancer le process GitHub selon les règles actives du chantier, uniquement sur demande explicite.
-12. RÈGLE D'OR : aucun flow GH sans vérification et finalisation préalable de la MAJ docs.
-13. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
+## RÃ¨gles de suivi
+1. Une Ã©tape = un objectif concret vÃ©rifiable.
+2. Chaque Ã©tape contient statut, date, dÃ©cisions, preuves.
+3. Pas de mÃ©lange entre actions faites et idÃ©es futures.
+4. Un fichier dÃ©diÃ© par Ã©tape dans ce dossier.
+5. ExÃ©cution par phases avec sous-Ã©tapes claires.
+6. Suivi en temps rÃ©el pendant l'exÃ©cution.
+7. Mise Ã  jour des documents de suivi aprÃ¨s chaque validation d'Ã©tape.
+8. Flow GitHub uniquement sur demande explicite : commits atomiques par logique mÃ©tier, puis push sur la branche dÃ©diÃ©e.
+9. Toute action de suivi est horodatÃ©e en heure de Paris.
+10. Mot-clÃ© MAJ docs : scanner tous les documents de suivi concernÃ©s par l'avancement en temps rÃ©el, puis les mettre Ã  jour.
+11. Mot-clÃ© flow GH : lancer le process GitHub selon les rÃ¨gles actives du chantier, uniquement sur demande explicite.
+12. RÃˆGLE D'OR : aucun flow GH sans vÃ©rification et finalisation prÃ©alable de la MAJ docs.
+13. Tests obligatoires entre lots : aucun passage au lot/Ã©tape suivant sans tests exÃ©cutÃ©s et validÃ©s.
 
 ## Journal d'avancement
 
 ### 2026-07-07 21:54:16 (Paris)
 
-- Purge des résidus `emv4` finalisée sur le builder Rubriques et le composant Scotchs partagé.
-- Renommage des préfixes d'identifiants CSS/JS pour rétablir la cohérence runtime entre PHP serveur et JS client.
-- Correctif d'un conflit fatal de fonction sur le top-bar: séparation explicite des helpers admin et front pour éviter le `Cannot redeclare`.
-- Revalidation effectuée après correction: la page `em-rubriques-overview` ne renvoie plus le 500 côté moteur PHP et le grep global `emv4` retourne 0 résultat dans le thème actif.
+- Purge des rÃ©sidus `emv4` finalisÃ©e sur le builder Rubriques et le composant Scotchs partagÃ©.
+- Renommage des prÃ©fixes d'identifiants CSS/JS pour rÃ©tablir la cohÃ©rence runtime entre PHP serveur et JS client.
+- Correctif d'un conflit fatal de fonction sur le top-bar: sÃ©paration explicite des helpers admin et front pour Ã©viter le `Cannot redeclare`.
+- Revalidation effectuÃ©e aprÃ¨s correction: la page `em-rubriques-overview` ne renvoie plus le 500 cÃ´tÃ© moteur PHP et le grep global `emv4` retourne 0 rÃ©sultat dans le thÃ¨me actif.
 
 ### 2026-07-07 14:12:20 (Paris)
 
-- Migration effective des assets partagés admin `assets/admin/css/shared` + `assets/admin/js/shared` vers `assets/admin/shared/css` + `assets/admin/shared/js`, avec recâblage des enqueues.
-- Migration effective des assets front partagés `assets/front/css/core` + JS core/slider vers `assets/front/shared/css` + `assets/front/shared/js`.
-- Suppression du dossier fantôme `assets/front/css/rubriques-v4` et recâblage des dépendances front/admin vers les nouveaux chemins.
-- Purge du namespace legacy gate `ellene` côté admin et bascule vers le namespace `client`.
-- Correction de régression sur la logique d'accès par admin connecté: mapping actif rétabli sur `admin-ellene` (restreint) et `admin-tyson` (complet).
-- Hotfix CSS admin: correction des imports cassés dans `assets/admin/shared/css/hub-cards.css` et `assets/admin/shared/css/module-common.css` pour restaurer l'alignement logo/pseudo et le rendu BO.
+- Migration effective des assets partagÃ©s admin `assets/admin/css/shared` + `assets/admin/js/shared` vers `assets/admin/shared/css` + `assets/admin/shared/js`, avec recÃ¢blage des enqueues.
+- Migration effective des assets front partagÃ©s `assets/front/css/core` + JS core/slider vers `assets/front/shared/css` + `assets/front/shared/js`.
+- Suppression du dossier fantÃ´me `assets/front/css/rubriques-v4` et recÃ¢blage des dÃ©pendances front/admin vers les nouveaux chemins.
+- Purge du namespace legacy gate `ellene` cÃ´tÃ© admin et bascule vers le namespace `client`.
+- Correction de rÃ©gression sur la logique d'accÃ¨s par admin connectÃ©: mapping actif rÃ©tabli sur `admin-ellene` (restreint) et `admin-tyson` (complet).
+- Hotfix CSS admin: correction des imports cassÃ©s dans `assets/admin/shared/css/hub-cards.css` et `assets/admin/shared/css/module-common.css` pour restaurer l'alignement logo/pseudo et le rendu BO.
 
 ### 2026-07-07 12:56:24 (Paris)
 
-- Standardisation des composants BO partagés vers `inc/admin/shared/components/<composant>/`.
-- Migration effective des composants partagés suivants : color-picker, scotchs-control, style-panel, hub-cards, hub-breadcrumb.
-- Recâblage des `require_once` admin vers les nouveaux chemins centralisés.
-- Harmonisation du composant Scotchs pour un rendu identique entre Slider et Top-bar (ordre color picker puis case à cocher, même logique de placement).
-- Ajout de classes neutres de composant Scotchs (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`) côté PHP, JS et CSS pour éviter les divergences contextuelles.
-- Renommage explicite des fichiers du builder Rubriques (préfixe `builder-...`) pour améliorer la lisibilité de reprise développeur.
-- Recâblage complet des includes builder après renommage (bootstrap Rubriques, item render, script principal et dépendances).
-- Vérifications effectuées : recherche de références legacy résiduelles, diagnostics d'erreurs sur les fichiers modifiés (aucune erreur remontée par l'outil de diagnostic).
+- Standardisation des composants BO partagÃ©s vers `inc/admin/shared/components/<composant>/`.
+- Migration effective des composants partagÃ©s suivants : color-picker, scotchs-control, style-panel, hub-cards, hub-breadcrumb.
+- RecÃ¢blage des `require_once` admin vers les nouveaux chemins centralisÃ©s.
+- Harmonisation du composant Scotchs pour un rendu identique entre Slider et Top-bar (ordre color picker puis case Ã  cocher, mÃªme logique de placement).
+- Ajout de classes neutres de composant Scotchs (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`) cÃ´tÃ© PHP, JS et CSS pour Ã©viter les divergences contextuelles.
+- Renommage explicite des fichiers du builder Rubriques (prÃ©fixe `builder-...`) pour amÃ©liorer la lisibilitÃ© de reprise dÃ©veloppeur.
+- RecÃ¢blage complet des includes builder aprÃ¨s renommage (bootstrap Rubriques, item render, script principal et dÃ©pendances).
+- VÃ©rifications effectuÃ©es : recherche de rÃ©fÃ©rences legacy rÃ©siduelles, diagnostics d'erreurs sur les fichiers modifiÃ©s (aucune erreur remontÃ©e par l'outil de diagnostic).
 
 
+
+### 2026-07-07 22:08:43 (Paris)
+
+- Suppression définitive du migrateur legacy inc/core/legacy-option-prefix-migration.php.
+- Retrait du chargement associé dans inc/bootstrap.php.
+- Validation post-suppression: aucune référence PHP restante au migrateur, aucun résidu em_wp dans les PHP du thème, bootstrap sans erreur de diagnostic.
