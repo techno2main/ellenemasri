@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 /**
  * URL d'édition d'un item dans la page RUBRIQUES (EM-SITE).
  */
-function em_site_admin_rubrique_v4_edit_url(string $type_slug, string $item_slug = ''): string
+function em_site_admin_rubrique_edit_url(string $type_slug, string $item_slug = ''): string
 {
     $args = ['page' => 'em-rubriques-overview', 'type' => sanitize_key($type_slug)];
 
@@ -200,11 +200,11 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
         return;
     }
 
-    $has_v4 = function_exists('em_site_rubrique_type_exists') && em_site_rubrique_type_exists($module_slug);
+    $has_rubrique_type = function_exists('em_site_rubrique_type_exists') && em_site_rubrique_type_exists($module_slug);
     ?>
     <li class="em-site-rubriques-admin__picker">
         <div class="em-site-rubriques-admin__picker-inner">
-            <?php if (!$has_v4) : ?>
+            <?php if (!$has_rubrique_type) : ?>
                 <p class="em-site-rubriques-admin__picker-empty">
                     <?php esc_html_e('Cette rubrique n’est pas encore disponible dans la nouvelle gestion des rubriques.', 'em-site'); ?>
                 </p>
@@ -354,7 +354,7 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
                                     </button>
                                     <a
                                         class="em-site-instance-picker__edit"
-                                        href="<?php echo esc_url(em_site_admin_rubrique_v4_edit_url($module_slug, $slug)); ?>"
+                                        href="<?php echo esc_url(em_site_admin_rubrique_edit_url($module_slug, $slug)); ?>"
                                         title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>"
                                         aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>"
                                     >

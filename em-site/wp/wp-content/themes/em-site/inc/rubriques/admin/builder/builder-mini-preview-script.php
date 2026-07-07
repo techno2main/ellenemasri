@@ -72,7 +72,7 @@ window.EmSiteMini = (function () {
     function render(builder) {
         var c = box(builder);
         if (!c || c.hidden || !window.EmSitePreview) { return; }
-        var data = builder.emv4Data;
+        var data = builder.emSiteData;
         if (!data) { return; }
         var stage = c.querySelector('.em-site-miniprev__stage');
         var inner = document.createElement('div');
@@ -104,7 +104,7 @@ window.EmSiteMini = (function () {
         var c = partBox(builder);
         if (!c || !window.EmSitePreview) { return; }
         var total = box(builder);
-        var data = builder.emv4Data;
+        var data = builder.emSiteData;
         var info = (total && !total.hidden) ? openRowInfo(builder) : null;
         if (!data || !info) { c.hidden = true; return; }
 

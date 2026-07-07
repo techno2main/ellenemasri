@@ -270,8 +270,8 @@ function em_site_overview_render(): void
  */
 function em_site_overview_notice(): void
 {
-    $updated = sanitize_key((string) ($_GET['v4_updated'] ?? ''));
-    $error = sanitize_key((string) ($_GET['v4_error'] ?? ''));
+    $updated = sanitize_key((string) ($_GET['updated'] ?? ''));
+    $error = sanitize_key((string) ($_GET['error'] ?? ''));
 
     $type_slug = sanitize_key((string) ($_GET['type'] ?? ''));
     $n = em_site_rubrique_type_nouns($type_slug !== '' && em_site_rubrique_type_exists($type_slug) ? $type_slug : '');

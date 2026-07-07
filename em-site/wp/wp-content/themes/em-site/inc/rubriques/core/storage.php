@@ -717,7 +717,7 @@ add_action('admin_init', 'em_site_sync_all_templates_instances', 6);
  */
 function em_site_maybe_reconcile_item_slugs(): void
 {
-    if (get_option('em_site_item_slugs_reconciled_v4', false)) {
+    if (get_option('em_site_item_slugs_reconciled', false)) {
         return;
     }
 
@@ -754,7 +754,7 @@ function em_site_maybe_reconcile_item_slugs(): void
         }
     }
 
-    update_option('em_site_item_slugs_reconciled_v4', '1', false);
+    update_option('em_site_item_slugs_reconciled', '1', false);
 }
 add_action('admin_init', 'em_site_maybe_reconcile_item_slugs', 5);
 

@@ -160,7 +160,7 @@ function em_site_render_appearance_field(string $type, string $item, array $fiel
     $role = (string) ($field['options']['role'] ?? 'content');
     $value = (string) ($content[$key] ?? $field['default'] ?? '');
     $args = [
-        'id'            => 'emv4c-' . sanitize_html_class($type . '-' . $item . '-' . $key),
+        'id'            => 'em-site-c-' . sanitize_html_class($type . '-' . $item . '-' . $key),
         'name'          => 'fields[' . $key . ']',
         'value'         => $value,
         'default'       => (string) ($field['default'] ?? ''),
@@ -169,7 +169,7 @@ function em_site_render_appearance_field(string $type, string $item, array $fiel
     ];
     // La pastille « Texte » s'affiche sur le fond choisi (couleur de fond du bloc).
     if ($role === 'text') {
-        $args['bg_target_id'] = 'emv4c-' . sanitize_html_class($type . '-' . $item . '-bg_color');
+        $args['bg_target_id'] = 'em-site-c-' . sanitize_html_class($type . '-' . $item . '-bg_color');
     }
     ?>
     <div class="em-site-appearance__item" data-role="<?php echo esc_attr($role); ?>">

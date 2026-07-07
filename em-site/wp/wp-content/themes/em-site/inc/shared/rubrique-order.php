@@ -92,7 +92,7 @@ function em_site_site_rubrique_visibility_toggle_modules(): array
  * intégrées, et les sous-types du composite HEADER (HERO / SLIDER) qui ne
  * s'ajoutent pas seuls au squelette.
  */
-function em_site_site_rubrique_is_extra_v4_module(string $module_slug): bool
+function em_site_site_rubrique_is_extra_module(string $module_slug): bool
 {
     $module_slug = sanitize_key($module_slug);
 
@@ -122,7 +122,7 @@ function em_site_site_rubrique_is_reorderable(string $module_slug): bool
         return true;
     }
 
-    return em_site_site_rubrique_is_extra_v4_module($module_slug);
+    return em_site_site_rubrique_is_extra_module($module_slug);
 }
 
 /**
@@ -138,7 +138,7 @@ function em_site_site_rubrique_is_visibility_toggle(string $module_slug): bool
         return true;
     }
 
-    return em_site_site_rubrique_is_extra_v4_module($module_slug);
+    return em_site_site_rubrique_is_extra_module($module_slug);
 }
 
 /**

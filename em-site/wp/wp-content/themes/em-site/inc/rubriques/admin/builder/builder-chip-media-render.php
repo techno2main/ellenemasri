@@ -78,7 +78,7 @@ function em_site_render_video_url_value(string $value): void
         'hidden_title' => __('Masquer les scotchs décoratifs de la vidéo', 'em-site'),
         'color_class' => 'em-site-chip__vtapes-color',
         'color_value' => (string) ($v['tapes_color'] ?? ''),
-        'color_prefix' => 'emv4vtp-',
+        'color_prefix' => 'em-site-vtp-',
     ]); ?>
     <?php
 }
@@ -200,7 +200,7 @@ function em_site_render_slider_value(string $value): void
                 'color_class' => 'em-site-slides__tapes-color',
                 'color_value' => $tapes_color,
                 'color_wrap_class' => 'em-site-slides__colorfield',
-                'color_prefix' => 'emv4sls-',
+                'color_prefix' => 'em-site-sls-',
             ]); ?>
         </span>
         <span class="em-site-slides__group-label em-site-slides__slides-label"><?php esc_html_e('Slides', 'em-site'); ?></span>

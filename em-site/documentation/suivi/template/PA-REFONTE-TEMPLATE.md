@@ -6,6 +6,12 @@ Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
 
+## Mise à jour session (Paris): 2026-07-07 21:54:16
+
+- Lot `emv4` purgé sur le builder Rubriques et le composant Scotchs.
+- Conflit fatal top-bar corrigé par séparation des helpers admin et front.
+- Validation du lot: grep global `emv4` à 0 sur le thème actif, page `em-rubriques-overview` rétablie.
+
 Mises à jour de session:
 
 - Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).

@@ -195,7 +195,7 @@ window.EmSiteChip = (function () {
             '<input type="number" class="em-site-chip__tsize" min="0" max="200" placeholder="' + esc(TXT.px) + '" title="' + esc(TXT.tsize) + '">' +
             '<select class="em-site-chip__tfont" title="' + esc(TXT.tfont) + '">' + fopts + '</select>' +
             '<select class="em-site-chip__talign" title="' + esc(TXT.talign) + '">' + aopts + '</select>' +
-            colorField(colorId('emv4ts-'), 'em-site-chip__tcolor', TXT.tcolor) +
+            colorField(colorId('em-site-ts-'), 'em-site-chip__tcolor', TXT.tcolor) +
             '</span>';
     }
 
@@ -218,7 +218,7 @@ window.EmSiteChip = (function () {
                 hiddenLabel: TXT.tapeHide,
                 colorClass: 'em-site-chip__itape-color',
                 colorLabel: TXT.tape,
-                colorIdPrefix: 'emv4itp-'
+                colorIdPrefix: 'em-site-itp-'
             });
     }
 
@@ -239,7 +239,7 @@ window.EmSiteChip = (function () {
                 + '<button type="button" class="button button-small em-site-richbtn" data-action="link" title="' + esc(TXT.richInlineLink) + '"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span></button>'
                 + '<button type="button" class="button button-small em-site-richbtn" data-cmd="unlink" title="' + esc(TXT.richUnlink) + '"><span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span></button>'
                 + '<button type="button" class="button button-small em-site-richbtn" data-action="anchor" title="' + esc(TXT.richAnchor) + '">#</button>'
-                + '<span class="em-site-chip__richcolor" title="' + esc(TXT.tcolor) + '">' + colorField(colorId('emv4rc-'), 'em-site-richcolor', TXT.tcolor) + '</span>'
+                + '<span class="em-site-chip__richcolor" title="' + esc(TXT.tcolor) + '">' + colorField(colorId('em-site-rc-'), 'em-site-richcolor', TXT.tcolor) + '</span>'
                 + '</span>'
                 + '<div class="em-site-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="' + esc(TXT.richPlaceholder) + '"></div>'
 
@@ -277,8 +277,8 @@ window.EmSiteChip = (function () {
                 + '<option value="pulse">' + esc(TXT.baPulse) + '</option>'
                 + '<option value="bounce">' + esc(TXT.baBounce) + '</option></select>';
             return '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">' +
-                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('emv4bbg-'), 'em-site-chip__btnbg', TXT.btnBg) + '</span>' +
-                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4btx-'), 'em-site-chip__btntext', TXT.btnText) + '</span>' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('em-site-bbg-'), 'em-site-chip__btnbg', TXT.btnBg) + '</span>' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('em-site-btx-'), 'em-site-chip__btntext', TXT.btnText) + '</span>' +
                 '<label class="em-site-chip__btnmargin"><span>' + esc(TXT.btnMargBefore) + '</span><input type="number" class="em-site-chip__btnml" min="0" max="200" value="0"></label>' +
                 '<label class="em-site-chip__btnmargin"><span>' + esc(TXT.btnMargAfter) + '</span><input type="number" class="em-site-chip__btnmr" min="0" max="200" value="0"></label>' +
                 '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + btShape + '</label>' +
@@ -296,8 +296,8 @@ window.EmSiteChip = (function () {
                 + '<option value="bounce">' + esc(TXT.baBounce) + '</option>'
                 + '<option value="none">' + esc(TXT.baNone) + '</option></select>';
             return '<input type="text" class="em-site-chip__btext" placeholder="' + esc(TXT.badgeText) + '">' +
-                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('emv4babg-'), 'em-site-chip__badgebg', TXT.btnBg) + '</span>' +
-                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4baink-'), 'em-site-chip__badgeink', TXT.btnText) + '</span>' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('em-site-babg-'), 'em-site-chip__badgebg', TXT.btnBg) + '</span>' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('em-site-baink-'), 'em-site-chip__badgeink', TXT.btnText) + '</span>' +
                 '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + bShape + '</label>' +
                 '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeAnim) + '</span>' + bAnim + '</label>' +
                 '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeRadius) + '</span><input type="number" class="em-site-chip__badgeradius" min="0" max="40" value="6"></label>';
@@ -325,7 +325,7 @@ window.EmSiteChip = (function () {
 
         if (DECOR[type] !== undefined) {
             chip.classList.add('em-site-chip--decor');
-            var colorPart = DECOR_COLOR.indexOf(type) !== -1 ? decorColorHtml(colorId('emv4dec-')) : '';
+            var colorPart = DECOR_COLOR.indexOf(type) !== -1 ? decorColorHtml(colorId('em-site-dec-')) : '';
             var urlPart = ARROW.indexOf(type) !== -1 ? '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.anchor) + '">' : '';
             var heightPart = type === 'sep_blank' ? '<input type="number" class="em-site-chip__value em-site-chip__height" min="0" max="400" placeholder="' + esc(TXT.height) + '">' : '';
             chip.innerHTML =

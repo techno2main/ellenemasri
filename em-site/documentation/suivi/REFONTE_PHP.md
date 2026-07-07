@@ -11,6 +11,12 @@ Périmètre scanné : em-site/wp/wp-content/themes/em-site
 - Recâblage des includes et loaders Rubriques après renommage pour éviter toute rupture.
 - Correctif de mutualisation Scotchs : neutralisation des variations de layout contextuelles via classes dédiées de composant (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`).
 
+## Mise à jour structurelle (Paris) : 2026-07-07 21:54:16
+
+- Purge des préfixes `emv4` restante dans le builder Rubriques et le composant Scotchs mutualisé.
+- Distinction nette des helpers top-bar admin/front pour supprimer le fatal `Cannot redeclare` sur le rendu admin.
+- Validation finale: `emv4` ne ressort plus dans le thème actif après grep global.
+
 ## Mise à jour structurelle (Paris) : 2026-07-07 14:12:20
 
 - Migration des assets partagés admin vers `assets/admin/shared/*` avec recâblage des enqueues côté `inc/admin`.

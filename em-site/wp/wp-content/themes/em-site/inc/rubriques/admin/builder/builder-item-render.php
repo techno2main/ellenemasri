@@ -21,7 +21,7 @@ require_once __DIR__ . '/builder-rows-render.php';
  */
 function em_site_item_form_id(string $type, string $item): string
 {
-    return 'emv4-item-' . sanitize_html_class($type . '-' . $item);
+    return 'em-site-item-' . sanitize_html_class($type . '-' . $item);
 }
 
 /**

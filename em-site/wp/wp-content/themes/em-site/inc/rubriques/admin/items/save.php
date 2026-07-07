@@ -35,7 +35,7 @@ function em_site_handle_create_item(): void
     $slug = sanitize_key((string) ($_POST['item_slug'] ?? ''));
 
     if (em_site_is_fixed_single_item_type($type)) {
-        em_site_builder_redirect(['v4_error' => 'create', 'type' => $type]);
+        em_site_builder_redirect(['error' => 'create', 'type' => $type]);
     }
 
     if ($slug === '' && $label !== '') {
@@ -47,12 +47,12 @@ function em_site_handle_create_item(): void
     }
 
     if (!em_site_rubrique_type_exists($type) || $slug === '') {
-        em_site_builder_redirect(['v4_error' => 'create', 'type' => $type]);
+        em_site_builder_redirect(['error' => 'create', 'type' => $type]);
     }
 
     $label = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
     em_site_register_item($type, $slug, $label);
-    em_site_builder_redirect(['v4_updated' => 'created', 'type' => $type, 'item' => $slug]);
+    em_site_builder_redirect(['updated' => 'created', 'type' => $type, 'item' => $slug]);
 }
 add_action('admin_post_em_site_create_item', 'em_site_handle_create_item');
 
@@ -132,13 +132,13 @@ function em_site_handle_duplicate_item(): void
     $source = sanitize_key((string) ($_POST['item'] ?? ''));
     $label = sanitize_text_field(wp_unslash((string) ($_POST['item_label'] ?? '')));
     if (em_site_is_fixed_single_item_type($type)) {
-        em_site_builder_redirect(['v4_error' => 'duplicate', 'type' => $type]);
+        em_site_builder_redirect(['error' => 'duplicate', 'type' => $type]);
     }
 
     $items = em_site_get_items($type);
 
     if (!em_site_rubrique_type_exists($type) || !isset($items[$source])) {
-        em_site_builder_redirect(['v4_error' => 'duplicate', 'type' => $type]);
+        em_site_builder_redirect(['error' => 'duplicate', 'type' => $type]);
     }
 
     if ($label === '') {
@@ -155,7 +155,7 @@ function em_site_handle_duplicate_item(): void
     em_site_save_items($type, $items);
     em_site_save_item($type, $slug, $data);
 
-    em_site_builder_redirect(['v4_updated' => 'duplicated', 'type' => $type, 'item' => $slug]);
+    em_site_builder_redirect(['updated' => 'duplicated', 'type' => $type, 'item' => $slug]);
 }
 add_action('admin_post_em_site_duplicate_item', 'em_site_handle_duplicate_item');
 
@@ -175,11 +175,11 @@ function em_site_handle_create_type(): void
     $slug = sanitize_key(sanitize_title($label));
 
     if ($label === '' || $slug === '') {
-        em_site_builder_redirect(['v4_error' => 'type_create']);
+        em_site_builder_redirect(['error' => 'type_create']);
     }
 
     if (em_site_rubrique_type_exists($slug)) {
-        em_site_builder_redirect(['v4_error' => 'type_exists']);
+        em_site_builder_redirect(['error' => 'type_exists']);
     }
 
     $label_uc = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
@@ -194,7 +194,7 @@ function em_site_handle_create_type(): void
     ];
     update_option(em_site_rubrique_types_option_name(), $types);
 
-    em_site_builder_redirect(['v4_updated' => 'type_created', 'type' => $slug]);
+    em_site_builder_redirect(['updated' => 'type_created', 'type' => $slug]);
 }
 add_action('admin_post_em_site_create_type', 'em_site_handle_create_type');
 
@@ -209,10 +209,10 @@ function em_site_handle_delete_item(): void
     $item = sanitize_key((string) ($_POST['item'] ?? ''));
 
     if (!em_site_rubrique_type_exists($type) || $item === '') {
-        em_site_builder_redirect(['v4_error' => 'delete', 'type' => $type]);
+        em_site_builder_redirect(['error' => 'delete', 'type' => $type]);
     }
 
     em_site_delete_item($type, $item);
-    em_site_builder_redirect(['v4_updated' => 'deleted', 'type' => $type]);
+    em_site_builder_redirect(['updated' => 'deleted', 'type' => $type]);
 }
 add_action('admin_post_em_site_delete_item', 'em_site_handle_delete_item');

@@ -29,7 +29,7 @@ function em_site_top_bar_render_item_panel(string $key, string $title, array $it
             <label><span><?php esc_html_e('Lien', 'em-site'); ?></span><input type="text" class="regular-text" name="<?php echo esc_attr($field); ?>[items][<?php echo esc_attr($key); ?>][href]" value="<?php echo esc_attr($item['href'] ?? ''); ?>"></label>
             <?php if (em_site_top_bar_item_supports_style($key)) {
                 $font_value = (string) ($item['font'] ?? '');
-                $font_stack = em_site_top_bar_font_stack($font_value);
+                $font_stack = em_site_top_bar_admin_font_stack($font_value);
                 $text_color = (string) ($item['text_color'] ?? '');
                 $preview_text = trim((string) ($item['label'] ?? '')) !== ''
                     ? (string) $item['label']

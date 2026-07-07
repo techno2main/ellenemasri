@@ -275,7 +275,7 @@ window.EmSiteRows = (function () {
     function showCellPreview(builder, cell) {
         if (cell === hoverCell) { return; }
         hoverCell = cell;
-        var data = builder.emv4Data;
+        var data = builder.emSiteData;
         if (!data || !window.EmSitePreview) { return; }
         var rIdx = parseInt(cell.getAttribute('data-row-index'), 10) || 0;
         var col = parseInt(cell.getAttribute('data-col'), 10) || 1;

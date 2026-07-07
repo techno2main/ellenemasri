@@ -27,10 +27,10 @@ if (!defined('ABSPATH')) {
     }
 
     function slidesOptsHtml() {
-        var borderId = colorId('emv4slbdr-');
-        var shadowId = colorId('emv4slsh-');
-        var footerBgId = colorId('emv4slb-');
-        var footerTextId = colorId('emv4slt-');
+        var borderId = colorId('em-site-sls-bdr-');
+        var shadowId = colorId('em-site-sls-sh-');
+        var footerBgId = colorId('em-site-sls-b-');
+        var footerTextId = colorId('em-site-sls-t-');
         return '<span class="em-site-slides__section-title">' + esc(TXT.slStyle || 'Style du Slider') + '</span>' +
             '<span class="em-site-slides__opts em-site-slides__opts--row1">' +
             '<span class="em-site-slides__titlegroup">' +
@@ -49,7 +49,7 @@ if (!defined('ABSPATH')) {
                 colorClass: 'em-site-slides__tapes-color',
                 colorLabel: TXT.slTape,
                 colorWrapClass: 'em-site-slides__colorfield',
-                colorIdPrefix: 'emv4sls-'
+                colorIdPrefix: 'em-site-sls-'
             }) +
             '</span>';
     }

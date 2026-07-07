@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-07 14:12:20.
+3. Dernière mise à jour : 2026-07-07 21:54:16.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -21,6 +21,13 @@
 13. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
 
 ## Journal d'avancement
+
+### 2026-07-07 21:54:16 (Paris)
+
+- Purge des résidus `emv4` finalisée sur le builder Rubriques et le composant Scotchs partagé.
+- Renommage des préfixes d'identifiants CSS/JS pour rétablir la cohérence runtime entre PHP serveur et JS client.
+- Correctif d'un conflit fatal de fonction sur le top-bar: séparation explicite des helpers admin et front pour éviter le `Cannot redeclare`.
+- Revalidation effectuée après correction: la page `em-rubriques-overview` ne renvoie plus le 500 côté moteur PHP et le grep global `emv4` retourne 0 résultat dans le thème actif.
 
 ### 2026-07-07 14:12:20 (Paris)
 

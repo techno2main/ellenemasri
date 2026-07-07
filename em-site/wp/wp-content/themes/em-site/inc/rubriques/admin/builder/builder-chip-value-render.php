@@ -50,7 +50,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
                 <button type="button" class="button button-small em-site-richbtn" data-action="anchor" title="<?php esc_attr_e('Ajouter une ancre sur la sélection', 'em-site'); ?>">#</button>
                 <span class="em-site-chip__richcolor" title="<?php esc_attr_e('Couleur du texte', 'em-site'); ?>">
                     <?php em_site_admin_render_color_field([
-                        'id'            => em_site_chip_color_id('emv4rc-', $key),
+                        'id'            => em_site_chip_color_id('em-site-rc-', $key),
                         'value'         => '#000000',
                         'input_class'   => 'em-site-richcolor',
                         'preview_label' => __('Couleur du texte', 'em-site'),
@@ -116,7 +116,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
             'hidden_title' => __('Masquer le scotch décoratif de l’image', 'em-site'),
             'color_class' => 'em-site-chip__itape-color',
             'color_value' => (string) ($img['tape_color'] ?? ''),
-            'color_prefix' => 'emv4itp-',
+            'color_prefix' => 'em-site-itp-',
             'key' => $key,
         ]); ?>
         <?php
@@ -130,7 +130,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
         <span class="em-site-chip__btncolor">
             <span class="em-site-chip__btncolor-label"><?php esc_html_e('Fond', 'em-site'); ?></span>
             <?php em_site_admin_render_color_field([
-                'id'            => em_site_chip_color_id('emv4bbg-', $key),
+                'id'            => em_site_chip_color_id('em-site-bbg-', $key),
                 'value'         => $btn['bg'],
                 'input_class'   => 'em-site-chip__btnbg',
                 'preview_label' => __('Fond du bouton', 'em-site'),
@@ -139,7 +139,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
         <span class="em-site-chip__btncolor">
             <span class="em-site-chip__btncolor-label"><?php esc_html_e('Texte', 'em-site'); ?></span>
             <?php em_site_admin_render_color_field([
-                'id'            => em_site_chip_color_id('emv4btx-', $key),
+                'id'            => em_site_chip_color_id('em-site-btx-', $key),
                 'value'         => $btn['text'],
                 'input_class'   => 'em-site-chip__btntext',
                 'preview_label' => __('Texte du bouton', 'em-site'),
@@ -184,7 +184,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
         <span class="em-site-chip__btncolor">
             <span class="em-site-chip__btncolor-label"><?php esc_html_e('Fond', 'em-site'); ?></span>
             <?php em_site_admin_render_color_field([
-                'id'            => em_site_chip_color_id('emv4babg-', $key),
+                'id'            => em_site_chip_color_id('em-site-babg-', $key),
                 'value'         => $badge['bg'],
                 'input_class'   => 'em-site-chip__badgebg',
                 'preview_label' => __('Fond du badge', 'em-site'),
@@ -193,7 +193,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
         <span class="em-site-chip__btncolor">
             <span class="em-site-chip__btncolor-label"><?php esc_html_e('Texte', 'em-site'); ?></span>
             <?php em_site_admin_render_color_field([
-                'id'            => em_site_chip_color_id('emv4baink-', $key),
+                'id'            => em_site_chip_color_id('em-site-baink-', $key),
                 'value'         => $badge['ink'],
                 'input_class'   => 'em-site-chip__badgeink',
                 'preview_label' => __('Texte du badge', 'em-site'),

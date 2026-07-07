@@ -140,7 +140,7 @@ function em_site_render_chip_textstyle(string $key, array $style): void
             <option value="justify" <?php selected($style['align'], 'justify'); ?>><?php esc_html_e('Justifié', 'em-site'); ?></option>
         </select>
         <?php em_site_admin_render_color_field([
-            'id'            => em_site_chip_color_id('emv4ts-', $key),
+            'id'            => em_site_chip_color_id('em-site-ts-', $key),
             'value'         => $style['color'],
             'input_class'   => 'em-site-chip__tcolor',
             'preview_label' => __('Couleur du texte', 'em-site'),
@@ -188,7 +188,7 @@ function em_site_render_decorative_chip(string $key, string $type, string $value
         <?php if ($has_color) : ?>
             <span class="em-site-chip__color">
                 <?php em_site_admin_render_color_field([
-                    'id'            => em_site_chip_color_id('emv4dec-', $key),
+                    'id'            => em_site_chip_color_id('em-site-dec-', $key),
                     'value'         => $color,
                     'input_class'   => 'em-site-chip__value',
                     'preview_label' => $label,

@@ -13,12 +13,12 @@ require_once __DIR__ . '/helpers.php';
 
 function em_site_render_top_bar(): void
 {
-	$item = em_site_top_bar_v4_item();
+	$item = em_site_top_bar_item();
 	if (!is_array($item)) {
 		return;
 	}
 
-	$item_option_name = em_site_top_bar_v4_item_option_name(em_site_top_bar_v4_active_template());
+	$item_option_name = em_site_top_bar_item_option_name(em_site_top_bar_active_template());
 	$item_slug = str_replace('em_site_item_top-bar_', '', $item_option_name);
 	$content = is_array($item['content'] ?? null) ? $item['content'] : [];
 	$footer_html = em_site_front_render_rubrique_footer('top-bar', $item_slug, '', [], $content);

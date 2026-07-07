@@ -143,7 +143,7 @@ function em_site_admin_catalog_rubrique_definitions(): array
  *
  * @return array<string, array<string, mixed>>
  */
-function em_site_admin_v4_extra_rubrique_definitions(): array
+function em_site_admin_extra_rubrique_definitions(): array
 {
     if (!function_exists('em_site_rubrique_type_registry')) {
         return [];
@@ -226,7 +226,7 @@ function em_site_admin_site_rubrique_all_definitions(): array
     return array_merge(
         em_site_admin_site_rubrique_static_definitions(),
         em_site_admin_catalog_rubrique_definitions(),
-        em_site_admin_v4_extra_rubrique_definitions()
+        em_site_admin_extra_rubrique_definitions()
     );
 }
 

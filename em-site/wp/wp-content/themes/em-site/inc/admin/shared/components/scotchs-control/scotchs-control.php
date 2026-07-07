@@ -28,7 +28,7 @@ function em_site_render_scotchs_component(array $args): void
     $color_label = isset($args['color_label']) ? (string) $args['color_label'] : __('Scotch', 'em-site');
     $color_wrap_class = isset($args['color_wrap_class']) ? (string) $args['color_wrap_class'] : 'em-site-slides__colorfield';
     $color_wrap_class = trim($color_wrap_class . ' em-site-scotchs-control__color');
-    $color_prefix = isset($args['color_prefix']) ? (string) $args['color_prefix'] : 'emv4tp-';
+    $color_prefix = isset($args['color_prefix']) ? (string) $args['color_prefix'] : 'em-site-tp-';
     $key = isset($args['key']) ? (string) $args['key'] : '';
 
     $color_id = function_exists('em_site_chip_color_id')

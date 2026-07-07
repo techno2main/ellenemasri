@@ -82,7 +82,7 @@ function em_site_handle_save_item(): void
     $item = sanitize_key((string) ($_POST['item'] ?? ''));
 
     if (!em_site_rubrique_type_exists($type) || $item === '') {
-        em_site_builder_redirect(['v4_error' => 'save']);
+        em_site_builder_redirect(['error' => 'save']);
     }
 
     $payload = em_site_decode_payload();
@@ -127,7 +127,7 @@ function em_site_handle_save_item(): void
     $renamed = em_site_rename_item($type, $item, $label);
     $target_item = (string) ($renamed['item'] ?? $item);
 
-    em_site_builder_redirect(['v4_updated' => 'saved', 'type' => $type, 'item' => $target_item]);
+    em_site_builder_redirect(['updated' => 'saved', 'type' => $type, 'item' => $target_item]);
 }
 add_action('admin_post_em_site_save_item', 'em_site_handle_save_item');
 

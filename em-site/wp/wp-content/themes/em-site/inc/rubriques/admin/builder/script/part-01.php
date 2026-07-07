@@ -45,10 +45,10 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
     }
 
     function setup(builder) {
-        if (!builder || builder.dataset.emV4SetupDone === '1') {
+        if (!builder || builder.dataset.emSiteSetupDone === '1') {
             return;
         }
-        builder.dataset.emV4SetupDone = '1';
+        builder.dataset.emSiteSetupDone = '1';
         var isReleaseBuilder = (builder.getAttribute('data-item-type') || '') === 'release';
 
         var formId = builder.getAttribute('data-form');
@@ -117,7 +117,7 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
             var mapped = items.map(function (it) {
                 return { row: it.row, col: it.col, type: it.type, label: it.label, value: it.value || it.label, url: it.url, imageUrl: it.imageUrl, icon: it.icon, color: it.color, name: it.name, link: it.link, hidden: it.hidden, style: it.style, sliderUrls: it.sliderUrls, thumbUrl: it.thumbUrl, clickable: it.clickable };
             });
-            builder.emv4Data = { layout: layout, items: mapped, colors: colors };
+            builder.emSiteData = { layout: layout, items: mapped, colors: colors };
             var hostItem = builder.closest('.em-site-item');
             var visible = !hostItem || !!hostItem.open;
             if (preview && visible) {

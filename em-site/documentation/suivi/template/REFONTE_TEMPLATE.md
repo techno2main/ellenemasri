@@ -5,6 +5,12 @@ Horodatage précis (Paris): 2026-07-07 20:13:03
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
 
+## Mise à jour session (Paris): 2026-07-07 21:54:16
+
+- Purge des résidus `emv4` du builder Rubriques et du composant Scotchs terminée.
+- Le conflit fatal de fonction top-bar a été résolu par séparation des helpers admin/front.
+- Le rendu de la page Rubriques est de nouveau exécutable sans 500.
+
 Règle de suivi: toujours inclure un horodatage précis temps réel (date + heure Paris) à chaque mise à jour de ce document.
 
 ## 1) Objectif validé

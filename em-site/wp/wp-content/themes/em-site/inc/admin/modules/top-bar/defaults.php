@@ -55,7 +55,7 @@ function em_site_top_bar_font_choices(): array
 /**
  * Retourne la pile CSS d'une typo top-bar (vide si inconnue/défaut).
  */
-function em_site_top_bar_font_stack(string $slug): string
+function em_site_top_bar_admin_font_stack(string $slug): string
 {
     $choices = em_site_top_bar_font_choices();
 

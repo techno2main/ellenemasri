@@ -8,7 +8,7 @@
         var colorLabel = opts.colorLabel || TXT.tape;
         var colorWrapClass = (opts.colorWrapClass || 'em-site-slides__colorfield') + ' em-site-scotchs-control__color';
         var colorLabelClass = opts.colorLabelClass || 'em-site-admin-color-field-row__label';
-        var colorIdPrefix = opts.colorIdPrefix || 'emv4tp-';
+        var colorIdPrefix = opts.colorIdPrefix || 'em-site-tp-';
         var html = '';
 
         html += '<span class="' + esc(colorWrapClass) + '"><span class="' + esc(colorLabelClass) + '">' + esc(colorLabel) + '</span>'

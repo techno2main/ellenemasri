@@ -9,14 +9,14 @@ if (!defined('ABSPATH')) {
 	exit;
 }
 
-function em_site_top_bar_v4_active_template(): string
+function em_site_top_bar_active_template(): string
 {
 	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
 }
 
-function em_site_top_bar_v4_item_option_name(string $template_slug): string
+function em_site_top_bar_item_option_name(string $template_slug): string
 {
 	$instance = get_option('em_site_instance_' . $template_slug . '_top-bar', []);
 	$item_slug = is_array($instance) ? sanitize_key((string) ($instance['item'] ?? '')) : '';
@@ -28,16 +28,16 @@ function em_site_top_bar_v4_item_option_name(string $template_slug): string
 	return 'em_site_item_top-bar_' . $item_slug;
 }
 
-function em_site_top_bar_v4_item(): array
+function em_site_top_bar_item(): array
 {
-	$template_slug = em_site_top_bar_v4_active_template();
-	$option_name = em_site_top_bar_v4_item_option_name($template_slug);
+	$template_slug = em_site_top_bar_active_template();
+	$option_name = em_site_top_bar_item_option_name($template_slug);
 	$item = get_option($option_name, []);
 
 	return is_array($item) ? $item : [];
 }
 
-function em_site_top_bar_v4_decode_json_field($value): array
+function em_site_top_bar_decode_json_field($value): array
 {
 	if (!is_string($value) || $value === '') {
 		return [];
@@ -48,7 +48,7 @@ function em_site_top_bar_v4_decode_json_field($value): array
 	return is_array($decoded) ? $decoded : [];
 }
 
-function em_site_top_bar_v4_font_stack(string $slug): string
+function em_site_top_bar_font_stack(string $slug): string
 {
 	$fonts = [
 		'archivo_black' => '"Archivo Black", system-ui, sans-serif',
@@ -59,7 +59,7 @@ function em_site_top_bar_v4_font_stack(string $slug): string
 	return (string) ($fonts[$slug] ?? 'inherit');
 }
 
-function em_site_top_bar_v4_platform_icon(string $platform): string
+function em_site_top_bar_platform_icon(string $platform): string
 {
 	$map = [
 		'stream:spotify' => 'fa-spotify',
@@ -72,7 +72,7 @@ function em_site_top_bar_v4_platform_icon(string $platform): string
 	return (string) ($map[$platform] ?? 'fa-link');
 }
 
-function em_site_top_bar_v4_platform_title(string $platform): string
+function em_site_top_bar_platform_title(string $platform): string
 {
 	$map = [
 		'stream:spotify' => 'Stream Spotify',
@@ -87,7 +87,7 @@ function em_site_top_bar_v4_platform_title(string $platform): string
 
 function em_site_top_bar_is_ready(): bool
 {
-	$item = em_site_top_bar_v4_item();
+	$item = em_site_top_bar_item();
 	$content = is_array($item['content'] ?? null) ? $item['content'] : [];
 
 	return !empty($content);
