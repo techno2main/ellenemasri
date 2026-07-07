@@ -3,7 +3,7 @@
 
     function SlideSortable(container, options) {
         this.container = container;
-        this.handleSelector = (options && options.handle) || '.em-wp-slide-sortable__handle';
+        this.handleSelector = (options && options.handle) || '.em-site-slide-sortable__handle';
         this.itemSelector = (options && options.item) || '[data-slide-item]';
         this.onEnd = options && options.onEnd ? options.onEnd : null;
         this.dragging = null;
@@ -26,7 +26,7 @@
 
     SlideSortable.prototype.getItems = function () {
         return Array.from(this.container.querySelectorAll(this.itemSelector)).filter(function (node) {
-            return !node.classList.contains('em-wp-slide-sortable__placeholder');
+            return !node.classList.contains('em-site-slide-sortable__placeholder');
         });
     };
 
@@ -67,7 +67,7 @@
         this.pointerId = null;
         this.dragOffsetY = 0;
         this.dragWidth = 0;
-        document.body.classList.remove('em-wp-slide-sortable-active');
+        document.body.classList.remove('em-site-slide-sortable-active');
         window.removeEventListener('pointermove', this.onPointerMove);
         window.removeEventListener('pointerup', this.onPointerUp);
         window.removeEventListener('pointercancel', this.onPointerUp);
@@ -100,7 +100,7 @@
         this.dragWidth = rect.width;
 
         this.placeholder = document.createElement('div');
-        this.placeholder.className = 'em-wp-slide-sortable__placeholder';
+        this.placeholder.className = 'em-site-slide-sortable__placeholder';
         this.placeholder.style.height = rect.height + 'px';
         this.container.insertBefore(this.placeholder, this.dragging);
 
@@ -116,7 +116,7 @@
             this.dragging.setPointerCapture(event.pointerId);
         }
 
-        document.body.classList.add('em-wp-slide-sortable-active');
+        document.body.classList.add('em-site-slide-sortable-active');
         window.addEventListener('pointermove', this.onPointerMove, { passive: false });
         window.addEventListener('pointerup', this.onPointerUp);
         window.addEventListener('pointercancel', this.onPointerUp);

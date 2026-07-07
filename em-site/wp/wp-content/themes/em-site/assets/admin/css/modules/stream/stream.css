@@ -1,23 +1,23 @@
-.em-wp-stream-admin .description,
+.em-site-stream-admin .description,
 .em-stream-admin .description,
-#em-wp-stream-form .description {
+#em-site-stream-form .description {
 	max-width: 820px;
 }
 
-.em-wp-stream-admin .em-top-bar-platform-item__body,
+.em-site-stream-admin .em-top-bar-platform-item__body,
 .em-stream-admin .em-top-bar-platform-item__body,
-#em-wp-stream-form .em-top-bar-platform-item__body {
+#em-site-stream-form .em-top-bar-platform-item__body {
 	row-gap: 10px;
 }
 
-.em-wp-stream-admin .em-top-bar-platform-item__body .em-admin-inline-check,
+.em-site-stream-admin .em-top-bar-platform-item__body .em-admin-inline-check,
 .em-stream-admin .em-top-bar-platform-item__body .em-admin-inline-check,
-#em-wp-stream-form .em-top-bar-platform-item__body .em-admin-inline-check {
+#em-site-stream-form .em-top-bar-platform-item__body .em-admin-inline-check {
 	margin-left: auto;
 }
 
-.em-wp-stream-admin .em-admin-module__hero,
+.em-site-stream-admin .em-admin-module__hero,
 .em-stream-admin .em-admin-module__hero,
-#em-wp-stream-form .em-admin-module__hero {
+#em-site-stream-form .em-admin-module__hero {
 	border-left: 4px solid #14532d;
 }

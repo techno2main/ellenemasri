@@ -13,7 +13,7 @@
         try {
             var url = new URL(config.quitEndpoint, window.location.origin);
 
-            url.searchParams.set('em_wp_quit_editing', '1');
+            url.searchParams.set('em-site_quit_editing', '1');
             url.searchParams.set('redirect_to', targetHref);
             url.searchParams.set('_wpnonce', config.quitNonce);
 
@@ -107,11 +107,11 @@
     }
 
     function boot() {
-        document.querySelectorAll('.em-wp-admin-catalog-slug-switches').forEach(function (group) {
+        document.querySelectorAll('.em-site-admin-catalog-slug-switches').forEach(function (group) {
             var hiddenInput = group.parentElement
-                ? group.parentElement.querySelector('.em-wp-admin-catalog-slug-input')
+                ? group.parentElement.querySelector('.em-site-admin-catalog-slug-input')
                 : null;
-            var switches = group.querySelectorAll('.em-wp-admin-catalog-slug-switch');
+            var switches = group.querySelectorAll('.em-site-admin-catalog-slug-switch');
 
             if (!hiddenInput || switches.length === 0) {
                 return;
@@ -151,7 +151,7 @@
             });
         });
 
-        document.querySelectorAll('.em-wp-catalog-entry-open').forEach(function (link) {
+        document.querySelectorAll('.em-site-catalog-entry-open').forEach(function (link) {
             link.addEventListener('click', handleCatalogEntryOpen);
         });
     }

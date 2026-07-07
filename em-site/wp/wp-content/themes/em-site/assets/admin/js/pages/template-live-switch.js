@@ -2,21 +2,21 @@
     'use strict';
 
     document.addEventListener('DOMContentLoaded', function () {
-        var root = document.querySelector('.em-wp-templates-sommaire');
+        var root = document.querySelector('.em-site-templates-sommaire');
 
         if (!root) {
             return;
         }
 
-        var bar = root.querySelector('.em-wp-hub__live-bar');
+        var bar = root.querySelector('.em-site-hub__live-bar');
         var activeSlug = root.getAttribute('data-active-slug') || '';
 
         if (activeSlug === '' && bar) {
             activeSlug = bar.getAttribute('data-active-slug') || '';
         }
-        var form = document.getElementById('em-wp-hub-set-live-template-form');
-        var slugInput = form ? form.querySelector('[name="em_wp_template_active_slug"]') : null;
-        var activateButtons = root.querySelectorAll('.em-wp-templates-sommaire__activate-live');
+        var form = document.getElementById('em-site-hub-set-live-template-form');
+        var slugInput = form ? form.querySelector('[name="em-site_template_active_slug"]') : null;
+        var activateButtons = root.querySelectorAll('.em-site-templates-sommaire__activate-live');
         var i18n = (window.emWpTemplateLiveSwitch && window.emWpTemplateLiveSwitch.i18n) || {};
 
         if (!activateButtons.length || !form || !slugInput) {

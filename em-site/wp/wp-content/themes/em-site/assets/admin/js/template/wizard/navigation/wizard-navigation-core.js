@@ -19,8 +19,8 @@
         activeDraftId: null,
 
         init: function () {
-            this.wizard = document.getElementById('em-wp-template-create-wizard');
-            this.form = document.getElementById('em-wp-template-create-form');
+            this.wizard = document.getElementById('em-site-template-create-wizard');
+            this.form = document.getElementById('em-site-template-create-form');
             if (!this.form) {
                 return;
             }
@@ -29,7 +29,7 @@
                 || this.wizard.getAttribute('data-wizard-page-mode') === '1'
                 || !!(State.config && State.config.pageMode);
 
-            this.identityPanel = document.getElementById('em-wp-template-wizard-identity');
+            this.identityPanel = document.getElementById('em-site-template-wizard-identity');
 
             if (this.wizard) {
                 this.catalog = EmWpTemplateWizard.Catalog;
@@ -42,9 +42,9 @@
                 Guide.init();
             }
 
-            var openBtn = document.getElementById('em-wp-template-wizard-open');
-            var labelInput = document.getElementById('em-wp-template-new-label');
-            var colorInput = document.getElementById('em-wp-template-new-color');
+            var openBtn = document.getElementById('em-site-template-wizard-open');
+            var labelInput = document.getElementById('em-site-template-new-label');
+            var colorInput = document.getElementById('em-site-template-new-color');
             var self = this;
 
             if (openBtn) {
@@ -210,8 +210,8 @@
                 Guide.clearFocus();
             }
 
-            var labelInput = document.getElementById('em-wp-template-new-label');
-            var colorInput = document.getElementById('em-wp-template-new-color');
+            var labelInput = document.getElementById('em-site-template-new-label');
+            var colorInput = document.getElementById('em-site-template-new-color');
             if (labelInput) {
                 labelInput.value = '';
                 if (Draft && Draft.applyLabelInputPlaceholder) {
@@ -306,7 +306,7 @@
                         self.wizard.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 } else if (self.wizard) {
-                    document.body.classList.add('em-wp-template-wizard-open');
+                    document.body.classList.add('em-site-template-wizard-open');
                 }
             };
 

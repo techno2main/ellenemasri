@@ -14,12 +14,12 @@
         box-shadow 0.15s ease;
 }
 
-.em-wp-hub__catalog-entry-link,
-.em-wp-hub__catalog-entry-link:visited,
+.em-site-hub__catalog-entry-link,
+.em-site-hub__catalog-entry-link:visited,
 .em-hub__catalog-entry-link:visited,
-.em-dashboard .em-wp-hub__catalog-entry-link,
+.em-dashboard .em-site-hub__catalog-entry-link,
 .em-dashboard .em-hub__catalog-entry-link,
-.em-templates-sommaire .em-wp-hub__catalog-entry-link,
+.em-templates-sommaire .em-site-hub__catalog-entry-link,
 .em-templates-sommaire .em-hub__catalog-entry-link {
     text-decoration: none;
 }
@@ -40,10 +40,10 @@ button.em-hub__catalog-entry-link {
     text-decoration: none;
 }
 
-.em-wp-hub__catalog-entry-link:hover,
-.em-wp-hub__catalog-entry-link:focus-visible,
-.em-wp-hub__catalog-entry-link:active,
-.em-wp-hub__catalog-entry-link:visited {
+.em-site-hub__catalog-entry-link:hover,
+.em-site-hub__catalog-entry-link:focus-visible,
+.em-site-hub__catalog-entry-link:active,
+.em-site-hub__catalog-entry-link:visited {
     text-decoration: none;
 }
 

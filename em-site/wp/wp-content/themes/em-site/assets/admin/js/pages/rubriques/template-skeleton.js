@@ -2,9 +2,9 @@
     'use strict';
 
     var config = window.emWpTemplateSkeleton || {};
-    var adminRoot = document.querySelector('.em-wp-rubriques-admin');
-    var addToggle = document.getElementById('em-wp-rubrique-skeleton-add-toggle');
-    var addPanel = document.getElementById('em-wp-rubrique-skeleton-add-panel');
+    var adminRoot = document.querySelector('.em-site-rubriques-admin');
+    var addToggle = document.getElementById('em-site-rubrique-skeleton-add-toggle');
+    var addPanel = document.getElementById('em-site-rubrique-skeleton-add-panel');
 
     if (!adminRoot || !config.ajaxUrl || !config.nonce) {
         return;
@@ -13,13 +13,13 @@
     var statusDismissTimer = null;
     var lastStatusEl = null;
     var STATUS_DISMISS_MS = 3000;
-    var listRoot = adminRoot.querySelector('.em-wp-rubriques-admin__list');
+    var listRoot = adminRoot.querySelector('.em-site-rubriques-admin__list');
     var pickerCache = Object.create(null);
     var activePickerRequestToken = 0;
 
     function setStatus(message, isError) {
-        var statusEl = document.getElementById('em-wp-rubrique-skeleton-add-status')
-            || document.getElementById('em-wp-rubriques-sort-status');
+        var statusEl = document.getElementById('em-site-rubrique-skeleton-add-status')
+            || document.getElementById('em-site-rubriques-sort-status');
 
         if (!statusEl) {
             return;
@@ -137,7 +137,7 @@
             return;
         }
 
-        var picker = listRoot.querySelector('.em-wp-rubriques-admin__picker');
+        var picker = listRoot.querySelector('.em-site-rubriques-admin__picker');
         if (picker && picker.parentNode) {
             picker.parentNode.removeChild(picker);
         }
@@ -148,7 +148,7 @@
             return;
         }
 
-        listRoot.querySelectorAll('.em-wp-rubriques-admin__list-item.is-open').forEach(function (item) {
+        listRoot.querySelectorAll('.em-site-rubriques-admin__list-item.is-open').forEach(function (item) {
             item.classList.remove('is-open');
         });
 
@@ -176,7 +176,7 @@
 
         var mount = document.createElement('ul');
         mount.innerHTML = html;
-        var picker = mount.querySelector('.em-wp-rubriques-admin__picker');
+        var picker = mount.querySelector('.em-site-rubriques-admin__picker');
 
         if (!picker) {
             return false;
@@ -194,7 +194,7 @@
 
     function fetchRubriquePicker(moduleSlug) {
         var body = new window.FormData();
-        body.append('action', 'em_wp_load_rubrique_picker');
+        body.append('action', 'em-site_load_rubrique_picker');
         body.append('nonce', config.nonce);
         body.append('module_slug', moduleSlug);
 
@@ -275,14 +275,14 @@
     }
 
     function getRubriqueLabelFromButton(button) {
-        var listItem = button.closest('.em-wp-rubriques-admin__list-item');
+        var listItem = button.closest('.em-site-rubriques-admin__list-item');
 
         if (listItem) {
-            var listLabel = listItem.querySelector('.em-wp-rubriques-admin__list-label');
+            var listLabel = listItem.querySelector('.em-site-rubriques-admin__list-label');
 
             if (listLabel) {
                 var listClone = listLabel.cloneNode(true);
-                var listBadge = listClone.querySelector('.em-wp-rubriques-admin__hidden-badge');
+                var listBadge = listClone.querySelector('.em-site-rubriques-admin__hidden-badge');
 
                 if (listBadge) {
                     listBadge.remove();
@@ -292,10 +292,10 @@
             }
         }
 
-        var panelItem = button.closest('.em-wp-rubrique-skeleton-add-panel__item');
+        var panelItem = button.closest('.em-site-rubrique-skeleton-add-panel__item');
 
         if (panelItem) {
-            var panelLabel = panelItem.querySelector('.em-wp-rubrique-skeleton-add-panel__item-title');
+            var panelLabel = panelItem.querySelector('.em-site-rubrique-skeleton-add-panel__item-title');
 
             if (panelLabel) {
                 return panelLabel.textContent.replace(/\s+/g, ' ').trim();
@@ -355,10 +355,10 @@
     }
 
     adminRoot.addEventListener('click', function (event) {
-        var listLink = event.target.closest('.em-wp-rubriques-admin__list-link');
+        var listLink = event.target.closest('.em-site-rubriques-admin__list-link');
 
         if (listLink && listRoot && listRoot.contains(listLink)) {
-            var listItem = listLink.closest('.em-wp-rubriques-admin__list-item[data-module-slug]');
+            var listItem = listLink.closest('.em-site-rubriques-admin__list-item[data-module-slug]');
             var moduleSlug = listItem ? (listItem.getAttribute('data-module-slug') || '') : '';
 
             if (moduleSlug !== '') {
@@ -374,7 +374,7 @@
             }
         }
 
-        var addButton = event.target.closest('.em-wp-rubriques-admin__add-button');
+        var addButton = event.target.closest('.em-site-rubriques-admin__add-button');
 
         if (addButton) {
             event.preventDefault();
@@ -386,14 +386,14 @@
                 return;
             }
 
-            var panelItem = addButton.closest('.em-wp-rubrique-skeleton-add-panel__item');
+            var panelItem = addButton.closest('.em-site-rubrique-skeleton-add-panel__item');
             var positionSelect = panelItem
-                ? panelItem.querySelector('.em-wp-rubrique-skeleton-add-panel__position')
+                ? panelItem.querySelector('.em-site-rubrique-skeleton-add-panel__position')
                 : null;
             var insertAfter = positionSelect ? positionSelect.value : '';
 
             postSkeletonAction(
-                'em_wp_template_skeleton_add_rubrique',
+                'em-site_template_skeleton_add_rubrique',
                 addTemplate,
                 addRubrique,
                 addButton,
@@ -404,7 +404,7 @@
             return;
         }
 
-        var removeButton = event.target.closest('.em-wp-rubriques-admin__remove-button');
+        var removeButton = event.target.closest('.em-site-rubriques-admin__remove-button');
 
         if (!removeButton) {
             return;
@@ -424,7 +424,7 @@
                 return;
             }
 
-            postSkeletonAction('em_wp_template_skeleton_remove_rubrique', removeTemplate, removeRubrique, removeButton);
+            postSkeletonAction('em-site_template_skeleton_remove_rubrique', removeTemplate, removeRubrique, removeButton);
         });
     });
 })(window, document);

@@ -18,41 +18,41 @@
         }
 
         modal = document.createElement('div');
-        modal.className = 'em-wp-admin-confirm';
+        modal.className = 'em-site-admin-confirm';
         modal.hidden = true;
         modal.innerHTML =
-            '<div class="em-wp-admin-confirm__backdrop" data-em-wp-confirm-dismiss></div>' +
-            '<div class="em-wp-admin-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="em-wp-admin-confirm-title em-wp-admin-confirm-message">' +
-                '<div class="em-wp-admin-confirm__head" hidden>' +
-                    '<h2 id="em-wp-admin-confirm-title" class="em-wp-admin-confirm__title"></h2>' +
+            '<div class="em-site-admin-confirm__backdrop" data-em-site-confirm-dismiss></div>' +
+            '<div class="em-site-admin-confirm__dialog" role="dialog" aria-modal="true" aria-labelledby="em-site-admin-confirm-title em-site-admin-confirm-message">' +
+                '<div class="em-site-admin-confirm__head" hidden>' +
+                    '<h2 id="em-site-admin-confirm-title" class="em-site-admin-confirm__title"></h2>' +
                 '</div>' +
-                '<div class="em-wp-admin-confirm__body">' +
-                    '<p id="em-wp-admin-confirm-message" class="em-wp-admin-confirm__message"></p>' +
-                    '<label class="em-wp-admin-confirm__acknowledge" hidden>' +
-                        '<input type="checkbox" class="em-wp-admin-confirm__ack-checkbox">' +
-                        '<span class="em-wp-admin-confirm__ack-text"></span>' +
+                '<div class="em-site-admin-confirm__body">' +
+                    '<p id="em-site-admin-confirm-message" class="em-site-admin-confirm__message"></p>' +
+                    '<label class="em-site-admin-confirm__acknowledge" hidden>' +
+                        '<input type="checkbox" class="em-site-admin-confirm__ack-checkbox">' +
+                        '<span class="em-site-admin-confirm__ack-text"></span>' +
                     '</label>' +
                 '</div>' +
-                '<div class="em-wp-admin-confirm__actions">' +
-                    '<button type="button" class="button button-secondary em-wp-admin-confirm__cancel">Annuler</button>' +
-                    '<button type="button" class="button button-primary em-wp-admin-confirm__confirm">Confirmer</button>' +
+                '<div class="em-site-admin-confirm__actions">' +
+                    '<button type="button" class="button button-secondary em-site-admin-confirm__cancel">Annuler</button>' +
+                    '<button type="button" class="button button-primary em-site-admin-confirm__confirm">Confirmer</button>' +
                 '</div>' +
             '</div>';
 
         document.body.appendChild(modal);
-        modal.dialogEl = modal.querySelector('.em-wp-admin-confirm__dialog');
-        headEl = modal.querySelector('.em-wp-admin-confirm__head');
-        titleEl = modal.querySelector('.em-wp-admin-confirm__title');
-        messageEl = modal.querySelector('.em-wp-admin-confirm__message');
-        acknowledgeRow = modal.querySelector('.em-wp-admin-confirm__acknowledge');
-        acknowledgeCheckbox = modal.querySelector('.em-wp-admin-confirm__ack-checkbox');
-        acknowledgeText = modal.querySelector('.em-wp-admin-confirm__ack-text');
-        confirmBtn = modal.querySelector('.em-wp-admin-confirm__confirm');
-        cancelBtn = modal.querySelector('.em-wp-admin-confirm__cancel');
+        modal.dialogEl = modal.querySelector('.em-site-admin-confirm__dialog');
+        headEl = modal.querySelector('.em-site-admin-confirm__head');
+        titleEl = modal.querySelector('.em-site-admin-confirm__title');
+        messageEl = modal.querySelector('.em-site-admin-confirm__message');
+        acknowledgeRow = modal.querySelector('.em-site-admin-confirm__acknowledge');
+        acknowledgeCheckbox = modal.querySelector('.em-site-admin-confirm__ack-checkbox');
+        acknowledgeText = modal.querySelector('.em-site-admin-confirm__ack-text');
+        confirmBtn = modal.querySelector('.em-site-admin-confirm__confirm');
+        cancelBtn = modal.querySelector('.em-site-admin-confirm__cancel');
 
         function close(result) {
             modal.hidden = true;
-            document.body.classList.remove('em-wp-admin-confirm-open');
+            document.body.classList.remove('em-site-admin-confirm-open');
 
             if (acknowledgeCheckbox) {
                 acknowledgeCheckbox.checked = false;
@@ -104,7 +104,7 @@
         }
 
         modal.addEventListener('click', function (event) {
-            if (event.target.matches('[data-em-wp-confirm-dismiss]')) {
+            if (event.target.matches('[data-em-site-confirm-dismiss]')) {
                 close(false);
             }
         });
@@ -157,10 +157,10 @@
         confirmBtn.textContent = config.confirmLabel || (isAlert ? 'OK' : 'Confirmer');
         cancelBtn.textContent = config.cancelLabel || 'Annuler';
         cancelBtn.hidden = isAlert;
-        confirmBtn.className = 'button ' + (config.confirmClass || 'button-primary') + ' em-wp-admin-confirm__confirm';
+        confirmBtn.className = 'button ' + (config.confirmClass || 'button-primary') + ' em-site-admin-confirm__confirm';
 
         modal.hidden = false;
-        document.body.classList.add('em-wp-admin-confirm-open');
+        document.body.classList.add('em-site-admin-confirm-open');
         (isAlert ? confirmBtn : cancelBtn).focus();
 
         return new Promise(function (resolve) {

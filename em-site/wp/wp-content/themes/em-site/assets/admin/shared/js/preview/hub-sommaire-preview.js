@@ -14,8 +14,8 @@
 
         var dataAttr = config.dataAttr;
         var attrSelector = '[' + dataAttr + ']';
-        var cards = root.querySelectorAll('.em-wp-hub__card' + attrSelector);
-        var navLinks = root.querySelectorAll('.em-wp-catalog-edit__nav-link' + attrSelector);
+        var cards = root.querySelectorAll('.em-site-hub__card' + attrSelector);
+        var navLinks = root.querySelectorAll('.em-site-catalog-edit__nav-link' + attrSelector);
         var previewBodyClass = config.previewBodyClass || '';
 
         if (!cards.length) {
@@ -111,17 +111,17 @@
 
     [
         {
-            rootSelector: '.em-wp-dashboard',
+            rootSelector: '.em-site-dashboard',
             dataAttr: 'data-dashboard-section',
             previewBodyClass: 'has-dashboard-preview',
         },
         {
-            rootSelector: '.em-wp-templates-sommaire',
+            rootSelector: '.em-site-templates-sommaire',
             dataAttr: 'data-template-section',
             previewBodyClass: 'has-template-preview',
         },
         {
-            rootSelector: '.em-wp-catalog-sommaire',
+            rootSelector: '.em-site-catalog-sommaire',
             dataAttr: 'data-catalog-module',
             previewBodyClass: 'has-catalog-preview',
         },

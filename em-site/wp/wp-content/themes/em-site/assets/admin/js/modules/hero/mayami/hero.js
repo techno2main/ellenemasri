@@ -10,7 +10,7 @@
     }
 
     function bindMediaPicker() {
-        $('.em-wp-hero-media-button').on('click', function (event) {
+        $('.em-site-hero-media-button').on('click', function (event) {
             event.preventDefault();
             const button = $(this);
             const input = $('#' + button.data('target'));
@@ -35,7 +35,7 @@
     }
 
     function initImagePreviews() {
-        $('.em-wp-hero-media-button').each(function () {
+        $('.em-site-hero-media-button').each(function () {
             const button = $(this);
             const input = $('#' + button.data('target'));
             const preview = $('#' + button.data('preview'));
@@ -52,7 +52,7 @@
     }
 
     function initBadgePreview() {
-        const badgeInput = document.getElementById('em-wp-hero-badge_text');
+        const badgeInput = document.getElementById('em-site-hero-badge_text');
         const badgeText = document.querySelector('[data-em-hero-badge-preview-text]');
 
         if (!badgeInput || !badgeText) {
@@ -78,7 +78,7 @@
             return;
         }
 
-        const panel = badge.closest('.em-wp-hero-item-panel') || document;
+        const panel = badge.closest('.em-site-hero-item-panel') || document;
         const bgInput = panel.querySelector('input[name$="[badge_bg_color]"]');
         const textInput = panel.querySelector('input[name$="[badge_text_color]"]');
 

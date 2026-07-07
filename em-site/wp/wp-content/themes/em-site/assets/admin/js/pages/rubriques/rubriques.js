@@ -1,18 +1,18 @@
 (function () {
     'use strict';
 
-    var root = document.querySelector('.em-wp-rubriques-admin');
-    var map = document.getElementById('em-wp-admin-landing-map');
-    var layout = document.querySelector('.em-wp-rubriques-admin__layout');
+    var root = document.querySelector('.em-site-rubriques-admin');
+    var map = document.getElementById('em-site-admin-landing-map');
+    var layout = document.querySelector('.em-site-rubriques-admin__layout');
 
     if (!root || !map || !layout) {
         return;
     }
 
-    var listLinks = root.querySelectorAll('.em-wp-rubriques-admin__list-link[data-preview-zone]');
-    var navLinks = root.querySelectorAll('.em-wp-rubrique-edit__nav .em-wp-catalog-edit__nav-link[data-preview-zone]');
+    var listLinks = root.querySelectorAll('.em-site-rubriques-admin__list-link[data-preview-zone]');
+    var navLinks = root.querySelectorAll('.em-site-rubrique-edit__nav .em-site-catalog-edit__nav-link[data-preview-zone]');
     var mapZones = map.querySelectorAll('[data-preview-zone]');
-    var headerGroups = map.querySelectorAll('.em-wp-admin-landing-map__header-group');
+    var headerGroups = map.querySelectorAll('.em-site-admin-landing-map__header-group');
 
     function normalizeZone(zone) {
         if (zone === 'header_hero' || zone === 'header_slider') {

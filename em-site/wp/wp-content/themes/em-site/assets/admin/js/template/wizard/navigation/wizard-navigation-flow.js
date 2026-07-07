@@ -43,7 +43,7 @@
                 this.wizard.hidden = true;
                 this.wizard.setAttribute('aria-hidden', 'true');
             }
-            document.body.classList.remove('em-wp-template-wizard-open');
+            document.body.classList.remove('em-site-template-wizard-open');
 
             if (this.identityPanel) {
                 this.identityPanel.hidden = Guide && Guide.usesProgressIdentityPanel && Guide.usesProgressIdentityPanel();
@@ -78,8 +78,8 @@
             var prevBtns = this.wizard.querySelectorAll('[data-wizard-prev]');
             var submitBtns = this.wizard.querySelectorAll('[data-wizard-submit]');
             var wireframeActions = this.wizard.querySelector('[data-wizard-wireframe-actions]');
-            var planErr = document.getElementById('em-wp-template-wizard-plan-error');
-            var catErr = document.getElementById('em-wp-template-wizard-catalog-error');
+            var planErr = document.getElementById('em-site-template-wizard-plan-error');
+            var catErr = document.getElementById('em-site-template-wizard-catalog-error');
 
             indicators.forEach(function (el) {
                 var n = Number(el.getAttribute('data-wizard-step-indicator'));
@@ -156,8 +156,8 @@
 
         submit: function (labelInput, colorInput) {
             var draft = State.getDraft();
-            var payloadInput = document.getElementById('em-wp-template-wizard-payload');
-            var actionInput = document.getElementById('em-wp-template-wizard-action');
+            var payloadInput = document.getElementById('em-site-template-wizard-payload');
+            var actionInput = document.getElementById('em-site-template-wizard-action');
             var self = this;
 
             if (!draft || !this.form) {

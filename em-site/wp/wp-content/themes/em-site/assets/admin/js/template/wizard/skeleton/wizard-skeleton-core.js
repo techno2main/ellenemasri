@@ -31,7 +31,7 @@
                 return;
             }
 
-            if (!this.listEl.querySelector('.em-wp-template-wizard-skeleton__item.is-sortable')) {
+            if (!this.listEl.querySelector('.em-site-template-wizard-skeleton__item.is-sortable')) {
                 return;
             }
 
@@ -40,8 +40,8 @@
             var topBarItem = this.listEl.querySelector('[data-rubrique="top-bar"]');
 
             this.sortable = new window.EmWpSlideSortable(this.listEl, {
-                handle: '.em-wp-template-wizard-skeleton__drag',
-                item: '.em-wp-template-wizard-skeleton__item.is-sortable',
+                handle: '.em-site-template-wizard-skeleton__drag',
+                item: '.em-site-template-wizard-skeleton__item.is-sortable',
                 onEnd: function () {
                     self.applyOrderFromDom();
                 },
@@ -134,7 +134,7 @@
         },
 
         bind: function (root) {
-            this.listEl = root.querySelector('#em-wp-template-wizard-skeleton-list');
+            this.listEl = root.querySelector('#em-site-template-wizard-skeleton-list');
             this.pickerListEl = root.querySelector('[data-wizard-skeleton-picker-list]');
             this.pickerEmptyEl = root.querySelector('[data-wizard-skeleton-picker-empty]');
             this.addWrap = root.querySelector('[data-wizard-skeleton-add]');
@@ -180,7 +180,7 @@
                         return;
                     }
 
-                    if (btn.classList.contains('em-wp-template-wizard-skeleton__remove')) {
+                    if (btn.classList.contains('em-site-template-wizard-skeleton__remove')) {
                         var def = State.getRubriqueDef(slug);
                         var phase = Helpers.resolvePhase(self.currentPhase);
 
@@ -216,7 +216,7 @@
 
             if (this.pickerListEl) {
                 this.pickerListEl.addEventListener('click', function (event) {
-                    var btn = event.target.closest('.em-wp-template-wizard-skeleton__picker-add');
+                    var btn = event.target.closest('.em-site-template-wizard-skeleton__picker-add');
 
                     if (!btn) {
                         return;

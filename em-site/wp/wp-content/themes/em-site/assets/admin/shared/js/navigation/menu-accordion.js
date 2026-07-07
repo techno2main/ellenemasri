@@ -10,8 +10,8 @@
      */
     var toggleOnlyGroups = [
         {
-            parentClass: 'em-wp-menu-accordion-settings-parent',
-            bodyClass: 'em-wp-accordion-settings-open',
+            parentClass: 'em-site-menu-accordion-settings-parent',
+            bodyClass: 'em-site-accordion-settings-open',
         },
     ];
 

@@ -4,7 +4,7 @@
     var runtime = window.EmAdminRuntime || null;
 
     function boot() {
-        var modal = document.getElementById('em-wp-new-template-modal');
+        var modal = document.getElementById('em-site-new-template-modal');
 
         if (!modal) {
             return;
@@ -14,15 +14,15 @@
         var i18n = cfg.i18n || {};
         var choicePanel = modal.querySelector('[data-new-template-panel="choice"]');
         var duplicatePanel = modal.querySelector('[data-new-template-panel="duplicate"]');
-        var duplicateForm = document.getElementById('em-wp-new-template-duplicate-form');
-        var sourceSelect = document.getElementById('em-wp-new-template-source');
-        var labelInput = document.getElementById('em-wp-new-template-label');
-        var colorInput = document.getElementById('em-wp-new-template-color');
-        var openTriggers = document.querySelectorAll('[data-em-wp-new-template-open]');
+        var duplicateForm = document.getElementById('em-site-new-template-duplicate-form');
+        var sourceSelect = document.getElementById('em-site-new-template-source');
+        var labelInput = document.getElementById('em-site-new-template-label');
+        var colorInput = document.getElementById('em-site-new-template-color');
+        var openTriggers = document.querySelectorAll('[data-em-site-new-template-open]');
         var colorInitialized = false;
 
         function grantWorkspaceLaunch() {
-            var key = cfg.workspaceLaunchGrantKey || 'em_wp_wizard_workspace_launch';
+            var key = cfg.workspaceLaunchGrantKey || 'em-site_wizard_workspace_launch';
 
             if (window.EmWpTemplateWizard
                 && EmWpTemplateWizard.Draft
@@ -55,10 +55,10 @@
         function openModal() {
             modal.hidden = false;
             modal.setAttribute('aria-hidden', 'false');
-            document.body.classList.add('em-wp-new-template-modal-open');
+            document.body.classList.add('em-site-new-template-modal-open');
             showPanel('choice');
 
-            var firstChoice = modal.querySelector('[data-em-wp-new-template-blank]');
+            var firstChoice = modal.querySelector('[data-em-site-new-template-blank]');
 
             if (firstChoice) {
                 firstChoice.focus();
@@ -68,7 +68,7 @@
         function closeModal() {
             modal.hidden = true;
             modal.setAttribute('aria-hidden', 'true');
-            document.body.classList.remove('em-wp-new-template-modal-open');
+            document.body.classList.remove('em-site-new-template-modal-open');
             showPanel('choice');
 
             if (duplicateForm) {
@@ -98,7 +98,7 @@
             });
         });
 
-        document.querySelectorAll('[data-em-wp-new-template-wizard]').forEach(function (trigger) {
+        document.querySelectorAll('[data-em-site-new-template-wizard]').forEach(function (trigger) {
             trigger.addEventListener('click', function (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -110,7 +110,7 @@
             });
         });
 
-        document.querySelectorAll('[data-em-wp-new-template-duplicate]').forEach(function (trigger) {
+        document.querySelectorAll('[data-em-site-new-template-duplicate]').forEach(function (trigger) {
             trigger.addEventListener('click', function (event) {
                 event.preventDefault();
                 event.stopPropagation();
@@ -123,7 +123,7 @@
             });
         });
 
-        modal.querySelectorAll('[data-em-wp-new-template-dismiss]').forEach(function (el) {
+        modal.querySelectorAll('[data-em-site-new-template-dismiss]').forEach(function (el) {
             el.addEventListener('click', closeModal);
         });
 
@@ -133,7 +133,7 @@
             }
         });
 
-        var blankBtn = modal.querySelector('[data-em-wp-new-template-blank]');
+        var blankBtn = modal.querySelector('[data-em-site-new-template-blank]');
 
         if (blankBtn) {
             blankBtn.addEventListener('click', function () {
@@ -145,7 +145,7 @@
             });
         }
 
-        var showDuplicateBtn = modal.querySelector('[data-em-wp-new-template-show-duplicate]');
+        var showDuplicateBtn = modal.querySelector('[data-em-site-new-template-show-duplicate]');
 
         if (showDuplicateBtn) {
             showDuplicateBtn.addEventListener('click', function () {
@@ -157,7 +157,7 @@
             });
         }
 
-        var showChoiceBtn = modal.querySelector('[data-em-wp-new-template-show-choice]');
+        var showChoiceBtn = modal.querySelector('[data-em-site-new-template-show-choice]');
 
         if (showChoiceBtn) {
             showChoiceBtn.addEventListener('click', function () {

@@ -7,13 +7,13 @@
     var allowFormSubmit = false;
     var i18n = {};
     function findModuleForm() {
-        var wrap = document.querySelector('.wrap.em-wp-admin-module, .wrap.em-wp-rubriques-admin');
+        var wrap = document.querySelector('.wrap.em-site-admin-module, .wrap.em-site-rubriques-admin');
         if (!wrap) {
             return null;
         }
-        var forms = wrap.querySelectorAll('form[id^="em-wp-"][method="post"]');
+        var forms = wrap.querySelectorAll('form[id^="em-site-"][method="post"]');
         for (var i = 0; i < forms.length; i++) {
-            if (!forms[i].closest('.em-wp-template-banner')) {
+            if (!forms[i].closest('.em-site-template-banner')) {
                 return forms[i];
             }
         }
@@ -31,7 +31,7 @@
         var entries = [];
         form.querySelectorAll('input, select, textarea').forEach(function (el) {
             var name = el.name;
-            if (!name || el.disabled || el.closest('.em-wp-template-banner')) {
+            if (!name || el.disabled || el.closest('.em-site-template-banner')) {
                 return;
             }
             if (el.type === 'checkbox') {
@@ -59,17 +59,17 @@
         return entries.join('&');
     }
     function setRedirectAfterSave(form, redirectTo) {
-        var input = form.querySelector('input[name="em_wp_redirect_after_save"]');
+        var input = form.querySelector('input[name="em-site_redirect_after_save"]');
         if (!input) {
             input = document.createElement('input');
             input.type = 'hidden';
-            input.name = 'em_wp_redirect_after_save';
+            input.name = 'em-site_redirect_after_save';
             form.appendChild(input);
         }
         input.value = redirectTo || '';
     }
     function clearRedirectAfterSave(form) {
-        var input = form.querySelector('input[name="em_wp_redirect_after_save"]');
+        var input = form.querySelector('input[name="em-site_redirect_after_save"]');
         if (input) {
             input.value = '';
         }
@@ -130,7 +130,7 @@
         }
         var formData = new FormData(moduleForm);
         if (redirectTo) {
-            formData.set('em_wp_redirect_after_save', redirectTo);
+            formData.set('em-site_redirect_after_save', redirectTo);
         }
         return fetch(moduleForm.action, {
             method: 'POST',
@@ -152,7 +152,7 @@
     function init(options) {
         options = options || {};
         i18n = options.i18n || {};
-        saveBtn = options.saveButton || document.getElementById('em-wp-template-banner-save');
+        saveBtn = options.saveButton || document.getElementById('em-site-template-banner-save');
         moduleForm = findModuleForm();
         baseline = moduleForm ? serializeForm(moduleForm) : '';
         if (!moduleForm) {

@@ -1,8 +1,8 @@
 (function () {
     'use strict';
 
-    var list = document.getElementById('em-wp-release-rows-list');
-    var addBtn = document.getElementById('em-wp-release-add-row');
+    var list = document.getElementById('em-site-release-rows-list');
+    var addBtn = document.getElementById('em-site-release-add-row');
 
     if (!list || !addBtn) {
         return;
@@ -11,13 +11,13 @@
     function reindexRows() {
         list.querySelectorAll('[data-release-row-item]').forEach(function (item, index) {
             item.querySelectorAll('[name]').forEach(function (field) {
-                field.name = field.name.replace(/em_wp_release_options\[rows\]\[\d+\]/, 'em_wp_release_options[rows][' + index + ']');
+                field.name = field.name.replace(/em-site_release_options\[rows\]\[\d+\]/, 'em-site_release_options[rows][' + index + ']');
             });
         });
     }
 
     function syncHiddenState(item) {
-        var hiddenInput = item.querySelector('.em-wp-release-row-hidden');
+        var hiddenInput = item.querySelector('.em-site-release-row-hidden');
         if (!hiddenInput) {
             return;
         }
@@ -47,8 +47,8 @@
     }
 
     function bindRow(item) {
-        var hiddenInput = item.querySelector('.em-wp-release-row-hidden');
-        var deleteBtn = item.querySelector('.em-wp-release-row-delete');
+        var hiddenInput = item.querySelector('.em-site-release-row-hidden');
+        var deleteBtn = item.querySelector('.em-site-release-row-delete');
 
         if (hiddenInput) {
             hiddenInput.addEventListener('change', function () {
@@ -88,7 +88,7 @@
         clone.querySelectorAll('input[type="text"]').forEach(function (input) {
             input.value = '';
         });
-        var hiddenInput = clone.querySelector('.em-wp-release-row-hidden');
+        var hiddenInput = clone.querySelector('.em-site-release-row-hidden');
         if (hiddenInput) {
             hiddenInput.checked = false;
         }
@@ -101,7 +101,7 @@
     if (window.EmWpSlideSortable) {
         new window.EmWpSlideSortable(list, {
             item: '[data-release-row-item]',
-            handle: '.em-wp-slide-sortable__handle',
+            handle: '.em-site-slide-sortable__handle',
             onEnd: reindexRows
         });
     }
