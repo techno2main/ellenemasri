@@ -198,3 +198,12 @@ Points temporairement mis en pause :
 - Suppression du fichier de migration one-shot inc/core/legacy-option-prefix-migration.php.
 - Débranchement du require correspondant dans inc/bootstrap.php.
 - Contrôle de cohérence effectué: plus aucune référence au migrateur ni au préfixe legacy em_wp dans les fichiers PHP du thème.
+
+## Mise à jour structurelle (Paris) : 2026-07-07 23:11:23
+
+- Correctif de robustesse côté admin Rubriques: neutralisation du moteur global `module-form-dirty` sur la page Rubriques pour éviter les soumissions hors périmètre vers `admin-post.php`.
+- Ajout d'un garde-fou serveur sur `admin-post.php` quand `action` est vide: redirection contrôlée vers l'admin avec indicateur d'erreur au lieu d'un écran blanc.
+- Suppression du BOM UTF-8 dans 3 fichiers PHP sensibles (sortie prématurée possible avant doctype) :
+	- `inc/rubriques/admin/pages/overview-styles.php`
+	- `inc/rubriques/admin/builder/builder-preview-script.php`
+	- `inc/front/modules/slider/render.php`

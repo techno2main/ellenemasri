@@ -61,14 +61,14 @@ function em_site_admin_rubriques_enqueue(string $hook_suffix): void
     // Médiathèque WP : choix de l'image de fond partagée du HEADER.
     wp_enqueue_media();
 
-    // CSS du SLIDER front (mayami) : le wireframe du squelette rend de vraies
-    // rubriques EM-SITE, dont le champ « Slider » (template mayami). Sans ce CSS, les
+    // CSS du SLIDER front partagé : le wireframe du squelette rend de vraies
+    // rubriques EM-SITE, dont le champ « Slider ». Sans ce CSS, les
     // slides s'empilent en pleine hauteur au lieu d'occuper le cadre du slider.
     $slider_css_rel = '/assets/front/shared/css/slider.css';
     $slider_css_path = get_template_directory() . $slider_css_rel;
     if (file_exists($slider_css_path)) {
         wp_enqueue_style(
-            'em-site-slider-mayami',
+            'em-site-slider-preview',
             $theme_uri . $slider_css_rel,
             [],
             (string) filemtime($slider_css_path)

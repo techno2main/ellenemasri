@@ -13,7 +13,13 @@
         }
         var forms = wrap.querySelectorAll('form[id^="em-site-"][method="post"]');
         for (var i = 0; i < forms.length; i++) {
-            if (!forms[i].closest('.em-site-template-banner')) {
+            if (forms[i].closest('.em-site-template-banner')) {
+                continue;
+            }
+
+            // Ne pilote que les formulaires modules (hero/slider/header/...).
+            // Evite de soumettre des formulaires admin-post de la page Rubriques.
+            if (forms[i].querySelector('input[name="em_site_module_save"]')) {
                 return forms[i];
             }
         }
@@ -153,6 +159,20 @@
         options = options || {};
         i18n = options.i18n || {};
         saveBtn = options.saveButton || document.getElementById('em-site-template-banner-save');
+
+        // La page Rubriques a ses propres formulaires/admin-post et sa logique
+        // d'enregistrement. Le moteur dirty-form global ne doit pas s'y brancher.
+        if (document.querySelector('.wrap.em-site-rubriques-admin')) {
+            moduleForm = null;
+            baseline = '';
+            isDirty = false;
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.setAttribute('aria-disabled', 'true');
+            }
+            return;
+        }
+
         moduleForm = findModuleForm();
         baseline = moduleForm ? serializeForm(moduleForm) : '';
         if (!moduleForm) {

@@ -178,7 +178,11 @@ function em_site_hero_get_admin_context(): array
         ];
     }
 
-    $definition = $definitions[$style_slug] ?? $definitions['mayami'];
+    $fallback = [];
+    if (!empty($definitions)) {
+        $fallback = reset($definitions);
+    }
+    $definition = $definitions[$style_slug] ?? (is_array($fallback) ? $fallback : []);
 
     return [
         'style_slug'  => $style_slug,

@@ -1,5 +1,5 @@
 (function () {
-    if (window.emSiteInitMayamiSlider) {
+    if (window.emSiteInitSlider) {
         return;
     }
 
@@ -70,7 +70,7 @@
         return true;
     }
 
-    window.emSiteInitMayamiSlider = function (root) {
+    window.emSiteInitSlider = function (root) {
         if (!root || root.dataset.emSliderInit === '1') {
             return;
         }

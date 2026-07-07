@@ -14,19 +14,24 @@ if (!defined('ABSPATH')) {
  */
 function em_site_hero_default_options(): array
 {
+    $site_title = trim((string) get_bloginfo('name'));
+    if ($site_title === '') {
+        $site_title = __('New Release', 'em-site');
+    }
+
     return [
         'enabled'                  => true,
         'badge_text'               => __('New Unique · Available!', 'em-site'),
         'badge_text_hidden'        => false,
         'badge_bg_color'           => '',
         'badge_text_color'         => '',
-        'subtitle'                 => __('Mayami, My Miami', 'em-site'),
+        'subtitle'                 => $site_title,
         'subtitle_hidden'          => false,
-        'main_title'               => __('Mayami, My Miami', 'em-site'),
+        'main_title'               => $site_title,
         'logo_image'               => '',
         'logo_hidden'              => false,
-        'logo_alt'                 => __('Mayami, My Miami', 'em-site'),
-        'description'              => __('A sun-soaked love letter to the city. Stream it, watch it, share it and follow the journey from the painted walls of Miami.', 'em-site'),
+        'logo_alt'                 => $site_title,
+        'description'              => __('Discover the current release and access all content from one place.', 'em-site'),
         'description_hidden'       => false,
         'stream_label'             => __('◉ Stream', 'em-site'),
         'stream_hidden'            => false,

@@ -208,6 +208,39 @@ function em_site_admin_handle_module_saves(): void
 add_action('admin_init', 'em_site_admin_handle_module_saves', 1);
 
 /**
+ * Evite la page blanche admin-post.php quand un submit part sans action.
+ *
+ * Dans ce cas on revient au referer avec un flag d'erreur exploitable.
+ */
+function em_site_admin_guard_empty_admin_post_action(): void
+{
+    if (!is_admin()) {
+        return;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $script = sanitize_key((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if ($script === '' || !str_ends_with($script, '/wp-admin/admin-post.php')) {
+        return;
+    }
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $action = sanitize_key((string) ($_REQUEST['action'] ?? ''));
+    if ($action !== '') {
+        return;
+    }
+
+    $referer = wp_get_referer();
+    $fallback = function_exists('em_site_overview_redirect_url')
+        ? em_site_overview_redirect_url(['error' => 'missing_action'])
+        : admin_url('admin.php?page=em-rubriques-overview&error=missing_action');
+
+    $target = is_string($referer) && $referer !== '' ? $referer : $fallback;
+    em_site_admin_safe_redirect(add_query_arg('error', 'missing_action', $target));
+}
+add_action('admin_init', 'em_site_admin_guard_empty_admin_post_action', 0);
+
+/**
  * Affiche les notices après enregistrement.
  */
 function em_site_admin_render_settings_notices(): void

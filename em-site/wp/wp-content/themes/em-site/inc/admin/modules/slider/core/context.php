@@ -203,26 +203,5 @@ function em_site_slider_group_name(string $style_slug): string
     return 'em_site_slider_' . sanitize_key($style_slug) . '_group';
 }
 
-/**
- * Resout le dossier d'assets admin (vue) pour une variante Slider.
- *
- * Les slugs catalogue (ex. slider-mayami-default) ne correspondent pas au
- * dossier d'assets JS (mayami) : on retombe sur une vue existante.
- */
-function em_site_slider_admin_asset_view_slug(string $style_slug): string
-{
-    $style_slug = sanitize_key($style_slug);
-    $theme_dir = get_template_directory();
-    $js_base = $theme_dir . '/assets/admin/js/modules/slider/';
 
-    if ($style_slug === 'mayami' && is_dir($js_base . 'mayami')) {
-        return 'mayami';
-    }
-
-    if (is_dir($js_base . 'mayami')) {
-        return 'mayami';
-    }
-
-    return '';
-}
 

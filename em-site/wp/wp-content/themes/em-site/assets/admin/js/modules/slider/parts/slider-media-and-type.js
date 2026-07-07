@@ -1,8 +1,8 @@
 (function ($) {
     'use strict';
 
-    window.EmWpSliderMayamiAdmin = window.EmWpSliderMayamiAdmin || {};
-    var Admin = window.EmWpSliderMayamiAdmin;
+    window.EmSiteSliderAdmin = window.EmSiteSliderAdmin || {};
+    var Admin = window.EmSiteSliderAdmin;
 
     Admin.syncPreview = function (input, preview) {
         var url = String(input.val() || '').trim();

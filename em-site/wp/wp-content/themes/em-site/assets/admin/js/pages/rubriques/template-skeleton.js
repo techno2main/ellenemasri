@@ -93,7 +93,7 @@
                     throw new Error('HTTP ' + response.status);
                 }
 
-                return response.json();
+                return parseJsonPayload(response);
             })
             .then(function (payload) {
                 if (!payload || !payload.success) {
@@ -114,6 +114,29 @@
                     button.disabled = false;
                 }
             });
+    }
+
+    function parseJsonPayload(response) {
+        return response.text().then(function (raw) {
+            var text = String(raw || '').trim();
+
+            if (text === '') {
+                throw new Error((config.i18n && config.i18n.error) || 'Empty JSON response');
+            }
+
+            try {
+                return JSON.parse(text);
+            } catch (_firstError) {
+                var firstBrace = text.indexOf('{');
+                var lastBrace = text.lastIndexOf('}');
+
+                if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
+                    return JSON.parse(text.slice(firstBrace, lastBrace + 1));
+                }
+
+                throw _firstError;
+            }
+        });
     }
 
     function currentUrl() {
@@ -207,7 +230,7 @@
                 throw new Error('HTTP ' + response.status);
             }
 
-            return response.json();
+            return parseJsonPayload(response);
         }).then(function (payload) {
             if (!payload || !payload.success || !payload.data || !payload.data.html) {
                 throw new Error((payload && payload.data && payload.data.message) || (config.i18n && config.i18n.pickerLoadError) || 'Picker load error');

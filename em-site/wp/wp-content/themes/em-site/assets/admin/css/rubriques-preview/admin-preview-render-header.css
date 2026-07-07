@@ -1,5 +1,5 @@
-/*
- * Rubriques admin — header composite.
+﻿/*
+ * Rubriques admin â€” header composite.
  */
 
 .em-rubrique.em-header-shell {
@@ -37,7 +37,7 @@
     width: 100%;
 }
 
-.em-header-shell__col--slider .em-slider--mayami {
+.em-header-shell__col--slider .em-slider--shared {
     width: 100%;
     max-width: 430px;
     margin: 0 auto;
@@ -71,15 +71,15 @@
         gap: 12px;
     }
 
-    .em-header-shell .em-hero--mayami .em-hero__inner {
+    .em-header-shell .em-hero .em-hero__inner {
         padding-top: 6px;
     }
 
-    .em-header-shell .em-hero--mayami .em-hero__scroll-row {
+    .em-header-shell .em-hero .em-hero__scroll-row {
         margin-bottom: 8px;
     }
 
-    .em-header-shell .em-hero--mayami .em-hero__actions {
+    .em-header-shell .em-hero .em-hero__actions {
         display: flex;
         flex-wrap: nowrap;
         gap: 4px;
@@ -87,7 +87,7 @@
         padding-bottom: 10px;
     }
 
-    .em-header-shell .em-hero--mayami .em-hero__btn {
+    .em-header-shell .em-hero .em-hero__btn {
         white-space: nowrap;
     }
 

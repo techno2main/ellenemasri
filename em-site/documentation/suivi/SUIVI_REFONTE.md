@@ -3,7 +3,7 @@
 ## Horodatage temps rÃ©el (Paris)
 1. Fuseau de rÃ©fÃ©rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. DerniÃ¨re mise Ã  jour : 2026-07-07 21:54:16.
+3. DerniÃ¨re mise Ã  jour : 2026-07-07 23:11:23.
 
 ## RÃ¨gles de suivi
 1. Une Ã©tape = un objectif concret vÃ©rifiable.
@@ -56,3 +56,10 @@
 - Suppression définitive du migrateur legacy inc/core/legacy-option-prefix-migration.php.
 - Retrait du chargement associé dans inc/bootstrap.php.
 - Validation post-suppression: aucune référence PHP restante au migrateur, aucun résidu em_wp dans les PHP du thème, bootstrap sans erreur de diagnostic.
+
+### 2026-07-07 23:11:23 (Paris)
+
+- Debug ciblé de la panne d'enregistrement Rubriques/Slider avec atterrissage sur admin-post.php.
+- Correctif JS de protection sur la page Rubriques: désactivation du moteur global module-form-dirty dans ce contexte pour éviter toute soumission parasite.
+- Correctif serveur de garde-fou sur admin-post.php sans action: redirection propre vers l'admin avec flag d'erreur, au lieu d'une page blanche.
+- Correction de cause racine potentielle Quirks Mode: suppression du BOM UTF-8 sur 3 fichiers PHP chargés côté admin/front (`inc/rubriques/admin/pages/overview-styles.php`, `inc/rubriques/admin/builder/builder-preview-script.php`, `inc/front/modules/slider/render.php`).

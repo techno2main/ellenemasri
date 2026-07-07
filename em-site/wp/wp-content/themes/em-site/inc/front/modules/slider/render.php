@@ -122,7 +122,7 @@ function em_site_render_header_slider_html(string $item_slug): string
 	<footer id="em-rubrique-sliders-<?php echo esc_attr($item_slug); ?>" class="em-rubrique em-rubrique--sliders" style="<?php echo esc_attr(implode(';', $style_vars)); ?>;">
 		<div class="em-rubrique__row" data-em-row="1" data-em-has-button="0" style="grid-template-columns:repeat(1,minmax(0,1fr))">
 			<div class="em-rubrique__col em-rubrique__col--center" data-em-col="1" data-em-has-button="0">
-				<div id="<?php echo esc_attr($slider_uid); ?>" class="em-slider em-slider--mayami<?php echo esc_attr($band_hidden_class); ?>" data-em-slider style="<?php echo esc_attr($slider_style); ?>">
+				<div id="<?php echo esc_attr($slider_uid); ?>" class="em-slider em-slider--shared<?php echo esc_attr($band_hidden_class); ?>" data-em-slider style="<?php echo esc_attr($slider_style); ?>">
 					<div class="em-slider__shell">
 						<?php if (empty($meta['tapes_hidden'])) : ?>
 							<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span>
@@ -176,3 +176,4 @@ function em_site_render_header_slider_html(string $item_slug): string
 
 	return (string) ob_get_clean();
 }
+

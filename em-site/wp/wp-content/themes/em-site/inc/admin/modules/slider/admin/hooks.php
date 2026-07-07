@@ -27,8 +27,6 @@ function em_site_slider_admin_enqueue(string $hook_suffix): void
     if ($style_slug === '') {
         return;
     }
-
-    $view_slug = em_site_slider_admin_asset_view_slug($style_slug);
     $theme_uri = get_template_directory_uri();
 
     wp_enqueue_script(
@@ -48,25 +46,25 @@ function em_site_slider_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_script(
         'em-site-slider-admin-media-type',
-        $theme_uri . '/assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-media-and-type.js',
+        $theme_uri . '/assets/admin/js/modules/slider/parts/slider-media-and-type.js',
         ['jquery', 'wp-color-picker', 'em-site-admin-color-picker'],
-        em_site_admin_asset_version('assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-media-and-type.js'),
+        em_site_admin_asset_version('assets/admin/js/modules/slider/parts/slider-media-and-type.js'),
         true
     );
 
     wp_enqueue_script(
         'em-site-slider-admin-list-manager',
-        $theme_uri . '/assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-list-manager.js',
+        $theme_uri . '/assets/admin/js/modules/slider/parts/slider-list-manager.js',
         ['jquery', 'em-site-admin-confirm-modal', 'em-site-admin-slide-sortable', 'em-site-slider-admin-media-type'],
-        em_site_admin_asset_version('assets/admin/js/modules/slider/' . $view_slug . '/parts/slider-list-manager.js'),
+        em_site_admin_asset_version('assets/admin/js/modules/slider/parts/slider-list-manager.js'),
         true
     );
 
     wp_enqueue_script(
         'em-site-slider-admin',
-        $theme_uri . '/assets/admin/js/modules/slider/' . $view_slug . '/slider.js',
+        $theme_uri . '/assets/admin/js/modules/slider/slider.js',
         ['jquery', 'em-site-slider-admin-media-type', 'em-site-slider-admin-list-manager'],
-        em_site_admin_asset_version('assets/admin/js/modules/slider/' . $view_slug . '/slider.js'),
+        em_site_admin_asset_version('assets/admin/js/modules/slider/slider.js'),
         true
     );
 }

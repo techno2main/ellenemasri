@@ -1,4 +1,4 @@
-.em-slider--mayami {
+﻿.em-slider--shared {
 	--em-slider-ink: #100421;
 	--em-slider-border-color: #100421;
 	--em-slider-shadow-color: #100421;
@@ -13,18 +13,18 @@
 .em-rubrique--sliders,
 .em-rubrique--sliders .em-rubrique__row,
 .em-rubrique--sliders .em-rubrique__col,
-.em-slider--mayami,
-.em-slider--mayami .em-slider__shell {
+.em-slider--shared,
+.em-slider--shared .em-slider__shell {
 	border: 0 !important;
 	outline: 0 !important;
 	box-shadow: none;
 }
 
-.em-slider--mayami .em-slider__shell {
+.em-slider--shared .em-slider__shell {
 	position: relative;
 }
 
-.em-slider--mayami .em-slider__frame {
+.em-slider--shared .em-slider__frame {
 	position: relative;
 	border: 2px solid var(--em-slider-border-color);
 	border-radius: 24px;
@@ -34,16 +34,16 @@
 	z-index: 1;
 }
 
-.em-slider--mayami.em-slider--band-hidden .em-slider__footer {
+.em-slider--shared.em-slider--band-hidden .em-slider__footer {
 	display: none;
 }
 
-.em-slider--mayami.em-slider--band-hidden .em-slider__media {
+.em-slider--shared.em-slider--band-hidden .em-slider__media {
 	border-bottom-left-radius: 22px;
 	border-bottom-right-radius: 22px;
 }
 
-.em-slider--mayami .em-slider__tape {
+.em-slider--shared .em-slider__tape {
 	position: absolute;
 	top: -14px;
 	width: 86px;
@@ -55,43 +55,43 @@
 	pointer-events: none;
 }
 
-.em-slider--mayami .em-slider__tape--left {
+.em-slider--shared .em-slider__tape--left {
 	left: 34px;
 	transform: rotate(-4deg);
 }
 
-.em-slider--mayami .em-slider__tape--right {
+.em-slider--shared .em-slider__tape--right {
 	right: 34px;
 	transform: rotate(6deg);
 }
 
-.em-slider--mayami .em-slider__media {
+.em-slider--shared .em-slider__media {
 	position: relative;
 	height: 610px;
 	background: linear-gradient(160deg, #0e318a, #081c58);
 }
 
-.em-slider--mayami .em-slider__slide {
+.em-slider--shared .em-slider__slide {
 	position: absolute;
 	inset: 0;
 	margin: 0;
 	display: none;
 }
 
-.em-slider--mayami .em-slider__slide.is-active {
+.em-slider--shared .em-slider__slide.is-active {
 	display: block;
 }
 
-.em-slider--mayami .em-slider__slide img {
+.em-slider--shared .em-slider__slide img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	display: block;
 }
 
-.em-slider--mayami .em-slider__slide iframe,
-.em-slider--mayami .em-slider__slide video,
-.em-slider--mayami .em-slider__slide .tiktok-embed {
+.em-slider--shared .em-slider__slide iframe,
+.em-slider--shared .em-slider__slide video,
+.em-slider--shared .em-slider__slide .tiktok-embed {
 	width: 100%;
 	height: 100%;
 	display: block;
@@ -100,14 +100,14 @@
 	background: #000000;
 }
 
-.em-slider--mayami .em-slider__video-wrap {
+.em-slider--shared .em-slider__video-wrap {
 	position: absolute;
 	inset: 0;
 	overflow: hidden;
 	background: #000000;
 }
 
-.em-slider--mayami .em-slider__tiktok-video {
+.em-slider--shared .em-slider__tiktok-video {
 	position: absolute;
 	inset: 0;
 	width: 100%;
@@ -116,12 +116,12 @@
 	background: #000000;
 }
 
-.em-slider--mayami .em-slider__slide video,
-.em-slider--mayami .em-slider__slide iframe {
+.em-slider--shared .em-slider__slide video,
+.em-slider--shared .em-slider__slide iframe {
 	object-fit: cover;
 }
 
-.em-slider--mayami .em-slider__nav {
+.em-slider--shared .em-slider__nav {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
@@ -137,15 +137,15 @@
 	z-index: 3;
 }
 
-.em-slider--mayami .em-slider__nav--prev {
+.em-slider--shared .em-slider__nav--prev {
 	left: 12px;
 }
 
-.em-slider--mayami .em-slider__nav--next {
+.em-slider--shared .em-slider__nav--next {
 	right: 12px;
 }
 
-.em-slider--mayami .em-slider__audio-btn {
+.em-slider--shared .em-slider__audio-btn {
 	position: absolute;
 	right: 12px;
 	bottom: 12px;
@@ -164,7 +164,7 @@
 	transition: transform 0.15s ease, background 0.15s ease;
 }
 
-.em-slider--mayami .em-slider__audio-btn-label {
+.em-slider--shared .em-slider__audio-btn-label {
 	position: absolute;
 	width: 1px;
 	height: 1px;
@@ -176,7 +176,7 @@
 	border: 0;
 }
 
-.em-slider--mayami .em-slider__audio-icon {
+.em-slider--shared .em-slider__audio-icon {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -184,35 +184,35 @@
 	height: 18px;
 }
 
-.em-slider--mayami .em-slider__audio-icon svg {
+.em-slider--shared .em-slider__audio-icon svg {
 	width: 18px;
 	height: 18px;
 	display: block;
 }
 
-.em-slider--mayami .em-slider__audio-btn .em-slider__audio-icon-live {
+.em-slider--shared .em-slider__audio-btn .em-slider__audio-icon-live {
 	display: none;
 }
 
-.em-slider--mayami .em-slider__audio-btn.is-live .em-slider__audio-icon-live {
+.em-slider--shared .em-slider__audio-btn.is-live .em-slider__audio-icon-live {
 	display: flex;
 }
 
-.em-slider--mayami .em-slider__audio-btn.is-live .em-slider__audio-icon-muted {
+.em-slider--shared .em-slider__audio-btn.is-live .em-slider__audio-icon-muted {
 	display: none;
 }
 
-.em-slider--mayami .em-slider__audio-btn.is-hidden {
+.em-slider--shared .em-slider__audio-btn.is-hidden {
 	display: none;
 }
 
-.em-slider--mayami .em-slider__audio-btn:hover,
-.em-slider--mayami .em-slider__audio-btn:focus-visible {
+.em-slider--shared .em-slider__audio-btn:hover,
+.em-slider--shared .em-slider__audio-btn:focus-visible {
 	transform: translateY(-1px);
 	background: #ffffff;
 }
 
-.em-slider--mayami .em-slider__footer {
+.em-slider--shared .em-slider__footer {
 	height: 52px;
 	border-top: 2px solid var(--em-slider-ink);
 	background: var(--em-slider-footer-bg);
@@ -224,14 +224,14 @@
 	padding: 8px 12px;
 }
 
-.em-slider--mayami .em-slider__title {
+.em-slider--shared .em-slider__title {
 	margin-left: auto;
 	font-family: "Archivo Black", sans-serif;
 	font-size: 13px;
 	letter-spacing: 0.04em;
 }
 
-.em-slider--mayami .em-slider__dots {
+.em-slider--shared .em-slider__dots {
 	margin-top: 12px;
 	display: flex;
 	align-items: center;
@@ -239,7 +239,7 @@
 	gap: 8px;
 }
 
-.em-slider--mayami .em-slider__dot {
+.em-slider--shared .em-slider__dot {
 	width: 12px;
 	height: 12px;
 	border-radius: 999px;
@@ -249,17 +249,18 @@
 	padding: 0;
 }
 
-.em-slider--mayami .em-slider__dot.is-active {
+.em-slider--shared .em-slider__dot.is-active {
 	background: #081b6f;
 }
 
 @media (max-width: 1100px) {
-	.em-slider--mayami {
+	.em-slider--shared {
 		max-width: min(430px, 92vw);
 		margin: 0 auto;
 	}
 
-	.em-slider--mayami .em-slider__media {
+	.em-slider--shared .em-slider__media {
 		height: min(68vh, 560px);
 	}
 }
+

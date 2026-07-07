@@ -334,8 +334,8 @@ function em_site_rubrique_slides_front_html(array $config): string
         'footer_text'         => (string) ($config['footer_text'] ?? ''),
     ];
 
-    // Le champ « Slider » EM-SITE rend TOUJOURS le template mayami : on garantit le
-    // chargement du CSS mayami partout où il est rendu (front, wireframe du
+    // Le champ « Slider » EM-SITE rend un slider partagé : on garantit le
+    // chargement du CSS partagé partout où il est rendu (front, wireframe du
     // squelette, aperçu builder) — sinon les slides s'empilent en pleine hauteur
     // au lieu d'occuper le cadre du slider. WP imprime les styles tardifs en
     // pied de page (front comme admin), donc l'appel reste valide pendant le rendu.
@@ -344,7 +344,7 @@ function em_site_rubrique_slides_front_html(array $config): string
         $slider_css_path = get_template_directory() . '/' . $slider_css_rel;
         if (file_exists($slider_css_path)) {
             wp_enqueue_style(
-                'em-site-slider-mayami',
+                'em-site-slider-preview',
                 get_template_directory_uri() . '/' . $slider_css_rel,
                 [],
                 (string) filemtime($slider_css_path)

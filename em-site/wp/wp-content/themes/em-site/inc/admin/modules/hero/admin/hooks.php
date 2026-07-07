@@ -58,7 +58,7 @@ function em_site_hero_admin_enqueue(string $hook_suffix): void
         'em-site-hero-admin',
         'assets/admin/css/modules/hero/hero.css',
         'em-site-hero-admin',
-        'assets/admin/js/modules/hero/mayami/hero.js',
+        'assets/admin/js/modules/hero/hero.js',
         ['wp-color-picker']
     );
 }
