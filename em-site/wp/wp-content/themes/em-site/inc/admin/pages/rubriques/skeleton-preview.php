@@ -178,6 +178,17 @@ function em_wp_admin_render_skeleton_preview_assets(): void
         box-shadow: inset 4px 0 0 var(--em-rubrique-accent, #646970);
     }
 
+    /* HEADER (mode placeholder du wireframe): pas d'encadrement bleu au survol. */
+    .em-wp-rubriques-admin .em-wp-admin-landing-map__header-group.is-layout-mode:hover,
+    .em-wp-rubriques-admin .em-wp-admin-landing-map__header-group.is-layout-mode.is-active,
+    .em-wp-rubriques-admin .em-wp-admin-landing-map__header-group.is-layout-mode:has(> .em-wp-admin-landing-map__header-group-link.is-layout-only:focus-visible),
+    .em-wp-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:hover,
+    .em-wp-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode.is-active,
+    .em-wp-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:has(> .em-admin-landing-map__header-group-link.is-layout-only:focus-visible) {
+        outline:none !important;
+        box-shadow:none !important;
+    }
+
     /* Wireframe plus large (desktop) pour mieux voir les aperçus. */
     @media screen and (min-width: 783px) {
         .em-wp-rubriques-admin .em-wp-rubriques-admin__layout { grid-template-columns: minmax(0, 1fr) minmax(440px, 560px); max-width: 1360px; }

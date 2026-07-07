@@ -394,30 +394,32 @@ function em_wp_rubrique_video_provider(string $url): array
 }
 
 /**
- * Décode la valeur d'un champ « Vidéo URL » en { url, thumb, clickable }.
+ * Décode la valeur d'un champ « Vidéo URL » en { url, thumb, clickable, tapes_hidden, tapes_color }.
  *
  * Rétrocompatible : une simple URL (legacy) → embed cliquable désactivé.
  *
  * @param mixed $value
- * @return array{url:string, thumb:int, clickable:bool}
+ * @return array{url:string, thumb:int, clickable:bool, tapes_hidden:bool, tapes_color:string}
  */
 function em_wp_rubrique_video_url_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['url' => trim((string) $value), 'thumb' => 0, 'clickable' => false];
+        return ['url' => trim((string) $value), 'thumb' => 0, 'clickable' => false, 'tapes_hidden' => false, 'tapes_color' => ''];
     }
 
     return [
         'url'       => trim((string) ($decoded['url'] ?? '')),
         'thumb'     => absint($decoded['thumb'] ?? 0),
         'clickable' => !empty($decoded['clickable']),
+        'tapes_hidden' => !empty($decoded['tapes_hidden']),
+        'tapes_color'  => sanitize_hex_color((string) ($decoded['tapes_color'] ?? '')) ?: '',
     ];
 }
 
 /**
- * Sanitise un champ « Vidéo URL » : URL + miniature (ID média) + lien cliquable.
+ * Sanitise un champ « Vidéo URL » : URL + miniature (ID média) + lien cliquable + options scotchs.
  *
  * @param mixed $value
  */
@@ -431,7 +433,13 @@ function em_wp_field_sanitize_video_url($value): string
         return '';
     }
 
-    return (string) wp_json_encode(['url' => $url, 'thumb' => $thumb, 'clickable' => $v['clickable'] ? 1 : 0]);
+    return (string) wp_json_encode([
+        'url' => $url,
+        'thumb' => $thumb,
+        'clickable' => $v['clickable'] ? 1 : 0,
+        'tapes_hidden' => !empty($v['tapes_hidden']) ? 1 : 0,
+        'tapes_color' => sanitize_hex_color((string) ($v['tapes_color'] ?? '')) ?: '',
+    ]);
 }
 
 /**

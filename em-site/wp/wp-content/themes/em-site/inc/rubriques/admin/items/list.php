@@ -111,6 +111,19 @@ function em_wp_v4_render_footer_item(string $type_slug, string $item_slug, strin
         <div class="em-v4-collapse__body">
             <?php
             if ($type_slug === 'headers' && function_exists('em_wp_admin_render_header_item_editor')) {
+                $preview_template = function_exists('em_wp_get_editing_template_slug')
+                    ? sanitize_key((string) em_wp_get_editing_template_slug())
+                    : sanitize_key((string) get_option('em_wp_active_template', ''));
+                if ($preview_template === '') {
+                    $preview_template = 'mayami';
+                }
+                $header_preview_html = function_exists('em_wp_admin_header_composite_html_for_item')
+                    ? em_wp_admin_header_composite_html_for_item($preview_template, $item_slug)
+                    : '';
+                ?>
+                <div class="em-v4-livepreview" hidden><?php echo $header_preview_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+                <?php
+
                 em_wp_admin_render_header_item_editor($item_slug);
                 if (function_exists('em_wp_admin_render_header_section_assets')) {
                     em_wp_admin_render_header_section_assets();

@@ -1,7 +1,7 @@
 /* HEADER composite V4 (fond partage + colonnes hero/slider). */
 
 .em-section--header .em-rubrique.em-header-shell {
-	background-color: var(--em-rubrique-bg, #ff6f00);
+	background-color: var(--em-rubrique-bg, transparent);
 }
 
 .em-section--header {
@@ -118,6 +118,9 @@
 .em-section--header .em-header-shell__col--slider .em-rubrique {
 	padding-left: 0 !important;
 	padding-right: 0 !important;
+	overflow: visible;
+	padding-bottom: 12px;
+	padding-right: 12px !important;
 }
 
 .em-section--header .em-rubrique__button {

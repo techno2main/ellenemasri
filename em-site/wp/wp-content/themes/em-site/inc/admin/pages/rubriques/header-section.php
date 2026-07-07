@@ -32,18 +32,30 @@ function em_wp_admin_header_section_slug(): string
  */
 function em_wp_admin_header_part_type_slug(string $keyword): string
 {
+    $keyword = $keyword === 'slider' ? 'slider' : 'hero';
+    $candidates = $keyword === 'hero'
+        ? ['header', 'hero', 'heros']
+        : ['sliders', 'slider'];
+
     if (!function_exists('em_wp_rubrique_type_registry')) {
-        return '';
+        return (string) ($candidates[0] ?? '');
     }
 
     $registry = em_wp_rubrique_type_registry();
-    $slugs = array_keys($registry);
+    $slugs = array_map('strval', array_keys($registry));
 
-    // 1) Slug exact, 2) slug contenant le mot-clé.
-    if (in_array($keyword, $slugs, true)) {
-        return $keyword;
+    // 1) Candidats explicites (compat historique), puis mot-clé exact.
+    foreach ($candidates as $candidate) {
+        if (in_array($candidate, $slugs, true)) {
+            return $candidate;
+        }
     }
 
+    if (in_array($keyword, $slugs, true)) {
+        return (string) $keyword;
+    }
+
+    // 2) Slug contenant le mot-clé.
     foreach ($slugs as $slug) {
         if (strpos((string) $slug, $keyword) !== false) {
             return (string) $slug;
@@ -54,7 +66,7 @@ function em_wp_admin_header_part_type_slug(string $keyword): string
     // change le LIBELLÉ mais pas le SLUG (ex. HERO créé puis renommé garde slug
     // « header »). Le rôle HERO/SLIDER se reconnaît alors au libellé saisi.
     foreach ($registry as $slug => $def) {
-        $label = strtolower((string) ($def['label'] ?? ''));
+        $label = strtolower((string) ($def['label'] ?? '') . ' ' . (string) ($def['label_plural'] ?? ''));
 
         if ($label !== '' && strpos($label, $keyword) !== false) {
             return (string) $slug;
@@ -294,18 +306,31 @@ function em_wp_admin_header_item_config_defaults(): array
 function em_wp_admin_header_item_config_normalize(array $raw): array
 {
     $defaults = em_wp_admin_header_item_config_defaults();
+    $hero_value = (string) ($raw['hero'] ?? ($raw['hero_slug'] ?? ''));
+    $slider_value = (string) ($raw['slider'] ?? ($raw['slider_slug'] ?? ''));
+    $position_value = (string) ($raw['position'] ?? ($raw['layout'] ?? 'hero_left'));
+    $matrix_value = (string) ($raw['matrix'] ?? '');
+    if ($matrix_value === '' && ($hero_value !== '' || $slider_value !== '')) {
+        if ($hero_value !== '' && $slider_value !== '') {
+            $matrix_value = 'hero_slider';
+        } elseif ($slider_value !== '') {
+            $matrix_value = 'slider';
+        } else {
+            $matrix_value = 'hero';
+        }
+    }
     $ratio = sanitize_key((string) ($raw['ratio'] ?? $defaults['ratio']));
     if (!isset(em_wp_admin_header_ratio_choices()[$ratio])) {
         $ratio = (string) $defaults['ratio'];
     }
 
     return [
-        'matrix'     => in_array((string) ($raw['matrix'] ?? ''), ['hero', 'hero_slider', 'slider'], true)
-            ? (string) $raw['matrix']
+        'matrix'     => in_array($matrix_value, ['hero', 'hero_slider', 'slider'], true)
+            ? $matrix_value
             : 'hero',
-        'position'   => ($raw['position'] ?? '') === 'slider_left' ? 'slider_left' : 'hero_left',
-        'hero'       => sanitize_key((string) ($raw['hero'] ?? '')),
-        'slider'     => sanitize_key((string) ($raw['slider'] ?? '')),
+        'position'   => $position_value === 'slider_left' ? 'slider_left' : 'hero_left',
+        'hero'       => sanitize_key($hero_value),
+        'slider'     => sanitize_key($slider_value),
         'ratio'      => $ratio,
         'appearance' => em_wp_admin_header_appearance_normalize(is_array($raw['appearance'] ?? null) ? $raw['appearance'] : []),
     ];
@@ -325,11 +350,25 @@ function em_wp_admin_header_item_config_get(string $header_item_slug): array
     }
 
     $raw = [];
+    $best_score = -1;
     foreach (em_wp_admin_header_slug_variants($header_item_slug) as $candidate_slug) {
         $candidate_raw = get_option(em_wp_admin_header_item_config_option_name($candidate_slug), []);
         if (is_array($candidate_raw) && $candidate_raw !== []) {
-            $raw = $candidate_raw;
-            break;
+            $candidate_norm = em_wp_admin_header_item_config_normalize($candidate_raw);
+            $score = 0;
+            if (($candidate_norm['hero'] ?? '') !== '') {
+                $score += 1;
+            }
+            if (($candidate_norm['slider'] ?? '') !== '') {
+                $score += 2;
+            }
+            if (($candidate_norm['matrix'] ?? '') === 'hero_slider') {
+                $score += 3;
+            }
+            if ($score > $best_score) {
+                $best_score = $score;
+                $raw = $candidate_raw;
+            }
         }
     }
 
@@ -1166,8 +1205,14 @@ function em_wp_admin_render_header_item_editor(string $header_item_slug): void
     $matrix = in_array((string) ($cfg['matrix'] ?? ''), ['hero', 'hero_slider', 'slider'], true)
         ? (string) $cfg['matrix']
         : 'hero';
+    $editing_template = function_exists('em_wp_get_editing_template_slug')
+        ? sanitize_key((string) em_wp_get_editing_template_slug())
+        : sanitize_key((string) get_option('em_wp_active_template', ''));
+    if ($editing_template === '') {
+        $editing_template = 'mayami';
+    }
     ?>
-    <div class="em-wp-header-picker em-wp-header-item-editor" data-header-item="<?php echo esc_attr($header_item_slug); ?>" data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>" data-matrix="<?php echo esc_attr($matrix); ?>" data-position="<?php echo esc_attr((string) ($cfg['position'] ?? 'hero_left')); ?>">
+    <div class="em-wp-header-picker em-wp-header-item-editor" data-header-item="<?php echo esc_attr($header_item_slug); ?>" data-template="<?php echo esc_attr($editing_template); ?>" data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>" data-matrix="<?php echo esc_attr($matrix); ?>" data-position="<?php echo esc_attr((string) ($cfg['position'] ?? 'hero_left')); ?>">
         <p class="em-wp-rubriques-admin__picker-head"><?php esc_html_e('Composition du HEADER', 'em-wp'); ?></p>
         <div class="em-wp-header-picker__compo">
             <div class="em-wp-header-picker__matrix" role="radiogroup">

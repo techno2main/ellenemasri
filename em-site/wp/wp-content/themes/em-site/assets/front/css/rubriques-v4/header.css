@@ -13,7 +13,7 @@
    choisie. La couleur FOND (--em-rubrique-bg) reste prioritaire si définie.
    Spécificité .em-rubrique.em-header-shell : bat le repli sombre de .em-rubrique. */
 .em-rubrique.em-header-shell {
-    background-color: var(--em-rubrique-bg, #ff6f00);
+    background-color: var(--em-rubrique-bg, transparent);
 }
 
 /* Calque image de fond : MÊME filtre que le site (modules/header/header.css). */

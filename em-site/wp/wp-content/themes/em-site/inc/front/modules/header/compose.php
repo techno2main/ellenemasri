@@ -122,7 +122,7 @@ function em_site_header_part_type_candidates(string $keyword): array
     $keyword = $keyword === 'slider' ? 'slider' : 'hero';
 
     if ($keyword === 'hero') {
-        return ['header', 'hero', 'heroes'];
+        return ['hero', 'heroes', 'header'];
     }
 
     return ['sliders', 'slider'];
@@ -178,7 +178,7 @@ function em_site_header_config_defaults(): array
         'slider' => '',
         'ratio' => '60-40',
         'appearance' => [
-            'bg' => '#ff6f00',
+            'bg' => '',
             'bg_image_id' => 0,
             'bg_image_pos' => 'cover',
             'bg_image_opacity' => 100,
@@ -215,7 +215,7 @@ function em_site_header_config_normalize(array $raw): array
         $config['ratio'] = '60-40';
     }
 
-    $config['appearance']['bg'] = sanitize_hex_color((string) ($config['appearance']['bg'] ?? '#ff6f00')) ?: '#ff6f00';
+    $config['appearance']['bg'] = sanitize_hex_color((string) ($config['appearance']['bg'] ?? '')) ?: '';
     $config['appearance']['bg_image_id'] = max(0, (int) ($config['appearance']['bg_image_id'] ?? 0));
     $config['appearance']['bg_image_pos'] = sanitize_key((string) ($config['appearance']['bg_image_pos'] ?? 'cover'));
     $config['appearance']['bg_image_opacity'] = max(0, min(100, (int) ($config['appearance']['bg_image_opacity'] ?? 100)));
@@ -501,9 +501,14 @@ function em_site_header_bg_position_css(string $value): array
 function em_site_header_shell_style_vars(array $config, array $hero_content): array
 {
     $appearance = is_array($config['appearance'] ?? null) ? $config['appearance'] : [];
-    $bg = sanitize_hex_color((string) ($appearance['bg'] ?? '#ff6f00'));
+    $hero_transparent = !empty($hero_content['bg_transparent']);
+    $hero_bg = sanitize_hex_color((string) ($hero_content['bg_color'] ?? ''));
+    $appearance_bg = sanitize_hex_color((string) ($appearance['bg'] ?? '')) ?: '';
+    $bg = !$hero_transparent && $hero_bg !== false && $hero_bg !== null && $hero_bg !== ''
+        ? $hero_bg
+        : $appearance_bg;
     if (!is_string($bg) || $bg === '') {
-        $bg = '#ff6f00';
+        $bg = 'transparent';
     }
 
     $vars = [

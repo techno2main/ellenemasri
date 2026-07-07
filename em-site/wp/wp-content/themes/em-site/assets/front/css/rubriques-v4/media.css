@@ -68,27 +68,30 @@
 }
 
 /* Scotch bleu décoratif GÉNÉRIQUE (vidéo, image…), façon site. */
-.em-rubrique__tape {
+.em-rubrique__tape,
+.em-slider__tape {
     position: absolute;
     z-index: 12;
-    height: 24px;
-    width: 112px;
-    background: oklch(0.78 0.16 195 / 0.85);
-    border: 1px dashed oklch(0.15 0.08 280 / 0.4);
-    opacity: .82;
+    height: 22px;
+    width: 86px;
+    background: var(--em-rubrique-tape-color, #39c7ca);
+    border: 1px dashed oklch(0.15 0.08 280 / 0.2);
+    opacity: .92;
     pointer-events: none;
 }
 
-.em-rubrique__tape--left {
-    top: -12px;
-    left: 24px;
+.em-rubrique__tape--left,
+.em-slider__tape--left {
+    top: -14px;
+    left: 34px;
     transform: rotate(-4deg);
 }
 
-.em-rubrique__tape--right {
-    top: -12px;
-    right: 40px;
-    transform: rotate(3deg);
+.em-rubrique__tape--right,
+.em-slider__tape--right {
+    top: -14px;
+    right: 34px;
+    transform: rotate(6deg);
 }
 
 /* Image avec scotch : conteneur en débord (overflow visible) qui porte le

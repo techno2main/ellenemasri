@@ -62,16 +62,24 @@ function em_wp_admin_header_preview_subzones(?array $header = null): array
     if ($header === null) {
         $header = em_wp_admin_header_preview_config();
     }
-    $hero_slug = sanitize_key((string) ($header['hero_slug'] ?? ''));
-    $slider_slug = sanitize_key((string) ($header['slider_slug'] ?? ''));
+    $hero_slug = sanitize_key((string) ($header['hero_slug'] ?? ($header['hero'] ?? '')));
+    $slider_slug = sanitize_key((string) ($header['slider_slug'] ?? ($header['slider'] ?? '')));
     $layout = (string) ($header['layout'] ?? 'hero_left');
+    $matrix = sanitize_key((string) ($header['matrix'] ?? ''));
+    $hero_enabled = $matrix !== 'slider';
+    $slider_enabled = $matrix !== 'hero';
+    if ($matrix !== 'hero' && $matrix !== 'hero_slider' && $matrix !== 'slider') {
+        // Compat legacy: si la matrice n'est pas fournie, on déduit via les slugs.
+        $hero_enabled = $hero_slug !== '';
+        $slider_enabled = $slider_slug !== '';
+    }
     $parts = [];
 
-    if ($hero_slug !== '') {
+    if ($hero_enabled && $hero_slug !== '') {
         $parts[] = ['zone' => 'header_hero', 'part' => 'hero', 'slug' => $hero_slug];
     }
 
-    if ($slider_slug !== '') {
+    if ($slider_enabled && $slider_slug !== '') {
         $parts[] = ['zone' => 'header_slider', 'part' => 'slider', 'slug' => $slider_slug];
     }
 
@@ -524,7 +532,7 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
                     )
                     : __('HEADER', 'em-wp');
                 ?>
-                <span class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-empty" style="grid-column:1 / -1;" aria-hidden="true">
+                <span class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-empty" style="grid-column:1 / -1; --em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;" aria-hidden="true">
                     <span class="em-wp-admin-landing-map__zone-label"><?php echo esc_html($placeholder); ?></span>
                 </span>
                 <?php
@@ -535,6 +543,7 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
                     href="<?php echo esc_url(function_exists('em_wp_admin_rubrique_open_url') ? em_wp_admin_rubrique_open_url('header') : em_wp_admin_site_rubrique_entry_url('header')); ?>"
                     data-preview-zone="header"
                     data-module-slug="header"
+                    style="--em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;"
                     title="<?php esc_attr_e('Configurer HEADER', 'em-wp'); ?>"
                 >
                     <span class="em-wp-admin-landing-map__zone-label"><?php esc_html_e('HEADER (non configuré)', 'em-wp'); ?></span>
@@ -644,14 +653,20 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
                 $module_slug = sanitize_key((string) $module_slug);
 
                 if ($module_slug === 'header') {
+                    $header_active = in_array($active_zone, ['header', 'header_hero', 'header_slider'], true);
                     $header_args = [
                         'interactive'        => true,
+                        // Le switch gauche/droite n'est plus affiché dans le wireframe
+                        // de la page Rubriques (reliquat historique).
+                        'disable_swap'       => true,
                         'subzones_clickable' => false,
-                        'subzone_display'    => 'placeholders',
+                        // Wireframe global: placeholder par défaut. La vraie structure
+                        // n'est affichée que lorsque la zone HEADER est active.
+                        'subzone_display'    => $header_active ? 'structure' : 'placeholders',
                     ];
 
                     // Reflète la composition HEADER V4 (matrice + position) si dispo.
-                    if (function_exists('em_wp_admin_header_section_get') && function_exists('em_wp_get_editing_template_slug')) {
+                    if ($header_active && function_exists('em_wp_admin_header_section_get') && function_exists('em_wp_get_editing_template_slug')) {
                         $tpl = (string) em_wp_get_editing_template_slug();
 
                         if ($tpl !== '') {
@@ -672,6 +687,7 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
                                     // de l'item HEADER sélectionné, sans dépendre du contexte.
                                     $header_args['header_config'] = [
                                         'enabled'     => true,
+                                        'matrix'      => (string) ($header_item_cfg['matrix'] ?? 'hero'),
                                         'hero_slug'   => (string) ($header_item_cfg['hero'] ?? ''),
                                         'slider_slug' => (string) ($header_item_cfg['slider'] ?? ''),
                                         'layout'      => (string) ($header_item_cfg['position'] ?? 'hero_left'),

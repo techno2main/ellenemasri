@@ -110,12 +110,6 @@
 	margin: 0;
 }
 
-.em-section--video .em-rubrique__tape--right {
-	top: -12px;
-	right: 40px;
-	transform: rotate(3deg);
-}
-
 .em-section--video .em-rubrique__videourl {
 	display: inline-block;
 	vertical-align: top;

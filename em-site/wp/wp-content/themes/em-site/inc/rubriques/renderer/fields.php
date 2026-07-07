@@ -55,8 +55,12 @@ function em_wp_rubrique_image_html(array $img_data, string $alt): string
     }
 
     if (!empty($img_data['tape'])) {
+        $tape_style = '';
+        if (!empty($img_data['tape_color'])) {
+            $tape_style = ' style="background:' . esc_attr((string) $img_data['tape_color']) . ';"';
+        }
         return '<span class="em-rubrique__imgwrap">'
-            . '<span class="em-rubrique__tape em-rubrique__tape--left" aria-hidden="true"></span>'
+            . '<span class="em-rubrique__tape em-rubrique__tape--left em-slider__tape em-slider__tape--left" aria-hidden="true"' . $tape_style . '></span>'
             . $img . '</span>';
     }
 
@@ -222,13 +226,20 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             return em_wp_rubrique_animated_badge_html(em_wp_rubrique_animated_badge_value($value));
 
         case 'video_url':
-            $video_html = em_wp_rubrique_video_url_html(em_wp_rubrique_video_url_value($value));
+            $video_data = em_wp_rubrique_video_url_value($value);
+            $video_html = em_wp_rubrique_video_url_html($video_data);
             if ($video_html === '') {
                 return '';
             }
+            $tape_style = '';
+            if (!empty($video_data['tapes_color'])) {
+                $tape_style = ' style="background:' . esc_attr((string) $video_data['tapes_color']) . ';"';
+            }
+            $left_tape = !empty($video_data['tapes_hidden']) ? '' : '<span class="em-rubrique__tape em-rubrique__tape--left em-slider__tape em-slider__tape--left" aria-hidden="true"' . $tape_style . '></span>';
+            $right_tape = !empty($video_data['tapes_hidden']) ? '' : '<span class="em-rubrique__tape em-rubrique__tape--right em-slider__tape em-slider__tape--right" aria-hidden="true"' . $tape_style . '></span>';
             return '<span class="em-rubrique__videowrap">'
-                . '<span class="em-rubrique__tape em-rubrique__tape--left" aria-hidden="true"></span>'
-                . '<span class="em-rubrique__tape em-rubrique__tape--right" aria-hidden="true"></span>'
+                . $left_tape
+                . $right_tape
                 . $video_html . '</span>';
 
         case 'video_file':

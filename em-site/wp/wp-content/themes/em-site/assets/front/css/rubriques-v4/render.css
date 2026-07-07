@@ -317,12 +317,6 @@
         height: auto;
     }
 
-    .emv4-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__imgwrap .em-rubrique__tape {
-        width: 76px;
-        height: 16px;
-        top: -8px;
-    }
-
     /* Plateformes + réseaux sur la même ligne (row 3), copyright en dessous. */
     .emv4-section--footer > .em-rubrique > .em-rubrique__row[data-em-row="3"] {
         display: flex !important;
