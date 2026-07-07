@@ -431,10 +431,10 @@ function em_wp_admin_rubriques_preview_css(): string
     foreach (
         [
             'admin-preview-render-base.css',
-            'admin-preview-render-admin-preview-render-media.css',
-            'admin-preview-render-admin-preview-render-components.css',
-            'admin-preview-render-admin-preview-render-header.css',
-            'admin-preview-render-admin-preview-render-layout.css',
+            'admin-preview-render-media.css',
+            'admin-preview-render-components.css',
+            'admin-preview-render-header.css',
+            'admin-preview-render-layout.css',
         ] as $file
     ) {
         $path = $base . $file;

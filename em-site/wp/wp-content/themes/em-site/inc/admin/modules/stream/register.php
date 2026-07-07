@@ -53,9 +53,9 @@ function em_wp_stream_admin_enqueue(string $hook_suffix): void
 
     wp_enqueue_style(
         'em-wp-header-admin',
-        get_template_directory_uri() . '/assets/admin/css/modules/header/admin-preview-render-header.css',
+        get_template_directory_uri() . '/assets/admin/css/modules/header/header.css',
         ['em-wp-admin-module-common', 'em-wp-admin-hub-cards'],
-        em_wp_admin_asset_version('assets/admin/css/modules/header/admin-preview-render-header.css')
+        em_wp_admin_asset_version('assets/admin/css/modules/header/header.css')
     );
 
     $theme_uri = get_template_directory_uri();
