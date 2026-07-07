@@ -110,10 +110,15 @@ function em_wp_v4_render_chip_value(string $type, string $value, string $key = '
             </label>
         </span>
         <input type="url" class="em-v4-chip__url" value="<?php echo esc_url($img['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-wp'); ?>">
-        <label class="em-v4-chip__check" title="<?php esc_attr_e('Ajoute un scotch bleu décoratif', 'em-wp'); ?>">
-            <input type="checkbox" class="em-v4-chip__itape" <?php checked(!empty($img['tape'])); ?>>
-            <?php esc_html_e('Scotch', 'em-wp'); ?>
-        </label>
+        <?php em_wp_v4_render_scotchs_component([
+            'hidden_class' => 'em-v4-chip__itape-hidden',
+            'hidden_checked' => empty($img['tape']),
+            'hidden_title' => __('Masquer le scotch décoratif de l’image', 'em-wp'),
+            'color_class' => 'em-v4-chip__itape-color',
+            'color_value' => (string) ($img['tape_color'] ?? ''),
+            'color_prefix' => 'emv4itp-',
+            'key' => $key,
+        ]); ?>
         <?php
         return;
     }

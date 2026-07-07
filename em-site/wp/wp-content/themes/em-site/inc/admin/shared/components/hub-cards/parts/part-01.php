@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(__DIR__) . '/hub-breadcrumb.php';
+require_once dirname(__DIR__, 2) . '/hub-breadcrumb/hub-breadcrumb.php';
 
 /**
  * Enqueue CSS/JS communs aux pages sommaire à cartes.

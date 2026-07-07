@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once __DIR__ . '/structure-rows.php';
+require_once __DIR__ . '/builder-rows-render.php';
 
 /**
  * Identifiant de formulaire d'un item (partagé entre l'en-tête et le builder).
@@ -117,10 +117,10 @@ function em_wp_v4_builder_assets(): void
 
     $done = true;
     em_wp_v4_render_preview_script();
-    require __DIR__ . '/mini-preview-script.php';
-    require __DIR__ . '/appearance-script.php';
-    require __DIR__ . '/align-script.php';
-    require __DIR__ . '/script.php';
+    require __DIR__ . '/builder-mini-preview-script.php';
+    require __DIR__ . '/builder-appearance-script.php';
+    require __DIR__ . '/builder-alignment-script.php';
+    require __DIR__ . '/builder-main-script.php';
     em_wp_v4_render_revert_script();
 }
 

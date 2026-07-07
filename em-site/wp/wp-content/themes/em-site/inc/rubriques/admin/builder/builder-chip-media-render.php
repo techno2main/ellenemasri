@@ -72,6 +72,14 @@ function em_wp_v4_render_video_url_value(string $value): void
         <input type="checkbox" class="em-v4-chip__clickable" <?php checked($v['clickable']); ?>>
         <?php esc_html_e('Lien cliquable', 'em-wp'); ?>
     </label>
+    <?php em_wp_v4_render_scotchs_component([
+        'hidden_class' => 'em-v4-chip__vtapes-hidden',
+        'hidden_checked' => !empty($v['tapes_hidden']),
+        'hidden_title' => __('Masquer les scotchs décoratifs de la vidéo', 'em-wp'),
+        'color_class' => 'em-v4-chip__vtapes-color',
+        'color_value' => (string) ($v['tapes_color'] ?? ''),
+        'color_prefix' => 'emv4vtp-',
+    ]); ?>
     <?php
 }
 
@@ -134,7 +142,6 @@ function em_wp_v4_render_slider_value(string $value): void
     $shadow_id = 'em-v4-slides-shadow-' . wp_unique_id();
     $footer_bg_id = 'em-v4-slides-footerbg-' . wp_unique_id();
     $footer_text_id = 'em-v4-slides-footertext-' . wp_unique_id();
-    $tapes_id = 'em-v4-slides-tapes-' . wp_unique_id();
     $frame = $cfg['frame_bg'] !== '' ? $cfg['frame_bg'] : '#12338f';
     $border_color = $cfg['border_color'] !== '' ? $cfg['border_color'] : '#100421';
     $shadow_color = $cfg['shadow_color'] !== '' ? $cfg['shadow_color'] : '#100421';
@@ -152,7 +159,7 @@ function em_wp_v4_render_slider_value(string $value): void
                 </label>
                 <label class="em-v4-slides__opt em-v4-slides__opt--check">
                     <input type="checkbox" class="em-v4-slides__title-hidden" <?php checked($cfg['title_hidden']); ?>>
-                    <?php esc_html_e('Masquer le titre', 'em-wp'); ?>
+                    <?php esc_html_e('Masquer le bandeau', 'em-wp'); ?>
                 </label>
             </span>
             <?php em_wp_admin_render_color_field([
@@ -186,17 +193,15 @@ function em_wp_v4_render_slider_value(string $value): void
                 'wrap_class'  => 'em-v4-slides__colorfield',
                 'input_class' => 'em-v4-slides__shadow-color',
             ]); ?>
-            <?php em_wp_admin_render_color_field([
-                'id'          => $tapes_id,
-                'value'       => $tapes_color,
-                'field_label' => __('Scotch', 'em-wp'),
-                'wrap_class'  => 'em-v4-slides__colorfield',
-                'input_class' => 'em-v4-slides__tapes-color',
+            <?php em_wp_v4_render_scotchs_component([
+                'hidden_class' => 'em-v4-slides__tapes-hidden',
+                'hidden_checked' => !empty($cfg['tapes_hidden']),
+                'hidden_wrap_class' => 'em-v4-slides__opt em-v4-slides__opt--check em-v4-slides__opt--check-tapes',
+                'color_class' => 'em-v4-slides__tapes-color',
+                'color_value' => $tapes_color,
+                'color_wrap_class' => 'em-v4-slides__colorfield',
+                'color_prefix' => 'emv4sls-',
             ]); ?>
-            <label class="em-v4-slides__opt em-v4-slides__opt--check em-v4-slides__opt--check-tapes">
-                <input type="checkbox" class="em-v4-slides__tapes-hidden" <?php checked($cfg['tapes_hidden']); ?>>
-                <?php esc_html_e('Masquer les scotchs', 'em-wp'); ?>
-            </label>
         </span>
         <span class="em-v4-slides__group-label em-v4-slides__slides-label"><?php esc_html_e('Slides', 'em-wp'); ?></span>
         <span class="em-v4-slides__list">

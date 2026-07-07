@@ -40,6 +40,7 @@ window.EmWpV4Chip = (function () {
     var TXT = {
         image: '<?php echo esc_js(__('Choisir une image', 'em-wp')); ?>',
         tape: '<?php echo esc_js(__('Scotch', 'em-wp')); ?>',
+        tapeHide: '<?php echo esc_js(__('Masquer les scotchs', 'em-wp')); ?>',
         pick: '<?php echo esc_js(__('— Choisir —', 'em-wp')); ?>',
         content: '<?php echo esc_js(__('Contenu…', 'em-wp')); ?>',
         link: '<?php echo esc_js(__('Lien (https://… ou #ancre)', 'em-wp')); ?>',
@@ -87,7 +88,7 @@ window.EmWpV4Chip = (function () {
         baNone: '<?php echo esc_js(__('Aucune', 'em-wp')); ?>',
         slTitle: '<?php echo esc_js(__('Titre du bandeau', 'em-wp')); ?>',
         slTitlePh: '<?php echo esc_js(__('Mayami, My Miami', 'em-wp')); ?>',
-        slTitleHide: '<?php echo esc_js(__('Masquer le titre', 'em-wp')); ?>',
+        slTitleHide: '<?php echo esc_js(__('Masquer le bandeau', 'em-wp')); ?>',
         slBorder: '<?php echo esc_js(__('Bordure', 'em-wp')); ?>',
         slShadow: '<?php echo esc_js(__('Ombre', 'em-wp')); ?>',
         slBand: '<?php echo esc_js(__('Bandeau', 'em-wp')); ?>',
@@ -198,6 +199,8 @@ window.EmWpV4Chip = (function () {
             '</span>';
     }
 
+<?php require __DIR__ . '/../../../admin/shared/components/scotchs-control/scotchs-control-script.php'; ?>
+
     function imageHtml() {
         return '<span class="em-v4-chip__media" data-url="">' +
             '<img class="em-v4-chip__thumb" alt="" hidden>' +
@@ -209,10 +212,17 @@ window.EmWpV4Chip = (function () {
             '<input type="range" class="em-v4-chip__w" min="0" max="600" step="5" value="0" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+\'px\':\'auto\')">' +
             '<output class="em-v4-chip__wout">auto</output></label></span>' +
             '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
-            '<label class="em-v4-chip__check"><input type="checkbox" class="em-v4-chip__itape"> ' + esc(TXT.tape) + '</label>';
+            scotchsControlHtml({
+                hiddenClass: 'em-v4-chip__itape-hidden',
+                hiddenChecked: true,
+                hiddenLabel: TXT.tapeHide,
+                colorClass: 'em-v4-chip__itape-color',
+                colorLabel: TXT.tape,
+                colorIdPrefix: 'emv4itp-'
+            });
     }
 
-<?php require __DIR__ . '/chip-media-script.php'; ?>
+<?php require __DIR__ . '/builder-chip-media-script.php'; ?>
 
     function valueHtml(type, key) {
         if (type === 'textarea') {
@@ -232,23 +242,7 @@ window.EmWpV4Chip = (function () {
                 + '<span class="em-v4-chip__richcolor" title="' + esc(TXT.tcolor) + '">' + colorField(colorId('emv4rc-'), 'em-v4-richcolor', TXT.tcolor) + '</span>'
                 + '</span>'
                 + '<div class="em-v4-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="' + esc(TXT.richPlaceholder) + '"></div>'
-                + '<input type="hidden" class="em-v4-chip__value">'
-                + '</span>';
-        }
 
-        if (type === 'video_url') {
-            return '<input type="url" class="em-v4-chip__vurl" placeholder="' + esc(TXT.videoUrl) + '">' +
-                '<span class="em-v4-chip__media em-v4-chip__media--av em-v4-chip__vthumb" data-url="" data-mtype="image">' +
-                '<button type="button" class="button button-small em-v4-chip__pick">' + esc(TXT.pickThumb) + '</button>' +
-                '<span class="em-v4-chip__medianame"></span>' +
-                '<input type="hidden" class="em-v4-chip__thumbid"></span>' +
-                '<label class="em-v4-chip__check"><input type="checkbox" class="em-v4-chip__clickable"> ' + esc(TXT.clickable) + '</label>';
-        }
-        if (type === 'audio_url') { return '<input type="url" class="em-v4-chip__value" placeholder="' + esc(TXT.audioUrl) + '">'; }
-        if (type === 'video_file') { return avHtml('video', TXT.pickVideo); }
-        if (type === 'audio_file') { return avHtml('audio', TXT.pickAudio); }
-        if (type === 'slider') { return sliderHtml(); }
-        if (type === 'network_block') {
             return '<input type="text" class="em-v4-chip__ptitle" placeholder="' + esc(TXT.netTitle) + '">' +
                 networkSelectHtml() +
                 '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +

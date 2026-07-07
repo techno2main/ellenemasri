@@ -31,7 +31,6 @@ if (!defined('ABSPATH')) {
         var shadowId = colorId('emv4slsh-');
         var footerBgId = colorId('emv4slb-');
         var footerTextId = colorId('emv4slt-');
-        var tapeId = colorId('emv4sls-');
         return '<span class="em-v4-slides__section-title">' + esc(TXT.slStyle || 'Style du Slider') + '</span>' +
             '<span class="em-v4-slides__opts em-v4-slides__opts--row1">' +
             '<span class="em-v4-slides__titlegroup">' +
@@ -43,8 +42,15 @@ if (!defined('ABSPATH')) {
             colorField(footerTextId, 'em-v4-slides__footertext em-v4-slides__footertext-text', TXT.slBandText, 'text', footerBgId) +
             colorField(borderId, 'em-v4-slides__border-color', TXT.slBorder || 'Bordure') +
             colorField(shadowId, 'em-v4-slides__shadow-color', TXT.slShadow || 'Ombre') +
-            '<label class="em-v4-slides__opt em-v4-slides__opt--check"><input type="checkbox" class="em-v4-slides__tapes-hidden"> ' + esc(TXT.slTapeHide) + '</label>' +
-            colorField(tapeId, 'em-v4-slides__tapes-color', TXT.slTape) +
+            scotchsControlHtml({
+                hiddenClass: 'em-v4-slides__tapes-hidden',
+                hiddenLabel: TXT.slTapeHide,
+                hiddenWrapClass: 'em-v4-slides__opt em-v4-slides__opt--check em-v4-slides__opt--check-tapes',
+                colorClass: 'em-v4-slides__tapes-color',
+                colorLabel: TXT.slTape,
+                colorWrapClass: 'em-v4-slides__colorfield',
+                colorIdPrefix: 'emv4sls-'
+            }) +
             '</span>';
     }
 
@@ -93,9 +99,17 @@ if (!defined('ABSPATH')) {
         if (type === 'video_file' || type === 'audio_file') { var av = chip.querySelector('.em-v4-chip__media'); item.url = av ? av.getAttribute('data-url') : ''; }
         else if (type === 'audio_url') { item.url = item.value; }
         else if (type === 'video_url') {
-            var vu = chip.querySelector('.em-v4-chip__vurl'), vt = chip.querySelector('.em-v4-chip__vthumb'), vtid = chip.querySelector('.em-v4-chip__thumbid'), vck = chip.querySelector('.em-v4-chip__clickable');
+            var vu = chip.querySelector('.em-v4-chip__vurl'), vt = chip.querySelector('.em-v4-chip__vthumb'), vtid = chip.querySelector('.em-v4-chip__thumbid'), vck = chip.querySelector('.em-v4-chip__clickable'), vth = chip.querySelector('.em-v4-chip__vtapes-hidden'), vtc = chip.querySelector('.em-v4-chip__vtapes-color');
             item.url = vu ? vu.value : ''; item.thumbUrl = vt ? vt.getAttribute('data-url') : ''; item.clickable = vck ? !!vck.checked : false;
-            item.value = JSON.stringify({ url: item.url, thumb: vtid && vtid.value ? parseInt(vtid.value, 10) : 0, clickable: item.clickable ? 1 : 0 });
+            item.tapesHidden = vth ? !!vth.checked : false;
+            item.tapesColor = vtc ? vtc.value : '';
+            item.value = JSON.stringify({
+                url: item.url,
+                thumb: vtid && vtid.value ? parseInt(vtid.value, 10) : 0,
+                clickable: item.clickable ? 1 : 0,
+                tapes_hidden: item.tapesHidden ? 1 : 0,
+                tapes_color: item.tapesColor
+            });
         }
         // type 'slider' : la valeur (config JSON complète) est déjà lue par readChip
         // via .em-v4-chip__value ; EmWpV4Slides la tient à jour.

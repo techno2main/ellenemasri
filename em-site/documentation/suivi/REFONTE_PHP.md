@@ -3,6 +3,14 @@
 Date (Paris) : 2026-07-05 17:11:19
 Périmètre scanné : em-site/wp/wp-content/themes/em-site
 
+## Mise à jour structurelle (Paris) : 2026-07-07 12:56:24
+
+- Migration de composants BO partagés vers `inc/admin/shared/components/` avec sous-dossier dédié par composant.
+- Composants migrés et recâblés : `color-picker`, `scotchs-control`, `style-panel`, `hub-cards`, `hub-breadcrumb`.
+- Renommage explicite du builder Rubriques : fichiers `chip*`, `structure*`, `preview`, `save`, `script*` renommés en `builder-...`.
+- Recâblage des includes et loaders Rubriques après renommage pour éviter toute rupture.
+- Correctif de mutualisation Scotchs : neutralisation des variations de layout contextuelles via classes dédiées de composant (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`).
+
 ## 1) Méthode de scan (calcul réel des lignes)
 
 - Scan récursif réel sur le dossier complet du thème.

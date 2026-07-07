@@ -101,7 +101,9 @@ function em_wp_v4_render_preview_script(): void
             var img = '<img class="em-rubrique__image" src="' + esc(url) + '"' + (st ? ' style="' + st + '"' : '') + ' alt="' + esc(alt) + '">';
             if (hasLink) { img = '<a class="em-rubrique__link em-rubrique__link--media" href="#" onclick="return false;">' + img + '</a>'; }
             if (iv.tape) {
-                img = '<span class="em-rubrique__imgwrap"><span class="em-rubrique__tape em-rubrique__tape--left" aria-hidden="true"></span>' + img + '</span>';
+                var tapeColor = color(iv.tape_color || '');
+                var tapeStyle = tapeColor ? ' style="background:' + esc(tapeColor) + ';"' : '';
+                img = '<span class="em-rubrique__imgwrap"><span class="em-rubrique__tape em-rubrique__tape--left em-slider__tape em-slider__tape--left" aria-hidden="true"' + tapeStyle + '></span>' + img + '</span>';
             }
             return img;
         }
@@ -136,7 +138,7 @@ function em_wp_v4_render_preview_script(): void
         function sliderMayamiHtml(cfg) {
             var slides = (cfg.slides || []).filter(function (sl) { return sl && !sl.hidden; });
             var vars = '';
-            if (cfg.frame_bg) { vars += '--em-slider-frame-bg:' + esc(cfg.frame_bg) + ';'; }
+            vars += '--em-slider-frame-bg:transparent;';
             if (cfg.border_color) { vars += '--em-slider-border-color:' + esc(cfg.border_color) + ';'; }
             if (cfg.shadow_color) { vars += '--em-slider-shadow-color:' + esc(cfg.shadow_color) + ';'; }
             if (cfg.footer_bg) { vars += '--em-slider-footer-bg:' + esc(cfg.footer_bg) + ';'; }
@@ -178,18 +180,19 @@ function em_wp_v4_render_preview_script(): void
                     '</button>'
                 : '';
             var titleHtml = (!cfg.title_hidden && cfg.title) ? '<span class="em-slider__title">' + esc(cfg.title) + '</span>' : '';
+            var footerHtml = !cfg.title_hidden ? ('<div class="em-slider__footer">' + titleHtml + '</div>') : '';
             var dots = '';
             if (slides.length > 1) {
                 var d = '';
                 slides.forEach(function (sl, i) { d += '<button class="em-slider__dot' + (i === 0 ? ' is-active' : '') + '" type="button" data-slide-to="' + i + '"></button>'; });
                 dots = '<div class="em-slider__dots">' + d + '</div>';
             }
-            return '<div class="em-slider em-slider--mayami"' + (vars ? ' style="' + vars + '"' : '') + '>' +
+            return '<div class="em-slider em-slider--mayami' + (cfg.title_hidden ? ' em-slider--band-hidden' : '') + '"' + (vars ? ' style="' + vars + '"' : '') + '>' +
                 '<div class="em-slider__shell">' +
                 (cfg.tapes_hidden ? '' : '<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span><span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>') +
                 '<div class="em-slider__frame">' +
                 '<div class="em-slider__media">' + figs + nav + audio + '</div>' +
-                '<div class="em-slider__footer">' + titleHtml + '</div>' +
+                footerHtml +
                 '</div></div>' + dots + '</div>';
         }
 
@@ -272,6 +275,8 @@ function em_wp_v4_render_preview_script(): void
                 var vd = {}; try { vd = JSON.parse(item.value || '{}'); } catch (e) { vd = {}; }
                 var vurl = (typeof vd.url === 'string') ? vd.url : (item.url || '');
                 var clickable = item.clickable !== undefined ? item.clickable : !!vd.clickable;
+                var tapesHidden = item.tapesHidden !== undefined ? item.tapesHidden : !!vd.tapes_hidden;
+                var tapesColor = color(item.tapesColor || vd.tapes_color || '');
                 var custom = item.thumbUrl || '';
                 var poster = clickable ? (custom || autoThumb(vurl)) : custom;
                 if (!poster) { return videoEmbed(vurl); }
@@ -279,9 +284,12 @@ function em_wp_v4_render_preview_script(): void
                 var frame = (clickable && vurl)
                     ? '<a class="em-rubrique__videourl em-rubrique__link--media" href="#" onclick="return false;">' + facade + '</a>'
                     : '<span class="em-rubrique__videourl">' + facade + '</span>';
+                var tapeStyle = tapesColor ? ' style="background:' + esc(tapesColor) + ';"' : '';
+                var leftTape = tapesHidden ? '' : '<span class="em-rubrique__tape em-rubrique__tape--left em-slider__tape em-slider__tape--left" aria-hidden="true"' + tapeStyle + '></span>';
+                var rightTape = tapesHidden ? '' : '<span class="em-rubrique__tape em-rubrique__tape--right em-slider__tape em-slider__tape--right" aria-hidden="true"' + tapeStyle + '></span>';
                 return '<span class="em-rubrique__videowrap">'
-                    + '<span class="em-rubrique__videotape em-rubrique__videotape--left" aria-hidden="true"></span>'
-                    + '<span class="em-rubrique__videotape em-rubrique__videotape--right" aria-hidden="true"></span>'
+                    + leftTape
+                    + rightTape
                     + frame + '</span>';
             }
             if (item.type === 'video_file') { return item.url ? '<video class="em-rubrique__video" controls preload="metadata" src="' + esc(item.url) + '"></video>' : '<span class="em-rubrique__field">[' + esc('vidéo') + ']</span>'; }

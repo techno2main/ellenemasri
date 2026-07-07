@@ -3,7 +3,7 @@
 ## Horodatage temps réel (Paris)
 1. Fuseau de référence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Dernière mise à jour : 2026-07-06 17:46:59.
+3. Dernière mise à jour : 2026-07-07 12:56:24.
 
 ## Règles de suivi
 1. Une étape = un objectif concret vérifiable.
@@ -19,5 +19,18 @@
 11. Mot-clé flow GH : lancer le process GitHub selon les règles actives du chantier, uniquement sur demande explicite.
 12. RÈGLE D'OR : aucun flow GH sans vérification et finalisation préalable de la MAJ docs.
 13. Tests obligatoires entre lots : aucun passage au lot/étape suivant sans tests exécutés et validés.
+
+## Journal d'avancement
+
+### 2026-07-07 12:56:24 (Paris)
+
+- Standardisation des composants BO partagés vers `inc/admin/shared/components/<composant>/`.
+- Migration effective des composants partagés suivants : color-picker, scotchs-control, style-panel, hub-cards, hub-breadcrumb.
+- Recâblage des `require_once` admin vers les nouveaux chemins centralisés.
+- Harmonisation du composant Scotchs pour un rendu identique entre Slider et Top-bar (ordre color picker puis case à cocher, même logique de placement).
+- Ajout de classes neutres de composant Scotchs (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`) côté PHP, JS et CSS pour éviter les divergences contextuelles.
+- Renommage explicite des fichiers du builder Rubriques (préfixe `builder-...`) pour améliorer la lisibilité de reprise développeur.
+- Recâblage complet des includes builder après renommage (bootstrap Rubriques, item render, script principal et dépendances).
+- Vérifications effectuées : recherche de références legacy résiduelles, diagnostics d'erreurs sur les fichiers modifiés (aucune erreur remontée par l'outil de diagnostic).
 
 

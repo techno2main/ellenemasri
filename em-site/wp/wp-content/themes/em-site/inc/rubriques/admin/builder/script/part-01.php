@@ -15,9 +15,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require dirname(__DIR__) . '/rows-script.php';
-require dirname(__DIR__) . '/chip-script.php';
-require dirname(__DIR__) . '/slides-editor-script.php';
+require dirname(__DIR__) . '/builder-rows-script.php';
+require dirname(__DIR__) . '/builder-chip-script.php';
+require dirname(__DIR__) . '/builder-slider-slides-script.php';
 ?>
 <script>
 (function () {
@@ -614,12 +614,16 @@ require dirname(__DIR__) . '/slides-editor-script.php';
     function readImage(chip) {
         var hid = chip.querySelector('.em-v4-chip__value');
         var lnk = chip.querySelector('.em-v4-chip__url');
+        var tapeHidden = chip.querySelector('.em-v4-chip__itape-hidden');
         var tape = chip.querySelector('.em-v4-chip__itape');
+        var tapeColor = chip.querySelector('.em-v4-chip__itape-color');
+        var tapeVisible = tapeHidden ? !tapeHidden.checked : !!(tape && tape.checked);
         return {
             id: hid ? hid.value : '', link: lnk ? lnk.value : '',
             w: parseInt(val(chip, '.em-v4-chip__w'), 10) || 0, h: parseInt(val(chip, '.em-v4-chip__h'), 10) || 0,
             fx: parseInt(val(chip, '.em-v4-chip__fx'), 10) || 50, fy: parseInt(val(chip, '.em-v4-chip__fy'), 10) || 50,
-            tape: !!(tape && tape.checked)
+            tape: tapeVisible,
+            tape_color: tapeColor ? tapeColor.value : ''
         };
     }
 
