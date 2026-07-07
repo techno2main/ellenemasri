@@ -1,12 +1,15 @@
 # PA - Refonte Gestion Template
 
 Date: 2026-07-07
-Horodatage précis (Paris): 2026-07-07 20:06:01
+Horodatage précis (Paris): 2026-07-07 20:13:03
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
 
 Mises à jour de session:
+
+- Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).
+- Correctif appliqué: migration v2 de fusion legacy -> em_site dans `inc/core/legacy-option-prefix-migration.php` pour restaurer les clés/items manquants (catalogues HEADER inclus) quand la clé cible existe déjà.
 
 - Purge nomenclature finalisée sur le thème actif: suppression des occurrences `em_wp_` résiduelles dans le code et les scripts admin/front.
 - Stabilisation runtime admin: correction d'une collision de fonction (`em_site_stream_player_height`) et neutralisation de fichiers legacy (`menu.php`, `dashboard-menus.php`, `dashboard-routing.php`) qui provoquaient des redéfinitions fatales.
