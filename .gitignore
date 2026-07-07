@@ -96,16 +96,8 @@ wp/wp-content/themes/ellene-wp/node_modules/
 wp/wp-content/themes/ellene-wp/migration-ovh/
 wp/wp-content/themes/ellene-wp/migration-ovh/*.zip
 
-# Ignore full WordPress tree em-wp, keep only the custom theme
-em-wp/wp/*
-!em-wp/wp/wp-content/
-em-wp/wp/wp-content/*
-!em-wp/wp/wp-content/themes/
-em-wp/wp/wp-content/themes/*
-!em-wp/wp/wp-content/themes/em-wp/
-!em-wp/wp/wp-content/themes/em-wp/**
-em-wp/wp/wp-content/themes/em-wp/node_modules/
-em-wp/wp/AGENTS.md
+# Ignore the retired em-wp tree entirely
+em-wp/
 
 # Ignore full WordPress tree em-site, keep only the custom theme
 em-site/wp/*
@@ -124,11 +116,6 @@ em-site/wp/wp-config.php
 
 # Instructions & local audit documentation
 /documentation/
-
-# em-wp — doc V2 suivie en repo (reste de em-wp/documentation/ hors repo)
-em-wp/documentation/*
-!em-wp/documentation/TEMPLATE_V2.md
-!em-wp/documentation/PURGE_EM_WP_SCAN_V4.md
 
 # em-site — exports SQL locaux (sensibles/volumineux)
 em-site/documentation/bdd/export/*
