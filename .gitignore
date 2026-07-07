@@ -2,12 +2,7 @@
 _sources/
 .copilot-snapshots/
 .github/
-docker/ellene-local/
-em-wp/docker/
-em-site/docker/
-old_docker/
-old_wp/
-website/
+
 
 # Sensitive files
 **/.env
@@ -37,17 +32,6 @@ dist-ssr
 .nitro
 *.local
 
-# Explicit React website ignores (clarity for monorepo layout)
-website/node_modules/
-website/dist/
-website/dist-ssr/
-website/.output/
-website/.vinxi/
-website/.tanstack/
-website/.nitro/
-website/.vite/
-website/*.local
-
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
@@ -56,7 +40,6 @@ website/*.local
 .cursor/
 .vscode/
 **/.vscode/
-website/.vscode/
 .idea
 .DS_Store
 *.suo
@@ -68,56 +51,31 @@ website/.vscode/
 # Local Vite cache folder at repo root
 .vite/
 
-# Ignore full WordPress tree, keep only the custom theme
-wp/*
-wp/AGENTS.md
-!wp/wp-content/
-wp/wp-admin/
-wp/wp-includes/
-wp/wp-content/*
-!wp/wp-content/themes/
-wp/wp-content/themes/*
-!wp/wp-content/themes/mayami/
-!wp/wp-content/themes/mayami/**
-!wp/wp-content/themes/ellene/
-!wp/wp-content/themes/ellene/**
-!wp/wp-content/themes/ellene-wp/
-!wp/wp-content/themes/ellene-wp/**
-wp/wp-content/themes/mayami/php.ini
-wp/wp-content/themes/mayami/node_modules/
-wp/wp-content/themes/mayami/migration-ovh/
-wp/wp-content/themes/mayami/migration-ovh/*.zip
-wp/wp-content/themes/ellene/php.ini
-wp/wp-content/themes/ellene/node_modules/
-wp/wp-content/themes/ellene/migration-ovh/
-wp/wp-content/themes/ellene/migration-ovh/*.zip
-wp/wp-content/themes/ellene-wp/php.ini
-wp/wp-content/themes/ellene-wp/node_modules/
-wp/wp-content/themes/ellene-wp/migration-ovh/
-wp/wp-content/themes/ellene-wp/migration-ovh/*.zip
-
-# Ignore the retired em-wp tree entirely
-em-wp/
-
-# Ignore full WordPress tree em-site, keep only the custom theme
+# Ignorer toute l'arborescence WordPress de em-site, sauf le thème personnalisé
+# Ignorer tout ce qui se trouve directement sous em-site/wp
 em-site/wp/*
+# Réinclure wp-content pour que Git puisse y descendre
 !em-site/wp/wp-content/
+# Ignorer tout le contenu de wp-content par défaut
 em-site/wp/wp-content/*
+# Réinclure le dossier themes
 !em-site/wp/wp-content/themes/
+# Ignorer tous les thèmes par défaut
 em-site/wp/wp-content/themes/*
+# Réinclure le dossier du thème personnalisé actif
 !em-site/wp/wp-content/themes/em-site/
+# Réinclure tout le contenu du thème personnalisé actif
 !em-site/wp/wp-content/themes/em-site/**
-em-site/wp/wp-content/themes/em-site/node_modules/
+# Ignorer le fichier de configuration WordPress local
 em-site/wp/wp-config.php
 
 # Deployment-only root files
 /.htaccess
 /index.php
 
-# Instructions & local audit documentation
-/documentation/
+# Ignorer le dossier docker de em-site, qui contient des fichiers sensibles
+em-site/docker/
 
-# em-site — exports SQL locaux (sensibles/volumineux)
-em-site/documentation/bdd/export/*
-
-em-wp_old/
+# Documentations & exports SQL locaux (sensibles/volumineux)
+em-site/documentation/arborescence/
+em-site/documentation/bdd/
