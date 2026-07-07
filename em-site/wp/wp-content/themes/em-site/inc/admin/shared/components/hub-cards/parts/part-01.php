@@ -22,16 +22,16 @@ function em_wp_admin_hub_cards_enqueue_assets(): void
 
     wp_enqueue_style(
         'em-wp-admin-hub-cards',
-        get_template_directory_uri() . '/assets/admin/css/shared/hub-cards.css',
+        get_template_directory_uri() . '/assets/admin/shared/css/hub-cards.css',
         ['em-wp-admin-module-common', 'em-wp-admin-live-badge', 'dashicons'],
-        em_wp_admin_asset_version('assets/admin/css/shared/hub-cards.css')
+        em_wp_admin_asset_version('assets/admin/shared/css/hub-cards.css')
     );
 
     wp_enqueue_script(
         'em-wp-admin-hub-sommaire-preview',
-        get_template_directory_uri() . '/assets/admin/js/shared/preview/hub-sommaire-preview.js',
+        get_template_directory_uri() . '/assets/admin/shared/js/preview/hub-sommaire-preview.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/preview/hub-sommaire-preview.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/preview/hub-sommaire-preview.js'),
         true
     );
 

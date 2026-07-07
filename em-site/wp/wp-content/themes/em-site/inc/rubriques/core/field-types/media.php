@@ -340,7 +340,7 @@ function em_wp_rubrique_slides_front_html(array $config): string
     // au lieu d'occuper le cadre du slider. WP imprime les styles tardifs en
     // pied de page (front comme admin), donc l'appel reste valide pendant le rendu.
     if (function_exists('wp_enqueue_style')) {
-        $slider_css_rel = 'assets/front/css/modules/slider/mayami/slider.css';
+        $slider_css_rel = 'assets/front/shared/css/slider.css';
         $slider_css_path = get_template_directory() . '/' . $slider_css_rel;
         if (file_exists($slider_css_path)) {
             wp_enqueue_style(

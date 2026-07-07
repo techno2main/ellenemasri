@@ -486,7 +486,7 @@ function em_wp_admin_header_ratio_columns(string $ratio, bool $slider_left): str
  */
 function em_wp_admin_header_appearance_defaults(): array
 {
-    // Valeurs par défaut calquées sur le rendu du site (modules/header/header.css) :
+    // Valeurs par défaut calquées sur le rendu du site (modules/header/admin-preview-render-header.css) :
     // fond orange via le repli CSS (.em-header-shell, FOND laissé vide), image de
     // fond faible (opacité 32 %) et miroir activé → fidèle sans réglage manuel.
     return [

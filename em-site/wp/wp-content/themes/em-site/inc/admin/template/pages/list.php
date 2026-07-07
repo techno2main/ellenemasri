@@ -34,7 +34,7 @@ function em_wp_admin_template_choice_admin_url(): string
 }
 
 /**
- * Slug page admin d'un template enregistré (MAYAMI, ELLENE, …).
+ * Slug page admin d'un template enregistré (MAYAMI, CLIENT, …).
  */
 function em_wp_admin_template_entry_page_slug(string $template_slug): string
 {
@@ -216,7 +216,7 @@ function em_wp_admin_templates_remove_duplicate_submenu(): void
 add_action('admin_menu', 'em_wp_admin_templates_remove_duplicate_submenu', 999);
 
 /**
- * Démarre l'édition d'un template depuis son entrée menu (MAYAMI, ELLENE, …).
+ * Démarre l'édition d'un template depuis son entrée menu (MAYAMI, CLIENT, …).
  */
 function em_wp_admin_template_entry_start_editing(): void
 {

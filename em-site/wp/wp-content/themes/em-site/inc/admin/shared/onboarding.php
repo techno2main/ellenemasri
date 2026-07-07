@@ -387,25 +387,25 @@ function em_wp_admin_enqueue_quit_editing_nav_guard(): void
 
     wp_enqueue_script(
         'em-wp-admin-confirm-modal',
-        $theme_uri . '/assets/admin/js/shared/modals/confirm-modal.js',
+        $theme_uri . '/assets/admin/shared/js/modals/confirm-modal.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/modals/confirm-modal.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/modals/confirm-modal.js'),
         true
     );
 
     wp_enqueue_script(
         'em-wp-admin-module-form-dirty-engine',
-        $theme_uri . '/assets/admin/js/shared/state/module-form-dirty/engine.js',
+        $theme_uri . '/assets/admin/shared/js/state/module-form-dirty/engine.js',
         ['em-wp-admin-confirm-modal'],
-        em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty/engine.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/state/module-form-dirty/engine.js'),
         true
     );
 
     wp_enqueue_script(
         'em-wp-admin-module-form-dirty',
-        $theme_uri . '/assets/admin/js/shared/state/module-form-dirty.js',
+        $theme_uri . '/assets/admin/shared/js/state/module-form-dirty.js',
         ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty-engine'],
-        em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/state/module-form-dirty.js'),
         true
     );
 
@@ -423,9 +423,9 @@ function em_wp_admin_enqueue_quit_editing_nav_guard(): void
 
     wp_enqueue_script(
         'em-wp-admin-quit-editing-nav',
-        $theme_uri . '/assets/admin/js/shared/navigation/quit-editing-nav.js',
+        $theme_uri . '/assets/admin/shared/js/navigation/quit-editing-nav.js',
         ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty'],
-        em_wp_admin_asset_version('assets/admin/js/shared/navigation/quit-editing-nav.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/navigation/quit-editing-nav.js'),
         true
     );
 

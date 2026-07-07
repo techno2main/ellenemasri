@@ -62,7 +62,7 @@ function em_wp_admin_landing_slider_structure_colors(string $catalog_slug): arra
 }
 
 /**
- * Libellé court style (MAYAMI, ELLENE…) depuis slug catalogue.
+ * Libellé court style (MAYAMI, CLIENT…) depuis slug catalogue.
  */
 function em_wp_admin_landing_structure_style_tag(string $type, string $catalog_slug): string
 {

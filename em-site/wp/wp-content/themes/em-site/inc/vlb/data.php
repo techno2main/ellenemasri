@@ -5,7 +5,7 @@ function mayami_sanitize_visual_links_html_payload($payload) {
         return array(
             'imageUrl' => '',
             'pdfHeaderEnabled' => false,
-            'pdfCtaText' => 'DOWNLOAD THIS ELLENE-WP ONESHEET - CLICKABLE IN PDF',
+            'pdfCtaText' => 'DOWNLOAD THIS CLIENT-WP ONESHEET - CLICKABLE IN PDF',
             'pdfUrl' => '',
             'zones' => array(),
         );
@@ -30,7 +30,7 @@ function mayami_sanitize_visual_links_html_payload($payload) {
         $pdf_url = esc_url_raw($raw_pdf_url);
     }
 
-    $pdf_cta_text = 'DOWNLOAD THIS ELLENE-WP ONESHEET - CLICKABLE IN PDF';
+    $pdf_cta_text = 'DOWNLOAD THIS CLIENT-WP ONESHEET - CLICKABLE IN PDF';
     if (isset($payload['pdfCtaText'])) {
         $raw_pdf_cta_text = trim((string) $payload['pdfCtaText']);
         if ($raw_pdf_cta_text !== '') {

@@ -20,7 +20,7 @@ function em_wp_template_unique_mode_enabled(): bool
 /**
  * Indique si l'utilisateur peut gérer les templates (CRUD + actif live).
  *
- * ellene-admin et admin-my : tous deux manage_options sur em-wp.
+ * client-admin et admin-my : tous deux manage_options sur em-wp.
  */
 function em_wp_admin_can_manage_templates(): bool
 {

@@ -32,17 +32,17 @@ function em_wp_admin_enqueue_shared_assets(): array
 {
     $theme_uri = get_template_directory_uri();
     $bootstrap_version = em_wp_admin_asset_version('assets/admin/js/core/admin-bootstrap.js');
-    $accordion_version = em_wp_admin_asset_version('assets/admin/js/shared/navigation/accordion.js');
-    $color_picker_css_version = em_wp_admin_asset_version('assets/admin/css/shared/color-picker.css');
-    $module_common_css_version = em_wp_admin_asset_version('assets/admin/css/shared/module-common.css');
-    $live_badge_css_version = em_wp_admin_asset_version('assets/admin/css/shared/live-badge.css');
-    $color_picker_js_version = em_wp_admin_asset_version('assets/admin/js/shared/modals/color-picker.js');
-    $color_modal_css_version = em_wp_admin_asset_version('assets/admin/css/shared/color-modal.css');
-    $color_modal_helpers_version = em_wp_admin_asset_version('assets/admin/js/shared/modals/color-modal/helpers.js');
-    $color_modal_engine_version = em_wp_admin_asset_version('assets/admin/js/shared/modals/color-modal/engine.js');
-    $color_modal_js_version = em_wp_admin_asset_version('assets/admin/js/shared/modals/color-modal.js');
-    $style_preview_version = em_wp_admin_asset_version('assets/admin/js/shared/preview/admin-module-style-preview.js');
-    $confirm_modal_version = em_wp_admin_asset_version('assets/admin/js/shared/modals/confirm-modal.js');
+    $accordion_version = em_wp_admin_asset_version('assets/admin/shared/js/navigation/accordion.js');
+    $color_picker_css_version = em_wp_admin_asset_version('assets/admin/shared/css/color-picker.css');
+    $module_common_css_version = em_wp_admin_asset_version('assets/admin/shared/css/module-common.css');
+    $live_badge_css_version = em_wp_admin_asset_version('assets/admin/shared/css/live-badge.css');
+    $color_picker_js_version = em_wp_admin_asset_version('assets/admin/shared/js/modals/color-picker.js');
+    $color_modal_css_version = em_wp_admin_asset_version('assets/admin/shared/css/color-modal.css');
+    $color_modal_helpers_version = em_wp_admin_asset_version('assets/admin/shared/js/modals/color-modal/helpers.js');
+    $color_modal_engine_version = em_wp_admin_asset_version('assets/admin/shared/js/modals/color-modal/engine.js');
+    $color_modal_js_version = em_wp_admin_asset_version('assets/admin/shared/js/modals/color-modal.js');
+    $style_preview_version = em_wp_admin_asset_version('assets/admin/shared/js/preview/admin-module-style-preview.js');
+    $confirm_modal_version = em_wp_admin_asset_version('assets/admin/shared/js/modals/confirm-modal.js');
 
     wp_enqueue_media();
     wp_enqueue_style('wp-color-picker');
@@ -54,25 +54,25 @@ function em_wp_admin_enqueue_shared_assets(): array
     );
     wp_enqueue_style(
         'em-wp-admin-color-picker',
-        $theme_uri . '/assets/admin/css/shared/color-picker.css',
+        $theme_uri . '/assets/admin/shared/css/color-picker.css',
         [],
         $color_picker_css_version
     );
     wp_enqueue_style(
         'em-wp-admin-color-modal',
-        $theme_uri . '/assets/admin/css/shared/color-modal.css',
+        $theme_uri . '/assets/admin/shared/css/color-modal.css',
         ['em-wp-admin-color-picker'],
         $color_modal_css_version
     );
     wp_enqueue_style(
         'em-wp-admin-module-common',
-        $theme_uri . '/assets/admin/css/shared/module-common.css',
+        $theme_uri . '/assets/admin/shared/css/module-common.css',
         ['em-wp-admin-color-picker', 'em-wp-admin-color-modal'],
         $module_common_css_version
     );
     wp_enqueue_style(
         'em-wp-admin-live-badge',
-        $theme_uri . '/assets/admin/css/shared/live-badge.css',
+        $theme_uri . '/assets/admin/shared/css/live-badge.css',
         ['em-wp-admin-module-common'],
         $live_badge_css_version
     );
@@ -85,49 +85,49 @@ function em_wp_admin_enqueue_shared_assets(): array
     );
     wp_enqueue_script(
         'em-wp-admin-accordion',
-        $theme_uri . '/assets/admin/js/shared/navigation/accordion.js',
+        $theme_uri . '/assets/admin/shared/js/navigation/accordion.js',
         ['em-wp-admin-bootstrap'],
         $accordion_version,
         true
     );
     wp_enqueue_script(
         'em-wp-admin-confirm-modal',
-        $theme_uri . '/assets/admin/js/shared/modals/confirm-modal.js',
+        $theme_uri . '/assets/admin/shared/js/modals/confirm-modal.js',
         [],
         $confirm_modal_version,
         true
     );
     wp_enqueue_script(
         'em-wp-admin-color-picker',
-        $theme_uri . '/assets/admin/js/shared/modals/color-picker.js',
+        $theme_uri . '/assets/admin/shared/js/modals/color-picker.js',
         ['jquery', 'wp-color-picker'],
         $color_picker_js_version,
         true
     );
     wp_enqueue_script(
         'em-wp-admin-color-modal-helpers',
-        $theme_uri . '/assets/admin/js/shared/modals/color-modal/helpers.js',
+        $theme_uri . '/assets/admin/shared/js/modals/color-modal/helpers.js',
         ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker'],
         $color_modal_helpers_version,
         true
     );
     wp_enqueue_script(
         'em-wp-admin-color-modal-engine',
-        $theme_uri . '/assets/admin/js/shared/modals/color-modal/engine.js',
+        $theme_uri . '/assets/admin/shared/js/modals/color-modal/engine.js',
         ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-color-modal-helpers'],
         $color_modal_engine_version,
         true
     );
     wp_enqueue_script(
         'em-wp-admin-color-modal',
-        $theme_uri . '/assets/admin/js/shared/modals/color-modal.js',
+        $theme_uri . '/assets/admin/shared/js/modals/color-modal.js',
         ['jquery', 'wp-color-picker', 'em-wp-admin-color-picker', 'em-wp-admin-color-modal-engine'],
         $color_modal_js_version,
         true
     );
     wp_enqueue_script(
         'em-wp-admin-module-style-preview',
-        $theme_uri . '/assets/admin/js/shared/preview/admin-module-style-preview.js',
+        $theme_uri . '/assets/admin/shared/js/preview/admin-module-style-preview.js',
         ['jquery', 'em-wp-admin-color-picker', 'em-wp-admin-color-modal'],
         $style_preview_version,
         true
@@ -159,9 +159,9 @@ function em_wp_admin_enqueue_notice_autodismiss(): void
 
     wp_enqueue_script(
         'em-wp-admin-notice-autodismiss',
-        get_template_directory_uri() . '/assets/admin/js/shared/feedback/notice-autodismiss.js',
+        get_template_directory_uri() . '/assets/admin/shared/js/feedback/notice-autodismiss.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/feedback/notice-autodismiss.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/feedback/notice-autodismiss.js'),
         true
     );
 }
@@ -188,9 +188,9 @@ function em_wp_admin_enqueue_class_prefix_compat(): void
 
     wp_enqueue_script(
         'em-wp-admin-class-prefix-compat',
-        get_template_directory_uri() . '/assets/admin/js/shared/compat/class-prefix-compat.js',
+        get_template_directory_uri() . '/assets/admin/shared/js/compat/class-prefix-compat.js',
         [],
-        em_wp_admin_asset_version('assets/admin/js/shared/compat/class-prefix-compat.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/compat/class-prefix-compat.js'),
         false
     );
 }

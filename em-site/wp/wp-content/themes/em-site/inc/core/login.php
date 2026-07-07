@@ -44,7 +44,7 @@ function em_wp_login_asset_version(string $relative_path): string
 function em_wp_enqueue_login_assets(): void
 {
     $theme_uri = get_template_directory_uri();
-    $login_css_path = 'assets/css/login.css';
+    $login_css_path = 'assets/front/css/login.css';
 
     wp_enqueue_style(
         'em-wp-login',

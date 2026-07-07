@@ -185,9 +185,9 @@ function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
     if (!wp_script_is('em-wp-admin-confirm-modal', 'registered')) {
         wp_register_script(
             'em-wp-admin-confirm-modal',
-            get_template_directory_uri() . '/assets/admin/js/shared/modals/confirm-modal.js',
+            get_template_directory_uri() . '/assets/admin/shared/js/modals/confirm-modal.js',
             [],
-            em_wp_admin_asset_version('assets/admin/js/shared/modals/confirm-modal.js'),
+            em_wp_admin_asset_version('assets/admin/shared/js/modals/confirm-modal.js'),
             true
         );
     }
@@ -195,17 +195,17 @@ function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
     if (!wp_script_is('em-wp-admin-module-form-dirty', 'registered')) {
         wp_register_script(
             'em-wp-admin-module-form-dirty-engine',
-            get_template_directory_uri() . '/assets/admin/js/shared/state/module-form-dirty/engine.js',
+            get_template_directory_uri() . '/assets/admin/shared/js/state/module-form-dirty/engine.js',
             ['em-wp-admin-confirm-modal'],
-            em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty/engine.js'),
+            em_wp_admin_asset_version('assets/admin/shared/js/state/module-form-dirty/engine.js'),
             true
         );
 
         wp_register_script(
             'em-wp-admin-module-form-dirty',
-            get_template_directory_uri() . '/assets/admin/js/shared/state/module-form-dirty.js',
+            get_template_directory_uri() . '/assets/admin/shared/js/state/module-form-dirty.js',
             ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty-engine'],
-            em_wp_admin_asset_version('assets/admin/js/shared/state/module-form-dirty.js'),
+            em_wp_admin_asset_version('assets/admin/shared/js/state/module-form-dirty.js'),
             true
         );
     }
@@ -215,9 +215,9 @@ function em_wp_admin_enqueue_catalog_slug_switch_assets(): void
 
     wp_enqueue_script(
         'em-wp-admin-catalog-slug-switch',
-        get_template_directory_uri() . '/assets/admin/js/shared/navigation/catalog-slug-switch.js',
+        get_template_directory_uri() . '/assets/admin/shared/js/navigation/catalog-slug-switch.js',
         ['em-wp-admin-confirm-modal', 'em-wp-admin-module-form-dirty'],
-        em_wp_admin_asset_version('assets/admin/js/shared/navigation/catalog-slug-switch.js'),
+        em_wp_admin_asset_version('assets/admin/shared/js/navigation/catalog-slug-switch.js'),
         true
     );
 

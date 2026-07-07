@@ -3,7 +3,7 @@
 /**
  * Visual Links admin helpers and AJAX handlers.
  *
- * @package ElleneWp
+ * @package ClientWp
  */
 
 if (!defined('ABSPATH')) {

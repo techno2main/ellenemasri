@@ -24,7 +24,7 @@ function em_wp_template_default_color_for_slug(string $slug): string
 {
     $known = [
         'mayami' => '#2d1454',
-        'ellene' => '#1a4d7c',
+        'client' => '#1a4d7c',
     ];
 
     $slug = em_wp_template_sanitize_slug($slug);

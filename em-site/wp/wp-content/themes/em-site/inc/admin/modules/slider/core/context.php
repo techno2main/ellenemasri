@@ -134,7 +134,6 @@ function em_wp_slider_style_from_page_slug(string $page_slug): string
 
     $legacy = [
         'em-slider-mayami' => 'slider-mayami-default',
-        'em-slider-ellene' => 'slider-ellene-default',
     ];
 
     if (isset($legacy[$page_slug])) {
@@ -169,7 +168,11 @@ function em_wp_slider_get_admin_context(): array
         ];
     }
 
-    $definition = $definitions[$style_slug] ?? $definitions['mayami'];
+    $fallback = [];
+    if (!empty($definitions)) {
+        $fallback = reset($definitions);
+    }
+    $definition = $definitions[$style_slug] ?? (is_array($fallback) ? $fallback : []);
 
     return [
         'style_slug'  => $style_slug,
@@ -203,28 +206,23 @@ function em_wp_slider_group_name(string $style_slug): string
 /**
  * Resout le dossier d'assets admin (vue) pour une variante Slider.
  *
- * Les slugs catalogue (ex. slider-mayami-default) ne correspondent pas aux
- * dossiers d'assets (mayami/ellene) : on retombe sur une vue existante.
+ * Les slugs catalogue (ex. slider-mayami-default) ne correspondent pas au
+ * dossier d'assets JS (mayami) : on retombe sur une vue existante.
  */
 function em_wp_slider_admin_asset_view_slug(string $style_slug): string
 {
     $style_slug = sanitize_key($style_slug);
     $theme_dir = get_template_directory();
     $js_base = $theme_dir . '/assets/admin/js/modules/slider/';
-    $css_base = $theme_dir . '/assets/admin/css/modules/slider/';
 
-    $has_view_assets = static function (string $view_slug) use ($js_base, $css_base): bool {
-        return is_dir($js_base . $view_slug) && is_file($css_base . $view_slug . '/slider.css');
-    };
-
-    if ($style_slug !== '' && $has_view_assets($style_slug)) {
-        return $style_slug;
+    if ($style_slug === 'mayami' && is_dir($js_base . 'mayami')) {
+        return 'mayami';
     }
 
-    if (strpos($style_slug, 'ellene') !== false && $has_view_assets('ellene')) {
-        return 'ellene';
+    if (is_dir($js_base . 'mayami')) {
+        return 'mayami';
     }
 
-    return 'mayami';
+    return '';
 }
 

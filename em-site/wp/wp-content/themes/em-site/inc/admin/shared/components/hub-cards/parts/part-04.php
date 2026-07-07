@@ -224,13 +224,13 @@ function em_wp_admin_hub_render_live_template_switcher(string $redirect_page = '
 }
 
 /**
- * Libellé court pour toggle catalogue (MAYAMI, ELLENE…).
+ * Libellé court pour toggle catalogue (MAYAMI, CLIENT…).
  */
 function em_wp_admin_catalog_choice_switch_label(string $catalog_slug, string $label): string
 {
     $catalog_slug = sanitize_key($catalog_slug);
 
-    foreach (['mayami', 'ellene'] as $token) {
+    foreach (['mayami', 'client'] as $token) {
         if ($catalog_slug !== '' && str_contains($catalog_slug, $token)) {
             return mb_strtoupper($token);
         }

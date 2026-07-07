@@ -45,9 +45,9 @@ function em_site_enqueue_front_assets(): void
 
 	wp_enqueue_style(
 		'em-site-front-layout',
-		$base_uri . '/assets/front/css/core/layout.css',
+		$base_uri . '/assets/front/shared/css/admin-preview-render-layout.css',
 		['em-site-style', 'em-site-font-archivo-black'],
-		em_site_asset_version('assets/front/css/core/layout.css')
+		em_site_asset_version('assets/front/shared/css/admin-preview-render-layout.css')
 	);
 
 	wp_enqueue_style(
@@ -150,9 +150,9 @@ function em_site_enqueue_front_assets(): void
 
 	wp_enqueue_script(
 		'em-site-theme',
-		$base_uri . '/assets/front/js/core/theme.js',
+		$base_uri . '/assets/front/shared/js/theme.js',
 		[],
-		em_site_asset_version('assets/front/js/core/theme.js'),
+		em_site_asset_version('assets/front/shared/js/theme.js'),
 		true
 	);
 
@@ -190,41 +190,41 @@ function em_site_enqueue_front_assets(): void
 
 	wp_enqueue_script(
 		'em-site-slider-media',
-		$base_uri . '/assets/front/js/modules/slider/media.js',
+		$base_uri . '/assets/front/shared/js/slider/media.js',
 		[],
-		em_site_asset_version('assets/front/js/modules/slider/media.js'),
+		em_site_asset_version('assets/front/shared/js/slider/media.js'),
 		true
 	);
 
 	wp_enqueue_script(
 		'em-site-slider-runtime',
-		$base_uri . '/assets/front/js/modules/slider/runtime.js',
+		$base_uri . '/assets/front/shared/js/slider/runtime.js',
 		['em-site-slider-media'],
-		em_site_asset_version('assets/front/js/modules/slider/runtime.js'),
+		em_site_asset_version('assets/front/shared/js/slider/runtime.js'),
 		true
 	);
 
 	wp_enqueue_script(
 		'em-site-slider-player',
-		$base_uri . '/assets/front/js/modules/slider/player.js',
+		$base_uri . '/assets/front/shared/js/slider/player.js',
 		['em-site-slider-runtime'],
-		em_site_asset_version('assets/front/js/modules/slider/player.js'),
+		em_site_asset_version('assets/front/shared/js/slider/player.js'),
 		true
 	);
 
 	wp_enqueue_script(
 		'em-site-slider-core',
-		$base_uri . '/assets/front/js/modules/slider/core.js',
+		$base_uri . '/assets/front/shared/js/slider/core.js',
 		['em-site-slider-player'],
-		em_site_asset_version('assets/front/js/modules/slider/core.js'),
+		em_site_asset_version('assets/front/shared/js/slider/core.js'),
 		true
 	);
 
 	wp_enqueue_script(
 		'em-site-slider',
-		$base_uri . '/assets/front/js/modules/slider/index.js',
+		$base_uri . '/assets/front/shared/js/slider/index.js',
 		['em-site-slider-core'],
-		em_site_asset_version('assets/front/js/modules/slider/index.js'),
+		em_site_asset_version('assets/front/shared/js/slider/index.js'),
 		true
 	);
 }

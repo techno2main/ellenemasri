@@ -1,9 +1,0 @@
-/* Shared module styles split by responsibility (<=300 lines per file). */
-@import url('./module-common/module-shell-and-hero.css');
-@import url('./module-common/form-controls-and-rows.css');
-@import url('./module-common/nested-lists-and-media.css');
-@import url('./module-common/confirm-modal-actions.css');
-@import url('./module-common/rubriques-map-status.css');
-@import url('./module-common/landing-map-structure-core.css');
-@import url('./module-common/landing-map-header-layout.css');
-@import url('./module-common/rubriques-list-and-pins.css');

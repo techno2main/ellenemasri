@@ -1,16 +1,16 @@
-.em-admin-color-field-group {
+﻿.em-wp-admin-color-field-group {
     margin-bottom: 4px;
 }
 
-.em-admin-color-field-group__title {
+.em-wp-admin-color-field-group__title {
     margin: 0 0 10px;
     font-size: 12px;
     font-weight: 600;
     color: #374151;
 }
 
-/* Rangée de color pickers — côte à côte, compact */
-.em-admin-color-field-wrap {
+/* RangÃ©e de color pickers â€” cÃ´te Ã  cÃ´te, compact */
+.em-wp-admin-color-field-wrap {
     display: flex;
     align-items: end;
     flex-wrap: wrap;
@@ -19,7 +19,7 @@
     max-width: 100%;
 }
 
-.em-admin-color-field-wrap .em-admin-color-control {
+.em-wp-admin-color-field-wrap .em-wp-admin-color-control {
     display: grid;
     gap: 6px;
     flex: 0 0 auto;
@@ -28,57 +28,57 @@
     max-width: none;
 }
 
-.em-admin-color-field-wrap .em-admin-color-control + .em-admin-color-control {
+.em-wp-admin-color-field-wrap .em-wp-admin-color-control + .em-wp-admin-color-control {
     margin-left: 0;
     padding-left: 20px;
     border-left: 1px solid #d1d5db;
 }
 
-.em-admin-color-label {
+.em-wp-admin-color-label {
     display: inline-block;
     font-size: 12px;
     font-weight: 600;
     color: #111827;
 }
 
-.em-admin-color-field-wrap .wp-picker-container {
+.em-wp-admin-color-field-wrap .wp-picker-container {
     width: auto;
     min-width: 0;
 }
 
-.em-admin-color-field-wrap .wp-picker-input-wrap input[type="text"].wp-color-picker {
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap input[type="text"].wp-color-picker {
     width: 100px !important;
     min-width: 100px !important;
     max-width: 100px !important;
     height: 30px !important;
 }
 
-.em-admin-color-field-wrap .wp-picker-input-wrap {
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap {
     display: inline-flex !important;
     align-items: center !important;
     gap: 6px;
 }
 
-.em-admin-color-field-wrap .wp-picker-input-wrap .button,
-.em-admin-color-field-wrap .wp-picker-input-wrap .wp-picker-clear,
-.em-admin-color-field-wrap .wp-picker-input-wrap .wp-picker-default {
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap .button,
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap .wp-picker-clear,
+.em-wp-admin-color-field-wrap .wp-picker-input-wrap .wp-picker-default {
     margin: 0 !important;
     height: 30px !important;
     line-height: 28px !important;
 }
 
-.em-admin-color-field-wrap .wp-picker-default {
+.em-wp-admin-color-field-wrap .wp-picker-default {
     display: none !important;
 }
 
 @media (max-width: 860px) {
-    .em-admin-color-field-wrap {
+    .em-wp-admin-color-field-wrap {
         flex-direction: column;
         align-items: stretch;
         width: 100%;
     }
 
-    .em-admin-color-field-wrap .em-admin-color-control + .em-admin-color-control {
+    .em-wp-admin-color-field-wrap .em-wp-admin-color-control + .em-wp-admin-color-control {
         margin-top: 0;
         padding-left: 0;
         padding-top: 12px;
@@ -86,3 +86,4 @@
         border-top: 1px solid #d1d5db;
     }
 }
+

@@ -173,19 +173,19 @@ function em_site_admin_enqueue_dashboard_assets(): void
 
 	wp_enqueue_style(
 		'em-site-admin-hub-cards',
-		get_template_directory_uri() . '/assets/admin/css/shared/hub-cards.css',
+		get_template_directory_uri() . '/assets/admin/shared/css/hub-cards.css',
 		['em-site-admin-dashboard'],
-		file_exists(get_template_directory() . '/assets/admin/css/shared/hub-cards.css')
-			? (string) filemtime(get_template_directory() . '/assets/admin/css/shared/hub-cards.css')
+		file_exists(get_template_directory() . '/assets/admin/shared/css/hub-cards.css')
+			? (string) filemtime(get_template_directory() . '/assets/admin/shared/css/hub-cards.css')
 			: (string) wp_get_theme()->get('Version')
 	);
 
 	wp_enqueue_style(
 		'em-site-admin-live-badge',
-		get_template_directory_uri() . '/assets/admin/css/shared/live-badge.css',
+		get_template_directory_uri() . '/assets/admin/shared/css/live-badge.css',
 		['em-site-admin-hub-cards'],
-		file_exists(get_template_directory() . '/assets/admin/css/shared/live-badge.css')
-			? (string) filemtime(get_template_directory() . '/assets/admin/css/shared/live-badge.css')
+		file_exists(get_template_directory() . '/assets/admin/shared/css/live-badge.css')
+			? (string) filemtime(get_template_directory() . '/assets/admin/shared/css/live-badge.css')
 			: (string) wp_get_theme()->get('Version')
 	);
 }
@@ -282,7 +282,7 @@ function em_site_admin_render_dashboard_page(): void
 			<section class="em-site-dashboard__card">
 				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES SETTINGS', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('options-general.php')); ?>" aria-label="<?php esc_attr_e('Voir mes settings', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
 				<p><?php esc_html_e('Réglages généraux de ton site.', 'em-wp'); ?></p>
-				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('themes.php')); ?>"><?php esc_html_e('APPARENCE', 'em-wp'); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('options-general.php')); ?>"><?php esc_html_e('GÉNÉRAL', 'em-wp'); ?></a><?php if (function_exists('em_site_ellene_admin_gate_settings_admin_url') && em_site_admin_is_power_user()) : ?><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(em_site_ellene_admin_gate_settings_admin_url()); ?>"><?php esc_html_e('VERROU ELLENE', 'em-wp'); ?></a><?php endif; ?></p>
+				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('themes.php')); ?>"><?php esc_html_e('APPARENCE', 'em-wp'); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('options-general.php')); ?>"><?php esc_html_e('GÉNÉRAL', 'em-wp'); ?></a><?php if (function_exists('em_wp_client_admin_gate_settings_admin_url') && em_wp_admin_is_power_user()) : ?><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(em_wp_client_admin_gate_settings_admin_url()); ?>"><?php esc_html_e('VERROU CLIENT', 'em-wp'); ?></a><?php endif; ?></p>
 			</section>
 		</div>
 	</div>

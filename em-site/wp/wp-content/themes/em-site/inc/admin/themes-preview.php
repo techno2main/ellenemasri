@@ -44,8 +44,8 @@ function em_wp_customize_themes_admin_preview(): void
     }
 
     $theme_slug = sanitize_key(get_stylesheet());
-    $hide_theme_actions = function_exists('em_wp_admin_should_limit_ellene_client')
-        && em_wp_admin_should_limit_ellene_client();
+    $hide_theme_actions = function_exists('em_wp_admin_should_limit_client_admin')
+        && em_wp_admin_should_limit_client_admin();
     ?>
     <style>
     .theme-wrap .theme-author,

@@ -26,7 +26,7 @@ function em_wp_hero_legacy_page_slug_map(): array
 {
     return [
         'em-hero-mayami' => 'hero-mayami-default',
-        'em-hero-ellene' => 'hero-ellene-default',
+        'em-hero-client' => 'hero-client-default',
     ];
 }
 

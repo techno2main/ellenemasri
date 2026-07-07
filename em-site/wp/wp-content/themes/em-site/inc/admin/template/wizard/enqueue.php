@@ -23,9 +23,9 @@ function em_wp_admin_template_wizard_enqueue(): void
 
     wp_enqueue_script(
         'em-wp-admin-slide-sortable',
-        $theme_uri . '/assets/admin/js/shared/media/slide-sortable.js',
+        $theme_uri . '/assets/admin/shared/js/media/slide-sortable.js',
         [],
-        $ver('assets/admin/js/shared/media/slide-sortable.js'),
+        $ver('assets/admin/shared/js/media/slide-sortable.js'),
         true
     );
 

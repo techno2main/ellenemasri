@@ -123,7 +123,7 @@ function em_wp_admin_dashboard_render_live_template_badge(string $active_label, 
 }
 
 /**
- * Pastille liste des templates existants (MAYAMI, ELLENE, …).
+ * Pastille liste des templates existants (MAYAMI, CLIENT, …).
  */
 function em_wp_admin_dashboard_render_templates_badge(): void
 {
@@ -247,11 +247,11 @@ function em_wp_admin_dashboard_render_settings_badge(): void
     ];
 
     if (function_exists('em_wp_admin_is_power_user')
-        && function_exists('em_wp_ellene_admin_gate_settings_admin_url')
+        && function_exists('em_wp_client_admin_gate_settings_admin_url')
         && em_wp_admin_is_power_user()) {
         $entries[] = [
-            'label' => __('VERROU ELLENE', 'em-wp'),
-            'url'   => em_wp_ellene_admin_gate_settings_admin_url(),
+            'label' => __('VERROU CLIENT', 'em-wp'),
+            'url'   => em_wp_client_admin_gate_settings_admin_url(),
         ];
     }
 
@@ -284,9 +284,9 @@ function em_wp_admin_dashboard_nav_tab_definitions(): array
         'settings' => [
             'menu_title' => __('SETTINGS', 'em-wp'),
             'url'        => (function_exists('em_wp_admin_is_power_user')
-                && function_exists('em_wp_ellene_admin_gate_settings_admin_url')
+                && function_exists('em_wp_client_admin_gate_settings_admin_url')
                 && em_wp_admin_is_power_user())
-                ? em_wp_ellene_admin_gate_settings_admin_url()
+                ? em_wp_client_admin_gate_settings_admin_url()
                 : admin_url('options-general.php'),
         ],
     ];

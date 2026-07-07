@@ -14,10 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function em_wp_slider_default_options(string $style_slug = 'mayami'): array
 {
-    $footer_titles = [
-        'mayami' => __('MAYAMI, MY MIAMI', 'em-wp'),
-        'ellene' => __('ELLENE', 'em-wp'),
-    ];
+    $footer_title = __('MAYAMI, MY MIAMI', 'em-wp');
 
     return [
         'enabled'             => true,
@@ -26,7 +23,7 @@ function em_wp_slider_default_options(string $style_slug = 'mayami'): array
         'footer_text'         => '#100421',
         'tapes_hidden'        => false,
         'tapes_color'         => '#39c7ca',
-        'footer_title'        => $footer_titles[$style_slug] ?? $footer_titles['mayami'],
+        'footer_title'        => $footer_title,
         'slider_title_hidden' => false,
         'slides'              => [em_wp_slider_default_slide()],
     ];
