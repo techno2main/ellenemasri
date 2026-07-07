@@ -24,6 +24,16 @@ function em_site_is_fixed_single_item_type(string $type_slug): bool
 }
 
 /**
+ * Rubriques verrouillées au niveau type (non supprimables depuis overview).
+ */
+function em_site_is_locked_type_slug(string $type_slug): bool
+{
+    $type_slug = sanitize_key($type_slug);
+
+    return in_array($type_slug, ['top-bar', 'footer', 'headers'], true);
+}
+
+/**
  * Crée un footer (item) avec la structure de départ du type.
  */
 function em_site_handle_create_item(): void
@@ -178,6 +188,49 @@ function em_site_handle_create_type(): void
         em_site_builder_redirect(['error' => 'type_create']);
     }
 
+    // Réactivation d'une rubrique intégrée masquée (suppression safe) :
+    // + Nouvelle Rubrique avec le même nom la remet visible, sans créer un type custom.
+    $hidden_option = function_exists('em_site_hidden_rubriques_option_name')
+        ? em_site_hidden_rubriques_option_name()
+        : 'em_site_hidden_rubriques';
+    $hidden = get_option($hidden_option, []);
+    $hidden = is_array($hidden) ? array_values(array_map('sanitize_key', $hidden)) : [];
+
+    if (in_array($slug, $hidden, true)) {
+            $hidden = array_values(array_filter($hidden, static fn(string $s): bool => $s !== $slug));
+            update_option($hidden_option, $hidden, false);
+
+            if (function_exists('em_site_get_rubrique_order') && function_exists('em_site_rubrique_order_option_name')) {
+                $admin_order = em_site_get_rubrique_order();
+                $admin_order = array_values(array_filter($admin_order, static fn(string $s): bool => $s !== $slug));
+                $footer_index = array_search('footer', $admin_order, true);
+
+                if ($footer_index === false) {
+                    $admin_order[] = $slug;
+                } else {
+                    array_splice($admin_order, (int) $footer_index, 0, [$slug]);
+                }
+
+                update_option(em_site_rubrique_order_option_name(), $admin_order);
+            }
+
+            if (function_exists('em_site_get_site_rubrique_order') && function_exists('em_site_save_site_rubrique_order')) {
+                $site_order = em_site_get_site_rubrique_order();
+                $site_order = array_values(array_filter($site_order, static fn(string $s): bool => $s !== $slug));
+                $footer_index = array_search('footer', $site_order, true);
+
+                if ($footer_index === false) {
+                    $site_order[] = $slug;
+                } else {
+                    array_splice($site_order, (int) $footer_index, 0, [$slug]);
+                }
+
+                em_site_save_site_rubrique_order($site_order);
+            }
+
+            em_site_builder_redirect(['updated' => 'type_created', 'type' => $slug]);
+    }
+
     if (em_site_rubrique_type_exists($slug)) {
         em_site_builder_redirect(['error' => 'type_exists']);
     }
@@ -194,9 +247,176 @@ function em_site_handle_create_type(): void
     ];
     update_option(em_site_rubrique_types_option_name(), $types);
 
+    if (function_exists('em_site_get_rubrique_order') && function_exists('em_site_rubrique_order_option_name')) {
+        $admin_order = em_site_get_rubrique_order();
+        $admin_order = array_values(array_filter($admin_order, static fn(string $s): bool => $s !== $slug));
+        $footer_index = array_search('footer', $admin_order, true);
+
+        if ($footer_index === false) {
+            $admin_order[] = $slug;
+        } else {
+            array_splice($admin_order, (int) $footer_index, 0, [$slug]);
+        }
+
+        update_option(em_site_rubrique_order_option_name(), $admin_order);
+    }
+
+    if (function_exists('em_site_get_site_rubrique_order') && function_exists('em_site_save_site_rubrique_order')) {
+        $site_order = em_site_get_site_rubrique_order();
+        $site_order = array_values(array_filter($site_order, static fn(string $s): bool => $s !== $slug));
+        $footer_index = array_search('footer', $site_order, true);
+
+        if ($footer_index === false) {
+            $site_order[] = $slug;
+        } else {
+            array_splice($site_order, (int) $footer_index, 0, [$slug]);
+        }
+
+        em_site_save_site_rubrique_order($site_order);
+    }
+
     em_site_builder_redirect(['updated' => 'type_created', 'type' => $slug]);
 }
 add_action('admin_post_em_site_create_type', 'em_site_handle_create_type');
+
+/**
+ * Supprime une RUBRIQUE personnalisée (type) et ses données associées.
+ */
+function em_site_handle_delete_type(): void
+{
+    em_site_items_guard('em_site_delete_type');
+
+    $slug = sanitize_key((string) ($_POST['type'] ?? ''));
+
+    if ($slug === '' || em_site_is_locked_type_slug($slug)) {
+        em_site_builder_redirect(['error' => 'type_delete']);
+    }
+
+    $types_option = em_site_rubrique_types_option_name();
+    $types = get_option($types_option, []);
+    $types = is_array($types) ? $types : [];
+    $is_custom_type = isset($types[$slug]);
+
+    if (!$is_custom_type && !em_site_rubrique_type_exists($slug)) {
+        em_site_builder_redirect(['error' => 'type_delete']);
+    }
+
+    if ($is_custom_type) {
+        unset($types[$slug]);
+        update_option($types_option, $types);
+    } else {
+        // Rubrique intégrée: suppression safe = masquage dans l'overview.
+        $hidden_option = function_exists('em_site_hidden_rubriques_option_name')
+            ? em_site_hidden_rubriques_option_name()
+            : 'em_site_hidden_rubriques';
+        $hidden = get_option($hidden_option, []);
+        $hidden = is_array($hidden) ? array_values(array_map('sanitize_key', $hidden)) : [];
+
+        if (!in_array($slug, $hidden, true)) {
+            $hidden[] = $slug;
+        }
+
+        update_option($hidden_option, array_values(array_unique($hidden)), false);
+    }
+
+    if ($is_custom_type && function_exists('em_site_rubrique_labels_option_name')) {
+        $labels_option = em_site_rubrique_labels_option_name();
+        $labels = get_option($labels_option, []);
+        if (is_array($labels) && isset($labels[$slug])) {
+            unset($labels[$slug]);
+            update_option($labels_option, $labels);
+        }
+    }
+
+    if (function_exists('em_site_get_rubrique_order') && function_exists('em_site_rubrique_order_option_name')) {
+        $admin_order = array_values(array_filter(
+            em_site_get_rubrique_order(),
+            static fn(string $s): bool => $s !== $slug
+        ));
+        update_option(em_site_rubrique_order_option_name(), $admin_order);
+    }
+
+    if (function_exists('em_site_get_site_rubrique_order') && function_exists('em_site_save_site_rubrique_order')) {
+        $site_order = array_values(array_filter(
+            em_site_get_site_rubrique_order(),
+            static fn(string $s): bool => $s !== $slug
+        ));
+        em_site_save_site_rubrique_order($site_order);
+    }
+
+    if (function_exists('em_site_site_rubrique_visibility_option_name')) {
+        $site_visibility_option = em_site_site_rubrique_visibility_option_name();
+        $site_visibility = get_option($site_visibility_option, []);
+        if (is_array($site_visibility) && isset($site_visibility[$slug])) {
+            unset($site_visibility[$slug]);
+            update_option($site_visibility_option, $site_visibility, false);
+        }
+    }
+
+    if (function_exists('em_site_template_visibility_option_name')) {
+        $template_visibility_option = em_site_template_visibility_option_name();
+        $template_visibility = get_option($template_visibility_option, []);
+        if (is_array($template_visibility)) {
+            foreach ($template_visibility as $template_slug => $template_map) {
+                if (!is_array($template_map) || !isset($template_map[$slug])) {
+                    continue;
+                }
+
+                unset($template_map[$slug]);
+                $template_visibility[$template_slug] = $template_map;
+            }
+
+            update_option($template_visibility_option, $template_visibility, false);
+        }
+    }
+
+    if ($is_custom_type) {
+        $items = function_exists('em_site_get_items') ? em_site_get_items($slug) : [];
+        if (is_array($items)) {
+            foreach (array_keys($items) as $item_slug) {
+                if (!is_string($item_slug) || $item_slug === '') {
+                    continue;
+                }
+
+                if (function_exists('em_site_item_option_name')) {
+                    delete_option(em_site_item_option_name($slug, $item_slug));
+                }
+            }
+        }
+
+        if (function_exists('em_site_items_option_name')) {
+            delete_option(em_site_items_option_name($slug));
+        }
+    }
+
+    if (function_exists('em_site_template_registry')) {
+        $templates = em_site_template_registry();
+
+        foreach ($templates as $template_slug => $template_definition) {
+            unset($template_definition);
+            $template_slug = sanitize_key((string) $template_slug);
+
+            if ($template_slug === '') {
+                continue;
+            }
+
+            if (function_exists('em_site_template_option_name')) {
+                delete_option(em_site_template_option_name($slug, $template_slug));
+            }
+
+            if (function_exists('em_site_instance_option_name')) {
+                delete_option(em_site_instance_option_name($template_slug, $slug));
+            }
+
+            if (function_exists('em_site_template_skeleton_remove_rubrique')) {
+                em_site_template_skeleton_remove_rubrique($template_slug, $slug);
+            }
+        }
+    }
+
+    em_site_builder_redirect(['updated' => 'type_deleted']);
+}
+add_action('admin_post_em_site_delete_type', 'em_site_handle_delete_type');
 
 /**
  * Supprime un footer (item).

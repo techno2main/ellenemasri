@@ -73,7 +73,8 @@ function em_site_overview_render_reorder_script(): void
         list.addEventListener('mousedown', function (e) {
             var handle = e.target.closest('.em-site-card__drag');
             var card = handle ? handle.closest('.em-site-card') : null;
-            if (card) { card.setAttribute('draggable', 'true'); }
+            if (!card || card.getAttribute('data-reorderable') !== '1') { return; }
+            card.setAttribute('draggable', 'true');
         });
         // La poignée ne doit pas ouvrir/fermer la carte.
         list.addEventListener('click', function (e) {
@@ -85,7 +86,7 @@ function em_site_overview_render_reorder_script(): void
 
         list.addEventListener('dragstart', function (e) {
             var card = e.target.closest('.em-site-card');
-            if (!card || card.getAttribute('draggable') !== 'true') { return; }
+            if (!card || card.getAttribute('draggable') !== 'true' || card.getAttribute('data-reorderable') !== '1') { return; }
             dragged = card;
             card.classList.add('is-dragging');
             e.dataTransfer.effectAllowed = 'move';
@@ -94,6 +95,9 @@ function em_site_overview_render_reorder_script(): void
             if (!dragged) { return; }
             var over = e.target.closest('.em-site-card');
             if (!over || over === dragged || over.parentNode !== list) { return; }
+            var draggedHeaderLinked = dragged.getAttribute('data-header-linked') === '1';
+            var overHeaderLinked = over.getAttribute('data-header-linked') === '1';
+            if (draggedHeaderLinked !== overHeaderLinked) { return; }
             e.preventDefault();
             var r = over.getBoundingClientRect();
             list.insertBefore(dragged, (e.clientY - r.top) / r.height > 0.5 ? over.nextSibling : over);

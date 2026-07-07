@@ -89,6 +89,42 @@ function em_site_overview_enqueue_assets(string $hook_suffix): void
 add_action('admin_enqueue_scripts', 'em_site_overview_enqueue_assets');
 
 /**
+ * Option des rubriques masquées depuis l'overview (suppression safe).
+ */
+function em_site_hidden_rubriques_option_name(): string
+{
+    return 'em_site_hidden_rubriques';
+}
+
+/**
+ * Slugs de rubriques masquées (suppression safe non destructive).
+ *
+ * @return array<int, string>
+ */
+function em_site_get_hidden_rubriques(): array
+{
+    $raw = get_option(em_site_hidden_rubriques_option_name(), []);
+
+    if (!is_array($raw)) {
+        return [];
+    }
+
+    $hidden = [];
+
+    foreach ($raw as $slug) {
+        $slug = sanitize_key((string) $slug);
+
+        if ($slug === '' || in_array($slug, ['top-bar', 'footer', 'headers'], true) || in_array($slug, $hidden, true)) {
+            continue;
+        }
+
+        $hidden[] = $slug;
+    }
+
+    return $hidden;
+}
+
+/**
  * Types triés dans l'ordre des rubriques du site (HEADER absent du EM-SITE).
  *
  * @return array<string, array<string, mixed>>
@@ -97,6 +133,17 @@ function em_site_ordered_types(): array
 {
     $types = em_site_rubrique_type_registry();
     $ordered = [];
+    $footer_type = null;
+    $hidden_types = em_site_get_hidden_rubriques();
+
+    foreach ($hidden_types as $hidden_slug) {
+        unset($types[$hidden_slug]);
+    }
+
+    if (isset($types['footer'])) {
+        $footer_type = $types['footer'];
+        unset($types['footer']);
+    }
 
     // Priorité UX: TOP-BAR puis HEADER avant HERO/SLIDERS.
     foreach (['top-bar', 'headers', 'header', 'sliders'] as $priority_slug) {
@@ -125,7 +172,48 @@ function em_site_ordered_types(): array
     }
 
     // 3) Reste éventuel (types personnalisés non classés) en fin.
-    return $ordered + $types;
+    $result = $ordered + $types;
+
+    // Footer reste systématiquement tout en bas.
+    if (is_array($footer_type)) {
+        $result['footer'] = $footer_type;
+    }
+
+    return $result;
+}
+
+/**
+ * Types de rubriques créés via l'admin (custom).
+ *
+ * @return array<string, true>
+ */
+function em_site_overview_custom_type_map(): array
+{
+    static $map = null;
+
+    if (is_array($map)) {
+        return $map;
+    }
+
+    $raw = function_exists('em_site_rubrique_types_option_name')
+        ? get_option(em_site_rubrique_types_option_name(), [])
+        : [];
+
+    $map = [];
+
+    if (is_array($raw)) {
+        foreach ($raw as $slug => $definition) {
+            $slug = sanitize_key((string) $slug);
+
+            if ($slug === '' || !is_array($definition)) {
+                continue;
+            }
+
+            $map[$slug] = true;
+        }
+    }
+
+    return $map;
 }
 
 /**
@@ -165,6 +253,7 @@ function em_site_overview_render(): void
     </div>
     <?php em_site_overview_render_reorder_script(); ?>
     <?php em_site_overview_render_rename_script(); ?>
+    <?php em_site_overview_render_delete_type_script(); ?>
     <script>
     (function () {
         function setCreateOpenState(btn, box, isOpen) {
@@ -285,6 +374,7 @@ function em_site_overview_notice(): void
         'duplicated' => sprintf(__('%1$s dupliqué%2$s.', 'em-site'), $noun, $e),
         'structure'  => __('Structure enregistrée.', 'em-site'),
         'type_created' => __('Rubrique créée.', 'em-site'),
+        'type_deleted' => __('Rubrique supprimée.', 'em-site'),
     ];
 
     if (isset($messages[$updated])) {
@@ -309,7 +399,14 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
     $add_label = sprintf(__('Ajouter une Section %s', 'em-site'), $label_singular);
     $is_special_fixed = function_exists('em_site_is_fixed_single_item_type')
         && em_site_is_fixed_single_item_type($slug);
+    $is_header_container = ($slug === 'headers');
+    $is_reorderable = !$is_special_fixed && !$is_header_container;
     $can_add_items = !$is_special_fixed;
+    $can_delete_type = !$is_special_fixed && !$is_header_container;
+    $delete_form_id = 'em-site-delete-type-' . $slug;
+    $delete_title = __('Supprimer la rubrique', 'em-site');
+    $delete_tip = __('Supprimer cette rubrique', 'em-site');
+    $delete_ack = __('Je confirme la suppression définitive de cette rubrique et de ses sections.', 'em-site');
     $label_for_match = strtolower(remove_accents($label));
     $is_header_linked = in_array($slug, ['hero', 'heros', 'heroes', 'slider', 'sliders'], true)
         || strpos($slug, 'hero') !== false
@@ -318,11 +415,12 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
         || strpos($label_for_match, 'slider') !== false;
     $card_classes = 'em-site-collapse em-site-card'
         . ($is_special_fixed ? ' em-site-card--fixed-single' : '')
+        . (!$is_reorderable ? ' em-site-card--not-reorderable' : '')
         . ($is_header_linked ? ' em-site-card--header-linked' : '');
     ?>
-    <details class="<?php echo esc_attr($card_classes); ?>" id="em-site-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" <?php echo $open ? 'open' : ''; ?>>
+    <details class="<?php echo esc_attr($card_classes); ?>" id="em-site-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" data-reorderable="<?php echo $is_reorderable ? '1' : '0'; ?>" data-header-linked="<?php echo $is_header_linked ? '1' : '0'; ?>" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-site-collapse__summary em-site-card__head">
-            <span class="em-site-card__drag dashicons dashicons-menu" title="<?php esc_attr_e('Glisser pour réordonner', 'em-site'); ?>" aria-hidden="true"></span>
+            <span class="em-site-card__drag dashicons dashicons-menu" title="<?php echo esc_attr($is_reorderable ? __('Glisser pour réordonner', 'em-site') : __('Ordre verrouillé', 'em-site')); ?>" aria-hidden="true"></span>
             <span class="em-site-collapse__chevron" aria-hidden="true"></span>
             <span class="em-site-card__icon dashicons <?php echo esc_attr((string) ($type['icon'] ?? 'dashicons-screenoptions')); ?>"></span>
             <button type="button" class="em-site-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>">
@@ -343,11 +441,63 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
                     <span><?php echo esc_html($add_label); ?></span>
                 </button>
             <?php } ?>
+            <?php if ($can_delete_type) { ?>
+                <button type="button" class="em-site-card__delete em-site-type-delete" data-deleteform="<?php echo esc_attr($delete_form_id); ?>" data-label="<?php echo esc_attr($label); ?>" data-title="<?php echo esc_attr($delete_title); ?>" data-ack="<?php echo esc_attr($delete_ack); ?>" title="<?php echo esc_attr($delete_tip); ?>" aria-label="<?php echo esc_attr($delete_tip); ?>">
+                    <span class="dashicons dashicons-trash" aria-hidden="true"></span>
+                </button>
+            <?php } ?>
         </summary>
         <div class="em-site-collapse__body">
             <?php em_site_render_items_section($slug); ?>
         </div>
+        <?php if ($can_delete_type) { ?>
+            <form id="<?php echo esc_attr($delete_form_id); ?>" method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-site-deleteform" hidden>
+                <?php wp_nonce_field('em_site_delete_type'); ?>
+                <input type="hidden" name="action" value="em_site_delete_type">
+                <input type="hidden" name="type" value="<?php echo esc_attr($slug); ?>">
+            </form>
+        <?php } ?>
     </details>
+    <?php
+}
+
+/**
+ * Confirmation modale de suppression d'une rubrique (cartes overview).
+ */
+function em_site_overview_render_delete_type_script(): void
+{
+    static $done = false;
+
+    if ($done) {
+        return;
+    }
+
+    $done = true;
+    ?>
+    <script>
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.em-site-type-delete');
+        if (!btn) { return; }
+        e.preventDefault();
+        e.stopPropagation();
+        if (!window.EmWpAdminConfirm || !window.EmWpAdminConfirm.confirmDelete) { return; }
+
+        var form = document.getElementById(btn.getAttribute('data-deleteform'));
+        if (!form) { return; }
+
+        var label = btn.getAttribute('data-label') || '';
+        var message = '<?php echo esc_js(__('Supprimer définitivement la rubrique « ', 'em-site')); ?>'
+            + label
+            + '<?php echo esc_js(__(' » et toutes ses sections ?', 'em-site')); ?>';
+
+        window.EmWpAdminConfirm.confirmDelete(function () { form.submit(); }, {
+            title: btn.getAttribute('data-title') || '<?php echo esc_js(__('Supprimer', 'em-site')); ?>',
+            message: message,
+            acknowledgeLabel: btn.getAttribute('data-ack') || '<?php echo esc_js(__('Je confirme la suppression.', 'em-site')); ?>',
+            confirmLabel: '<?php echo esc_js(__('Supprimer définitivement', 'em-site')); ?>'
+        });
+    });
+    </script>
     <?php
 }
 
