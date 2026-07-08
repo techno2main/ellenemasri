@@ -526,6 +526,22 @@ if (!defined('ABSPATH')) {
     .em-site-item__delete { background:none !important; border:0 !important; box-shadow:none !important; outline:0; cursor:pointer; color:#b32d2e; padding:0 2px; margin-left:6px; display:inline-flex; align-items:center; }
     .em-site-item__delete:hover, .em-site-item__delete:focus, .em-site-item__delete:active { background:none !important; box-shadow:none !important; color:#8a2424; }
     .em-site-item__delete .dashicons { font-size:18px; width:18px; height:18px; }
+   .em-site-item:not([open]):hover > .em-site-collapse__summary > .dashicons,
+   .em-site-item:not([open]):focus-within > .em-site-collapse__summary > .dashicons,
+   .em-site-item:not([open]):hover .em-site-item__edit,
+   .em-site-item:not([open]):focus-within .em-site-item__edit,
+   .em-site-item:not([open]):hover .em-site-item__delete,
+   .em-site-item:not([open]):focus-within .em-site-item__delete,
+   .em-site-item:not([open]):hover .em-site-preview__toggle,
+   .em-site-item:not([open]):focus-within .em-site-preview__toggle,
+   .em-site-item:not([open]):hover .em-site-preview__popout,
+   .em-site-item:not([open]):focus-within .em-site-preview__popout {
+      color:#fff !important;
+   }
+   .em-site-item:not([open]):hover .em-site-collapse__chevron,
+   .em-site-item:not([open]):focus-within .em-site-collapse__chevron {
+      border-left-color:#fff !important;
+   }
     /* Champ #ancre : mini chip inline unifiÃ©. Tout le rendu visuel (fond,
        bordure, focus) est portÃ© par le wrapper ; l'input interne est rendu
        totalement neutre/transparent. SpÃ©cificitÃ© renforcÃ©e pour neutraliser le
