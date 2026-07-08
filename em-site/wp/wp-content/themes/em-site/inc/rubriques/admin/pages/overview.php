@@ -217,6 +217,127 @@ function em_site_overview_custom_type_map(): array
 }
 
 /**
+ * URL canonique du sommaire Rubriques.
+ */
+function em_site_overview_summary_url(): string
+{
+    return (string) admin_url('admin.php?page=em-rubriques-overview');
+}
+
+/**
+ * Barre discrète de retour au sommaire en mode focus.
+ *
+ * @param array<string, mixed> $type
+ */
+function em_site_overview_render_focus_back(string $active_slug, array $type): void
+{
+    $label = (string) ($type['label_plural'] ?? $type['label'] ?? $active_slug);
+    ?>
+    <div class="em-site-overview__focus-bar" data-overview-focusbar>
+        <a href="<?php echo esc_url(em_site_overview_summary_url()); ?>" class="em-site-overview__focus-back" data-overview-back>
+            <span class="dashicons dashicons-arrow-left-alt2" aria-hidden="true"></span>
+            <span><?php esc_html_e('Retour au sommaire', 'em-site'); ?></span>
+        </a>
+        <div class="em-site-overview__focus-titlewrap">
+            <span class="em-site-overview__focus-kicker"><?php esc_html_e('Édition ciblée', 'em-site'); ?></span>
+            <strong class="em-site-overview__focus-title"><?php echo esc_html($label); ?></strong>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Sommaire compact des rubriques.
+ *
+ * @param array<string, array<string, mixed>> $types
+ */
+function em_site_overview_render_directory(array $types, string $active_slug): void
+{
+    ?>
+    <section class="em-site-overview__summary" data-overview-summary>
+        <div class="em-site-overview__summary-head">
+            <div>
+                <p class="em-site-overview__eyebrow"><?php esc_html_e('Sommaire des rubriques', 'em-site'); ?></p>
+            </div>
+        </div>
+
+        <div class="em-site-overview__directory" role="list">
+            <?php
+            $slots_total = count($types);
+            $slot_index = 0;
+            ?>
+            <?php foreach ($types as $slug => $type) : ?>
+                <?php
+                $slug = (string) $slug;
+                $items = em_site_get_items($slug);
+                $count = count($items);
+                $label = (string) ($type['label_plural'] ?? $type['label'] ?? $slug);
+                $icon = (string) ($type['icon'] ?? 'dashicons-screenoptions');
+                $is_active = ($active_slug === $slug);
+                ?>
+                <a
+                    href="<?php echo esc_url(add_query_arg('type', $slug, em_site_overview_summary_url())); ?>"
+                    class="em-site-overview__directory-link<?php echo $is_active ? ' is-active' : ''; ?>"
+                    data-focus-slug="<?php echo esc_attr($slug); ?>"
+                    data-item-count="<?php echo esc_attr((string) $count); ?>"
+                    role="listitem"
+                    aria-current="<?php echo $is_active ? 'true' : 'false'; ?>"
+                >
+                    <span class="em-site-overview__directory-content">
+                        <span class="em-site-overview__directory-topline">
+                            <span class="em-site-overview__directory-heading">
+                                <span class="em-site-overview__directory-icon dashicons <?php echo esc_attr($icon); ?>" aria-hidden="true"></span>
+                                <strong class="em-site-overview__directory-label"><?php echo esc_html($label); ?></strong>
+                            </span>
+                        </span>
+                        <span class="em-site-overview__directory-meta">
+                            <?php if ($items === []) : ?>
+                                <span class="em-site-overview__directory-pill is-empty"><?php esc_html_e('Aucun item', 'em-site'); ?></span>
+                            <?php else : ?>
+                                <?php foreach ($items as $item_label) : ?>
+                                    <span class="em-site-overview__directory-pill"><?php echo esc_html((string) $item_label); ?></span>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </span>
+                    </span>
+                    <span class="em-site-overview__directory-rail" aria-hidden="true">
+                        <span class="em-site-overview__directory-arrow dashicons dashicons-arrow-right-alt2"></span>
+                        <span class="em-site-overview__directory-map">
+                            <?php for ($i = 0; $i < $slots_total; $i++) : ?>
+                                <span class="em-site-overview__directory-map-slot<?php echo $i === $slot_index ? ' is-current' : ''; ?>"></span>
+                            <?php endfor; ?>
+                        </span>
+                    </span>
+                </a>
+                <?php $slot_index++; ?>
+            <?php endforeach; ?>
+            <button
+                type="button"
+                class="em-site-overview__directory-link em-site-overview__directory-link--create"
+                data-overview-create-toggle
+                aria-expanded="false"
+                role="listitem"
+            >
+                <span class="em-site-overview__directory-content">
+                    <span class="em-site-overview__directory-topline">
+                        <span class="em-site-overview__directory-heading">
+                            <span class="em-site-overview__directory-icon dashicons dashicons-welcome-add-page" aria-hidden="true"></span>
+                            <strong class="em-site-overview__directory-label em-site-overview__directory-label--create"><?php esc_html_e('Nouvelle Rubrique', 'em-site'); ?></strong>
+                        </span>
+                    </span>
+                </span>
+                <span class="em-site-overview__directory-rail" aria-hidden="true">
+                    <span class="em-site-overview__directory-arrow dashicons dashicons-arrow-right-alt2"></span>
+                </span>
+            </button>
+        </div>
+
+        <?php em_site_overview_render_create_type(); ?>
+    </section>
+    <?php
+}
+
+/**
  * Rendu de la page.
  */
 function em_site_overview_render(): void
@@ -224,12 +345,10 @@ function em_site_overview_render(): void
     $types = em_site_ordered_types();
     // Rubrique ciblée par le sous-menu de gauche (…&type=<slug>) : on ouvre sa carte.
     $open_type = sanitize_key((string) ($_GET['type'] ?? ''));
+    $active_type = ($open_type !== '' && isset($types[$open_type])) ? $open_type : '';
     $breadcrumb = [];
-    if (function_exists('em_site_admin_hub_breadcrumb_crumb')) {
-        $breadcrumb[] = em_site_admin_hub_breadcrumb_crumb(__('Mes Rubriques', 'em-site'));
-    }
     ?>
-    <div class="wrap em-site-overview em-site-admin-module em-site-hub-sommaire">
+    <div class="wrap em-site-overview em-site-admin-module em-site-hub-sommaire<?php echo $active_type !== '' ? ' is-focus-mode' : ''; ?>" data-initial-focus="<?php echo esc_attr($active_type); ?>">
         <?php
         if (function_exists('em_site_admin_hub_render_sommaire_header')) {
             em_site_admin_hub_render_sommaire_header('', 'dashicons-screenoptions', false, true, null, $breadcrumb, false);
@@ -238,15 +357,15 @@ function em_site_overview_render(): void
 
         <?php em_site_overview_notice(); ?>
         <?php em_site_overview_render_styles(); ?>
-
-        <?php em_site_overview_render_create_type(); ?>
+        <?php em_site_overview_render_focus_back($active_type, $active_type !== '' ? $types[$active_type] : []); ?>
+        <?php em_site_overview_render_directory($types, $active_type); ?>
 
         <?php if ($types === []) : ?>
             <p><?php esc_html_e('Aucune rubrique déclarée pour le moment.', 'em-site'); ?></p>
         <?php else : ?>
-            <div class="em-site-cards" id="em-site-cards">
+            <div class="em-site-cards" id="em-site-cards" data-active-slug="<?php echo esc_attr($active_type); ?>">
                 <?php foreach ($types as $slug => $type) : ?>
-                    <?php em_site_overview_render_type((string) $slug, $type, $open_type === (string) $slug); ?>
+                    <?php em_site_overview_render_type((string) $slug, $type, $active_type === (string) $slug); ?>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
@@ -256,12 +375,126 @@ function em_site_overview_render(): void
     <?php em_site_overview_render_delete_type_script(); ?>
     <script>
     (function () {
+        var wrap = document.querySelector('.em-site-overview');
+        if (!wrap) { return; }
+
+        var summaryUrl = <?php echo wp_json_encode(em_site_overview_summary_url()); ?>;
+        var initialFocus = wrap.getAttribute('data-initial-focus') || '';
+        var cards = Array.prototype.slice.call(document.querySelectorAll('.em-site-card'));
+        var focusLinks = Array.prototype.slice.call(document.querySelectorAll('[data-focus-slug]'));
+        var createTypeToggle = wrap.querySelector('[data-overview-create-toggle]');
+        var createTypePanel = document.getElementById('em-site-create-type-panel');
+
+        function setCreateTypePanelOpen(isOpen) {
+            if (!createTypePanel) { return; }
+            createTypePanel.hidden = !isOpen;
+            if (createTypeToggle) {
+                createTypeToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                createTypeToggle.classList.toggle('is-active', !!isOpen);
+            }
+            if (!isOpen) { return; }
+            try {
+                var firstInput = createTypePanel.querySelector('.em-site-create__name:not([disabled])');
+                if (firstInput) { firstInput.focus(); }
+            } catch (err) {}
+        }
+
         function setCreateOpenState(btn, box, isOpen) {
             if (!box) { return; }
             box.hidden = !isOpen;
             if (!btn) { return; }
             btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             btn.classList.toggle('is-active', !!isOpen);
+        }
+
+        function getCardBySlug(slug) {
+            return document.getElementById('em-site-card-' + slug);
+        }
+
+        function closeCardUi(card) {
+            if (!card) { return; }
+            var btn = card.querySelector('.em-site-card__additem');
+            var box = card.querySelector('.em-site-create');
+            setCreateOpenState(btn, box, false);
+            card.classList.remove('em-site-card--item-open');
+        }
+
+        function syncFocusLinks(activeSlug) {
+            focusLinks.forEach(function (link) {
+                var isActive = !!activeSlug && link.getAttribute('data-focus-slug') === activeSlug;
+                link.classList.toggle('is-active', isActive);
+                link.setAttribute('aria-current', isActive ? 'true' : 'false');
+            });
+        }
+
+        function syncFocusTitle(activeSlug) {
+            var title = wrap.querySelector('.em-site-overview__focus-title');
+            if (!title) { return; }
+            if (!activeSlug) {
+                title.textContent = '';
+                return;
+            }
+            var card = getCardBySlug(activeSlug);
+            var name = card ? card.querySelector('.em-site-card__name') : null;
+            title.textContent = name ? name.textContent : activeSlug;
+        }
+
+        function resetItemsForFocus(card) {
+            if (!card) { return; }
+            var items = Array.prototype.slice.call(card.querySelectorAll('.em-site-items > .em-site-item'));
+            if (!items.length) { return; }
+            items.forEach(function (item) {
+                item.open = false;
+            });
+        }
+
+        function setFocusMode(activeSlug, options) {
+            var settings = options || {};
+            var targetCard = activeSlug ? getCardBySlug(activeSlug) : null;
+
+            if (!targetCard) {
+                wrap.classList.remove('is-focus-mode');
+                wrap.removeAttribute('data-focus-slug');
+                cards.forEach(function (card) {
+                    card.hidden = true;
+                    card.open = false;
+                    closeCardUi(card);
+                });
+                syncFocusLinks('');
+                syncFocusTitle('');
+                if (settings.updateHistory && window.history && window.history.replaceState) {
+                    window.history.replaceState({}, document.title, summaryUrl);
+                }
+                return;
+            }
+
+            wrap.classList.add('is-focus-mode');
+            wrap.setAttribute('data-focus-slug', activeSlug);
+            cards.forEach(function (card) {
+                var isTarget = card === targetCard;
+                card.hidden = !isTarget;
+                if (!isTarget) {
+                    card.open = false;
+                    closeCardUi(card);
+                    return;
+                }
+                card.open = true;
+                closeCardUi(card);
+                resetItemsForFocus(card);
+            });
+            syncFocusLinks(activeSlug);
+            syncFocusTitle(activeSlug);
+
+            if (settings.updateHistory && window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, activeSlug ? (summaryUrl + '&type=' + encodeURIComponent(activeSlug)) : summaryUrl);
+            }
+
+            if (settings.scroll !== false) {
+                var focusBar = wrap.querySelector('[data-overview-focusbar]');
+                if (focusBar && focusBar.scrollIntoView) {
+                    focusBar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
         }
 
         function syncCardAddButton(card) {
@@ -274,8 +507,6 @@ function em_site_overview_render(): void
             setCreateOpenState(btn, box, false);
         }
 
-        // Accordéon : une seule rubrique ouverte à la fois (focus sur l'édition).
-        var cards = document.querySelectorAll('.em-site-card');
         cards.forEach(function (card) {
             card.addEventListener('toggle', function () {
                 var ownCreate = card.querySelector('.em-site-create');
@@ -293,6 +524,26 @@ function em_site_overview_render(): void
                 syncCardAddButton(card);
             });
         });
+        focusLinks.forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                var slug = link.getAttribute('data-focus-slug') || '';
+                if (!slug) { return; }
+                event.preventDefault();
+                setFocusMode(slug, { updateHistory: true });
+            });
+        });
+        document.querySelectorAll('[data-overview-back]').forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault();
+                setFocusMode('', { updateHistory: true });
+            });
+        });
+        if (createTypeToggle) {
+            createTypeToggle.addEventListener('click', function (event) {
+                event.preventDefault();
+                setCreateTypePanelOpen(!createTypePanel || createTypePanel.hidden);
+            });
+        }
         document.addEventListener('click', function (e) {
             var btn = e.target.closest('.em-site-card__additem');
             if (!btn) { return; }
@@ -341,12 +592,29 @@ function em_site_overview_render(): void
             setCreateOpenState(btn, box, !box.hidden);
             syncCardAddButton(card);
         });
+        if (createTypePanel) {
+            setCreateTypePanelOpen(!createTypePanel.hidden);
+        }
+        document.addEventListener('keydown', function (event) {
+            if (event.key !== 'Escape' || !wrap.classList.contains('is-focus-mode')) { return; }
+            var target = event.target;
+            if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) {
+                return;
+            }
+            setFocusMode('', { updateHistory: true, scroll: false });
+        });
+
+        if (initialFocus) {
+            setFocusMode(initialFocus, { updateHistory: false, scroll: false });
+        } else {
+            setFocusMode('', { updateHistory: false, scroll: false });
+        }
     })();
     </script>
-    <?php if ($open_type !== '' && isset($types[$open_type])) : ?>
+    <?php if ($active_type !== '') : ?>
         <script>
         (function () {
-            var el = document.getElementById('em-site-card-<?php echo esc_js($open_type); ?>');
+            var el = document.getElementById('em-site-card-<?php echo esc_js($active_type); ?>');
             if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
         })();
         </script>
@@ -418,7 +686,7 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
         . (!$is_reorderable ? ' em-site-card--not-reorderable' : '')
         . ($is_header_linked ? ' em-site-card--header-linked' : '');
     ?>
-    <details class="<?php echo esc_attr($card_classes); ?>" id="em-site-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" data-reorderable="<?php echo $is_reorderable ? '1' : '0'; ?>" data-header-linked="<?php echo $is_header_linked ? '1' : '0'; ?>" <?php echo $open ? 'open' : ''; ?>>
+    <details class="<?php echo esc_attr($card_classes); ?>" id="em-site-card-<?php echo esc_attr($slug); ?>" data-slug="<?php echo esc_attr($slug); ?>" data-item-count="<?php echo esc_attr((string) $count); ?>" data-reorderable="<?php echo $is_reorderable ? '1' : '0'; ?>" data-header-linked="<?php echo $is_header_linked ? '1' : '0'; ?>" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-site-collapse__summary em-site-card__head">
             <span class="em-site-card__drag dashicons dashicons-menu" title="<?php echo esc_attr($is_reorderable ? __('Glisser pour réordonner', 'em-site') : __('Ordre verrouillé', 'em-site')); ?>" aria-hidden="true"></span>
             <span class="em-site-collapse__chevron" aria-hidden="true"></span>
@@ -434,7 +702,7 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
             <button type="button" class="em-site-card__cancel" title="<?php esc_attr_e('Annuler', 'em-site'); ?>" aria-label="<?php esc_attr_e('Annuler', 'em-site'); ?>" hidden>
                 <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
             </button>
-            <span class="em-site-card__count" title="<?php echo esc_attr(sprintf(_n('%d section', '%d sections', $count, 'em-site'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
+            <span class="em-site-card__count" title="<?php echo esc_attr(sprintf(_n('%d item', '%d items', $count, 'em-site'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
             <?php if ($can_add_items) { ?>
                 <button type="button" class="em-site-card__additem" data-create-target="em-site-create-<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($add_label); ?>" aria-label="<?php echo esc_attr($add_label); ?>" aria-expanded="false">
                     <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
@@ -516,11 +784,7 @@ function em_site_overview_render_create_type(): void
         'dashicons-list-view', 'dashicons-admin-links',
     ];
     ?>
-    <details class="em-site-collapse em-site-create em-site-create--nochevron em-site-createtype">
-        <summary class="em-site-collapse__summary">
-            <span class="dashicons dashicons-plus-alt2"></span>
-            <strong><?php esc_html_e('Nouvelle Rubrique', 'em-site'); ?></strong>
-        </summary>
+    <div class="em-site-collapse em-site-create em-site-create--nochevron em-site-createtype" id="em-site-create-type-panel" hidden>
         <div class="em-site-collapse__body em-site-create__options">
             <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" class="em-site-form em-site-create__row">
                 <?php wp_nonce_field('em_site_create_type'); ?>
@@ -538,7 +802,7 @@ function em_site_overview_render_create_type(): void
                 <button type="submit" class="button button-primary"><span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e('Créer la rubrique', 'em-site'); ?></button>
             </form>
         </div>
-    </details>
+    </div>
     <?php
 }
 

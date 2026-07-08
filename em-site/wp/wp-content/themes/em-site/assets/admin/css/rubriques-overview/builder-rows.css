@@ -1,0 +1,100 @@
+/* Apparence (couleurs globales) */
+    .em-site-appearance { display:flex; flex-direction:column; gap:10px; margin:0 0 14px; padding:10px 12px; background:#fff; border:1px solid #dcdcde; border-radius:6px; }
+    .em-site-builder__section > .em-site-collapse__summary strong { font-size:13px; text-transform:uppercase; letter-spacing:.04em; }
+    .em-site-collapse__body .em-site-appearance { border:0; background:transparent; padding:0; margin:0 0 10px; border-radius:0; }
+
+    /* Bloc interne ouvert (Apparence / Contenu / Ligne N) : encadrement net pour
+       repÃ©rer la partie de l'item en cours d'Ã©dition. On reprend la teinte de
+       l'item (--em-site-item-bg) pour rester cohÃ©rent ; le corps reste blanc afin
+       de ressortir sur le fond teintÃ© de l'item ouvert. Bloc fermÃ© = neutre. */
+    .em-site-builder__section, .em-site-row { transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
+    .em-site-builder__section[open], .em-site-row[open] {
+        border-color:color-mix(in srgb, var(--em-site-item-bg, #2271b1) 60%, #c3c4c7);
+        box-shadow:0 0 0 1px color-mix(in srgb, var(--em-site-item-bg, #2271b1) 32%, transparent),
+                   0 6px 16px -10px color-mix(in srgb, var(--em-site-item-bg, #2271b1) 45%, transparent);
+    }
+    .em-site-builder__section[open] > .em-site-collapse__summary,
+    .em-site-row[open] > .em-site-row__summary {
+        background:color-mix(in srgb, var(--em-site-item-bg, #2271b1) 10%, #fff);
+        border-radius:6px 6px 0 0;
+    }
+    .em-site-appearance__line { display:flex; flex-wrap:wrap; gap:18px; align-items:center; }
+    .em-site-appearance__title { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; min-width:90px; }
+    .em-site-appearance__item { display:flex; align-items:center; gap:10px; }
+    .em-site-appearance__label { font-size:13px; color:#374151; }
+    .em-site-appearance__toggle, .em-site-appearance__num, .em-site-appearance__font { display:flex; align-items:center; gap:6px; }
+    .em-site-appearance__num-input { width:72px; }
+    /* Pastilles de couleur carrÃ©es (au lieu de rondes) dans l'Apparence */
+    .em-site-appearance .em-site-admin-color-trigger__swatch { border-radius:4px; }
+    /* Espacements liables (haut/bas, gauche/droite) */
+    .em-site-appearance__group { display:inline-flex; align-items:center; gap:8px; }
+    .em-site-appearance__chain { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; padding:0; border:1px solid #dcdcde; border-radius:5px; background:#fff; color:#6b7280; cursor:pointer; }
+    .em-site-appearance__chain:hover { border-color:#2271b1; color:#2271b1; }
+    .em-site-appearance__chain[aria-pressed="true"] { border-color:#2271b1; background:#2271b1; color:#fff; }
+    .em-site-appearance__chain .dashicons { font-size:16px; width:16px; height:16px; }
+    .em-site-appearance__font-input { max-width:220px; }
+    .em-site-appearance__bgpos-input { max-width:220px; }
+    /* Image de fond (sÃ©lecteur mÃ©dia) */
+    .em-site-appearance__bgmedia { display:inline-flex; align-items:center; gap:8px; }
+    .em-site-appearance__bgthumb { width:46px; height:32px; object-fit:cover; border-radius:4px; border:1px solid #dcdcde; background:#f0f0f1; }
+    .em-site-appearance__bgclear { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; padding:0; border:0; background:transparent; color:#b32d2e; font-size:18px; line-height:1; cursor:pointer; border-radius:4px; }
+    .em-site-appearance__bgclear:hover { background:#fbeaea; }
+    .em-site-appearance__bgopacity-input { width:90px; }
+    .em-site-appearance__bgopacity-out { font-size:12px; color:#6b7280; min-width:34px; }
+
+    /* En-tÃªte de ligne : colonnes + alignement par colonne */
+    /* Colonnes + alignement : visibles uniquement quand la ligne est ouverte, Ã  cÃ´tÃ© du libellÃ©. */
+   .em-site-row__layout { display:flex; flex-wrap:nowrap; align-items:center; gap:8px; margin-left:14px; }
+   .em-site-row:not([open]) > .em-site-row__summary .em-site-row__layout { display:none; }
+   .em-site-rowcols-label { display:inline-flex; flex-direction:row; align-items:center; gap:6px; font-size:11px; color:#6b7280; }
+    .em-site-rowcols { height:28px; min-height:28px; line-height:1; padding:0 18px 0 4px; margin:0; font-size:12px; vertical-align:middle; border:0; box-shadow:none; background-color:transparent; }
+    .em-site-rowcols:focus { border:0; box-shadow:none; outline:none; }
+    .em-site-align { display:flex; flex-direction:row; align-items:center; }
+    .em-site-align__label { display:none; }
+    .em-site-align__group { display:inline-flex; border:1px solid #c3c4c7; border-radius:5px; overflow:hidden; background:#fff; }
+    /* RepliÃ© : on n'affiche que l'alignement choisi ; ouvert : les 4 options. */
+    .em-site-align__group:not(.is-open) .em-site-align__btn:not(.is-active) { display:none; }
+    .em-site-align__group:not(.is-open) .em-site-align__btn.is-active { border-left:0; }
+    .em-site-align__btn { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; padding:0; border:0; border-left:1px solid #e2e4e7; background:#fff; color:#50575e; cursor:pointer; }
+    .em-site-align__btn:first-of-type { border-left:0; }
+    .em-site-align__btn:hover { background:#f0f0f1; color:#1d2327; }
+    .em-site-align__btn.is-active { background:#2271b1; color:#fff; }
+    /* Onglet repliÃ© : l'icÃ´ne d'alignement affichÃ©e est en noir (pas en bleu). */
+    .em-site-align__group:not(.is-open) .em-site-align__btn.is-active { background:#fff; color:#1d2327; }
+    .em-site-align__btn .dashicons { font-size:18px; width:18px; height:18px; }
+
+    /* Mini-carte de la grille (Ã  cÃ´tÃ© de Â« Contenu Â») â€” large & plate (â‰ˆ section front) */
+    .em-site-gridmap { display:inline-flex; flex-direction:column; gap:3px; margin-left:12px; padding:4px; width:142px; box-sizing:border-box; border:1px solid #c3c4c7; border-radius:5px; background:#f6f7f8; vertical-align:middle; }
+    .em-site-gridmap:empty { display:none; }
+    .em-site-gridmap__row { display:flex; gap:3px; }
+    .em-site-gridmap__cell { flex:1 1 0; min-width:0; height:9px; border-radius:2px; background:#aab2bd; cursor:pointer; transition:background .12s ease; }
+    .em-site-gridmap__cell:hover { background:#7b8593; }
+    .em-site-gridmap__cell.is-active { background:#155a9c; }
+    /* Å’il Â« toute la section Â» Ã  droite de la carte */
+    .em-site-gridmap__eye { margin-left:8px; padding:0 2px; border:0; background:transparent; color:#2271b1; cursor:pointer; display:inline-flex; align-items:center; vertical-align:middle; }
+    .em-site-gridmap__eye:hover { color:#135e96; }
+    .em-site-gridmap__eye[aria-pressed="true"] { color:#135e96; }
+    .em-site-gridmap__eye .dashicons { font-size:18px; width:18px; height:18px; }
+
+    /* Bulle d'aperÃ§u d'une cellule de la carte (survol) */
+    .em-site-gridmap__pop { position:absolute; z-index:100000; display:none; max-width:380px; min-width:180px; padding:8px; background:#fff; border:1px solid #c3c4c7; border-radius:8px; box-shadow:0 8px 28px rgba(16,24,40,.20); pointer-events:none; }
+   .em-site-gridmap__pop-title { margin:0 0 6px; padding:0 2px; font-size:11px; line-height:1.25; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .em-site-gridmap__pop .em-rubrique--preview { padding:0; font-size:12px; }
+
+    /* Vignette d'aperÃ§u RÃ‰DUIT, INTÃ‰GRÃ‰E Ã  la ligne Â« Contenu Â» (Ã  droite de l'Å“il), temps rÃ©el */
+    .em-site-miniprev { display:inline-block; margin-left:8px; vertical-align:middle; background:#fff; border:1px solid #c3c4c7; border-radius:6px; box-shadow:0 1px 4px rgba(16,24,40,.12); overflow:hidden; }
+    .em-site-miniprev[hidden] { display:none; }
+   .em-site-miniprev { cursor:default; }
+    /* AperÃ§u de la PARTIE en Ã©dition (colonne de la ligne ouverte), Ã  droite du
+       total : mÃªme gabarit, bordure pointillÃ©e pour signaler le focus colonne. */
+    .em-site-partprev { border-style:dashed; border-color:#b9c0c9; }
+    /* Loupe : popover flottant agrandissant l'aperÃ§u survolÃ© (total ou partie). */
+    .em-site-miniprev__zoom { position:absolute; z-index:100001; display:none; overflow:hidden; background:#fff; border:1px solid #c3c4c7; border-radius:8px; box-shadow:0 12px 34px rgba(16,24,40,.26); pointer-events:none; }
+    .em-site-miniprev__stage { overflow:hidden; width:100%; height:100%; }
+    .em-site-miniprev__stage .em-site-livepreview { border:0; margin:0; }
+    .em-site-gridmap__pop-empty { font-size:12px; color:#6b7280; padding:4px 6px; font-style:italic; }
+    .em-rubrique .em-site-gridmap__pop-empty { color:inherit; opacity:.7; text-align:center; }
+
+    /* Item Â« MasquÃ© Â» signalÃ© dans l'aperÃ§u (au lieu d'Ãªtre omis) */
+    .em-rubrique__masked { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; margin:2px; border:1px dashed currentColor; border-radius:999px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; opacity:.55; }
+    .em-rubrique__masked .dashicons { font-size:14px; width:14px; height:14px; }

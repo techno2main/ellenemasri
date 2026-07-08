@@ -38,7 +38,10 @@ function em_site_render_items_section(string $type_slug): void
             <p class="description"><?php echo esc_html(sprintf(__('%1$s %2$s pour le moment. Crée ta première Section ci-dessous.', 'em-site'), $n['none'], $n['singular'])); ?></p>
         <?php else : ?>
             <?php foreach ($items as $slug => $label) : ?>
-                <?php em_site_render_footer_item($type_slug, (string) $slug, (string) $label, $open_item === $slug); ?>
+                <?php
+                $should_open = ($open_item !== '' && $open_item === (string) $slug);
+                em_site_render_footer_item($type_slug, (string) $slug, (string) $label, $should_open);
+                ?>
             <?php endforeach; ?>
         <?php endif; ?>
 

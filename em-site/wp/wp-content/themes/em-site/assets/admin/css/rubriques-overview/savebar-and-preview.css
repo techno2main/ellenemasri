@@ -1,0 +1,188 @@
+.em-site-chip__btncolor { display:inline-flex; align-items:center; gap:5px; flex:0 0 auto; padding:3px 6px; background:#f8fafc; border:1px solid #eef0f3; border-radius:6px; }
+    .em-site-chip__btncolor-label { font-size:11px; font-weight:700; color:#94a3b8; line-height:1; }
+    .em-site-chip__btncolor .em-site-admin-color-field-row { margin:0; }
+    .em-site-chip__btnmargin, .em-site-chip__badgeopt { display:inline-flex; align-items:center; gap:5px; flex:0 0 auto; padding:3px 6px; background:#f8fafc; border:1px solid #eef0f3; border-radius:6px; }
+    .em-site-chip__btnmargin > span, .em-site-chip__badgeopt > span { font-size:11px; font-weight:700; color:#94a3b8; line-height:1; }
+    .em-site-chip__btnmargin input[type="number"], .em-site-chip__badgeopt input[type="number"] { width:56px; font-size:12px; }
+    .em-site-chip__badgeopt select { font-size:12px; max-width:140px; }
+    .em-site-chip__badgeopt input[type="number"] { width:48px; }
+
+    .em-site-chip__actions { display:flex; align-items:center; gap:2px; flex:0 0 auto; margin-top:0; }
+    .em-site-chip__remove { border:0; background:transparent; color:#b32d2e; font-size:18px; line-height:1; cursor:pointer; padding:0 4px; border-radius:4px; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; height:24px; }
+    .em-site-chip__remove:hover { background:#fbeaea; }
+    .em-site-chip__toggle { border:0; background:transparent; color:#6b7280; cursor:pointer; padding:0 4px; border-radius:4px; flex:0 0 auto; display:inline-flex; align-items:center; justify-content:center; height:24px; }
+    .em-site-chip__toggle:hover { color:#1d2327; background:#eef2f7; }
+    .em-site-chip__toggle .dashicons { font-size:18px; width:18px; height:18px; }
+    .em-site-chip.is-hidden { opacity:.55; background:#f1f1f3; }
+    .em-site-chip.is-hidden .em-site-chip__type::after { content:" (masquÃ©)"; color:#b32d2e; font-weight:600; }
+    .em-site-chip.is-hidden .em-site-chip__toggle { color:#b32d2e; }
+
+    /* Bloc Plateforme / RÃ©seau : tous les champs compacts sur UNE ligne (titre,
+       rÃ©seau, lien, pseudo) â€” mÃªmes bases flex que les autres champs, l'espace
+       restant pousse l'Å“il/la croix Ã  droite. */
+    .em-site-chip__fields .em-site-chip__platform { flex:0 1 150px; min-width:90px; max-width:100%; width:auto; }
+    .em-site-chip__fields .em-site-chip__ptitle { flex:0 1 130px; min-width:70px; width:auto; }
+    .em-site-chip__fields .em-site-chip__paccount { flex:0 1 150px; min-width:70px; width:auto; }
+    .em-site-chip__fields .em-site-chip__url { flex:0 1 160px; min-width:70px; width:auto; }
+
+    .em-site-chip__tt-part { display:inline-flex; align-items:center; gap:6px; flex-wrap:nowrap; flex:1 1 240px; min-width:0; }
+    .em-site-chip__check { display:inline-flex; align-items:center; gap:4px; font-size:12px; color:#50575e; white-space:nowrap; }
+    .em-site-chip__vthumb { flex:0 0 auto; }
+    .em-site-chip__ti-image { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+
+    /* Ajout d'un champ dans une cellule */
+    .em-site-celladd { padding:0; }
+    .em-site-celladd__btn { width:100%; border:1px dashed #cbd5e1; background:#fff; color:#2271b1; border-radius:5px; padding:5px; cursor:pointer; font-size:12px; display:flex; align-items:center; justify-content:center; gap:4px; }
+    .em-site-celladd__btn:hover { background:#f0f6fc; }
+    .em-site-celladd__form[hidden] { display:none; }
+   .em-site-celladd__form:not([hidden]) { display:flex; gap:6px; align-items:center; flex-wrap:nowrap; margin-top:6px; padding:6px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; position:relative; overflow:visible; }
+   .em-site-celladd__picker { position:relative; flex:0 0 260px; width:260px; max-width:260px; min-width:0; }
+   .em-site-celladd__pickbtn { width:100%; min-height:32px; border:1px solid #c3c4c7; border-radius:6px; background:#fff; display:flex; align-items:center; gap:8px; padding:0 8px; color:#111827; cursor:pointer; }
+   .em-site-celladd__pickbtn:hover { border-color:#8fa7c0; background:#fdfefe; }
+   .em-site-celladd__pickicon { color:#0f172a; }
+   .em-site-celladd__picklabel { flex:1 1 auto; min-width:0; text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:12px; }
+   .em-site-celladd__pickarrow { color:#64748b; }
+   .em-site-celladd__menu { position:absolute; top:calc(100% + 6px); left:0; width:min(360px, 60vw); max-height:300px; overflow:auto; background:#fff; border:1px solid #cbd5e1; border-radius:8px; box-shadow:0 10px 28px rgba(2,6,23,.16); z-index:35; padding:6px; }
+   .em-site-celladd__group + .em-site-celladd__group { margin-top:6px; padding-top:6px; border-top:1px solid #eef2f7; }
+   .em-site-celladd__gtitle { font-size:11px; font-weight:700; color:#475569; text-transform:uppercase; letter-spacing:.03em; margin:0 2px 4px; }
+   .em-site-celladd__glist { display:flex; flex-direction:column; gap:2px; }
+   .em-site-celladd__opt { border:0; background:#fff; border-radius:6px; min-height:28px; padding:4px 6px; display:flex; align-items:center; gap:7px; text-align:left; cursor:pointer; color:#0f172a; }
+   .em-site-celladd__opt:hover { background:#eef6ff; }
+   .em-site-celladd__opticon { color:#334155; }
+   .em-site-celladd__optlabel { font-size:12px; line-height:1.25; }
+   .em-site-celladd__type[hidden] { display:none !important; }
+   .em-site-celladd__confirm { min-width:44px; }
+    .em-site-celladd__cancel { border:0; background:transparent; color:#6b7280; font-size:16px; cursor:pointer; }
+
+    .em-site-builder__actions { display:flex; gap:8px; align-items:center; margin-top:12px; }
+
+   .em-site-release-tools { display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; }
+   .em-site-release-tools__hint { font-size:11px; color:#6b7280; }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 8px;
+      border-radius:8px;
+   }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro { background:#fffef6; border-color:#eadfb0; }
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title { background:#f5f7ff; border-color:#d8def4; }
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit { background:#f8fafc; border-color:#d7e0ea; }
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit-sep { background:#fbfdff; border-color:#e2e8f0; }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro .em-site-chip__type,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title .em-site-chip__type,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__type {
+      min-width:110px;
+      max-width:110px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+   }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro .em-site-chip__fields,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title .em-site-chip__fields,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__fields {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:1 1 auto;
+      min-width:0;
+      overflow-x:auto;
+      padding-bottom:2px;
+   }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title .em-site-chip__tt-part,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__tt-part {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex:0 0 auto;
+   }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title .em-site-chip__titext,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__titext {
+      width:180px;
+   }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title .em-site-chip__titext2,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__titext2 {
+      width:220px;
+   }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro .em-site-chip__actions,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-title .em-site-chip__actions,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__actions {
+      margin-left:auto;
+      flex:0 0 auto;
+   }
+
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro .em-site-chip__tlink,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__tlink,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__tlink2,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro .em-site-chip__tsize,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro .em-site-chip__tfont,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-intro .em-site-chip__talign,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__tsize,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__tfont,
+   .em-site-builder[data-item-type="release"] .em-site-chip--release-credit .em-site-chip__talign {
+      display:none !important;
+   }
+
+    .em-site-sticky { position:sticky; top:32px; z-index:20; margin:0 0 14px; }
+    .em-site-savebar { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin:0; padding:8px 0; background:transparent; border:0; box-shadow:none; }
+    .em-site-savebar[hidden] { display:none; }
+    /* Boutons de la savebar : mÃªmes styles que le modal de confirmation (bordeaux, pas de bleu) */
+    .em-site-savebar__btn.button-primary { border-color:#4e080e !important; background:linear-gradient(180deg,#751820 0%,#4e080e 100%) !important; color:#fff !important; text-shadow:none !important; box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 2px 8px rgba(78,8,14,.28) !important; }
+    .em-site-savebar__btn.button-primary:hover, .em-site-savebar__btn.button-primary:focus { border-color:#3d060b !important; background:linear-gradient(180deg,#651620 0%,#3d060b 100%) !important; color:#fff !important; box-shadow:0 1px 0 rgba(255,255,255,.14) inset, 0 4px 12px rgba(78,8,14,.34) !important; }
+   /* Exception: bouton "+ Nouvelle Rubrique" neutre au chargement, accent seulement en interaction/ouverture. */
+   .em-site-savebar__btn.em-site-rubriques-admin__add-rubrique-toggle.button-primary,
+   .em-site-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary {
+      border-color:transparent !important;
+      background:transparent !important;
+      color:#1d2327 !important;
+      box-shadow:none !important;
+   }
+   .em-site-savebar__btn.em-site-rubriques-admin__add-rubrique-toggle.button-primary:hover,
+   .em-site-savebar__btn.em-site-rubriques-admin__add-rubrique-toggle.button-primary:focus,
+   .em-site-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary:hover,
+   .em-site-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary:focus {
+      border-color:#751820 !important;
+      background:#fff !important;
+      color:#751820 !important;
+      box-shadow:none !important;
+   }
+   .em-site-savebar__btn.em-site-rubriques-admin__add-rubrique-toggle.button-primary[aria-expanded="true"],
+   .em-site-savebar__btn.em-rubriques-admin__add-rubrique-toggle.button-primary[aria-expanded="true"] {
+      border-color:#751820 !important;
+      background:#751820 !important;
+      color:#fff !important;
+      box-shadow:none !important;
+   }
+    .em-site-savebar__revert { display:inline-flex; align-items:center; height:30px; padding:0 12px; border:1px solid #c3c4c7; border-radius:3px; background:#fff; color:#50575e; font-size:13px; font-weight:500; line-height:1; cursor:pointer; box-shadow:0 1px 0 rgba(255,255,255,.9) inset; }
+    .em-site-savebar__revert:hover, .em-site-savebar__revert:focus { border-color:#751820; color:#751820; background:#fafafa; }
+    /* ContrÃ´les d'aperÃ§u sur la ligne du nom de la rubrique (Å“il + nouvel onglet) */
+    .em-site-item__preview { display:inline-flex; align-items:center; gap:2px; margin-left:8px; }
+    .em-site-preview__toggle, .em-site-preview__popout { border:0; background:transparent; color:#2271b1; cursor:pointer; padding:3px 5px; border-radius:4px; display:inline-flex; align-items:center; }
+    .em-site-preview__toggle:hover, .em-site-preview__popout:hover { background:#eef2f7; }
+    .em-site-preview__toggle[aria-pressed="true"] { color:#1d2327; background:#eef2f7; }
+    .em-site-preview__toggle .dashicons { font-size:18px; width:18px; height:18px; }
+    .em-site-preview__popout .dashicons { font-size:16px; width:16px; height:16px; }
+    .em-site-preview__frame, .em-site-livepreview { border:1px dashed #cbd5e1; border-radius:6px; overflow:hidden; }
+    .em-site-livepreview { margin-top:8px; }
+    .em-site-livepreview[hidden] { display:none; }
+    .em-site-livepreview:empty::before { content:"â€¦"; display:block; padding:18px; color:#9ca3af; text-align:center; }
+
+    /* NOTE : le rendu .em-rubriqueâ€¦ (base, grille, champs, mÃ©dias, composants)
+       n'est plus dupliquÃ© ici. Il est inlinÃ© en fin de fichier depuis la
+      source admin locale rubriques-preview/ via em_site_admin_rubriques_preview_css(). */
+    /* HEADER composite (.em-header-shellâ€¦) : mÃªme source admin locale. */
+    .em-site-chip--decor { align-items:center; }
+    .em-site-chip--decor .em-site-chip__type { font-weight:600; color:#1d2327; text-transform:none; }
+
+   /* === RENDU RUBRIQUES ADMIN (source unique : assets/admin/css/rubriques-preview/*) === */
+<?php echo function_exists('em_site_admin_rubriques_preview_css') ? em_site_admin_rubriques_preview_css() : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

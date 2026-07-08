@@ -3,7 +3,7 @@
 ## Horodatage temps rÃ©el (Paris)
 1. Fuseau de rÃ©fÃ©rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. DerniÃ¨re mise Ã  jour : 2026-07-07 23:11:23.
+3. DerniÃ¨re mise Ã  jour : 2026-07-08 13:16:02.
 
 ## RÃ¨gles de suivi
 1. Une Ã©tape = un objectif concret vÃ©rifiable.
@@ -63,3 +63,12 @@
 - Correctif JS de protection sur la page Rubriques: désactivation du moteur global module-form-dirty dans ce contexte pour éviter toute soumission parasite.
 - Correctif serveur de garde-fou sur admin-post.php sans action: redirection propre vers l'admin avec flag d'erreur, au lieu d'une page blanche.
 - Correction de cause racine potentielle Quirks Mode: suppression du BOM UTF-8 sur 3 fichiers PHP chargés côté admin/front (`inc/rubriques/admin/pages/overview-styles.php`, `inc/rubriques/admin/builder/builder-preview-script.php`, `inc/front/modules/slider/render.php`).
+
+### 2026-07-08 13:16:02 (Paris)
+
+- Reprise du chantier Rubriques BO sur `em-site` après régression d'interface dans l'overview admin.
+- Réorganisation du rendu overview par sous-fichiers logiques (page + parts) et migration des styles overview vers `assets/admin/css/rubriques-overview/`.
+- Correction du blocage de chargement CSS dans l'enqueue admin (suppression du retour prématuré qui empêchait l'injection des styles overview).
+- Réintroduction du wrapper `overview-fields.php` pour restaurer la compatibilité runtime attendue par `overview.php` et éviter un fatal lors du chargement de la page Rubriques.
+- Restauration ciblée des versions locales antérieures sur les fichiers sensibles (`focus-directory.php`, `notice-and-type-card.php`, `storage.php`) pour revenir à l'état de travail validé visuellement avant les patchs incrémentaux.
+- Validation technique exécutée sur les fichiers PHP critiques du lot via `php -l` : aucune erreur de syntaxe détectée.
