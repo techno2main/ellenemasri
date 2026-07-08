@@ -139,7 +139,7 @@ if (!defined('ABSPATH')) {
 
    .em-site-overview__directory-link {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 28px;
+      grid-template-columns: minmax(0, 1fr) 50px;
       align-items: start;
       column-gap: 12px;
       min-height: 92px;
@@ -302,7 +302,7 @@ if (!defined('ABSPATH')) {
       flex-direction: column;
       align-items: flex-end;
       gap: 9px;
-      width: 28px;
+      width: 45px;
       min-height: 22px;
    }
 
@@ -317,7 +317,7 @@ if (!defined('ABSPATH')) {
    }
 
    .em-site-overview__directory-map-slot {
-      width: 16px;
+      width: 50px;
       height: 5px;
       border-radius: 1px;
       background: rgba(79, 8, 14, .24);
