@@ -234,9 +234,10 @@ function em_site_overview_render_focus_back(string $active_slug, array $type): v
     $label = (string) ($type['label_plural'] ?? $type['label'] ?? $active_slug);
     ?>
     <div class="em-site-overview__focus-bar" data-overview-focusbar>
-        <a href="<?php echo esc_url(em_site_overview_summary_url()); ?>" class="em-site-overview__focus-back" data-overview-back>
+        <a href="<?php echo esc_url(em_site_overview_summary_url()); ?>" class="em-site-overview__focus-back" data-overview-back title="<?php esc_attr_e('Retour au sommaire', 'em-site'); ?>" aria-label="<?php esc_attr_e('Retour au sommaire', 'em-site'); ?>">
             <span class="dashicons dashicons-arrow-left-alt2" aria-hidden="true"></span>
-            <span><?php esc_html_e('Retour au sommaire', 'em-site'); ?></span>
+            <span class="dashicons dashicons-screenoptions" aria-hidden="true"></span>
+            <span class="screen-reader-text"><?php esc_html_e('Retour au sommaire', 'em-site'); ?></span>
         </a>
         <div class="em-site-overview__focus-titlewrap">
             <span class="em-site-overview__focus-kicker"><?php esc_html_e('Édition ciblée', 'em-site'); ?></span>
