@@ -237,14 +237,16 @@ function em_site_overview_render_focus_back(string $active_slug, array $type): v
         <a href="<?php echo esc_url(em_site_overview_summary_url()); ?>" class="em-site-overview__focus-back" data-overview-back title="<?php esc_attr_e('Retour au sommaire', 'em-site'); ?>" aria-label="<?php esc_attr_e('Retour au sommaire', 'em-site'); ?>">
             <span class="dashicons dashicons-arrow-left-alt2" aria-hidden="true"></span>
             <span class="dashicons dashicons-screenoptions" aria-hidden="true"></span>
-            <span aria-hidden="true"><?php esc_html_e('RETOUR', 'em-site'); ?></span>
+            <span aria-hidden="true"><?php esc_html_e('RUBRIQUES', 'em-site'); ?></span>
             <span class="screen-reader-text"><?php esc_html_e('Retour au sommaire', 'em-site'); ?></span>
         </a>
         <div class="em-site-overview__focus-titlewrap">
             <span class="em-site-overview__focus-kicker"><?php esc_html_e('ÉDITION CIBLÉE DE LA RUBRIQUE', 'em-site'); ?></span>
             <strong class="em-site-overview__focus-title">
-                <span class="em-site-overview__focus-titleicon dashicons dashicons-screenoptions" aria-hidden="true"></span>
-                <span class="em-site-overview__focus-titlename"><?php echo esc_html($label); ?></span>
+                <button type="button" class="em-site-overview__focus-titlehome" data-overview-resetitems title="<?php esc_attr_e('Afficher la liste des items fermés', 'em-site'); ?>" aria-label="<?php esc_attr_e('Afficher la liste des items fermés', 'em-site'); ?>">
+                    <span class="em-site-overview__focus-titleicon dashicons dashicons-screenoptions" aria-hidden="true"></span>
+                    <span class="em-site-overview__focus-titlename"><?php echo esc_html($label); ?></span>
+                </button>
                 <input type="text" class="em-site-overview__focus-nameinput" value="<?php echo esc_attr($label); ?>" hidden>
                 <button type="button" class="em-site-overview__focus-confirm" title="<?php esc_attr_e('Valider', 'em-site'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-site'); ?>" hidden>
                     <span class="dashicons dashicons-yes" aria-hidden="true"></span>
@@ -256,7 +258,7 @@ function em_site_overview_render_focus_back(string $active_slug, array $type): v
                     <span class="dashicons dashicons-edit" aria-hidden="true"></span>
                     <span class="screen-reader-text"><?php esc_html_e('Renommer la rubrique', 'em-site'); ?></span>
                 </button>
-                <span class="em-site-overview__focus-titlecount em-site-card__count" aria-hidden="true"></span>
+                <span class="em-site-overview__focus-itemtabs" data-overview-itemtabs hidden></span>
             </strong>
         </div>
     </div>
@@ -446,9 +448,11 @@ function em_site_overview_render(): void
 
         function syncFocusTitle(activeSlug) {
             var titleWrap = wrap.querySelector('.em-site-overview__focus-title');
+            var titleHome = wrap.querySelector('[data-overview-resetitems]');
             var titleName = wrap.querySelector('.em-site-overview__focus-titlename');
             var titleIcon = wrap.querySelector('.em-site-overview__focus-titleicon');
             var titleCount = wrap.querySelector('.em-site-overview__focus-titlecount');
+            var itemTabs = wrap.querySelector('[data-overview-itemtabs]');
             var titleInput = wrap.querySelector('.em-site-overview__focus-nameinput');
             var titleEdit = wrap.querySelector('.em-site-overview__focus-titleedit');
             var titleConfirm = wrap.querySelector('.em-site-overview__focus-confirm');
@@ -459,6 +463,7 @@ function em_site_overview_render(): void
             if (titleConfirm) { titleConfirm.hidden = true; }
             if (titleCancel) { titleCancel.hidden = true; }
             if (titleEdit) { titleEdit.hidden = false; }
+            if (titleHome) { titleHome.hidden = false; }
             titleName.hidden = false;
 
             if (!activeSlug) {
@@ -469,6 +474,11 @@ function em_site_overview_render(): void
                     titleInput.setAttribute('data-slug', '');
                 }
                 if (titleCount) { titleCount.textContent = ''; }
+                if (itemTabs) {
+                    itemTabs.hidden = true;
+                    itemTabs.innerHTML = '';
+                }
+                if (titleHome) { titleHome.hidden = true; }
                 return;
             }
             var card = getCardBySlug(activeSlug);
@@ -495,6 +505,85 @@ function em_site_overview_render(): void
             if (titleCount) {
                 titleCount.textContent = count ? count.textContent : '';
             }
+
+            if (!itemTabs || !card) { return; }
+
+            var itemNodes = Array.prototype.slice.call(card.querySelectorAll('.em-site-items > .em-site-item'));
+            var headerRadios = Array.prototype.slice.call(card.querySelectorAll('.em-site-header-picker__items[data-part] input[type="radio"]'));
+
+            function normalizeKey(value) {
+                var raw = (value || '').toString().trim().toLowerCase();
+                if (!raw) { return ''; }
+                if (raw.normalize) {
+                    raw = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                }
+                return raw.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+            }
+
+            var tabs = itemNodes.map(function (item) {
+                var summaryItem = item.querySelector('.em-site-collapse__summary');
+                var titleItem = item.querySelector('.em-site-item__title');
+                var glyph = summaryItem ? summaryItem.querySelector('span.dashicons') : null;
+                var glyphClass = glyph ? Array.prototype.find.call(glyph.classList, function (klass) {
+                    return klass.indexOf('dashicons-') === 0;
+                }) : '';
+                var label = titleItem ? titleItem.textContent.replace(/\s+/g, ' ').trim() : '';
+                var key = normalizeKey(label);
+
+                return {
+                    node: item,
+                    label: label,
+                    icon: glyphClass || 'dashicons-align-center',
+                    key: key,
+                    active: !!item.open
+                };
+            });
+
+            itemTabs.innerHTML = '';
+            tabs.forEach(function (tab) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'em-site-overview__focus-tab' + (tab.active ? ' is-active' : '');
+                btn.setAttribute('aria-pressed', tab.active ? 'true' : 'false');
+                var iconEl = document.createElement('span');
+                iconEl.className = 'em-site-overview__focus-tabicon dashicons ' + tab.icon;
+                iconEl.setAttribute('aria-hidden', 'true');
+                btn.appendChild(iconEl);
+                var textEl = document.createElement('span');
+                textEl.className = 'em-site-overview__focus-tablabel';
+                textEl.textContent = tab.label;
+                btn.appendChild(textEl);
+                if (tab.active) {
+                    var activeEye = document.createElement('span');
+                    activeEye.className = 'em-site-overview__focus-tabactiveicon dashicons dashicons-yes-alt';
+                    activeEye.setAttribute('aria-hidden', 'true');
+                    btn.appendChild(activeEye);
+                }
+                btn.addEventListener('click', function () {
+                    itemNodes.forEach(function (other) {
+                        if (other !== tab.node && other.open) {
+                            other.open = false;
+                        }
+                    });
+                    tab.node.open = true;
+
+                    if (headerRadios.length && tab.key) {
+                        headerRadios.forEach(function (radio) {
+                            if (normalizeKey(radio.value || '') !== tab.key || radio.checked) {
+                                return;
+                            }
+                            radio.checked = true;
+                            radio.dispatchEvent(new Event('input', { bubbles: true }));
+                            radio.dispatchEvent(new Event('change', { bubbles: true }));
+                        });
+                    }
+
+                    syncFocusTitle(activeSlug);
+                });
+                itemTabs.appendChild(btn);
+            });
+
+            itemTabs.hidden = tabs.length === 0;
         }
 
         function resetItemsForFocus(card) {
@@ -580,6 +669,10 @@ function em_site_overview_render(): void
                     }
                 });
                 syncCardAddButton(card);
+                var focusedSlug = wrap.getAttribute('data-focus-slug') || '';
+                if (focusedSlug && card.id === ('em-site-card-' + focusedSlug)) {
+                    syncFocusTitle(focusedSlug);
+                }
             });
         });
         focusLinks.forEach(function (link) {
@@ -632,6 +725,10 @@ function em_site_overview_render(): void
                         });
                     }
                     syncCardAddButton(card);
+                    var focusedSlug = wrap.getAttribute('data-focus-slug') || '';
+                    if (focusedSlug && card && card.id === ('em-site-card-' + focusedSlug)) {
+                        syncFocusTitle(focusedSlug);
+                    }
                 });
             });
 
@@ -653,6 +750,24 @@ function em_site_overview_render(): void
         if (createTypePanel) {
             setCreateTypePanelOpen(!createTypePanel.hidden);
         }
+        var focusTitleHome = wrap.querySelector('[data-overview-resetitems]');
+        if (focusTitleHome) {
+            focusTitleHome.addEventListener('click', function () {
+                var focusedSlug = wrap.getAttribute('data-focus-slug') || '';
+                var card = focusedSlug ? getCardBySlug(focusedSlug) : null;
+                if (!card) { return; }
+                resetItemsForFocus(card);
+                syncCardAddButton(card);
+                syncFocusTitle(focusedSlug);
+            });
+        }
+        document.addEventListener('change', function (event) {
+            var radio = event.target.closest('.em-site-header-picker__items[data-part] input[type="radio"]');
+            if (!radio) { return; }
+            var focusedSlug = wrap.getAttribute('data-focus-slug') || '';
+            if (!focusedSlug) { return; }
+            syncFocusTitle(focusedSlug);
+        });
         document.addEventListener('keydown', function (event) {
             if (event.key !== 'Escape' || !wrap.classList.contains('is-focus-mode')) { return; }
             var target = event.target;

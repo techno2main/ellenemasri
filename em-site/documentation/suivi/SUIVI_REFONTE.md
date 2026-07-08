@@ -3,7 +3,7 @@
 ## Horodatage temps rÃ©el (Paris)
 1. Fuseau de rÃ©fÃ©rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. DerniÃ¨re mise Ã  jour : 2026-07-08 13:16:02.
+3. DerniÃ¨re mise Ã  jour : 2026-07-08 14:45:14.
 
 ## RÃ¨gles de suivi
 1. Une Ã©tape = un objectif concret vÃ©rifiable.
@@ -72,3 +72,13 @@
 - Réintroduction du wrapper `overview-fields.php` pour restaurer la compatibilité runtime attendue par `overview.php` et éviter un fatal lors du chargement de la page Rubriques.
 - Restauration ciblée des versions locales antérieures sur les fichiers sensibles (`focus-directory.php`, `notice-and-type-card.php`, `storage.php`) pour revenir à l'état de travail validé visuellement avant les patchs incrémentaux.
 - Validation technique exécutée sur les fichiers PHP critiques du lot via `php -l` : aucune erreur de syntaxe détectée.
+
+### 2026-07-08 14:45:14 (Paris)
+
+- Ajustements UX du bandeau focus Rubriques dans l’admin : séparation visuelle affinée, libellé de retour remplacé par `RUBRIQUES`, suppression des décalages résiduels et réglages d’espacement.
+- Refonte des onglets d’items : style harmonisé avec la charte marron/blanc, proportions actif/inactif alignées, bordures/arrondis ajustés et amélioration de la lisibilité des icônes.
+- Clarification de l’état actif : remplacement de l’icône ambiguë (œil) par une icône de validation (`dashicons-yes-alt`) pour signaler explicitement l’onglet ouvert.
+- Comportement navigation item stabilisé :
+	- arrivée initiale et clic sur icône+nom de rubrique => liste complète des items fermés,
+	- clic onglet => ouverture de l’item ciblé et masquage des autres items.
+- Contrôles techniques exécutés pendant le lot : diagnostics VS Code sans erreur sur les fichiers modifiés + vérification répétée `php -l` sur `overview.php` sans erreur de syntaxe.
