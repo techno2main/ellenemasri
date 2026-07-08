@@ -88,6 +88,98 @@ function em_site_overview_render_rename_script(): void
             }
             var mt = menuText(slug);
             if (mt) { mt.textContent = label; }
+
+            var wrap = document.querySelector('.em-site-overview[data-focus-slug]');
+            if (wrap && (wrap.getAttribute('data-focus-slug') || '') === slug) {
+                var focusName = wrap.querySelector('.em-site-overview__focus-titlename');
+                var focusInput = wrap.querySelector('.em-site-overview__focus-nameinput');
+                if (focusName) { focusName.textContent = label; }
+                if (focusInput) {
+                    focusInput.value = label;
+                    focusInput.setAttribute('data-original', label);
+                    focusInput.setAttribute('data-slug', slug);
+                }
+            }
+        }
+
+        function focusParts() {
+            return {
+                wrap:    document.querySelector('.em-site-overview[data-focus-slug]'),
+                name:    document.querySelector('.em-site-overview__focus-titlename'),
+                input:   document.querySelector('.em-site-overview__focus-nameinput'),
+                pen:     document.querySelector('.em-site-overview__focus-titleedit'),
+                confirm: document.querySelector('.em-site-overview__focus-confirm'),
+                cancel:  document.querySelector('.em-site-overview__focus-cancel')
+            };
+        }
+
+        function openFocusRename() {
+            var p = focusParts();
+            if (!p.wrap || !p.input || !p.name) { return; }
+            var slug = p.wrap.getAttribute('data-focus-slug') || '';
+            var current = p.name.textContent || '';
+            p.input.setAttribute('data-slug', slug);
+            p.input.setAttribute('data-original', current);
+            p.input.value = current;
+            p.input.hidden = false;
+            if (p.confirm) { p.confirm.hidden = false; }
+            if (p.cancel) { p.cancel.hidden = false; }
+            if (p.pen) { p.pen.hidden = true; }
+            p.name.hidden = true;
+            p.input.focus();
+            p.input.select();
+        }
+
+        function closeFocusRename(reset) {
+            var p = focusParts();
+            if (!p.input || !p.name) { return; }
+            if (reset) {
+                var orig = p.input.getAttribute('data-original') || '';
+                p.input.value = orig;
+                p.name.textContent = orig;
+            }
+            p.input.hidden = true;
+            if (p.confirm) { p.confirm.hidden = true; }
+            if (p.cancel) { p.cancel.hidden = true; }
+            if (p.pen) { p.pen.hidden = false; }
+            p.name.hidden = false;
+        }
+
+        function previewFocusLabel(slug, label) {
+            var p = focusParts();
+            if (p.name) { p.name.textContent = label; }
+            var card = document.getElementById('em-site-card-' + slug);
+            var name = card ? card.querySelector('.em-site-card__name') : null;
+            if (name) { name.textContent = label; }
+            var mt = menuText(slug);
+            if (mt) { mt.textContent = label; }
+        }
+
+        function confirmFocusRename() {
+            var p = focusParts();
+            if (!p.input) { return; }
+            var slug = p.input.getAttribute('data-slug') || '';
+            var orig = p.input.getAttribute('data-original') || '';
+            var val = p.input.value.trim();
+            if (slug === '') { closeFocusRename(true); return; }
+            if (val === '' || val === orig) { closeFocusRename(true); return; }
+
+            var body = new URLSearchParams();
+            body.set('action', 'em_site_rename_type');
+            body.set('_ajax_nonce', NONCE);
+            body.set('slug', slug);
+            body.set('label', val);
+            fetch(window.ajaxurl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (res && res.success && res.data && res.data.label) {
+                    applyLabel(slug, res.data.label, res.data.singular || '');
+                }
+            }).catch(function () {});
+            closeFocusRename(false);
         }
 
         function parts(card) {
@@ -101,8 +193,10 @@ function em_site_overview_render_rename_script(): void
         }
 
         function open(card) {
+            if (!card) { return; }
             var p = parts(card);
             if (!p.input) { return; }
+            card.classList.add('em-site-card--renaming');
             if (p.name) { p.name.hidden = true; }
             if (p.pen) { p.pen.hidden = true; }
             p.input.hidden = false;
@@ -113,12 +207,14 @@ function em_site_overview_render_rename_script(): void
         }
 
         function close(card) {
+            if (!card) { return; }
             var p = parts(card);
             if (p.input) { p.input.hidden = true; }
             if (p.confirm) { p.confirm.hidden = true; }
             if (p.cancel) { p.cancel.hidden = true; }
             if (p.name) { p.name.hidden = false; }
             if (p.pen) { p.pen.hidden = false; }
+            card.classList.remove('em-site-card--renaming');
         }
 
         // Aperçu en direct du libellé saisi (carte + sous-menu) avant validation.
@@ -165,6 +261,24 @@ function em_site_overview_render_rename_script(): void
         }
 
         document.addEventListener('click', function (e) {
+            var focusRename = e.target.closest('.em-site-overview__focus-titleedit');
+            if (focusRename) {
+                stop(e);
+                openFocusRename();
+                return;
+            }
+            var focusOk = e.target.closest('.em-site-overview__focus-confirm');
+            if (focusOk) {
+                stop(e);
+                confirmFocusRename();
+                return;
+            }
+            var focusNo = e.target.closest('.em-site-overview__focus-cancel');
+            if (focusNo) {
+                stop(e);
+                closeFocusRename(true);
+                return;
+            }
             var pen = e.target.closest('.em-site-card__edit');
             if (pen) { stop(e); open(pen.closest('.em-site-card')); return; }
             var ok = e.target.closest('.em-site-card__confirm');
@@ -175,6 +289,12 @@ function em_site_overview_render_rename_script(): void
         });
 
         document.addEventListener('input', function (e) {
+            var focusInput = e.target.closest('.em-site-overview__focus-nameinput');
+            if (focusInput) {
+                focusInput.value = focusInput.value.toUpperCase();
+                previewFocusLabel(focusInput.getAttribute('data-slug') || '', focusInput.value);
+                return;
+            }
             var input = e.target.closest('.em-site-card__nameinput');
             if (!input) { return; }
             input.value = input.value.toUpperCase();
@@ -183,12 +303,19 @@ function em_site_overview_render_rename_script(): void
 
         // Plus de validation au clavier (Entrée) : on neutralise Entrée.
         document.addEventListener('keydown', function (e) {
+            var focusInput = e.target.closest('.em-site-overview__focus-nameinput');
+            if (focusInput) {
+                if (e.key === 'Enter') { e.preventDefault(); confirmFocusRename(); }
+                if (e.key === 'Escape') { e.preventDefault(); closeFocusRename(true); }
+                return;
+            }
             var input = e.target.closest('.em-site-card__nameinput');
             if (input && e.key === 'Enter') { e.preventDefault(); }
         });
 
         // Le champ ne doit pas ouvrir/fermer la carte.
         document.addEventListener('mousedown', function (e) {
+            if (e.target.closest('.em-site-overview__focus-nameinput')) { e.stopPropagation(); }
             if (e.target.closest('.em-site-card__nameinput')) { e.stopPropagation(); }
         });
     })();
