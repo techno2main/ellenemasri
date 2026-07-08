@@ -396,7 +396,7 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
     $count = count(em_site_get_items($slug));
     $label = (string) ($type['label_plural'] ?? $type['label']);
     $label_singular = (string) ($type['label'] ?? $label);
-    $add_label = sprintf(__('Ajouter une Section %s', 'em-site'), $label_singular);
+    $add_label = sprintf(__('Ajouter un item %s', 'em-site'), $label_singular);
     $is_special_fixed = function_exists('em_site_is_fixed_single_item_type')
         && em_site_is_fixed_single_item_type($slug);
     $is_header_container = ($slug === 'headers');
