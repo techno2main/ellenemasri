@@ -75,7 +75,7 @@ if (!defined('ABSPATH')) {
       display: inline-flex;
       align-items: center;
       color: rgba(255, 255, 255, .88);
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 600;
       letter-spacing: .08em;
       text-transform: uppercase;
