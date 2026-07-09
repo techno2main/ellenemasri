@@ -3,7 +3,7 @@
 Date : 2026-07-07
 Horodatage précis (Paris) : 2026-07-09 10:24:37
 Périmètre : em-site/wp/wp-content/themes/em-site
-Statut : Cadrage validé, implémentation en cours (suivi opérationnel dans `documentation/suivi/SUIVI_REFONTE.md`)
+Statut : Cadrage validé, implémentation en cours, preview HEADER ramené au layout vertical précédent (suivi opérationnel dans `documentation/suivi/SUIVI_REFONTE.md`)
 
 ## Objectif
 
@@ -77,6 +77,11 @@ Sous-étapes :
 - L’ordre d’affichage doit ignorer les rubriques masquées.
 - Les menus, l’aperçu et les contrôles doivent suivre le même état.
 - Les règles spécifiques de verrouillage doivent être explicites et minimales.
+
+## État courant
+
+- Le rendu admin HEADER a été ramené à une présentation simple en colonne unique, avec HERO au-dessus du SLIDER.
+- La phase de debug de la grille composite est mise en pause après stabilisation du comportement demandé.
 
 ### Étape 1.3 - Items rattachés
 

@@ -18,6 +18,12 @@
 10. Mot-cl? MAJ docs : scanner tous les documents de suivi concern?s par l'avancement en temps r?el, puis les mettre ? jour.
 11. Mot-cl? flow GH : lancer le process GitHub selon les r?gles actives du chantier, uniquement sur demande explicite.
 12. R?GLE D'OR : aucun flow GH sans v?rification et finalisation pr?alable de la MAJ docs.
+
+### 2026-07-09 11:54:20 (Paris)
+
+- Retour demandé vers le layout HEADER précédent, en une seule colonne avec HERO au-dessus du SLIDER, pour figer la preview sur le comportement simple et stable.
+- Neutralisation du bloc de composition pair dans le rendu admin HEADER afin d'éviter les variations de grille introduites pendant le debug.
+- Validation technique réalisée après rollback : fichier PHP concerné vérifié sans erreur de syntaxe.
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement

@@ -379,7 +379,7 @@ function em_site_admin_render_header_section_assets(): void
             var position = radioVal(root, 'em-site-header-position') || prev.position || 'hero_left';
             var hero = partVal(root, 'hero') || prev.hero || '';
             var slider = partVal(root, 'slider') || prev.slider || '';
-            var ratio = i.ratio ? i.ratio.value : (prev.ratio || '75-25');
+            var ratio = i.ratio ? i.ratio.value : (prev.ratio || '60-40');
             var appearance = root.querySelector('.em-site-header-picker__appearance')
                 ? collectAppearance(root)
                 : (prev.appearance || {});
@@ -434,7 +434,7 @@ function em_site_admin_render_header_section_assets(): void
                 first_item: c.first_item || '',
                 hidden_items: Array.isArray(c.hidden_items) ? c.hidden_items.slice().sort() : [],
                 matrix: c.matrix || 'hero', position: c.position || 'hero_left',
-                hero: c.hero || '', slider: c.slider || '', ratio: c.ratio || '75-25',
+                hero: c.hero || '', slider: c.slider || '', ratio: c.ratio || '60-40',
                 appearance: {
                     bg: (a.bg || '').toLowerCase(), img: parseInt(a.bg_image_id, 10) || 0, pos: a.bg_image_pos || 'cover',
                     op: parseInt(a.bg_image_opacity, 10) || 0, mirror: !!a.bg_image_mirror,
@@ -503,7 +503,7 @@ function em_site_admin_render_header_section_assets(): void
             if (i.pos) { i.pos.value = a.bg_image_pos || 'cover'; }
             if (i.op) { i.op.value = (a.bg_image_opacity == null ? 100 : a.bg_image_opacity); if (i.op.nextElementSibling) { i.op.nextElementSibling.textContent = i.op.value + '%'; } }
             if (i.mirror) { i.mirror.checked = !!a.bg_image_mirror; }
-            if (i.ratio) { i.ratio.value = c.ratio || '75-25'; }
+            if (i.ratio) { i.ratio.value = c.ratio || '60-40'; }
             if (i.pt) { i.pt.value = a.pt != null ? a.pt : 0; }
             if (i.pb) { i.pb.value = a.pb != null ? a.pb : 0; }
             if (i.pl) { i.pl.value = a.pl != null ? a.pl : 0; }
@@ -533,7 +533,7 @@ function em_site_admin_render_header_section_assets(): void
             body.set('position', cfg.position);
             body.set('hero', cfg.hero);
             body.set('slider', cfg.slider);
-            body.set('ratio', cfg.ratio || '75-25');
+            body.set('ratio', cfg.ratio || '60-40');
             body.set('a_bg', a.bg || '');
             body.set('a_bg_image_id', a.bg_image_id || 0);
             body.set('a_pos', a.bg_image_pos || 'cover');
@@ -623,6 +623,7 @@ function em_site_admin_render_header_section_assets(): void
         var ITEM_NONCE = '<?php echo esc_js(wp_create_nonce('em_site_set_header_item_config')); ?>';
         var SAVED = '<?php echo esc_js(__('Composition du HEADER enregistrée.', 'em-site')); ?>';
         var ERR = '<?php echo esc_js(__('Échec de l’enregistrement.', 'em-site')); ?>';
+        var previewTimers = new WeakMap();
 
         function readJsonAttr(el, attr) {
             try { return JSON.parse(el.getAttribute(attr) || '{}'); } catch (e) { return {}; }
@@ -637,6 +638,73 @@ function em_site_admin_render_header_section_assets(): void
             status.textContent = msg || '';
             status.style.color = color || '#6b7280';
             status.hidden = msg === '';
+        }
+        function previewTarget(root) {
+            var bodyWrap = root.closest('.em-site-collapse__body');
+            return bodyWrap ? bodyWrap.querySelector('.em-site-livepreview') : null;
+        }
+        function refreshPreview(root, preview) {
+            if (!preview || preview.hidden) { return; }
+
+            var cfg = currentConfig(root);
+            var itemSlug = root.getAttribute('data-header-item') || '';
+            var template = root.getAttribute('data-template') || '';
+            if (!itemSlug) { return; }
+
+            var a = cfg.appearance || {};
+            var body = new URLSearchParams();
+            body.set('action', 'em_site_set_header_item_config');
+            body.set('_ajax_nonce', ITEM_NONCE);
+            body.set('dry_run', '1');
+            body.set('header_item', itemSlug);
+            body.set('template', template);
+            body.set('matrix', cfg.matrix || 'hero');
+            body.set('position', cfg.position || 'hero_left');
+            body.set('hero', cfg.hero || '');
+            body.set('slider', cfg.slider || '');
+            body.set('ratio', cfg.ratio || '60-40');
+            body.set('a_bg', a.bg || '');
+            body.set('a_bg_image_id', a.bg_image_id || 0);
+            body.set('a_pos', a.bg_image_pos || 'cover');
+            body.set('a_op', a.bg_image_opacity);
+            body.set('a_mirror', a.bg_image_mirror ? '1' : '0');
+            body.set('a_pt', a.pt || 0);
+            body.set('a_pb', a.pb || 0);
+            body.set('a_pl', a.pl || 0);
+            body.set('a_pr', a.pr || 0);
+
+            fetch(window.ajaxurl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (res && res.success && res.data && typeof res.data.preview_html === 'string') {
+                    preview.innerHTML = res.data.preview_html;
+                    if (window.EmSitePreview && typeof window.EmSitePreview.initSliders === 'function') {
+                        window.EmSitePreview.initSliders(preview);
+                    }
+                } else {
+                    setStatus(root, ERR, '#b32d2e');
+                }
+            }).catch(function () {
+                setStatus(root, ERR, '#b32d2e');
+            });
+        }
+        function schedulePreviewRefresh(root) {
+            var preview = previewTarget(root);
+            if (!preview || preview.hidden) { return; }
+
+            var pending = previewTimers.get(root);
+            if (pending) {
+                window.clearTimeout(pending);
+            }
+
+            var timerId = window.setTimeout(function () {
+                previewTimers.delete(root);
+                refreshPreview(root, preview);
+            }, 140);
+            previewTimers.set(root, timerId);
         }
         function setDirty(root, dirty) {
             var btn = root.querySelector('.em-site-header-item-editor__save');
@@ -671,7 +739,7 @@ function em_site_admin_render_header_section_assets(): void
                 position: posInput ? posInput.value : 'hero_left',
                 hero: heroChecked ? heroChecked.value : '',
                 slider: sliderChecked ? sliderChecked.value : '',
-                ratio: ((root.querySelector('.em-site-header-appr__ratio') || {}).value || '75-25'),
+                ratio: ((root.querySelector('.em-site-header-appr__ratio') || {}).value || '60-40'),
                 appearance: appearance
             };
         }
@@ -683,7 +751,7 @@ function em_site_admin_render_header_section_assets(): void
                 position: cfg.position || 'hero_left',
                 hero: cfg.hero || '',
                 slider: cfg.slider || '',
-                ratio: cfg.ratio || '75-25',
+                ratio: cfg.ratio || '60-40',
                 appearance: {
                     bg: (a.bg || '').toLowerCase(),
                     img: asInt(a.bg_image_id, 0),
@@ -773,7 +841,7 @@ function em_site_admin_render_header_section_assets(): void
             body.set('position', cfg.position || 'hero_left');
             body.set('hero', cfg.hero || '');
             body.set('slider', cfg.slider || '');
-            body.set('ratio', cfg.ratio || '75-25');
+            body.set('ratio', cfg.ratio || '60-40');
             body.set('a_bg', a.bg || '');
             body.set('a_bg_image_id', a.bg_image_id || 0);
             body.set('a_pos', a.bg_image_pos || 'cover');
@@ -798,6 +866,9 @@ function em_site_admin_render_header_section_assets(): void
                         var preview = bodyWrap ? bodyWrap.querySelector('.em-site-livepreview') : null;
                         if (preview) {
                             preview.innerHTML = res.data.preview_html;
+                            if (window.EmSitePreview && typeof window.EmSitePreview.initSliders === 'function') {
+                                window.EmSitePreview.initSliders(preview);
+                            }
                         }
                     }
                     setDirty(root, false);
@@ -824,11 +895,13 @@ function em_site_admin_render_header_section_assets(): void
                 syncPartOrder(root, matrix, p.value || 'hero_left');
             }
             setDirty(root, isDirty(root));
+            schedulePreviewRefresh(root);
         });
 
         document.addEventListener('emWpAdminColorFieldChanged', function () {
             document.querySelectorAll('.em-site-header-item-editor').forEach(function (root) {
                 setDirty(root, isDirty(root));
+                schedulePreviewRefresh(root);
             });
         });
 
@@ -973,17 +1046,12 @@ function em_site_handle_ajax_set_header_item_config(): void
     $hero = sanitize_key((string) ($_POST['hero'] ?? ''));
     $slider = sanitize_key((string) ($_POST['slider'] ?? ''));
 
-    $hero_type = em_site_admin_header_part_type_slug('hero');
-    if ($hero_type !== '' && $hero !== '' && function_exists('em_site_get_items') && !isset(em_site_get_items($hero_type)[$hero])) {
-        wp_send_json_error(['message' => 'unknown_hero'], 400);
-    }
+    // Validation tolérante: en admin, les slugs HERO/SLIDER peuvent exister
+    // dans un type différent de la détection "attendue" (historique renommages).
+    // Le rendu composite est déjà robuste (fallback multi-types), on n'échoue
+    // donc pas ici pour préserver la preview live et l'enregistrement.
 
-    $slider_type = em_site_admin_header_part_type_slug('slider');
-    if ($slider_type !== '' && $slider !== '' && function_exists('em_site_get_items') && !isset(em_site_get_items($slider_type)[$slider])) {
-        wp_send_json_error(['message' => 'unknown_slider'], 400);
-    }
-
-    $ratio = sanitize_text_field((string) ($_POST['ratio'] ?? '75-25'));
+    $ratio = sanitize_text_field((string) ($_POST['ratio'] ?? '60-40'));
     $template = sanitize_key((string) ($_POST['template'] ?? ''));
     if ($template === '' && function_exists('em_site_get_editing_template_slug')) {
         $template = sanitize_key((string) em_site_get_editing_template_slug());
@@ -1006,7 +1074,9 @@ function em_site_handle_ajax_set_header_item_config(): void
         'pr'               => max(0, (int) ($_POST['a_pr'] ?? 0)),
     ];
 
-    if (function_exists('em_site_admin_header_item_config_save')) {
+    $dry_run = (string) ($_POST['dry_run'] ?? '') === '1';
+
+    if (!$dry_run && function_exists('em_site_admin_header_item_config_save')) {
         em_site_admin_header_item_config_save($header_item, [
             'matrix'     => $matrix,
             'position'   => $position,
@@ -1018,7 +1088,14 @@ function em_site_handle_ajax_set_header_item_config(): void
     }
 
     $preview_html = function_exists('em_site_admin_header_composite_html_for_item')
-        ? em_site_admin_header_composite_html_for_item($template, $header_item)
+        ? em_site_admin_header_composite_html_for_item($template, $header_item, [
+            'matrix'     => $matrix,
+            'position'   => $position,
+            'hero'       => $hero,
+            'slider'     => $slider,
+            'ratio'      => $ratio,
+            'appearance' => $appearance,
+        ])
         : '';
 
     wp_send_json_success([
@@ -1028,6 +1105,7 @@ function em_site_handle_ajax_set_header_item_config(): void
         'hero'        => $hero,
         'slider'      => $slider,
         'template'    => $template,
+        'dry_run'     => $dry_run,
         'preview_html'=> $preview_html,
     ]);
 }

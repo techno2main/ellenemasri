@@ -118,6 +118,13 @@ function em_site_admin_rubriques_preview_css(): string
         }
     }
 
+    // Le preview admin doit utiliser les règles du SLIDER front pour afficher
+    // correctement les slides (hero+slider, slider seul, position gauche/droite).
+    $slider_css = get_template_directory() . '/assets/front/shared/css/slider.css';
+    if (is_readable($slider_css)) {
+        $css .= (string) file_get_contents($slider_css) . "\n";
+    }
+
     return $css;
 }
 

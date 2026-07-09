@@ -101,6 +101,80 @@ function em_site_admin_header_item_config_option_name(string $header_item_slug):
 }
 
 /**
+ * Rend un preview HEADER en réutilisant la logique front.
+ *
+ * @param array<string, mixed> $cfg
+ */
+function em_site_admin_header_preview_html_from_config(array $cfg): string
+{
+    if (!function_exists('em_site_header_hero_item_slug') || !function_exists('em_site_header_slider_item_slug')) {
+        $compose = get_template_directory() . '/inc/front/modules/header/compose.php';
+        if (is_readable($compose)) {
+            require_once $compose;
+        }
+    }
+    if (!function_exists('em_site_render_header_hero_html') || !function_exists('em_site_render_header_slider_html')) {
+        $hero_render = get_template_directory() . '/inc/front/modules/hero/render.php';
+        $slider_render = get_template_directory() . '/inc/front/modules/slider/render.php';
+        if (is_readable($hero_render)) {
+            require_once $hero_render;
+        }
+        if (is_readable($slider_render)) {
+            require_once $slider_render;
+        }
+    }
+    if (!function_exists('em_site_header_shell_style_vars') || !function_exists('em_site_header_ratio_columns')) {
+        return '';
+    }
+
+    $matrix = sanitize_key((string) ($cfg['matrix'] ?? 'hero'));
+    $position = sanitize_key((string) ($cfg['position'] ?? 'hero_left'));
+    $slider_left = $position === 'slider_left';
+
+    $hero_item_slug = sanitize_key((string) ($cfg['hero'] ?? ''));
+    if ($hero_item_slug === '') {
+        $hero_item_slug = em_site_header_hero_item_slug($cfg);
+    }
+    $hero_item = $hero_item_slug !== '' && function_exists('em_site_header_hero_item') ? em_site_header_hero_item($hero_item_slug) : [];
+    $hero_content = is_array($hero_item['content'] ?? null) ? $hero_item['content'] : [];
+    $hero_html = ($matrix !== 'slider' && $hero_item_slug !== '')
+        ? em_site_render_header_hero_html($hero_content, $hero_item_slug, true)
+        : '';
+
+    $slider_item_slug = sanitize_key((string) ($cfg['slider'] ?? ''));
+    if ($slider_item_slug === '') {
+        $slider_item_slug = em_site_header_slider_item_slug($cfg);
+    }
+    $slider_html = ($matrix !== 'hero' && $slider_item_slug !== '')
+        ? em_site_render_header_slider_html($slider_item_slug)
+        : '';
+
+    $has_hero = trim($hero_html) !== '';
+    $has_slider = trim($slider_html) !== '';
+    if (!$has_hero && !$has_slider) {
+        return '';
+    }
+
+    $is_pair = false;
+    $cols = 'minmax(0,1fr)';
+    $shell_style = em_site_header_shell_style_vars($cfg, $hero_content);
+    $inner_class = 'em-header-shell__inner is-single';
+    $inner_style = 'display:grid;align-items:start;gap:28px;width:min(1100px,92vw);margin:0 auto;padding:44px 0 68px;grid-template-columns:' . $cols . ';';
+
+    $inner = '';
+    if ($has_hero) {
+        $inner .= '<div class="em-header-shell__col em-header-shell__col--hero">' . $hero_html . '</div>';
+    }
+    if ($has_slider) {
+        $inner .= '<div class="em-header-shell__col em-header-shell__col--slider">' . $slider_html . '</div>';
+    }
+
+    return '<div class="em-rubrique em-header-shell" style="' . esc_attr(implode(';', (array) $shell_style)) . ';">'
+        . '<div class="' . esc_attr($inner_class) . '" style="' . esc_attr($inner_style) . '">' . $inner . '</div>'
+        . '</div>';
+}
+
+/**
  * Variantes de slug HEADER pour compatibilité legacy (`header-` / `headers-`).
  *
  * @return array<int,string>
@@ -292,7 +366,7 @@ function em_site_admin_header_item_config_defaults(): array
         'position'   => 'hero_left',
         'hero'       => '',
         'slider'     => '',
-        'ratio'      => '75-25',
+        'ratio'      => '60-40',
         'appearance' => em_site_admin_header_appearance_defaults(),
     ];
 }
@@ -435,7 +509,7 @@ function em_site_admin_header_maybe_migrate_legacy_template_config(string $templ
             'position'   => ($legacy['position'] ?? '') === 'slider_left' ? 'slider_left' : 'hero_left',
             'hero'       => sanitize_key((string) ($legacy['hero'] ?? '')),
             'slider'     => sanitize_key((string) ($legacy['slider'] ?? '')),
-            'ratio'      => sanitize_key((string) ($legacy['ratio'] ?? '75-25')),
+            'ratio'      => sanitize_key((string) ($legacy['ratio'] ?? '60-40')),
             'appearance' => is_array($legacy['appearance'] ?? null) ? $legacy['appearance'] : [],
         ]);
     }
@@ -690,7 +764,7 @@ function em_site_admin_header_section_save(string $template, array $data): void
         'position'     => (string) ($item_cfg['position'] ?? 'hero_left'),
         'hero'         => (string) ($item_cfg['hero'] ?? ''),
         'slider'       => (string) ($item_cfg['slider'] ?? ''),
-        'ratio'        => (string) ($item_cfg['ratio'] ?? '75-25'),
+        'ratio'        => (string) ($item_cfg['ratio'] ?? '60-40'),
         'appearance'   => (array) ($item_cfg['appearance'] ?? em_site_admin_header_appearance_defaults()),
         'header_item'  => $header_item,
     ], false);
@@ -843,10 +917,54 @@ function em_site_admin_render_header_catalog_items(string $template): void
  *
  * @param array<string, mixed> $appearance
  */
-function em_site_admin_header_shell_style(string $template, array $appearance): string
+function em_site_admin_header_part_item_data(string $part, string $item_slug): array
+{
+    $part = $part === 'slider' ? 'slider' : 'hero';
+    $item_slug = sanitize_key($item_slug);
+    if ($item_slug === '') {
+        return [];
+    }
+
+    if (!function_exists('em_site_header_hero_item') || !function_exists('em_site_header_slider_item')) {
+        $compose = get_template_directory() . '/inc/front/modules/header/compose.php';
+        if (is_readable($compose)) {
+            require_once $compose;
+        }
+    }
+
+    if ($part === 'slider' && function_exists('em_site_header_slider_item')) {
+        $item = (array) em_site_header_slider_item($item_slug);
+        return is_array($item['content'] ?? null) ? (array) $item['content'] : [];
+    }
+
+    if ($part === 'hero' && function_exists('em_site_header_hero_item')) {
+        $item = (array) em_site_header_hero_item($item_slug);
+        return is_array($item['content'] ?? null) ? (array) $item['content'] : [];
+    }
+
+    return [];
+}
+
+/**
+ * Style inline (variables CSS) du conteneur HEADER : fond partagé (couleur +
+ * image explicite optionnelle + opacité + miroir + position) et marges.
+ *
+ * @param array<string, mixed> $appearance
+ * @param array<string, mixed> $hero_content
+ */
+function em_site_admin_header_shell_style(string $template, array $appearance, array $hero_content = []): string
 {
     $style = '';
-    $bg = sanitize_hex_color((string) ($appearance['bg'] ?? ''));
+    $hero_transparent = !empty($hero_content['bg_transparent']);
+    $hero_bg = sanitize_hex_color((string) ($hero_content['bg_color'] ?? ''));
+    $appearance_bg = sanitize_hex_color((string) ($appearance['bg'] ?? '')) ?: '';
+    $bg = !$hero_transparent && $hero_bg !== false && $hero_bg !== null && $hero_bg !== ''
+        ? $hero_bg
+        : $appearance_bg;
+
+    if (!is_string($bg) || $bg === '') {
+        $bg = 'transparent';
+    }
 
     if (is_string($bg) && $bg !== '') {
         $style .= '--em-rubrique-bg:' . $bg . ';';
@@ -857,9 +975,17 @@ function em_site_admin_header_shell_style(string $template, array $appearance): 
         $style .= $var . ':' . max(0, (int) ($appearance[$key] ?? 0)) . 'px;';
     }
 
-    // Image de fond optionnelle: si aucune image n'est choisie, aucun visuel.
+    // Image de fond optionnelle: si aucune image n'est choisie, on reprend le
+    // fond hero du front quand il existe, sinon aucun visuel.
     $bg_image_id = (int) ($appearance['bg_image_id'] ?? 0);
     $url = $bg_image_id > 0 ? (string) wp_get_attachment_image_url($bg_image_id, 'full') : '';
+    if ($url === '') {
+        $hero_bg_json = function_exists('em_site_header_decode_json_field')
+            ? em_site_header_decode_json_field((string) ($hero_content['bg_image'] ?? ''))
+            : [];
+        $hero_bg_id = (int) ($hero_bg_json['id'] ?? 0);
+        $url = $hero_bg_id > 0 ? (string) wp_get_attachment_image_url($hero_bg_id, 'full') : '';
+    }
 
     if ($url !== '') {
         $bp = em_site_rubrique_bg_position_css((string) ($appearance['bg_image_pos'] ?? 'cover'));
@@ -874,6 +1000,66 @@ function em_site_admin_header_shell_style(string $template, array $appearance): 
 }
 
 /**
+ * Rendu robuste d'un item HERO/SLIDER pour la preview admin.
+ *
+ * Tente d'abord le type attendu (hero/slider), puis un fallback sur les types
+ * enregistrés afin de retrouver l'item par son slug si le mapping a dérivé.
+ */
+function em_site_admin_header_render_part_html(string $part, string $item_slug): string
+{
+    if (!function_exists('em_site_rubrique_render')) {
+        return '';
+    }
+
+    $part = $part === 'slider' ? 'slider' : 'hero';
+    $item_slug = sanitize_key($item_slug);
+    if ($item_slug === '') {
+        return '';
+    }
+
+    if ($part === 'slider') {
+        if (!function_exists('em_site_render_header_slider_html')) {
+            $slider_render = get_template_directory() . '/inc/front/modules/slider/render.php';
+            if (is_readable($slider_render)) {
+                require_once $slider_render;
+            }
+        }
+        if (function_exists('em_site_render_header_slider_html')) {
+            $direct_html = (string) em_site_render_header_slider_html($item_slug);
+            if (trim($direct_html) !== '') {
+                return $direct_html;
+            }
+        }
+    }
+
+    $types = [];
+    $expected = em_site_admin_header_part_type_slug($part);
+    if ($expected !== '') {
+        $types[] = $expected;
+    }
+
+    if (function_exists('em_site_rubrique_type_registry')) {
+        foreach (array_keys((array) em_site_rubrique_type_registry()) as $candidate_type) {
+            $candidate_type = sanitize_key((string) $candidate_type);
+            if ($candidate_type !== '') {
+                $types[] = $candidate_type;
+            }
+        }
+    }
+
+    $types = array_values(array_unique($types));
+
+    foreach ($types as $type) {
+        $html = em_site_rubrique_render($type, ['item' => $item_slug]);
+        if (trim($html) !== '') {
+            return $html;
+        }
+    }
+
+    return '';
+}
+
+/**
  * HTML composite du HEADER : un conteneur « shell » qui porte le FOND PARTAGÉ,
  * sur lequel HERO (et SLIDER) sont posés en colonnes, rendus SANS fond propre
  * (transparents) — reproduit le rendu du site (un seul fond, deux colonnes).
@@ -885,6 +1071,10 @@ function em_site_admin_header_composite_html(string $template): string
     }
 
     $cfg = em_site_admin_header_section_get($template);
+    $preview_html = em_site_admin_header_preview_html_from_config($cfg);
+    if ($preview_html !== '') {
+        return $preview_html;
+    }
     $header_item = sanitize_key((string) ($cfg['header_item'] ?? ''));
     if (($cfg['display_mode'] ?? 'single') === 'multi') {
         $first_item = sanitize_key((string) ($cfg['first_item'] ?? ''));
@@ -899,15 +1089,16 @@ function em_site_admin_header_composite_html(string $template): string
 
     $hero_type = em_site_admin_header_part_type_slug('hero');
     $hero_item = em_site_admin_header_effective_item($template, 'hero');
-    $hero_html = ($hero_type !== '' && $hero_item !== '')
-        ? em_site_rubrique_render($hero_type, ['item' => $hero_item])
+    $hero_content = $hero_item !== '' ? em_site_admin_header_part_item_data('hero', $hero_item) : [];
+    $hero_html = $hero_item !== ''
+        ? em_site_admin_header_render_part_html('hero', $hero_item)
         : '';
     $hero_col = '<div class="em-header-shell__col em-header-shell__col--hero">' . $hero_html . '</div>';
 
     $slider_type = em_site_admin_header_part_type_slug('slider');
     $slider_item = em_site_admin_header_effective_item($template, 'slider');
-    $slider_html = ($slider_type !== '' && $slider_item !== '')
-        ? em_site_rubrique_render($slider_type, ['item' => $slider_item])
+    $slider_html = $slider_item !== ''
+        ? em_site_admin_header_render_part_html('slider', $slider_item)
         : '';
     $slider_col = '<div id="hero-slider" class="em-header-shell__col em-header-shell__col--slider">' . $slider_html . '</div>';
 
@@ -940,7 +1131,7 @@ function em_site_admin_header_composite_html(string $template): string
     // Le SHELL porte le fond partagé pleine largeur ; la grille HERO/SLIDER est
     // dans un conteneur centré (comme .em-landing-hero-row__inner du front :
     // max 1100px, gap, padding vertical, colonnes alignées en haut).
-    $shell_style = em_site_admin_header_shell_style($template, $cfg['appearance']);
+    $shell_style = em_site_admin_header_shell_style($template, (array) ($cfg['appearance'] ?? []), $hero_content);
     $nav_color = '';
     if (!empty($cfg['appearance']['nav_color'])) {
         $nav_color = sanitize_hex_color((string) $cfg['appearance']['nav_color']) ?: '';
@@ -951,7 +1142,7 @@ function em_site_admin_header_composite_html(string $template): string
     if ($nav_color !== '') {
         $shell_style .= '--em-header-switch-color:' . $nav_color . ';';
     }
-    $inner_style = 'grid-template-columns:' . $cols . ';';
+    $inner_style = 'display:grid;align-items:start;gap:28px;width:min(1100px,92vw);margin:0 auto;padding:44px 0 68px;grid-template-columns:' . $cols . ';';
     $inner_class = 'em-header-shell__inner' . ($slider_left ? ' is-slider-first' : '') . ($is_pair ? ' is-pair' : ' is-single');
 
     return '<div class="em-rubrique em-header-shell" style="' . esc_attr($shell_style) . '">'
@@ -962,7 +1153,7 @@ function em_site_admin_header_composite_html(string $template): string
 /**
  * HTML composite du HEADER pour un item spécifique (aperçu œil + mode multi).
  */
-function em_site_admin_header_composite_html_for_item(string $template, string $header_item_slug): string
+function em_site_admin_header_composite_html_for_item(string $template, string $header_item_slug, array $override_config = []): string
 {
     if (!function_exists('em_site_rubrique_render')) {
         return '';
@@ -975,16 +1166,37 @@ function em_site_admin_header_composite_html_for_item(string $template, string $
     }
 
     $cfg = em_site_admin_header_item_config_get($header_item_slug);
-    $hero_type = em_site_admin_header_part_type_slug('hero');
+    if ($override_config !== []) {
+        $base_appearance = is_array($cfg['appearance'] ?? null) ? $cfg['appearance'] : [];
+        $incoming_appearance = is_array($override_config['appearance'] ?? null) ? $override_config['appearance'] : [];
+        $merged = $cfg;
+        foreach ($override_config as $key => $value) {
+            if ($key === 'appearance') {
+                continue;
+            }
+            $merged[$key] = $value;
+        }
+        $merged['appearance'] = array_merge($base_appearance, $incoming_appearance);
+        $cfg = em_site_admin_header_item_config_normalize($merged);
+    }
+    $preview_html = em_site_admin_header_preview_html_from_config($cfg);
+    if ($preview_html !== '') {
+        return $preview_html;
+    }
     $hero_item = sanitize_key((string) ($cfg['hero'] ?? ''));
     if ($hero_item === '' && $template !== '') {
         $hero_item = em_site_admin_header_effective_item($template, 'hero');
     }
-    if ($hero_item === '' && $hero_type !== '' && function_exists('em_site_rubrique_default_item_slug')) {
-        $hero_item = em_site_rubrique_default_item_slug($hero_type);
+    $hero_content = $hero_item !== '' ? em_site_admin_header_part_item_data('hero', $hero_item) : [];
+    if ($hero_item === '' && function_exists('em_site_admin_header_part_type_slug')) {
+        $hero_type = em_site_admin_header_part_type_slug('hero');
+        if ($hero_type !== '' && function_exists('em_site_rubrique_default_item_slug')) {
+            $hero_item = em_site_rubrique_default_item_slug($hero_type);
+            $hero_content = $hero_item !== '' ? em_site_admin_header_part_item_data('hero', $hero_item) : [];
+        }
     }
-    $hero_html = ($hero_type !== '' && $hero_item !== '')
-        ? em_site_rubrique_render($hero_type, ['item' => $hero_item])
+    $hero_html = $hero_item !== ''
+        ? em_site_admin_header_render_part_html('hero', $hero_item)
         : '';
     $hero_col = '<div class="em-header-shell__col em-header-shell__col--hero">' . $hero_html . '</div>';
 
@@ -996,8 +1208,8 @@ function em_site_admin_header_composite_html_for_item(string $template, string $
     if ($slider_item === '' && $slider_type !== '' && function_exists('em_site_rubrique_default_item_slug')) {
         $slider_item = em_site_rubrique_default_item_slug($slider_type);
     }
-    $slider_html = ($slider_type !== '' && $slider_item !== '')
-        ? em_site_rubrique_render($slider_type, ['item' => $slider_item])
+    $slider_html = $slider_item !== ''
+        ? em_site_admin_header_render_part_html('slider', $slider_item)
         : '';
     $slider_col = '<div id="hero-slider" class="em-header-shell__col em-header-shell__col--slider">' . $slider_html . '</div>';
 
@@ -1015,7 +1227,7 @@ function em_site_admin_header_composite_html_for_item(string $template, string $
     } elseif ($matrix === 'hero_slider') {
         if ($hero_html !== '' && $slider_html !== '') {
             $is_pair = true;
-            $cols = em_site_admin_header_ratio_columns((string) ($cfg['ratio'] ?? '75-25'), $slider_left);
+            $cols = em_site_admin_header_ratio_columns((string) ($cfg['ratio'] ?? '60-40'), $slider_left);
             $inner = $slider_left ? ($slider_col . $hero_col) : ($hero_col . $slider_col);
         } elseif ($hero_html !== '') {
             $inner = $hero_col;
@@ -1028,7 +1240,7 @@ function em_site_admin_header_composite_html_for_item(string $template, string $
         return '';
     }
 
-    $shell_style = em_site_admin_header_shell_style($template, (array) ($cfg['appearance'] ?? []));
+    $shell_style = em_site_admin_header_shell_style($template, (array) ($cfg['appearance'] ?? []), $hero_content);
     $nav_color = '';
     if (!empty($cfg['appearance']['nav_color'])) {
         $nav_color = sanitize_hex_color((string) $cfg['appearance']['nav_color']) ?: '';
@@ -1039,7 +1251,7 @@ function em_site_admin_header_composite_html_for_item(string $template, string $
     if ($nav_color !== '') {
         $shell_style .= '--em-header-switch-color:' . $nav_color . ';';
     }
-    $inner_style = 'grid-template-columns:' . $cols . ';';
+    $inner_style = 'display:grid;align-items:start;gap:28px;width:min(1100px,92vw);margin:0 auto;padding:44px 0 68px;grid-template-columns:' . $cols . ';';
     $inner_class = 'em-header-shell__inner' . ($slider_left ? ' is-slider-first' : '') . ($is_pair ? ' is-pair' : ' is-single');
 
     return '<div class="em-rubrique em-header-shell" style="' . esc_attr($shell_style) . '">'
@@ -1208,7 +1420,7 @@ function em_site_admin_render_header_item_editor(string $header_item_slug): void
                 <strong><?php esc_html_e('Apparence', 'em-site'); ?></strong>
             </summary>
             <div class="em-site-collapse__body">
-            <?php em_site_admin_render_header_appearance((array) ($cfg['appearance'] ?? []), (string) ($cfg['ratio'] ?? '75-25'), $header_item_slug); ?>
+            <?php em_site_admin_render_header_appearance((array) ($cfg['appearance'] ?? []), (string) ($cfg['ratio'] ?? '60-40'), $header_item_slug); ?>
             </div>
         </details>
 

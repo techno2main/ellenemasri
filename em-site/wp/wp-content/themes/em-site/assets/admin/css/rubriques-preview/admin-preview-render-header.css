@@ -43,6 +43,11 @@
     margin: 0 auto;
 }
 
+.em-header-shell__inner.is-pair .em-header-shell__col--slider .em-slider--shared {
+    max-width: none;
+    margin: 0;
+}
+
 .em-header-shell .em-rubrique {
     background-color: transparent !important;
 }
@@ -54,6 +59,38 @@
 .em-header-shell__col--slider .em-rubrique {
     padding-left: 0 !important;
     padding-right: 0 !important;
+}
+
+/* Preview admin: le slider doit rester visible même si un état JS/CSS échoue.
+   On force l'affichage de la zone média + première slide de secours. */
+.em-site-livepreview .em-header-shell__col--slider .em-slider--shared,
+.em-header-shell .em-header-shell__col--slider .em-slider--shared {
+    display: block !important;
+    width: 100% !important;
+    max-width: 430px;
+}
+
+.em-site-livepreview .em-header-shell__col--slider .em-slider--shared .em-slider__media,
+.em-header-shell .em-header-shell__col--slider .em-slider--shared .em-slider__media {
+    display: block !important;
+    position: relative !important;
+    min-height: 420px !important;
+    height: 610px !important;
+    overflow: hidden;
+}
+
+.em-site-livepreview .em-header-shell__col--slider .em-slider--shared .em-slider__slide,
+.em-header-shell .em-header-shell__col--slider .em-slider--shared .em-slider__slide {
+    position: absolute !important;
+    inset: 0;
+    display: none !important;
+}
+
+.em-site-livepreview .em-header-shell__col--slider .em-slider--shared .em-slider__slide.is-active,
+.em-header-shell .em-header-shell__col--slider .em-slider--shared .em-slider__slide.is-active,
+.em-site-livepreview .em-header-shell__col--slider .em-slider--shared .em-slider__slide:first-child,
+.em-header-shell .em-header-shell__col--slider .em-slider--shared .em-slider__slide:first-child {
+    display: block !important;
 }
 
 @media (max-width: 960px) {
