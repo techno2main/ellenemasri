@@ -1,9 +1,9 @@
 # PA - Refonte Rubriques
 
 Date : 2026-07-07
-Horodatage précis (Paris) : 2026-07-07 23:40:00
+Horodatage précis (Paris) : 2026-07-09 10:24:37
 Périmètre : em-site/wp/wp-content/themes/em-site
-Statut : Cadrage rédigé, aucune action code lancée
+Statut : Cadrage validé, implémentation en cours (suivi opérationnel dans `documentation/suivi/SUIVI_REFONTE.md`)
 
 ## Objectif
 

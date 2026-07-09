@@ -1177,11 +1177,6 @@ function em_site_admin_render_header_item_part_items(string $header_item_slug, s
                         <input type="radio" id="<?php echo esc_attr($radio_id); ?>" name="em-site-header-itemcfg-<?php echo esc_attr($header_item_slug . '-' . $part); ?>" value="<?php echo esc_attr($slug); ?>" <?php checked($slug === $selected); ?>>
                         <span class="em-site-instance-picker__name"><?php echo esc_html($part_label . ' ' . $item_label); ?></span>
                     </label>
-                    <span class="em-site-instance-picker__actions">
-                        <a class="em-site-instance-picker__edit" href="<?php echo esc_url(em_site_admin_rubrique_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>">
-                            <span class="dashicons dashicons-edit" aria-hidden="true"></span>
-                        </a>
-                    </span>
                 </li>
             <?php endforeach; ?>
         </ul>
@@ -1213,45 +1208,69 @@ function em_site_admin_render_header_item_editor(string $header_item_slug): void
     }
     ?>
     <div class="em-site-header-picker em-site-header-item-editor" data-header-item="<?php echo esc_attr($header_item_slug); ?>" data-template="<?php echo esc_attr($editing_template); ?>" data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>" data-matrix="<?php echo esc_attr($matrix); ?>" data-position="<?php echo esc_attr((string) ($cfg['position'] ?? 'hero_left')); ?>">
-        <p class="em-site-rubriques-admin__picker-head"><?php esc_html_e('Composition du HEADER', 'em-site'); ?></p>
-        <div class="em-site-header-picker__compo">
-            <div class="em-site-header-picker__matrix" role="radiogroup">
-                <label class="em-site-header-picker__opt">
-                    <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero" <?php checked($matrix === 'hero'); ?>>
-                    <span><?php esc_html_e('HERO seul', 'em-site'); ?></span>
-                </label>
-                <label class="em-site-header-picker__opt">
-                    <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero_slider" <?php checked($matrix === 'hero_slider'); ?>>
-                    <span><?php esc_html_e('HERO + SLIDER', 'em-site'); ?></span>
-                </label>
-                <label class="em-site-header-picker__opt">
-                    <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="slider" <?php checked($matrix === 'slider'); ?>>
-                    <span><?php esc_html_e('SLIDER seul', 'em-site'); ?></span>
-                </label>
+        <details class="em-site-collapse em-site-builder__section em-site-header-item-editor__tab" data-item-section="appearance">
+            <summary class="em-site-collapse__summary">
+                <span class="em-site-collapse__chevron" aria-hidden="true"></span>
+                <strong><?php esc_html_e('Apparence', 'em-site'); ?></strong>
+            </summary>
+            <div class="em-site-collapse__body">
+            <?php em_site_admin_render_header_appearance((array) ($cfg['appearance'] ?? []), (string) ($cfg['ratio'] ?? '75-25'), $header_item_slug); ?>
+            </div>
+        </details>
+
+        <details class="em-site-collapse em-site-builder__section em-site-header-item-editor__tab" data-item-section="composition">
+            <summary class="em-site-collapse__summary">
+                <span class="em-site-collapse__chevron" aria-hidden="true"></span>
+                <strong><?php esc_html_e('Composition', 'em-site'); ?></strong>
+            </summary>
+            <div class="em-site-collapse__body">
+            <div class="em-site-header-picker__controls">
+                <div class="em-site-header-picker__line em-site-header-picker__line--composition">
+                    <p class="em-site-rubriques-admin__picker-head"><?php esc_html_e('Composition du HEADER', 'em-site'); ?></p>
+                    <div class="em-site-header-picker__compo">
+                        <div class="em-site-header-picker__matrix" role="radiogroup">
+                            <label class="em-site-header-picker__opt">
+                                <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero_slider" <?php checked($matrix === 'hero_slider'); ?>>
+                                <span><?php esc_html_e('HERO + SLIDER', 'em-site'); ?></span>
+                            </label>
+                            <label class="em-site-header-picker__opt">
+                                <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="hero" <?php checked($matrix === 'hero'); ?>>
+                                <span><?php esc_html_e('HERO seul', 'em-site'); ?></span>
+                            </label>
+                            <label class="em-site-header-picker__opt">
+                                <input type="radio" name="em-site-header-matrix-<?php echo esc_attr($header_item_slug); ?>" value="slider" <?php checked($matrix === 'slider'); ?>>
+                                <span><?php esc_html_e('SLIDER seul', 'em-site'); ?></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="em-site-header-picker__line em-site-header-picker__position"<?php echo $matrix === 'hero_slider' ? '' : ' hidden'; ?>>
+                    <p class="em-site-rubriques-admin__picker-head"><?php esc_html_e('Position', 'em-site'); ?></p>
+                    <div class="em-site-header-picker__position-options">
+                            <label class="em-site-header-picker__opt">
+                                <input type="radio" name="em-site-header-position-<?php echo esc_attr($header_item_slug); ?>" value="hero_left" <?php checked((string) ($cfg['position'] ?? 'hero_left') !== 'slider_left'); ?>>
+                                <span><?php esc_html_e('HERO à gauche', 'em-site'); ?></span>
+                            </label>
+                            <label class="em-site-header-picker__opt">
+                                <input type="radio" name="em-site-header-position-<?php echo esc_attr($header_item_slug); ?>" value="slider_left" <?php checked((string) ($cfg['position'] ?? '') === 'slider_left'); ?>>
+                                <span><?php esc_html_e('SLIDER à gauche', 'em-site'); ?></span>
+                            </label>
+                    </div>
+                </div>
             </div>
 
-            <div class="em-site-header-picker__position"<?php echo $matrix === 'hero_slider' ? '' : ' hidden'; ?>>
-                <span class="em-site-header-picker__poslabel"><?php esc_html_e('Position', 'em-site'); ?></span>
-                <label class="em-site-header-picker__opt">
-                    <input type="radio" name="em-site-header-position-<?php echo esc_attr($header_item_slug); ?>" value="hero_left" <?php checked((string) ($cfg['position'] ?? 'hero_left') !== 'slider_left'); ?>>
-                    <span><?php esc_html_e('HERO à gauche', 'em-site'); ?></span>
-                </label>
-                <label class="em-site-header-picker__opt">
-                    <input type="radio" name="em-site-header-position-<?php echo esc_attr($header_item_slug); ?>" value="slider_left" <?php checked((string) ($cfg['position'] ?? '') === 'slider_left'); ?>>
-                    <span><?php esc_html_e('SLIDER à gauche', 'em-site'); ?></span>
-                </label>
+            <div class="em-site-header-picker__lists">
+                <div class="em-site-header-item-editor__hero-wrap"<?php echo in_array($matrix, ['hero', 'hero_slider'], true) ? '' : ' hidden'; ?>>
+                    <?php em_site_admin_render_header_item_part_items($header_item_slug, 'hero', $hero_type, (string) ($cfg['hero'] ?? '')); ?>
+                </div>
+
+                <div class="em-site-header-item-editor__slider-wrap"<?php echo in_array($matrix, ['slider', 'hero_slider'], true) ? '' : ' hidden'; ?>>
+                    <?php em_site_admin_render_header_item_part_items($header_item_slug, 'slider', $slider_type, (string) ($cfg['slider'] ?? '')); ?>
+                </div>
             </div>
-        </div>
-
-        <div class="em-site-header-item-editor__hero-wrap"<?php echo in_array($matrix, ['hero', 'hero_slider'], true) ? '' : ' hidden'; ?>>
-            <?php em_site_admin_render_header_item_part_items($header_item_slug, 'hero', $hero_type, (string) ($cfg['hero'] ?? '')); ?>
-        </div>
-
-        <div class="em-site-header-item-editor__slider-wrap"<?php echo in_array($matrix, ['slider', 'hero_slider'], true) ? '' : ' hidden'; ?>>
-            <?php em_site_admin_render_header_item_part_items($header_item_slug, 'slider', $slider_type, (string) ($cfg['slider'] ?? '')); ?>
-        </div>
-
-        <?php em_site_admin_render_header_appearance((array) ($cfg['appearance'] ?? []), (string) ($cfg['ratio'] ?? '75-25'), $header_item_slug); ?>
+            </div>
+        </details>
 
         <div class="em-site-header-picker__savebar">
             <button type="button" class="button button-primary em-site-header-item-editor__save" disabled><?php esc_html_e('Enregistrer la composition', 'em-site'); ?></button>
@@ -1280,62 +1299,78 @@ function em_site_admin_render_header_appearance(array $appearance, string $ratio
         $bg_field_id .= '-' . $scope_key;
     }
     ?>
-    <div class="em-site-header-picker__appearance">
-        <p class="em-site-header-picker__subhead"><?php esc_html_e('Apparence du HEADER (fond partagé)', 'em-site'); ?></p>
-        <div class="em-site-header-appr">
-            <div class="em-site-header-appr__row">
-                <span class="em-site-header-appr__field">
-                    <span><?php esc_html_e('Fond', 'em-site'); ?></span>
-                    <?php em_site_admin_render_color_field([
-                        'id'            => $bg_field_id,
-                        'value'         => $bg,
-                        'input_class'   => 'em-site-header-appr__bg',
-                        'preview_label' => __('Fond du HEADER', 'em-site'),
-                    ]); ?>
-                </span>
-                <span class="em-site-header-appr__field em-site-header-appr__field--image">
-                    <span><?php esc_html_e('Image de fond', 'em-site'); ?></span>
-                    <span class="em-site-header-appr__media" data-id="<?php echo esc_attr((string) $bg_image_id); ?>">
-                        <img class="em-site-header-appr__thumb"<?php echo $bg_thumb !== '' ? ' src="' . esc_url($bg_thumb) . '"' : ''; ?> alt=""<?php echo $bg_thumb === '' ? ' hidden' : ''; ?>>
-                        <button type="button" class="button button-small em-site-header-appr__pick"><?php esc_html_e('Choisir', 'em-site'); ?></button>
-                        <button type="button" class="button button-small em-site-header-appr__clear" title="<?php esc_attr_e('Aucune image de fond', 'em-site'); ?>" aria-label="<?php esc_attr_e('Aucune image de fond', 'em-site'); ?>"><?php esc_html_e('Aucune image', 'em-site'); ?></button>
-                    </span>
-                </span>
-                <label class="em-site-header-appr__field em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
-                    <span><?php esc_html_e('Position image', 'em-site'); ?></span>
-                    <select class="em-site-header-appr__pos">
-                        <?php foreach (em_site_rubrique_bg_position_choices() as $key => $label) : ?>
-                            <option value="<?php echo esc_attr($key); ?>" <?php selected($pos, $key); ?>><?php echo esc_html($label); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
-                <label class="em-site-header-appr__field">
-                    <span><?php esc_html_e('Ratio HERO/SLIDER', 'em-site'); ?></span>
-                    <select class="em-site-header-appr__ratio">
-                        <?php foreach (em_site_admin_header_ratio_choices() as $key => $label) : ?>
-                            <option value="<?php echo esc_attr($key); ?>" <?php selected($ratio, $key); ?>><?php echo esc_html($label); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </label>
+    <div class="em-site-header-picker__appearance em-site-appearance em-site-header-appr">
+        <div class="em-site-appearance__line em-site-appearance__line--colors">
+            <span class="em-site-appearance__title"><?php esc_html_e('Couleurs', 'em-site'); ?></span>
+            <div class="em-site-appearance__item" data-role="background">
+                <span class="em-site-appearance__label"><?php esc_html_e('Fond', 'em-site'); ?></span>
+                <?php em_site_admin_render_color_field([
+                    'id'            => $bg_field_id,
+                    'value'         => $bg,
+                    'input_class'   => 'em-site-header-appr__bg',
+                    'preview_label' => __('Fond du HEADER', 'em-site'),
+                ]); ?>
             </div>
-            <div class="em-site-header-appr__row">
-                <label class="em-site-header-appr__field em-site-header-appr__field--range em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
-                    <span><?php esc_html_e('Opacité', 'em-site'); ?></span>
-                    <input type="range" class="em-site-header-appr__op" min="0" max="100" step="1" value="<?php echo esc_attr((string) $op); ?>" oninput="this.nextElementSibling.textContent=this.value+'%'">
-                    <output><?php echo esc_html($op . '%'); ?></output>
+        </div>
+
+        <div class="em-site-appearance__line em-site-appearance__line--spaces">
+            <span class="em-site-appearance__title"><?php esc_html_e('Espacements', 'em-site'); ?></span>
+            <span class="em-site-header-appr__pads">
+                <label class="em-site-appearance__num">
+                    <span class="em-site-appearance__label"><?php esc_html_e('Haut', 'em-site'); ?></span>
+                    <input type="number" class="em-site-appearance__num-input em-site-header-appr__pt" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pt'] ?? 0)); ?>">
                 </label>
-                <label class="em-site-header-appr__field em-site-header-appr__field--check em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
-                    <input type="checkbox" class="em-site-header-appr__mirror" <?php checked(!empty($appearance['bg_image_mirror'])); ?>>
-                    <span><?php esc_html_e('Miroir', 'em-site'); ?></span>
+                <label class="em-site-appearance__num">
+                    <span class="em-site-appearance__label"><?php esc_html_e('Bas', 'em-site'); ?></span>
+                    <input type="number" class="em-site-appearance__num-input em-site-header-appr__pb" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pb'] ?? 0)); ?>">
                 </label>
-                <span class="em-site-header-appr__pads">
-                    <span class="em-site-header-appr__padlabel"><?php esc_html_e('Marges', 'em-site'); ?></span>
-                    <input type="number" class="em-site-header-appr__pt" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pt'] ?? 0)); ?>" title="<?php esc_attr_e('Haut', 'em-site'); ?>">
-                    <input type="number" class="em-site-header-appr__pb" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pb'] ?? 0)); ?>" title="<?php esc_attr_e('Bas', 'em-site'); ?>">
-                    <input type="number" class="em-site-header-appr__pl" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pl'] ?? 0)); ?>" title="<?php esc_attr_e('Gauche', 'em-site'); ?>">
-                    <input type="number" class="em-site-header-appr__pr" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pr'] ?? 0)); ?>" title="<?php esc_attr_e('Droite', 'em-site'); ?>">
-                </span>
-            </div>
+                <label class="em-site-appearance__num">
+                    <span class="em-site-appearance__label"><?php esc_html_e('Gauche', 'em-site'); ?></span>
+                    <input type="number" class="em-site-appearance__num-input em-site-header-appr__pl" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pl'] ?? 0)); ?>">
+                </label>
+                <label class="em-site-appearance__num">
+                    <span class="em-site-appearance__label"><?php esc_html_e('Droite', 'em-site'); ?></span>
+                    <input type="number" class="em-site-appearance__num-input em-site-header-appr__pr" min="0" value="<?php echo esc_attr((string) (int) ($appearance['pr'] ?? 0)); ?>">
+                </label>
+            </span>
+        </div>
+
+        <div class="em-site-appearance__line em-site-appearance__line--fonts em-site-header-appr__layout-line">
+            <span class="em-site-appearance__title"><?php esc_html_e('Mise en page', 'em-site'); ?></span>
+            <label class="em-site-appearance__font em-site-header-appr__ratio-wrap">
+                <span class="em-site-appearance__label"><?php esc_html_e('Ratio HERO/SLIDER', 'em-site'); ?></span>
+                <select class="em-site-header-appr__ratio em-site-appearance__font-input">
+                    <?php foreach (em_site_admin_header_ratio_choices() as $key => $label) : ?>
+                        <option value="<?php echo esc_attr($key); ?>" <?php selected($ratio, $key); ?>><?php echo esc_html($label); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+        </div>
+
+        <div class="em-site-appearance__line em-site-appearance__line--bgimage">
+            <span class="em-site-appearance__title"><?php esc_html_e('Image de fond', 'em-site'); ?></span>
+            <span class="em-site-header-appr__media em-site-appearance__bgmedia" data-id="<?php echo esc_attr((string) $bg_image_id); ?>">
+                <img class="em-site-header-appr__thumb em-site-appearance__bgthumb"<?php echo $bg_thumb !== '' ? ' src="' . esc_url($bg_thumb) . '"' : ''; ?> alt=""<?php echo $bg_thumb === '' ? ' hidden' : ''; ?>>
+                <button type="button" class="button button-small em-site-header-appr__pick"><?php esc_html_e('Choisir', 'em-site'); ?></button>
+                <button type="button" class="button button-small em-site-header-appr__clear" title="<?php esc_attr_e('Aucune image de fond', 'em-site'); ?>" aria-label="<?php esc_attr_e('Aucune image de fond', 'em-site'); ?>"><?php esc_html_e('Aucune image', 'em-site'); ?></button>
+            </span>
+            <label class="em-site-appearance__font em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
+                <span class="em-site-appearance__label"><?php esc_html_e('Position', 'em-site'); ?></span>
+                <select class="em-site-header-appr__pos em-site-appearance__bgpos-input">
+                    <?php foreach (em_site_rubrique_bg_position_choices() as $key => $label) : ?>
+                        <option value="<?php echo esc_attr($key); ?>" <?php selected($pos, $key); ?>><?php echo esc_html($label); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </label>
+            <label class="em-site-appearance__font em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
+                <span class="em-site-appearance__label"><?php esc_html_e('Opacité', 'em-site'); ?></span>
+                <input type="range" class="em-site-header-appr__op em-site-appearance__bgopacity-input" min="0" max="100" step="1" value="<?php echo esc_attr((string) $op); ?>" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <output class="em-site-appearance__bgopacity-out"><?php echo esc_html($op . '%'); ?></output>
+            </label>
+            <label class="em-site-appearance__toggle em-site-header-appr__image-opt"<?php echo $has_bg_image ? '' : ' hidden'; ?>>
+                <input type="checkbox" class="em-site-header-appr__mirror" <?php checked(!empty($appearance['bg_image_mirror'])); ?>>
+                <span class="em-site-appearance__label"><?php esc_html_e('Miroir', 'em-site'); ?></span>
+            </label>
         </div>
     </div>
     <?php

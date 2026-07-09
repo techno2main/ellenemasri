@@ -113,7 +113,10 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
             if (sb) { sb.hidden = !ready || sig === baseline; }
             EmSiteAppearance.updatePill(builder, colors);
             var card = builder.closest('.em-site-item');
-            if (card) { card.style.setProperty('--em-site-item-bg', colors && colors.bg ? colors.bg : ''); }
+            if (card) {
+                card.style.setProperty('--em-site-item-bg', colors && colors.bg ? colors.bg : '');
+                card.style.setProperty('--em-site-item-text', colors && colors.text ? colors.text : '');
+            }
             var mapped = items.map(function (it) {
                 return { row: it.row, col: it.col, type: it.type, label: it.label, value: it.value || it.label, url: it.url, imageUrl: it.imageUrl, icon: it.icon, color: it.color, name: it.name, link: it.link, hidden: it.hidden, style: it.style, sliderUrls: it.sliderUrls, thumbUrl: it.thumbUrl, clickable: it.clickable };
             });

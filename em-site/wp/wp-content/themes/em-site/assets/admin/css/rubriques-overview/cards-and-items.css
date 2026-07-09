@@ -135,8 +135,18 @@
     }
     .em-site-item__anchorinput::placeholder { color:#aeb6bf; opacity:1; }
    .em-site-item__slug { display:inline-flex; align-items:center; gap:5px; margin-left:6px; padding:0 8px; height:24px; border:1px solid #e5e8ec; border-radius:7px; background:#f6f8fa; color:#7c8794; font-size:11px; line-height:1; }
+   .em-site-item__slug,
+   .em-site-item__slug * { cursor:default !important; }
    .em-site-item__slug-label { text-transform:uppercase; letter-spacing:.04em; font-weight:600; opacity:.8; }
    .em-site-item__slug-value { color:#66717e; font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size:11px; }
+   .em-site-item__section-tabs { display:inline-flex; align-items:center; gap:6px; margin-left:8px; }
+   .em-site-item:not([open]) .em-site-item__section-tabs { display:none; }
+   .em-site-item__section-tab { display:inline-flex; align-items:center; gap:4px; height:24px; margin:0; padding:0 8px; border:1px solid #d4d9df; border-radius:7px; background:#fff; color:#5a6673; font-size:11px; font-weight:600; letter-spacing:.02em; line-height:1; cursor:pointer; transition:background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease; }
+   .em-site-item__section-tab .dashicons { width:14px; height:14px; font-size:14px; line-height:14px; }
+   .em-site-item__section-tab:hover { border-color:#9aa4af; color:#37414b; background:#f7f9fb; }
+   .em-site-item__section-tab:focus-visible { outline:0; border-color:#2271b1; box-shadow:0 0 0 1px rgba(34,113,177,.28); }
+   .em-site-item__section-tab.is-active,
+   .em-site-item__section-tab[aria-selected="true"] { border-color:#2271b1; color:#135e96; background:#eef6fc; box-shadow:0 0 0 1px rgba(34,113,177,.16); }
     .em-site-item__nameinput { text-transform:uppercase; font-weight:600; min-width:200px; }
     /* Boutons valider / annuler du renommage inline (items + rubriques) */
     .em-site-item__confirm, .em-site-item__cancel, .em-site-card__confirm, .em-site-card__cancel { background:#fff; border:1px solid #c3c4c7; border-radius:4px; cursor:pointer; padding:2px 4px; margin-left:4px; display:inline-flex; align-items:center; line-height:1; }

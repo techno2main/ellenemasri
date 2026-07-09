@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-08 14:45:14.
+3. Derni?re mise ? jour : 2026-07-09 10:24:37.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -82,3 +82,17 @@
 	- arriv?e initiale et clic sur ic?ne+nom de rubrique => liste compl?te des items ferm?s,
 	- clic onglet => ouverture de l?item cibl? et masquage des autres items.
 - Contr?les techniques ex?cut?s pendant le lot : diagnostics VS Code sans erreur sur les fichiers modifi?s + v?rification r?p?t?e `php -l` sur `overview.php` sans erreur de syntaxe.
+
+### 2026-07-09 10:24:37 (Paris)
+
+- Lot UX Rubriques/HEADER poursuivi sur la page overview admin : ajout et stabilisation des onglets inline `Apparence` / `Contenu` (et `Composition` pour HEADER) avec ouverture ciblée, état actif cohérent et masquage du panneau non actif.
+- Harmonisation de la ligne item (icônes, séparateurs, renommage mono-ligne, slug non interactif) et ajustements de lisibilité du bandeau focus (onglet inactif atténué, actif plus lisible).
+- Refonte de la composition HEADER :
+	- ordre des options réorganisé (`HERO + SLIDER`, puis `HERO seul`, puis `SLIDER seul`),
+	- section `Position` conditionnelle,
+	- ordre dynamique des listes HERO/SLIDER selon la position choisie,
+	- suppression du scroll horizontal sur les listes d’items,
+	- séparation visuelle entre bloc de réglages (Composition/Position) et bloc de sélection des items.
+- Harmonisation du bloc `Apparence` de HEADER sur la structure visuelle standard des autres rubriques (lignes `Couleurs`, `Espacements`, `Mise en page`, `Image de fond`) tout en conservant les champs métier spécifiques.
+- Règle métier appliquée : si la composition est `HERO seul` ou `SLIDER seul`, la ligne `Mise en page` (incluant le ratio HERO/SLIDER) est masquée ; elle réapparaît en `HERO + SLIDER`.
+- Contrôles techniques exécutés pendant le lot : diagnostics VS Code sur les fichiers modifiés sans erreur remontée.

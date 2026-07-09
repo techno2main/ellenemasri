@@ -34,7 +34,7 @@ function em_site_sort_global_fields(array $fields): array
 }
 
 /**
- * Bandeau Apparence sur deux lignes : couleurs/liens, puis espacements.
+ * Bandeau Apparence sur 4 lignes : Couleurs, Espacements, Typos, Image de fond.
  *
  * @param array<int, array<string, mixed>> $global_fields
  * @param array<string, mixed>             $content
@@ -52,24 +52,24 @@ function em_site_render_appearance_lines(string $type, string $item, array $glob
     $bg_opacities = array_filter($sorted, static fn(array $f): bool => (string) $f['type'] === 'number' && $role_of($f) === 'background_opacity');
     $bg_mirrors = array_filter($sorted, static fn(array $f): bool => (string) $f['type'] === 'toggle' && $role_of($f) === 'background_mirror');
     ?>
-    <div class="em-site-appearance__line">
+    <div class="em-site-appearance__line em-site-appearance__line--colors">
         <span class="em-site-appearance__title"><?php esc_html_e('Couleurs', 'em-site'); ?></span>
         <?php foreach ($colors as $field) : ?>
             <?php em_site_render_appearance_field($type, $item, $field, $form_id, $content); ?>
         <?php endforeach; ?>
     </div>
-    <?php if ($spaces !== [] || $fonts !== []) : ?>
-        <div class="em-site-appearance__line">
-            <?php if ($spaces !== []) : ?>
-                <span class="em-site-appearance__title"><?php esc_html_e('Espacements', 'em-site'); ?></span>
-                <?php em_site_render_spacing_pairs($type, $item, $spaces, $form_id, $content); ?>
-            <?php endif; ?>
-            <?php if ($fonts !== []) : ?>
-                <span class="em-site-appearance__title"><?php esc_html_e('Typos', 'em-site'); ?></span>
-                <?php foreach ($fonts as $field) : ?>
-                    <?php em_site_render_appearance_field($type, $item, $field, $form_id, $content); ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+    <?php if ($spaces !== []) : ?>
+        <div class="em-site-appearance__line em-site-appearance__line--spaces">
+            <span class="em-site-appearance__title"><?php esc_html_e('Espacements', 'em-site'); ?></span>
+            <?php em_site_render_spacing_pairs($type, $item, $spaces, $form_id, $content); ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($fonts !== []) : ?>
+        <div class="em-site-appearance__line em-site-appearance__line--fonts">
+            <span class="em-site-appearance__title"><?php esc_html_e('Typos', 'em-site'); ?></span>
+            <?php foreach ($fonts as $field) : ?>
+                <?php em_site_render_appearance_field($type, $item, $field, $form_id, $content); ?>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
     <?php if ($bg_images !== [] || $bg_positions !== []) : ?>

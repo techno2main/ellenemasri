@@ -63,6 +63,7 @@ function em_site_render_footer_item(string $type_slug, string $item_slug, string
     $del_ack = sprintf(__('Je confirme la suppression de %1$s %2$s.', 'em-site'), $n['dem'], $n['singular']);
     $del_tip = sprintf(__('Supprimer la Section %s', 'em-site'), $type_label . ' ' . $label);
     $anchor = (string) (em_site_get_item($type_slug, $item_slug)['anchor'] ?? '');
+    $show_inline_section_tabs = true;
     ?>
     <details class="em-site-collapse em-site-item" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-site-collapse__summary">
@@ -110,6 +111,34 @@ function em_site_render_footer_item(string $type_slug, string $item_slug, string
                 <span class="em-site-item__slug-label">slug</span>
                 <span class="em-site-item__slug-value"><?php echo esc_html($item_slug); ?></span>
             </span>
+            <?php if ($show_inline_section_tabs) : ?>
+                <span class="em-site-item__section-tabs" role="tablist" aria-label="<?php esc_attr_e('Navigation rapide section item', 'em-site'); ?>">
+                    <button
+                        type="button"
+                        class="em-site-item__section-tab"
+                        data-item-section-target="appearance"
+                        role="tab"
+                        aria-selected="false"
+                        title="<?php esc_attr_e('Ouvrir la section Apparence', 'em-site'); ?>"
+                        aria-label="<?php esc_attr_e('Ouvrir la section Apparence', 'em-site'); ?>"
+                    >
+                        <span class="dashicons dashicons-art" aria-hidden="true"></span>
+                        <span><?php esc_html_e('Apparence', 'em-site'); ?></span>
+                    </button>
+                    <button
+                        type="button"
+                        class="em-site-item__section-tab"
+                        data-item-section-target="<?php echo esc_attr($type_slug === 'headers' ? 'composition' : 'content'); ?>"
+                        role="tab"
+                        aria-selected="false"
+                        title="<?php echo esc_attr($type_slug === 'headers' ? __('Ouvrir la section Composition', 'em-site') : __('Ouvrir la section Contenu', 'em-site')); ?>"
+                        aria-label="<?php echo esc_attr($type_slug === 'headers' ? __('Ouvrir la section Composition', 'em-site') : __('Ouvrir la section Contenu', 'em-site')); ?>"
+                    >
+                        <span class="dashicons <?php echo esc_attr($type_slug === 'headers' ? 'dashicons-screenoptions' : 'dashicons-media-text'); ?>" aria-hidden="true"></span>
+                        <span><?php echo esc_html($type_slug === 'headers' ? __('Composition', 'em-site') : __('Contenu', 'em-site')); ?></span>
+                    </button>
+                </span>
+            <?php endif; ?>
         </summary>
         <div class="em-site-collapse__body">
             <?php
@@ -147,4 +176,5 @@ function em_site_render_footer_item(string $type_slug, string $item_slug, string
     em_site_render_rename_script();
     em_site_render_delete_script();
     em_site_render_anchor_script();
+    em_site_render_item_section_tabs_script();
 }

@@ -60,7 +60,7 @@ function em_site_render_item_builder(string $type, string $item): void
             <input type="hidden" name="item_label" id="<?php echo esc_attr($form_id); ?>-label" value="<?php echo esc_attr($data['label']); ?>">
 
             <?php if ($global_fields !== []) : ?>
-                <details class="em-site-collapse em-site-builder__section">
+                <details class="em-site-collapse em-site-builder__section" data-item-section="appearance">
                     <summary class="em-site-collapse__summary">
                         <span class="em-site-collapse__chevron"></span>
                         <strong><?php esc_html_e('Apparence', 'em-site'); ?></strong>
@@ -74,7 +74,7 @@ function em_site_render_item_builder(string $type, string $item): void
             <?php endif; ?>
         </form>
 
-        <details class="em-site-collapse em-site-builder__section">
+        <details class="em-site-collapse em-site-builder__section" data-item-section="content">
             <summary class="em-site-collapse__summary">
                 <span class="em-site-collapse__chevron"></span>
                 <strong><?php esc_html_e('Contenu', 'em-site'); ?></strong>
