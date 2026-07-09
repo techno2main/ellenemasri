@@ -187,12 +187,15 @@ function em_site_overview_render_directory(array $types, string $active_slug): v
                     <span class="em-site-overview__directory-topline">
                         <span class="em-site-overview__directory-heading">
                             <span class="em-site-overview__directory-icon dashicons dashicons-welcome-add-page" aria-hidden="true"></span>
-                            <strong class="em-site-overview__directory-label em-site-overview__directory-label--create"><?php esc_html_e('Nouvelle Rubrique', 'em-site'); ?></strong>
+                            <strong class="em-site-overview__directory-label em-site-overview__directory-label--create"><?php esc_html_e('Ajouter', 'em-site'); ?></strong>
                         </span>
+                    </span>
+                    <span class="em-site-overview__directory-meta">
+                        <span class="em-site-overview__directory-pill em-site-overview__directory-pill--createhint"><?php esc_html_e('+ NOUVELLE RUBRIQUE', 'em-site'); ?></span>
                     </span>
                 </span>
                 <span class="em-site-overview__directory-rail" aria-hidden="true">
-                    <span class="em-site-overview__directory-arrow dashicons dashicons-arrow-right-alt2"></span>
+                    <span class="em-site-overview__directory-arrow dashicons dashicons-plus-alt2"></span>
                 </span>
             </button>
         </div>

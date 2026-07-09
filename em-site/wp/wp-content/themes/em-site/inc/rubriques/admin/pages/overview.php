@@ -259,6 +259,10 @@ function em_site_overview_render_focus_back(string $active_slug, array $type): v
                     <span class="screen-reader-text"><?php esc_html_e('Renommer la rubrique', 'em-site'); ?></span>
                 </button>
                 <span class="em-site-overview__focus-itemtabs" data-overview-itemtabs hidden></span>
+                <button type="button" class="em-site-overview__focus-additem" data-overview-additem hidden>
+                    <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+                    <span><?php esc_html_e('Nouvel item', 'em-site'); ?></span>
+                </button>
             </strong>
         </div>
     </div>
@@ -341,12 +345,15 @@ function em_site_overview_render_directory(array $types, string $active_slug): v
                     <span class="em-site-overview__directory-topline">
                         <span class="em-site-overview__directory-heading">
                             <span class="em-site-overview__directory-icon dashicons dashicons-welcome-add-page" aria-hidden="true"></span>
-                            <strong class="em-site-overview__directory-label em-site-overview__directory-label--create"><?php esc_html_e('Nouvelle Rubrique', 'em-site'); ?></strong>
+                            <strong class="em-site-overview__directory-label em-site-overview__directory-label--create"><?php esc_html_e('Ajouter', 'em-site'); ?></strong>
                         </span>
+                    </span>
+                    <span class="em-site-overview__directory-meta">
+                        <span class="em-site-overview__directory-pill em-site-overview__directory-pill--createhint"><?php esc_html_e('+ NOUVELLE RUBRIQUE', 'em-site'); ?></span>
                     </span>
                 </span>
                 <span class="em-site-overview__directory-rail" aria-hidden="true">
-                    <span class="em-site-overview__directory-arrow dashicons dashicons-arrow-right-alt2"></span>
+                    <span class="em-site-overview__directory-arrow dashicons dashicons-plus-alt2"></span>
                 </span>
             </button>
         </div>
@@ -453,6 +460,7 @@ function em_site_overview_render(): void
             var titleIcon = wrap.querySelector('.em-site-overview__focus-titleicon');
             var titleCount = wrap.querySelector('.em-site-overview__focus-titlecount');
             var itemTabs = wrap.querySelector('[data-overview-itemtabs]');
+            var addItemBtn = wrap.querySelector('[data-overview-additem]');
             var titleInput = wrap.querySelector('.em-site-overview__focus-nameinput');
             var titleEdit = wrap.querySelector('.em-site-overview__focus-titleedit');
             var titleConfirm = wrap.querySelector('.em-site-overview__focus-confirm');
@@ -477,6 +485,10 @@ function em_site_overview_render(): void
                 if (itemTabs) {
                     itemTabs.hidden = true;
                     itemTabs.innerHTML = '';
+                }
+                if (addItemBtn) {
+                    addItemBtn.hidden = true;
+                    addItemBtn.onclick = null;
                 }
                 if (titleHome) { titleHome.hidden = true; }
                 return;
@@ -504,6 +516,21 @@ function em_site_overview_render(): void
 
             if (titleCount) {
                 titleCount.textContent = count ? count.textContent : '';
+            }
+
+            if (addItemBtn) {
+                var cardAddItem = card ? card.querySelector('.em-site-card__additem') : null;
+                if (!cardAddItem) {
+                    addItemBtn.hidden = true;
+                    addItemBtn.onclick = null;
+                } else {
+                    addItemBtn.hidden = false;
+                    addItemBtn.title = cardAddItem.getAttribute('title') || '';
+                    addItemBtn.setAttribute('aria-label', cardAddItem.getAttribute('aria-label') || '');
+                    addItemBtn.onclick = function () {
+                        cardAddItem.click();
+                    };
+                }
             }
 
             if (!itemTabs || !card) { return; }
