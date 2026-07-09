@@ -33,7 +33,7 @@ function em_site_admin_render_header_section_assets(): void
     <style>
     /* Panneau (mêmes visuels que le sélecteur d'instance). */
     .em-site-rubriques-admin__picker { list-style:none; margin:0 0 10px; padding:0; }
-    .em-site-rubriques-admin__picker-inner { margin:-2px 0 8px; padding:14px 16px; background:#fbf8f9; border:1px solid #e6d9dc; border-radius:8px; }
+    .em-site-rubriques-admin__picker-inner { margin:-2px 34px 8px 34px; padding:14px 16px; max-width:none; width:auto; background:#fbf8f9; border:1px solid #e6d9dc; border-radius:8px; }
     .em-site-rubriques-admin__picker-head { margin:0 0 8px; font-weight:600; color:#4e080e; }
     .em-site-rubriques-admin__picker-empty { margin:0; color:#666; }
     .em-site-header-picker__mode { margin:0 0 12px; }
@@ -211,6 +211,10 @@ function em_site_admin_render_header_section_assets(): void
     .em-site-header-picker__savebar { display:flex; align-items:center; gap:14px; margin-top:14px; }
     .em-site-header-picker__savebar .em-site-instance-picker__status { margin:0; }
     .em-site-header-picker__save:disabled { opacity:.55; cursor:default; }
+
+    @media (max-width: 782px) {
+        .em-site-rubriques-admin__picker-inner { margin-left:0; width:100%; }
+    }
     </style>
     <script>
     (function () {

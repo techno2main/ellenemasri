@@ -352,14 +352,6 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
                                     >
                                         <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
                                     </button>
-                                    <a
-                                        class="em-site-instance-picker__edit"
-                                        href="<?php echo esc_url(em_site_admin_rubrique_edit_url($module_slug, $slug)); ?>"
-                                        title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>"
-                                        aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>"
-                                    >
-                                        <span class="dashicons dashicons-edit" aria-hidden="true"></span>
-                                    </a>
                                 </span>
                             </li>
                         <?php endforeach; ?>

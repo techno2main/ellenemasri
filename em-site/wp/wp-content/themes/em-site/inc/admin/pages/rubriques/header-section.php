@@ -817,9 +817,6 @@ function em_site_admin_render_header_catalog_items(string $template): void
                             <button type="button" class="em-site-instance-picker__eye" data-item="<?php echo esc_attr($slug); ?>" aria-pressed="false" title="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>" aria-label="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>">
                                 <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
                             </button>
-                            <a class="em-site-instance-picker__edit" href="<?php echo esc_url(em_site_admin_rubrique_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>">
-                                <span class="dashicons dashicons-edit" aria-hidden="true"></span>
-                            </a>
                         </span>
                     </li>
                 <?php endforeach; ?>
@@ -1114,9 +1111,6 @@ function em_site_admin_render_header_part_items(string $template, string $part, 
                         <button type="button" class="em-site-instance-picker__eye" data-part="<?php echo esc_attr($part); ?>" data-item="<?php echo esc_attr($slug); ?>" aria-pressed="false" title="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>" aria-label="<?php esc_attr_e('Aperçu de la section', 'em-site'); ?>">
                             <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
                         </button>
-                        <a class="em-site-instance-picker__edit" href="<?php echo esc_url(em_site_admin_rubrique_edit_url($type, $slug)); ?>" title="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>" aria-label="<?php esc_attr_e('Éditer dans RUBRIQUES', 'em-site'); ?>">
-                            <span class="dashicons dashicons-edit" aria-hidden="true"></span>
-                        </a>
                     </span>
                 </li>
             <?php endforeach; ?>

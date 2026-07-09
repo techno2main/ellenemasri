@@ -32,7 +32,7 @@ function em_site_admin_render_rubrique_items_picker_assets(): void
     ?>
     <style>
     .em-site-rubriques-admin__picker { list-style:none; margin:0 0 10px; padding:0; }
-    .em-site-rubriques-admin__picker-inner { margin:-2px 0 8px; padding:14px 16px; background:#fbf8f9; border:1px solid #e6d9dc; border-radius:8px; }
+    .em-site-rubriques-admin__picker-inner { margin:-2px 34px 8px 34px; padding:14px 16px; max-width:none; width:auto; background:#fbf8f9; border:1px solid #e6d9dc; border-radius:8px; }
     .em-site-rubriques-admin__picker-head { margin:0 0 8px; font-weight:600; color:#4e080e; }
     .em-site-rubriques-admin__picker-empty { margin:0; color:#666; }
     .em-site-instance-picker__mode { margin:0 0 10px; padding:10px; background:#fff; border:1px solid #e6d9dc; border-radius:6px; }
@@ -66,6 +66,10 @@ function em_site_admin_render_rubrique_items_picker_assets(): void
        Le rendu/échelle des aperçus est mutualisé dans skeleton-preview.php. */
     .em-site-instance-picker__previews { display:none; }
     .em-site-instance-picker__status { margin:8px 0 0; font-size:12px; color:#2f7a37; }
+
+    @media (max-width: 782px) {
+        .em-site-rubriques-admin__picker-inner { margin-left:0; width:100%; }
+    }
     </style>
     <script>
     (function () {

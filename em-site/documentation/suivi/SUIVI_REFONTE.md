@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-09 10:24:37.
+3. Derni?re mise ? jour : 2026-07-09 10:57:56.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -96,3 +96,16 @@
 - Harmonisation du bloc `Apparence` de HEADER sur la structure visuelle standard des autres rubriques (lignes `Couleurs`, `Espacements`, `Mise en page`, `Image de fond`) tout en conservant les champs métier spécifiques.
 - Règle métier appliquée : si la composition est `HERO seul` ou `SLIDER seul`, la ligne `Mise en page` (incluant le ratio HERO/SLIDER) est masquée ; elle réapparaît en `HERO + SLIDER`.
 - Contrôles techniques exécutés pendant le lot : diagnostics VS Code sur les fichiers modifiés sans erreur remontée.
+
+### 2026-07-09 10:57:56 (Paris)
+
+- Ajustements UI du bandeau focus Rubriques :
+	- carte de création renommée (`Ajouter`) avec sous-texte `+ NOUVELLE RUBRIQUE`,
+	- icône d’action remplacée par `+`,
+	- bouton `+ NOUVEL ITEM` réintroduit à droite des onglets de titre rubrique et relié au flux d’ajout existant de la carte active,
+	- harmonisation typographique et colorimétrique du bouton d’ajout avec les onglets.
+- Ajustements page Squelette/Template :
+	- retrait des icônes d’édition dans les listes d’items (picker standard + listes HEADER dédiées),
+	- réalignement du bloc de réglages sous la ligne titre rubrique,
+	- largeur du bloc de réglages recalée pour correspondre visuellement à la largeur utile du cartouche titre (sans empiéter sur la zone de suppression/croix).
+- Contrôles techniques exécutés : diagnostics VS Code sans erreur sur les fichiers modifiés.
