@@ -58,11 +58,11 @@ if (!function_exists('em_site_overview_display_text')) {
 
 if (!function_exists('em_site_overview_is_garbled_text')) {
     /**
-     * Détecte un libellé probablement corrompu (mojibake).
+     * D?tecte un libell? probablement corrompu (mojibake).
      */
     function em_site_overview_is_garbled_text(string $text): bool
     {
-        return preg_match('/Ã|Â|â|\x{FFFD}/u', $text) === 1;
+        return preg_match('/?|?|?|\x{FFFD}/u', $text) === 1;
     }
 }
 
@@ -98,7 +98,7 @@ function em_site_overview_render_focus_back(string $active_slug, array $type): v
             <span><?php esc_html_e('Retour au sommaire', 'em-site'); ?></span>
         </a>
         <div class="em-site-overview__focus-titlewrap">
-            <span class="em-site-overview__focus-kicker"><?php esc_html_e('Édition ciblée', 'em-site'); ?></span>
+            <span class="em-site-overview__focus-kicker"><?php esc_html_e('?dition cibl?e', 'em-site'); ?></span>
             <strong class="em-site-overview__focus-title"><?php echo esc_html($label); ?></strong>
         </div>
     </div>
@@ -156,8 +156,8 @@ function em_site_overview_render_directory(array $types, string $active_slug): v
                                 <?php foreach ($items as $item_slug => $item_label) : ?>
                                     <?php
                                     unset($item_label);
-                                    // Vue sommaire: on privilégie un libellé stable dérivé du slug
-                                    // pour neutraliser définitivement les labels corrompus.
+                                    // Vue sommaire: on privil?gie un libell? stable d?riv? du slug
+                                    // pour neutraliser d?finitivement les labels corrompus.
                                     $display_label = em_site_overview_item_label_fallback($slug, (string) $item_slug);
                                     ?>
                                     <span class="em-site-overview__directory-pill"><?php echo esc_html($display_label); ?></span>

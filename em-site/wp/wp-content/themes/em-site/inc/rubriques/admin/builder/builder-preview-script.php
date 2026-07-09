@@ -1,10 +1,10 @@
 <?php
 /**
- * AperÃ§u temps rÃ©el partagÃ© (EM-SITE) â€” window.EmSitePreview.
+ * Aperçu temps réel partagé (EM-SITE) — window.EmSitePreview.
  *
- * Rendu client identique au front : lignes Ã— colonnes (gauche/centre/droite) +
- * couleurs globales. UtilisÃ© par le builder (Ã‰tape 1, placeholders = libellÃ©s) et
- * par l'Ã©dition de contenu (Ã‰tape 2, vraies valeurs).
+ * Rendu client identique au front : lignes × colonnes (gauche/centre/droite) +
+ * couleurs globales. Utilisé par le builder (Étape 1, placeholders = libellés) et
+ * par l'édition de contenu (Étape 2, vraies valeurs).
  *
  * @package em-site
  */
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Imprime le script d'aperÃ§u (une seule fois).
+ * Imprime le script d'aperçu (une seule fois).
  */
 function em_site_render_preview_script(): void
 {
@@ -29,7 +29,7 @@ function em_site_render_preview_script(): void
     <script>
     window.EmSitePreview = (function () {
         var FONTS = <?php echo wp_json_encode(em_site_rubrique_font_choices()); ?>;
-        var MASKED = '<?php echo esc_js(__('MasquÃ©', 'em-site')); ?>';
+        var MASKED = '<?php echo esc_js(__('Masqué', 'em-site')); ?>';
 
         function esc(value) {
             var d = document.createElement('div');
@@ -37,13 +37,13 @@ function em_site_render_preview_script(): void
             return d.innerHTML;
         }
 
-        // Texte Ã©chappÃ©, enveloppÃ© d'un lien factice (preview) si un lien existe.
+        // Texte échappé, enveloppé d'un lien factice (preview) si un lien existe.
         function textLink(text, link) {
             var html = esc(text);
             return link ? '<a class="em-rubrique__link" href="#" onclick="return false;">' + html + '</a>' : html;
         }
 
-        // Rendu preview du texte enrichi: HTML simple autorisÃ©, fallback nl2br.
+        // Rendu preview du texte enrichi: HTML simple autorisé, fallback nl2br.
         function richTextHtml(raw) {
             var str = String(raw || '');
             if (!str) { return ''; }
@@ -90,7 +90,7 @@ function em_site_render_preview_script(): void
             return css;
         }
 
-        // Balise image (redimension/recadrage + lien Ã©ventuel). '' si pas d'URL.
+        // Balise image (redimension/recadrage + lien éventuel). '' si pas d'URL.
         function imageMarkup(url, iv, alt, hasLink) {
             if (!url) { return ''; }
             iv = iv || {};
@@ -108,7 +108,7 @@ function em_site_render_preview_script(): void
             return img;
         }
 
-        // DÃ©tecte le fournisseur d'une URL vidÃ©o (youtube/tiktok) + ID.
+        // Détecte le fournisseur d'une URL vidéo (youtube/tiktok) + ID.
         function videoProvider(url) {
             url = String(url || '').trim();
             var m;
@@ -132,8 +132,8 @@ function em_site_render_preview_script(): void
             return '<div class="em-rubrique__video-embed em-rubrique__video-embed--' + info.p + '"><iframe src="' + esc(src) + '" frameborder="0" allowfullscreen></iframe></div>';
         }
 
-        // AperÃ§u fidÃ¨le du SLIDER mayami : reprend EXACTEMENT le markup du
-        // template-part front (cadre, scotch, flÃ¨ches, bandeau titre, pastilles,
+        // Aperçu fidèle du SLIDER mayami : reprend EXACTEMENT le markup du
+        // template-part front (cadre, scotch, flèches, bandeau titre, pastilles,
         // bouton son) afin que la CSS front lui donne le look du site.
         function sliderSharedHtml(cfg) {
             var slides = (cfg.slides || []).filter(function (sl) { return sl && !sl.hidden; });
@@ -292,7 +292,7 @@ function em_site_render_preview_script(): void
                     + rightTape
                     + frame + '</span>';
             }
-            if (item.type === 'video_file') { return item.url ? '<video class="em-rubrique__video" controls preload="metadata" src="' + esc(item.url) + '"></video>' : '<span class="em-rubrique__field">[' + esc('vidÃ©o') + ']</span>'; }
+            if (item.type === 'video_file') { return item.url ? '<video class="em-rubrique__video" controls preload="metadata" src="' + esc(item.url) + '"></video>' : '<span class="em-rubrique__field">[' + esc('vidéo') + ']</span>'; }
             if (item.type === 'audio_file') { return item.url ? '<audio class="em-rubrique__audio" controls preload="none" src="' + esc(item.url) + '"></audio>' : '<span class="em-rubrique__field">[' + esc('son') + ']</span>'; }
             if (item.type === 'audio_url') { return item.value ? '<audio class="em-rubrique__audio" controls preload="none" src="' + esc(item.value) + '"></audio>' : ''; }
             if (item.type === 'slider') {
@@ -336,7 +336,7 @@ function em_site_render_preview_script(): void
             }
         }
 
-        // Carte Â« Bloc Plateforme Â» (rendu identique Ã  la section Stream du site).
+        // Carte « Bloc Plateforme » (rendu identique à la section Stream du site).
         function platformCardHtml(item) {
             var pv = {}; try { pv = JSON.parse(item.value || '{}'); } catch (e) { pv = {}; }
             var top = pv.label || '';
@@ -349,7 +349,7 @@ function em_site_render_preview_script(): void
                 '<span class="em-rubrique__platform-card-arrow" aria-hidden="true">\u2192</span></a>';
         }
 
-        // Carte Â« Bloc RÃ©seau Â» (rendu identique Ã  la section Social du site).
+        // Carte « Bloc Réseau » (rendu identique à la section Social du site).
         function networkBrand(slug) {
             if (slug === 'tiktok') { return { bg: 'linear-gradient(135deg,#0f0f13 0%,#1a1a22 62%,#22152d 100%)', shadow: '#25f4ee' }; }
             if (slug === 'instagram') { return { bg: '#c13584', shadow: '#833ab4' }; }
@@ -362,7 +362,7 @@ function em_site_render_preview_script(): void
         function networkCardHtml(item) {
             var pv = {}; try { pv = JSON.parse(item.value || '{}'); } catch (e) { pv = {}; }
             var badge = pv.label || '';
-            if (!pv.platform && !badge) { return '<span class="em-rubrique__field">[' + esc('rÃ©seau') + ']</span>'; }
+            if (!pv.platform && !badge) { return '<span class="em-rubrique__field">[' + esc('réseau') + ']</span>'; }
             var slug = (pv.platform && pv.platform.indexOf(':') !== -1) ? pv.platform.split(':')[1] : (pv.platform || '');
             var brand = networkBrand(slug);
             var account = pv.account || NET_DEFAULT_ACCOUNT[slug] || '';
@@ -430,8 +430,8 @@ function em_site_render_preview_script(): void
             var footer = document.createElement('footer');
             footer.className = 'em-rubrique em-rubrique--footer em-rubrique--preview';
             footer.setAttribute('style', style);
-            // :visited ignore var() â†’ couleur littÃ©rale scopÃ©e au footer d'aperÃ§u.
-            // Les liens mÃ©dia (icÃ´nes/images) sont exclus : ils gardent la couleur de lien.
+            // :visited ignore var() → couleur littérale scopée au footer d'aperçu.
+            // Les liens média (icônes/images) sont exclus : ils gardent la couleur de lien.
             var vis = linkVisited || link;
             footer.innerHTML = (vis ? '<style>.em-rubrique--preview .em-rubrique__link:not(.em-rubrique__link--media):visited{color:' + vis + ' !important;}.em-rubrique--preview .em-rubrique__link--media:visited{color:' + (link || 'inherit') + ' !important;}</style>' : '') + rows;
 
@@ -440,10 +440,10 @@ function em_site_render_preview_script(): void
             initSliders(target);
         }
 
-        // Ã‰lÃ©ment de rubrique contenant l'aperÃ§u liÃ© Ã  un bouton (Å“il/popout).
+        // Élément de rubrique contenant l'aperçu lié à un bouton (œil/popout).
         function ownerItem(btn) { return btn.closest('.em-site-item') || btn.closest('.em-site-builder'); }
 
-        // Ouvre/ferme l'aperÃ§u pleine taille (sticky). Ouvre l'item si activÃ©.
+        // Ouvre/ferme l'aperçu pleine taille (sticky). Ouvre l'item si activé.
         function toggle(btn) {
             var item = ownerItem(btn);
             var body = item ? item.querySelector('.em-site-livepreview') : null;
@@ -456,7 +456,7 @@ function em_site_render_preview_script(): void
             if (!wasOpen && item && item.tagName === 'DETAILS') { item.open = true; }
         }
 
-        // FenÃªtre dÃ©tachÃ©e (onglet) â€” recopie les feuilles de style de la page.
+        // Fenêtre détachée (onglet) — recopie les feuilles de style de la page.
         var winRef = null;
 
         function popoutStyles() {
@@ -471,7 +471,7 @@ function em_site_render_preview_script(): void
             win.document.write(
                 '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">' +
                 '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-                '<title>' + esc('<?php echo esc_js(__('AperÃ§u', 'em-site')); ?>') + '</title>' +
+                '<title>' + esc('<?php echo esc_js(__('Aperçu', 'em-site')); ?>') + '</title>' +
                 popoutStyles() +
                 '<style>html,body{margin:0;padding:0;background:#f0f0f1;}' +
                 '.em-rubrique-popout{padding:24px;}' +
@@ -486,27 +486,27 @@ function em_site_render_preview_script(): void
             if (winRef) { writeWindow(winRef, previewNode); winRef.focus(); }
         }
 
-        // RafraÃ®chit la fenÃªtre dÃ©tachÃ©e si elle est ouverte (sync temps rÃ©el).
+        // Rafraîchit la fenêtre détachée si elle est ouverte (sync temps réel).
         function syncWindow(previewNode) {
             if (!winRef || winRef.closed) { return; }
             var stage = winRef.document.querySelector('.em-rubrique-popout .em-site-livepreview');
             if (stage) { stage.innerHTML = previewNode ? previewNode.innerHTML : ''; }
         }
 
-        // ContrÃ´les d'aperÃ§u dans l'en-tÃªte de l'item (hors builder) : dÃ©lÃ©gation globale.
+        // Contrôles d'aperçu dans l'en-tête de l'item (hors builder) : délégation globale.
         document.addEventListener('click', function (e) {
             var tg = e.target.closest('.em-site-preview__toggle'), po = e.target.closest('.em-site-preview__popout');
             if (tg) { e.preventDefault(); e.stopPropagation(); toggle(tg); }
             else if (po) { e.preventDefault(); e.stopPropagation(); var it = ownerItem(po); openWindow(it ? it.querySelector('.em-site-livepreview') : null); }
         });
 
-        // Slider d'aperÃ§u : comportement IDENTIQUE au front.
-        //  - vidÃ©os (TikTok fichier / YouTube) : lecture AUTO, pas de minuteur,
-        //    on passe au suivant Ã  la fin de la vidÃ©o (event 'ended') ;
-        //  - photos (et TikTok sans vidÃ©o) : minuteur (durÃ©e du slide, def. 5 s).
-        // Le minuteur est stockÃ© sur la racine (root._emTimer) et se neutralise
-        // tout seul si la racine a Ã©tÃ© re-rendue (document.body.contains test),
-        // donc aucun timer fantÃ´me ne s'accumule entre deux rendus d'aperÃ§u.
+        // Slider d'aperçu : comportement IDENTIQUE au front.
+        //  - vidéos (TikTok fichier / YouTube) : lecture AUTO, pas de minuteur,
+        //    on passe au suivant à la fin de la vidéo (event 'ended') ;
+        //  - photos (et TikTok sans vidéo) : minuteur (durée du slide, def. 5 s).
+        // Le minuteur est stocké sur la racine (root._emTimer) et se neutralise
+        // tout seul si la racine a été re-rendue (document.body.contains test),
+        // donc aucun timer fantôme ne s'accumule entre deux rendus d'aperçu.
         function sliderSlides(root) { return Array.prototype.slice.call(root.querySelectorAll('.em-slider__slide')); }
         function sliderActiveIndex(slides) { for (var i = 0; i < slides.length; i++) { if (slides[i].classList.contains('is-active')) { return i; } } return 0; }
         function sliderVideoOf(slide) { return slide ? slide.querySelector('video.em-slider__tiktok-video') : null; }
@@ -514,7 +514,7 @@ function em_site_render_preview_script(): void
             if (!slide) { return false; }
             var t = slide.getAttribute('data-type');
             if (t === 'video') { return true; }            // YouTube : auto, pas de minuteur
-            if (t === 'tiktok') { return !!sliderVideoOf(slide); } // fichier : auto + avance Ã  la fin
+            if (t === 'tiktok') { return !!sliderVideoOf(slide); } // fichier : auto + avance à la fin
             return false;
         }
         function sliderDelay(slide) {

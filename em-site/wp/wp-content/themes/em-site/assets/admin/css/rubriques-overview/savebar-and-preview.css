@@ -14,12 +14,12 @@
     .em-site-chip__toggle:hover { color:#1d2327; background:#eef2f7; }
     .em-site-chip__toggle .dashicons { font-size:18px; width:18px; height:18px; }
     .em-site-chip.is-hidden { opacity:.55; background:#f1f1f3; }
-    .em-site-chip.is-hidden .em-site-chip__type::after { content:" (masquÃ©)"; color:#b32d2e; font-weight:600; }
+    .em-site-chip.is-hidden .em-site-chip__type::after { content:" (masqué)"; color:#b32d2e; font-weight:600; }
     .em-site-chip.is-hidden .em-site-chip__toggle { color:#b32d2e; }
 
-    /* Bloc Plateforme / RÃ©seau : tous les champs compacts sur UNE ligne (titre,
-       rÃ©seau, lien, pseudo) â€” mÃªmes bases flex que les autres champs, l'espace
-       restant pousse l'Å“il/la croix Ã  droite. */
+    /* Bloc Plateforme / Réseau : tous les champs compacts sur UNE ligne (titre,
+       réseau, lien, pseudo) — mêmes bases flex que les autres champs, l'espace
+       restant pousse l'œil/la croix à droite. */
     .em-site-chip__fields .em-site-chip__platform { flex:0 1 150px; min-width:90px; max-width:100%; width:auto; }
     .em-site-chip__fields .em-site-chip__ptitle { flex:0 1 130px; min-width:70px; width:auto; }
     .em-site-chip__fields .em-site-chip__paccount { flex:0 1 150px; min-width:70px; width:auto; }
@@ -136,7 +136,7 @@
     .em-site-sticky { position:sticky; top:32px; z-index:20; margin:0 0 14px; }
     .em-site-savebar { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin:0; padding:8px 0; background:transparent; border:0; box-shadow:none; }
     .em-site-savebar[hidden] { display:none; }
-    /* Boutons de la savebar : mÃªmes styles que le modal de confirmation (bordeaux, pas de bleu) */
+    /* Boutons de la savebar : mêmes styles que le modal de confirmation (bordeaux, pas de bleu) */
     .em-site-savebar__btn.button-primary { border-color:#4e080e !important; background:linear-gradient(180deg,#751820 0%,#4e080e 100%) !important; color:#fff !important; text-shadow:none !important; box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 2px 8px rgba(78,8,14,.28) !important; }
     .em-site-savebar__btn.button-primary:hover, .em-site-savebar__btn.button-primary:focus { border-color:#3d060b !important; background:linear-gradient(180deg,#651620 0%,#3d060b 100%) !important; color:#fff !important; box-shadow:0 1px 0 rgba(255,255,255,.14) inset, 0 4px 12px rgba(78,8,14,.34) !important; }
    /* Exception: bouton "+ Nouvelle Rubrique" neutre au chargement, accent seulement en interaction/ouverture. */
@@ -165,7 +165,7 @@
    }
     .em-site-savebar__revert { display:inline-flex; align-items:center; height:30px; padding:0 12px; border:1px solid #c3c4c7; border-radius:3px; background:#fff; color:#50575e; font-size:13px; font-weight:500; line-height:1; cursor:pointer; box-shadow:0 1px 0 rgba(255,255,255,.9) inset; }
     .em-site-savebar__revert:hover, .em-site-savebar__revert:focus { border-color:#751820; color:#751820; background:#fafafa; }
-    /* ContrÃ´les d'aperÃ§u sur la ligne du nom de la rubrique (Å“il + nouvel onglet) */
+    /* Contrôles d'aperçu sur la ligne du nom de la rubrique (œil + nouvel onglet) */
     .em-site-item__preview { display:inline-flex; align-items:center; gap:2px; margin-left:8px; }
     .em-site-preview__toggle, .em-site-preview__popout { border:0; background:transparent; color:#2271b1; cursor:pointer; padding:3px 5px; border-radius:4px; display:inline-flex; align-items:center; }
     .em-site-preview__toggle:hover, .em-site-preview__popout:hover { background:#eef2f7; }
@@ -175,12 +175,12 @@
     .em-site-preview__frame, .em-site-livepreview { border:1px dashed #cbd5e1; border-radius:6px; overflow:hidden; }
     .em-site-livepreview { margin-top:8px; }
     .em-site-livepreview[hidden] { display:none; }
-    .em-site-livepreview:empty::before { content:"â€¦"; display:block; padding:18px; color:#9ca3af; text-align:center; }
+    .em-site-livepreview:empty::before { content:"…"; display:block; padding:18px; color:#9ca3af; text-align:center; }
 
-    /* NOTE : le rendu .em-rubriqueâ€¦ (base, grille, champs, mÃ©dias, composants)
-       n'est plus dupliquÃ© ici. Il est inlinÃ© en fin de fichier depuis la
+    /* NOTE : le rendu .em-rubrique… (base, grille, champs, médias, composants)
+       n'est plus dupliqué ici. Il est inliné en fin de fichier depuis la
       source admin locale rubriques-preview/ via em_site_admin_rubriques_preview_css(). */
-    /* HEADER composite (.em-header-shellâ€¦) : mÃªme source admin locale. */
+    /* HEADER composite (.em-header-shell…) : même source admin locale. */
     .em-site-chip--decor { align-items:center; }
     .em-site-chip--decor .em-site-chip__type { font-weight:600; color:#1d2327; text-transform:none; }
 

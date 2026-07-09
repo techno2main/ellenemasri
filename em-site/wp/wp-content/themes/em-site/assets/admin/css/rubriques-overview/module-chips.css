@@ -1,4 +1,4 @@
-/* Builder : lignes Ã— colonnes */
+/* Builder : lignes × colonnes */
     .em-site-rows { counter-reset: emrow; display:flex; flex-direction:column; gap:10px; margin:8px 0; }
     .em-site-row { counter-increment: emrow; background:#fff; border:1px solid #dcdcde; border-radius:6px; }
    .em-site-row__summary { list-style:none; cursor:pointer; display:grid; grid-template-columns:auto auto minmax(230px, 320px) minmax(420px, 1fr) auto auto; align-items:center; column-gap:8px; padding:8px 12px; user-select:none; }
@@ -58,14 +58,14 @@
     .em-site-col-tab__move .dashicons { font-size:14px; width:14px; height:14px; line-height:14px; }
     .em-site-col-tab__move:hover:not(:disabled) { background:#eef0f2; color:#751820; }
     .em-site-col-tab__move:disabled { opacity:.3; cursor:default; }
-    /* Une seule colonne : dÃ©placement inutile. */
+    /* Une seule colonne : déplacement inutile. */
     .em-site-col-tab:first-of-type:last-of-type .em-site-col-tab__move-group { display:none; }
-    /* Une seule colonne : pas de croix (on ne peut pas supprimer la derniÃ¨re). */
+    /* Une seule colonne : pas de croix (on ne peut pas supprimer la dernière). */
     .em-site-col-tab:first-of-type:last-of-type .em-site-col-tab__del { display:none; }
     .em-site-col-tab__add { align-self:center; display:inline-flex; align-items:center; gap:4px; border:1px dashed #c3c4c7; background:#fff; color:#2271b1; height:28px; padding:0 10px; border-radius:5px; cursor:pointer; font-size:12px; margin-bottom:3px; flex:0 0 auto; white-space:nowrap; }
     .em-site-col-tab__add .dashicons { font-size:16px; width:16px; height:16px; }
     .em-site-col-tab__add:hover { background:#f0f6fc; border-color:#2271b1; }
-    /* Pictos de colonnes : un picto = une colonne (ligne ouverte et fermÃ©e). */
+    /* Pictos de colonnes : un picto = une colonne (ligne ouverte et fermée). */
     .em-site-colpips { display:inline-flex; align-items:center; gap:3px; }
     .em-site-colpip { width:4px; height:12px; background:#8a929e; border-radius:1px; }
     .em-site-col-panels { min-width:0; }
@@ -88,7 +88,7 @@
     .em-site-chip__slide { position:relative; width:40px; height:40px; border-radius:4px; overflow:hidden; border:1px solid #dcdcde; }
     .em-site-chip__slide img { width:100%; height:100%; object-fit:cover; display:block; }
     .em-site-chip__slide-del { position:absolute; top:0; right:0; border:0; background:rgba(0,0,0,.6); color:#fff; cursor:pointer; line-height:1; padding:0 3px; border-bottom-left-radius:4px; }
-    /* Ã‰diteur de slides riche (champ Slider EM-SITE) : prend toute la largeur de la chip. */
+    /* Éditeur de slides riche (champ Slider EM-SITE) : prend toute la largeur de la chip. */
     .em-site-slides { flex:1 1 100%; min-width:0; display:flex; flex-direction:column; gap:8px; background:#f8fafc; border:1px solid #eef0f3; border-radius:6px; padding:8px; }
    .em-site-slides__section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; }
    .em-site-slides__opts { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; }
@@ -131,20 +131,20 @@
     .em-site-slide__eye, .em-site-slide__del { border:0; background:none; cursor:pointer; line-height:1; flex:0 0 auto; }
     .em-site-slide__eye { color:#475569; }
     .em-site-slide__del { color:#b32d2e; font-size:18px; }
-    /* Affichage conditionnel des contrÃ´les selon le type de slide. */
+    /* Affichage conditionnel des contrôles selon le type de slide. */
     .em-site-slide .em-site-slide__videourl, .em-site-slide .em-site-slide__tiktokurl, .em-site-slide .em-site-slide__media--ttvid { display:none; }
     .em-site-slide[data-type="image"] .em-site-slide__media--image { display:inline-flex; }
     .em-site-slide[data-type="video"] .em-site-slide__media--image { display:none; }
     .em-site-slide[data-type="video"] .em-site-slide__videourl { display:inline-flex; }
     .em-site-slide[data-type="tiktok"] .em-site-slide__tiktokurl, .em-site-slide[data-type="tiktok"] .em-site-slide__media--ttvid, .em-site-slide[data-type="tiktok"] .em-site-slide__media--image { display:inline-flex; }
     .em-site-slides__add { align-self:flex-start; }
-    /* AperÃ§u temps rÃ©el du slider : placeholder de slide sans mÃ©dia (le reste du
-       look vient de la CSS front partagÃ©e chargÃ©e sur la page builder). */
+    /* Aperçu temps réel du slider : placeholder de slide sans média (le reste du
+       look vient de la CSS front partagée chargée sur la page builder). */
     .em-site-livepreview .em-slider--shared, .em-site-miniprev .em-slider--shared { margin:0 auto; }
     .em-slider--shared .em-slider__ph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; opacity:.8; }
     /* Tous les champs du contenu sur UNE seule ligne (saisie + lien + style).
-       Les saisies ne s'Ã©tirent pas (flex-grow:0) : largeurs compactes, le vide
-       restant pousse les actions (Å“il/croix) Ã  droite. */
+       Les saisies ne s'étirent pas (flex-grow:0) : largeurs compactes, le vide
+       restant pousse les actions (œil/croix) à droite. */
     .em-site-chip__fields { display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:6px; flex:1 1 auto; min-width:0; }
     .em-site-chip__fields > .em-site-chip__label { font-size:11px; font-weight:600; color:#475569; background:#f8fafc; flex:0 1 190px; min-width:70px; width:auto; }
     .em-site-chip__fields .em-site-chip__value, .em-site-chip__fields .em-site-chip__titext, .em-site-chip__fields .em-site-chip__titext2 { font-weight:500; flex:0 1 190px; min-width:60px; width:auto; }
@@ -193,7 +193,7 @@
     .em-site-chip__h { width:96px; }
     .em-site-chip__height { width:120px; }
 
-    /* RÃ©glages de style propres au champ texte : groupe compact, sur la mÃªme ligne. */
+    /* Réglages de style propres au champ texte : groupe compact, sur la même ligne. */
     .em-site-chip__tstyle { display:inline-flex; align-items:center; gap:6px; flex-wrap:nowrap; flex:0 0 auto; padding:4px 6px; background:#f8fafc; border:1px solid #eef0f3; border-radius:6px; }
     .em-site-chip__tstyle::before { content:"Aa"; font-weight:700; font-size:11px; color:#94a3b8; line-height:1; }
     .em-site-chip__tsize { width:64px; flex:0 0 auto; }

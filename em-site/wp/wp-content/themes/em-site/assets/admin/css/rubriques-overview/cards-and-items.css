@@ -1,9 +1,9 @@
 .em-site-overview h2 { margin-top: 26px; text-transform: uppercase; }
 
     .em-site-collapse { background:#fff; border:1px solid #dcdcde; border-radius:6px; margin:0 0 10px; }
-    /* Item repliÃ© : neutre (cf. .em-site-item plus bas). Item dÃ©pliÃ© : mis en
-       avant avec la teinte de sa section Â« Apparence Â» (--em-site-item-bg posÃ©e
-       en JS). --item-open-bg factorise un fond clair dÃ©rivÃ© via color-mix. */
+    /* Item replié : neutre (cf. .em-site-item plus bas). Item déplié : mis en
+       avant avec la teinte de sa section « Apparence » (--em-site-item-bg posée
+       en JS). --item-open-bg factorise un fond clair dérivé via color-mix. */
     .em-site-item { transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
     .em-site-item[open] {
         --item-open-bg: color-mix(in srgb, var(--em-site-item-bg, #2271b1) 7%, #fff);
@@ -27,15 +27,15 @@
       column-gap:10px;
       justify-content:start;
    }
-    /* Rubrique fermÃ©e : lÃ©ger feedback au survol, reste neutre */
+    /* Rubrique fermée : léger feedback au survol, reste neutre */
     .em-site-card:not([open]):hover { border-color:#a7aaae; }
-    /* Rubrique ouverte : encadrement accentuÃ© (anneau couleur marque), fond
-       lÃ©gÃ¨rement teintÃ© et ombre discrÃ¨te pour crÃ©er une hiÃ©rarchie visuelle.
-       L'anneau via box-shadow Ã©vite tout dÃ©calage de mise en page. */
+    /* Rubrique ouverte : encadrement accentué (anneau couleur marque), fond
+       légèrement teinté et ombre discrète pour créer une hiérarchie visuelle.
+       L'anneau via box-shadow évite tout décalage de mise en page. */
     .em-site-card[open] { border-color:#751820; background:#fdf7f7; box-shadow:0 0 0 1px #751820, 0 8px 20px -8px rgba(78,8,14,.22); }
     .em-site-card[open] > .em-site-card__head { background:#fbf1f1; border-radius:6px 6px 0 0; }
-   /* HiÃ©rarchie Rubriques : les rubriques standards sont dÃ©calÃ©es Ã  droite,
-      TOP-BAR/FOOTER restent alignÃ©es Ã  gauche (rubriques spÃ©ciales). */
+   /* Hiérarchie Rubriques : les rubriques standards sont décalées à droite,
+      TOP-BAR/FOOTER restent alignées à gauche (rubriques spéciales). */
    .em-site-card { margin-left:14px; }
    .em-site-card--header-linked {
       margin-left:44px;
@@ -45,7 +45,7 @@
    .em-site-card--fixed-single { margin-left:0; border-left:3px solid #751820; }
    .em-site-card--fixed-single > .em-site-card__head { padding-left:10px; }
     .em-site-item, .em-site-step, .em-site-create { background:#fbfbfc; }
-    /* Ligne Â« Nouvelle Section Â» : 2 lignes empilÃ©es (crÃ©er / dupliquer) */
+    /* Ligne « Nouvelle Section » : 2 lignes empilées (créer / dupliquer) */
       .em-site-card__additem { display:inline-flex; align-items:center; justify-content:center; gap:6px; margin-left:0; width:100%; min-width:260px; max-width:340px; height:26px; padding:0 10px; border:1px dashed #c3c4c7; border-radius:5px; background:#fff; color:#2271b1; cursor:pointer; font-size:12px; text-transform:uppercase; letter-spacing:.03em; line-height:1; }
       .em-site-card__additem:hover { border-color:#2271b1; background:#f0f6fc; color:#135e96; }
          .em-site-card__additem.is-active,
@@ -71,7 +71,7 @@
     .em-site-create__select { max-width:100%; }
     .em-site-create__row.is-off { opacity:.5; }
     .em-site-create__row.is-off .em-site-create__label { cursor:pointer; }
-    /* SÃ©lecteur d'icÃ´ne (Nouvelle Rubrique) */
+    /* Sélecteur d'icône (Nouvelle Rubrique) */
     .em-site-iconpick { display:inline-flex; flex-wrap:wrap; gap:4px; align-items:center; }
     .em-site-iconpick__opt { position:relative; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid #dcdcde; border-radius:5px; cursor:pointer; color:#50575e; background:#fff; }
     .em-site-iconpick__opt input { position:absolute; opacity:0; width:0; height:0; }
@@ -90,7 +90,7 @@
    .em-site-card__nameinput { width:100%; max-width:none; text-transform:uppercase; font-weight:700; min-width:0; margin:0; }
    .em-site-card__nameinput { grid-column:5; }
    .em-site-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; margin-left:0; justify-self:center; grid-column:8; background:#f0f0f1; color:#646970; border:1px solid #dcdcde; border-radius:999px; font-size:11px; font-weight:600; line-height:1; }
-    /* RÃ©ordonnancement des rubriques (glisser-dÃ©poser) */
+    /* Réordonnancement des rubriques (glisser-déposer) */
     .em-site-card__drag { color:#a7aaae; cursor:grab; font-size:18px; width:18px; height:18px; flex:0 0 auto; }
     .em-site-card__drag:hover { color:#646970; }
     .em-site-card__drag:active { cursor:grabbing; }
@@ -118,9 +118,9 @@
     .em-site-item__delete { background:none !important; border:0 !important; box-shadow:none !important; outline:0; cursor:pointer; color:#b32d2e; padding:0 2px; margin-left:6px; display:inline-flex; align-items:center; }
     .em-site-item__delete:hover, .em-site-item__delete:focus, .em-site-item__delete:active { background:none !important; box-shadow:none !important; color:#8a2424; }
     .em-site-item__delete .dashicons { font-size:18px; width:18px; height:18px; }
-    /* Champ #ancre : mini chip inline unifiÃ©. Tout le rendu visuel (fond,
-       bordure, focus) est portÃ© par le wrapper ; l'input interne est rendu
-       totalement neutre/transparent. SpÃ©cificitÃ© renforcÃ©e pour neutraliser le
+    /* Champ #ancre : mini chip inline unifié. Tout le rendu visuel (fond,
+       bordure, focus) est porté par le wrapper ; l'input interne est rendu
+       totalement neutre/transparent. Spécificité renforcée pour neutraliser le
        style natif des inputs admin WordPress (.wp-core-ui input[type=text]). */
     .em-site-item__anchor { display:inline-flex; align-items:center; gap:4px; margin-left:8px; padding:0 9px; height:24px; line-height:1; background:#eef1f4; border:1px solid transparent; border-radius:7px; transition:background-color .15s ease, border-color .15s ease, box-shadow .15s ease; }
     .em-site-item__anchor:hover { background:#e7ebef; }

@@ -572,7 +572,7 @@ if (!defined('ABSPATH')) {
    }
 
    .em-site-overview__directory-map-slot {
-      width: 50px;
+      width: 70px;
       height: 5px;
       border-radius: 1px;
       background: rgba(79, 8, 14, .24);
@@ -581,8 +581,9 @@ if (!defined('ABSPATH')) {
 
    .em-site-overview__directory-map-slot.is-current {
       background: #7d484d;
-      transform: scaleX(1.28);
+      transform: scaleX(1.14);
       transform-origin: right center;
+      height: 8px;
    }
 
    .em-site-overview__directory-link:hover .em-site-overview__directory-arrow,
@@ -622,9 +623,9 @@ if (!defined('ABSPATH')) {
    }
 
    .em-site-collapse { background:#fff; border:1px solid #dcdcde; border-radius:6px; margin:0 0 10px; }
-    /* Item repliÃ© : neutre (cf. .em-site-item plus bas). Item dÃ©pliÃ© : mis en
-       avant avec la teinte de sa section Â« Apparence Â» (--em-site-item-bg posÃ©e
-       en JS). --item-open-bg factorise un fond clair dÃ©rivÃ© via color-mix. */
+    /* Item replié : neutre (cf. .em-site-item plus bas). Item déplié : mis en
+       avant avec la teinte de sa section « Apparence » (--em-site-item-bg posée
+       en JS). --item-open-bg factorise un fond clair dérivé via color-mix. */
    .em-site-item {
       border-color:#4f080e;
       border-radius:18px;
@@ -664,15 +665,15 @@ if (!defined('ABSPATH')) {
       column-gap:10px;
       justify-content:start;
    }
-    /* Rubrique fermÃ©e : lÃ©ger feedback au survol, reste neutre */
+    /* Rubrique fermée : léger feedback au survol, reste neutre */
    .em-site-card:not([open]):hover { border-color:var(--em-site-overview-border-strong); }
-    /* Rubrique ouverte : encadrement accentuÃ© (anneau couleur marque), fond
-       lÃ©gÃ¨rement teintÃ© et ombre discrÃ¨te pour crÃ©er une hiÃ©rarchie visuelle.
-       L'anneau via box-shadow Ã©vite tout dÃ©calage de mise en page. */
+    /* Rubrique ouverte : encadrement accentué (anneau couleur marque), fond
+       légèrement teinté et ombre discrète pour créer une hiérarchie visuelle.
+       L'anneau via box-shadow évite tout décalage de mise en page. */
    .em-site-card[open] { border-color:var(--em-site-overview-accent-strong); background:var(--em-site-overview-surface); box-shadow:0 0 0 1px var(--em-site-overview-accent-strong), 0 14px 34px -22px rgba(78,8,14,.30); }
    .em-site-card[open] > .em-site-card__head { background:var(--em-site-overview-surface-soft); border-radius:18px 18px 0 0; }
-   /* HiÃ©rarchie Rubriques : les rubriques standards sont dÃ©calÃ©es Ã  droite,
-      TOP-BAR/FOOTER restent alignÃ©es Ã  gauche (rubriques spÃ©ciales). */
+   /* Hiérarchie Rubriques : les rubriques standards sont décalées à droite,
+      TOP-BAR/FOOTER restent alignées à gauche (rubriques spéciales). */
    .em-site-card { margin-left:14px; }
    .em-site-card--header-linked {
       margin-left:44px;
@@ -682,7 +683,7 @@ if (!defined('ABSPATH')) {
    .em-site-card--fixed-single { margin-left:0; border-left:3px solid #751820; }
    .em-site-card--fixed-single > .em-site-card__head { padding-left:10px; }
    .em-site-item, .em-site-step, .em-site-create { background:#fffefd; }
-    /* Ligne Â« Nouvelle Section Â» : 2 lignes empilÃ©es (crÃ©er / dupliquer) */
+    /* Ligne « Nouvelle Section » : 2 lignes empilées (créer / dupliquer) */
       .em-site-card__additem { display:inline-flex; align-items:center; justify-content:center; gap:6px; margin-left:0; width:100%; min-width:260px; max-width:340px; height:30px; padding:0 12px; border:1px dashed var(--em-site-overview-border-strong); border-radius:999px; background:#fff; color:var(--em-site-overview-accent-strong); cursor:pointer; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; line-height:1; }
       .em-site-card__additem:hover { border-color:var(--em-site-overview-accent); background:#fff7f4; color:var(--em-site-overview-accent); }
          .em-site-card__additem.is-active,
@@ -708,7 +709,7 @@ if (!defined('ABSPATH')) {
     .em-site-create__select { max-width:100%; }
     .em-site-create__row.is-off { opacity:.5; }
     .em-site-create__row.is-off .em-site-create__label { cursor:pointer; }
-    /* SÃ©lecteur d'icÃ´ne (Nouvelle Rubrique) */
+    /* Sélecteur d'icône (Nouvelle Rubrique) */
     .em-site-iconpick { display:inline-flex; flex-wrap:wrap; gap:4px; align-items:center; }
     .em-site-iconpick__opt { position:relative; display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:1px solid #dcdcde; border-radius:5px; cursor:pointer; color:#50575e; background:#fff; }
     .em-site-iconpick__opt input { position:absolute; opacity:0; width:0; height:0; }
@@ -727,7 +728,7 @@ if (!defined('ABSPATH')) {
    .em-site-card__nameinput { width:100%; max-width:none; text-transform:uppercase; font-weight:700; min-width:0; margin:0; }
    .em-site-card__nameinput { grid-column:5; }
    .em-site-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 8px; margin-left:0; justify-self:center; grid-column:8; background:#fff; color:var(--em-site-overview-accent-strong); border:1px solid var(--em-site-overview-border-strong); border-radius:999px; font-size:11px; font-weight:700; line-height:1; }
-    /* RÃ©ordonnancement des rubriques (glisser-dÃ©poser) */
+    /* Réordonnancement des rubriques (glisser-déposer) */
     .em-site-card__drag { color:#a7aaae; cursor:grab; font-size:18px; width:18px; height:18px; flex:0 0 auto; }
     .em-site-card__drag:hover { color:#646970; }
     .em-site-card__drag:active { cursor:grabbing; }
@@ -805,9 +806,9 @@ if (!defined('ABSPATH')) {
    .em-site-item:not([open]):focus-within .em-site-collapse__chevron {
       border-left-color:#fff !important;
    }
-    /* Champ #ancre : mini chip inline unifiÃ©. Tout le rendu visuel (fond,
-       bordure, focus) est portÃ© par le wrapper ; l'input interne est rendu
-       totalement neutre/transparent. SpÃ©cificitÃ© renforcÃ©e pour neutraliser le
+    /* Champ #ancre : mini chip inline unifié. Tout le rendu visuel (fond,
+       bordure, focus) est porté par le wrapper ; l'input interne est rendu
+       totalement neutre/transparent. Spécificité renforcée pour neutraliser le
        style natif des inputs admin WordPress (.wp-core-ui input[type=text]). */
     .em-site-item__anchor { display:inline-flex; align-items:center; gap:4px; margin-left:8px; padding:0 9px; height:24px; line-height:1; background:#eef1f4; border:1px solid transparent; border-radius:7px; transition:background-color .15s ease, border-color .15s ease, box-shadow .15s ease; }
     .em-site-item__anchor:hover { background:#e7ebef; }
@@ -840,9 +841,9 @@ if (!defined('ABSPATH')) {
     .em-site-collapse__body .em-site-appearance { border:0; background:transparent; padding:0; margin:0 0 10px; border-radius:0; }
 
     /* Bloc interne ouvert (Apparence / Contenu / Ligne N) : encadrement net pour
-       repÃ©rer la partie de l'item en cours d'Ã©dition. On reprend la teinte de
-       l'item (--em-site-item-bg) pour rester cohÃ©rent ; le corps reste blanc afin
-       de ressortir sur le fond teintÃ© de l'item ouvert. Bloc fermÃ© = neutre. */
+       repérer la partie de l'item en cours d'édition. On reprend la teinte de
+       l'item (--em-site-item-bg) pour rester cohérent ; le corps reste blanc afin
+       de ressortir sur le fond teinté de l'item ouvert. Bloc fermé = neutre. */
     .em-site-builder__section, .em-site-row { transition:border-color .18s ease, box-shadow .18s ease, background-color .18s ease; }
     .em-site-builder__section[open], .em-site-row[open] {
         border-color:color-mix(in srgb, var(--em-site-item-bg, #2271b1) 60%, #c3c4c7);
@@ -860,7 +861,7 @@ if (!defined('ABSPATH')) {
     .em-site-appearance__label { font-size:13px; color:#374151; }
     .em-site-appearance__toggle, .em-site-appearance__num, .em-site-appearance__font { display:flex; align-items:center; gap:6px; }
     .em-site-appearance__num-input { width:72px; }
-    /* Pastilles de couleur carrÃ©es (au lieu de rondes) dans l'Apparence */
+    /* Pastilles de couleur carrées (au lieu de rondes) dans l'Apparence */
     .em-site-appearance .em-site-admin-color-trigger__swatch { border-radius:4px; }
     /* Espacements liables (haut/bas, gauche/droite) */
     .em-site-appearance__group { display:inline-flex; align-items:center; gap:8px; }
@@ -870,7 +871,7 @@ if (!defined('ABSPATH')) {
     .em-site-appearance__chain .dashicons { font-size:16px; width:16px; height:16px; }
     .em-site-appearance__font-input { max-width:220px; }
     .em-site-appearance__bgpos-input { max-width:220px; }
-    /* Image de fond (sÃ©lecteur mÃ©dia) */
+    /* Image de fond (sélecteur média) */
     .em-site-appearance__bgmedia { display:inline-flex; align-items:center; gap:8px; }
     .em-site-appearance__bgthumb { width:46px; height:32px; object-fit:cover; border-radius:4px; border:1px solid #dcdcde; background:#f0f0f1; }
     .em-site-appearance__bgclear { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; padding:0; border:0; background:transparent; color:#b32d2e; font-size:18px; line-height:1; cursor:pointer; border-radius:4px; }
@@ -878,8 +879,8 @@ if (!defined('ABSPATH')) {
     .em-site-appearance__bgopacity-input { width:90px; }
     .em-site-appearance__bgopacity-out { font-size:12px; color:#6b7280; min-width:34px; }
 
-    /* En-tÃªte de ligne : colonnes + alignement par colonne */
-    /* Colonnes + alignement : visibles uniquement quand la ligne est ouverte, Ã  cÃ´tÃ© du libellÃ©. */
+    /* En-tête de ligne : colonnes + alignement par colonne */
+    /* Colonnes + alignement : visibles uniquement quand la ligne est ouverte, à côté du libellé. */
    .em-site-row__layout { display:flex; flex-wrap:nowrap; align-items:center; gap:8px; margin-left:14px; }
    .em-site-row:not([open]) > .em-site-row__summary .em-site-row__layout { display:none; }
    .em-site-rowcols-label { display:inline-flex; flex-direction:row; align-items:center; gap:6px; font-size:11px; color:#6b7280; }
@@ -888,54 +889,54 @@ if (!defined('ABSPATH')) {
     .em-site-align { display:flex; flex-direction:row; align-items:center; }
     .em-site-align__label { display:none; }
     .em-site-align__group { display:inline-flex; border:1px solid #c3c4c7; border-radius:5px; overflow:hidden; background:#fff; }
-    /* RepliÃ© : on n'affiche que l'alignement choisi ; ouvert : les 4 options. */
+    /* Replié : on n'affiche que l'alignement choisi ; ouvert : les 4 options. */
     .em-site-align__group:not(.is-open) .em-site-align__btn:not(.is-active) { display:none; }
     .em-site-align__group:not(.is-open) .em-site-align__btn.is-active { border-left:0; }
     .em-site-align__btn { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; padding:0; border:0; border-left:1px solid #e2e4e7; background:#fff; color:#50575e; cursor:pointer; }
     .em-site-align__btn:first-of-type { border-left:0; }
     .em-site-align__btn:hover { background:#f0f0f1; color:#1d2327; }
     .em-site-align__btn.is-active { background:#2271b1; color:#fff; }
-    /* Onglet repliÃ© : l'icÃ´ne d'alignement affichÃ©e est en noir (pas en bleu). */
+    /* Onglet replié : l'icône d'alignement affichée est en noir (pas en bleu). */
     .em-site-align__group:not(.is-open) .em-site-align__btn.is-active { background:#fff; color:#1d2327; }
     .em-site-align__btn .dashicons { font-size:18px; width:18px; height:18px; }
 
-    /* Mini-carte de la grille (Ã  cÃ´tÃ© de Â« Contenu Â») â€” large & plate (â‰ˆ section front) */
+    /* Mini-carte de la grille (à côté de « Contenu ») — large & plate (≈ section front) */
     .em-site-gridmap { display:inline-flex; flex-direction:column; gap:3px; margin-left:12px; padding:4px; width:142px; box-sizing:border-box; border:1px solid #c3c4c7; border-radius:5px; background:#f6f7f8; vertical-align:middle; }
     .em-site-gridmap:empty { display:none; }
     .em-site-gridmap__row { display:flex; gap:3px; }
     .em-site-gridmap__cell { flex:1 1 0; min-width:0; height:9px; border-radius:2px; background:#aab2bd; cursor:pointer; transition:background .12s ease; }
     .em-site-gridmap__cell:hover { background:#7b8593; }
     .em-site-gridmap__cell.is-active { background:#155a9c; }
-    /* Å’il Â« toute la section Â» Ã  droite de la carte */
+    /* Œil « toute la section » à droite de la carte */
     .em-site-gridmap__eye { margin-left:8px; padding:0 2px; border:0; background:transparent; color:#2271b1; cursor:pointer; display:inline-flex; align-items:center; vertical-align:middle; }
     .em-site-gridmap__eye:hover { color:#135e96; }
     .em-site-gridmap__eye[aria-pressed="true"] { color:#135e96; }
     .em-site-gridmap__eye .dashicons { font-size:18px; width:18px; height:18px; }
 
-    /* Bulle d'aperÃ§u d'une cellule de la carte (survol) */
+    /* Bulle d'aperçu d'une cellule de la carte (survol) */
     .em-site-gridmap__pop { position:absolute; z-index:100000; display:none; max-width:380px; min-width:180px; padding:8px; background:#fff; border:1px solid #c3c4c7; border-radius:8px; box-shadow:0 8px 28px rgba(16,24,40,.20); pointer-events:none; }
    .em-site-gridmap__pop-title { margin:0 0 6px; padding:0 2px; font-size:11px; line-height:1.25; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .em-site-gridmap__pop .em-rubrique--preview { padding:0; font-size:12px; }
 
-    /* Vignette d'aperÃ§u RÃ‰DUIT, INTÃ‰GRÃ‰E Ã  la ligne Â« Contenu Â» (Ã  droite de l'Å“il), temps rÃ©el */
+    /* Vignette d'aperçu RÉDUIT, INTÉGRÉE à la ligne « Contenu » (à droite de l'œil), temps réel */
     .em-site-miniprev { display:inline-block; margin-left:8px; vertical-align:middle; background:#fff; border:1px solid #c3c4c7; border-radius:6px; box-shadow:0 1px 4px rgba(16,24,40,.12); overflow:hidden; }
     .em-site-miniprev[hidden] { display:none; }
    .em-site-miniprev { cursor:default; }
-    /* AperÃ§u de la PARTIE en Ã©dition (colonne de la ligne ouverte), Ã  droite du
-       total : mÃªme gabarit, bordure pointillÃ©e pour signaler le focus colonne. */
+    /* Aperçu de la PARTIE en édition (colonne de la ligne ouverte), à droite du
+       total : même gabarit, bordure pointillée pour signaler le focus colonne. */
     .em-site-partprev { border-style:dashed; border-color:#b9c0c9; }
-    /* Loupe : popover flottant agrandissant l'aperÃ§u survolÃ© (total ou partie). */
+    /* Loupe : popover flottant agrandissant l'aperçu survolé (total ou partie). */
     .em-site-miniprev__zoom { position:absolute; z-index:100001; display:none; overflow:hidden; background:#fff; border:1px solid #c3c4c7; border-radius:8px; box-shadow:0 12px 34px rgba(16,24,40,.26); pointer-events:none; }
     .em-site-miniprev__stage { overflow:hidden; width:100%; height:100%; }
     .em-site-miniprev__stage .em-site-livepreview { border:0; margin:0; }
     .em-site-gridmap__pop-empty { font-size:12px; color:#6b7280; padding:4px 6px; font-style:italic; }
     .em-rubrique .em-site-gridmap__pop-empty { color:inherit; opacity:.7; text-align:center; }
 
-    /* Item Â« MasquÃ© Â» signalÃ© dans l'aperÃ§u (au lieu d'Ãªtre omis) */
+    /* Item « Masqué » signalé dans l'aperçu (au lieu d'être omis) */
     .em-rubrique__masked { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; margin:2px; border:1px dashed currentColor; border-radius:999px; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; opacity:.55; }
     .em-rubrique__masked .dashicons { font-size:14px; width:14px; height:14px; }
 
-    /* Builder : lignes Ã— colonnes */
+    /* Builder : lignes × colonnes */
     .em-site-rows { counter-reset: emrow; display:flex; flex-direction:column; gap:10px; margin:8px 0; }
     .em-site-row { counter-increment: emrow; background:#fff; border:1px solid #dcdcde; border-radius:6px; }
    .em-site-row__summary { list-style:none; cursor:pointer; display:grid; grid-template-columns:auto auto minmax(230px, 320px) minmax(420px, 1fr) auto auto; align-items:center; column-gap:8px; padding:8px 12px; user-select:none; }
@@ -995,14 +996,14 @@ if (!defined('ABSPATH')) {
     .em-site-col-tab__move .dashicons { font-size:14px; width:14px; height:14px; line-height:14px; }
     .em-site-col-tab__move:hover:not(:disabled) { background:#eef0f2; color:#751820; }
     .em-site-col-tab__move:disabled { opacity:.3; cursor:default; }
-    /* Une seule colonne : dÃ©placement inutile. */
+    /* Une seule colonne : déplacement inutile. */
     .em-site-col-tab:first-of-type:last-of-type .em-site-col-tab__move-group { display:none; }
-    /* Une seule colonne : pas de croix (on ne peut pas supprimer la derniÃ¨re). */
+    /* Une seule colonne : pas de croix (on ne peut pas supprimer la dernière). */
     .em-site-col-tab:first-of-type:last-of-type .em-site-col-tab__del { display:none; }
     .em-site-col-tab__add { align-self:center; display:inline-flex; align-items:center; gap:4px; border:1px dashed #c3c4c7; background:#fff; color:#2271b1; height:28px; padding:0 10px; border-radius:5px; cursor:pointer; font-size:12px; margin-bottom:3px; flex:0 0 auto; white-space:nowrap; }
     .em-site-col-tab__add .dashicons { font-size:16px; width:16px; height:16px; }
     .em-site-col-tab__add:hover { background:#f0f6fc; border-color:#2271b1; }
-    /* Pictos de colonnes : un picto = une colonne (ligne ouverte et fermÃ©e). */
+    /* Pictos de colonnes : un picto = une colonne (ligne ouverte et fermée). */
     .em-site-colpips { display:inline-flex; align-items:center; gap:3px; }
     .em-site-colpip { width:4px; height:12px; background:#8a929e; border-radius:1px; }
     .em-site-col-panels { min-width:0; }
@@ -1025,7 +1026,7 @@ if (!defined('ABSPATH')) {
     .em-site-chip__slide { position:relative; width:40px; height:40px; border-radius:4px; overflow:hidden; border:1px solid #dcdcde; }
     .em-site-chip__slide img { width:100%; height:100%; object-fit:cover; display:block; }
     .em-site-chip__slide-del { position:absolute; top:0; right:0; border:0; background:rgba(0,0,0,.6); color:#fff; cursor:pointer; line-height:1; padding:0 3px; border-bottom-left-radius:4px; }
-    /* Ã‰diteur de slides riche (champ Slider EM-SITE) : prend toute la largeur de la chip. */
+    /* Éditeur de slides riche (champ Slider EM-SITE) : prend toute la largeur de la chip. */
     .em-site-slides { flex:1 1 100%; min-width:0; display:flex; flex-direction:column; gap:8px; background:#f8fafc; border:1px solid #eef0f3; border-radius:6px; padding:8px; }
    .em-site-slides__section-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:#6b7280; }
    .em-site-slides__opts { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; }
@@ -1068,20 +1069,20 @@ if (!defined('ABSPATH')) {
     .em-site-slide__eye, .em-site-slide__del { border:0; background:none; cursor:pointer; line-height:1; flex:0 0 auto; }
     .em-site-slide__eye { color:#475569; }
     .em-site-slide__del { color:#b32d2e; font-size:18px; }
-    /* Affichage conditionnel des contrÃ´les selon le type de slide. */
+    /* Affichage conditionnel des contrôles selon le type de slide. */
     .em-site-slide .em-site-slide__videourl, .em-site-slide .em-site-slide__tiktokurl, .em-site-slide .em-site-slide__media--ttvid { display:none; }
     .em-site-slide[data-type="image"] .em-site-slide__media--image { display:inline-flex; }
     .em-site-slide[data-type="video"] .em-site-slide__media--image { display:none; }
     .em-site-slide[data-type="video"] .em-site-slide__videourl { display:inline-flex; }
     .em-site-slide[data-type="tiktok"] .em-site-slide__tiktokurl, .em-site-slide[data-type="tiktok"] .em-site-slide__media--ttvid, .em-site-slide[data-type="tiktok"] .em-site-slide__media--image { display:inline-flex; }
     .em-site-slides__add { align-self:flex-start; }
-    /* AperÃ§u temps rÃ©el du slider : placeholder de slide sans mÃ©dia (le reste du
-       look vient de la CSS front partagÃ©e chargÃ©e sur la page builder). */
+    /* Aperçu temps réel du slider : placeholder de slide sans média (le reste du
+       look vient de la CSS front partagée chargée sur la page builder). */
     .em-site-livepreview .em-slider--shared, .em-site-miniprev .em-slider--shared { margin:0 auto; }
     .em-slider--shared .em-slider__ph { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#fff; font-size:22px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; opacity:.8; }
     /* Tous les champs du contenu sur UNE seule ligne (saisie + lien + style).
-       Les saisies ne s'Ã©tirent pas (flex-grow:0) : largeurs compactes, le vide
-       restant pousse les actions (Å“il/croix) Ã  droite. */
+       Les saisies ne s'étirent pas (flex-grow:0) : largeurs compactes, le vide
+       restant pousse les actions (œil/croix) à droite. */
     .em-site-chip__fields { display:flex; flex-direction:row; flex-wrap:wrap; align-items:center; gap:6px; flex:1 1 auto; min-width:0; }
     .em-site-chip__fields > .em-site-chip__label { font-size:11px; font-weight:600; color:#475569; background:#f8fafc; flex:0 1 190px; min-width:70px; width:auto; }
     .em-site-chip__fields .em-site-chip__value, .em-site-chip__fields .em-site-chip__titext, .em-site-chip__fields .em-site-chip__titext2 { font-weight:500; flex:0 1 190px; min-width:60px; width:auto; }
@@ -1130,7 +1131,7 @@ if (!defined('ABSPATH')) {
     .em-site-chip__h { width:96px; }
     .em-site-chip__height { width:120px; }
 
-    /* RÃ©glages de style propres au champ texte : groupe compact, sur la mÃªme ligne. */
+    /* Réglages de style propres au champ texte : groupe compact, sur la même ligne. */
     .em-site-chip__tstyle { display:inline-flex; align-items:center; gap:6px; flex-wrap:nowrap; flex:0 0 auto; padding:4px 6px; background:#f8fafc; border:1px solid #eef0f3; border-radius:6px; }
     .em-site-chip__tstyle::before { content:"Aa"; font-weight:700; font-size:11px; color:#94a3b8; line-height:1; }
     .em-site-chip__tsize { width:64px; flex:0 0 auto; }
@@ -1152,12 +1153,12 @@ if (!defined('ABSPATH')) {
     .em-site-chip__toggle:hover { color:#1d2327; background:#eef2f7; }
     .em-site-chip__toggle .dashicons { font-size:18px; width:18px; height:18px; }
     .em-site-chip.is-hidden { opacity:.55; background:#f1f1f3; }
-    .em-site-chip.is-hidden .em-site-chip__type::after { content:" (masquÃ©)"; color:#b32d2e; font-weight:600; }
+    .em-site-chip.is-hidden .em-site-chip__type::after { content:" (masqué)"; color:#b32d2e; font-weight:600; }
     .em-site-chip.is-hidden .em-site-chip__toggle { color:#b32d2e; }
 
-    /* Bloc Plateforme / RÃ©seau : tous les champs compacts sur UNE ligne (titre,
-       rÃ©seau, lien, pseudo) â€” mÃªmes bases flex que les autres champs, l'espace
-       restant pousse l'Å“il/la croix Ã  droite. */
+    /* Bloc Plateforme / Réseau : tous les champs compacts sur UNE ligne (titre,
+       réseau, lien, pseudo) — mêmes bases flex que les autres champs, l'espace
+       restant pousse l'œil/la croix à droite. */
     .em-site-chip__fields .em-site-chip__platform { flex:0 1 150px; min-width:90px; max-width:100%; width:auto; }
     .em-site-chip__fields .em-site-chip__ptitle { flex:0 1 130px; min-width:70px; width:auto; }
     .em-site-chip__fields .em-site-chip__paccount { flex:0 1 150px; min-width:70px; width:auto; }
@@ -1274,7 +1275,7 @@ if (!defined('ABSPATH')) {
     .em-site-sticky { position:sticky; top:32px; z-index:20; margin:0 0 14px; }
     .em-site-savebar { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin:0; padding:8px 0; background:transparent; border:0; box-shadow:none; }
     .em-site-savebar[hidden] { display:none; }
-    /* Boutons de la savebar : mÃªmes styles que le modal de confirmation (bordeaux, pas de bleu) */
+    /* Boutons de la savebar : mêmes styles que le modal de confirmation (bordeaux, pas de bleu) */
     .em-site-savebar__btn.button-primary { border-color:#4e080e !important; background:linear-gradient(180deg,#751820 0%,#4e080e 100%) !important; color:#fff !important; text-shadow:none !important; box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 2px 8px rgba(78,8,14,.28) !important; }
     .em-site-savebar__btn.button-primary:hover, .em-site-savebar__btn.button-primary:focus { border-color:#3d060b !important; background:linear-gradient(180deg,#651620 0%,#3d060b 100%) !important; color:#fff !important; box-shadow:0 1px 0 rgba(255,255,255,.14) inset, 0 4px 12px rgba(78,8,14,.34) !important; }
    /* Exception: bouton "+ Nouvelle Rubrique" neutre au chargement, accent seulement en interaction/ouverture. */
@@ -1303,7 +1304,7 @@ if (!defined('ABSPATH')) {
    }
     .em-site-savebar__revert { display:inline-flex; align-items:center; height:30px; padding:0 12px; border:1px solid #c3c4c7; border-radius:3px; background:#fff; color:#50575e; font-size:13px; font-weight:500; line-height:1; cursor:pointer; box-shadow:0 1px 0 rgba(255,255,255,.9) inset; }
     .em-site-savebar__revert:hover, .em-site-savebar__revert:focus { border-color:#751820; color:#751820; background:#fafafa; }
-    /* ContrÃ´les d'aperÃ§u sur la ligne du nom de la rubrique (Å“il + nouvel onglet) */
+    /* Contrôles d'aperçu sur la ligne du nom de la rubrique (œil + nouvel onglet) */
     .em-site-item__preview { display:inline-flex; align-items:center; gap:2px; margin-left:8px; }
     .em-site-preview__toggle, .em-site-preview__popout { border:0; background:transparent; color:#2271b1; cursor:pointer; padding:3px 5px; border-radius:4px; display:inline-flex; align-items:center; }
     .em-site-preview__toggle:hover, .em-site-preview__popout:hover { background:#eef2f7; }
@@ -1313,12 +1314,12 @@ if (!defined('ABSPATH')) {
     .em-site-preview__frame, .em-site-livepreview { border:1px dashed #cbd5e1; border-radius:6px; overflow:hidden; }
     .em-site-livepreview { margin-top:8px; }
     .em-site-livepreview[hidden] { display:none; }
-    .em-site-livepreview:empty::before { content:"â€¦"; display:block; padding:18px; color:#9ca3af; text-align:center; }
+    .em-site-livepreview:empty::before { content:"…"; display:block; padding:18px; color:#9ca3af; text-align:center; }
 
-    /* NOTE : le rendu .em-rubriqueâ€¦ (base, grille, champs, mÃ©dias, composants)
-       n'est plus dupliquÃ© ici. Il est inlinÃ© en fin de fichier depuis la
+    /* NOTE : le rendu .em-rubrique… (base, grille, champs, médias, composants)
+       n'est plus dupliqué ici. Il est inliné en fin de fichier depuis la
       source admin locale rubriques-preview/ via em_site_admin_rubriques_preview_css(). */
-    /* HEADER composite (.em-header-shellâ€¦) : mÃªme source admin locale. */
+    /* HEADER composite (.em-header-shell…) : même source admin locale. */
     .em-site-chip--decor { align-items:center; }
     .em-site-chip--decor .em-site-chip__type { font-weight:600; color:#1d2327; text-transform:none; }
 
