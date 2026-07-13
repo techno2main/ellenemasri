@@ -2,7 +2,7 @@
 /**
  * Bootstrap couche admin Templates (V2).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

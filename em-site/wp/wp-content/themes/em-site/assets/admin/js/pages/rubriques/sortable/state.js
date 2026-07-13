@@ -6,11 +6,11 @@
     ns.createContext = function () {
         return {
             config: window.emWpRubriquesSortable || {},
-            list: document.querySelector('.em-wp-rubriques-admin__list'),
-            map: document.getElementById('em-wp-admin-landing-map'),
-            mapBody: document.getElementById('em-wp-admin-landing-map-body'),
-            statusEl: document.getElementById('em-wp-rubriques-sort-status'),
-            adminRoot: document.querySelector('.em-wp-rubriques-admin'),
+            list: document.querySelector('.em-site-rubriques-admin__list'),
+            map: document.getElementById('em-site-admin-landing-map'),
+            mapBody: document.getElementById('em-site-admin-landing-map-body'),
+            statusEl: document.getElementById('em-site-rubriques-sort-status'),
+            adminRoot: document.querySelector('.em-site-rubriques-admin'),
             saving: false,
             mapSortable: null,
             visibilitySaving: false,
@@ -47,18 +47,18 @@
             return;
         }
 
-        var listItem = ctx.list.querySelector('.em-wp-rubriques-admin__list-item[data-module-slug="' + moduleSlug + '"]');
-        var toggle = listItem ? listItem.querySelector('.em-wp-rubriques-visibility-toggle') : null;
-        var label = listItem ? listItem.querySelector('.em-wp-rubriques-admin__list-label') : null;
+        var listItem = ctx.list.querySelector('.em-site-rubriques-admin__list-item[data-module-slug="' + moduleSlug + '"]');
+        var toggle = listItem ? listItem.querySelector('.em-site-rubriques-visibility-toggle') : null;
+        var label = listItem ? listItem.querySelector('.em-site-rubriques-admin__list-label') : null;
         var mapZone = ctx.map ? ctx.map.querySelector('[data-module-slug="' + moduleSlug + '"]:not([data-header-part])') : null;
-        var headerGroup = ctx.map ? ctx.map.querySelector('.em-wp-admin-landing-map__header-group[data-module-slug="' + moduleSlug + '"]') : null;
+        var headerGroup = ctx.map ? ctx.map.querySelector('.em-site-admin-landing-map__header-group[data-module-slug="' + moduleSlug + '"]') : null;
 
         if (
             mapZone
             && (
                 mapZone === headerGroup
-                || mapZone.classList.contains('em-wp-admin-landing-map__header-group')
-                || mapZone.classList.contains('em-wp-admin-landing-map__header-group-link')
+                || mapZone.classList.contains('em-site-admin-landing-map__header-group')
+                || mapZone.classList.contains('em-site-admin-landing-map__header-group-link')
             )
         ) {
             mapZone = null;
@@ -87,11 +87,11 @@
         }
 
         if (label) {
-            var badge = label.querySelector('.em-wp-rubriques-admin__hidden-badge');
+            var badge = label.querySelector('.em-site-rubriques-admin__hidden-badge');
 
             if (!visible && !badge) {
                 badge = document.createElement('span');
-                badge.className = 'em-wp-rubriques-admin__hidden-badge';
+                badge.className = 'em-site-rubriques-admin__hidden-badge';
                 badge.textContent = hiddenLabel;
                 label.appendChild(badge);
             } else if (visible && badge) {
@@ -102,12 +102,12 @@
         if (mapZone) {
             mapZone.classList.toggle('is-rubrique-hidden', !visible);
 
-            var mapBadge = mapZone.querySelector('.em-wp-admin-landing-map__hidden-badge');
+            var mapBadge = mapZone.querySelector('.em-site-admin-landing-map__hidden-badge');
             if (!visible && !mapBadge) {
                 mapBadge = document.createElement('span');
-                mapBadge.className = 'em-wp-admin-landing-map__hidden-badge';
+                mapBadge.className = 'em-site-admin-landing-map__hidden-badge';
                 mapBadge.textContent = hiddenLabel;
-                var zoneLabel = mapZone.querySelector('.em-wp-admin-landing-map__zone-label');
+                var zoneLabel = mapZone.querySelector('.em-site-admin-landing-map__zone-label');
 
                 if (zoneLabel && zoneLabel.parentNode === mapZone) {
                     mapZone.insertBefore(mapBadge, zoneLabel);
@@ -122,12 +122,12 @@
         if (headerGroup) {
             headerGroup.classList.toggle('is-rubrique-hidden', !visible);
 
-            var toolbar = headerGroup.querySelector('.em-wp-admin-landing-map__header-group-toolbar');
-            var groupBadge = toolbar ? toolbar.querySelector('.em-wp-admin-landing-map__hidden-badge') : null;
+            var toolbar = headerGroup.querySelector('.em-site-admin-landing-map__header-group-toolbar');
+            var groupBadge = toolbar ? toolbar.querySelector('.em-site-admin-landing-map__hidden-badge') : null;
 
             if (!visible && toolbar && !groupBadge) {
                 groupBadge = document.createElement('span');
-                groupBadge.className = 'em-wp-admin-landing-map__hidden-badge';
+                groupBadge.className = 'em-site-admin-landing-map__hidden-badge';
                 groupBadge.textContent = hiddenLabel;
                 toolbar.appendChild(groupBadge);
             } else if (visible && groupBadge) {
@@ -148,7 +148,7 @@
         }
 
         var body = new window.FormData();
-        body.append('action', 'em_wp_save_site_rubrique_visibility');
+        body.append('action', 'em_site_save_site_rubrique_visibility');
         body.append('nonce', ctx.config.nonce);
         body.append('module_slug', moduleSlug);
         body.append('visible', visible ? '1' : '0');
@@ -195,7 +195,7 @@
         }
 
         ctx.adminRoot.addEventListener('click', function (event) {
-            var toggle = event.target.closest('.em-wp-rubriques-visibility-toggle');
+            var toggle = event.target.closest('.em-site-rubriques-visibility-toggle');
             if (!toggle) {
                 return;
             }

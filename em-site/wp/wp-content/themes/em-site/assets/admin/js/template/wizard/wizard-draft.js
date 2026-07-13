@@ -13,13 +13,13 @@
         navigation: null,
         legacyKeySuffix: '_legacy_single',
         isEditingDraftName: false,
-        restoreGrantKey: 'em_wp_wizard_restore_grant',
-        newLaunchGrantKey: 'em_wp_wizard_new_launch',
-        workspaceLaunchGrantKey: 'em_wp_wizard_workspace_launch',
+        restoreGrantKey: 'em_site_wizard_restore_grant',
+        newLaunchGrantKey: 'em_site_wizard_new_launch',
+        workspaceLaunchGrantKey: 'em_site_wizard_workspace_launch',
         serverStore: null,
 
         getKey: function () {
-            return (State.config && State.config.draftStorageKey) || 'em_wp_template_wizard_drafts';
+            return (State.config && State.config.draftStorageKey) || 'em_site_template_wizard_drafts';
         },
 
         getLegacyKey: function () {
@@ -179,7 +179,7 @@
             var config = State.config || {};
             var body = new URLSearchParams();
 
-            body.append('action', 'em_wp_template_wizard_save_draft');
+            body.append('action', 'em_site_template_wizard_save_draft');
             body.append('nonce', config.draftNonce || '');
             body.append('snapshot', JSON.stringify(snapshot));
 
@@ -199,7 +199,7 @@
             var config = State.config || {};
             var body = new URLSearchParams();
 
-            body.append('action', 'em_wp_template_wizard_delete_draft');
+            body.append('action', 'em_site_template_wizard_delete_draft');
             body.append('nonce', config.draftNonce || '');
             body.append('draft_id', String(draftId || ''));
 
@@ -224,8 +224,8 @@
 
             try {
                 var url = new URL(window.location.href);
-                url.searchParams.set('em_wp_mode', 'edit');
-                url.searchParams.set('em_wp_draft', String(draftId));
+                url.searchParams.set('em_site_mode', 'edit');
+                url.searchParams.set('em_site_draft', String(draftId));
                 window.history.replaceState({}, '', url.toString());
                 page.setAttribute('data-wizard-resume-id', String(draftId));
             } catch (err) {
@@ -305,9 +305,9 @@
         },
 
         editUrl: function (id) {
-            var base = (State.config && State.config.createHubUrl) || window.location.pathname + window.location.search.split('&em_wp_')[0];
+            var base = (State.config && State.config.createHubUrl) || window.location.pathname + window.location.search.split('&em_site')[0];
             var join = base.indexOf('?') >= 0 ? '&' : '?';
-            return base + join + 'em_wp_mode=edit&em_wp_draft=' + encodeURIComponent(String(id || ''));
+            return base + join + 'em_site_mode=edit&em_site_draft=' + encodeURIComponent(String(id || ''));
         },
 
         hubUrl: function () {
@@ -380,7 +380,7 @@
 
             try {
                 var url = new URL(window.location.href);
-                url.searchParams.delete('em_wp_draft');
+                url.searchParams.delete('em_site_draft');
                 window.history.replaceState({}, '', url.toString());
             } catch (err) {
                 /* noop */
@@ -393,8 +393,8 @@
 
         resetLaunchState: function (navigation) {
             var Guide = EmWpTemplateWizard.Guide;
-            var labelInput = document.getElementById('em-wp-template-new-label');
-            var colorInput = document.getElementById('em-wp-template-new-color');
+            var labelInput = document.getElementById('em-site-template-new-label');
+            var colorInput = document.getElementById('em-site-template-new-color');
 
             if (navigation) {
                 navigation.activeDraftId = null;
@@ -507,7 +507,7 @@
                 return;
             }
 
-            root.querySelectorAll('a[href*="em_wp_draft="]').forEach(function (link) {
+            root.querySelectorAll('a[href*="em_site_draft="]').forEach(function (link) {
                 if (link.dataset.resumeBound === '1') {
                     return;
                 }
@@ -517,7 +517,7 @@
                     var draftId = '';
 
                     try {
-                        draftId = new URL(link.href, window.location.origin).searchParams.get('em_wp_draft') || '';
+                        draftId = new URL(link.href, window.location.origin).searchParams.get('em_site_draft') || '';
                     } catch (err) {
                         draftId = '';
                     }
@@ -653,7 +653,7 @@
         syncLaunchContext: function (resumeId) {
             var page = document.querySelector('[data-wizard-view]');
             var view = page ? page.getAttribute('data-wizard-view') : 'hub';
-            var labelInput = document.getElementById('em-wp-template-new-label');
+            var labelInput = document.getElementById('em-site-template-new-label');
 
             this.applyLabelInputPlaceholder(labelInput);
 
@@ -724,7 +724,7 @@
             var cancelBtn = document.querySelector('[data-wizard-draft-name-cancel]');
             var nameEl = document.querySelector('[data-wizard-draft-name]');
             var nameInput = document.querySelector('[data-wizard-draft-name-input]');
-            var labelInput = document.getElementById('em-wp-template-new-label');
+            var labelInput = document.getElementById('em-site-template-new-label');
             var self = this;
             var originalName = '';
 
@@ -886,7 +886,7 @@
 
             drafts.forEach(function (item) {
                 var li = document.createElement('li');
-                li.className = 'em-wp-template-wizard-drafts__item';
+                li.className = 'em-site-template-wizard-drafts__item';
 
                 var color = item.color || '#cccccc';
                 var step = Number(item.currentStep || 0);
@@ -894,19 +894,19 @@
                 var resumeUrl = self.editUrl(item.id);
 
                 li.innerHTML =
-                    '<div class="em-wp-template-wizard-drafts__meta">' +
-                        '<span class="em-wp-template-wizard-drafts__swatch" style="--em-template-swatch:' + color + ';"></span>' +
-                        '<span class="em-wp-template-wizard-drafts__name">' + self.escapeHtml(item.label || '—') + '</span>' +
-                        '<span class="em-wp-template-wizard-drafts__step">' + self.escapeHtml(self.stepLabel(step)) + '</span>' +
-                        (savedLabel ? '<span class="em-wp-template-wizard-drafts__date">' + self.escapeHtml(savedLabel) + '</span>' : '') +
+                    '<div class="em-site-template-wizard-drafts__meta">' +
+                        '<span class="em-site-template-wizard-drafts__swatch" style="--em-template-swatch:' + color + ';"></span>' +
+                        '<span class="em-site-template-wizard-drafts__name">' + self.escapeHtml(item.label || '—') + '</span>' +
+                        '<span class="em-site-template-wizard-drafts__step">' + self.escapeHtml(self.stepLabel(step)) + '</span>' +
+                        (savedLabel ? '<span class="em-site-template-wizard-drafts__date">' + self.escapeHtml(savedLabel) + '</span>' : '') +
                     '</div>' +
-                    '<div class="em-wp-template-wizard-drafts__actions">' +
-                        '<a class="em-wp-hub__action em-wp-hub__action--compact" href="' + self.escapeAttr(resumeUrl) + '">' +
-                            '<span class="em-wp-hub__action-inner"><span class="em-wp-hub__action-label">' +
+                    '<div class="em-site-template-wizard-drafts__actions">' +
+                        '<a class="em-site-hub__action em-site-hub__action--compact" href="' + self.escapeAttr(resumeUrl) + '">' +
+                            '<span class="em-site-hub__action-inner"><span class="em-site-hub__action-label">' +
                                 self.escapeHtml(i18n.draftResume || 'Reprendre') +
                             '</span></span>' +
                         '</a>' +
-                        '<button type="button" class="em-wp-template-wizard-drafts__delete" data-wizard-draft-delete="' + self.escapeAttr(item.id) + '" title="' + self.escapeAttr(i18n.draftDelete || 'Supprimer') + '">' +
+                        '<button type="button" class="em-site-template-wizard-drafts__delete" data-wizard-draft-delete="' + self.escapeAttr(item.id) + '" title="' + self.escapeAttr(i18n.draftDelete || 'Supprimer') + '">' +
                             '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>' +
                         '</button>' +
                     '</div>';
@@ -1080,8 +1080,8 @@
             var self = this;
             var i18n = State.config.i18n || {};
             var navigation = this.navigation;
-            var labelInput = document.getElementById('em-wp-template-new-label');
-            var colorInput = document.getElementById('em-wp-template-new-color');
+            var labelInput = document.getElementById('em-site-template-new-label');
+            var colorInput = document.getElementById('em-site-template-new-color');
             var step = navigation ? navigation.currentStep : 0;
             var activeId = navigation ? navigation.activeDraftId : null;
 
@@ -1143,8 +1143,8 @@
         },
 
         applyRestore: function (stored, navigation) {
-            var labelInput = document.getElementById('em-wp-template-new-label');
-            var colorInput = document.getElementById('em-wp-template-new-color');
+            var labelInput = document.getElementById('em-site-template-new-label');
+            var colorInput = document.getElementById('em-site-template-new-color');
             var Guide = EmWpTemplateWizard.Guide;
             var self = this;
 

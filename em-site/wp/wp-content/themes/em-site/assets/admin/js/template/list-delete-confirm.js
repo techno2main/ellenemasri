@@ -4,7 +4,7 @@
     var runtime = window.EmAdminRuntime || null;
 
     function boot() {
-        document.querySelectorAll('.em-wp-templates-admin__delete-form').forEach(function (form) {
+        document.querySelectorAll('.em-site-templates-admin__delete-form').forEach(function (form) {
             form.addEventListener('submit', function (event) {
                 if (!window.EmWpAdminConfirm || typeof window.EmWpAdminConfirm.confirmDelete !== 'function') {
                     return;

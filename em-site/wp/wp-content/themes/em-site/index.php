@@ -2,7 +2,7 @@
 /**
  * Fallback principal du theme.
  *
- * @package em-wp
+ * @package em-site
  */
 
 get_template_part('templates/front-page');

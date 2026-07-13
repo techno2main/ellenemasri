@@ -3,9 +3,9 @@
  * Bootstrap de la couche admin (BO).
  *
  * Menus admin : accueil Dashboard (pages/dashboard/), sommaire Rubriques (pages/rubriques/),
- * catalogues, templates, puis modules em-wp (voir inc/admin/shared/menu/).
+ * catalogues, templates, puis modules em-site (voir inc/admin/shared/menu/).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -48,7 +48,7 @@ require_once __DIR__ . '/../vlb/bootstrap.php';
 /**
  * Slugs modules gérés côté admin.
  */
-function em_wp_admin_module_slugs(): array
+function em_site_admin_module_slugs(): array
 {
     return [
         'top-bar',

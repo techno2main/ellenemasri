@@ -2,7 +2,7 @@
 /**
  * Loader decoupe pour hub-cards.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

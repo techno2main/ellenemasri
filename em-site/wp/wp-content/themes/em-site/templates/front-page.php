@@ -2,7 +2,7 @@
 /**
  * Vue de la page d'accueil.
  *
- * @package em-wp
+ * @package em-site
  */
 ?>
 <main class="site-main site-main--front">

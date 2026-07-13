@@ -6,8 +6,8 @@
 
     function initAll() {
         document.querySelectorAll('[data-em-slider]').forEach(function (root) {
-            if (typeof window.emWpInitMayamiSlider === 'function') {
-                window.emWpInitMayamiSlider(root);
+            if (typeof window.emWpInitSlider === 'function') {
+                window.emWpInitSlider(root);
             }
         });
     }

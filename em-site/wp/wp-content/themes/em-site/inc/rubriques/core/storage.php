@@ -1,13 +1,13 @@
 <?php
 /**
- * Stockage V4 ? noms d'options & acc?s items / instances.
+ * Stockage EM-SITE ? noms d'options & acc?s items / instances.
  *
- * Namespace d?di? `em_wp_v4_*` pour NE PAS ?craser les options v3 (rollback s?r).
+ * Namespace d?di? `em_site_*` pour NE PAS ?craser les options v3 (rollback s?r).
  *   - Item     : un footer nomm? = STRUCTURE (champs + positions) + CONTENU.
  *                Forme : [ 'label', 'fields' => [...], 'content' => [...] ]
  *   - Instance : item choisi pour une rubrique dans un template.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -15,35 +15,35 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Pr?fixe global des options V4.
+ * Pr?fixe global des options EM-SITE.
  */
-function em_wp_v4_option_prefix(): string
+function em_site_option_prefix(): string
 {
-    return 'em_wp_v4_';
+    return 'em_site_';
 }
 
 /**
  * Nom d'option de la LISTE des items d'un type (slug => label).
  */
-function em_wp_v4_items_option_name(string $type_slug): string
+function em_site_items_option_name(string $type_slug): string
 {
-    return em_wp_v4_option_prefix() . 'items_' . sanitize_key($type_slug);
+    return em_site_option_prefix() . 'items_' . sanitize_key($type_slug);
 }
 
 /**
  * Nom d'option du CONTENU d'un item pr?cis.
  */
-function em_wp_v4_item_option_name(string $type_slug, string $item_slug): string
+function em_site_item_option_name(string $type_slug, string $item_slug): string
 {
-    return em_wp_v4_option_prefix() . 'item_' . sanitize_key($type_slug) . '_' . sanitize_key($item_slug);
+    return em_site_option_prefix() . 'item_' . sanitize_key($type_slug) . '_' . sanitize_key($item_slug);
 }
 
 /**
  * Nom d'option d'une INSTANCE (template + type de rubrique).
  */
-function em_wp_v4_instance_option_name(string $template_slug, string $type_slug): string
+function em_site_instance_option_name(string $template_slug, string $type_slug): string
 {
-    return em_wp_v4_option_prefix() . 'instance_' . sanitize_key($template_slug) . '_' . sanitize_key($type_slug);
+    return em_site_option_prefix() . 'instance_' . sanitize_key($template_slug) . '_' . sanitize_key($type_slug);
 }
 
 /**
@@ -53,7 +53,7 @@ function em_wp_v4_instance_option_name(string $template_slug, string $type_slug)
  *
  * @return array<string, mixed>|array<int, mixed>|null
  */
-function em_wp_v4_repair_serialized_array_value($raw): ?array
+function em_site_repair_serialized_array_value($raw): ?array
 {
     if (!is_string($raw) || $raw === '') {
         return null;
@@ -91,7 +91,7 @@ function em_wp_v4_repair_serialized_array_value($raw): ?array
 /**
  * Lit la valeur brute d'une option (sans tentative de deserialisation WP).
  */
-function em_wp_v4_get_raw_option_value(string $option_name)
+function em_site_get_raw_option_value(string $option_name)
 {
     global $wpdb;
 
@@ -119,7 +119,7 @@ function em_wp_v4_get_raw_option_value(string $option_name)
 /**
  * Repare les textes mojibake les plus frequents apres migration SQL.
  */
-function em_wp_v4_fix_mojibake_string(string $value): string
+function em_site_fix_mojibake_string(string $value): string
 {
     if ($value === '') {
         return $value;
@@ -156,39 +156,39 @@ function em_wp_v4_fix_mojibake_string(string $value): string
 }
 
 /**
- * Normalise recursivement l'encodage des valeurs textuelles d'un tableau V4.
+ * Normalise recursivement l'encodage des valeurs textuelles d'un tableau EM-SITE.
  *
  * @param mixed $value
  * @return mixed
  */
-function em_wp_v4_normalize_value_encoding($value)
+function em_site_normalize_value_encoding($value)
 {
     if (is_array($value)) {
         foreach ($value as $k => $v) {
-            $value[$k] = em_wp_v4_normalize_value_encoding($v);
+            $value[$k] = em_site_normalize_value_encoding($v);
         }
 
         return $value;
     }
 
     if (is_string($value)) {
-        return em_wp_v4_fix_mojibake_string($value);
+        return em_site_fix_mojibake_string($value);
     }
 
     return $value;
 }
 
 /**
- * Lit une option V4 attendue comme tableau avec tentative de reparation.
+ * Lit une option EM-SITE attendue comme tableau avec tentative de reparation.
  *
  * @return array<string, mixed>|array<int, mixed>
  */
-function em_wp_v4_get_array_option(string $option_name): array
+function em_site_get_array_option(string $option_name): array
 {
     $value = get_option($option_name, null);
 
     if (is_array($value)) {
-        $normalized = em_wp_v4_normalize_value_encoding($value);
+        $normalized = em_site_normalize_value_encoding($value);
 
         if ($normalized !== $value) {
             update_option($option_name, $normalized);
@@ -197,15 +197,15 @@ function em_wp_v4_get_array_option(string $option_name): array
         return is_array($normalized) ? $normalized : [];
     }
 
-    $repaired = em_wp_v4_repair_serialized_array_value($value);
+    $repaired = em_site_repair_serialized_array_value($value);
 
     if ($repaired === null) {
-        $raw = em_wp_v4_get_raw_option_value($option_name);
-        $repaired = em_wp_v4_repair_serialized_array_value($raw);
+        $raw = em_site_get_raw_option_value($option_name);
+        $repaired = em_site_repair_serialized_array_value($raw);
     }
 
     if ($repaired !== null) {
-        $normalized = em_wp_v4_normalize_value_encoding($repaired);
+        $normalized = em_site_normalize_value_encoding($repaired);
 
         // Auto-heal : on persiste la version propre pour eviter de reparer a chaque requete.
         update_option($option_name, $normalized);
@@ -221,11 +221,11 @@ function em_wp_v4_get_array_option(string $option_name): array
  *
  * @return array<string, string>
  */
-function em_wp_v4_get_items(string $type_slug): array
+function em_site_get_items(string $type_slug): array
 {
-    $items = em_wp_v4_get_array_option(em_wp_v4_items_option_name($type_slug));
+    $items = em_site_get_array_option(em_site_items_option_name($type_slug));
 
-    return em_wp_v4_sort_items(is_array($items) ? $items : []);
+    return em_site_sort_items(is_array($items) ? $items : []);
 }
 
 /**
@@ -234,7 +234,7 @@ function em_wp_v4_get_items(string $type_slug): array
  * @param array<string, string> $items slug => label
  * @return array<string, string>
  */
-function em_wp_v4_sort_items(array $items): array
+function em_site_sort_items(array $items): array
 {
     uasort($items, static function ($a, $b): int {
         $da = preg_match('/\bdefault\b/i', (string) $a) ? 0 : 1;
@@ -251,9 +251,9 @@ function em_wp_v4_sort_items(array $items): array
  *
  * @param array<string, string> $items
  */
-function em_wp_v4_save_items(string $type_slug, array $items): bool
+function em_site_save_items(string $type_slug, array $items): bool
 {
-    return (bool) update_option(em_wp_v4_items_option_name($type_slug), $items);
+    return (bool) update_option(em_site_items_option_name($type_slug), $items);
 }
 
 /**
@@ -261,11 +261,11 @@ function em_wp_v4_save_items(string $type_slug, array $items): bool
  *
  * Exemple : type `top-bar` + label `MAYAMI` => `top-bar-mayami`.
  */
-function em_wp_v4_item_slug_base(string $type_slug, string $label_or_slug): string
+function em_site_item_slug_base(string $type_slug, string $label_or_slug): string
 {
     $type_slug = sanitize_key($type_slug);
     $value_slug = sanitize_key(sanitize_title($label_or_slug));
-    $slug_prefix = em_wp_v4_item_slug_prefix($type_slug);
+    $slug_prefix = em_site_item_slug_prefix($type_slug);
 
     if ($slug_prefix === '') {
         return $value_slug !== '' ? $value_slug : 'item';
@@ -285,7 +285,7 @@ function em_wp_v4_item_slug_base(string $type_slug, string $label_or_slug): stri
 /**
  * Pr?fixe de slug m?tier par rubrique (peut diff?rer du slug technique).
  */
-function em_wp_v4_item_slug_prefix(string $type_slug): string
+function em_site_item_slug_prefix(string $type_slug): string
 {
     $type_slug = sanitize_key($type_slug);
 
@@ -302,7 +302,7 @@ function em_wp_v4_item_slug_prefix(string $type_slug): string
 /**
  * G?n?re un slug d'item unique pour un type (suffixe -2, -3... si d?j? pris).
  */
-function em_wp_v4_unique_item_slug(string $type_slug, string $base_slug, string $exclude_slug = ''): string
+function em_site_unique_item_slug(string $type_slug, string $base_slug, string $exclude_slug = ''): string
 {
     $base_slug = sanitize_key($base_slug);
     $exclude_slug = sanitize_key($exclude_slug);
@@ -311,7 +311,7 @@ function em_wp_v4_unique_item_slug(string $type_slug, string $base_slug, string 
         $base_slug = 'item';
     }
 
-    $items = em_wp_v4_get_items($type_slug);
+    $items = em_site_get_items($type_slug);
     $slug = $base_slug;
     $i = 2;
 
@@ -328,21 +328,21 @@ function em_wp_v4_unique_item_slug(string $type_slug, string $base_slug, string 
  *
  * @return array{label:string, fields:array<int,array<string,mixed>>, content:array<string,mixed>, layout:array{columns:int,align:array<int,string>}}
  */
-function em_wp_v4_get_item(string $type_slug, string $item_slug): array
+function em_site_get_item(string $type_slug, string $item_slug): array
 {
-    $data = em_wp_v4_get_array_option(em_wp_v4_item_option_name($type_slug, $item_slug));
+    $data = em_site_get_array_option(em_site_item_option_name($type_slug, $item_slug));
 
-    $fields = em_wp_rubrique_normalize_fields(is_array($data['fields'] ?? null) ? $data['fields'] : []);
+    $fields = em_site_rubrique_normalize_fields(is_array($data['fields'] ?? null) ? $data['fields'] : []);
 
     // Repli : un item sans structure d?marre VIDE c?t? contenu (aucune ligne,
     // aucun champ) ; seuls les champs d'apparence (globaux) du type sont conserv?s.
     if ($fields === []) {
-        [$starter_global] = em_wp_rubrique_split_global_fields(em_wp_rubrique_type_starter_fields($type_slug));
+        [$starter_global] = em_site_rubrique_split_global_fields(em_site_rubrique_type_starter_fields($type_slug));
         $fields = $starter_global;
-        $layout = em_wp_rubrique_normalize_layout([], $starter_global);
+        $layout = em_site_rubrique_normalize_layout([], $starter_global);
     } else {
-        $fields = em_wp_v4_ensure_global_fields($type_slug, $fields);
-        $layout = em_wp_rubrique_normalize_layout($data['layout'] ?? [], $fields);
+        $fields = em_site_ensure_global_fields($type_slug, $fields);
+        $layout = em_site_rubrique_normalize_layout($data['layout'] ?? [], $fields);
     }
 
     return [
@@ -350,7 +350,7 @@ function em_wp_v4_get_item(string $type_slug, string $item_slug): array
         'fields'  => $fields,
         'content' => is_array($data['content'] ?? null) ? $data['content'] : [],
         'layout'  => $layout,
-        'anchor'  => em_wp_v4_sanitize_anchor((string) ($data['anchor'] ?? '')),
+        'anchor'  => em_site_sanitize_anchor((string) ($data['anchor'] ?? '')),
     ];
 }
 
@@ -360,7 +360,7 @@ function em_wp_v4_get_item(string $type_slug, string $item_slug): array
  * Accepte ? #stream ?, ? Stream ?, ? mon-ancre ?? et renvoie un slug r?utilisable
  * ? la fois comme attribut id="" de la section et comme cible d'un lien #ancre.
  */
-function em_wp_v4_sanitize_anchor(string $anchor): string
+function em_site_sanitize_anchor(string $anchor): string
 {
     return sanitize_title(ltrim(trim($anchor), '#'));
 }
@@ -370,9 +370,9 @@ function em_wp_v4_sanitize_anchor(string $anchor): string
  *
  * @return array{columns:int, align:array<int,string>}
  */
-function em_wp_v4_get_item_layout(string $type_slug, string $item_slug): array
+function em_site_get_item_layout(string $type_slug, string $item_slug): array
 {
-    return em_wp_v4_get_item($type_slug, $item_slug)['layout'];
+    return em_site_get_item($type_slug, $item_slug)['layout'];
 }
 
 /**
@@ -385,12 +385,12 @@ function em_wp_v4_get_item_layout(string $type_slug, string $item_slug): array
  * @param array<int, array<string, mixed>> $fields
  * @return array<int, array<string, mixed>>
  */
-function em_wp_v4_ensure_global_fields(string $type_slug, array $fields): array
+function em_site_ensure_global_fields(string $type_slug, array $fields): array
 {
-    [$starter_global] = em_wp_rubrique_split_global_fields(em_wp_rubrique_type_starter_fields($type_slug));
+    [$starter_global] = em_site_rubrique_split_global_fields(em_site_rubrique_type_starter_fields($type_slug));
     $content = array_values(array_filter(
         $fields,
-        static fn(array $field): bool => !em_wp_rubrique_field_is_global($field)
+        static fn(array $field): bool => !em_site_rubrique_field_is_global($field)
     ));
 
     return array_merge($starter_global, $content);
@@ -399,7 +399,7 @@ function em_wp_v4_ensure_global_fields(string $type_slug, array $fields): array
 /**
  * Supprime un item (sa liste + son option de donn?es).
  */
-function em_wp_v4_delete_item(string $type_slug, string $item_slug): void
+function em_site_delete_item(string $type_slug, string $item_slug): void
 {
     $item_slug = sanitize_key($item_slug);
 
@@ -407,14 +407,14 @@ function em_wp_v4_delete_item(string $type_slug, string $item_slug): void
         return;
     }
 
-    $items = em_wp_v4_get_items($type_slug);
+    $items = em_site_get_items($type_slug);
 
     if (isset($items[$item_slug])) {
         unset($items[$item_slug]);
-        em_wp_v4_save_items($type_slug, $items);
+        em_site_save_items($type_slug, $items);
     }
 
-    delete_option(em_wp_v4_item_option_name($type_slug, $item_slug));
+    delete_option(em_site_item_option_name($type_slug, $item_slug));
 }
 
 /**
@@ -422,9 +422,9 @@ function em_wp_v4_delete_item(string $type_slug, string $item_slug): void
  *
  * @return array<int, array<string, mixed>>
  */
-function em_wp_v4_get_item_fields(string $type_slug, string $item_slug): array
+function em_site_get_item_fields(string $type_slug, string $item_slug): array
 {
-    return em_wp_v4_get_item($type_slug, $item_slug)['fields'];
+    return em_site_get_item($type_slug, $item_slug)['fields'];
 }
 
 /**
@@ -432,12 +432,12 @@ function em_wp_v4_get_item_fields(string $type_slug, string $item_slug): array
  *
  * @return array<string, mixed>
  */
-function em_wp_v4_get_item_content(string $type_slug, string $item_slug): array
+function em_site_get_item_content(string $type_slug, string $item_slug): array
 {
-    $item = em_wp_v4_get_item($type_slug, $item_slug);
+    $item = em_site_get_item($type_slug, $item_slug);
 
     return array_merge(
-        em_wp_rubrique_fields_defaults($item['fields']),
+        em_site_rubrique_fields_defaults($item['fields']),
         $item['content']
     );
 }
@@ -447,7 +447,7 @@ function em_wp_v4_get_item_content(string $type_slug, string $item_slug): array
  *
  * @param array<string, mixed> $item
  */
-function em_wp_v4_save_item(string $type_slug, string $item_slug, array $item): bool
+function em_site_save_item(string $type_slug, string $item_slug, array $item): bool
 {
     $item_slug = sanitize_key($item_slug);
 
@@ -455,7 +455,7 @@ function em_wp_v4_save_item(string $type_slug, string $item_slug, array $item): 
         return false;
     }
 
-    return (bool) update_option(em_wp_v4_item_option_name($type_slug, $item_slug), $item);
+    return (bool) update_option(em_site_item_option_name($type_slug, $item_slug), $item);
 }
 
 /**
@@ -463,12 +463,12 @@ function em_wp_v4_save_item(string $type_slug, string $item_slug, array $item): 
  *
  * @param array<int, array<string, mixed>> $fields
  */
-function em_wp_v4_save_item_fields(string $type_slug, string $item_slug, array $fields): bool
+function em_site_save_item_fields(string $type_slug, string $item_slug, array $fields): bool
 {
-    $item = em_wp_v4_get_item($type_slug, $item_slug);
+    $item = em_site_get_item($type_slug, $item_slug);
     $item['fields'] = array_values($fields);
 
-    return em_wp_v4_save_item($type_slug, $item_slug, $item);
+    return em_site_save_item($type_slug, $item_slug, $item);
 }
 
 /**
@@ -476,18 +476,18 @@ function em_wp_v4_save_item_fields(string $type_slug, string $item_slug, array $
  *
  * @param array<string, mixed> $content
  */
-function em_wp_v4_save_item_content(string $type_slug, string $item_slug, array $content): bool
+function em_site_save_item_content(string $type_slug, string $item_slug, array $content): bool
 {
-    $item = em_wp_v4_get_item($type_slug, $item_slug);
+    $item = em_site_get_item($type_slug, $item_slug);
     $item['content'] = $content;
 
-    return em_wp_v4_save_item($type_slug, $item_slug, $item);
+    return em_site_save_item($type_slug, $item_slug, $item);
 }
 
 /**
  * D?clare un item dans la liste (et l'initialise avec la structure de d?part).
  */
-function em_wp_v4_register_item(string $type_slug, string $item_slug, string $label): void
+function em_site_register_item(string $type_slug, string $item_slug, string $label): void
 {
     $item_slug = sanitize_key($item_slug);
 
@@ -495,22 +495,22 @@ function em_wp_v4_register_item(string $type_slug, string $item_slug, string $la
         return;
     }
 
-    $items = em_wp_v4_get_items($type_slug);
+    $items = em_site_get_items($type_slug);
     $items[$item_slug] = $label !== '' ? $label : $item_slug;
-    em_wp_v4_save_items($type_slug, $items);
+    em_site_save_items($type_slug, $items);
 
-    if (get_option(em_wp_v4_item_option_name($type_slug, $item_slug), null) === null) {
-        $fields = em_wp_rubrique_type_starter_fields($type_slug);
+    if (get_option(em_site_item_option_name($type_slug, $item_slug), null) === null) {
+        $fields = em_site_rubrique_type_starter_fields($type_slug);
         // On ne fige QUE les valeurs des champs de contenu. Les valeurs globales
         // (apparence) ne sont pas persist?es ? la cr?ation : elles suivent ainsi
         // toujours les d?fauts courants (mutualisation), tant que l'utilisateur
         // ne les modifie pas explicitement via le builder.
-        [, $content_fields] = em_wp_rubrique_split_global_fields($fields);
-        em_wp_v4_save_item($type_slug, $item_slug, [
+        [, $content_fields] = em_site_rubrique_split_global_fields($fields);
+        em_site_save_item($type_slug, $item_slug, [
             'label'   => $items[$item_slug],
             'fields'  => $fields,
-            'content' => em_wp_rubrique_fields_defaults($content_fields),
-            'layout'  => em_wp_rubrique_type_starter_layout($type_slug),
+            'content' => em_site_rubrique_fields_defaults($content_fields),
+            'layout'  => em_site_rubrique_type_starter_layout($type_slug),
         ]);
     }
 }
@@ -520,7 +520,7 @@ function em_wp_v4_register_item(string $type_slug, string $item_slug, string $la
  *
  * @return array{item:string,label:string}
  */
-function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $label): array
+function em_site_rename_item(string $type_slug, string $item_slug, string $label): array
 {
     $type_slug = sanitize_key($type_slug);
     $item_slug = sanitize_key($item_slug);
@@ -530,7 +530,7 @@ function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $labe
         return ['item' => '', 'label' => $label];
     }
 
-    $items = em_wp_v4_get_items($type_slug);
+    $items = em_site_get_items($type_slug);
 
     if (!isset($items[$item_slug])) {
         return ['item' => '', 'label' => $label];
@@ -540,16 +540,16 @@ function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $labe
         $label = (string) $items[$item_slug];
     }
 
-    $desired_slug = em_wp_v4_item_slug_base($type_slug, $label);
-    $new_slug = em_wp_v4_unique_item_slug($type_slug, $desired_slug, $item_slug);
+    $desired_slug = em_site_item_slug_base($type_slug, $label);
+    $new_slug = em_site_unique_item_slug($type_slug, $desired_slug, $item_slug);
 
     if ($new_slug === $item_slug) {
         $items[$item_slug] = $label;
-        em_wp_v4_save_items($type_slug, $items);
+        em_site_save_items($type_slug, $items);
 
-        $data = em_wp_v4_get_item($type_slug, $item_slug);
+        $data = em_site_get_item($type_slug, $item_slug);
         $data['label'] = $label;
-        em_wp_v4_save_item($type_slug, $item_slug, $data);
+        em_site_save_item($type_slug, $item_slug, $data);
 
         return ['item' => $item_slug, 'label' => $label];
     }
@@ -563,32 +563,32 @@ function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $labe
 
         $new_items[(string) $slug] = (string) $item_label;
     }
-    em_wp_v4_save_items($type_slug, $new_items);
+    em_site_save_items($type_slug, $new_items);
 
-    $old_option = em_wp_v4_item_option_name($type_slug, $item_slug);
-    $new_option = em_wp_v4_item_option_name($type_slug, $new_slug);
-    $raw_item = em_wp_v4_get_array_option($old_option);
-    $item_data = $raw_item !== [] ? $raw_item : em_wp_v4_get_item($type_slug, $item_slug);
+    $old_option = em_site_item_option_name($type_slug, $item_slug);
+    $new_option = em_site_item_option_name($type_slug, $new_slug);
+    $raw_item = em_site_get_array_option($old_option);
+    $item_data = $raw_item !== [] ? $raw_item : em_site_get_item($type_slug, $item_slug);
     $item_data['label'] = $label;
     update_option($new_option, $item_data);
     delete_option($old_option);
 
-    if (function_exists('em_wp_template_registry')) {
-        foreach (array_keys((array) em_wp_template_registry()) as $template_slug) {
+    if (function_exists('em_site_template_registry')) {
+        foreach (array_keys((array) em_site_template_registry()) as $template_slug) {
             $template_slug = sanitize_key((string) $template_slug);
 
             if ($template_slug === '') {
                 continue;
             }
 
-            $instance = em_wp_v4_get_instance($template_slug, $type_slug);
+            $instance = em_site_get_instance($template_slug, $type_slug);
 
             if (sanitize_key((string) ($instance['item'] ?? '')) !== $item_slug) {
                 continue;
             }
 
             $instance['item'] = $new_slug;
-            em_wp_v4_save_instance($template_slug, $type_slug, $instance);
+            em_site_save_instance($template_slug, $type_slug, $instance);
         }
     }
 
@@ -600,9 +600,9 @@ function em_wp_v4_rename_item(string $type_slug, string $item_slug, string $labe
  *
  * @return array<string, mixed>
  */
-function em_wp_v4_get_instance(string $template_slug, string $type_slug): array
+function em_site_get_instance(string $template_slug, string $type_slug): array
 {
-    return em_wp_v4_get_array_option(em_wp_v4_instance_option_name($template_slug, $type_slug));
+    return em_site_get_array_option(em_site_instance_option_name($template_slug, $type_slug));
 }
 
 /**
@@ -610,17 +610,17 @@ function em_wp_v4_get_instance(string $template_slug, string $type_slug): array
  *
  * @param array<string, mixed> $instance
  */
-function em_wp_v4_save_instance(string $template_slug, string $type_slug, array $instance): bool
+function em_site_save_instance(string $template_slug, string $type_slug, array $instance): bool
 {
-    return (bool) update_option(em_wp_v4_instance_option_name($template_slug, $type_slug), $instance);
+    return (bool) update_option(em_site_instance_option_name($template_slug, $type_slug), $instance);
 }
 
 /**
  * Retourne le slug item par d?faut d'un type ('' si aucun item).
  */
-function em_wp_v4_default_item_slug(string $type_slug): string
+function em_site_default_item_slug(string $type_slug): string
 {
-    $items = em_wp_v4_get_items($type_slug);
+    $items = em_site_get_items($type_slug);
 
     if (isset($items['default'])) {
         return 'default';
@@ -630,13 +630,13 @@ function em_wp_v4_default_item_slug(string $type_slug): string
 }
 
 /**
- * Garantit des instances V4 coh?rentes pour un template donn?.
+ * Garantit des instances EM-SITE coh?rentes pour un template donn?.
  *
  * R?gles :
  * - si l'instance existe et pointe vers un item valide : inchang?
  * - sinon, on branche explicitement l'item par d?faut r?solu du type
  */
-function em_wp_v4_ensure_template_instances(string $template_slug): void
+function em_site_ensure_template_instances(string $template_slug): void
 {
     $template_slug = sanitize_key($template_slug);
 
@@ -646,68 +646,68 @@ function em_wp_v4_ensure_template_instances(string $template_slug): void
 
     $candidate_types = [];
 
-    if (function_exists('em_wp_get_template_skeleton_order')) {
-        $candidate_types = em_wp_get_template_skeleton_order($template_slug);
+    if (function_exists('em_site_get_template_skeleton_order')) {
+        $candidate_types = em_site_get_template_skeleton_order($template_slug);
     }
 
     if (!is_array($candidate_types) || $candidate_types === []) {
-        $candidate_types = array_keys((array) em_wp_rubrique_type_registry());
+        $candidate_types = array_keys((array) em_site_rubrique_type_registry());
     }
 
     foreach ($candidate_types as $type_slug) {
         $type_slug = sanitize_key((string) $type_slug);
 
         // `header` est une section composite (squelette) qui sélectionne un item
-        // du catalogue `headers`. La sync générique V4 ne doit pas la remapper,
+        // du catalogue `headers`. La sync générique EM-SITE ne doit pas la remapper,
         // sinon elle écrase le choix utilisateur (mode Unique/Multi).
         if ($type_slug === 'header') {
             continue;
         }
 
-        if ($type_slug === '' || !em_wp_rubrique_type_exists($type_slug)) {
+        if ($type_slug === '' || !em_site_rubrique_type_exists($type_slug)) {
             continue;
         }
 
-        $items = em_wp_v4_get_items($type_slug);
+        $items = em_site_get_items($type_slug);
 
         if ($items === []) {
             continue;
         }
 
-        $instance = em_wp_v4_get_instance($template_slug, $type_slug);
+        $instance = em_site_get_instance($template_slug, $type_slug);
         $current_item = sanitize_key((string) ($instance['item'] ?? ''));
 
         if ($current_item !== '' && isset($items[$current_item])) {
             continue;
         }
 
-        $fallback_item = em_wp_v4_default_item_slug($type_slug);
+        $fallback_item = em_site_default_item_slug($type_slug);
 
         if ($fallback_item === '') {
             continue;
         }
 
         $instance['item'] = $fallback_item;
-        em_wp_v4_save_instance($template_slug, $type_slug, $instance);
+        em_site_save_instance($template_slug, $type_slug, $instance);
     }
 }
 
 /**
- * Synchronise les instances V4 pour tous les templates existants.
+ * Synchronise les instances EM-SITE pour tous les templates existants.
  */
-function em_wp_v4_sync_all_templates_instances(): void
+function em_site_sync_all_templates_instances(): void
 {
-    if (!function_exists('em_wp_template_registry') || !function_exists('em_wp_rubrique_type_registry')) {
+    if (!function_exists('em_site_template_registry') || !function_exists('em_site_rubrique_type_registry')) {
         return;
     }
 
-    $templates = em_wp_template_registry();
+    $templates = em_site_template_registry();
 
     foreach (array_keys((array) $templates) as $template_slug) {
-        em_wp_v4_ensure_template_instances((string) $template_slug);
+        em_site_ensure_template_instances((string) $template_slug);
     }
 }
-add_action('admin_init', 'em_wp_v4_sync_all_templates_instances', 6);
+add_action('admin_init', 'em_site_sync_all_templates_instances', 6);
 
 /**
  * R?concilie une fois les slugs d'items h?rit?s (slug != sanitize_title(label)).
@@ -715,17 +715,17 @@ add_action('admin_init', 'em_wp_v4_sync_all_templates_instances', 6);
  * ?vite les cas historiques du type `default => MAYAMI` apr?s d?ploiement de la
  * migration de renommage de slug.
  */
-function em_wp_v4_maybe_reconcile_item_slugs(): void
+function em_site_maybe_reconcile_item_slugs(): void
 {
-    if (get_option('em_wp_v4_item_slugs_reconciled_v4', false)) {
+    if (get_option('em_site_item_slugs_reconciled', false)) {
         return;
     }
 
-    if (!function_exists('em_wp_rubrique_type_registry')) {
+    if (!function_exists('em_site_rubrique_type_registry')) {
         return;
     }
 
-    $types = em_wp_rubrique_type_registry();
+    $types = em_site_rubrique_type_registry();
 
     foreach (array_keys($types) as $type_slug) {
         $type_slug = sanitize_key((string) $type_slug);
@@ -734,7 +734,7 @@ function em_wp_v4_maybe_reconcile_item_slugs(): void
             continue;
         }
 
-        $items = em_wp_v4_get_items($type_slug);
+        $items = em_site_get_items($type_slug);
 
         foreach ($items as $item_slug => $label) {
             $item_slug = sanitize_key((string) $item_slug);
@@ -744,19 +744,19 @@ function em_wp_v4_maybe_reconcile_item_slugs(): void
                 continue;
             }
 
-            $desired_slug = em_wp_v4_item_slug_base($type_slug, $label);
+            $desired_slug = em_site_item_slug_base($type_slug, $label);
 
             if ($desired_slug === '' || $desired_slug === $item_slug) {
                 continue;
             }
 
-            em_wp_v4_rename_item($type_slug, $item_slug, $label);
+            em_site_rename_item($type_slug, $item_slug, $label);
         }
     }
 
-    update_option('em_wp_v4_item_slugs_reconciled_v4', '1', false);
+    update_option('em_site_item_slugs_reconciled', '1', false);
 }
-add_action('admin_init', 'em_wp_v4_maybe_reconcile_item_slugs', 5);
+add_action('admin_init', 'em_site_maybe_reconcile_item_slugs', 5);
 
 /**
  * Renomme les items legacy MAYAMI de TOP-BAR/FOOTER en "default".
@@ -765,20 +765,20 @@ add_action('admin_init', 'em_wp_v4_maybe_reconcile_item_slugs', 5);
  * - top-bar-mayami -> top-bar-default
  * - footer-mayami -> footer-default
  */
-function em_wp_v4_maybe_force_default_topbar_footer_items(): void
+function em_site_maybe_force_default_topbar_footer_items(): void
 {
-    if (!(function_exists('em_wp_template_unique_mode_enabled') && em_wp_template_unique_mode_enabled())) {
+    if (!(function_exists('em_site_template_unique_mode_enabled') && em_site_template_unique_mode_enabled())) {
         return;
     }
 
-    if (get_option('em_wp_v4_default_topbar_footer_items_v1', false)) {
+    if (get_option('em_site_default_topbar_footer_items_v1', false)) {
         return;
     }
 
     $targets = ['top-bar', 'footer'];
 
     foreach ($targets as $type_slug) {
-        $items = em_wp_v4_get_items($type_slug);
+        $items = em_site_get_items($type_slug);
 
         if ($items === []) {
             continue;
@@ -812,9 +812,9 @@ function em_wp_v4_maybe_force_default_topbar_footer_items(): void
             continue;
         }
 
-        em_wp_v4_rename_item($type_slug, $candidate_slug, 'default');
+        em_site_rename_item($type_slug, $candidate_slug, 'default');
     }
 
-    update_option('em_wp_v4_default_topbar_footer_items_v1', '1', false);
+    update_option('em_site_default_topbar_footer_items_v1', '1', false);
 }
-add_action('admin_init', 'em_wp_v4_maybe_force_default_topbar_footer_items', 8);
+add_action('admin_init', 'em_site_maybe_force_default_topbar_footer_items', 8);

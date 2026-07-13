@@ -13,22 +13,22 @@
         }
 
         popover = document.createElement('div');
-        popover.className = 'em-wp-template-thumb';
+        popover.className = 'em-site-template-thumb';
         popover.hidden = true;
         popover.innerHTML =
-            '<div class="em-wp-template-thumb__head">' +
-                '<span class="em-wp-template-thumb__label"></span>' +
-                '<button type="button" class="em-wp-template-thumb__close" aria-label="Fermer l\u2019aper\u00e7u">\u00d7</button>' +
+            '<div class="em-site-template-thumb__head">' +
+                '<span class="em-site-template-thumb__label"></span>' +
+                '<button type="button" class="em-site-template-thumb__close" aria-label="Fermer l\u2019aper\u00e7u">\u00d7</button>' +
             '</div>' +
-            '<div class="em-wp-template-thumb__viewport is-loading">' +
-                '<div class="em-wp-template-thumb__loading">Chargement de l\u2019aper\u00e7u\u2026</div>' +
+            '<div class="em-site-template-thumb__viewport is-loading">' +
+                '<div class="em-site-template-thumb__loading">Chargement de l\u2019aper\u00e7u\u2026</div>' +
             '</div>';
 
         document.body.appendChild(popover);
 
-        viewportEl = popover.querySelector('.em-wp-template-thumb__viewport');
-        labelEl = popover.querySelector('.em-wp-template-thumb__label');
-        popover.querySelector('.em-wp-template-thumb__close').addEventListener('click', hide);
+        viewportEl = popover.querySelector('.em-site-template-thumb__viewport');
+        labelEl = popover.querySelector('.em-site-template-thumb__label');
+        popover.querySelector('.em-site-template-thumb__close').addEventListener('click', hide);
     }
 
     // Détruit l'iframe courante : vide le cache de rendu pour repartir propre.
@@ -47,7 +47,7 @@
         clearFrame();
 
         frame = document.createElement('iframe');
-        frame.className = 'em-wp-template-thumb__frame';
+        frame.className = 'em-site-template-thumb__frame';
         frame.setAttribute('tabindex', '-1');
         frame.setAttribute('aria-hidden', 'true');
         frame.setAttribute('scrolling', 'no');
@@ -88,14 +88,14 @@
     }
 
     function show(trigger) {
-        var url = trigger.getAttribute('data-em-wp-template-preview-url');
+        var url = trigger.getAttribute('data-em-site-template-preview-url');
         if (!url) {
             return;
         }
 
         buildShell();
         activeTrigger = trigger;
-        labelEl.textContent = trigger.getAttribute('data-em-wp-template-preview-label') || '';
+        labelEl.textContent = trigger.getAttribute('data-em-site-template-preview-label') || '';
 
         popover.hidden = false;
         loadFrame(url);
@@ -111,7 +111,7 @@
     }
 
     document.addEventListener('click', function (event) {
-        var trigger = event.target.closest('[data-em-wp-template-preview-url]');
+        var trigger = event.target.closest('[data-em-site-template-preview-url]');
 
         if (trigger) {
             event.preventDefault();

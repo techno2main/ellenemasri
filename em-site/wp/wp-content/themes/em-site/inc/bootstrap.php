@@ -2,7 +2,7 @@
 /**
  * Bootstrap minimal du theme pour rendu front par rubrique.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

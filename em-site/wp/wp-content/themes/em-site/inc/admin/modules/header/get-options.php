@@ -2,7 +2,7 @@
 /**
  * Lecture options HEADER par template.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,42 +12,42 @@ if (!defined('ABSPATH')) {
 /**
  * Nom d'option WP pour HEADER × template.
  */
-function em_wp_header_option_name(?string $template_slug = null): string
+function em_site_header_option_name(?string $template_slug = null): string
 {
     if ($template_slug === null || $template_slug === '') {
-        $template_slug = is_admin() && function_exists('em_wp_get_editing_template_slug')
-            ? em_wp_get_editing_template_slug()
-            : em_wp_get_active_template_slug();
+        $template_slug = is_admin() && function_exists('em_site_get_editing_template_slug')
+            ? em_site_get_editing_template_slug()
+            : em_site_get_active_template_slug();
     }
 
-    return em_wp_template_resolve_option_name('header', $template_slug);
+    return em_site_template_resolve_option_name('header', $template_slug);
 }
 
 /**
  * Template cible pour lecture / écriture HEADER (POST admin, édition, live).
  */
-function em_wp_header_resolve_template_slug(?string $preferred = null): string
+function em_site_header_resolve_template_slug(?string $preferred = null): string
 {
     $preferred = sanitize_key((string) ($preferred ?? ''));
 
-    if ($preferred !== '' && function_exists('em_wp_template_exists') && em_wp_template_exists($preferred)) {
+    if ($preferred !== '' && function_exists('em_site_template_exists') && em_site_template_exists($preferred)) {
         return $preferred;
     }
 
     // phpcs:ignore WordPress.Security.NonceVerification.Missing
-    $from_post = sanitize_key((string) ($_POST['em_wp_template_context'] ?? ''));
+    $from_post = sanitize_key((string) ($_POST['em_site_template_context'] ?? ''));
 
-    if ($from_post !== '' && function_exists('em_wp_template_exists') && em_wp_template_exists($from_post)) {
+    if ($from_post !== '' && function_exists('em_site_template_exists') && em_site_template_exists($from_post)) {
         return $from_post;
     }
 
-    if (is_admin() && function_exists('em_wp_get_editing_template_slug')) {
-        return em_wp_get_editing_template_slug();
+    if (is_admin() && function_exists('em_site_get_editing_template_slug')) {
+        return em_site_get_editing_template_slug();
     }
 
-    return function_exists('em_wp_front_get_live_template_slug')
-        ? em_wp_front_get_live_template_slug()
-        : em_wp_get_active_template_slug();
+    return function_exists('em_site_front_get_live_template_slug')
+        ? em_site_front_get_live_template_slug()
+        : em_site_get_active_template_slug();
 }
 
 /**
@@ -55,13 +55,13 @@ function em_wp_header_resolve_template_slug(?string $preferred = null): string
  *
  * @param array<string, mixed> $options
  */
-function em_wp_header_persist_options(array $options, ?string $template_slug = null): bool
+function em_site_header_persist_options(array $options, ?string $template_slug = null): bool
 {
-    $template_slug = em_wp_header_resolve_template_slug($template_slug);
+    $template_slug = em_site_header_resolve_template_slug($template_slug);
 
     return (bool) update_option(
-        em_wp_header_option_name($template_slug),
-        wp_parse_args($options, em_wp_header_default_options()),
+        em_site_header_option_name($template_slug),
+        wp_parse_args($options, em_site_header_default_options()),
         false
     );
 }
@@ -72,11 +72,11 @@ function em_wp_header_persist_options(array $options, ?string $template_slug = n
  * @param array<string, mixed> $options
  * @return array<string, mixed>
  */
-function em_wp_header_migrate_style_from_hero_catalog(array $options): array
+function em_site_header_migrate_style_from_hero_catalog(array $options): array
 {
     $hero_slug = sanitize_key((string) ($options['hero_slug'] ?? ''));
 
-    if ($hero_slug === '' || !function_exists('em_wp_hero_get_options')) {
+    if ($hero_slug === '' || !function_exists('em_site_hero_get_options')) {
         return $options;
     }
 
@@ -88,7 +88,7 @@ function em_wp_header_migrate_style_from_hero_catalog(array $options): array
         return $options;
     }
 
-    $hero = em_wp_hero_get_options($hero_slug);
+    $hero = em_site_hero_get_options($hero_slug);
 
     if (trim((string) ($options['background_color'] ?? '')) === '' && trim((string) ($hero['background_color'] ?? '')) !== '') {
         $options['background_color'] = (string) $hero['background_color'];
@@ -113,14 +113,14 @@ function em_wp_header_migrate_style_from_hero_catalog(array $options): array
  * le slug enregistré n'existe plus), on retombe sur l'item Default du catalogue
  * correspondant. Retourne '' si aucun défaut n'est disponible.
  */
-function em_wp_header_resolve_catalog_entry_slug(string $part, string $slug): string
+function em_site_header_resolve_catalog_entry_slug(string $part, string $slug): string
 {
     $part = $part === 'slider' ? 'slider' : 'hero';
     $slug = sanitize_key($slug);
 
-    $normalize = 'em_wp_' . $part . '_normalize_catalog_slug';
-    $has = 'em_wp_' . $part . '_catalog_has';
-    $entries = 'em_wp_' . $part . '_catalog_entries';
+    $normalize = 'em_site_' . $part . '_normalize_catalog_slug';
+    $has = 'em_site_' . $part . '_catalog_has';
+    $entries = 'em_site_' . $part . '_catalog_entries';
 
     if ($slug !== '') {
         if (function_exists($normalize)) {
@@ -134,8 +134,8 @@ function em_wp_header_resolve_catalog_entry_slug(string $part, string $slug): st
     }
 
     // Aucun item (ou item disparu) : repli sur le Default du catalogue.
-    if (function_exists('em_wp_catalog_default_entry_slug_if_present') && function_exists($entries)) {
-        return em_wp_catalog_default_entry_slug_if_present(call_user_func($entries));
+    if (function_exists('em_site_catalog_default_entry_slug_if_present') && function_exists($entries)) {
+        return em_site_catalog_default_entry_slug_if_present(call_user_func($entries));
     }
 
     return '';
@@ -146,15 +146,15 @@ function em_wp_header_resolve_catalog_entry_slug(string $part, string $slug): st
  *
  * @return array<string, mixed>
  */
-function em_wp_header_get_saved_options(?string $template_slug = null): array
+function em_site_header_get_saved_options(?string $template_slug = null): array
 {
     if ($template_slug === null || $template_slug === '') {
-        $template_slug = em_wp_header_resolve_template_slug();
+        $template_slug = em_site_header_resolve_template_slug();
     }
 
     return wp_parse_args(
-        em_wp_get_template_rubrique_options('header', $template_slug),
-        em_wp_header_default_options()
+        em_site_get_template_rubrique_options('header', $template_slug),
+        em_site_header_default_options()
     );
 }
 
@@ -163,16 +163,16 @@ function em_wp_header_get_saved_options(?string $template_slug = null): array
  *
  * @return array<string, mixed>
  */
-function em_wp_header_get_options(?string $template_slug = null): array
+function em_site_header_get_options(?string $template_slug = null): array
 {
     if ($template_slug === null || $template_slug === '') {
-        $template_slug = em_wp_header_resolve_template_slug();
+        $template_slug = em_site_header_resolve_template_slug();
     }
 
-    $options = em_wp_header_get_saved_options($template_slug);
+    $options = em_site_header_get_saved_options($template_slug);
 
-    if (function_exists('em_wp_rubrique_sync_enabled_for_admin')) {
-        $options = em_wp_rubrique_sync_enabled_for_admin('header', $options);
+    if (function_exists('em_site_rubrique_sync_enabled_for_admin')) {
+        $options = em_site_rubrique_sync_enabled_for_admin('header', $options);
     }
 
     // Repli Default (comme les autres rubriques) : quand AUCUN hero ni slider
@@ -182,21 +182,21 @@ function em_wp_header_get_options(?string $template_slug = null): array
     $slider_slug = sanitize_key((string) ($options['slider_slug'] ?? ''));
 
     if ($hero_slug === '' && $slider_slug === '') {
-        $options['hero_slug'] = em_wp_header_resolve_catalog_entry_slug('hero', '');
-        $options['slider_slug'] = em_wp_header_resolve_catalog_entry_slug('slider', '');
+        $options['hero_slug'] = em_site_header_resolve_catalog_entry_slug('hero', '');
+        $options['slider_slug'] = em_site_header_resolve_catalog_entry_slug('slider', '');
     }
 
-    return em_wp_header_migrate_style_from_hero_catalog($options);
+    return em_site_header_migrate_style_from_hero_catalog($options);
 }
 
 /**
  * Options HEADER pour le front (template live).
  */
-function em_wp_header_get_options_for_front(): array
+function em_site_header_get_options_for_front(): array
 {
-    $template_slug = function_exists('em_wp_front_get_live_template_slug')
-        ? em_wp_front_get_live_template_slug()
-        : em_wp_get_active_template_slug();
+    $template_slug = function_exists('em_site_front_get_live_template_slug')
+        ? em_site_front_get_live_template_slug()
+        : em_site_get_active_template_slug();
 
-    return em_wp_header_get_options($template_slug);
+    return em_site_header_get_options($template_slug);
 }

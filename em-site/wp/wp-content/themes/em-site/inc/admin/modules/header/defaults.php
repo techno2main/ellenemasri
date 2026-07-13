@@ -2,7 +2,7 @@
 /**
  * Valeurs par défaut rubrique HEADER (par template).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
  *     background_image_hidden:bool
  * }
  */
-function em_wp_header_default_options(): array
+function em_site_header_default_options(): array
 {
     return [
         'enabled'                  => true,
@@ -40,7 +40,7 @@ function em_wp_header_default_options(): array
 /**
  * Clé POST / champs formulaire HEADER (fixe, indépendante du template).
  */
-function em_wp_header_form_option_key(): string
+function em_site_header_form_option_key(): string
 {
-    return 'em_wp_header_options';
+    return 'em_site_header_options';
 }

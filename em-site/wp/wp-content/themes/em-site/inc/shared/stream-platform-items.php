@@ -2,7 +2,7 @@
 /**
  * Données plateformes stream : contenu (STREAM) + masquage section icônes (TOP-BAR).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 /**
  * @return array{slug:string,label:string,href:string,active:bool}
  */
-function em_wp_stream_default_platform_item(string $slug): array
+function em_site_stream_default_platform_item(string $slug): array
 {
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $platform = $definitions[$slug] ?? null;
 
     return [
@@ -28,7 +28,7 @@ function em_wp_stream_default_platform_item(string $slug): array
 /**
  * @param mixed $platforms
  */
-function em_wp_stream_platforms_is_list_format($platforms): bool
+function em_site_stream_platforms_is_list_format($platforms): bool
 {
     if (!is_array($platforms) || $platforms === []) {
         return false;
@@ -43,15 +43,15 @@ function em_wp_stream_platforms_is_list_format($platforms): bool
  * @param array<string, mixed> $item
  * @return array{slug:string,label:string,href:string,active:bool}
  */
-function em_wp_stream_normalize_platform_item(array $item): array
+function em_site_stream_normalize_platform_item(array $item): array
 {
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $slug = sanitize_key((string) ($item['slug'] ?? ''));
     if ($slug === '' || !isset($definitions[$slug])) {
         $slug = (string) array_key_first($definitions);
     }
 
-    $defaults = em_wp_stream_default_platform_item($slug);
+    $defaults = em_site_stream_default_platform_item($slug);
 
     return [
         'slug'   => $slug,
@@ -67,30 +67,30 @@ function em_wp_stream_normalize_platform_item(array $item): array
  * @param array<string, mixed>|null $stream_options
  * @return array<int, array{slug:string,label:string,href:string,active:bool}>
  */
-function em_wp_stream_get_platforms_list(?array $stream_options = null): array
+function em_site_stream_get_platforms_list(?array $stream_options = null): array
 {
     if ($stream_options === null) {
-        if (!is_admin() && function_exists('em_wp_stream_get_options_for_front')) {
-            $stream_options = em_wp_stream_get_options_for_front();
-        } elseif (function_exists('em_wp_stream_get_options')) {
-            $stream_options = em_wp_stream_get_options();
+        if (!is_admin() && function_exists('em_site_stream_get_options_for_front')) {
+            $stream_options = em_site_stream_get_options_for_front();
+        } elseif (function_exists('em_site_stream_get_options')) {
+            $stream_options = em_site_stream_get_options();
         } else {
-            $stream_options = em_wp_stream_catalog_default_options();
+            $stream_options = em_site_stream_catalog_default_options();
         }
     }
 
     $raw = $stream_options['platforms'] ?? [];
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $platforms = [];
     $seen = [];
 
-    if (em_wp_stream_platforms_is_list_format($raw)) {
+    if (em_site_stream_platforms_is_list_format($raw)) {
         foreach ($raw as $item) {
             if (!is_array($item)) {
                 continue;
             }
 
-            $normalized = em_wp_stream_normalize_platform_item($item);
+            $normalized = em_site_stream_normalize_platform_item($item);
             $slug = $normalized['slug'];
             if (isset($seen[$slug])) {
                 continue;
@@ -103,7 +103,7 @@ function em_wp_stream_get_platforms_list(?array $stream_options = null): array
 
     foreach (array_keys($definitions) as $slug) {
         if (!isset($seen[$slug])) {
-            $platforms[] = em_wp_stream_default_platform_item($slug);
+            $platforms[] = em_site_stream_default_platform_item($slug);
         }
     }
 
@@ -114,13 +114,13 @@ function em_wp_stream_get_platforms_list(?array $stream_options = null): array
  * @param mixed $raw
  * @return array<int, array{slug:string,label:string,href:string,active:bool}>
  */
-function em_wp_stream_sanitize_platforms_from_input($raw): array
+function em_site_stream_sanitize_platforms_from_input($raw): array
 {
     if (!is_array($raw)) {
-        return em_wp_stream_get_platforms_list(['platforms' => []]);
+        return em_site_stream_get_platforms_list(['platforms' => []]);
     }
 
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $platforms = [];
     $seen = [];
 
@@ -145,7 +145,7 @@ function em_wp_stream_sanitize_platforms_from_input($raw): array
 
     foreach (array_keys($definitions) as $slug) {
         if (!isset($seen[$slug])) {
-            $platforms[] = em_wp_stream_default_platform_item($slug);
+            $platforms[] = em_site_stream_default_platform_item($slug);
         }
     }
 
@@ -155,7 +155,7 @@ function em_wp_stream_sanitize_platforms_from_input($raw): array
 /**
  * @return array{slug:string,hidden:bool}
  */
-function em_wp_top_bar_default_stream_icon_item(string $slug): array
+function em_site_top_bar_default_stream_icon_item(string $slug): array
 {
     return [
         'slug'   => sanitize_key($slug),
@@ -166,7 +166,7 @@ function em_wp_top_bar_default_stream_icon_item(string $slug): array
 /**
  * @param mixed $icons
  */
-function em_wp_top_bar_stream_icons_is_list_format($icons): bool
+function em_site_top_bar_stream_icons_is_list_format($icons): bool
 {
     if (!is_array($icons) || $icons === []) {
         return false;
@@ -181,9 +181,9 @@ function em_wp_top_bar_stream_icons_is_list_format($icons): bool
  * @param array<string, mixed> $item
  * @return array{slug:string,hidden:bool}
  */
-function em_wp_top_bar_normalize_stream_icon_item(array $item): array
+function em_site_top_bar_normalize_stream_icon_item(array $item): array
 {
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $slug = sanitize_key((string) ($item['slug'] ?? ''));
     if ($slug === '' || !isset($definitions[$slug])) {
         $slug = (string) array_key_first($definitions);
@@ -201,26 +201,26 @@ function em_wp_top_bar_normalize_stream_icon_item(array $item): array
  * @param array<string, mixed>|null $top_bar_options
  * @return array<int, array{slug:string,hidden:bool}>
  */
-function em_wp_top_bar_get_stream_icons_list(?array $top_bar_options = null): array
+function em_site_top_bar_get_stream_icons_list(?array $top_bar_options = null): array
 {
     if ($top_bar_options === null) {
-        $top_bar_options = function_exists('em_wp_top_bar_get_options')
-            ? em_wp_top_bar_get_options()
+        $top_bar_options = function_exists('em_site_top_bar_get_options')
+            ? em_site_top_bar_get_options()
             : [];
     }
 
     $raw = $top_bar_options['stream_icons'] ?? null;
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $icons = [];
     $seen = [];
 
-    if (em_wp_top_bar_stream_icons_is_list_format($raw)) {
+    if (em_site_top_bar_stream_icons_is_list_format($raw)) {
         foreach ($raw as $item) {
             if (!is_array($item)) {
                 continue;
             }
 
-            $normalized = em_wp_top_bar_normalize_stream_icon_item($item);
+            $normalized = em_site_top_bar_normalize_stream_icon_item($item);
             $slug = $normalized['slug'];
             if (isset($seen[$slug])) {
                 continue;
@@ -233,7 +233,7 @@ function em_wp_top_bar_get_stream_icons_list(?array $top_bar_options = null): ar
 
     foreach (array_keys($definitions) as $slug) {
         if (!isset($seen[$slug])) {
-            $icons[] = em_wp_top_bar_default_stream_icon_item($slug);
+            $icons[] = em_site_top_bar_default_stream_icon_item($slug);
         }
     }
 
@@ -244,13 +244,13 @@ function em_wp_top_bar_get_stream_icons_list(?array $top_bar_options = null): ar
  * @param mixed $raw
  * @return array<int, array{slug:string,hidden:bool}>
  */
-function em_wp_top_bar_sanitize_stream_icons_from_input($raw): array
+function em_site_top_bar_sanitize_stream_icons_from_input($raw): array
 {
     if (!is_array($raw)) {
-        return em_wp_top_bar_get_stream_icons_list(['stream_icons' => []]);
+        return em_site_top_bar_get_stream_icons_list(['stream_icons' => []]);
     }
 
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $icons = [];
     $seen = [];
 
@@ -273,7 +273,7 @@ function em_wp_top_bar_sanitize_stream_icons_from_input($raw): array
 
     foreach (array_keys($definitions) as $slug) {
         if (!isset($seen[$slug])) {
-            $icons[] = em_wp_top_bar_default_stream_icon_item($slug);
+            $icons[] = em_site_top_bar_default_stream_icon_item($slug);
         }
     }
 
@@ -286,9 +286,9 @@ function em_wp_top_bar_sanitize_stream_icons_from_input($raw): array
  * @param array{slug:string,label:string,href:string,active:bool} $link
  * @return array<string, mixed>|null
  */
-function em_wp_stream_build_front_platform_item(array $link): ?array
+function em_site_stream_build_front_platform_item(array $link): ?array
 {
-    $definitions = em_wp_stream_platform_definitions();
+    $definitions = em_site_stream_platform_definitions();
     $slug = sanitize_key((string) ($link['slug'] ?? ''));
     $href = trim((string) ($link['href'] ?? ''));
     $label = trim((string) ($link['label'] ?? ''));
@@ -302,8 +302,8 @@ function em_wp_stream_build_front_platform_item(array $link): ?array
         $label = (string) ($definition['label'] ?? $slug);
     }
 
-    $platform_type = em_wp_stream_detect_stream_platform_key($slug, $href);
-    $embed_src = em_wp_stream_build_stream_embed_src($platform_type, $href);
+    $platform_type = em_site_stream_detect_stream_platform_key($slug, $href);
+    $embed_src = em_site_stream_build_stream_embed_src($platform_type, $href);
 
     return [
         'slug'          => $slug,
@@ -314,7 +314,7 @@ function em_wp_stream_build_front_platform_item(array $link): ?array
         'color'         => (string) ($definition['color'] ?? '#410b49'),
         'embed_src'     => $embed_src,
         'has_player'    => $embed_src !== '',
-        'player_height' => em_wp_stream_player_height($platform_type, $embed_src),
+        'player_height' => em_site_stream_player_height($platform_type, $embed_src),
     ];
 }
 

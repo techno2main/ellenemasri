@@ -2,7 +2,7 @@
 /**
  * Rendu front de la rubrique RELEASE.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/helpers.php';
 
-function em_wp_render_release(): void
+function em_site_render_release(): void
 {
 	$config = em_site_release_resolved_config();
 	$item_slugs = (array) ($config['item_slugs'] ?? []);
@@ -53,14 +53,14 @@ function em_wp_render_release(): void
 	?>
 	<section id="release" class="em-section em-section--release" data-em-rubrique="release" data-em-release-mode="<?php echo esc_attr($is_multi ? 'multi' : 'single'); ?>" data-em-release-transition="<?php echo esc_attr($transition_mode); ?>" data-em-release-timer="<?php echo esc_attr((string) $transition_timer); ?>">
 		<?php if ($is_multi) : ?>
-			<nav class="em-release-switch" aria-label="<?php esc_attr_e('Navigation Release', 'em-wp'); ?>">
-				<button type="button" class="em-release-switch__btn" data-em-release-prev aria-label="<?php esc_attr_e('Item précédent', 'em-wp'); ?>">&larr;</button>
-				<div class="em-release-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Release', 'em-wp'); ?>">
+			<nav class="em-release-switch" aria-label="<?php esc_attr_e('Navigation Release', 'em-site'); ?>">
+				<button type="button" class="em-release-switch__btn" data-em-release-prev aria-label="<?php esc_attr_e('Item précédent', 'em-site'); ?>">&larr;</button>
+				<div class="em-release-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Release', 'em-site'); ?>">
 					<?php foreach ($entries as $idx => $entry) : ?>
-						<button type="button" class="em-release-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-release-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-wp'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
+						<button type="button" class="em-release-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-release-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-site'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
 					<?php endforeach; ?>
 				</div>
-				<button type="button" class="em-release-switch__btn" data-em-release-next aria-label="<?php esc_attr_e('Item suivant', 'em-wp'); ?>">&rarr;</button>
+				<button type="button" class="em-release-switch__btn" data-em-release-next aria-label="<?php esc_attr_e('Item suivant', 'em-site'); ?>">&rarr;</button>
 			</nav>
 		<?php endif; ?>
 

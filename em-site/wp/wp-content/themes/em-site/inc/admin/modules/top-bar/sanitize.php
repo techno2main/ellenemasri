@@ -2,17 +2,17 @@
 /**
  * Sanitize options Top Bar.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-function em_wp_top_bar_sanitize_rubrique_options($input): array
+function em_site_top_bar_sanitize_rubrique_options($input): array
 {
-    $template_slug = em_wp_top_bar_resolve_template_slug();
-    $existing = em_wp_top_bar_get_saved_rubrique_options($template_slug);
+    $template_slug = em_site_top_bar_resolve_template_slug();
+    $existing = em_site_top_bar_get_saved_rubrique_options($template_slug);
 
     if (!is_array($input)) {
         return $existing;
@@ -21,19 +21,19 @@ function em_wp_top_bar_sanitize_rubrique_options($input): array
     $enabled = array_key_exists('enabled', $input) ? !empty($input['enabled']) : !empty($existing['enabled']);
     $top_bar_slug = sanitize_key((string) ($input['top_bar_slug'] ?? ($existing['top_bar_slug'] ?? '')));
 
-    if ($top_bar_slug !== '' && function_exists('em_wp_top_bar_normalize_catalog_slug')) {
-        $top_bar_slug = em_wp_top_bar_normalize_catalog_slug($top_bar_slug);
+    if ($top_bar_slug !== '' && function_exists('em_site_top_bar_normalize_catalog_slug')) {
+        $top_bar_slug = em_site_top_bar_normalize_catalog_slug($top_bar_slug);
     }
 
-    if ($top_bar_slug !== '' && function_exists('em_wp_top_bar_catalog_has') && !em_wp_top_bar_catalog_has($top_bar_slug)) {
+    if ($top_bar_slug !== '' && function_exists('em_site_top_bar_catalog_has') && !em_site_top_bar_catalog_has($top_bar_slug)) {
         $top_bar_slug = sanitize_key((string) ($existing['top_bar_slug'] ?? ''));
     }
 
     $background_color = sanitize_hex_color($input['background_color'] ?? '');
     $text_color = sanitize_hex_color($input['text_color'] ?? '');
 
-    if (function_exists('em_wp_admin_sync_rubrique_visibility_from_post')) {
-        em_wp_admin_sync_rubrique_visibility_from_post('top-bar');
+    if (function_exists('em_site_admin_sync_rubrique_visibility_from_post')) {
+        em_site_admin_sync_rubrique_visibility_from_post('top-bar');
     }
 
     return [
@@ -48,18 +48,18 @@ function em_wp_top_bar_sanitize_rubrique_options($input): array
     ];
 }
 
-function em_wp_top_bar_sanitize_catalog_options($input): array
+function em_site_top_bar_sanitize_catalog_options($input): array
 {
-    $existing = em_wp_top_bar_catalog_default_options();
+    $existing = em_site_top_bar_catalog_default_options();
 
     if (!is_array($input)) {
         return $existing;
     }
 
-    $defaults = em_wp_top_bar_catalog_default_options();
+    $defaults = em_site_top_bar_catalog_default_options();
     $items = [];
 
-    foreach (em_wp_top_bar_item_definitions() as $key => $title) {
+    foreach (em_site_top_bar_item_definitions() as $key => $title) {
         unset($title);
         $source = is_array($input['items'][$key] ?? null) ? $input['items'][$key] : [];
         $items[$key] = [
@@ -68,12 +68,12 @@ function em_wp_top_bar_sanitize_catalog_options($input): array
             'hidden' => !empty($source['hidden']),
         ];
 
-        if (em_wp_top_bar_item_supports_style($key)) {
+        if (em_site_top_bar_item_supports_style($key)) {
             $text_color = sanitize_hex_color($source['text_color'] ?? '');
             $items[$key]['text_color'] = $text_color !== null && $text_color !== false ? $text_color : '';
 
             $font = sanitize_key((string) ($source['font'] ?? ''));
-            $items[$key]['font'] = array_key_exists($font, em_wp_top_bar_font_choices()) ? $font : '';
+            $items[$key]['font'] = array_key_exists($font, em_site_top_bar_font_choices()) ? $font : '';
         }
     }
 
@@ -88,11 +88,11 @@ function em_wp_top_bar_sanitize_catalog_options($input): array
     ];
 }
 
-function em_wp_top_bar_sanitize_options($input, bool $sync_rubrique = true): array
+function em_site_top_bar_sanitize_options($input, bool $sync_rubrique = true): array
 {
     if ($sync_rubrique) {
-        return em_wp_top_bar_sanitize_rubrique_options($input);
+        return em_site_top_bar_sanitize_rubrique_options($input);
     }
 
-    return em_wp_top_bar_sanitize_catalog_options($input);
+    return em_site_top_bar_sanitize_catalog_options($input);
 }

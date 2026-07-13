@@ -2,7 +2,7 @@
 /**
  * Helpers front du slider HEADER.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

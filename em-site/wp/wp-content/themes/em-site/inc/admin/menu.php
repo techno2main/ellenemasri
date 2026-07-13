@@ -2,12 +2,15 @@
 /**
  * Menu et dashboard admin em-site (Lot B).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
 	exit;
 }
+
+// Fichier legacy conservé pour historique. Le dashboard actif est chargé via pages/dashboard/*.
+return;
 
 function em_site_admin_is_dashboard_screen(): bool
 {
@@ -28,8 +31,8 @@ function em_site_admin_dashboard_admin_url(): string
 function em_site_admin_register_dashboard_page(): void
 {
 	add_menu_page(
-		__('Dashboard EM-SITE', 'em-wp'),
-		__('Dashboard', 'em-wp'),
+		__('Dashboard EM-SITE', 'em-site'),
+		__('Dashboard', 'em-site'),
 		'manage_options',
 		em_site_admin_dashboard_page_slug(),
 		'em_site_admin_render_dashboard_page',
@@ -76,7 +79,7 @@ function em_site_admin_point_dashboard_to_home(): void
 		$menu[$position][0] = 'DASHBOARD';
 		$menu[$position][3] = 'DASHBOARD';
 		$menu[$position][2] = 'index.php';
-		$menu[$position][4] = trim(((string) ($item[4] ?? 'menu-top')) . ' em-wp-menu-dashboard-entry');
+		$menu[$position][4] = trim(((string) ($item[4] ?? 'menu-top')) . ' em-site-menu-dashboard-entry');
 		$menu[$position][6] = 'dashicons-dashboard';
 	}
 }
@@ -108,7 +111,7 @@ function em_site_admin_dashboard_body_class($classes)
 		return $classes;
 	}
 
-	return $classes . ' em-wp-admin-dashboard-screen em-site-admin-screen';
+	return $classes . ' em-site-admin-dashboard-screen em-site-admin-screen';
 }
 add_filter('admin_body_class', 'em_site_admin_dashboard_body_class');
 
@@ -116,19 +119,19 @@ function em_site_admin_dashboard_tabs(): array
 {
 	return [
 		[
-			'label' => __('MES RUBRIQUES', 'em-wp'),
+			'label' => __('MES RUBRIQUES', 'em-site'),
 			'url' => admin_url('admin.php?page=em-rubriques-overview'),
 		],
 		[
-			'label' => __('MES TEMPLATES', 'em-wp'),
+			'label' => __('MES TEMPLATES', 'em-site'),
 			'url' => admin_url('admin.php?page=em-template'),
 		],
 		[
-			'label' => __('MEDIAS', 'em-wp'),
+			'label' => __('MEDIAS', 'em-site'),
 			'url' => admin_url('upload.php'),
 		],
 		[
-			'label' => __('SETTINGS', 'em-wp'),
+			'label' => __('SETTINGS', 'em-site'),
 			'url' => admin_url('options-general.php'),
 		],
 	];
@@ -201,18 +204,18 @@ function em_site_admin_mount_sidebar_menu_chrome_scripts(): void
 		(function () {
 			function getDashboardItem() {
 				return document.getElementById('menu-dashboard')
-					|| document.querySelector('#adminmenu li.em-wp-menu-dashboard-entry');
+					|| document.querySelector('#adminmenu li.em-site-menu-dashboard-entry');
 			}
 
 			function mountDashboardArrow() {
 				var item = getDashboardItem();
-				if (!item || item.querySelector('.em-wp-dashboard-menu-arrow')) {
+				if (!item || item.querySelector('.em-site-dashboard-menu-arrow')) {
 					return;
 				}
 
 				var link = item.querySelector('a.menu-top');
 				var arrow = document.createElement('span');
-				arrow.className = 'em-wp-dashboard-menu-arrow';
+				arrow.className = 'em-site-dashboard-menu-arrow';
 				arrow.setAttribute('aria-hidden', 'true');
 
 				if (link) {
@@ -243,17 +246,17 @@ function em_site_admin_render_dashboard_page(): void
 		? em_site_admin_active_template_label()
 		: 'MAYAMI';
 	?>
-	<div class="wrap em-wp-admin-module em-wp-hub-sommaire em-site-dashboard">
-		<div class="em-wp-hub__greeting">
-			<span class="dashicons dashicons-admin-home em-wp-hub__greeting-icon" aria-hidden="true"></span>
-			<div class="em-wp-hub__greeting-text">
-				<h1><?php esc_html_e('Ellen Masri', 'em-wp'); ?></h1>
-				<p class="em-site-dashboard__sub"><?php esc_html_e('MON DASHBOARD', 'em-wp'); ?></p>
+	<div class="wrap em-site-admin-module em-site-hub-sommaire em-site-dashboard">
+		<div class="em-site-hub__greeting">
+			<span class="dashicons dashicons-admin-home em-site-hub__greeting-icon" aria-hidden="true"></span>
+			<div class="em-site-hub__greeting-text">
+				<h1><?php esc_html_e('Ellen Masri', 'em-site'); ?></h1>
+				<p class="em-site-dashboard__sub"><?php esc_html_e('MON DASHBOARD', 'em-site'); ?></p>
 			</div>
 		</div>
 
 		<div class="em-site-dashboard__tabs" role="navigation" aria-label="Dashboard navigation">
-			<a class="em-site-dashboard__tab em-site-dashboard__tab--list" href="<?php echo esc_url(em_site_admin_dashboard_admin_url()); ?>" aria-label="<?php esc_attr_e('Liste', 'em-wp'); ?>"><i class="fa-solid fa-list-ol" aria-hidden="true"></i></a>
+			<a class="em-site-dashboard__tab em-site-dashboard__tab--list" href="<?php echo esc_url(em_site_admin_dashboard_admin_url()); ?>" aria-label="<?php esc_attr_e('Liste', 'em-site'); ?>"><i class="fa-solid fa-list-ol" aria-hidden="true"></i></a>
 			<?php foreach ($tabs as $tab) : ?>
 				<a class="em-site-dashboard__tab" href="<?php echo esc_url((string) $tab['url']); ?>"><?php echo esc_html((string) $tab['label']); ?></a>
 			<?php endforeach; ?>
@@ -261,28 +264,28 @@ function em_site_admin_render_dashboard_page(): void
 
 		<div class="em-site-dashboard__grid">
 			<section class="em-site-dashboard__card">
-				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES RUBRIQUES', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-rubriques-overview')); ?>" aria-label="<?php esc_attr_e('Gérer mes rubriques', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
-				<p><?php esc_html_e('Sections réutilisables qui composent tes templates.', 'em-wp'); ?></p>
-				<a class="em-site-dashboard__primary" href="<?php echo esc_url(admin_url('admin.php?page=em-rubriques-overview')); ?>"><?php esc_html_e('GÉRER LES RUBRIQUES', 'em-wp'); ?></a>
+				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES RUBRIQUES', 'em-site'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-rubriques-overview')); ?>" aria-label="<?php esc_attr_e('Gérer mes rubriques', 'em-site'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
+				<p><?php esc_html_e('Sections réutilisables qui composent tes templates.', 'em-site'); ?></p>
+				<a class="em-site-dashboard__primary" href="<?php echo esc_url(admin_url('admin.php?page=em-rubriques-overview')); ?>"><?php esc_html_e('GÉRER LES RUBRIQUES', 'em-site'); ?></a>
 			</section>
 
 			<section class="em-site-dashboard__card">
-				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES TEMPLATES', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>" aria-label="<?php esc_attr_e('Gérer mes templates', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
-				<p><?php esc_html_e('Ton site utilise actuellement le template :', 'em-wp'); ?></p>
-				<p class="em-site-dashboard__status"><span class="em-site-pill em-site-pill--primary"><?php echo esc_html($active_template); ?></span><span class="em-site-pill em-site-pill--live"><?php esc_html_e('LIVE', 'em-wp'); ?></span></p>
-				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>"><?php echo esc_html($active_template); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>"><?php esc_html_e('VOIR TOUT', 'em-wp'); ?></a></p>
+				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES TEMPLATES', 'em-site'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>" aria-label="<?php esc_attr_e('Gérer mes templates', 'em-site'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
+				<p><?php esc_html_e('Ton site utilise actuellement le template :', 'em-site'); ?></p>
+				<p class="em-site-dashboard__status"><span class="em-site-pill em-site-pill--primary"><?php echo esc_html($active_template); ?></span><span class="em-site-pill em-site-pill--live"><?php esc_html_e('LIVE', 'em-site'); ?></span></p>
+				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>"><?php echo esc_html($active_template); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('admin.php?page=em-template')); ?>"><?php esc_html_e('VOIR TOUT', 'em-site'); ?></a></p>
 			</section>
 
 			<section class="em-site-dashboard__card">
-				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES MEDIAS', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('upload.php')); ?>" aria-label="<?php esc_attr_e('Gérer mes médias', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
-				<p><?php esc_html_e('Accède à ta bibliothèque de fichiers (images, vidéos, documents).', 'em-wp'); ?></p>
-				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('upload.php')); ?>"><?php esc_html_e('LIBRAIRIE', 'em-wp'); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('media-new.php')); ?>"><?php esc_html_e('AJOUTER', 'em-wp'); ?></a></p>
+				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES MEDIAS', 'em-site'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('upload.php')); ?>" aria-label="<?php esc_attr_e('Gérer mes médias', 'em-site'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
+				<p><?php esc_html_e('Accède à ta bibliothèque de fichiers (images, vidéos, documents).', 'em-site'); ?></p>
+				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('upload.php')); ?>"><?php esc_html_e('LIBRAIRIE', 'em-site'); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('media-new.php')); ?>"><?php esc_html_e('AJOUTER', 'em-site'); ?></a></p>
 			</section>
 
 			<section class="em-site-dashboard__card">
-				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES SETTINGS', 'em-wp'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('options-general.php')); ?>" aria-label="<?php esc_attr_e('Voir mes settings', 'em-wp'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
-				<p><?php esc_html_e('Réglages généraux de ton site.', 'em-wp'); ?></p>
-				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('themes.php')); ?>"><?php esc_html_e('APPARENCE', 'em-wp'); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('options-general.php')); ?>"><?php esc_html_e('GÉNÉRAL', 'em-wp'); ?></a><?php if (function_exists('em_wp_client_admin_gate_settings_admin_url') && em_wp_admin_is_power_user()) : ?><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(em_wp_client_admin_gate_settings_admin_url()); ?>"><?php esc_html_e('VERROU CLIENT', 'em-wp'); ?></a><?php endif; ?></p>
+				<header class="em-site-dashboard__card-head"><h2><?php esc_html_e('MES SETTINGS', 'em-site'); ?></h2><a class="em-site-dashboard__gear" href="<?php echo esc_url(admin_url('options-general.php')); ?>" aria-label="<?php esc_attr_e('Voir mes settings', 'em-site'); ?>"><span class="dashicons dashicons-admin-generic" aria-hidden="true"></span></a></header>
+				<p><?php esc_html_e('Réglages généraux de ton site.', 'em-site'); ?></p>
+				<p class="em-site-dashboard__links"><span class="em-site-dashboard__bubble" aria-hidden="true">&#8594;</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('themes.php')); ?>"><?php esc_html_e('APPARENCE', 'em-site'); ?></a><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(admin_url('options-general.php')); ?>"><?php esc_html_e('GÉNÉRAL', 'em-site'); ?></a><?php if (function_exists('em_site_client_admin_gate_settings_admin_url') && em_site_admin_is_power_user()) : ?><span>·</span><a class="em-site-dashboard__mini-link" href="<?php echo esc_url(em_site_client_admin_gate_settings_admin_url()); ?>"><?php esc_html_e('VERROU CLIENT', 'em-site'); ?></a><?php endif; ?></p>
 			</section>
 		</div>
 	</div>

@@ -1,12 +1,12 @@
 <?php
 /**
- * Rendu d'un ITEM par LIGNES × COLONNES (V4).
+ * Rendu d'un ITEM par LIGNES × COLONNES (EM-SITE).
  *
  * Rend un footer (item) à partir de sa structure (champs positionnés en
  * lignes/colonnes) et de son contenu. Les couleurs à rôle (fond/texte) pilotent
  * le style du bloc ; les autres champs s'affichent à leur position.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -18,9 +18,9 @@ if (!defined('ABSPATH')) {
  *
  * @param array<string, mixed>|null $content_override
  */
-function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array $content_override = null): string
+function em_site_rubrique_render_item(string $type_slug, string $item_slug, ?array $content_override = null): string
 {
-    $item = em_wp_v4_get_item($type_slug, $item_slug);
+    $item = em_site_get_item($type_slug, $item_slug);
     $fields = $item['fields'];
 
     if ($fields === []) {
@@ -28,16 +28,16 @@ function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array
     }
 
     $content = $content_override === null
-        ? em_wp_v4_get_item_content($type_slug, $item_slug)
-        : array_merge(em_wp_rubrique_fields_defaults($fields), $content_override);
+        ? em_site_get_item_content($type_slug, $item_slug)
+        : array_merge(em_site_rubrique_fields_defaults($fields), $content_override);
 
     $layout = $item['layout'];
-    [$style, $grid, $visited] = em_wp_rubrique_item_grid($fields, $content, $layout);
+    [$style, $grid, $visited] = em_site_rubrique_item_grid($fields, $content, $layout);
     // On rend AU MOINS toutes les lignes du layout, mais aussi les lignes qui
     // contiennent des champs au-delà du layout déclaré (sinon ces champs — souvent
     // des textes secondaires — seraient silencieusement omis, contrairement à
     // l'aperçu JS qui étend déjà le nombre de lignes au max présent).
-    $row_count = em_wp_rubrique_layout_row_count($layout);
+    $row_count = em_site_rubrique_layout_row_count($layout);
     if ($grid !== []) {
         $row_count = max($row_count, (int) max(array_keys($grid)));
     }
@@ -52,7 +52,7 @@ function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array
     <?php endif; ?>
     <footer id="<?php echo esc_attr($uid); ?>" class="em-rubrique em-rubrique--<?php echo esc_attr($type_slug); ?>"<?php echo $style !== '' ? ' style="' . esc_attr($style) . '"' : ''; ?>>
         <?php for ($row = 1; $row <= $row_count; $row++) : ?>
-            <?php $cols = em_wp_rubrique_layout_columns_for($layout, $row); ?>
+            <?php $cols = em_site_rubrique_layout_columns_for($layout, $row); ?>
             <?php
             $row_has_button = false;
             foreach (($grid[$row] ?? []) as $row_cells) {
@@ -75,7 +75,7 @@ function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array
                         }
                     }
                     ?>
-                    <div class="em-rubrique__col em-rubrique__col--<?php echo esc_attr(em_wp_rubrique_layout_align_for($layout, $row, $col)); ?>" data-em-col="<?php echo (int) $col; ?>" data-em-has-button="<?php echo $col_has_button ? '1' : '0'; ?>">
+                    <div class="em-rubrique__col em-rubrique__col--<?php echo esc_attr(em_site_rubrique_layout_align_for($layout, $row, $col)); ?>" data-em-col="<?php echo (int) $col; ?>" data-em-has-button="<?php echo $col_has_button ? '1' : '0'; ?>">
                         <?php echo implode('', $grid[$row][$col] ?? []); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                     </div>
                 <?php endfor; ?>
@@ -92,7 +92,7 @@ function em_wp_rubrique_render_item(string $type_slug, string $item_slug, ?array
  *
  * @return array<string, string>
  */
-function em_wp_rubrique_color_role_vars(): array
+function em_site_rubrique_color_role_vars(): array
 {
     return [
         'background'    => '--em-rubrique-bg',
@@ -111,7 +111,7 @@ function em_wp_rubrique_color_role_vars(): array
  * @param array<string, mixed>             $layout
  * @return array{0:string,1:array<int,array<int,array<int,string>>>,2:string}
  */
-function em_wp_rubrique_item_grid(array $fields, array $content, array $layout): array
+function em_site_rubrique_item_grid(array $fields, array $content, array $layout): array
 {
     $style = '';
     $grid = [];
@@ -127,7 +127,7 @@ function em_wp_rubrique_item_grid(array $fields, array $content, array $layout):
         $role = (string) ($field['options']['role'] ?? '');
 
         if ($field['type'] === 'image' && $role === 'background_image') {
-            $img = em_wp_rubrique_image_value($value);
+            $img = em_site_rubrique_image_value($value);
             if ((int) $img['id'] > 0) {
                 $url = (string) wp_get_attachment_image_url((int) $img['id'], 'full');
                 if ($url !== '') {
@@ -157,9 +157,9 @@ function em_wp_rubrique_item_grid(array $fields, array $content, array $layout):
             continue;
         }
 
-        if ($field['type'] === 'color' && isset(em_wp_rubrique_color_role_vars()[$role])) {
+        if ($field['type'] === 'color' && isset(em_site_rubrique_color_role_vars()[$role])) {
             if ($value !== '') {
-                $style .= em_wp_rubrique_color_role_vars()[$role] . ':' . $value . ';';
+                $style .= em_site_rubrique_color_role_vars()[$role] . ':' . $value . ';';
                 if ($role === 'link_visited') {
                     $visited = (string) $value;
                 }
@@ -173,7 +173,7 @@ function em_wp_rubrique_item_grid(array $fields, array $content, array $layout):
         }
 
         if ($field['type'] === 'select' && $role === 'font') {
-            $stack = em_wp_rubrique_font_stack((string) $value);
+            $stack = em_site_rubrique_font_stack((string) $value);
             if ($stack !== '') {
                 $style .= '--em-rubrique-font:' . $stack . ';';
             }
@@ -190,11 +190,11 @@ function em_wp_rubrique_item_grid(array $fields, array $content, array $layout):
             continue;
         }
 
-        $html = em_wp_rubrique_item_field_html($field, $value);
+        $html = em_site_rubrique_item_field_html($field, $value);
 
         if ($html !== '') {
             $row = (int) $field['row'];
-            $col = em_wp_rubrique_valid_col((int) $field['col'], em_wp_rubrique_layout_columns_for($layout, $row));
+            $col = em_site_rubrique_valid_col((int) $field['col'], em_site_rubrique_layout_columns_for($layout, $row));
             $grid[$row][$col][] = $html;
         }
     }
@@ -206,7 +206,7 @@ function em_wp_rubrique_item_grid(array $fields, array $content, array $layout):
     }
 
     if ($bg_image_url !== '') {
-        $bp = em_wp_rubrique_bg_position_css($bg_image_pos);
+        $bp = em_site_rubrique_bg_position_css($bg_image_pos);
         $style .= "--em-rubrique-bg-image:url('" . str_replace("'", '%27', esc_url($bg_image_url)) . "');";
         $style .= '--em-rubrique-bg-size:' . $bp['size'] . ';';
         $style .= '--em-rubrique-bg-repeat:' . $bp['repeat'] . ';';

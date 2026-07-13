@@ -18,9 +18,9 @@
         identityStashEl: null,
         identityRowEl: null,
         isProgressMode: false,
-        focusClass: 'em-wp-template-wizard-guide__target--focus',
-        progressFieldActiveClass: 'em-wp-template-wizard-progress__field-active',
-        doneClass: 'em-wp-template-wizard-guide__target--done',
+        focusClass: 'em-site-template-wizard-guide__target--focus',
+        progressFieldActiveClass: 'em-site-template-wizard-progress__field-active',
+        doneClass: 'em-site-template-wizard-guide__target--done',
         identityTargets: null,
         currentStep: 0,
         validatedActions: {},
@@ -46,8 +46,8 @@
                 this.progressFieldsEl = this.progressRoot
                     ? this.progressRoot.querySelector('[data-wizard-progress-fields]')
                     : null;
-                this.identityStashEl = document.getElementById('em-wp-template-identity-stash');
-                this.identityRowEl = document.getElementById('em-wp-template-wizard-identity');
+                this.identityStashEl = document.getElementById('em-site-template-identity-stash');
+                this.identityRowEl = document.getElementById('em-site-template-wizard-identity');
             } else {
                 this.root = document.querySelector('[data-wizard-guide]');
                 this.stepEl = this.root ? this.root.querySelector('[data-wizard-guide-step]') : null;
@@ -307,8 +307,8 @@
 
         getIdentityInputs: function () {
             return {
-                labelInput: document.getElementById('em-wp-template-new-label'),
-                colorInput: document.getElementById('em-wp-template-new-color'),
+                labelInput: document.getElementById('em-site-template-new-label'),
+                colorInput: document.getElementById('em-site-template-new-color'),
             };
         },
 
@@ -609,30 +609,30 @@
 
             if (step === 0 && action.key === 'label') {
                 if (!state.hasLabel) {
-                    return '<span class="em-wp-template-wizard-progress__action-text">'
+                    return '<span class="em-site-template-wizard-progress__action-text">'
                         + this.escapeHtml(summary)
                         + '</span>';
                 }
 
-                return '<span class="em-wp-template-wizard-progress__action-text">Nom du template : '
+                return '<span class="em-site-template-wizard-progress__action-text">Nom du template : '
                     + '<strong>' + this.escapeHtml(state.label) + '</strong></span>';
             }
 
             if (step === 0 && action.key === 'color') {
                 if (!state.hasColor) {
-                    return '<span class="em-wp-template-wizard-progress__action-text">'
+                    return '<span class="em-site-template-wizard-progress__action-text">'
                         + this.escapeHtml(summary)
                         + '</span>';
                 }
 
-                return '<span class="em-wp-template-wizard-progress__action-text">Couleur d\'identification : '
-                    + '<span class="em-wp-template-wizard-progress__checklist-swatch" style="background-color:'
+                return '<span class="em-site-template-wizard-progress__action-text">Couleur d\'identification : '
+                    + '<span class="em-site-template-wizard-progress__checklist-swatch" style="background-color:'
                     + this.escapeHtml(state.color)
                     + ';" aria-hidden="true"></span></span>';
             }
 
             if (step === 1 && action.summary) {
-                return '<span class="em-wp-template-wizard-progress__action-text">'
+                return '<span class="em-site-template-wizard-progress__action-text">'
                     + this.escapeHtml(action.summary)
                     + '</span>';
             }
@@ -736,7 +736,7 @@
             var lead = this.formatProgressActionsLead(step, actions, totalSteps, label);
             var stepComplete = this.isStepFullyValidated(step);
 
-            this.progressTitle.innerHTML = '<span class="em-wp-template-wizard-progress__title-lead">'
+            this.progressTitle.innerHTML = '<span class="em-site-template-wizard-progress__title-lead">'
                 + this.escapeHtml(lead)
                 + (stepComplete ? '' : ' :')
                 + '</span>';
@@ -813,7 +813,7 @@
             progressCfg = cfg.progress || {};
             tpl = progressCfg.actionsProgressCounter || 'Action %1$s/%2$s';
             counter = document.createElement('span');
-            counter.className = 'em-wp-template-wizard-progress__action-counter';
+            counter.className = 'em-site-template-wizard-progress__action-counter';
             counter.setAttribute('data-wizard-progress-action-counter', '');
             counter.textContent = tpl
                 .replace('%1$s', String(progress.current))
@@ -866,12 +866,12 @@
                 }
 
                 parts.push(
-                    '<span class="em-wp-template-wizard-progress__checklist-item '
+                    '<span class="em-site-template-wizard-progress__checklist-item '
                     + mod
                     + '" data-progress-action="'
                     + this.escapeHtml(action.key)
                     + '">'
-                    + '<span class="em-wp-template-wizard-progress__checklist-code">'
+                    + '<span class="em-site-template-wizard-progress__checklist-code">'
                     + this.escapeHtml(this.formatProgressActionCode(step, action, progress))
                     + '</span>'
                     + ' — '
@@ -879,7 +879,7 @@
 
                 if (isUpcoming) {
                     parts.push(
-                        '<span class="em-wp-template-wizard-progress__action-text">'
+                        '<span class="em-site-template-wizard-progress__action-text">'
                         + this.escapeHtml(this.getProgressActionPreviewText(step, action))
                         + '</span>'
                     );
@@ -896,19 +896,19 @@
                 if (showValidate) {
                     if (done) {
                         parts.push(
-                            '<span class="em-wp-template-wizard-progress__action-validate is-validated" aria-hidden="true">'
+                            '<span class="em-site-template-wizard-progress__action-validate is-validated" aria-hidden="true">'
                             + '<i class="fa-solid fa-check" aria-hidden="true"></i>'
                             + '</span>'
                         );
                     } else if (isUpcoming) {
                         parts.push(
-                            '<span class="em-wp-template-wizard-progress__action-validate is-upcoming" aria-hidden="true">'
+                            '<span class="em-site-template-wizard-progress__action-validate is-upcoming" aria-hidden="true">'
                             + '<i class="fa-solid fa-check" aria-hidden="true"></i>'
                             + '</span>'
                         );
                     } else {
                         parts.push(
-                            '<button type="button" class="em-wp-template-wizard-progress__action-validate'
+                            '<button type="button" class="em-site-template-wizard-progress__action-validate'
                             + (canValidate ? ' is-ready' : '')
                             + '" data-wizard-action-validate="'
                             + this.escapeHtml(action.key)
@@ -997,8 +997,8 @@
         },
 
         syncWizardFooter: function (step) {
-            var wizard = document.getElementById('em-wp-template-create-wizard');
-            var footer = wizard ? wizard.querySelector('.em-wp-template-wizard__actions') : null;
+            var wizard = document.getElementById('em-site-template-create-wizard');
+            var footer = wizard ? wizard.querySelector('.em-site-template-wizard__actions') : null;
 
             if (!footer) {
                 return;
@@ -1013,9 +1013,9 @@
         },
 
         syncWizardPlanWorkspace: function (step) {
-            var wizard = document.getElementById('em-wp-template-create-wizard');
-            var body = wizard ? wizard.querySelector('.em-wp-template-wizard__body') : null;
-            var planSection = document.querySelector('.em-wp-templates-create-page--edit .em-wp-catalog-sommaire__section');
+            var wizard = document.getElementById('em-site-template-create-wizard');
+            var body = wizard ? wizard.querySelector('.em-site-template-wizard__body') : null;
+            var planSection = document.querySelector('.em-site-templates-create-page--edit .em-site-catalog-sommaire__section');
 
             if (this.isProgressMode && planSection) {
                 planSection.hidden = step !== 1;
@@ -1039,7 +1039,7 @@
         },
 
         syncWireframeActions: function (step) {
-            var wizard = document.getElementById('em-wp-template-create-wizard');
+            var wizard = document.getElementById('em-site-template-create-wizard');
             var actions = wizard ? wizard.querySelector('[data-wizard-wireframe-actions]') : null;
             var submitBtn = actions ? actions.querySelector('[data-wizard-submit]') : null;
             var state = this.getIdentityState();
@@ -1063,12 +1063,12 @@
 
         getIdentityActionsWrap: function () {
             return this.identityRowEl
-                ? this.identityRowEl.querySelector('.em-wp-templates-admin__create-actions')
+                ? this.identityRowEl.querySelector('.em-site-templates-admin__create-actions')
                 : null;
         },
 
         getContinueButton: function () {
-            return document.getElementById('em-wp-template-wizard-open');
+            return document.getElementById('em-site-template-wizard-open');
         },
 
         isProgressContinueButton: function (button) {
@@ -1116,7 +1116,7 @@
                 return;
             }
 
-            var inner = this.progressRoot.querySelector('.em-wp-template-wizard-progress__inner');
+            var inner = this.progressRoot.querySelector('.em-site-template-wizard-progress__inner');
 
             if (!inner) {
                 return;
@@ -1127,14 +1127,14 @@
             var useTemplateColor = state.hasColor && (step >= 1 || stepComplete);
 
             if (useTemplateColor) {
-                inner.style.setProperty('--em-wp-wizard-banner-from', this.shadeColor(state.color, -0.28));
-                inner.style.setProperty('--em-wp-wizard-banner-to', state.color);
+                inner.style.setProperty('--em-site-wizard-banner-from', this.shadeColor(state.color, -0.28));
+                inner.style.setProperty('--em-site-wizard-banner-to', state.color);
                 inner.classList.add('is-template-colored');
                 return;
             }
 
-            inner.style.removeProperty('--em-wp-wizard-banner-from');
-            inner.style.removeProperty('--em-wp-wizard-banner-to');
+            inner.style.removeProperty('--em-site-wizard-banner-from');
+            inner.style.removeProperty('--em-site-wizard-banner-to');
             inner.classList.remove('is-template-colored');
         },
 
@@ -1177,7 +1177,7 @@
 
         syncContinueButton: function (step, state) {
             var button = this.getContinueButton();
-            var labelEl = button ? button.querySelector('.em-wp-hub__action-label') : null;
+            var labelEl = button ? button.querySelector('.em-site-hub__action-label') : null;
             var i18n = State.config.i18n || {};
             var labels = (State.config.onboarding && State.config.onboarding.stepLabels) || [];
             var total = labels.length || 3;
@@ -1192,12 +1192,12 @@
 
             if (!ready) {
                 button.classList.remove(this.focusClass);
-                button.style.removeProperty('--em-wp-wizard-continue-from');
-                button.style.removeProperty('--em-wp-wizard-continue-to');
+                button.style.removeProperty('--em-site-wizard-continue-from');
+                button.style.removeProperty('--em-site-wizard-continue-to');
                 button.style.removeProperty('border-color');
             } else if (state.hasColor) {
-                button.style.setProperty('--em-wp-wizard-continue-from', this.shadeColor(state.color, -0.28));
-                button.style.setProperty('--em-wp-wizard-continue-to', state.color);
+                button.style.setProperty('--em-site-wizard-continue-from', this.shadeColor(state.color, -0.28));
+                button.style.setProperty('--em-site-wizard-continue-to', state.color);
                 button.style.borderColor = this.shadeColor(state.color, -0.35);
             }
 
@@ -1240,20 +1240,20 @@
             }
 
             if (state && state.hasColor) {
-                button.style.setProperty('--em-wp-wizard-continue-from', this.shadeColor(state.color, -0.28));
-                button.style.setProperty('--em-wp-wizard-continue-to', state.color);
+                button.style.setProperty('--em-site-wizard-continue-from', this.shadeColor(state.color, -0.28));
+                button.style.setProperty('--em-site-wizard-continue-to', state.color);
                 button.style.borderColor = this.shadeColor(state.color, -0.35);
                 return;
             }
 
-            button.style.removeProperty('--em-wp-wizard-continue-from');
-            button.style.removeProperty('--em-wp-wizard-continue-to');
+            button.style.removeProperty('--em-site-wizard-continue-from');
+            button.style.removeProperty('--em-site-wizard-continue-to');
             button.style.removeProperty('border-color');
         },
 
         syncProgressAdvanceButton: function (step) {
             var button = document.querySelector('[data-wizard-progress-advance]');
-            var labelEl = button ? button.querySelector('.em-wp-hub__action-label') : null;
+            var labelEl = button ? button.querySelector('.em-site-hub__action-label') : null;
             var i18n = State.config.i18n || {};
             var labels = (State.config.onboarding && State.config.onboarding.stepLabels) || [];
             var total = labels.length || 3;
@@ -1314,7 +1314,7 @@
                 colorWrap.hidden = false;
             }
             if (continueBtn && actionsWrap && !this.isProgressContinueButton(continueBtn)) {
-                continueBtn.classList.remove('em-wp-template-wizard-progress__continue');
+                continueBtn.classList.remove('em-site-template-wizard-progress__continue');
                 actionsWrap.appendChild(continueBtn);
             }
             if (actionsWrap && this.identityRowEl && actionsWrap.parentElement !== this.identityRowEl) {
@@ -1396,7 +1396,7 @@
             }
 
             if (continueBtn && this.progressFieldsEl) {
-                continueBtn.classList.add('em-wp-template-wizard-progress__continue');
+                continueBtn.classList.add('em-site-template-wizard-progress__continue');
 
                 if (!this.isProgressContinueButton(continueBtn)) {
                     this.progressFieldsEl.appendChild(continueBtn);
@@ -1454,7 +1454,7 @@
                         }
                         self.clearFocus();
                         self.syncIdentityFieldStates();
-                        var continueBtn = document.getElementById('em-wp-template-wizard-open');
+                        var continueBtn = document.getElementById('em-site-template-wizard-open');
                         if (continueBtn && !continueBtn.hidden) {
                             if (typeof continueBtn.focus === 'function') {
                                 continueBtn.focus({ preventScroll: true });
@@ -1503,7 +1503,7 @@
             this.syncProgressActionCounter(0);
 
             if (which === 'color') {
-                var editButton = target ? target.querySelector('[data-em-wp-color-modal-open]') : null;
+                var editButton = target ? target.querySelector('[data-em-site-color-modal-open]') : null;
 
                 if (editButton && typeof editButton.focus === 'function') {
                     editButton.focus({ preventScroll: true });
@@ -1519,8 +1519,8 @@
             }
 
             var wrap = el.closest('[data-wizard-guide-target]')
-                || el.closest('.em-wp-templates-admin__create-field')
-                || el.closest('.em-wp-template-wizard-catalog__field')
+                || el.closest('.em-site-templates-admin__create-field')
+                || el.closest('.em-site-template-wizard-catalog__field')
                 || el;
 
             if (wrap) {
@@ -1539,14 +1539,14 @@
         },
 
         hideOverview: function () {
-            var overview = document.getElementById('em-wp-template-wizard-overview');
+            var overview = document.getElementById('em-site-template-wizard-overview');
             if (overview) {
                 overview.hidden = true;
             }
         },
 
         showOverview: function () {
-            var overview = document.getElementById('em-wp-template-wizard-overview');
+            var overview = document.getElementById('em-site-template-wizard-overview');
             if (overview) {
                 overview.hidden = false;
             }

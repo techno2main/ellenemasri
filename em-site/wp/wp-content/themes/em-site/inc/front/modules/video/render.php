@@ -2,7 +2,7 @@
 /**
  * Rendu front de la rubrique VIDEO.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/helpers.php';
 
-function em_wp_render_video(): void
+function em_site_render_video(): void
 {
 	$config = em_site_video_resolved_config();
 	$item_slugs = (array) ($config['item_slugs'] ?? []);
@@ -49,14 +49,14 @@ function em_wp_render_video(): void
 	?>
 	<section id="video" class="em-section em-section--video" data-em-rubrique="video" data-em-video-mode="<?php echo esc_attr($is_multi ? 'multi' : 'single'); ?>" data-em-video-transition="<?php echo esc_attr($transition_mode); ?>" data-em-video-timer="<?php echo esc_attr((string) $transition_timer); ?>">
 		<?php if ($is_multi) : ?>
-			<nav class="em-video-switch" aria-label="<?php esc_attr_e('Navigation Video', 'em-wp'); ?>">
-				<button type="button" class="em-video-switch__btn" data-em-video-prev aria-label="<?php esc_attr_e('Item précédent', 'em-wp'); ?>">&larr;</button>
-				<div class="em-video-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Video', 'em-wp'); ?>">
+			<nav class="em-video-switch" aria-label="<?php esc_attr_e('Navigation Video', 'em-site'); ?>">
+				<button type="button" class="em-video-switch__btn" data-em-video-prev aria-label="<?php esc_attr_e('Item précédent', 'em-site'); ?>">&larr;</button>
+				<div class="em-video-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Video', 'em-site'); ?>">
 					<?php foreach ($entries as $idx => $entry) : ?>
-						<button type="button" class="em-video-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-video-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-wp'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
+						<button type="button" class="em-video-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-video-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-site'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
 					<?php endforeach; ?>
 				</div>
-				<button type="button" class="em-video-switch__btn" data-em-video-next aria-label="<?php esc_attr_e('Item suivant', 'em-wp'); ?>">&rarr;</button>
+				<button type="button" class="em-video-switch__btn" data-em-video-next aria-label="<?php esc_attr_e('Item suivant', 'em-site'); ?>">&rarr;</button>
 			</nav>
 		<?php endif; ?>
 

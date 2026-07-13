@@ -1,23 +1,23 @@
-.em-wp-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack,
+.em-site-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack,
 .em-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack,
-#em-wp-footer-form .em-admin-module__panel-body.em-admin-panel-body--stack {
+#em-site-footer-form .em-admin-module__panel-body.em-admin-panel-body--stack {
 	gap: 0;
 }
 
-.em-wp-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack > label,
+.em-site-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack > label,
 .em-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack > label,
-#em-wp-footer-form .em-admin-module__panel-body.em-admin-panel-body--stack > label {
+#em-site-footer-form .em-admin-module__panel-body.em-admin-panel-body--stack > label {
 	grid-template-columns: minmax(120px, 180px) minmax(0, 1fr);
 }
 
-.em-wp-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text,
+.em-site-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text,
 .em-footer-admin .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text,
-#em-wp-footer-form .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text {
+#em-site-footer-form .em-admin-module__panel-body.em-admin-panel-body--stack .regular-text {
 	max-width: 420px;
 }
 
-.em-wp-footer-admin .em-admin-module__hero,
+.em-site-footer-admin .em-admin-module__hero,
 .em-footer-admin .em-admin-module__hero,
-#em-wp-footer-form .em-admin-module__hero {
+#em-site-footer-form .em-admin-module__hero {
 	border-left: 4px solid #4e080e;
 }

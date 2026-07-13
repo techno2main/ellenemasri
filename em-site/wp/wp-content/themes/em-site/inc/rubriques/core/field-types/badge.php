@@ -1,6 +1,6 @@
 <?php
 /**
- * Type de champ « Badge animé » (V4).
+ * Type de champ « Badge animé » (EM-SITE).
  *
  * Pilule façon hero mayami : texte + couleur de fond + couleur de texte, avec un
  * point « aqua » et une animation « wiggle ». Réutilisable dans n'importe quelle
@@ -9,7 +9,7 @@
  * Valeur stockée (JSON) : { text, bg, ink } — `ink` = couleur du texte (et de la
  * bordure + ombre portée, comme sur le site).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -22,30 +22,30 @@ if (!defined('ABSPATH')) {
  * @param array<string, array<string, mixed>> $types
  * @return array<string, array<string, mixed>>
  */
-function em_wp_field_types_animated_badge(array $types): array
+function em_site_field_types_animated_badge(array $types): array
 {
     $types['animated_badge'] = [
-        'label'    => __('Badge animé', 'em-wp'),
+        'label'    => __('Badge animé', 'em-site'),
         'default'  => '',
         'icon'     => 'dashicons-awards',
-        'sanitize' => 'em_wp_field_sanitize_animated_badge',
+        'sanitize' => 'em_site_field_sanitize_animated_badge',
     ];
 
     return $types;
 }
-add_filter('em_wp_field_types', 'em_wp_field_types_animated_badge');
+add_filter('em_site_field_types', 'em_site_field_types_animated_badge');
 
 /**
  * Formes disponibles du badge (slug => libellé admin).
  *
  * @return array<string, string>
  */
-function em_wp_rubrique_badge_shapes(): array
+function em_site_rubrique_badge_shapes(): array
 {
     return [
-        'pill'     => __('Pastille (arrondi total)', 'em-wp'),
-        'square'   => __('Carré / rectangle', 'em-wp'),
-        'triangle' => __('Triangle', 'em-wp'),
+        'pill'     => __('Pastille (arrondi total)', 'em-site'),
+        'square'   => __('Carré / rectangle', 'em-site'),
+        'triangle' => __('Triangle', 'em-site'),
     ];
 }
 
@@ -54,30 +54,30 @@ function em_wp_rubrique_badge_shapes(): array
  *
  * @return array<string, string>
  */
-function em_wp_rubrique_badge_anims(): array
+function em_site_rubrique_badge_anims(): array
 {
     return [
-        'wiggle' => __('Balancement', 'em-wp'),
-        'pulse'  => __('Pulsation', 'em-wp'),
-        'bounce' => __('Rebond', 'em-wp'),
-        'none'   => __('Aucune', 'em-wp'),
+        'wiggle' => __('Balancement', 'em-site'),
+        'pulse'  => __('Pulsation', 'em-site'),
+        'bounce' => __('Rebond', 'em-site'),
+        'none'   => __('Aucune', 'em-site'),
     ];
 }
 
 /**
  * Valide une forme (repli « pill »).
  */
-function em_wp_rubrique_badge_valid_shape(string $shape): string
+function em_site_rubrique_badge_valid_shape(string $shape): string
 {
-    return isset(em_wp_rubrique_badge_shapes()[$shape]) ? $shape : 'pill';
+    return isset(em_site_rubrique_badge_shapes()[$shape]) ? $shape : 'pill';
 }
 
 /**
  * Valide une animation (repli « wiggle »).
  */
-function em_wp_rubrique_badge_valid_anim(string $anim): string
+function em_site_rubrique_badge_valid_anim(string $anim): string
 {
-    return isset(em_wp_rubrique_badge_anims()[$anim]) ? $anim : 'wiggle';
+    return isset(em_site_rubrique_badge_anims()[$anim]) ? $anim : 'wiggle';
 }
 
 /**
@@ -86,7 +86,7 @@ function em_wp_rubrique_badge_valid_anim(string $anim): string
  * @param mixed $value
  * @return array{text:string, bg:string, ink:string, shape:string, anim:string, radius:int}
  */
-function em_wp_rubrique_animated_badge_value($value): array
+function em_site_rubrique_animated_badge_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -96,10 +96,10 @@ function em_wp_rubrique_animated_badge_value($value): array
 
     return [
         'text'   => (string) ($decoded['text'] ?? ''),
-        'bg'     => em_wp_field_sanitize_color((string) ($decoded['bg'] ?? '')),
-        'ink'    => em_wp_field_sanitize_color((string) ($decoded['ink'] ?? '')),
-        'shape'  => em_wp_rubrique_badge_valid_shape((string) ($decoded['shape'] ?? 'pill')),
-        'anim'   => em_wp_rubrique_badge_valid_anim((string) ($decoded['anim'] ?? 'wiggle')),
+        'bg'     => em_site_field_sanitize_color((string) ($decoded['bg'] ?? '')),
+        'ink'    => em_site_field_sanitize_color((string) ($decoded['ink'] ?? '')),
+        'shape'  => em_site_rubrique_badge_valid_shape((string) ($decoded['shape'] ?? 'pill')),
+        'anim'   => em_site_rubrique_badge_valid_anim((string) ($decoded['anim'] ?? 'wiggle')),
         'radius' => max(0, min(40, (int) ($decoded['radius'] ?? 6))),
     ];
 }
@@ -109,9 +109,9 @@ function em_wp_rubrique_animated_badge_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_animated_badge($value): string
+function em_site_field_sanitize_animated_badge($value): string
 {
-    $badge = em_wp_rubrique_animated_badge_value($value);
+    $badge = em_site_rubrique_animated_badge_value($value);
     $text = sanitize_text_field($badge['text']);
 
     if ($text === '' && $badge['bg'] === '' && $badge['ink'] === '') {
@@ -135,7 +135,7 @@ function em_wp_field_sanitize_animated_badge($value): string
  *
  * @param array{text:string, bg:string, ink:string, shape?:string, anim?:string, radius?:int} $badge
  */
-function em_wp_rubrique_animated_badge_html(array $badge): string
+function em_site_rubrique_animated_badge_html(array $badge): string
 {
     $text = (string) ($badge['text'] ?? '');
 
@@ -143,10 +143,10 @@ function em_wp_rubrique_animated_badge_html(array $badge): string
         return '';
     }
 
-    $bg = em_wp_field_sanitize_color((string) ($badge['bg'] ?? ''));
-    $ink = em_wp_field_sanitize_color((string) ($badge['ink'] ?? ''));
-    $shape = em_wp_rubrique_badge_valid_shape((string) ($badge['shape'] ?? 'pill'));
-    $anim = em_wp_rubrique_badge_valid_anim((string) ($badge['anim'] ?? 'wiggle'));
+    $bg = em_site_field_sanitize_color((string) ($badge['bg'] ?? ''));
+    $ink = em_site_field_sanitize_color((string) ($badge['ink'] ?? ''));
+    $shape = em_site_rubrique_badge_valid_shape((string) ($badge['shape'] ?? 'pill'));
+    $anim = em_site_rubrique_badge_valid_anim((string) ($badge['anim'] ?? 'wiggle'));
     $radius = max(0, min(40, (int) ($badge['radius'] ?? 6)));
 
     $classes = ['em-rubrique__badge', 'em-rubrique__badge--shape-' . $shape];

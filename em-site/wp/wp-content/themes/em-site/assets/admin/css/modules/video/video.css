@@ -1,25 +1,25 @@
-.em-wp-video-admin textarea.large-text,
+.em-site-video-admin textarea.large-text,
 .em-video-admin textarea.large-text,
-#em-wp-video-form textarea.large-text {
+#em-site-video-form textarea.large-text {
 	min-height: 110px;
 	max-width: 520px;
 }
 
-.em-wp-video-admin .em-admin-media-preview img,
+.em-site-video-admin .em-admin-media-preview img,
 .em-video-admin .em-admin-media-preview img,
-#em-wp-video-form .em-admin-media-preview img {
+#em-site-video-form .em-admin-media-preview img {
 	max-width: 300px;
 	max-height: 120px;
 }
 
-.em-wp-video-admin .em-admin-module__panel-body .regular-text,
+.em-site-video-admin .em-admin-module__panel-body .regular-text,
 .em-video-admin .em-admin-module__panel-body .regular-text,
-#em-wp-video-form .em-admin-module__panel-body .regular-text {
+#em-site-video-form .em-admin-module__panel-body .regular-text {
 	max-width: 460px;
 }
 
-.em-wp-video-admin .em-admin-module__hero,
+.em-site-video-admin .em-admin-module__hero,
 .em-video-admin .em-admin-module__hero,
-#em-wp-video-form .em-admin-module__hero {
+#em-site-video-form .em-admin-module__hero {
 	border-left: 4px solid #7c2d12;
 }

@@ -1,12 +1,12 @@
 <?php
 /**
- * Logique client du bandeau Apparence (V4) — EmWpV4Appearance.
+ * Logique client du bandeau Apparence (EM-SITE) — EmSiteAppearance.
  *
  * collect(builder) : lit les réglages globaux (couleurs de liens par état,
  * soulignement, espaces haut/bas). updatePill(builder, style) : met à jour la
  * pastille « Aperçu » en temps réel (fond, texte, lien + survol/visité via vars).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,21 +14,21 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <script>
-window.EmWpV4Appearance = (function () {
+window.EmSiteAppearance = (function () {
     var COLOR = { background: 'bg', text: 'text', link: 'link', link_hover: 'linkHover', link_visited: 'linkVisited' };
     var NUM = { space_top: 'padTop', space_bottom: 'padBottom', space_left: 'padLeft', space_right: 'padRight' };
 
     function collect(builder) {
         var c = {};
-        builder.querySelectorAll('.em-v4-appearance__item').forEach(function (it) {
+        builder.querySelectorAll('.em-site-appearance__item').forEach(function (it) {
             var role = it.getAttribute('data-role');
-            var col = it.querySelector('.em-wp-admin-color-value');
-            var tg = it.querySelector('.em-v4-appearance__toggle-input');
-            var nb = it.querySelector('.em-v4-appearance__num-input');
-            var fn = it.querySelector('.em-v4-appearance__font-input');
-            var bgp = it.querySelector('.em-v4-appearance__bgpos-input');
-            var bgm = it.querySelector('.em-v4-appearance__bgmedia');
-            var bgo = it.querySelector('.em-v4-appearance__bgopacity-input');
+            var col = it.querySelector('.em-site-admin-color-value');
+            var tg = it.querySelector('.em-site-appearance__toggle-input');
+            var nb = it.querySelector('.em-site-appearance__num-input');
+            var fn = it.querySelector('.em-site-appearance__font-input');
+            var bgp = it.querySelector('.em-site-appearance__bgpos-input');
+            var bgm = it.querySelector('.em-site-appearance__bgmedia');
+            var bgo = it.querySelector('.em-site-appearance__bgopacity-input');
             if (col && COLOR[role]) { c[COLOR[role]] = col.value; }
             if (tg && role === 'link_underline') { c.underline = tg.checked; }
             if (tg && role === 'background_mirror') { c.bgMirror = tg.checked; }
@@ -46,13 +46,13 @@ window.EmWpV4Appearance = (function () {
     // l'URL pleine taille et la vignette, puis notifie le builder (change bubble).
     function openBgImage(media) {
         if (!window.wp || !window.wp.media) { return; }
-        var frame = window.wp.media({ title: '<?php echo esc_js(__('Image de fond', 'em-wp')); ?>', multiple: false, library: { type: 'image' } });
+        var frame = window.wp.media({ title: '<?php echo esc_js(__('Image de fond', 'em-site')); ?>', multiple: false, library: { type: 'image' } });
         frame.on('select', function () {
             var att = frame.state().get('selection').first().toJSON();
             var sizes = att.sizes || {};
-            var hidden = media.querySelector('.em-v4-appearance__bgid');
-            var thumb = media.querySelector('.em-v4-appearance__bgthumb');
-            var clear = media.querySelector('.em-v4-appearance__bgclear');
+            var hidden = media.querySelector('.em-site-appearance__bgid');
+            var thumb = media.querySelector('.em-site-appearance__bgthumb');
+            var clear = media.querySelector('.em-site-appearance__bgclear');
             media.setAttribute('data-url', att.url || '');
             if (hidden) { hidden.value = att.id; }
             if (thumb) { thumb.src = (sizes.medium ? sizes.medium.url : att.url); thumb.hidden = false; }
@@ -63,9 +63,9 @@ window.EmWpV4Appearance = (function () {
     }
 
     function clearBgImage(media) {
-        var hidden = media.querySelector('.em-v4-appearance__bgid');
-        var thumb = media.querySelector('.em-v4-appearance__bgthumb');
-        var clear = media.querySelector('.em-v4-appearance__bgclear');
+        var hidden = media.querySelector('.em-site-appearance__bgid');
+        var thumb = media.querySelector('.em-site-appearance__bgthumb');
+        var clear = media.querySelector('.em-site-appearance__bgclear');
         media.setAttribute('data-url', '');
         if (hidden) { hidden.value = ''; }
         if (thumb) { thumb.src = ''; thumb.hidden = true; }
@@ -74,14 +74,14 @@ window.EmWpV4Appearance = (function () {
     }
 
     document.addEventListener('click', function (e) {
-        var pick = e.target.closest('.em-v4-appearance__bgpick');
-        if (pick) { e.preventDefault(); var m = pick.closest('.em-v4-appearance__bgmedia'); if (m) { openBgImage(m); } return; }
-        var clr = e.target.closest('.em-v4-appearance__bgclear');
-        if (clr) { e.preventDefault(); var m2 = clr.closest('.em-v4-appearance__bgmedia'); if (m2) { clearBgImage(m2); } return; }
+        var pick = e.target.closest('.em-site-appearance__bgpick');
+        if (pick) { e.preventDefault(); var m = pick.closest('.em-site-appearance__bgmedia'); if (m) { openBgImage(m); } return; }
+        var clr = e.target.closest('.em-site-appearance__bgclear');
+        if (clr) { e.preventDefault(); var m2 = clr.closest('.em-site-appearance__bgmedia'); if (m2) { clearBgImage(m2); } return; }
     });
 
     function updatePill(builder, c) {
-        var box = builder.querySelector('.em-v4-appearance__preview-box');
+        var box = builder.querySelector('.em-site-appearance__preview-box');
         if (!box) { return; }
         var t = box.querySelector('.ap-text'), l = box.querySelector('.ap-link');
         box.style.fontFamily = c.font || '';
@@ -102,7 +102,7 @@ window.EmWpV4Appearance = (function () {
 
     // Espacements liés : la chaîne synchronise les deux valeurs d'une paire.
     function syncPair(group, source) {
-        var inputs = group.querySelectorAll('.em-v4-appearance__num-input');
+        var inputs = group.querySelectorAll('.em-site-appearance__num-input');
         if (inputs.length < 2) { return; }
         var other = inputs[0] === source ? inputs[1] : inputs[0];
         if (other.value !== source.value) {
@@ -111,10 +111,10 @@ window.EmWpV4Appearance = (function () {
         }
     }
     document.addEventListener('click', function (e) {
-        var btn = e.target.closest('.em-v4-appearance__chain');
+        var btn = e.target.closest('.em-site-appearance__chain');
         if (!btn) { return; }
         e.preventDefault();
-        var group = btn.closest('.em-v4-appearance__group');
+        var group = btn.closest('.em-site-appearance__group');
         if (!group) { return; }
         var on = btn.getAttribute('aria-pressed') !== 'true';
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -122,14 +122,14 @@ window.EmWpV4Appearance = (function () {
         var icon = btn.querySelector('.dashicons');
         if (icon) { icon.className = 'dashicons dashicons-' + (on ? 'admin-links' : 'editor-unlink'); }
         if (on) {
-            var first = group.querySelector('.em-v4-appearance__num-input');
+            var first = group.querySelector('.em-site-appearance__num-input');
             if (first) { syncPair(group, first); }
         }
     });
     document.addEventListener('input', function (e) {
-        var inp = e.target.closest('.em-v4-appearance__num-input');
+        var inp = e.target.closest('.em-site-appearance__num-input');
         if (!inp) { return; }
-        var group = inp.closest('.em-v4-appearance__group');
+        var group = inp.closest('.em-site-appearance__group');
         if (group && group.classList.contains('is-linked')) { syncPair(group, inp); }
     });
 

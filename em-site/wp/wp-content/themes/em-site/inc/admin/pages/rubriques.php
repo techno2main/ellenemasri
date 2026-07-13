@@ -4,7 +4,7 @@
  *
  * Modules dans pages/rubriques/ — voir bootstrap.php pour la carte du dossier.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

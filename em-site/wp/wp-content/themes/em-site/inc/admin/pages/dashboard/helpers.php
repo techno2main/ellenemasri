@@ -2,7 +2,7 @@
 /**
  * Helpers page Accueil (données utilisateur, etc.).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Prénom (ou repli) de l'admin connecté pour le bandeau d'accueil.
  */
-function em_wp_admin_dashboard_greeting_name(): string
+function em_site_admin_dashboard_greeting_name(): string
 {
-    return em_wp_admin_hub_greeting_name();
+    return em_site_admin_hub_greeting_name();
 }

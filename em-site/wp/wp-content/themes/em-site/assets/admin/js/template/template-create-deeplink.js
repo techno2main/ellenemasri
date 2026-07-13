@@ -6,12 +6,12 @@
     function boot() {
         var params = new URLSearchParams(window.location.search);
 
-        if (params.get('em_wp_open') !== 'template-create') {
+        if (params.get('em_site_open') !== 'template-create') {
             return;
         }
 
-        var panel = document.getElementById('em-wp-template-create-panel');
-        var input = document.getElementById('em-wp-template-new-label');
+        var panel = document.getElementById('em-site-template-create-panel');
+        var input = document.getElementById('em-site-template-new-label');
 
         if (panel) {
             panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -23,7 +23,7 @@
             }, 200);
         }
 
-        params.delete('em_wp_open');
+        params.delete('em_site_open');
 
         if (window.history && window.history.replaceState) {
             var query = params.toString();

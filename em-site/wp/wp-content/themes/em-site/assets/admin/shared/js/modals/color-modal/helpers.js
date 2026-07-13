@@ -20,7 +20,7 @@
             return null;
         }
 
-        return trigger.querySelector('[data-em-wp-color-modal-open]');
+        return trigger.querySelector('[data-em-site-color-modal-open]');
     }
 
     function isTextPreviewContext(context) {
@@ -52,13 +52,13 @@
         }
 
         return resolveBg({
-            bgTargetId: button.getAttribute('data-em-wp-color-modal-bg-target') || '',
+            bgTargetId: button.getAttribute('data-em-site-color-modal-bg-target') || '',
         });
     }
 
     function syncTextPreviewTrigger(trigger, color, resolveBgColorFn) {
-        var textPreview = trigger.querySelector('[data-em-wp-color-text-preview]');
-        var textLabel = textPreview ? textPreview.querySelector('.em-wp-admin-color-trigger__text-preview-label') : null;
+        var textPreview = trigger.querySelector('[data-em-site-color-text-preview]');
+        var textLabel = textPreview ? textPreview.querySelector('.em-site-admin-color-trigger__text-preview-label') : null;
         var bgColor = resolveBgColorFromTrigger(trigger, resolveBgColorFn);
 
         if (textPreview) {
@@ -78,17 +78,17 @@
         var normalize = deps && deps.normalizeColor ? deps.normalizeColor : normalizeColor;
         var syncTextPreview = deps && deps.syncTextPreviewTrigger ? deps.syncTextPreviewTrigger : syncTextPreviewTrigger;
         var color = normalize(input.value, input.getAttribute('data-default-color') || '');
-        var trigger = document.querySelector('[data-em-wp-color-trigger-for="' + input.id + '"]');
+        var trigger = document.querySelector('[data-em-site-color-trigger-for="' + input.id + '"]');
 
         if (!trigger) {
-            var inlineField = input.closest('.em-wp-templates-admin__inline-field');
+            var inlineField = input.closest('.em-site-templates-admin__inline-field');
 
             if (inlineField) {
-                var swatch = inlineField.querySelector('.em-wp-templates-admin__color-swatch');
-                var hex = inlineField.querySelector('.em-wp-templates-admin__color-hex');
+                var swatch = inlineField.querySelector('.em-site-templates-admin__color-swatch');
+                var hex = inlineField.querySelector('.em-site-templates-admin__color-hex');
 
                 if (swatch) {
-                    swatch.style.setProperty('--em-wp-color-swatch', color || '#cccccc');
+                    swatch.style.setProperty('--em-site-color-swatch', color || '#cccccc');
                     swatch.style.setProperty('--em-color-swatch', color || '#cccccc');
                     swatch.style.setProperty('--em-template-swatch', color || '#cccccc');
                 }
@@ -101,15 +101,15 @@
             return;
         }
 
-        var triggerHex = trigger.querySelector('.em-wp-admin-color-trigger__hex');
-        var isTextPreview = trigger.classList.contains('em-wp-admin-color-trigger--text-preview');
+        var triggerHex = trigger.querySelector('.em-site-admin-color-trigger__hex');
+        var isTextPreview = trigger.classList.contains('em-site-admin-color-trigger--text-preview');
 
         if (isTextPreview) {
             syncTextPreview(trigger, color);
         } else {
-            var triggerSwatch = trigger.querySelector('.em-wp-admin-color-trigger__swatch');
+            var triggerSwatch = trigger.querySelector('.em-site-admin-color-trigger__swatch');
             if (triggerSwatch) {
-                triggerSwatch.style.setProperty('--em-wp-color-swatch', color || '#cccccc');
+                triggerSwatch.style.setProperty('--em-site-color-swatch', color || '#cccccc');
                 triggerSwatch.style.setProperty('--em-color-swatch', color || '#cccccc');
             }
         }
@@ -127,8 +127,8 @@
         var getInput = getTargetInputFn || getTargetInput;
         var syncDisplay = syncTriggerDisplayFn || syncTriggerDisplay;
 
-        document.querySelectorAll('[data-em-wp-color-modal-bg-target="' + bgInputId + '"]').forEach(function (button) {
-            var targetId = button.getAttribute('data-em-wp-color-modal-target') || '';
+        document.querySelectorAll('[data-em-site-color-modal-bg-target="' + bgInputId + '"]').forEach(function (button) {
+            var targetId = button.getAttribute('data-em-site-color-modal-target') || '';
             var targetInput = getInput(targetId);
 
             if (targetInput) {
@@ -170,7 +170,7 @@
         if (textMode) {
             var bgColor = resolveBg(previewContext);
             var textLabel = previewText
-                ? previewText.querySelector('.em-wp-admin-color-modal__preview-text')
+                ? previewText.querySelector('.em-site-admin-color-modal__preview-text')
                 : null;
 
             if (previewText) {
@@ -185,13 +185,13 @@
         }
 
         if (previewSwatch) {
-            previewSwatch.style.setProperty('--em-wp-color-swatch', color || '#2d1454');
+            previewSwatch.style.setProperty('--em-site-color-swatch', color || '#2d1454');
             previewSwatch.style.setProperty('--em-color-swatch', color || '#2d1454');
         }
     }
 
     function buildContextFromButton(button, getTargetInputFn) {
-        var targetId = button.getAttribute('data-em-wp-color-modal-target') || '';
+        var targetId = button.getAttribute('data-em-site-color-modal-target') || '';
         var getInput = getTargetInputFn || getTargetInput;
         var targetInput = getInput(targetId);
 
@@ -202,14 +202,14 @@
         return {
             targetInput: targetInput,
             triggerButton: button,
-            label: button.getAttribute('data-em-wp-color-modal-label') || '',
-            title: button.getAttribute('data-em-wp-color-modal-title') || '',
-            defaultColor: button.getAttribute('data-em-wp-color-modal-default') || '',
-            color: targetInput.value || button.getAttribute('data-em-wp-color-modal-color') || '',
-            formId: button.getAttribute('data-em-wp-color-modal-form') || '',
-            formValueName: button.getAttribute('data-em-wp-color-modal-value-name') || '',
-            previewType: button.getAttribute('data-em-wp-color-modal-preview-type') || 'swatch',
-            bgTargetId: button.getAttribute('data-em-wp-color-modal-bg-target') || '',
+            label: button.getAttribute('data-em-site-color-modal-label') || '',
+            title: button.getAttribute('data-em-site-color-modal-title') || '',
+            defaultColor: button.getAttribute('data-em-site-color-modal-default') || '',
+            color: targetInput.value || button.getAttribute('data-em-site-color-modal-color') || '',
+            formId: button.getAttribute('data-em-site-color-modal-form') || '',
+            formValueName: button.getAttribute('data-em-site-color-modal-value-name') || '',
+            previewType: button.getAttribute('data-em-site-color-modal-preview-type') || 'swatch',
+            bgTargetId: button.getAttribute('data-em-site-color-modal-bg-target') || '',
         };
     }
 

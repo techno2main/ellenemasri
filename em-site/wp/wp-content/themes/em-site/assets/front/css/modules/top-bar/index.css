@@ -28,7 +28,7 @@ html {
 #footer,
 .em-section,
 .em-landing-section,
-.emv4-section {
+.em-site-section {
 	scroll-margin-top: var(--em-section-scroll-offset);
 }
 

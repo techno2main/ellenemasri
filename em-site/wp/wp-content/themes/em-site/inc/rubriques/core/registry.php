@@ -1,16 +1,16 @@
 <?php
 /**
- * Registre des TYPES DE RUBRIQUE (V4) — modèle simplifié.
+ * Registre des TYPES DE RUBRIQUE (EM-SITE) — modèle simplifié.
  *
  * Un « type de rubrique » est une famille du catalogue (FOOTER, HEADER…). Il ne
  * porte plus de « modèles » : chaque item (footer nommé) possède sa propre
  * structure. Le type fournit seulement un libellé, une icône et une STRUCTURE DE
  * DÉPART (starter) utilisée à la création d'un nouvel item.
  *
- * Types intégrés : filtre `em_wp_rubrique_types` (types/<slug>/type.php).
- * Types créés via wizard : option `em_wp_v4_rubrique_types`.
+ * Types intégrés : filtre `em_site_rubrique_types` (types/<slug>/type.php).
+ * Types créés via wizard : option `em_site_rubrique_types`.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -20,9 +20,9 @@ if (!defined('ABSPATH')) {
 /**
  * Nom d'option des types créés via l'admin.
  */
-function em_wp_rubrique_types_option_name(): string
+function em_site_rubrique_types_option_name(): string
 {
-    return 'em_wp_v4_rubrique_types';
+    return 'em_site_rubrique_types';
 }
 
 /**
@@ -31,9 +31,9 @@ function em_wp_rubrique_types_option_name(): string
  * Map slug => libellé d'affichage. S'applique aussi bien aux types intégrés
  * (code) qu'aux types créés via l'admin, sans toucher leur structure.
  */
-function em_wp_rubrique_labels_option_name(): string
+function em_site_rubrique_labels_option_name(): string
 {
-    return 'em_wp_v4_rubrique_labels';
+    return 'em_site_rubrique_labels';
 }
 
 /**
@@ -41,7 +41,7 @@ function em_wp_rubrique_labels_option_name(): string
  *
  * @return array<string, mixed>|array<int, mixed>|null
  */
-function em_wp_rubrique_repair_serialized_array($raw): ?array
+function em_site_rubrique_repair_serialized_array($raw): ?array
 {
     if (!is_string($raw) || $raw === '') {
         return null;
@@ -79,7 +79,7 @@ function em_wp_rubrique_repair_serialized_array($raw): ?array
  *
  * @return array<string, mixed>|array<int, mixed>
  */
-function em_wp_rubrique_get_array_option_safe(string $option_name): array
+function em_site_rubrique_get_array_option_safe(string $option_name): array
 {
     $value = get_option($option_name, null);
 
@@ -87,7 +87,7 @@ function em_wp_rubrique_get_array_option_safe(string $option_name): array
         return $value;
     }
 
-    $repaired = em_wp_rubrique_repair_serialized_array($value);
+    $repaired = em_site_rubrique_repair_serialized_array($value);
 
     if ($repaired === null) {
         global $wpdb;
@@ -98,7 +98,7 @@ function em_wp_rubrique_get_array_option_safe(string $option_name): array
                 $option_name
             ));
 
-            $repaired = em_wp_rubrique_repair_serialized_array($raw);
+            $repaired = em_site_rubrique_repair_serialized_array($raw);
         }
     }
 
@@ -116,9 +116,9 @@ function em_wp_rubrique_get_array_option_safe(string $option_name): array
  *
  * @return array<string, string>
  */
-function em_wp_rubrique_labels(): array
+function em_site_rubrique_labels(): array
 {
-    $labels = em_wp_rubrique_get_array_option_safe(em_wp_rubrique_labels_option_name());
+    $labels = em_site_rubrique_get_array_option_safe(em_site_rubrique_labels_option_name());
 
     return is_array($labels) ? $labels : [];
 }
@@ -130,7 +130,7 @@ function em_wp_rubrique_labels(): array
  * renommage : l'utilisateur saisit le nom pluriel affiché, on en déduit le
  * singulier pour le préfixe des items et le nom « Section <…> ».
  */
-function em_wp_rubrique_singularize(string $plural): string
+function em_site_rubrique_singularize(string $plural): string
 {
     $plural = trim($plural);
     $len = function_exists('mb_strlen') ? mb_strlen($plural, 'UTF-8') : strlen($plural);
@@ -148,7 +148,7 @@ function em_wp_rubrique_singularize(string $plural): string
 /**
  * Met « Casse de Titre » à un libellé (pour le noun « Section <…> »).
  */
-function em_wp_rubrique_title_case(string $text): string
+function em_site_rubrique_title_case(string $text): string
 {
     $text = trim($text);
 
@@ -162,7 +162,7 @@ function em_wp_rubrique_title_case(string $text): string
  *
  * @return array<string, array<string, mixed>>
  */
-function em_wp_rubrique_type_registry(): array
+function em_site_rubrique_type_registry(): array
 {
     static $cache = null;
 
@@ -170,8 +170,8 @@ function em_wp_rubrique_type_registry(): array
         return $cache;
     }
 
-    $code_types = (array) apply_filters('em_wp_rubrique_types', []);
-    $option_types = em_wp_rubrique_get_array_option_safe(em_wp_rubrique_types_option_name());
+    $code_types = (array) apply_filters('em_site_rubrique_types', []);
+    $option_types = em_site_rubrique_get_array_option_safe(em_site_rubrique_types_option_name());
 
     $merged = $code_types;
 
@@ -186,7 +186,7 @@ function em_wp_rubrique_type_registry(): array
     }
 
     $normalized = [];
-    $overrides = em_wp_rubrique_labels();
+    $overrides = em_site_rubrique_labels();
 
     foreach ($merged as $slug => $definition) {
         $slug = sanitize_key((string) $slug);
@@ -195,7 +195,7 @@ function em_wp_rubrique_type_registry(): array
             continue;
         }
 
-        $type = em_wp_rubrique_type_normalize($slug, $definition);
+        $type = em_site_rubrique_type_normalize($slug, $definition);
 
         // Renommage : un libellé personnalisé (nom pluriel saisi) remplace le nom
         // de la rubrique PARTOUT — carte + sous-menu (pluriel), préfixe des items
@@ -203,10 +203,10 @@ function em_wp_rubrique_type_registry(): array
         // n'est pas touchée.
         if (isset($overrides[$slug]) && is_string($overrides[$slug]) && $overrides[$slug] !== '') {
             $plural = $overrides[$slug];
-            $singular = em_wp_rubrique_singularize($plural);
+            $singular = em_site_rubrique_singularize($plural);
             $type['label_plural'] = $plural;
             $type['label'] = $singular;
-            $type['noun'] = em_wp_rubrique_title_case($singular);
+            $type['noun'] = em_site_rubrique_title_case($singular);
         }
 
         $normalized[$slug] = $type;
@@ -225,24 +225,24 @@ function em_wp_rubrique_type_registry(): array
  *
  * @return array<int, array<string, mixed>>
  */
-function em_wp_rubrique_default_appearance_fields(): array
+function em_site_rubrique_default_appearance_fields(): array
 {
     return [
-        ['key' => 'bg_color', 'type' => 'color', 'label' => __('Fond', 'em-wp'), 'default' => '#0f172a', 'options' => ['role' => 'background'], 'row' => 1, 'col' => 1],
-        ['key' => 'bg_transparent', 'type' => 'toggle', 'label' => __('Transparent', 'em-wp'), 'default' => false, 'options' => ['role' => 'background_transparent'], 'row' => 1, 'col' => 1],
-        ['key' => 'text_color', 'type' => 'color', 'label' => __('Texte', 'em-wp'), 'default' => '#e2e8f0', 'options' => ['role' => 'text'], 'row' => 1, 'col' => 1],
-        ['key' => 'link_color', 'type' => 'color', 'label' => __('Liens', 'em-wp'), 'default' => '#38bdf8', 'options' => ['role' => 'link'], 'row' => 1, 'col' => 1],
-        ['key' => 'link_hover_color', 'type' => 'color', 'label' => __('Survol', 'em-wp'), 'default' => '#7dd3fc', 'options' => ['role' => 'link_hover'], 'row' => 1, 'col' => 1],
-        ['key' => 'link_underline', 'type' => 'toggle', 'label' => __('Soulignés', 'em-wp'), 'default' => false, 'options' => ['role' => 'link_underline'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_top', 'type' => 'number', 'label' => __('Haut', 'em-wp'), 'default' => 40, 'options' => ['role' => 'space_top'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_bottom', 'type' => 'number', 'label' => __('Bas', 'em-wp'), 'default' => 40, 'options' => ['role' => 'space_bottom'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_left', 'type' => 'number', 'label' => __('Gauche', 'em-wp'), 'default' => 180, 'options' => ['role' => 'space_left'], 'row' => 1, 'col' => 1],
-        ['key' => 'space_right', 'type' => 'number', 'label' => __('Droite', 'em-wp'), 'default' => 180, 'options' => ['role' => 'space_right'], 'row' => 1, 'col' => 1],
-        ['key' => 'font_family', 'type' => 'select', 'label' => __('Police', 'em-wp'), 'default' => 'archivo_black', 'options' => ['role' => 'font'], 'row' => 1, 'col' => 1],
-        ['key' => 'bg_image', 'type' => 'image', 'label' => __('Image de fond', 'em-wp'), 'default' => '', 'options' => ['role' => 'background_image'], 'row' => 1, 'col' => 1],
-        ['key' => 'bg_image_pos', 'type' => 'select', 'label' => __('Position', 'em-wp'), 'default' => 'cover', 'options' => ['role' => 'background_pos'], 'row' => 1, 'col' => 1],
-        ['key' => 'bg_image_opacity', 'type' => 'number', 'label' => __('Opacité', 'em-wp'), 'default' => 100, 'options' => ['role' => 'background_opacity'], 'row' => 1, 'col' => 1],
-        ['key' => 'bg_image_mirror', 'type' => 'toggle', 'label' => __('Miroir', 'em-wp'), 'default' => false, 'options' => ['role' => 'background_mirror'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_color', 'type' => 'color', 'label' => __('Fond', 'em-site'), 'default' => '#0f172a', 'options' => ['role' => 'background'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_transparent', 'type' => 'toggle', 'label' => __('Transparent', 'em-site'), 'default' => false, 'options' => ['role' => 'background_transparent'], 'row' => 1, 'col' => 1],
+        ['key' => 'text_color', 'type' => 'color', 'label' => __('Texte', 'em-site'), 'default' => '#e2e8f0', 'options' => ['role' => 'text'], 'row' => 1, 'col' => 1],
+        ['key' => 'link_color', 'type' => 'color', 'label' => __('Liens', 'em-site'), 'default' => '#38bdf8', 'options' => ['role' => 'link'], 'row' => 1, 'col' => 1],
+        ['key' => 'link_hover_color', 'type' => 'color', 'label' => __('Survol', 'em-site'), 'default' => '#7dd3fc', 'options' => ['role' => 'link_hover'], 'row' => 1, 'col' => 1],
+        ['key' => 'link_underline', 'type' => 'toggle', 'label' => __('Soulignés', 'em-site'), 'default' => false, 'options' => ['role' => 'link_underline'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_top', 'type' => 'number', 'label' => __('Haut', 'em-site'), 'default' => 40, 'options' => ['role' => 'space_top'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_bottom', 'type' => 'number', 'label' => __('Bas', 'em-site'), 'default' => 40, 'options' => ['role' => 'space_bottom'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_left', 'type' => 'number', 'label' => __('Gauche', 'em-site'), 'default' => 180, 'options' => ['role' => 'space_left'], 'row' => 1, 'col' => 1],
+        ['key' => 'space_right', 'type' => 'number', 'label' => __('Droite', 'em-site'), 'default' => 180, 'options' => ['role' => 'space_right'], 'row' => 1, 'col' => 1],
+        ['key' => 'font_family', 'type' => 'select', 'label' => __('Police', 'em-site'), 'default' => 'archivo_black', 'options' => ['role' => 'font'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image', 'type' => 'image', 'label' => __('Image de fond', 'em-site'), 'default' => '', 'options' => ['role' => 'background_image'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image_pos', 'type' => 'select', 'label' => __('Position', 'em-site'), 'default' => 'cover', 'options' => ['role' => 'background_pos'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image_opacity', 'type' => 'number', 'label' => __('Opacité', 'em-site'), 'default' => 100, 'options' => ['role' => 'background_opacity'], 'row' => 1, 'col' => 1],
+        ['key' => 'bg_image_mirror', 'type' => 'toggle', 'label' => __('Miroir', 'em-site'), 'default' => false, 'options' => ['role' => 'background_mirror'], 'row' => 1, 'col' => 1],
     ];
 }
 
@@ -252,7 +252,7 @@ function em_wp_rubrique_default_appearance_fields(): array
  * @param array<string, mixed> $definition
  * @return array<string, mixed>
  */
-function em_wp_rubrique_type_normalize(string $slug, array $definition): array
+function em_site_rubrique_type_normalize(string $slug, array $definition): array
 {
     // Mutualisation forte : on impose TOUJOURS les champs d'apparence COURANTS et
     // on ne conserve du starter déclaré/stocké que les champs de CONTENU. Ainsi un
@@ -261,10 +261,10 @@ function em_wp_rubrique_type_normalize(string $slug, array $definition): array
     $raw_starter = is_array($definition['starter'] ?? null) ? $definition['starter'] : [];
     $content_only = array_values(array_filter(
         $raw_starter,
-        static fn($field): bool => is_array($field) && !em_wp_rubrique_field_is_global($field)
+        static fn($field): bool => is_array($field) && !em_site_rubrique_field_is_global($field)
     ));
-    $starter = em_wp_rubrique_normalize_fields(
-        array_merge(em_wp_rubrique_default_appearance_fields(), $content_only)
+    $starter = em_site_rubrique_normalize_fields(
+        array_merge(em_site_rubrique_default_appearance_fields(), $content_only)
     );
 
     $label = (string) ($definition['label'] ?? mb_strtoupper($slug));
@@ -278,9 +278,9 @@ function em_wp_rubrique_type_normalize(string $slug, array $definition): array
     // (TOP-BAR / TOP-BARS). Sans distinction stockée (label == pluriel, pas de
     // noun), le pluriel fuiterait partout (ex. « Nouvelle Section SLIDERS »).
     if ($noun === '' && $label === $label_plural) {
-        $singular = em_wp_rubrique_singularize($label_plural);
+        $singular = em_site_rubrique_singularize($label_plural);
         $label = $singular;
-        $noun = em_wp_rubrique_title_case($singular);
+        $noun = em_site_rubrique_title_case($singular);
     }
 
     return [
@@ -292,7 +292,7 @@ function em_wp_rubrique_type_normalize(string $slug, array $definition): array
         // (ex. « Section Top-Bar »). Défaut : libellé en Casse de Titre.
         'noun'         => $noun,
         'starter'      => $starter,
-        'layout'       => em_wp_rubrique_normalize_layout($definition['layout'] ?? [], $starter),
+        'layout'       => em_site_rubrique_normalize_layout($definition['layout'] ?? [], $starter),
     ];
 }
 
@@ -304,9 +304,9 @@ function em_wp_rubrique_type_normalize(string $slug, array $definition): array
  *
  * @return array{singular:string, indef:string, def:string, dem:string, none:string, of:string, e:string}
  */
-function em_wp_rubrique_type_nouns(string $type_slug): array
+function em_site_rubrique_type_nouns(string $type_slug): array
 {
-    $type = em_wp_rubrique_type_get($type_slug);
+    $type = em_site_rubrique_type_get($type_slug);
     $name = (string) ($type['noun'] ?? '');
 
     if ($name === '') {
@@ -317,16 +317,16 @@ function em_wp_rubrique_type_nouns(string $type_slug): array
     }
 
     $singular = $name !== ''
-        ? sprintf(__('Section %s', 'em-wp'), $name)
-        : __('Section', 'em-wp');
+        ? sprintf(__('Section %s', 'em-site'), $name)
+        : __('Section', 'em-site');
 
     return [
         'singular' => $singular,
-        'indef'    => __('une', 'em-wp'),
-        'def'      => __('la', 'em-wp'),
-        'dem'      => __('cette', 'em-wp'),
-        'none'     => __('Aucune', 'em-wp'),
-        'of'       => __('de la', 'em-wp'),
+        'indef'    => __('une', 'em-site'),
+        'def'      => __('la', 'em-site'),
+        'dem'      => __('cette', 'em-site'),
+        'none'     => __('Aucune', 'em-site'),
+        'of'       => __('de la', 'em-site'),
         'e'        => 'e',
     ];
 }
@@ -334,11 +334,11 @@ function em_wp_rubrique_type_nouns(string $type_slug): array
 /**
  * Un type existe-t-il ?
  */
-function em_wp_rubrique_type_exists(string $slug): bool
+function em_site_rubrique_type_exists(string $slug): bool
 {
     $slug = sanitize_key($slug);
 
-    return $slug !== '' && isset(em_wp_rubrique_type_registry()[$slug]);
+    return $slug !== '' && isset(em_site_rubrique_type_registry()[$slug]);
 }
 
 /**
@@ -346,11 +346,11 @@ function em_wp_rubrique_type_exists(string $slug): bool
  *
  * @return array<string, mixed>|null
  */
-function em_wp_rubrique_type_get(string $slug): ?array
+function em_site_rubrique_type_get(string $slug): ?array
 {
     $slug = sanitize_key($slug);
 
-    return em_wp_rubrique_type_registry()[$slug] ?? null;
+    return em_site_rubrique_type_registry()[$slug] ?? null;
 }
 
 /**
@@ -358,9 +358,9 @@ function em_wp_rubrique_type_get(string $slug): ?array
  *
  * @return array<int, array<string, mixed>>
  */
-function em_wp_rubrique_type_starter_fields(string $slug): array
+function em_site_rubrique_type_starter_fields(string $slug): array
 {
-    $type = em_wp_rubrique_type_get($slug);
+    $type = em_site_rubrique_type_get($slug);
 
     return is_array($type['starter'] ?? null) ? $type['starter'] : [];
 }
@@ -370,11 +370,11 @@ function em_wp_rubrique_type_starter_fields(string $slug): array
  *
  * @return array{columns:int, align:array<int,string>}
  */
-function em_wp_rubrique_type_starter_layout(string $slug): array
+function em_site_rubrique_type_starter_layout(string $slug): array
 {
-    $type = em_wp_rubrique_type_get($slug);
+    $type = em_site_rubrique_type_get($slug);
 
     return is_array($type['layout'] ?? null)
         ? $type['layout']
-        : em_wp_rubrique_normalize_layout([], []);
+        : em_site_rubrique_normalize_layout([], []);
 }

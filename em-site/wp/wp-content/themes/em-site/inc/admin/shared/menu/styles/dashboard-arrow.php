@@ -1,5 +1,5 @@
-        #adminmenu #menu-dashboard .em-wp-dashboard-menu-arrow,
-        #adminmenu li.em-wp-menu-dashboard-entry .em-wp-dashboard-menu-arrow {
+        #adminmenu #menu-dashboard .em-site-dashboard-menu-arrow,
+        #adminmenu li.em-site-menu-dashboard-entry .em-site-dashboard-menu-arrow {
             display: block !important;
             visibility: visible !important;
             width: 28px;
@@ -14,32 +14,32 @@
             box-shadow:
                 0 0 0 1px rgba(255, 255, 255, 0.22),
                 0 2px 6px rgba(0, 0, 0, 0.12);
-            animation: em-wp-admin-dashboard-arrow-bounce 2.2s ease-in-out infinite;
+            animation: em-site-admin-dashboard-arrow-bounce 2.2s ease-in-out infinite;
             pointer-events: none;
         }
 
         #adminmenu #menu-dashboard,
-        #adminmenu li.em-wp-menu-dashboard-entry {
+        #adminmenu li.em-site-menu-dashboard-entry {
             overflow: visible;
             margin-bottom: 14px;
         }
 
-        #adminmenu li.em-wp-menu-dashboard-entry.wp-has-current-submenu::after,
-        #adminmenu li.em-wp-menu-dashboard-entry.wp-menu-open::after {
+        #adminmenu li.em-site-menu-dashboard-entry.wp-has-current-submenu::after,
+        #adminmenu li.em-site-menu-dashboard-entry.wp-menu-open::after {
             display: none !important;
             content: none !important;
         }
 
-        #adminmenu li.em-wp-menu-dashboard-entry .wp-submenu {
+        #adminmenu li.em-site-menu-dashboard-entry .wp-submenu {
             display: none !important;
         }
 
-        .folded #adminmenu #menu-dashboard .em-wp-dashboard-menu-arrow,
-        .folded #adminmenu li.em-wp-menu-dashboard-entry .em-wp-dashboard-menu-arrow {
+        .folded #adminmenu #menu-dashboard .em-site-dashboard-menu-arrow,
+        .folded #adminmenu li.em-site-menu-dashboard-entry .em-site-dashboard-menu-arrow {
             display: none !important;
         }
 
-        @keyframes em-wp-admin-dashboard-arrow-bounce {
+        @keyframes em-site-admin-dashboard-arrow-bounce {
             0%,
             100% {
                 transform: translateY(0);

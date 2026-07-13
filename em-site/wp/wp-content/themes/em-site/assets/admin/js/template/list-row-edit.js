@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    var table = document.querySelector('.em-wp-templates-admin__table');
+    var table = document.querySelector('.em-site-templates-admin__table');
 
     if (!table) {
         return;
@@ -14,9 +14,9 @@
             return;
         }
 
-        var form = activeNameField.querySelector('.em-wp-templates-admin__rename-form');
-        var display = activeNameField.querySelector('.em-wp-templates-admin__inline-value');
-        var input = form ? form.querySelector('.em-wp-templates-admin__inline-input') : null;
+        var form = activeNameField.querySelector('.em-site-templates-admin__rename-form');
+        var display = activeNameField.querySelector('.em-site-templates-admin__inline-value');
+        var input = form ? form.querySelector('.em-site-templates-admin__inline-input') : null;
 
         if (input && display) {
             input.value = display.textContent.trim();
@@ -41,8 +41,8 @@
     function startNameEdit(field) {
         closeAllEdits();
 
-        var form = field.querySelector('.em-wp-templates-admin__rename-form');
-        var input = form ? form.querySelector('.em-wp-templates-admin__inline-input') : null;
+        var form = field.querySelector('.em-site-templates-admin__rename-form');
+        var input = form ? form.querySelector('.em-site-templates-admin__inline-input') : null;
 
         if (!form || !input) {
             return;
@@ -56,18 +56,18 @@
     }
 
     table.addEventListener('click', function (event) {
-        var editButton = event.target.closest('[data-em-wp-template-inline-edit="name"]');
+        var editButton = event.target.closest('[data-em-site-template-inline-edit="name"]');
 
         if (!editButton || !table.contains(editButton)) {
             return;
         }
 
         event.preventDefault();
-        startNameEdit(editButton.closest('[data-em-wp-template-inline-field="name"]'));
+        startNameEdit(editButton.closest('[data-em-site-template-inline-field="name"]'));
     });
 
     table.addEventListener('click', function (event) {
-        var cancelButton = event.target.closest('[data-em-wp-template-inline-cancel="name"]');
+        var cancelButton = event.target.closest('[data-em-site-template-inline-cancel="name"]');
 
         if (!cancelButton || !table.contains(cancelButton)) {
             return;
@@ -82,7 +82,7 @@
             return;
         }
 
-        var input = activeNameField.querySelector('.em-wp-templates-admin__inline-input');
+        var input = activeNameField.querySelector('.em-site-templates-admin__inline-input');
 
         if (input && (event.target === input || input.contains(event.target))) {
             event.preventDefault();

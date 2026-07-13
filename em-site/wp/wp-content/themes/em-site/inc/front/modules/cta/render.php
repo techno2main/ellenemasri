@@ -2,7 +2,7 @@
 /**
  * Rendu front de la rubrique CTA.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/helpers.php';
 
-function em_wp_render_cta(): void
+function em_site_render_cta(): void
 {
 	$item = em_site_cta_item();
 	if (!is_array($item)) {
@@ -19,7 +19,7 @@ function em_wp_render_cta(): void
 	}
 
 	$item_option_name = em_site_cta_item_option_name(em_site_cta_active_template());
-	$item_slug = str_replace('em_wp_v4_item_cta_', '', $item_option_name);
+	$item_slug = str_replace('em_site_item_cta_', '', $item_option_name);
 	$content = is_array($item['content'] ?? null) ? $item['content'] : [];
 	$footer_html = em_site_front_render_rubrique_footer('cta', $item_slug, '', [], $content);
 	if ($footer_html === '') {

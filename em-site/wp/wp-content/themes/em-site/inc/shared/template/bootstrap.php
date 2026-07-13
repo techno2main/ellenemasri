@@ -2,7 +2,7 @@
 /**
  * Bootstrap couche shared Templates (V2).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

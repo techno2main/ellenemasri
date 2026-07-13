@@ -1,13 +1,13 @@
 (function ($) {
     'use strict';
     var helpers = window.EmWpAdminColorModalHelpers || {};
-    var modal = document.getElementById('em-wp-admin-color-modal');
-    var modalInput = document.getElementById('em-wp-admin-color-modal-input');
-    var modalPreviewSwatch = document.getElementById('em-wp-admin-color-modal-preview-swatch');
-    var modalPreviewText = document.getElementById('em-wp-admin-color-modal-preview-text');
-    var modalLabel = document.getElementById('em-wp-admin-color-modal-label');
-    var modalTitle = document.getElementById('em-wp-admin-color-modal-title');
-    var modalSaveBtn = document.getElementById('em-wp-admin-color-modal-save');
+    var modal = document.getElementById('em-site-admin-color-modal');
+    var modalInput = document.getElementById('em-site-admin-color-modal-input');
+    var modalPreviewSwatch = document.getElementById('em-site-admin-color-modal-preview-swatch');
+    var modalPreviewText = document.getElementById('em-site-admin-color-modal-preview-text');
+    var modalLabel = document.getElementById('em-site-admin-color-modal-label');
+    var modalTitle = document.getElementById('em-site-admin-color-modal-title');
+    var modalSaveBtn = document.getElementById('em-site-admin-color-modal-save');
     var colorPickerReady = false;
     var activeContext = null;
     var activeTriggerButton = null;
@@ -102,7 +102,7 @@
         }
         modal.hidden = true;
         modal.setAttribute('aria-hidden', 'true');
-        document.body.classList.remove('em-wp-admin-color-modal-open');
+        document.body.classList.remove('em-site-admin-color-modal-open');
         activeContext = null;
         setModalPreviewMode(false);
         if (activeTriggerButton && typeof activeTriggerButton.focus === 'function') {
@@ -136,7 +136,7 @@
         }
         modal.hidden = false;
         modal.setAttribute('aria-hidden', 'false');
-        document.body.classList.add('em-wp-admin-color-modal-open');
+        document.body.classList.add('em-site-admin-color-modal-open');
         ensureColorPicker(defaultColor);
         if (window.emWpAdminColorFieldApi && typeof window.emWpAdminColorFieldApi.setValue === 'function') {
             window.emWpAdminColorFieldApi.setValue(modalInput, color);
@@ -180,7 +180,7 @@
         closeModal();
     }
     function initTriggers() {
-        document.querySelectorAll('.em-wp-admin-color-value').forEach(syncTriggerDisplay);
+        document.querySelectorAll('.em-site-admin-color-value').forEach(syncTriggerDisplay);
     }
     window.emWpAdminColorModal = {
         open: openModal,
@@ -189,7 +189,7 @@
         buildContextFromButton: buildContextFromButton,
     };
     document.addEventListener('click', function (event) {
-        var openButton = event.target.closest('[data-em-wp-color-modal-open]');
+        var openButton = event.target.closest('[data-em-site-color-modal-open]');
         if (openButton) {
             event.preventDefault();
             var context = buildContextFromButton(openButton);
@@ -198,7 +198,7 @@
             }
             return;
         }
-        if (event.target.matches('[data-em-wp-color-modal-dismiss]')) {
+        if (event.target.matches('[data-em-site-color-modal-dismiss]')) {
             event.preventDefault();
             closeModal();
         }

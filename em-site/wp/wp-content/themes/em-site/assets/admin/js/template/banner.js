@@ -7,15 +7,15 @@
         var config = window.EmWpTemplateBanner || {};
         var i18n = config.i18n || {};
         var confirmApi = window.EmWpAdminConfirm;
-        var editingSelect = document.getElementById('em-wp-template-editing-select');
-        var saveBtn = document.getElementById('em-wp-template-banner-save');
-        var quitBtn = document.getElementById('em-wp-template-banner-quit');
-        var quitForm = document.getElementById('em-wp-template-banner-quit-form');
+        var editingSelect = document.getElementById('em-site-template-editing-select');
+        var saveBtn = document.getElementById('em-site-template-banner-save');
+        var quitBtn = document.getElementById('em-site-template-banner-quit');
+        var quitForm = document.getElementById('em-site-template-banner-quit-form');
         var formDirty = window.EmWpModuleFormDirty;
 
         // Aperçu : ouverture par script (window.open) pour que l'onglet d'aperçu
         // puisse se refermer lui-même (window.close) via le bouton « Fermer l'aperçu ».
-        var previewLink = document.querySelector('.em-wp-template-banner__preview');
+        var previewLink = document.querySelector('.em-site-template-banner__preview');
         if (previewLink) {
             previewLink.addEventListener('click', function (event) {
                 var url = previewLink.getAttribute('href');
@@ -28,7 +28,7 @@
         }
 
         if (editingSelect) {
-            var editingForm = editingSelect.closest('.em-wp-template-banner__form--editing');
+            var editingForm = editingSelect.closest('.em-site-template-banner__form--editing');
             var previousEditingSlug = editingSelect.value;
 
             if (editingForm) {
@@ -169,10 +169,10 @@
             });
         }
 
-        var activateButton = document.getElementById('em-wp-template-banner-activate-live');
-        var liveForm = document.getElementById('em-wp-hub-set-live-template-form');
-        var slugInput = liveForm ? liveForm.querySelector('[name="em_wp_template_active_slug"]') : null;
-        var bannerRoot = document.querySelector('.em-wp-template-banner');
+        var activateButton = document.getElementById('em-site-template-banner-activate-live');
+        var liveForm = document.getElementById('em-site-hub-set-live-template-form');
+        var slugInput = liveForm ? liveForm.querySelector('[name="em_site_template_active_slug"]') : null;
+        var bannerRoot = document.querySelector('.em-site-template-banner');
 
         if (activateButton && liveForm && slugInput && bannerRoot) {
             activateButton.addEventListener('click', function () {

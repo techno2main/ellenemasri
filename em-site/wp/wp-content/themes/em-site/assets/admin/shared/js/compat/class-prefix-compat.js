@@ -8,14 +8,14 @@
             return;
         }
 
-        var nodes = root.querySelectorAll('[class*="em-wp-"]');
+        var nodes = root.querySelectorAll('[class*="em-site-"]');
         nodes.forEach(function (node) {
             node.classList.forEach(function (className) {
-                if (className.indexOf('em-wp-') !== 0) {
+                if (className.indexOf('em-site-') !== 0) {
                     return;
                 }
 
-                var alias = 'em-' + className.substring('em-wp-'.length);
+                var alias = 'em-' + className.substring('em-site-'.length);
                 if (!node.classList.contains(alias)) {
                     node.classList.add(alias);
                 }
@@ -42,7 +42,7 @@
                         return;
                     }
 
-                    if (addedNode.matches('[class*="em-wp-"]')) {
+                    if (addedNode.matches('[class*="em-site-"]')) {
                         applyClassPrefixCompat(addedNode.parentNode || document);
                         return;
                     }

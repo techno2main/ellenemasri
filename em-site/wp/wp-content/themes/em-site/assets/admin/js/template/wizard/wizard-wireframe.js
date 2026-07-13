@@ -109,7 +109,7 @@
 
     function getTemplateAccentColor() {
         var draft = State.getDraft();
-        var colorInput = document.getElementById('em-wp-template-new-color');
+        var colorInput = document.getElementById('em-site-template-new-color');
         var color = draft && draft.color ? draft.color : '';
 
         if (!color && colorInput) {
@@ -125,7 +125,7 @@
 
     function renderPicker(pickerListEl, pickerEmptyEl, addWrap, order, defs) {
         var available = getAvailableRubriques(order, defs);
-        var pickerRow = addWrap ? addWrap.querySelector('.em-wp-template-wizard-skeleton__picker-row') : null;
+        var pickerRow = addWrap ? addWrap.querySelector('.em-site-template-wizard-skeleton__picker-row') : null;
         var accentColor = getTemplateAccentColor();
 
         if (!pickerListEl) {
@@ -139,7 +139,7 @@
         }
 
         pickerListEl.hidden = available.length === 0;
-        pickerListEl.style.setProperty('--em-wp-skeleton-accent', accentColor);
+        pickerListEl.style.setProperty('--em-site-skeleton-accent', accentColor);
 
         if (pickerRow) {
             pickerRow.hidden = available.length === 0;
@@ -151,11 +151,11 @@
 
         available.forEach(function (item) {
             var li = document.createElement('li');
-            li.className = 'em-wp-template-wizard-skeleton__picker-item';
+            li.className = 'em-site-template-wizard-skeleton__picker-item';
 
             var btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'em-wp-template-wizard-skeleton__picker-add';
+            btn.className = 'em-site-template-wizard-skeleton__picker-add';
             btn.value = item.slug;
             btn.setAttribute('data-rubrique-slug', item.slug);
             btn.setAttribute('draggable', 'false');
@@ -165,11 +165,11 @@
             );
 
             var icon = document.createElement('span');
-            icon.className = 'em-wp-template-wizard-skeleton__picker-add-icon';
+            icon.className = 'em-site-template-wizard-skeleton__picker-add-icon';
             icon.setAttribute('aria-hidden', 'true');
 
             var text = document.createElement('span');
-            text.className = 'em-wp-template-wizard-skeleton__picker-label';
+            text.className = 'em-site-template-wizard-skeleton__picker-label';
             text.textContent = item.label;
 
             btn.appendChild(icon);
@@ -200,11 +200,11 @@
         },
 
         getMapBody: function () {
-            return this.host ? this.host.querySelector('#em-wp-template-wizard-map-body') : null;
+            return this.host ? this.host.querySelector('#em-site-template-wizard-map-body') : null;
         },
 
         getMapRoot: function () {
-            return this.host ? this.host.querySelector('.em-wp-admin-landing-map--wizard-edit') : null;
+            return this.host ? this.host.querySelector('.em-site-admin-landing-map--wizard-edit') : null;
         },
 
         hasMapContent: function () {
@@ -220,7 +220,7 @@
             }
 
             Array.prototype.forEach.call(mapBody.children, function (child) {
-                if (child.classList.contains('em-wp-admin-landing-map__header-group')) {
+                if (child.classList.contains('em-site-admin-landing-map__header-group')) {
                     order.push('header');
                     return;
                 }
@@ -290,7 +290,7 @@
             }
 
             if (slug === 'header') {
-                return mapBody.querySelector('.em-wp-admin-landing-map__header-group');
+                return mapBody.querySelector('.em-site-admin-landing-map__header-group');
             }
 
             return mapBody.querySelector(':scope > [data-module-slug="' + slug + '"]')
@@ -302,13 +302,13 @@
             var def = defs[slug];
             var i18n = State.config.i18n || {};
 
-            if (!zone || !canRemove(slug, def) || zone.querySelector('.em-wp-template-wizard-wireframe__remove')) {
+            if (!zone || !canRemove(slug, def) || zone.querySelector('.em-site-template-wizard-wireframe__remove')) {
                 return;
             }
 
             var btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'em-wp-template-wizard-wireframe__remove';
+            btn.className = 'em-site-template-wizard-wireframe__remove';
             btn.setAttribute(
                 'aria-label',
                 (i18n.removeRubriqueLabel || 'Retirer %s').replace('%s', def ? def.label : slug)
@@ -328,7 +328,7 @@
             map.querySelectorAll('[data-module-slug]').forEach(function (zone) {
                 var slug = zone.getAttribute('data-module-slug') || '';
 
-                if (zone.classList.contains('em-wp-admin-landing-map__header-group') && slug !== 'header') {
+                if (zone.classList.contains('em-site-admin-landing-map__header-group') && slug !== 'header') {
                     return;
                 }
 
@@ -406,7 +406,7 @@
             payload.wireframeEditable = true;
 
             var body = new FormData();
-            body.append('action', 'em_wp_template_wizard_wireframe');
+            body.append('action', 'em_site_template_wizard_wireframe');
             body.append('nonce', cfg.wireframeNonce || '');
             body.append('payload', JSON.stringify(payload));
 
@@ -434,7 +434,7 @@
                 var temp = document.createElement('div');
                 temp.innerHTML = html;
 
-                var sourceBody = temp.querySelector('#em-wp-template-wizard-map-body');
+                var sourceBody = temp.querySelector('#em-site-template-wizard-map-body');
 
                 if (!sourceBody) {
                     self.mountHtml(html);
@@ -444,7 +444,7 @@
                 var sourceZone = null;
 
                 if (slug === 'header') {
-                    sourceZone = sourceBody.querySelector('.em-wp-admin-landing-map__header-group');
+                    sourceZone = sourceBody.querySelector('.em-site-admin-landing-map__header-group');
                 } else {
                     sourceZone = sourceBody.querySelector(':scope > [data-module-slug="' + slug + '"]');
                 }
@@ -477,12 +477,12 @@
             }
 
             var self = this;
-            var mapRoot = mapBody.closest('.em-wp-admin-landing-map');
+            var mapRoot = mapBody.closest('.em-site-admin-landing-map');
             var footerZone = mapRoot ? mapRoot.querySelector('[data-module-slug="footer"]') : null;
 
             this.sortable = new window.EmWpSlideSortable(mapBody, {
-                handle: '.em-wp-rubriques-sortable__handle',
-                item: '.em-wp-admin-landing-map__header-group.is-sortable, .em-wp-admin-landing-map__zone.is-sortable',
+                handle: '.em-site-rubriques-sortable__handle',
+                item: '.em-site-admin-landing-map__header-group.is-sortable, .em-site-admin-landing-map__zone.is-sortable',
                 onEnd: function () {
                     self.applyOrderFromMap();
                     self.renderPicker();
@@ -562,7 +562,7 @@
 
         getInsertBeforeSlugFromPlaceholder: function () {
             var mapBody = this.getMapBody();
-            var placeholder = mapBody ? mapBody.querySelector('.em-wp-slide-sortable__placeholder') : null;
+            var placeholder = mapBody ? mapBody.querySelector('.em-site-slide-sortable__placeholder') : null;
 
             if (!mapBody || !placeholder) {
                 return null;
@@ -571,7 +571,7 @@
             var next = placeholder.nextElementSibling;
 
             while (next) {
-                if (next.classList.contains('em-wp-admin-landing-map__header-group')) {
+                if (next.classList.contains('em-site-admin-landing-map__header-group')) {
                     return 'header';
                 }
 
@@ -610,14 +610,14 @@
 
             if (!drag.placeholder) {
                 drag.placeholder = document.createElement('div');
-                drag.placeholder.className = 'em-wp-slide-sortable__placeholder em-wp-template-wizard-picker-drop__placeholder';
+                drag.placeholder.className = 'em-site-slide-sortable__placeholder em-site-template-wizard-picker-drop__placeholder';
                 drag.placeholder.style.height = '40px';
             }
 
             var items = Array.from(mapBody.children).filter(function (node) {
                 return node !== drag.placeholder
-                    && (node.classList.contains('em-wp-admin-landing-map__header-group')
-                        || node.matches('.em-wp-admin-landing-map__zone.is-sortable'));
+                    && (node.classList.contains('em-site-admin-landing-map__header-group')
+                        || node.matches('.em-site-admin-landing-map__zone.is-sortable'));
             });
 
             var target = null;
@@ -678,7 +678,7 @@
             drag.pointerId = null;
             drag.moved = false;
 
-            document.body.classList.remove('em-wp-template-wizard-picker-drag-active');
+            document.body.classList.remove('em-site-template-wizard-picker-drag-active');
             window.removeEventListener('pointermove', this.onPickerDragMove);
             window.removeEventListener('pointerup', this.onPickerDragEnd);
             window.removeEventListener('pointercancel', this.onPickerDragEnd);
@@ -703,11 +703,11 @@
                 }
 
                 drag.ghost = document.createElement('div');
-                drag.ghost.className = 'em-wp-template-wizard-picker-drag-ghost';
+                drag.ghost.className = 'em-site-template-wizard-picker-drag-ghost';
                 drag.ghost.textContent = drag.label || drag.slug;
                 document.body.appendChild(drag.ghost);
 
-                document.body.classList.add('em-wp-template-wizard-picker-drag-active');
+                document.body.classList.add('em-site-template-wizard-picker-drag-active');
             }
 
             if (!drag.moved) {
@@ -792,7 +792,7 @@
             var self = this;
 
             this.pickerListEl.addEventListener('pointerdown', function (event) {
-                var btn = event.target.closest('.em-wp-template-wizard-skeleton__picker-add');
+                var btn = event.target.closest('.em-site-template-wizard-skeleton__picker-add');
 
                 if (!btn || !self.hasMapContent()) {
                     return;
@@ -808,7 +808,7 @@
                     return;
                 }
 
-                var labelEl = btn.querySelector('.em-wp-template-wizard-skeleton__picker-label');
+                var labelEl = btn.querySelector('.em-site-template-wizard-skeleton__picker-label');
                 var drag = self.pickerDrag;
 
                 drag.active = true;
@@ -849,7 +849,7 @@
         },
 
         bind: function (root) {
-            this.host = root.querySelector('#em-wp-template-wizard-wireframe-host');
+            this.host = root.querySelector('#em-site-template-wizard-wireframe-host');
             this.pickerListEl = root.querySelector('[data-wizard-plan-picker-list]');
             this.pickerEmptyEl = root.querySelector('[data-wizard-plan-picker-empty]');
             this.addWrap = root.querySelector('[data-wizard-plan-add]');
@@ -868,7 +868,7 @@
                         return;
                     }
 
-                    var btn = event.target.closest('.em-wp-template-wizard-skeleton__picker-add');
+                    var btn = event.target.closest('.em-site-template-wizard-skeleton__picker-add');
 
                     if (!btn) {
                         return;
@@ -888,7 +888,7 @@
 
             if (this.host) {
                 this.host.addEventListener('click', function (event) {
-                    var removeBtn = event.target.closest('.em-wp-template-wizard-wireframe__remove');
+                    var removeBtn = event.target.closest('.em-site-template-wizard-wireframe__remove');
 
                     if (!removeBtn) {
                         return;
@@ -921,7 +921,7 @@
             this.rendering = true;
 
             if (isInitial) {
-                this.host.innerHTML = '<p class="em-wp-template-wizard__loading">' + '…' + '</p>';
+                this.host.innerHTML = '<p class="em-site-template-wizard__loading">' + '…' + '</p>';
             }
 
             return this.fetchHtml()

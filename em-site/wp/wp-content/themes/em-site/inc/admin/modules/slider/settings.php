@@ -5,7 +5,7 @@
  * Ce fichier reste volontairement court et charge les sous-composants
  * afin de respecter la limite de taille par fichier.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

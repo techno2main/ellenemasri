@@ -1,13 +1,13 @@
 <?php
 /**
- * Rendu HTML des cartes plateformes / réseaux (V4).
+ * Rendu HTML des cartes plateformes / réseaux (EM-SITE).
  *
  * Extrait de platforms.php (helpers de décodage/sanitisation) pour rester sous
  * 300 lignes. Le rendu reprend exactement les sections Stream / Social du site,
  * et la carte plateforme s'intègre au système d'ouverture des players du site
  * réel (cf. renderer/platform-players.php + stream.js).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -23,7 +23,7 @@ if (!defined('ABSPATH')) {
  *
  * @param array{platform:string, url:string, label:string} $block
  */
-function em_wp_rubrique_platform_card_html(array $block): string
+function em_site_rubrique_platform_card_html(array $block): string
 {
     $platform = (string) ($block['platform'] ?? '');
     $url = (string) ($block['url'] ?? '');
@@ -33,9 +33,9 @@ function em_wp_rubrique_platform_card_html(array $block): string
         return '';
     }
 
-    $name = em_wp_rubrique_platform_label($platform);
-    $icon = em_wp_rubrique_platform_icon($platform);
-    $color = em_wp_rubrique_platform_color($platform);
+    $name = em_site_rubrique_platform_label($platform);
+    $icon = em_site_rubrique_platform_icon($platform);
+    $color = em_site_rubrique_platform_color($platform);
 
     $icon_html = $icon !== ''
         ? '<span class="em-rubrique__platform-card-icon"' . ($color !== '' ? ' style="color:' . esc_attr($color) . '"' : '') . '><i class="fa-brands ' . esc_attr($icon) . '" aria-hidden="true"></i></span>'
@@ -50,14 +50,14 @@ function em_wp_rubrique_platform_card_html(array $block): string
 
     // Système d'ouverture du site réel : si la plateforme STREAM expose un embed,
     // la carte ouvre un player inline (#player-*-{slug}) au lieu d'un lien externe.
-    // Le player est enregistré pour être rendu en bas de la section (cf. V4 render).
-    $player = function_exists('em_wp_v4_platform_player')
-        ? em_wp_v4_platform_player($platform, $url)
+    // Le player est enregistré pour être rendu en bas de la section (cf. EM-SITE render).
+    $player = function_exists('em_site_platform_player')
+        ? em_site_platform_player($platform, $url)
         : ['has_player' => false, 'slug' => ''];
 
     if (!empty($player['has_player'])) {
-        if (function_exists('em_wp_v4_players_add')) {
-            em_wp_v4_players_add($player);
+        if (function_exists('em_site_players_add')) {
+            em_site_players_add($player);
         }
 
         return '<a class="em-rubrique__platform-card platform-card" href="' . esc_url($url) . '"'
@@ -76,7 +76,7 @@ function em_wp_rubrique_platform_card_html(array $block): string
  *
  * @return array{bg:string, shadow:string}
  */
-function em_wp_rubrique_network_brand(string $slug): array
+function em_site_rubrique_network_brand(string $slug): array
 {
     switch ($slug) {
         case 'tiktok':
@@ -96,7 +96,7 @@ function em_wp_rubrique_network_brand(string $slug): array
  *
  * @param array{platform:string, url:string, label:string} $block
  */
-function em_wp_rubrique_network_card_html(array $block): string
+function em_site_rubrique_network_card_html(array $block): string
 {
     $platform = (string) ($block['platform'] ?? '');
     $url = (string) ($block['url'] ?? '');
@@ -107,15 +107,15 @@ function em_wp_rubrique_network_card_html(array $block): string
     }
 
     $slug = strpos($platform, ':') !== false ? substr($platform, (int) strpos($platform, ':') + 1) : $platform;
-    $name = em_wp_rubrique_platform_label($platform);
-    $icon = em_wp_rubrique_platform_icon($platform);
-    $brand = em_wp_rubrique_network_brand($slug);
+    $name = em_site_rubrique_platform_label($platform);
+    $icon = em_site_rubrique_platform_icon($platform);
+    $brand = em_site_rubrique_network_brand($slug);
 
     // @pseudo : saisi dans le builder ; à défaut, repli sur le compte par défaut
     // défini pour la plateforme (parité avec le site).
     $account = (string) ($block['account'] ?? '');
-    if ($account === '' && function_exists('em_wp_social_platform_definitions')) {
-        $defs = em_wp_social_platform_definitions();
+    if ($account === '' && function_exists('em_site_social_platform_definitions')) {
+        $defs = em_site_social_platform_definitions();
         $account = isset($defs[$slug]) ? (string) ($defs[$slug]['default_account'] ?? '') : '';
     }
 

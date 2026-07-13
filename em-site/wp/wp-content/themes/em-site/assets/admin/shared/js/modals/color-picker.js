@@ -4,7 +4,7 @@
             return;
         }
 
-        $('.em-wp-admin-color-field').not('.em-wp-admin-color-value').each(function () {
+        $('.em-site-admin-color-field').not('.em-site-admin-color-value').each(function () {
             const input = $(this);
 
             if (input.data('emWpColorPickerReady')) {

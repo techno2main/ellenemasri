@@ -10,7 +10,7 @@
  *   render-list-item.php      → une ligne rubrique (liste + tri + visibilité)
  *   render-page.php           → page sommaire complète (liste + plan)
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

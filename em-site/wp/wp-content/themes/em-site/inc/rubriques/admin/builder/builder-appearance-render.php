@@ -1,12 +1,12 @@
 <?php
 /**
- * Bandeau « Apparence » du builder (V4) : réglages globaux du bloc.
+ * Bandeau « Apparence » du builder (EM-SITE) : réglages globaux du bloc.
  *
  * Réglages globaux = ne se positionnent pas en lignes/colonnes : couleur de fond,
  * couleur du texte, couleur des liens, soulignement des liens. Plus une pastille
  * « Aperçu » mise à jour en temps réel par le script du builder.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  * @param array<int, array<string, mixed>> $fields
  * @return array<int, array<string, mixed>>
  */
-function em_wp_v4_sort_global_fields(array $fields): array
+function em_site_sort_global_fields(array $fields): array
 {
     $order = ['background' => 0, 'background_transparent' => 0.5, 'text' => 1, 'link' => 2, 'link_hover' => 3, 'link_visited' => 4, 'link_underline' => 5, 'space_top' => 6, 'space_bottom' => 7, 'space_left' => 8, 'space_right' => 9, 'font' => 10, 'background_image' => 11, 'background_pos' => 12, 'background_opacity' => 13, 'background_mirror' => 14];
 
@@ -34,14 +34,14 @@ function em_wp_v4_sort_global_fields(array $fields): array
 }
 
 /**
- * Bandeau Apparence sur deux lignes : couleurs/liens, puis espacements.
+ * Bandeau Apparence sur 4 lignes : Couleurs, Espacements, Typos, Image de fond.
  *
  * @param array<int, array<string, mixed>> $global_fields
  * @param array<string, mixed>             $content
  */
-function em_wp_v4_render_appearance_lines(string $type, string $item, array $global_fields, string $form_id, array $content): void
+function em_site_render_appearance_lines(string $type, string $item, array $global_fields, string $form_id, array $content): void
 {
-    $sorted = em_wp_v4_sort_global_fields($global_fields);
+    $sorted = em_site_sort_global_fields($global_fields);
     $role_of = static fn(array $f): string => (string) ($f['options']['role'] ?? '');
     $space_roles = ['space_top', 'space_bottom', 'space_left', 'space_right'];
     $colors = array_filter($sorted, static fn(array $f): bool => (string) $f['type'] === 'color' || ((string) $f['type'] === 'toggle' && in_array($role_of($f), ['link_underline', 'background_transparent'], true)));
@@ -52,40 +52,40 @@ function em_wp_v4_render_appearance_lines(string $type, string $item, array $glo
     $bg_opacities = array_filter($sorted, static fn(array $f): bool => (string) $f['type'] === 'number' && $role_of($f) === 'background_opacity');
     $bg_mirrors = array_filter($sorted, static fn(array $f): bool => (string) $f['type'] === 'toggle' && $role_of($f) === 'background_mirror');
     ?>
-    <div class="em-v4-appearance__line">
-        <span class="em-v4-appearance__title"><?php esc_html_e('Couleurs', 'em-wp'); ?></span>
+    <div class="em-site-appearance__line em-site-appearance__line--colors">
+        <span class="em-site-appearance__title"><?php esc_html_e('Couleurs', 'em-site'); ?></span>
         <?php foreach ($colors as $field) : ?>
-            <?php em_wp_v4_render_appearance_field($type, $item, $field, $form_id, $content); ?>
+            <?php em_site_render_appearance_field($type, $item, $field, $form_id, $content); ?>
         <?php endforeach; ?>
     </div>
-    <?php if ($spaces !== [] || $fonts !== []) : ?>
-        <div class="em-v4-appearance__line">
-            <?php if ($spaces !== []) : ?>
-                <span class="em-v4-appearance__title"><?php esc_html_e('Espacements', 'em-wp'); ?></span>
-                <?php em_wp_v4_render_spacing_pairs($type, $item, $spaces, $form_id, $content); ?>
-            <?php endif; ?>
-            <?php if ($fonts !== []) : ?>
-                <span class="em-v4-appearance__title"><?php esc_html_e('Typos', 'em-wp'); ?></span>
-                <?php foreach ($fonts as $field) : ?>
-                    <?php em_wp_v4_render_appearance_field($type, $item, $field, $form_id, $content); ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+    <?php if ($spaces !== []) : ?>
+        <div class="em-site-appearance__line em-site-appearance__line--spaces">
+            <span class="em-site-appearance__title"><?php esc_html_e('Espacements', 'em-site'); ?></span>
+            <?php em_site_render_spacing_pairs($type, $item, $spaces, $form_id, $content); ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($fonts !== []) : ?>
+        <div class="em-site-appearance__line em-site-appearance__line--fonts">
+            <span class="em-site-appearance__title"><?php esc_html_e('Typos', 'em-site'); ?></span>
+            <?php foreach ($fonts as $field) : ?>
+                <?php em_site_render_appearance_field($type, $item, $field, $form_id, $content); ?>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
     <?php if ($bg_images !== [] || $bg_positions !== []) : ?>
-        <div class="em-v4-appearance__line em-v4-appearance__line--bgimage">
-            <span class="em-v4-appearance__title"><?php esc_html_e('Image de fond', 'em-wp'); ?></span>
+        <div class="em-site-appearance__line em-site-appearance__line--bgimage">
+            <span class="em-site-appearance__title"><?php esc_html_e('Image de fond', 'em-site'); ?></span>
             <?php foreach ($bg_images as $field) : ?>
-                <?php em_wp_v4_render_appearance_bg_image($field, $content); ?>
+                <?php em_site_render_appearance_bg_image($field, $content); ?>
             <?php endforeach; ?>
             <?php foreach ($bg_positions as $field) : ?>
-                <?php em_wp_v4_render_appearance_select($field, $content); ?>
+                <?php em_site_render_appearance_select($field, $content); ?>
             <?php endforeach; ?>
             <?php foreach ($bg_opacities as $field) : ?>
-                <?php em_wp_v4_render_appearance_bg_opacity($field, $content); ?>
+                <?php em_site_render_appearance_bg_opacity($field, $content); ?>
             <?php endforeach; ?>
             <?php foreach ($bg_mirrors as $field) : ?>
-                <?php em_wp_v4_render_appearance_toggle($field, $content); ?>
+                <?php em_site_render_appearance_toggle($field, $content); ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
@@ -99,7 +99,7 @@ function em_wp_v4_render_appearance_lines(string $type, string $item, array $glo
  * @param array<int, array<string, mixed>> $spaces
  * @param array<string, mixed>             $content
  */
-function em_wp_v4_render_spacing_pairs(string $type, string $item, array $spaces, string $form_id, array $content): void
+function em_site_render_spacing_pairs(string $type, string $item, array $spaces, string $form_id, array $content): void
 {
     $by_role = [];
     foreach ($spaces as $f) {
@@ -107,8 +107,8 @@ function em_wp_v4_render_spacing_pairs(string $type, string $item, array $spaces
     }
 
     $pairs = [
-        'vertical'   => ['space_top', 'space_bottom', __('Lier haut et bas', 'em-wp')],
-        'horizontal' => ['space_left', 'space_right', __('Lier gauche et droite', 'em-wp')],
+        'vertical'   => ['space_top', 'space_bottom', __('Lier haut et bas', 'em-site')],
+        'horizontal' => ['space_left', 'space_right', __('Lier gauche et droite', 'em-site')],
     ];
 
     foreach ($pairs as $axis => $pair) {
@@ -117,19 +117,19 @@ function em_wp_v4_render_spacing_pairs(string $type, string $item, array $spaces
             continue;
         }
         ?>
-        <span class="em-v4-appearance__group" data-axis="<?php echo esc_attr($axis); ?>">
-            <?php em_wp_v4_render_appearance_field($type, $item, $by_role[$a], $form_id, $content); ?>
-            <button type="button" class="em-v4-appearance__chain" aria-pressed="false" title="<?php echo esc_attr($tip); ?>" aria-label="<?php echo esc_attr($tip); ?>">
+        <span class="em-site-appearance__group" data-axis="<?php echo esc_attr($axis); ?>">
+            <?php em_site_render_appearance_field($type, $item, $by_role[$a], $form_id, $content); ?>
+            <button type="button" class="em-site-appearance__chain" aria-pressed="false" title="<?php echo esc_attr($tip); ?>" aria-label="<?php echo esc_attr($tip); ?>">
                 <span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span>
             </button>
-            <?php em_wp_v4_render_appearance_field($type, $item, $by_role[$b], $form_id, $content); ?>
+            <?php em_site_render_appearance_field($type, $item, $by_role[$b], $form_id, $content); ?>
         </span>
         <?php
         unset($by_role[$a], $by_role[$b]);
     }
 
     foreach ($by_role as $field) {
-        em_wp_v4_render_appearance_field($type, $item, $field, $form_id, $content);
+        em_site_render_appearance_field($type, $item, $field, $form_id, $content);
     }
 }
 
@@ -139,20 +139,20 @@ function em_wp_v4_render_spacing_pairs(string $type, string $item, array $spaces
  * @param array<string, mixed> $field
  * @param array<string, mixed> $content
  */
-function em_wp_v4_render_appearance_field(string $type, string $item, array $field, string $form_id, array $content): void
+function em_site_render_appearance_field(string $type, string $item, array $field, string $form_id, array $content): void
 {
     if ((string) $field['type'] === 'toggle') {
-        em_wp_v4_render_appearance_toggle($field, $content);
+        em_site_render_appearance_toggle($field, $content);
         return;
     }
 
     if ((string) $field['type'] === 'number') {
-        em_wp_v4_render_appearance_number($field, $content);
+        em_site_render_appearance_number($field, $content);
         return;
     }
 
     if ((string) $field['type'] === 'select') {
-        em_wp_v4_render_appearance_select($field, $content);
+        em_site_render_appearance_select($field, $content);
         return;
     }
 
@@ -160,7 +160,7 @@ function em_wp_v4_render_appearance_field(string $type, string $item, array $fie
     $role = (string) ($field['options']['role'] ?? 'content');
     $value = (string) ($content[$key] ?? $field['default'] ?? '');
     $args = [
-        'id'            => 'emv4c-' . sanitize_html_class($type . '-' . $item . '-' . $key),
+        'id'            => 'em-site-c-' . sanitize_html_class($type . '-' . $item . '-' . $key),
         'name'          => 'fields[' . $key . ']',
         'value'         => $value,
         'default'       => (string) ($field['default'] ?? ''),
@@ -169,12 +169,12 @@ function em_wp_v4_render_appearance_field(string $type, string $item, array $fie
     ];
     // La pastille « Texte » s'affiche sur le fond choisi (couleur de fond du bloc).
     if ($role === 'text') {
-        $args['bg_target_id'] = 'emv4c-' . sanitize_html_class($type . '-' . $item . '-bg_color');
+        $args['bg_target_id'] = 'em-site-c-' . sanitize_html_class($type . '-' . $item . '-bg_color');
     }
     ?>
-    <div class="em-v4-appearance__item" data-role="<?php echo esc_attr($role); ?>">
-        <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
-        <?php em_wp_admin_render_color_field($args); ?>
+    <div class="em-site-appearance__item" data-role="<?php echo esc_attr($role); ?>">
+        <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
+        <?php em_site_admin_render_color_field($args); ?>
     </div>
     <?php
 }
@@ -185,17 +185,17 @@ function em_wp_v4_render_appearance_field(string $type, string $item, array $fie
  * @param array<string, mixed> $field
  * @param array<string, mixed> $content
  */
-function em_wp_v4_render_appearance_toggle(array $field, array $content): void
+function em_site_render_appearance_toggle(array $field, array $content): void
 {
     $key = (string) $field['key'];
     $role = (string) ($field['options']['role'] ?? 'content');
     $checked = !empty($content[$key] ?? $field['default'] ?? false);
     ?>
-    <div class="em-v4-appearance__item" data-role="<?php echo esc_attr($role); ?>">
-        <label class="em-v4-appearance__toggle">
+    <div class="em-site-appearance__item" data-role="<?php echo esc_attr($role); ?>">
+        <label class="em-site-appearance__toggle">
             <input type="hidden" name="fields[<?php echo esc_attr($key); ?>]" value="0">
-            <input type="checkbox" class="em-v4-appearance__toggle-input" name="fields[<?php echo esc_attr($key); ?>]" value="1" <?php checked($checked); ?>>
-            <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
+            <input type="checkbox" class="em-site-appearance__toggle-input" name="fields[<?php echo esc_attr($key); ?>]" value="1" <?php checked($checked); ?>>
+            <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
         </label>
     </div>
     <?php
@@ -207,16 +207,16 @@ function em_wp_v4_render_appearance_toggle(array $field, array $content): void
  * @param array<string, mixed> $field
  * @param array<string, mixed> $content
  */
-function em_wp_v4_render_appearance_number(array $field, array $content): void
+function em_site_render_appearance_number(array $field, array $content): void
 {
     $key = (string) $field['key'];
     $role = (string) ($field['options']['role'] ?? 'content');
     $value = (int) ($content[$key] ?? $field['default'] ?? 0);
     ?>
-    <div class="em-v4-appearance__item" data-role="<?php echo esc_attr($role); ?>">
-        <label class="em-v4-appearance__num">
-            <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
-            <input type="number" class="em-v4-appearance__num-input" name="fields[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr((string) $value); ?>" min="0" max="200" step="2">
+    <div class="em-site-appearance__item" data-role="<?php echo esc_attr($role); ?>">
+        <label class="em-site-appearance__num">
+            <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
+            <input type="number" class="em-site-appearance__num-input" name="fields[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr((string) $value); ?>" min="0" max="200" step="2">
         </label>
     </div>
     <?php
@@ -228,19 +228,19 @@ function em_wp_v4_render_appearance_number(array $field, array $content): void
  * @param array<string, mixed> $field
  * @param array<string, mixed> $content
  */
-function em_wp_v4_render_appearance_select(array $field, array $content): void
+function em_site_render_appearance_select(array $field, array $content): void
 {
     $key = (string) $field['key'];
     $role = (string) ($field['options']['role'] ?? 'content');
     $value = (string) ($content[$key] ?? $field['default'] ?? '');
 
     if ($role === 'background_pos') {
-        $choices = em_wp_rubrique_bg_position_choices();
+        $choices = em_site_rubrique_bg_position_choices();
         ?>
-        <div class="em-v4-appearance__item" data-role="<?php echo esc_attr($role); ?>">
-            <label class="em-v4-appearance__font">
-                <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
-                <select class="em-v4-appearance__bgpos-input" name="fields[<?php echo esc_attr($key); ?>]">
+        <div class="em-site-appearance__item" data-role="<?php echo esc_attr($role); ?>">
+            <label class="em-site-appearance__font">
+                <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
+                <select class="em-site-appearance__bgpos-input" name="fields[<?php echo esc_attr($key); ?>]">
                     <?php foreach ($choices as $ckey => $clabel) : ?>
                         <option value="<?php echo esc_attr($ckey); ?>" <?php selected($value, $ckey); ?>><?php echo esc_html($clabel); ?></option>
                     <?php endforeach; ?>
@@ -251,12 +251,12 @@ function em_wp_v4_render_appearance_select(array $field, array $content): void
         return;
     }
 
-    $choices = $role === 'font' ? em_wp_rubrique_font_choices() : [];
+    $choices = $role === 'font' ? em_site_rubrique_font_choices() : [];
     ?>
-    <div class="em-v4-appearance__item" data-role="<?php echo esc_attr($role); ?>">
-        <label class="em-v4-appearance__font">
-            <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
-            <select class="em-v4-appearance__font-input" name="fields[<?php echo esc_attr($key); ?>]">
+    <div class="em-site-appearance__item" data-role="<?php echo esc_attr($role); ?>">
+        <label class="em-site-appearance__font">
+            <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
+            <select class="em-site-appearance__font-input" name="fields[<?php echo esc_attr($key); ?>]">
                 <?php foreach ($choices as $ckey => $choice) : ?>
                     <option value="<?php echo esc_attr($ckey); ?>" data-stack="<?php echo esc_attr($choice['stack']); ?>" style="font-family:<?php echo esc_attr($choice['stack']); ?>" <?php selected($value, $ckey); ?>><?php echo esc_html($choice['label']); ?></option>
                 <?php endforeach; ?>
@@ -274,21 +274,21 @@ function em_wp_v4_render_appearance_select(array $field, array $content): void
  * @param array<string, mixed> $field
  * @param array<string, mixed> $content
  */
-function em_wp_v4_render_appearance_bg_image(array $field, array $content): void
+function em_site_render_appearance_bg_image(array $field, array $content): void
 {
     $key = (string) $field['key'];
-    $value = em_wp_rubrique_image_value($content[$key] ?? $field['default'] ?? '');
+    $value = em_site_rubrique_image_value($content[$key] ?? $field['default'] ?? '');
     $id = (int) $value['id'];
     $thumb = $id > 0 ? (string) wp_get_attachment_image_url($id, 'medium') : '';
     $full = $id > 0 ? (string) wp_get_attachment_image_url($id, 'full') : '';
     ?>
-    <div class="em-v4-appearance__item em-v4-appearance__bgimg" data-role="background_image">
-        <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
-        <span class="em-v4-appearance__bgmedia" data-url="<?php echo esc_url($full); ?>">
-            <img class="em-v4-appearance__bgthumb" src="<?php echo esc_url($thumb); ?>" alt=""<?php echo $thumb === '' ? ' hidden' : ''; ?>>
-            <button type="button" class="button button-small em-v4-appearance__bgpick"><?php esc_html_e('Choisir', 'em-wp'); ?></button>
-            <button type="button" class="em-v4-appearance__bgclear" title="<?php esc_attr_e('Retirer l’image', 'em-wp'); ?>" aria-label="<?php esc_attr_e('Retirer l’image', 'em-wp'); ?>"<?php echo $id > 0 ? '' : ' hidden'; ?>>&times;</button>
-            <input type="hidden" class="em-v4-appearance__bgid" name="fields[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr($id > 0 ? (string) $id : ''); ?>">
+    <div class="em-site-appearance__item em-site-appearance__bgimg" data-role="background_image">
+        <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
+        <span class="em-site-appearance__bgmedia" data-url="<?php echo esc_url($full); ?>">
+            <img class="em-site-appearance__bgthumb" src="<?php echo esc_url($thumb); ?>" alt=""<?php echo $thumb === '' ? ' hidden' : ''; ?>>
+            <button type="button" class="button button-small em-site-appearance__bgpick"><?php esc_html_e('Choisir', 'em-site'); ?></button>
+            <button type="button" class="em-site-appearance__bgclear" title="<?php esc_attr_e('Retirer l’image', 'em-site'); ?>" aria-label="<?php esc_attr_e('Retirer l’image', 'em-site'); ?>"<?php echo $id > 0 ? '' : ' hidden'; ?>>&times;</button>
+            <input type="hidden" class="em-site-appearance__bgid" name="fields[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr($id > 0 ? (string) $id : ''); ?>">
         </span>
     </div>
     <?php
@@ -300,16 +300,16 @@ function em_wp_v4_render_appearance_bg_image(array $field, array $content): void
  * @param array<string, mixed> $field
  * @param array<string, mixed> $content
  */
-function em_wp_v4_render_appearance_bg_opacity(array $field, array $content): void
+function em_site_render_appearance_bg_opacity(array $field, array $content): void
 {
     $key = (string) $field['key'];
     $value = max(0, min(100, (int) ($content[$key] ?? $field['default'] ?? 100)));
     ?>
-    <div class="em-v4-appearance__item em-v4-appearance__bgopacity" data-role="background_opacity">
-        <label class="em-v4-appearance__num">
-            <span class="em-v4-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
-            <input type="range" class="em-v4-appearance__bgopacity-input" name="fields[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr((string) $value); ?>" min="0" max="100" step="1" oninput="this.nextElementSibling.textContent=this.value+'%'">
-            <output class="em-v4-appearance__bgopacity-out"><?php echo esc_html($value . '%'); ?></output>
+    <div class="em-site-appearance__item em-site-appearance__bgopacity" data-role="background_opacity">
+        <label class="em-site-appearance__num">
+            <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>
+            <input type="range" class="em-site-appearance__bgopacity-input" name="fields[<?php echo esc_attr($key); ?>]" value="<?php echo esc_attr((string) $value); ?>" min="0" max="100" step="1" oninput="this.nextElementSibling.textContent=this.value+'%'">
+            <output class="em-site-appearance__bgopacity-out"><?php echo esc_html($value . '%'); ?></output>
         </label>
     </div>
     <?php

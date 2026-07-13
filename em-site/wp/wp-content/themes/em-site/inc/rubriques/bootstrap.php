@@ -1,13 +1,13 @@
 <?php
 /**
- * Bootstrap du système de rubriques (V4) — modèle simplifié.
+ * Bootstrap du système de rubriques (EM-SITE) — modèle simplifié.
  *
  * Une rubrique (type) contient des items (footers nommés). Chaque item porte sa
  * STRUCTURE (champs positionnés en lignes/colonnes) et son CONTENU. Tout est
  * ADDITIF : le front actuel n'est pas impacté tant que le pilote n'est pas
  * branché. Voir documentation/REFONTE_RUBRIQUES_CIBLE.md (§12).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -39,12 +39,12 @@ require_once __DIR__ . '/renderer/item.php';
 require_once __DIR__ . '/renderer/engine.php';
 
 // Types de rubrique déclarés en code (1 dossier par type sous types/).
-foreach (glob(__DIR__ . '/types/*/type.php') ?: [] as $em_wp_rubrique_type_file) {
-    require_once $em_wp_rubrique_type_file;
+foreach (glob(__DIR__ . '/types/*/type.php') ?: [] as $em_site_rubrique_type_file) {
+    require_once $em_site_rubrique_type_file;
 }
-unset($em_wp_rubrique_type_file);
+unset($em_site_rubrique_type_file);
 
-// Admin : assets, builder (une étape : structure + contenu), page V4.
+// Admin : assets, builder (une étape : structure + contenu), page EM-SITE.
 if (is_admin()) {
     require_once __DIR__ . '/admin/assets.php';
     require_once __DIR__ . '/admin/builder/builder-preview-script.php';

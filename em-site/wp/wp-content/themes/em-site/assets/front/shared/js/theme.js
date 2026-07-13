@@ -6,7 +6,7 @@
     var stickyScrollGap = 24;
 
     function getTopBarElement() {
-        var candidates = document.querySelectorAll('.em-top-bar, .emv4-section--top-bar, .em-section--top-bar');
+        var candidates = document.querySelectorAll('.em-top-bar, .em-site-section--top-bar, .em-section--top-bar');
         for (var i = 0; i < candidates.length; i++) {
             var rect = candidates[i].getBoundingClientRect();
             if (rect.height > 0) {
@@ -167,7 +167,7 @@
                 hash = mobileTarget;
             } else if (
                 anchor.classList.contains('em-rubrique__arrow-link')
-                && anchor.closest('.emv4-section--header, .em-header-shell, .em-section--header')
+                && anchor.closest('.em-site-section--header, .em-header-shell, .em-section--header')
                 && hash === '#stream'
             ) {
                 hash = '#hero-slider';

@@ -50,7 +50,7 @@
     function buildQuitUrl(targetHref) {
         var url = new URL(config.quitEndpoint, window.location.origin);
 
-        url.searchParams.set('em_wp_quit_editing', '1');
+        url.searchParams.set('em_site_quit_editing', '1');
         url.searchParams.set('redirect_to', targetHref);
         url.searchParams.set('_wpnonce', config.nonce);
 

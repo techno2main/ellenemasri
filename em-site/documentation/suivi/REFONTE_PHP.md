@@ -1,92 +1,98 @@
 # Rapport d'audit refonte PHP/structure
 
 Date (Paris) : 2026-07-05 17:11:19
-Périmètre scanné : em-site/wp/wp-content/themes/em-site
+P?rim?tre scann? : em-site/wp/wp-content/themes/em-site
 
-## Mise à jour structurelle (Paris) : 2026-07-07 12:56:24
+## Mise ? jour structurelle (Paris) : 2026-07-07 12:56:24
 
-- Migration de composants BO partagés vers `inc/admin/shared/components/` avec sous-dossier dédié par composant.
-- Composants migrés et recâblés : `color-picker`, `scotchs-control`, `style-panel`, `hub-cards`, `hub-breadcrumb`.
-- Renommage explicite du builder Rubriques : fichiers `chip*`, `structure*`, `preview`, `save`, `script*` renommés en `builder-...`.
-- Recâblage des includes et loaders Rubriques après renommage pour éviter toute rupture.
-- Correctif de mutualisation Scotchs : neutralisation des variations de layout contextuelles via classes dédiées de composant (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`).
+- Migration de composants BO partag?s vers `inc/admin/shared/components/` avec sous-dossier d?di? par composant.
+- Composants migr?s et rec?bl?s : `color-picker`, `scotchs-control`, `style-panel`, `hub-cards`, `hub-breadcrumb`.
+- Renommage explicite du builder Rubriques : fichiers `chip*`, `structure*`, `preview`, `save`, `script*` renomm?s en `builder-...`.
+- Rec?blage des includes et loaders Rubriques apr?s renommage pour ?viter toute rupture.
+- Correctif de mutualisation Scotchs : neutralisation des variations de layout contextuelles via classes d?di?es de composant (`em-v4-scotchs-control__color`, `em-v4-scotchs-control__check`).
 
-## Mise à jour structurelle (Paris) : 2026-07-07 14:12:20
+## Mise ? jour structurelle (Paris) : 2026-07-07 21:54:16
 
-- Migration des assets partagés admin vers `assets/admin/shared/*` avec recâblage des enqueues côté `inc/admin`.
-- Migration des assets partagés front vers `assets/front/shared/*` avec recâblage des enqueues côté `inc/core` et pages Rubriques.
-- Purge des chemins legacy `assets/front/css/rubriques-v4/*` et suppression du dossier fantôme.
-- Purge du namespace gate legacy `ellene` dans les points d'entrée admin.
-- Correctif de régression des accès admin: règles rétablies avec comptes réels `admin-ellene` et `admin-tyson`.
-- Hotfix imports CSS admin cassés: correction des chemins dans `hub-cards.css` et `module-common.css`.
+- Purge des pr?fixes `emv4` restante dans le builder Rubriques et le composant Scotchs mutualis?.
+- Distinction nette des helpers top-bar admin/front pour supprimer le fatal `Cannot redeclare` sur le rendu admin.
+- Validation finale: `emv4` ne ressort plus dans le th?me actif apr?s grep global.
 
-## 1) Méthode de scan (calcul réel des lignes)
+## Mise ? jour structurelle (Paris) : 2026-07-07 14:12:20
 
-- Scan récursif réel sur le dossier complet du thème.
-- Comptage de lignes effectué fichier par fichier via lecture réelle du contenu.
+- Migration des assets partag?s admin vers `assets/admin/shared/*` avec rec?blage des enqueues c?t? `inc/admin`.
+- Migration des assets partag?s front vers `assets/front/shared/*` avec rec?blage des enqueues c?t? `inc/core` et pages Rubriques.
+- Purge des chemins legacy `assets/front/css/rubriques-v4/*` et suppression du dossier fant?me.
+- Purge du namespace gate legacy `ellene` dans les points d'entr?e admin.
+- Correctif de r?gression des acc?s admin: r?gles r?tablies avec comptes r?els `admin-ellene` et `admin-tyson`.
+- Hotfix imports CSS admin cass?s: correction des chemins dans `hub-cards.css` et `module-common.css`.
+
+## 1) M?thode de scan (calcul r?el des lignes)
+
+- Scan r?cursif r?el sur le dossier complet du th?me.
+- Comptage de lignes effectu? fichier par fichier via lecture r?elle du contenu.
 - Extensions incluses pour ce rapport : .php, .js, .css, .html, .md.
 
-## 2) Résumé chiffré global
+## 2) R?sum? chiffr? global
 
-- Fichiers scannés : 482
+- Fichiers scann?s : 482
 - Lignes totales : 66 365
 - Fichiers > 300 lignes : 38
 
-Répartition par extension :
+R?partition par extension :
 
 - .php : 332 fichiers, 40 703 lignes, 29 fichiers > 300
 - .js : 72 fichiers, 11 402 lignes, 5 fichiers > 300
 - .css : 76 fichiers, 11 765 lignes, 3 fichiers > 300
 - .html : 2 fichiers, 2 495 lignes, 1 fichier > 300
 
-## 3) Fichiers > 300 lignes (liste complète)
+## 3) Fichiers > 300 lignes (liste compl?te)
 
-1. visual-links-builder/visual-links-builder.html — 2278
-2. visual-links-builder/admin/assets/builder.js — 2147
-3. assets/admin/js/template/wizard/wizard-guide.js — 1281
-4. assets/admin/js/template/wizard/wizard-draft.js — 1030
-5. inc/rubriques/admin/builder/script/part-01.php — 896
-6. inc/admin/client-access.php — 783
-7. assets/admin/js/template/wizard/wizard-wireframe.js — 729
-8. visual-links-builder/styles/builder.css — 664
-9. visual-links-builder/admin/assets/builder.css — 664
-10. inc/admin/shared/landing-preview.php — 628
-11. inc/rubriques/core/storage.php — 609
-12. inc/admin/shared/style-panel.php — 594
-13. inc/rubriques/admin/builder/preview.php — 570
-14. inc/admin/pages/rubriques/header-section.php — 535
-15. inc/rubriques/admin/pages/overview-styles.php — 516
-16. inc/rubriques/core/field-types/media.php — 492
-17. inc/shared/rubrique-order.php — 489
-18. inc/shared/template/registry.php — 480
-19. inc/admin/template/pages/create-page.php — 439
-20. inc/rubriques/admin/builder/rows-script.php — 430
-21. inc/admin/pages/rubriques/header-section-assets.php — 417
-22. inc/rubriques/admin/pages/overview.php — 401
-23. inc/rubriques/admin/builder/chip-script.php — 401
-24. inc/admin/shared/variant-hub.php — 393
-25. inc/admin/shared/register-module-saves.php — 392
-26. inc/admin/shared/onboarding.php — 375
-27. inc/rubriques/admin/builder/structure-rows.php — 370
-28. inc/admin/shared/menu/accordion.php — 368
-29. inc/admin/template/pages/list.php — 364
-30. assets/admin/js/pages/rubriques/template-skeleton.js — 345
-31. inc/shared/template/active.php — 343
-32. inc/admin/pages/rubriques/skeleton-preview.php — 324
-33. inc/rubriques/core/registry.php — 321
-34. inc/shared/template/plan.php — 318
-35. inc/admin/pages/dashboard/components.php — 309
-36. inc/admin/template/banner.php — 304
-37. inc/admin/template/wizard/config-data.php — 302
-38. assets/front/css/rubriques-v4/render.css — 302
+1. visual-links-builder/visual-links-builder.html ? 2278
+2. visual-links-builder/admin/assets/builder.js ? 2147
+3. assets/admin/js/template/wizard/wizard-guide.js ? 1281
+4. assets/admin/js/template/wizard/wizard-draft.js ? 1030
+5. inc/rubriques/admin/builder/script/part-01.php ? 896
+6. inc/admin/client-access.php ? 783
+7. assets/admin/js/template/wizard/wizard-wireframe.js ? 729
+8. visual-links-builder/styles/builder.css ? 664
+9. visual-links-builder/admin/assets/builder.css ? 664
+10. inc/admin/shared/landing-preview.php ? 628
+11. inc/rubriques/core/storage.php ? 609
+12. inc/admin/shared/style-panel.php ? 594
+13. inc/rubriques/admin/builder/preview.php ? 570
+14. inc/admin/pages/rubriques/header-section.php ? 535
+15. inc/rubriques/admin/pages/overview-styles.php ? 516
+16. inc/rubriques/core/field-types/media.php ? 492
+17. inc/shared/rubrique-order.php ? 489
+18. inc/shared/template/registry.php ? 480
+19. inc/admin/template/pages/create-page.php ? 439
+20. inc/rubriques/admin/builder/rows-script.php ? 430
+21. inc/admin/pages/rubriques/header-section-assets.php ? 417
+22. inc/rubriques/admin/pages/overview.php ? 401
+23. inc/rubriques/admin/builder/chip-script.php ? 401
+24. inc/admin/shared/variant-hub.php ? 393
+25. inc/admin/shared/register-module-saves.php ? 392
+26. inc/admin/shared/onboarding.php ? 375
+27. inc/rubriques/admin/builder/structure-rows.php ? 370
+28. inc/admin/shared/menu/accordion.php ? 368
+29. inc/admin/template/pages/list.php ? 364
+30. assets/admin/js/pages/rubriques/template-skeleton.js ? 345
+31. inc/shared/template/active.php ? 343
+32. inc/admin/pages/rubriques/skeleton-preview.php ? 324
+33. inc/rubriques/core/registry.php ? 321
+34. inc/shared/template/plan.php ? 318
+35. inc/admin/pages/dashboard/components.php ? 309
+36. inc/admin/template/banner.php ? 304
+37. inc/admin/template/wizard/config-data.php ? 302
+38. assets/front/css/rubriques-v4/render.css ? 302
 
-Constat : le point « trop de fichiers > 300 lignes » est confirmé.
+Constat : le point ? trop de fichiers > 300 lignes ? est confirm?.
 
 ## 4) Nommage non intuitif (part01/part02/etc.)
 
 ### 4.1 Fichiers au format part-XX
 
-Total détecté : 15
+Total d?tect? : 15
 
 1. inc/admin/pages/rubriques/definitions/part-01.php
 2. inc/admin/pages/rubriques/definitions/part-02.php
@@ -104,9 +110,9 @@ Total détecté : 15
 14. inc/admin/shared/menu/layout/part-04.php
 15. inc/rubriques/admin/builder/script/part-01.php
 
-### 4.2 Fichiers index.php génériques
+### 4.2 Fichiers index.php g?n?riques
 
-Total détecté : 18
+Total d?tect? : 18
 
 1. inc/admin/modules/about/index.php
 2. inc/admin/modules/contact/index.php
@@ -127,28 +133,28 @@ Total détecté : 18
 17. index.php
 18. visual-links-builder/admin/index.php
 
-Constat : la remarque sur le nommage non intuitif est également confirmée.
+Constat : la remarque sur le nommage non intuitif est ?galement confirm?e.
 
 ## 5) Duplication du guard ABSPATH
 
-Question posée : « pourquoi encore plein de fichiers avec `<?php if (!defined('ABSPATH')) { exit; }` ? utile ou oubli de purge ? »
+Question pos?e : ? pourquoi encore plein de fichiers avec `<?php if (!defined('ABSPATH')) { exit; }` ? utile ou oubli de purge ? ?
 
-Mesure réelle :
+Mesure r?elle :
 
 - Occurrences exactes du pattern compact : 30 fichiers
-- Occurrences variantes du guard ABSPATH (formes différentes) : 276 fichiers
+- Occurrences variantes du guard ABSPATH (formes diff?rentes) : 276 fichiers
 
 Lecture technique :
 
-- Ce n'est pas un oubli de purge au sens "code mort" : c'est une protection WordPress standard contre l'accès direct à des fichiers PHP.
-- La répétition est normale dans beaucoup de codebases WP, surtout sur des fichiers chargeables directement.
-- En revanche, dans une architecture déjà totalement contrôlée par bootstrap/loader, on peut réduire certaines répétitions (mais cela demande une décision d'architecture et des tests de non-régression).
+- Ce n'est pas un oubli de purge au sens "code mort" : c'est une protection WordPress standard contre l'acc?s direct ? des fichiers PHP.
+- La r?p?tition est normale dans beaucoup de codebases WP, surtout sur des fichiers chargeables directement.
+- En revanche, dans une architecture d?j? totalement contr?l?e par bootstrap/loader, on peut r?duire certaines r?p?titions (mais cela demande une d?cision d'architecture et des tests de non-r?gression).
 
 Conclusion sur ce point : pattern utile globalement, mais marge de rationalisation possible.
 
 ## 6) Dossiers vides (scan complet)
 
-Total détecté : 12
+Total d?tect? : 12
 
 1. assets/admin/js/modules/about
 2. assets/admin/js/modules/contact
@@ -163,26 +169,41 @@ Total détecté : 12
 11. visual-links-builder/exports-html/Mayami-EPK/Template-Email/img
 12. visual-links-builder/exports-html/Mayami-EPK/Template-HTML
 
-Constat : la remarque sur les dossiers vides est confirmée (dont inc/admin/fields).
+Constat : la remarque sur les dossiers vides est confirm?e (dont inc/admin/fields).
 
-## 7) Synthèse de l'audit
+## 7) Synth?se de l'audit
 
-- Point 1 (fichiers > 300) : confirmé, volume significatif (38 fichiers).
-- Point 2 (noms non intuitifs) : confirmé (part-XX + index.php génériques nombreux).
-- Point 3 (guards ABSPATH dupliqués) : confirmé en volume, mais techniquement justifiés dans la plupart des cas.
-- Point 4 (dossiers vides) : confirmé (12 dossiers).
-- Point 5 (scan complet réel des lignes) : réalisé et consolidé dans ce rapport.
+- Point 1 (fichiers > 300) : confirm?, volume significatif (38 fichiers).
+- Point 2 (noms non intuitifs) : confirm? (part-XX + index.php g?n?riques nombreux).
+- Point 3 (guards ABSPATH dupliqu?s) : confirm? en volume, mais techniquement justifi?s dans la plupart des cas.
+- Point 4 (dossiers vides) : confirm? (12 dossiers).
+- Point 5 (scan complet r?el des lignes) : r?alis? et consolid? dans ce rapport.
 
-## 8) Actions proposées (non exécutées)
+## 8) Actions propos?es (non ex?cut?es)
 
-Ce rapport ne déclenche aucune action corrective (conforme à la demande « aucune action pour le moment »).
+Ce rapport ne d?clenche aucune action corrective (conforme ? la demande ? aucune action pour le moment ?).
 
-Si validation ultérieure :
+Si validation ult?rieure :
 
 1. Prioriser les 10 plus gros fichiers > 300 (impact maximal rapide).
-2. Plan de renommage explicite des part-XX/index.php ambiguës.
+2. Plan de renommage explicite des part-XX/index.php ambigu?s.
 
 Points temporairement mis en pause :
 
 - Revue ABSPATH fichier par fichier avec politique unique (conserver/simplifier).
-- Purge contrôlée des dossiers vides avec vérification Git/CI.
+- Purge contr?l?e des dossiers vides avec v?rification Git/CI.
+
+## Mise ? jour structurelle (Paris) : 2026-07-07 22:08:43
+
+- Suppression du fichier de migration one-shot inc/core/legacy-option-prefix-migration.php.
+- D?branchement du require correspondant dans inc/bootstrap.php.
+- Contr?le de coh?rence effectu?: plus aucune r?f?rence au migrateur ni au pr?fixe legacy em_wp dans les fichiers PHP du th?me.
+
+## Mise ? jour structurelle (Paris) : 2026-07-07 23:11:23
+
+- Correctif de robustesse c?t? admin Rubriques: neutralisation du moteur global `module-form-dirty` sur la page Rubriques pour ?viter les soumissions hors p?rim?tre vers `admin-post.php`.
+- Ajout d'un garde-fou serveur sur `admin-post.php` quand `action` est vide: redirection contr?l?e vers l'admin avec indicateur d'erreur au lieu d'un ?cran blanc.
+- Suppression du BOM UTF-8 dans 3 fichiers PHP sensibles (sortie pr?matur?e possible avant doctype) :
+	- `inc/rubriques/admin/pages/overview-styles.php`
+	- `inc/rubriques/admin/builder/builder-preview-script.php`
+	- `inc/front/modules/slider/render.php`

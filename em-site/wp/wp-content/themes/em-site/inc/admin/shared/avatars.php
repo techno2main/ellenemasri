@@ -2,7 +2,7 @@
 /**
  * Avatars admin personnalisés (alignés prod : client-admin, admin-my).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Résout le login WordPress depuis la cible get_avatar().
  */
-function em_wp_admin_resolve_user_login_from_avatar_subject($id_or_email): string
+function em_site_admin_resolve_user_login_from_avatar_subject($id_or_email): string
 {
     if ($id_or_email instanceof WP_User) {
         return (string) $id_or_email->user_login;
@@ -52,7 +52,7 @@ function em_wp_admin_resolve_user_login_from_avatar_subject($id_or_email): strin
 /**
  * URL locale de l'avatar admin-my (TAD).
  */
-function em_wp_admin_my_avatar_url(int $size = 96): string
+function em_site_admin_my_avatar_url(int $size = 96): string
 {
     unset($size);
 
@@ -67,15 +67,15 @@ function em_wp_admin_my_avatar_url(int $size = 96): string
 }
 
 /**
- * Personnalise les avatars des comptes admin em-wp.
+ * Personnalise les avatars des comptes admin em-site.
  *
  * @param array<string, mixed> $args
  * @param mixed                $id_or_email
  * @return array<string, mixed>
  */
-function em_wp_admin_customize_account_avatars(array $args, $id_or_email): array
+function em_site_admin_customize_account_avatars(array $args, $id_or_email): array
 {
-    $user_login = strtolower(em_wp_admin_resolve_user_login_from_avatar_subject($id_or_email));
+    $user_login = strtolower(em_site_admin_resolve_user_login_from_avatar_subject($id_or_email));
 
     if ($user_login === '') {
         return $args;
@@ -90,7 +90,7 @@ function em_wp_admin_customize_account_avatars(array $args, $id_or_email): array
             $custom_url = get_site_icon_url(96);
         }
     } elseif (in_array($user_login, ['admin-tyson'], true)) {
-        $custom_url = em_wp_admin_my_avatar_url((int) ($args['size'] ?? 96));
+        $custom_url = em_site_admin_my_avatar_url((int) ($args['size'] ?? 96));
 
         if ($custom_url === '') {
             $custom_url = get_site_icon_url((int) ($args['size'] ?? 96));
@@ -110,4 +110,4 @@ function em_wp_admin_customize_account_avatars(array $args, $id_or_email): array
 
     return $args;
 }
-add_filter('pre_get_avatar_data', 'em_wp_admin_customize_account_avatars', 20, 2);
+add_filter('pre_get_avatar_data', 'em_site_admin_customize_account_avatars', 20, 2);

@@ -1,13 +1,13 @@
 <?php
 /**
- * Schéma des CHAMPS (V4) — modèle simplifié (sans « modèles »).
+ * Schéma des CHAMPS (EM-SITE) — modèle simplifié (sans « modèles »).
  *
  * Un item (ex. « Footer Default ») porte directement sa STRUCTURE : une liste de
  * champs, chacun positionné par LIGNE (row) et COLONNE (gauche/centre/droite).
  * Ce fichier normalise les champs, calcule les valeurs par défaut et sanitise un
  * contenu saisi.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  *
  * @return array<int, string>
  */
-function em_wp_rubrique_decorative_types(): array
+function em_site_rubrique_decorative_types(): array
 {
     return ['sep_line', 'sep_blank', 'arrow_up', 'arrow_down'];
 }
@@ -27,15 +27,15 @@ function em_wp_rubrique_decorative_types(): array
 /**
  * Indique si un type de champ est décoratif (sans libellé).
  */
-function em_wp_rubrique_field_is_decorative(string $type): bool
+function em_site_rubrique_field_is_decorative(string $type): bool
 {
-    return in_array($type, em_wp_rubrique_decorative_types(), true);
+    return in_array($type, em_site_rubrique_decorative_types(), true);
 }
 
 /**
  * Types décoratifs avec choix de couleur. @return array<int, string>
  */
-function em_wp_rubrique_decorative_color_types(): array
+function em_site_rubrique_decorative_color_types(): array
 {
     return ['sep_line', 'arrow_up', 'arrow_down'];
 }
@@ -46,29 +46,29 @@ function em_wp_rubrique_decorative_color_types(): array
  *
  * @return array<string, array{label:string, stack:string}>
  */
-function em_wp_rubrique_font_choices(): array
+function em_site_rubrique_font_choices(): array
 {
     return [
-        'archivo_black' => ['label' => __('Archivo Black (site)', 'em-wp'), 'stack' => '"Archivo Black", system-ui, sans-serif'],
-        'system'        => ['label' => __('Système', 'em-wp'), 'stack' => 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'],
+        'archivo_black' => ['label' => __('Archivo Black (site)', 'em-site'), 'stack' => '"Archivo Black", system-ui, sans-serif'],
+        'system'        => ['label' => __('Système', 'em-site'), 'stack' => 'system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'],
         'inter'         => ['label' => 'Inter', 'stack' => 'Inter, system-ui, sans-serif'],
         'montserrat'    => ['label' => 'Montserrat', 'stack' => 'Montserrat, system-ui, sans-serif'],
         'poppins'       => ['label' => 'Poppins', 'stack' => 'Poppins, system-ui, sans-serif'],
         'oswald'        => ['label' => 'Oswald', 'stack' => 'Oswald, system-ui, sans-serif'],
         'roboto'        => ['label' => 'Roboto', 'stack' => 'Roboto, system-ui, sans-serif'],
         'playfair'      => ['label' => 'Playfair Display', 'stack' => '"Playfair Display", Georgia, serif'],
-        'brush_script'  => ['label' => __('Script cursif (site)', 'em-wp'), 'stack' => '"Brush Script MT", "Segoe Script", cursive'],
-        'serif'         => ['label' => __('Serif', 'em-wp'), 'stack' => 'Georgia, "Times New Roman", serif'],
-        'mono'          => ['label' => __('Monospace', 'em-wp'), 'stack' => 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'],
+        'brush_script'  => ['label' => __('Script cursif (site)', 'em-site'), 'stack' => '"Brush Script MT", "Segoe Script", cursive'],
+        'serif'         => ['label' => __('Serif', 'em-site'), 'stack' => 'Georgia, "Times New Roman", serif'],
+        'mono'          => ['label' => __('Monospace', 'em-site'), 'stack' => 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'],
     ];
 }
 
 /**
  * Pile CSS d'une police par sa clé ('' si inconnue).
  */
-function em_wp_rubrique_font_stack(string $key): string
+function em_site_rubrique_font_stack(string $key): string
 {
-    $choices = em_wp_rubrique_font_choices();
+    $choices = em_site_rubrique_font_choices();
 
     return isset($choices[$key]) ? $choices[$key]['stack'] : '';
 }
@@ -79,7 +79,7 @@ function em_wp_rubrique_font_stack(string $key): string
  * @param array<int, mixed> $raw
  * @return array<int, array<string, mixed>>
  */
-function em_wp_rubrique_normalize_fields(array $raw): array
+function em_site_rubrique_normalize_fields(array $raw): array
 {
     $fields = [];
 
@@ -99,10 +99,10 @@ function em_wp_rubrique_normalize_fields(array $raw): array
             'key'     => $key,
             'type'    => $type,
             'label'   => (string) ($field['label'] ?? $key),
-            'default' => $field['default'] ?? em_wp_field_type_default($type),
+            'default' => $field['default'] ?? em_site_field_type_default($type),
             'options' => is_array($field['options'] ?? null) ? $field['options'] : [],
             'row'     => max(1, (int) ($field['row'] ?? 1)),
-            'col'     => em_wp_rubrique_valid_col(em_wp_rubrique_col_to_int($field['col'] ?? 1), em_wp_rubrique_max_columns()),
+            'col'     => em_site_rubrique_valid_col(em_site_rubrique_col_to_int($field['col'] ?? 1), em_site_rubrique_max_columns()),
             'hidden'  => !empty($field['hidden']),
         ];
     }
@@ -116,7 +116,7 @@ function em_wp_rubrique_normalize_fields(array $raw): array
  * @param array<int, array<string, mixed>> $fields
  * @return array<string, mixed>
  */
-function em_wp_rubrique_fields_defaults(array $fields): array
+function em_site_rubrique_fields_defaults(array $fields): array
 {
     $defaults = [];
 
@@ -134,14 +134,14 @@ function em_wp_rubrique_fields_defaults(array $fields): array
  * @param array<string, mixed>             $raw
  * @return array<string, mixed>
  */
-function em_wp_rubrique_sanitize_content(array $fields, array $raw): array
+function em_site_rubrique_sanitize_content(array $fields, array $raw): array
 {
     $clean = [];
 
     foreach ($fields as $field) {
         $key = $field['key'];
         $value = $raw[$key] ?? ($field['default'] ?? '');
-        $clean[$key] = em_wp_field_type_sanitize((string) $field['type'], $value);
+        $clean[$key] = em_site_field_type_sanitize((string) $field['type'], $value);
     }
 
     return $clean;
@@ -153,7 +153,7 @@ function em_wp_rubrique_sanitize_content(array $fields, array $raw): array
  *
  * @param array<string, mixed> $field
  */
-function em_wp_rubrique_field_is_global(array $field): bool
+function em_site_rubrique_field_is_global(array $field): bool
 {
     $type = (string) ($field['type'] ?? '');
     $role = (string) ($field['options']['role'] ?? '');
@@ -187,13 +187,13 @@ function em_wp_rubrique_field_is_global(array $field): bool
  * @param array<int, array<string, mixed>> $fields
  * @return array{0:array<int,array<string,mixed>>,1:array<int,array<string,mixed>>}
  */
-function em_wp_rubrique_split_global_fields(array $fields): array
+function em_site_rubrique_split_global_fields(array $fields): array
 {
     $global = [];
     $content = [];
 
     foreach ($fields as $field) {
-        if (em_wp_rubrique_field_is_global($field)) {
+        if (em_site_rubrique_field_is_global($field)) {
             $global[] = $field;
         } else {
             $content[] = $field;

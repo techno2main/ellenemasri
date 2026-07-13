@@ -1,10 +1,10 @@
 <?php
 /**
- * Rendu HTML d'un champ de contenu selon son type (V4).
+ * Rendu HTML d'un champ de contenu selon son type (EM-SITE).
  *
  * Sépare la logique « un champ → HTML » du moteur de grille (item.php).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
 /**
  * Style CSS d'une image (redimension + recadrage non destructif via object-fit).
  */
-function em_wp_rubrique_image_style(int $w, int $h, int $fx, int $fy): string
+function em_site_rubrique_image_style(int $w, int $h, int $fx, int $fy): string
 {
     $style = '';
 
@@ -38,7 +38,7 @@ function em_wp_rubrique_image_style(int $w, int $h, int $fx, int $fy): string
  *
  * @param array{id:int,link:string,w:int,h:int,fx:int,fy:int} $img_data
  */
-function em_wp_rubrique_image_html(array $img_data, string $alt): string
+function em_site_rubrique_image_html(array $img_data, string $alt): string
 {
     $url = $img_data['id'] ? wp_get_attachment_image_url((int) $img_data['id'], 'large') : '';
 
@@ -46,7 +46,7 @@ function em_wp_rubrique_image_html(array $img_data, string $alt): string
         return '';
     }
 
-    $img_style = em_wp_rubrique_image_style((int) $img_data['w'], (int) $img_data['h'], (int) $img_data['fx'], (int) $img_data['fy']);
+    $img_style = em_site_rubrique_image_style((int) $img_data['w'], (int) $img_data['h'], (int) $img_data['fx'], (int) $img_data['fy']);
     $img = '<img class="em-rubrique__image" src="' . esc_url($url) . '" alt="' . esc_attr($alt) . '"' . ($img_style !== '' ? ' style="' . esc_attr($img_style) . '"' : '') . '>';
 
     if ($img_data['link'] !== '') {
@@ -73,7 +73,7 @@ function em_wp_rubrique_image_html(array $img_data, string $alt): string
  * @param array<string, mixed> $field
  * @param mixed                $value
  */
-function em_wp_rubrique_item_field_html(array $field, $value): string
+function em_site_rubrique_item_field_html(array $field, $value): string
 {
     $type = (string) $field['type'];
     $label = (string) $field['label'];
@@ -81,21 +81,21 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
 
     switch ($type) {
         case 'sep_line':
-            $sep_color = em_wp_field_sanitize_color((string) $value);
+            $sep_color = em_site_field_sanitize_color((string) $value);
             return '<hr class="em-rubrique__sep"' . ($sep_color !== '' ? ' style="border-color:' . esc_attr($sep_color) . '"' : '') . '>';
 
         case 'sep_blank':
-            $blank_h = em_wp_rubrique_sep_blank_height($value);
+            $blank_h = em_site_rubrique_sep_blank_height($value);
             return '<span class="em-rubrique__spacer" aria-hidden="true"' . ($blank_h > 0 ? ' style="display:block;height:' . $blank_h . 'px;"' : '') . '></span>';
 
         case 'arrow_up':
-            return em_wp_rubrique_arrow_html($value, 'up', '&uarr;');
+            return em_site_rubrique_arrow_html($value, 'up', '&uarr;');
 
         case 'arrow_down':
-            return em_wp_rubrique_arrow_html($value, 'down', '&darr;');
+            return em_site_rubrique_arrow_html($value, 'down', '&darr;');
 
         case 'text':
-            $tv = em_wp_rubrique_text_value($value);
+            $tv = em_site_rubrique_text_value($value);
             if ($tv['text'] === '') {
                 // Repli « valeur || libellé » (identique à l'aperçu builder JS) :
                 // les anciens champs texte stockaient leur contenu dans le libellé
@@ -108,17 +108,17 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             if ($tv['text'] === '') {
                 return '';
             }
-            $text_style = em_wp_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
-            $text_inner = em_wp_rubrique_text_link_wrap($tv['text'], $tv['link']);
+            $text_style = em_site_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
+            $text_inner = em_site_rubrique_text_link_wrap($tv['text'], $tv['link']);
             return '<p class="em-rubrique__field em-rubrique__field--' . esc_attr($key) . '"' . ($text_style !== '' ? ' style="' . esc_attr($text_style) . '"' : '') . '>' . $text_inner . '</p>';
 
         case 'textarea':
-            $tv = em_wp_rubrique_text_value($value);
+            $tv = em_site_rubrique_text_value($value);
             if ($tv['text'] === '') {
                 return '';
             }
-            $text_style = em_wp_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
-            $rich_html = em_wp_rubrique_textarea_render_html((string) $tv['text']);
+            $text_style = em_site_rubrique_text_style_css((array) ($field['options']['style'] ?? []));
+            $rich_html = em_site_rubrique_textarea_render_html((string) $tv['text']);
             if ($rich_html === '') {
                 return '';
             }
@@ -136,37 +136,37 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             return $value === '' ? '' : '<a class="em-rubrique__link" href="' . esc_attr('mailto:' . sanitize_email((string) $value)) . '">' . esc_html((string) $value) . '</a>';
 
         case 'image':
-            return em_wp_rubrique_image_html(em_wp_rubrique_image_value($value), $label);
+            return em_site_rubrique_image_html(em_site_rubrique_image_value($value), $label);
 
         case 'text_image':
-            $ti = em_wp_rubrique_text_image_value($value);
+            $ti = em_site_rubrique_text_image_value($value);
             $ti_text = (string) $ti['text'];
-            $ti_style = em_wp_rubrique_text_style_css($ti['style']);
+            $ti_style = em_site_rubrique_text_style_css($ti['style']);
             $ti_text_html = $ti_text !== ''
-                ? '<p class="em-rubrique__field"' . ($ti_style !== '' ? ' style="' . esc_attr($ti_style) . '"' : '') . '>' . em_wp_rubrique_text_link_wrap($ti_text, (string) $ti['link']) . '</p>'
+                ? '<p class="em-rubrique__field"' . ($ti_style !== '' ? ' style="' . esc_attr($ti_style) . '"' : '') . '>' . em_site_rubrique_text_link_wrap($ti_text, (string) $ti['link']) . '</p>'
                 : '';
-            $ti_img_html = em_wp_rubrique_image_html($ti['image'], $label);
+            $ti_img_html = em_site_rubrique_image_html($ti['image'], $label);
             if ($ti_text_html === '' && $ti_img_html === '') {
                 return '';
             }
             return '<div class="em-rubrique__textimg">' . $ti_text_html . $ti_img_html . '</div>';
 
         case 'text_text':
-            $tt = em_wp_rubrique_text_text_value($value);
+            $tt = em_site_rubrique_text_text_value($value);
             $tt1 = (string) $tt['text'];
             $tt2 = (string) $tt['text2'];
-            $tt1_style = em_wp_rubrique_text_style_css($tt['style']);
-            $tt2_style = em_wp_rubrique_text_style_css($tt['style2']);
-            $tt1_html = $tt1 !== '' ? '<p class="em-rubrique__field"' . ($tt1_style !== '' ? ' style="' . esc_attr($tt1_style) . '"' : '') . '>' . em_wp_rubrique_text_link_wrap($tt1, (string) $tt['link']) . '</p>' : '';
-            $tt2_html = $tt2 !== '' ? '<p class="em-rubrique__field"' . ($tt2_style !== '' ? ' style="' . esc_attr($tt2_style) . '"' : '') . '>' . em_wp_rubrique_text_link_wrap($tt2, (string) $tt['link2']) . '</p>' : '';
+            $tt1_style = em_site_rubrique_text_style_css($tt['style']);
+            $tt2_style = em_site_rubrique_text_style_css($tt['style2']);
+            $tt1_html = $tt1 !== '' ? '<p class="em-rubrique__field"' . ($tt1_style !== '' ? ' style="' . esc_attr($tt1_style) . '"' : '') . '>' . em_site_rubrique_text_link_wrap($tt1, (string) $tt['link']) . '</p>' : '';
+            $tt2_html = $tt2 !== '' ? '<p class="em-rubrique__field"' . ($tt2_style !== '' ? ' style="' . esc_attr($tt2_style) . '"' : '') . '>' . em_site_rubrique_text_link_wrap($tt2, (string) $tt['link2']) . '</p>' : '';
             if ($tt1_html === '' && $tt2_html === '') {
                 return '';
             }
             return '<div class="em-rubrique__texttext">' . $tt1_html . $tt2_html . '</div>';
 
         case 'icon':
-            $icon_data = em_wp_rubrique_icon_value($value);
-            $icon = $icon_data['platform'] !== '' ? em_wp_rubrique_platform_icon($icon_data['platform']) : '';
+            $icon_data = em_site_rubrique_icon_value($value);
+            $icon = $icon_data['platform'] !== '' ? em_site_rubrique_platform_icon($icon_data['platform']) : '';
             if ($icon === '') {
                 return '';
             }
@@ -178,8 +178,8 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             // — scroll vers #stream puis ouverture du player (stream.js). Sinon, lien
             // externe classique (réseaux sociaux, liens divers).
             if (strpos($icon_data['platform'], 'stream:') === 0) {
-                $open_slug = function_exists('em_wp_v4_platform_stream_slug')
-                    ? em_wp_v4_platform_stream_slug($icon_data['platform'])
+                $open_slug = function_exists('em_site_platform_stream_slug')
+                    ? em_site_platform_stream_slug($icon_data['platform'])
                     : '';
                 if ($open_slug !== '') {
                     return '<a class="em-rubrique__link em-rubrique__link--media top-bar-platform-link" href="' . esc_url($icon_data['url']) . '" data-open-platform="' . esc_attr($open_slug) . '">' . $glyph . '</a>';
@@ -188,16 +188,16 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             return '<a class="em-rubrique__link em-rubrique__link--media" href="' . esc_url($icon_data['url']) . '" target="_blank" rel="noopener noreferrer">' . $glyph . '</a>';
 
         case 'platform_block':
-            return em_wp_rubrique_platform_card_html(em_wp_rubrique_platform_block_value($value));
+            return em_site_rubrique_platform_card_html(em_site_rubrique_platform_block_value($value));
 
         case 'network_block':
-            return em_wp_rubrique_network_card_html(em_wp_rubrique_platform_block_value($value));
+            return em_site_rubrique_network_card_html(em_site_rubrique_platform_block_value($value));
 
         case 'button':
             if ($label === '') {
                 return '';
             }
-            $btn = em_wp_rubrique_button_value($value);
+            $btn = em_site_rubrique_button_value($value);
             $btn_style = '';
             if ($btn['bg'] !== '') {
                 $btn_style .= 'background:' . $btn['bg'] . ';border-color:' . $btn['bg'] . ';';
@@ -223,11 +223,11 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
             return '<a class="' . esc_attr(implode(' ', $btn_classes)) . '" href="' . esc_url($btn_href) . '"' . $btn_target . ($btn_style !== '' ? ' style="' . esc_attr($btn_style) . '"' : '') . '>' . esc_html($label) . '</a>';
 
         case 'animated_badge':
-            return em_wp_rubrique_animated_badge_html(em_wp_rubrique_animated_badge_value($value));
+            return em_site_rubrique_animated_badge_html(em_site_rubrique_animated_badge_value($value));
 
         case 'video_url':
-            $video_data = em_wp_rubrique_video_url_value($value);
-            $video_html = em_wp_rubrique_video_url_html($video_data);
+            $video_data = em_site_rubrique_video_url_value($value);
+            $video_html = em_site_rubrique_video_url_html($video_data);
             if ($video_html === '') {
                 return '';
             }
@@ -243,20 +243,20 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
                 . $video_html . '</span>';
 
         case 'video_file':
-            return em_wp_rubrique_video_file_html(em_wp_rubrique_media_id_value($value));
+            return em_site_rubrique_video_file_html(em_site_rubrique_media_id_value($value));
 
         case 'audio_file':
-            $audio_id = em_wp_rubrique_media_id_value($value);
-            return em_wp_rubrique_audio_html($audio_id > 0 ? (string) wp_get_attachment_url($audio_id) : '');
+            $audio_id = em_site_rubrique_media_id_value($value);
+            return em_site_rubrique_audio_html($audio_id > 0 ? (string) wp_get_attachment_url($audio_id) : '');
 
         case 'audio_url':
-            return em_wp_rubrique_audio_html((string) $value);
+            return em_site_rubrique_audio_html((string) $value);
 
         case 'slider':
-            return em_wp_rubrique_slides_front_html(em_wp_rubrique_slides_config($value));
+            return em_site_rubrique_slides_front_html(em_site_rubrique_slides_config($value));
 
         case 'toggle':
-            return '<span class="em-rubrique__chip">' . esc_html($label) . ' : ' . ($value ? esc_html__('oui', 'em-wp') : esc_html__('non', 'em-wp')) . '</span>';
+            return '<span class="em-rubrique__chip">' . esc_html($label) . ' : ' . ($value ? esc_html__('oui', 'em-site') : esc_html__('non', 'em-site')) . '</span>';
 
         case 'color':
             return $value === '' ? '' : '<span class="em-rubrique__swatch" style="background:' . esc_attr((string) $value) . '" title="' . esc_attr($label) . '"></span>';
@@ -273,9 +273,9 @@ function em_wp_rubrique_item_field_html(array $field, $value): string
  *
  * @param mixed $value
  */
-function em_wp_rubrique_arrow_html($value, string $dir, string $glyph): string
+function em_site_rubrique_arrow_html($value, string $dir, string $glyph): string
 {
-    $arrow = em_wp_rubrique_arrow_value($value);
+    $arrow = em_site_rubrique_arrow_value($value);
     $style = $arrow['color'] !== '' ? ' style="color:' . esc_attr($arrow['color']) . '"' : '';
     $span = '<span class="em-rubrique__arrow em-rubrique__arrow--' . esc_attr($dir) . '" aria-hidden="true"' . $style . '>' . $glyph . '</span>';
 

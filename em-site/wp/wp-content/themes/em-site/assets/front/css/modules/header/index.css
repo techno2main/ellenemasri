@@ -1,4 +1,4 @@
-/* HEADER composite V4 (fond partage + colonnes hero/slider). */
+﻿/* HEADER composite em-site (fond partage + colonnes hero/slider). */
 
 .em-section--header .em-rubrique.em-header-shell {
 	background-color: var(--em-rubrique-bg, transparent);
@@ -101,7 +101,7 @@
 	width: 100%;
 }
 
-.em-section--header .em-header-shell__col--slider .em-slider--mayami {
+.em-section--header .em-header-shell__col--slider .em-slider--shared {
 	width: 100%;
 	max-width: 430px;
 	margin: 0 auto;
@@ -188,3 +188,4 @@
 		text-size-adjust: 100%;
 	}
 }
+

@@ -2,7 +2,7 @@
 /**
  * Rendu front de la rubrique STREAM.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/helpers.php';
 
-function em_wp_render_stream(): void
+function em_site_render_stream(): void
 {
 	$config = em_site_stream_resolved_config();
 	$item_slugs = (array) ($config['item_slugs'] ?? []);
@@ -74,14 +74,14 @@ function em_wp_render_stream(): void
 	?>
 	<section id="stream" class="em-section em-section--stream" data-em-rubrique="stream" data-em-stream-mode="<?php echo esc_attr($is_multi ? 'multi' : 'single'); ?>" data-em-stream-transition="<?php echo esc_attr($transition_mode); ?>" data-em-stream-timer="<?php echo esc_attr((string) $transition_timer); ?>">
 		<?php if ($is_multi) : ?>
-			<nav class="em-stream-switch" aria-label="<?php esc_attr_e('Navigation Stream', 'em-wp'); ?>">
-				<button type="button" class="em-stream-switch__btn" data-em-stream-prev aria-label="<?php esc_attr_e('Item précédent', 'em-wp'); ?>">&larr;</button>
-				<div class="em-stream-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Stream', 'em-wp'); ?>">
+			<nav class="em-stream-switch" aria-label="<?php esc_attr_e('Navigation Stream', 'em-site'); ?>">
+				<button type="button" class="em-stream-switch__btn" data-em-stream-prev aria-label="<?php esc_attr_e('Item précédent', 'em-site'); ?>">&larr;</button>
+				<div class="em-stream-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Stream', 'em-site'); ?>">
 					<?php foreach ($entries as $idx => $entry) : ?>
-						<button type="button" class="em-stream-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-stream-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-wp'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
+						<button type="button" class="em-stream-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-stream-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-site'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
 					<?php endforeach; ?>
 				</div>
-				<button type="button" class="em-stream-switch__btn" data-em-stream-next aria-label="<?php esc_attr_e('Item suivant', 'em-wp'); ?>">&rarr;</button>
+				<button type="button" class="em-stream-switch__btn" data-em-stream-next aria-label="<?php esc_attr_e('Item suivant', 'em-site'); ?>">&rarr;</button>
 			</nav>
 		<?php endif; ?>
 

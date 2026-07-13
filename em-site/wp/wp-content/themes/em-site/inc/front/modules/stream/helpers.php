@@ -2,7 +2,7 @@
 /**
  * Helpers front de la rubrique STREAM.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 function em_site_stream_active_template(): string
 {
-	$slug = sanitize_key((string) get_option('em_wp_active_template', ''));
+	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
 }
@@ -22,7 +22,7 @@ function em_site_stream_instance(string $template_slug = ''): array
 		$template_slug = em_site_stream_active_template();
 	}
 
-	$instance = get_option('em_wp_v4_instance_' . $template_slug . '_stream', []);
+	$instance = get_option('em_site_instance_' . $template_slug . '_stream', []);
 
 	return is_array($instance) ? $instance : [];
 }
@@ -38,7 +38,7 @@ function em_site_stream_item_option_name(string $template_slug, string $item_slu
 		$item_slug = 'stream-' . $template_slug;
 	}
 
-	return 'em_wp_v4_item_stream_' . $item_slug;
+	return 'em_site_item_stream_' . $item_slug;
 }
 
 /**
@@ -78,12 +78,12 @@ function em_site_stream_resolved_config(string $template_slug = ''): array
 		$instance_multi_items = array_values(array_unique($instance_multi_items));
 	}
 
-	if (function_exists('em_wp_v4_get_items')) {
-		$item_slugs = array_map('strval', array_keys(em_wp_v4_get_items('stream')));
+	if (function_exists('em_site_get_items')) {
+		$item_slugs = array_map('strval', array_keys(em_site_get_items('stream')));
 	}
 
 	if ($item_slugs === []) {
-		$raw_items = get_option('em_wp_v4_items_stream', []);
+		$raw_items = get_option('em_site_items_stream', []);
 		if (is_array($raw_items)) {
 			$item_slugs = array_map('sanitize_key', array_keys($raw_items));
 			$item_slugs = array_values(array_filter($item_slugs, static function (string $slug): bool {
@@ -299,7 +299,7 @@ function em_site_stream_embed_src(string $platform, string $url): string
 	return '';
 }
 
-function em_site_stream_player_height(string $platform): int
+function em_site_front_stream_player_height(string $platform): int
 {
 	if ($platform === 'stream:spotify') {
 		return 152;
@@ -355,7 +355,7 @@ function em_site_stream_collect_platform_cards(array $content, array $item = [])
 			'icon_color' => em_site_stream_platform_color($platform),
 			'has_player' => em_site_stream_has_player($platform),
 			'embed_src' => em_site_stream_embed_src($platform, $url),
-			'player_height' => em_site_stream_player_height($platform),
+			'player_height' => em_site_front_stream_player_height($platform),
 		];
 	}
 

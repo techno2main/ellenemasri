@@ -1,12 +1,12 @@
 <?php
 /**
- * Aperçu temps réel partagé (V4) — window.EmWpV4Preview.
+ * Aperçu temps réel partagé (EM-SITE) — window.EmSitePreview.
  *
  * Rendu client identique au front : lignes × colonnes (gauche/centre/droite) +
  * couleurs globales. Utilisé par le builder (Étape 1, placeholders = libellés) et
  * par l'édition de contenu (Étape 2, vraies valeurs).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 /**
  * Imprime le script d'aperçu (une seule fois).
  */
-function em_wp_v4_render_preview_script(): void
+function em_site_render_preview_script(): void
 {
     static $done = false;
 
@@ -25,11 +25,15 @@ function em_wp_v4_render_preview_script(): void
     }
 
     $done = true;
+    $preview_css = function_exists('em_site_admin_rubriques_preview_css')
+        ? em_site_admin_rubriques_preview_css()
+        : '';
     ?>
     <script>
-    window.EmWpV4Preview = (function () {
-        var FONTS = <?php echo wp_json_encode(em_wp_rubrique_font_choices()); ?>;
-        var MASKED = '<?php echo esc_js(__('Masqué', 'em-wp')); ?>';
+    window.EmSitePreview = (function () {
+        var PREVIEW_CSS = <?php echo wp_json_encode($preview_css); ?>;
+        var FONTS = <?php echo wp_json_encode(em_site_rubrique_font_choices()); ?>;
+        var MASKED = '<?php echo esc_js(__('Masqué', 'em-site')); ?>';
 
         function esc(value) {
             var d = document.createElement('div');
@@ -135,7 +139,7 @@ function em_wp_v4_render_preview_script(): void
         // Aperçu fidèle du SLIDER mayami : reprend EXACTEMENT le markup du
         // template-part front (cadre, scotch, flèches, bandeau titre, pastilles,
         // bouton son) afin que la CSS front lui donne le look du site.
-        function sliderMayamiHtml(cfg) {
+        function sliderSharedHtml(cfg) {
             var slides = (cfg.slides || []).filter(function (sl) { return sl && !sl.hidden; });
             var vars = '';
             vars += '--em-slider-frame-bg:transparent;';
@@ -187,7 +191,7 @@ function em_wp_v4_render_preview_script(): void
                 slides.forEach(function (sl, i) { d += '<button class="em-slider__dot' + (i === 0 ? ' is-active' : '') + '" type="button" data-slide-to="' + i + '"></button>'; });
                 dots = '<div class="em-slider__dots">' + d + '</div>';
             }
-            return '<div class="em-slider em-slider--mayami' + (cfg.title_hidden ? ' em-slider--band-hidden' : '') + '"' + (vars ? ' style="' + vars + '"' : '') + '>' +
+            return '<div class="em-slider em-slider--shared' + (cfg.title_hidden ? ' em-slider--band-hidden' : '') + '"' + (vars ? ' style="' + vars + '"' : '') + '>' +
                 '<div class="em-slider__shell">' +
                 (cfg.tapes_hidden ? '' : '<span class="em-slider__tape em-slider__tape--left" aria-hidden="true"></span><span class="em-slider__tape em-slider__tape--right" aria-hidden="true"></span>') +
                 '<div class="em-slider__frame">' +
@@ -298,7 +302,7 @@ function em_wp_v4_render_preview_script(): void
             if (item.type === 'slider') {
                 var cfg = {};
                 try { cfg = JSON.parse(item.value || '{}') || {}; } catch (e) { cfg = {}; }
-                return sliderMayamiHtml(cfg);
+                return sliderSharedHtml(cfg);
             }
 
             if (item.type === 'textarea') {
@@ -441,12 +445,12 @@ function em_wp_v4_render_preview_script(): void
         }
 
         // Élément de rubrique contenant l'aperçu lié à un bouton (œil/popout).
-        function ownerItem(btn) { return btn.closest('.em-v4-item') || btn.closest('.em-v4-builder'); }
+        function ownerItem(btn) { return btn.closest('.em-site-item') || btn.closest('.em-site-builder'); }
 
         // Ouvre/ferme l'aperçu pleine taille (sticky). Ouvre l'item si activé.
         function toggle(btn) {
             var item = ownerItem(btn);
-            var body = item ? item.querySelector('.em-v4-livepreview') : null;
+            var body = item ? item.querySelector('.em-site-livepreview') : null;
             if (!body) { return; }
             var wasOpen = !body.hidden;
             body.hidden = wasOpen;
@@ -471,33 +475,39 @@ function em_wp_v4_render_preview_script(): void
             win.document.write(
                 '<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8">' +
                 '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-                '<title>' + esc('<?php echo esc_js(__('Aperçu', 'em-wp')); ?>') + '</title>' +
+                '<title>' + esc('<?php echo esc_js(__('Aperçu', 'em-site')); ?>') + '</title>' +
                 popoutStyles() +
+                (PREVIEW_CSS ? '<style id="em-site-preview-css">' + PREVIEW_CSS + '</style>' : '') +
                 '<style>html,body{margin:0;padding:0;background:#f0f0f1;}' +
+                'body.em-rubrique-popout-body{min-width:1120px;}' +
                 '.em-rubrique-popout{padding:24px;}' +
-                '.em-rubrique-popout .em-v4-livepreview{display:block!important;border:0;margin:0;}</style>' +
-                '</head><body><div class="em-rubrique-popout"><div class="em-v4-livepreview">' + inner + '</div></div></body></html>'
+                '.em-rubrique-popout .em-site-livepreview{display:block!important;border:0;margin:0;overflow:visible;}</style>' +
+                '</head><body class="em-rubrique-popout-body"><div class="em-rubrique-popout"><div class="em-site-livepreview">' + inner + '</div></div></body></html>'
             );
             win.document.close();
+            if (typeof initSliders === 'function') {
+                var stage = win.document.querySelector('.em-rubrique-popout .em-site-livepreview');
+                if (stage) { initSliders(stage); }
+            }
         }
 
         function openWindow(previewNode) {
-            winRef = window.open('', 'emWpV4PreviewWin');
+            winRef = window.open('', 'emSitePreviewWin');
             if (winRef) { writeWindow(winRef, previewNode); winRef.focus(); }
         }
 
         // Rafraîchit la fenêtre détachée si elle est ouverte (sync temps réel).
         function syncWindow(previewNode) {
             if (!winRef || winRef.closed) { return; }
-            var stage = winRef.document.querySelector('.em-rubrique-popout .em-v4-livepreview');
+            var stage = winRef.document.querySelector('.em-rubrique-popout .em-site-livepreview');
             if (stage) { stage.innerHTML = previewNode ? previewNode.innerHTML : ''; }
         }
 
         // Contrôles d'aperçu dans l'en-tête de l'item (hors builder) : délégation globale.
         document.addEventListener('click', function (e) {
-            var tg = e.target.closest('.em-v4-preview__toggle'), po = e.target.closest('.em-v4-preview__popout');
+            var tg = e.target.closest('.em-site-preview__toggle'), po = e.target.closest('.em-site-preview__popout');
             if (tg) { e.preventDefault(); e.stopPropagation(); toggle(tg); }
-            else if (po) { e.preventDefault(); e.stopPropagation(); var it = ownerItem(po); openWindow(it ? it.querySelector('.em-v4-livepreview') : null); }
+            else if (po) { e.preventDefault(); e.stopPropagation(); var it = ownerItem(po); openWindow(it ? it.querySelector('.em-site-livepreview') : null); }
         });
 
         // Slider d'aperçu : comportement IDENTIQUE au front.
@@ -591,11 +601,11 @@ function em_wp_v4_render_preview_script(): void
             sliderSchedule(root);
         }
         function initSliders(scope) {
-            (scope || document).querySelectorAll('.em-slider--mayami').forEach(sliderInit);
+            (scope || document).querySelectorAll('.em-slider--shared').forEach(sliderInit);
         }
 
         document.addEventListener('click', function (e) {
-            var root = e.target.closest('.em-slider--mayami');
+            var root = e.target.closest('.em-slider--shared');
             if (!root) { return; }
             var slides = sliderSlides(root);
             if (e.target.closest('.em-slider__nav--prev')) { e.preventDefault(); sliderGo(root, sliderActiveIndex(slides) - 1); return; }
@@ -618,3 +628,4 @@ function em_wp_v4_render_preview_script(): void
     </script>
     <?php
 }
+

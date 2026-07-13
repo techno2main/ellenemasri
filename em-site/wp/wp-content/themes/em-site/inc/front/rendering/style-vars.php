@@ -1,10 +1,10 @@
 <?php
 /**
  * Helpers de variables CSS front pour aligner tous les rendus sur les memes
- * regles d'apparence V4 (fond, transparent, texte, liens, espacements, typo,
+ * regles d'apparence EM-SITE (fond, transparent, texte, liens, espacements, typo,
  * image de fond).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -18,8 +18,8 @@ function em_site_front_rubrique_appearance_defaults(): array
 {
     $defaults = [];
 
-    if (function_exists('em_wp_rubrique_default_appearance_fields')) {
-        $fields = em_wp_rubrique_default_appearance_fields();
+    if (function_exists('em_site_rubrique_default_appearance_fields')) {
+        $fields = em_site_rubrique_default_appearance_fields();
         if (is_array($fields)) {
             foreach ($fields as $field) {
                 if (!is_array($field)) {
@@ -81,8 +81,8 @@ function em_site_front_rubrique_style_vars(array $content, ?callable $font_stack
     $font_stack = '';
     if ($font_stack_resolver !== null) {
         $font_stack = (string) $font_stack_resolver($font_slug);
-    } elseif (function_exists('em_wp_rubrique_font_stack')) {
-        $font_stack = (string) em_wp_rubrique_font_stack($font_slug);
+    } elseif (function_exists('em_site_rubrique_font_stack')) {
+        $font_stack = (string) em_site_rubrique_font_stack($font_slug);
     }
 
     $vars = [
@@ -108,8 +108,8 @@ function em_site_front_rubrique_style_vars(array $content, ?callable $font_stack
         $position = (string) ($content['bg_image_pos'] ?? ($defaults['bg_image_pos'] ?? 'cover'));
         $opacity = max(0, min(100, (int) ($content['bg_image_opacity'] ?? ($defaults['bg_image_opacity'] ?? 100))));
 
-        if (function_exists('em_wp_rubrique_bg_position_css')) {
-            $bp = em_wp_rubrique_bg_position_css($position);
+        if (function_exists('em_site_rubrique_bg_position_css')) {
+            $bp = em_site_rubrique_bg_position_css($position);
             $size = (string) ($bp['size'] ?? 'cover');
             $repeat = (string) ($bp['repeat'] ?? 'no-repeat');
             $bg_position = (string) ($bp['position'] ?? 'center');

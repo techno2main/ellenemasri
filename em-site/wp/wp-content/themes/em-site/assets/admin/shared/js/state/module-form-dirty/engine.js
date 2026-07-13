@@ -7,13 +7,19 @@
     var allowFormSubmit = false;
     var i18n = {};
     function findModuleForm() {
-        var wrap = document.querySelector('.wrap.em-wp-admin-module, .wrap.em-wp-rubriques-admin');
+        var wrap = document.querySelector('.wrap.em-site-admin-module, .wrap.em-site-rubriques-admin');
         if (!wrap) {
             return null;
         }
-        var forms = wrap.querySelectorAll('form[id^="em-wp-"][method="post"]');
+        var forms = wrap.querySelectorAll('form[id^="em-site-"][method="post"]');
         for (var i = 0; i < forms.length; i++) {
-            if (!forms[i].closest('.em-wp-template-banner')) {
+            if (forms[i].closest('.em-site-template-banner')) {
+                continue;
+            }
+
+            // Ne pilote que les formulaires modules (hero/slider/header/...).
+            // Evite de soumettre des formulaires admin-post de la page Rubriques.
+            if (forms[i].querySelector('input[name="em_site_module_save"]')) {
                 return forms[i];
             }
         }
@@ -31,7 +37,7 @@
         var entries = [];
         form.querySelectorAll('input, select, textarea').forEach(function (el) {
             var name = el.name;
-            if (!name || el.disabled || el.closest('.em-wp-template-banner')) {
+            if (!name || el.disabled || el.closest('.em-site-template-banner')) {
                 return;
             }
             if (el.type === 'checkbox') {
@@ -59,17 +65,17 @@
         return entries.join('&');
     }
     function setRedirectAfterSave(form, redirectTo) {
-        var input = form.querySelector('input[name="em_wp_redirect_after_save"]');
+        var input = form.querySelector('input[name="em_site_redirect_after_save"]');
         if (!input) {
             input = document.createElement('input');
             input.type = 'hidden';
-            input.name = 'em_wp_redirect_after_save';
+            input.name = 'em_site_redirect_after_save';
             form.appendChild(input);
         }
         input.value = redirectTo || '';
     }
     function clearRedirectAfterSave(form) {
-        var input = form.querySelector('input[name="em_wp_redirect_after_save"]');
+        var input = form.querySelector('input[name="em_site_redirect_after_save"]');
         if (input) {
             input.value = '';
         }
@@ -130,7 +136,7 @@
         }
         var formData = new FormData(moduleForm);
         if (redirectTo) {
-            formData.set('em_wp_redirect_after_save', redirectTo);
+            formData.set('em_site_redirect_after_save', redirectTo);
         }
         return fetch(moduleForm.action, {
             method: 'POST',
@@ -152,7 +158,21 @@
     function init(options) {
         options = options || {};
         i18n = options.i18n || {};
-        saveBtn = options.saveButton || document.getElementById('em-wp-template-banner-save');
+        saveBtn = options.saveButton || document.getElementById('em-site-template-banner-save');
+
+        // La page Rubriques a ses propres formulaires/admin-post et sa logique
+        // d'enregistrement. Le moteur dirty-form global ne doit pas s'y brancher.
+        if (document.querySelector('.wrap.em-site-rubriques-admin')) {
+            moduleForm = null;
+            baseline = '';
+            isDirty = false;
+            if (saveBtn) {
+                saveBtn.disabled = true;
+                saveBtn.setAttribute('aria-disabled', 'true');
+            }
+            return;
+        }
+
         moduleForm = findModuleForm();
         baseline = moduleForm ? serializeForm(moduleForm) : '';
         if (!moduleForm) {

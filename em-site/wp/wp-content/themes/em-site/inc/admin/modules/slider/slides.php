@@ -2,7 +2,7 @@
 /**
  * Modèle de données des slides Slider (liste dynamique).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  *
  * @return array{name:string,type:string,image:string,video_url:string,tiktok_url:string,tiktok_video_url:string,alt_text:string,duration:string,hidden:bool}
  */
-function em_wp_slider_default_slide(): array
+function em_site_slider_default_slide(): array
 {
     return [
         'name'             => '',
@@ -34,7 +34,7 @@ function em_wp_slider_default_slide(): array
  *
  * @param array<string, mixed> $slide
  */
-function em_wp_slider_slide_has_content(array $slide): bool
+function em_site_slider_slide_has_content(array $slide): bool
 {
     return trim((string) ($slide['name'] ?? '')) !== ''
         || trim((string) ($slide['image'] ?? '')) !== ''
@@ -49,7 +49,7 @@ function em_wp_slider_slide_has_content(array $slide): bool
  *
  * @return array{name:string,type:string,image:string,video_url:string,tiktok_url:string,tiktok_video_url:string,alt_text:string,duration:string,hidden:bool}
  */
-function em_wp_slider_read_legacy_slide(array $source, int $index): array
+function em_site_slider_read_legacy_slide(array $source, int $index): array
 {
     return [
         'name'             => (string) ($source['slide_' . $index . '_name'] ?? ''),
@@ -69,15 +69,15 @@ function em_wp_slider_read_legacy_slide(array $source, int $index): array
  *
  * @param array<string, mixed> $saved
  */
-function em_wp_slider_has_legacy_slide_data(array $saved): bool
+function em_site_slider_has_legacy_slide_data(array $saved): bool
 {
     if (isset($saved['slides_count'])) {
         return true;
     }
 
     for ($i = 1; $i <= 12; $i++) {
-        $slide = em_wp_slider_read_legacy_slide($saved, $i);
-        if (em_wp_slider_slide_has_content($slide)) {
+        $slide = em_site_slider_read_legacy_slide($saved, $i);
+        if (em_site_slider_slide_has_content($slide)) {
             return true;
         }
     }
@@ -90,10 +90,10 @@ function em_wp_slider_has_legacy_slide_data(array $saved): bool
  *
  * @param array<int, mixed> $slides
  */
-function em_wp_slider_slides_array_has_content(array $slides): bool
+function em_site_slider_slides_array_has_content(array $slides): bool
 {
     foreach ($slides as $slide) {
-        if (is_array($slide) && em_wp_slider_slide_has_content($slide)) {
+        if (is_array($slide) && em_site_slider_slide_has_content($slide)) {
             return true;
         }
     }
@@ -107,12 +107,12 @@ function em_wp_slider_slides_array_has_content(array $slides): bool
  * @param array<string, mixed> $saved
  * @return array<string, mixed>
  */
-function em_wp_slider_migrate_legacy_options(array $saved): array
+function em_site_slider_migrate_legacy_options(array $saved): array
 {
-    $has_legacy = em_wp_slider_has_legacy_slide_data($saved);
+    $has_legacy = em_site_slider_has_legacy_slide_data($saved);
     $has_new_slides = isset($saved['slides'])
         && is_array($saved['slides'])
-        && em_wp_slider_slides_array_has_content($saved['slides']);
+        && em_site_slider_slides_array_has_content($saved['slides']);
 
     if ($has_new_slides) {
         return $saved;
@@ -120,7 +120,7 @@ function em_wp_slider_migrate_legacy_options(array $saved): array
 
     if (!$has_legacy) {
         if (!isset($saved['slides']) || !is_array($saved['slides']) || $saved['slides'] === []) {
-            $saved['slides'] = [em_wp_slider_default_slide()];
+            $saved['slides'] = [em_site_slider_default_slide()];
         }
 
         return $saved;
@@ -129,14 +129,14 @@ function em_wp_slider_migrate_legacy_options(array $saved): array
     $slides = [];
 
     for ($i = 1; $i <= 12; $i++) {
-        $slide = em_wp_slider_read_legacy_slide($saved, $i);
-        if (em_wp_slider_slide_has_content($slide)) {
+        $slide = em_site_slider_read_legacy_slide($saved, $i);
+        if (em_site_slider_slide_has_content($slide)) {
             $slides[] = $slide;
         }
     }
 
     if ($slides === []) {
-        $slides[] = em_wp_slider_default_slide();
+        $slides[] = em_site_slider_default_slide();
     }
 
     $saved['slides'] = $slides;
@@ -150,11 +150,11 @@ function em_wp_slider_migrate_legacy_options(array $saved): array
  * @param array<string, mixed> $options
  * @return array<int, array{name:string,type:string,image:string,video_url:string,tiktok_url:string,tiktok_video_url:string,alt_text:string,duration:string,hidden:bool}>
  */
-function em_wp_slider_get_slides_list(array $options): array
+function em_site_slider_get_slides_list(array $options): array
 {
     $raw = $options['slides'] ?? [];
     if (!is_array($raw) || $raw === []) {
-        return [em_wp_slider_default_slide()];
+        return [em_site_slider_default_slide()];
     }
 
     $slides = [];
@@ -164,19 +164,19 @@ function em_wp_slider_get_slides_list(array $options): array
             continue;
         }
 
-        $slides[] = em_wp_slider_normalize_slide_item($item);
+        $slides[] = em_site_slider_normalize_slide_item($item);
     }
 
-    return $slides !== [] ? $slides : [em_wp_slider_default_slide()];
+    return $slides !== [] ? $slides : [em_site_slider_default_slide()];
 }
 
 /**
  * @param array<string, mixed> $item
  * @return array{name:string,type:string,image:string,video_url:string,tiktok_url:string,tiktok_video_url:string,alt_text:string,duration:string,hidden:bool}
  */
-function em_wp_slider_normalize_slide_item(array $item): array
+function em_site_slider_normalize_slide_item(array $item): array
 {
-    $defaults = em_wp_slider_default_slide();
+    $defaults = em_site_slider_default_slide();
     $slide_type = sanitize_key((string) ($item['type'] ?? $defaults['type']));
     if (!in_array($slide_type, ['image', 'video', 'tiktok'], true)) {
         $slide_type = 'image';
@@ -201,7 +201,7 @@ function em_wp_slider_normalize_slide_item(array $item): array
  * @param array<string, mixed> $item
  * @return array{name:string,type:string,image:string,video_url:string,tiktok_url:string,tiktok_video_url:string,alt_text:string,duration:string,hidden:bool}
  */
-function em_wp_slider_sanitize_slide_item(array $item): array
+function em_site_slider_sanitize_slide_item(array $item): array
 {
     $slide_type = sanitize_key((string) ($item['type'] ?? 'image'));
     if (!in_array($slide_type, ['image', 'video', 'tiktok'], true)) {
@@ -227,10 +227,10 @@ function em_wp_slider_sanitize_slide_item(array $item): array
  * @param mixed $raw
  * @return array<int, array{name:string,type:string,image:string,video_url:string,tiktok_url:string,tiktok_video_url:string,alt_text:string,duration:string,hidden:bool}>
  */
-function em_wp_slider_sanitize_slides_from_input($raw): array
+function em_site_slider_sanitize_slides_from_input($raw): array
 {
     if (!is_array($raw)) {
-        return [em_wp_slider_default_slide()];
+        return [em_site_slider_default_slide()];
     }
 
     $slides = [];
@@ -240,8 +240,8 @@ function em_wp_slider_sanitize_slides_from_input($raw): array
             continue;
         }
 
-        $slides[] = em_wp_slider_sanitize_slide_item($item);
+        $slides[] = em_site_slider_sanitize_slide_item($item);
     }
 
-    return $slides !== [] ? array_values($slides) : [em_wp_slider_default_slide()];
+    return $slides !== [] ? array_values($slides) : [em_site_slider_default_slide()];
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * Renommage des rubriques (V4) — édition inline + persistance.
+ * Renommage des rubriques (EM-SITE) — édition inline + persistance.
  *
  * Le nom affiché d'une rubrique (carte de l'aperçu + sous-menu de gauche) peut
  * être renommé via un crayon dans l'en-tête de la carte. Le libellé est stocké
  * en option (map slug => libellé) et appliqué par le registre, sans toucher la
  * structure ni le préfixe singulier des items. Mise à jour AJAX + temps réel.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -17,33 +17,33 @@ if (!defined('ABSPATH')) {
 /**
  * AJAX : enregistre le libellé personnalisé d'une rubrique.
  */
-function em_wp_v4_handle_ajax_rename_type(): void
+function em_site_handle_ajax_rename_type(): void
 {
     if (!current_user_can('manage_options')) {
         wp_send_json_error('forbidden', 403);
     }
 
-    check_ajax_referer('em_wp_v4_rename_type');
+    check_ajax_referer('em_site_rename_type');
 
     $slug = sanitize_key((string) ($_POST['slug'] ?? ''));
     $label = sanitize_text_field((string) wp_unslash($_POST['label'] ?? ''));
     $label = function_exists('mb_strtoupper') ? mb_strtoupper($label, 'UTF-8') : strtoupper($label);
 
-    if ($slug === '' || $label === '' || !em_wp_rubrique_type_exists($slug)) {
+    if ($slug === '' || $label === '' || !em_site_rubrique_type_exists($slug)) {
         wp_send_json_error('invalid', 400);
     }
 
-    $labels = em_wp_rubrique_labels();
+    $labels = em_site_rubrique_labels();
     $labels[$slug] = $label;
-    update_option(em_wp_rubrique_labels_option_name(), $labels);
+    update_option(em_site_rubrique_labels_option_name(), $labels);
 
     wp_send_json_success([
         'slug'     => $slug,
         'label'    => $label,
-        'singular' => em_wp_rubrique_singularize($label),
+        'singular' => em_site_rubrique_singularize($label),
     ]);
 }
-add_action('wp_ajax_em_wp_v4_rename_type', 'em_wp_v4_handle_ajax_rename_type');
+add_action('wp_ajax_em_site_rename_type', 'em_site_handle_ajax_rename_type');
 
 /**
  * Script (une fois) : édition inline du nom d'une rubrique depuis l'en-tête.
@@ -51,12 +51,12 @@ add_action('wp_ajax_em_wp_v4_rename_type', 'em_wp_v4_handle_ajax_rename_type');
  * Le crayon affiche un champ ; la saisie (forcée en MAJUSCULES) met à jour le
  * titre de la carte ET le libellé du sous-menu de gauche en temps réel.
  */
-function em_wp_v4_overview_render_rename_script(): void
+function em_site_overview_render_rename_script(): void
 {
     ?>
     <script>
     (function () {
-        var NONCE = '<?php echo esc_js(wp_create_nonce('em_wp_v4_rename_type')); ?>';
+        var NONCE = '<?php echo esc_js(wp_create_nonce('em_site_rename_type')); ?>';
         function stop(e) { e.preventDefault(); e.stopPropagation(); }
 
         // Libellé du sous-menu de gauche correspondant à la rubrique.
@@ -66,43 +66,137 @@ function em_wp_v4_overview_render_rename_script(): void
                 var type = '';
                 try { type = new URL(links[i].href).searchParams.get('type') || ''; } catch (err) {}
                 if (type === slug) {
-                    return links[i].querySelector('.em-wp-rubrique-submenu__text');
+                    return links[i].querySelector('.em-site-rubrique-submenu__text');
                 }
             }
             return null;
         }
 
         function applyLabel(slug, label, singular) {
-            var card = document.getElementById('em-v4-card-' + slug);
+            var card = document.getElementById('em-site-card-' + slug);
             if (card) {
-                var name = card.querySelector('.em-v4-card__name');
+                var name = card.querySelector('.em-site-card__name');
                 if (name) { name.textContent = label; }
-                var input = card.querySelector('.em-v4-card__nameinput');
+                var input = card.querySelector('.em-site-card__nameinput');
                 if (input) { input.value = label; input.setAttribute('data-original', label); }
                 // Préfixe singulier des items de la carte (ex. « TOP-BAR DEFAULT »).
                 if (singular) {
-                    card.querySelectorAll('.em-v4-item__prefix').forEach(function (el) {
+                    card.querySelectorAll('.em-site-item__prefix').forEach(function (el) {
                         el.textContent = singular;
                     });
                 }
             }
             var mt = menuText(slug);
             if (mt) { mt.textContent = label; }
+
+            var wrap = document.querySelector('.em-site-overview[data-focus-slug]');
+            if (wrap && (wrap.getAttribute('data-focus-slug') || '') === slug) {
+                var focusName = wrap.querySelector('.em-site-overview__focus-titlename');
+                var focusInput = wrap.querySelector('.em-site-overview__focus-nameinput');
+                if (focusName) { focusName.textContent = label; }
+                if (focusInput) {
+                    focusInput.value = label;
+                    focusInput.setAttribute('data-original', label);
+                    focusInput.setAttribute('data-slug', slug);
+                }
+            }
+        }
+
+        function focusParts() {
+            return {
+                wrap:    document.querySelector('.em-site-overview[data-focus-slug]'),
+                name:    document.querySelector('.em-site-overview__focus-titlename'),
+                input:   document.querySelector('.em-site-overview__focus-nameinput'),
+                pen:     document.querySelector('.em-site-overview__focus-titleedit'),
+                confirm: document.querySelector('.em-site-overview__focus-confirm'),
+                cancel:  document.querySelector('.em-site-overview__focus-cancel')
+            };
+        }
+
+        function openFocusRename() {
+            var p = focusParts();
+            if (!p.wrap || !p.input || !p.name) { return; }
+            var slug = p.wrap.getAttribute('data-focus-slug') || '';
+            var current = p.name.textContent || '';
+            p.input.setAttribute('data-slug', slug);
+            p.input.setAttribute('data-original', current);
+            p.input.value = current;
+            p.input.hidden = false;
+            if (p.confirm) { p.confirm.hidden = false; }
+            if (p.cancel) { p.cancel.hidden = false; }
+            if (p.pen) { p.pen.hidden = true; }
+            p.name.hidden = true;
+            p.input.focus();
+            p.input.select();
+        }
+
+        function closeFocusRename(reset) {
+            var p = focusParts();
+            if (!p.input || !p.name) { return; }
+            if (reset) {
+                var orig = p.input.getAttribute('data-original') || '';
+                p.input.value = orig;
+                p.name.textContent = orig;
+            }
+            p.input.hidden = true;
+            if (p.confirm) { p.confirm.hidden = true; }
+            if (p.cancel) { p.cancel.hidden = true; }
+            if (p.pen) { p.pen.hidden = false; }
+            p.name.hidden = false;
+        }
+
+        function previewFocusLabel(slug, label) {
+            var p = focusParts();
+            if (p.name) { p.name.textContent = label; }
+            var card = document.getElementById('em-site-card-' + slug);
+            var name = card ? card.querySelector('.em-site-card__name') : null;
+            if (name) { name.textContent = label; }
+            var mt = menuText(slug);
+            if (mt) { mt.textContent = label; }
+        }
+
+        function confirmFocusRename() {
+            var p = focusParts();
+            if (!p.input) { return; }
+            var slug = p.input.getAttribute('data-slug') || '';
+            var orig = p.input.getAttribute('data-original') || '';
+            var val = p.input.value.trim();
+            if (slug === '') { closeFocusRename(true); return; }
+            if (val === '' || val === orig) { closeFocusRename(true); return; }
+
+            var body = new URLSearchParams();
+            body.set('action', 'em_site_rename_type');
+            body.set('_ajax_nonce', NONCE);
+            body.set('slug', slug);
+            body.set('label', val);
+            fetch(window.ajaxurl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (res && res.success && res.data && res.data.label) {
+                    applyLabel(slug, res.data.label, res.data.singular || '');
+                }
+            }).catch(function () {});
+            closeFocusRename(false);
         }
 
         function parts(card) {
             return {
-                name:    card.querySelector('.em-v4-card__name'),
-                pen:     card.querySelector('.em-v4-card__edit'),
-                input:   card.querySelector('.em-v4-card__nameinput'),
-                confirm: card.querySelector('.em-v4-card__confirm'),
-                cancel:  card.querySelector('.em-v4-card__cancel')
+                name:    card.querySelector('.em-site-card__name'),
+                pen:     card.querySelector('.em-site-card__edit'),
+                input:   card.querySelector('.em-site-card__nameinput'),
+                confirm: card.querySelector('.em-site-card__confirm'),
+                cancel:  card.querySelector('.em-site-card__cancel')
             };
         }
 
         function open(card) {
+            if (!card) { return; }
             var p = parts(card);
             if (!p.input) { return; }
+            card.classList.add('em-site-card--renaming');
             if (p.name) { p.name.hidden = true; }
             if (p.pen) { p.pen.hidden = true; }
             p.input.hidden = false;
@@ -113,18 +207,20 @@ function em_wp_v4_overview_render_rename_script(): void
         }
 
         function close(card) {
+            if (!card) { return; }
             var p = parts(card);
             if (p.input) { p.input.hidden = true; }
             if (p.confirm) { p.confirm.hidden = true; }
             if (p.cancel) { p.cancel.hidden = true; }
             if (p.name) { p.name.hidden = false; }
             if (p.pen) { p.pen.hidden = false; }
+            card.classList.remove('em-site-card--renaming');
         }
 
         // Aperçu en direct du libellé saisi (carte + sous-menu) avant validation.
         function preview(input, label) {
-            var card = input.closest('.em-v4-card');
-            var name = card ? card.querySelector('.em-v4-card__name') : null;
+            var card = input.closest('.em-site-card');
+            var name = card ? card.querySelector('.em-site-card__name') : null;
             if (name) { name.textContent = label; }
             var mt = menuText(input.getAttribute('data-slug') || '');
             if (mt) { mt.textContent = label; }
@@ -137,7 +233,7 @@ function em_wp_v4_overview_render_rename_script(): void
             var slug = p.input.getAttribute('data-slug') || '';
             if (val === '' || val === p.input.getAttribute('data-original')) { close(card); return; }
             var body = new URLSearchParams();
-            body.set('action', 'em_wp_v4_rename_type');
+            body.set('action', 'em_site_rename_type');
             body.set('_ajax_nonce', NONCE);
             body.set('slug', slug);
             body.set('label', val);
@@ -165,17 +261,41 @@ function em_wp_v4_overview_render_rename_script(): void
         }
 
         document.addEventListener('click', function (e) {
-            var pen = e.target.closest('.em-v4-card__edit');
-            if (pen) { stop(e); open(pen.closest('.em-v4-card')); return; }
-            var ok = e.target.closest('.em-v4-card__confirm');
-            if (ok) { stop(e); confirm(ok.closest('.em-v4-card')); return; }
-            var no = e.target.closest('.em-v4-card__cancel');
-            if (no) { stop(e); cancel(no.closest('.em-v4-card')); return; }
-            if (e.target.closest('.em-v4-card__nameinput')) { e.preventDefault(); e.stopPropagation(); }
+            var focusRename = e.target.closest('.em-site-overview__focus-titleedit');
+            if (focusRename) {
+                stop(e);
+                openFocusRename();
+                return;
+            }
+            var focusOk = e.target.closest('.em-site-overview__focus-confirm');
+            if (focusOk) {
+                stop(e);
+                confirmFocusRename();
+                return;
+            }
+            var focusNo = e.target.closest('.em-site-overview__focus-cancel');
+            if (focusNo) {
+                stop(e);
+                closeFocusRename(true);
+                return;
+            }
+            var pen = e.target.closest('.em-site-card__edit');
+            if (pen) { stop(e); open(pen.closest('.em-site-card')); return; }
+            var ok = e.target.closest('.em-site-card__confirm');
+            if (ok) { stop(e); confirm(ok.closest('.em-site-card')); return; }
+            var no = e.target.closest('.em-site-card__cancel');
+            if (no) { stop(e); cancel(no.closest('.em-site-card')); return; }
+            if (e.target.closest('.em-site-card__nameinput')) { e.preventDefault(); e.stopPropagation(); }
         });
 
         document.addEventListener('input', function (e) {
-            var input = e.target.closest('.em-v4-card__nameinput');
+            var focusInput = e.target.closest('.em-site-overview__focus-nameinput');
+            if (focusInput) {
+                focusInput.value = focusInput.value.toUpperCase();
+                previewFocusLabel(focusInput.getAttribute('data-slug') || '', focusInput.value);
+                return;
+            }
+            var input = e.target.closest('.em-site-card__nameinput');
             if (!input) { return; }
             input.value = input.value.toUpperCase();
             preview(input, input.value);
@@ -183,13 +303,20 @@ function em_wp_v4_overview_render_rename_script(): void
 
         // Plus de validation au clavier (Entrée) : on neutralise Entrée.
         document.addEventListener('keydown', function (e) {
-            var input = e.target.closest('.em-v4-card__nameinput');
+            var focusInput = e.target.closest('.em-site-overview__focus-nameinput');
+            if (focusInput) {
+                if (e.key === 'Enter') { e.preventDefault(); confirmFocusRename(); }
+                if (e.key === 'Escape') { e.preventDefault(); closeFocusRename(true); }
+                return;
+            }
+            var input = e.target.closest('.em-site-card__nameinput');
             if (input && e.key === 'Enter') { e.preventDefault(); }
         });
 
         // Le champ ne doit pas ouvrir/fermer la carte.
         document.addEventListener('mousedown', function (e) {
-            if (e.target.closest('.em-v4-card__nameinput')) { e.stopPropagation(); }
+            if (e.target.closest('.em-site-overview__focus-nameinput')) { e.stopPropagation(); }
+            if (e.target.closest('.em-site-card__nameinput')) { e.stopPropagation(); }
         });
     })();
     </script>

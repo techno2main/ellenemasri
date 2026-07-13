@@ -1,10 +1,10 @@
 <?php
 /**
- * Bootstrap menu admin em-wp (modules < 350 lignes chacun).
+ * Bootstrap menu admin em-site (modules < 350 lignes chacun).
  *
  * Positions figées : menu/layout.php
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

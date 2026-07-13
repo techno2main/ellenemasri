@@ -8,7 +8,7 @@
 
  *
 
- * @package em-wp
+ * @package em-site
 
  */
 
@@ -32,7 +32,7 @@ if (!defined('ABSPATH')) {
 
  */
 
-function em_wp_admin_template_wizard_onboarding_steps(): array
+function em_site_admin_template_wizard_onboarding_steps(): array
 
 {
 
@@ -40,17 +40,17 @@ function em_wp_admin_template_wizard_onboarding_steps(): array
 
         [
 
-            'title'   => __('Identité', 'em-wp'),
+            'title'   => __('Identité', 'em-site'),
 
-            'summary' => __('Nom et couleur du template — repères visuels dans l’admin et le bandeau d’édition.', 'em-wp'),
+            'summary' => __('Nom et couleur du template — repères visuels dans l’admin et le bandeau d’édition.', 'em-site'),
 
         ],
 
         [
 
-            'title'   => __('Plan', 'em-wp'),
+            'title'   => __('Plan', 'em-site'),
 
-            'summary' => __('Compose le plan de page sur le wireframe : ajoute, réordonne ou retire des rubriques, puis valide le template.', 'em-wp'),
+            'summary' => __('Compose le plan de page sur le wireframe : ajoute, réordonne ou retire des rubriques, puis valide le template.', 'em-site'),
 
         ],
 

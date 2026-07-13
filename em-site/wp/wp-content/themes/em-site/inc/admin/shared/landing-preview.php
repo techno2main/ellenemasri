@@ -2,7 +2,7 @@
 /**
  * Plan de la landing pour le sommaire admin (position des rubriques).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,9 +12,9 @@ if (!defined('ABSPATH')) {
 /**
  * Slug module d'une zone du plan.
  */
-function em_wp_admin_landing_preview_zone_module_slug(string $zone): string
+function em_site_admin_landing_preview_zone_module_slug(string $zone): string
 {
-    foreach (em_wp_admin_site_rubrique_all_definitions() as $module_slug => $definition) {
+    foreach (em_site_admin_site_rubrique_all_definitions() as $module_slug => $definition) {
         if (($definition['preview_zone'] ?? '') === $zone) {
             return (string) $module_slug;
         }
@@ -30,9 +30,9 @@ function em_wp_admin_landing_preview_zone_module_slug(string $zone): string
 /**
  * Zone preview d'un module.
  */
-function em_wp_admin_landing_preview_module_zone(string $module_slug): string
+function em_site_admin_landing_preview_module_zone(string $module_slug): string
 {
-    $definitions = em_wp_admin_site_rubrique_definitions();
+    $definitions = em_site_admin_site_rubrique_definitions();
 
     return (string) ($definitions[$module_slug]['preview_zone'] ?? '');
 }
@@ -42,13 +42,13 @@ function em_wp_admin_landing_preview_module_zone(string $module_slug): string
  *
  * @return array{enabled:bool,hero_slug:string,slider_slug:string,layout:string}
  */
-function em_wp_admin_header_preview_config(): array
+function em_site_admin_header_preview_config(): array
 {
-    if (!function_exists('em_wp_header_get_options')) {
-        return em_wp_header_default_options();
+    if (!function_exists('em_site_header_get_options')) {
+        return em_site_header_default_options();
     }
 
-    return em_wp_header_get_options();
+    return em_site_header_get_options();
 }
 
 /**
@@ -57,10 +57,10 @@ function em_wp_admin_header_preview_config(): array
  * @param array{enabled?:bool,hero_slug?:string,slider_slug?:string,layout?:string}|null $header
  * @return array<int, array{zone:string,part:string,slug:string,label:string}>
  */
-function em_wp_admin_header_preview_subzones(?array $header = null): array
+function em_site_admin_header_preview_subzones(?array $header = null): array
 {
     if ($header === null) {
-        $header = em_wp_admin_header_preview_config();
+        $header = em_site_admin_header_preview_config();
     }
     $hero_slug = sanitize_key((string) ($header['hero_slug'] ?? ($header['hero'] ?? '')));
     $slider_slug = sanitize_key((string) ($header['slider_slug'] ?? ($header['slider'] ?? '')));
@@ -88,8 +88,8 @@ function em_wp_admin_header_preview_subzones(?array $header = null): array
     }
 
     $labels = [
-        'header_hero'   => __('Hero', 'em-wp'),
-        'header_slider' => __('Slider', 'em-wp'),
+        'header_hero'   => __('Hero', 'em-site'),
+        'header_slider' => __('Slider', 'em-site'),
     ];
 
     foreach ($parts as $index => $part) {
@@ -97,15 +97,15 @@ function em_wp_admin_header_preview_subzones(?array $header = null): array
         $catalog_slug = (string) $part['slug'];
         $label = $labels[$zone] ?? $zone;
 
-        if ($zone === 'header_hero' && function_exists('em_wp_hero_catalog_entries')) {
-            $entries = em_wp_hero_catalog_entries();
+        if ($zone === 'header_hero' && function_exists('em_site_hero_catalog_entries')) {
+            $entries = em_site_hero_catalog_entries();
             if (isset($entries[$catalog_slug]['label'])) {
                 $label = (string) $entries[$catalog_slug]['label'];
             }
         }
 
-        if ($zone === 'header_slider' && function_exists('em_wp_slider_catalog_entries')) {
-            $entries = em_wp_slider_catalog_entries();
+        if ($zone === 'header_slider' && function_exists('em_site_slider_catalog_entries')) {
+            $entries = em_site_slider_catalog_entries();
             if (isset($entries[$catalog_slug]['label'])) {
                 $label = (string) $entries[$catalog_slug]['label'];
             }
@@ -120,29 +120,29 @@ function em_wp_admin_header_preview_subzones(?array $header = null): array
 /**
  * Libellé court d'une zone (infobulle).
  */
-function em_wp_admin_landing_preview_zone_label(string $zone): string
+function em_site_admin_landing_preview_zone_label(string $zone): string
 {
     $labels = [
-        'top_bar'        => __('Barre du haut', 'em-wp'),
-        'header'         => __('Section Header', 'em-wp'),
-        'header_hero'    => __('Hero (catalogue)', 'em-wp'),
-        'header_slider'    => __('Slider (catalogue)', 'em-wp'),
-        'section_stream' => __('Section Stream', 'em-wp'),
-        'section_social' => __('Section Social', 'em-wp'),
-        'section_video'  => __('Section Videos', 'em-wp'),
-        'section_release'=> __('Section Releases', 'em-wp'),
-        'section_cta'    => __('Section CTA', 'em-wp'),
-        'section_footer' => __('Footer', 'em-wp'),
+        'top_bar'        => __('Barre du haut', 'em-site'),
+        'header'         => __('Section Header', 'em-site'),
+        'header_hero'    => __('Hero (catalogue)', 'em-site'),
+        'header_slider'    => __('Slider (catalogue)', 'em-site'),
+        'section_stream' => __('Section Stream', 'em-site'),
+        'section_social' => __('Section Social', 'em-site'),
+        'section_video'  => __('Section Videos', 'em-site'),
+        'section_release'=> __('Section Releases', 'em-site'),
+        'section_cta'    => __('Section CTA', 'em-site'),
+        'section_footer' => __('Footer', 'em-site'),
     ];
 
     if (isset($labels[$zone])) {
         return $labels[$zone];
     }
 
-    $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
+    $module_slug = em_site_admin_landing_preview_zone_module_slug($zone);
 
-    if ($module_slug !== '' && function_exists('em_wp_admin_rubrique_skeleton_label')) {
-        return em_wp_admin_rubrique_skeleton_label($module_slug);
+    if ($module_slug !== '' && function_exists('em_site_admin_rubrique_skeleton_label')) {
+        return em_site_admin_rubrique_skeleton_label($module_slug);
     }
 
     return $zone;
@@ -151,9 +151,9 @@ function em_wp_admin_landing_preview_zone_label(string $zone): string
 /**
  * Couleur d'accent d'une zone (Style de base enregistré, sinon défaut rubrique).
  */
-function em_wp_admin_landing_preview_zone_color(string $zone): string
+function em_site_admin_landing_preview_zone_color(string $zone): string
 {
-    return em_wp_admin_landing_preview_zone_style($zone)['background'];
+    return em_site_admin_landing_preview_zone_style($zone)['background'];
 }
 
 /**
@@ -161,12 +161,12 @@ function em_wp_admin_landing_preview_zone_color(string $zone): string
  *
  * @return array{background:string,text:string}
  */
-function em_wp_admin_header_catalog_subzone_style(string $part, string $catalog_slug): array
+function em_site_admin_header_catalog_subzone_style(string $part, string $catalog_slug): array
 {
     $catalog_slug = sanitize_key($catalog_slug);
 
-    if ($part === 'hero' && function_exists('em_wp_header_get_options')) {
-        $options = em_wp_header_get_options();
+    if ($part === 'hero' && function_exists('em_site_header_get_options')) {
+        $options = em_site_header_get_options();
         $bg = trim((string) ($options['background_color'] ?? ''));
         $text = trim((string) ($options['text_color'] ?? ''));
 
@@ -176,8 +176,8 @@ function em_wp_admin_header_catalog_subzone_style(string $part, string $catalog_
         ];
     }
 
-    if ($part === 'slider' && $catalog_slug !== '' && function_exists('em_wp_slider_get_options')) {
-        $options = em_wp_slider_get_options($catalog_slug);
+    if ($part === 'slider' && $catalog_slug !== '' && function_exists('em_site_slider_get_options')) {
+        $options = em_site_slider_get_options($catalog_slug);
         $bg = trim((string) ($options['frame_bg_color'] ?? ''));
         $text = trim((string) ($options['footer_text'] ?? ''));
 
@@ -198,24 +198,24 @@ function em_wp_admin_header_catalog_subzone_style(string $part, string $catalog_
  *
  * @return array{background:string,text:string}
  */
-function em_wp_admin_landing_preview_zone_style(string $zone): array
+function em_site_admin_landing_preview_zone_style(string $zone): array
 {
     if ($zone === 'header_hero' || $zone === 'header_slider') {
-        $header = em_wp_admin_header_preview_config();
+        $header = em_site_admin_header_preview_config();
         $part = $zone === 'header_hero' ? 'hero' : 'slider';
         $slug = sanitize_key((string) ($header[$part . '_slug'] ?? ''));
 
-        return em_wp_admin_header_catalog_subzone_style($part, $slug);
+        return em_site_admin_header_catalog_subzone_style($part, $slug);
     }
 
-    $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
+    $module_slug = em_site_admin_landing_preview_zone_module_slug($zone);
 
-    if ($module_slug !== '' && function_exists('em_wp_admin_module_style_colors_for_preview')) {
-        return em_wp_admin_module_style_colors_for_preview($module_slug);
+    if ($module_slug !== '' && function_exists('em_site_admin_module_style_colors_for_preview')) {
+        return em_site_admin_module_style_colors_for_preview($module_slug);
     }
 
     return [
-        'background' => em_wp_admin_landing_preview_zone_fallback_color($zone),
+        'background' => em_site_admin_landing_preview_zone_fallback_color($zone),
         'text'       => '#ffffff',
     ];
 }
@@ -223,9 +223,9 @@ function em_wp_admin_landing_preview_zone_style(string $zone): array
 /**
  * Couleur statique de repli (définition rubrique).
  */
-function em_wp_admin_landing_preview_zone_fallback_color(string $zone): string
+function em_site_admin_landing_preview_zone_fallback_color(string $zone): string
 {
-    $definitions = em_wp_admin_site_rubrique_definitions();
+    $definitions = em_site_admin_site_rubrique_definitions();
 
     foreach ($definitions as $definition) {
         if (($definition['preview_zone'] ?? '') === $zone) {
@@ -247,7 +247,7 @@ function em_wp_admin_landing_preview_zone_fallback_color(string $zone): string
 /**
  * Classe CSS is-active pour une zone du plan.
  */
-function em_wp_admin_landing_zone_active_class(string $zone, string $active_zone): string
+function em_site_admin_landing_zone_active_class(string $zone, string $active_zone): string
 {
     if ($zone === $active_zone) {
         return ' is-active';
@@ -263,10 +263,10 @@ function em_wp_admin_landing_zone_active_class(string $zone, string $active_zone
 /**
  * URL admin d'une entrée catalogue hero/slider.
  */
-function em_wp_admin_catalog_entry_url(string $type, string $catalog_slug): string
+function em_site_admin_catalog_entry_url(string $type, string $catalog_slug): string
 {
-    if (function_exists('em_wp_admin_catalog_entry_edit_url')) {
-        return em_wp_admin_catalog_entry_edit_url($type, $catalog_slug);
+    if (function_exists('em_site_admin_catalog_entry_edit_url')) {
+        return em_site_admin_catalog_entry_edit_url($type, $catalog_slug);
     }
 
     return '';
@@ -275,25 +275,25 @@ function em_wp_admin_catalog_entry_url(string $type, string $catalog_slug): stri
 /**
  * URL admin de la rubrique liée à une zone du plan.
  */
-function em_wp_admin_landing_preview_zone_url(string $zone): string
+function em_site_admin_landing_preview_zone_url(string $zone): string
 {
     if ($zone === 'header_hero' || $zone === 'header_slider') {
-        $header = em_wp_admin_header_preview_config();
+        $header = em_site_admin_header_preview_config();
         $part = $zone === 'header_hero' ? 'hero' : 'slider';
         $slug = sanitize_key((string) ($header[$part . '_slug'] ?? ''));
 
-        return em_wp_admin_catalog_entry_url($part, $slug);
+        return em_site_admin_catalog_entry_url($part, $slug);
     }
 
-    $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
+    $module_slug = em_site_admin_landing_preview_zone_module_slug($zone);
 
-    // Rester sur le squelette : ouvrir la gestion V4 de la rubrique en dessous.
-    if ($module_slug !== '' && function_exists('em_wp_admin_rubrique_open_url')) {
-        return em_wp_admin_rubrique_open_url($module_slug);
+    // Rester sur le squelette : ouvrir la gestion EM-SITE de la rubrique en dessous.
+    if ($module_slug !== '' && function_exists('em_site_admin_rubrique_open_url')) {
+        return em_site_admin_rubrique_open_url($module_slug);
     }
 
-    if ($module_slug !== '' && function_exists('em_wp_admin_site_rubrique_entry_url')) {
-        return em_wp_admin_site_rubrique_entry_url($module_slug);
+    if ($module_slug !== '' && function_exists('em_site_admin_site_rubrique_entry_url')) {
+        return em_site_admin_site_rubrique_entry_url($module_slug);
     }
 
     return '';
@@ -302,26 +302,26 @@ function em_wp_admin_landing_preview_zone_url(string $zone): string
 /**
  * Titre rubrique affiché sur le plan.
  */
-function em_wp_admin_landing_preview_zone_title(string $zone): string
+function em_site_admin_landing_preview_zone_title(string $zone): string
 {
     if ($zone === 'header_hero' || $zone === 'header_slider') {
-        foreach (em_wp_admin_header_preview_subzones() as $subzone) {
+        foreach (em_site_admin_header_preview_subzones() as $subzone) {
             if (($subzone['zone'] ?? '') === $zone) {
-                return (string) ($subzone['label'] ?? em_wp_admin_landing_preview_zone_label($zone));
+                return (string) ($subzone['label'] ?? em_site_admin_landing_preview_zone_label($zone));
             }
         }
     }
 
-    $definitions = em_wp_admin_site_rubrique_definitions();
+    $definitions = em_site_admin_site_rubrique_definitions();
 
     foreach ($definitions as $module_slug => $definition) {
         if (($definition['preview_zone'] ?? '') === $zone) {
-            if (function_exists('em_wp_admin_rubrique_skeleton_label_with_item')) {
-                return em_wp_admin_rubrique_skeleton_label_with_item((string) $module_slug);
+            if (function_exists('em_site_admin_rubrique_skeleton_label_with_item')) {
+                return em_site_admin_rubrique_skeleton_label_with_item((string) $module_slug);
             }
 
-            if (function_exists('em_wp_admin_rubrique_skeleton_label')) {
-                return em_wp_admin_rubrique_skeleton_label((string) $module_slug);
+            if (function_exists('em_site_admin_rubrique_skeleton_label')) {
+                return em_site_admin_rubrique_skeleton_label((string) $module_slug);
             }
 
             $title = (string) ($definition['label'] ?? '');
@@ -332,21 +332,21 @@ function em_wp_admin_landing_preview_zone_title(string $zone): string
         }
     }
 
-    return em_wp_admin_landing_preview_zone_label($zone);
+    return em_site_admin_landing_preview_zone_label($zone);
 }
 
 /**
  * Zone preview pour un module.
  */
-function em_wp_admin_landing_preview_zone_for_module(string $module_slug): string
+function em_site_admin_landing_preview_zone_for_module(string $module_slug): string
 {
-    return em_wp_admin_landing_preview_module_zone($module_slug);
+    return em_site_admin_landing_preview_module_zone($module_slug);
 }
 
 /**
  * Affiche une zone cliquable du plan landing.
  */
-function em_wp_admin_render_landing_map_zone(
+function em_site_admin_render_landing_map_zone(
     string $zone,
     string $active_zone,
     string $class_suffix,
@@ -361,25 +361,25 @@ function em_wp_admin_render_landing_map_zone(
     bool $omit_preview_zone = false,
     ?array $style_override = null
 ): void {
-    $url = $is_disabled ? '' : em_wp_admin_landing_preview_zone_url($zone);
-    $label = em_wp_admin_landing_preview_zone_label($zone);
-    $title = em_wp_admin_landing_preview_zone_title($zone);
+    $url = $is_disabled ? '' : em_site_admin_landing_preview_zone_url($zone);
+    $label = em_site_admin_landing_preview_zone_label($zone);
+    $title = em_site_admin_landing_preview_zone_title($zone);
     $tooltip = $zone_tooltip !== '' ? $zone_tooltip : ($inner_html !== '' ? $title : $label);
     $style = is_array($style_override)
         ? wp_parse_args($style_override, ['background' => '#100421', 'text' => '#ffffff'])
-        : em_wp_admin_landing_preview_zone_style($zone);
+        : em_site_admin_landing_preview_zone_style($zone);
     $is_inert = $is_disabled && !$disabled_visual;
 
     if ($module_slug === '') {
-        $module_slug = em_wp_admin_landing_preview_zone_module_slug($zone);
+        $module_slug = em_site_admin_landing_preview_zone_module_slug($zone);
     }
 
-    if (!$is_sortable && $module_slug !== '' && $module_slug !== 'header' && em_wp_site_rubrique_is_reorderable($module_slug)) {
+    if (!$is_sortable && $module_slug !== '' && $module_slug !== 'header' && em_site_site_rubrique_is_reorderable($module_slug)) {
         $is_sortable = true;
     }
 
-    $classes = 'em-wp-admin-landing-map__zone em-wp-admin-landing-map__' . $class_suffix
-        . em_wp_admin_landing_zone_active_class($zone, $active_zone)
+    $classes = 'em-site-admin-landing-map__zone em-site-admin-landing-map__' . $class_suffix
+        . em_site_admin_landing_zone_active_class($zone, $active_zone)
         . ($is_sortable ? ' is-sortable' : '')
         . ($is_hidden ? ' is-rubrique-hidden' : '')
         . ($inner_html !== '' ? ' has-structure' : '')
@@ -387,17 +387,17 @@ function em_wp_admin_render_landing_map_zone(
         . ($is_inert ? ' is-inert' : '');
 
     $sort_handle = $is_sortable
-        ? '<span class="em-wp-rubriques-sortable__handle" aria-hidden="true"><i class="fa-solid fa-grip-vertical"></i></span>'
+        ? '<span class="em-site-rubriques-sortable__handle" aria-hidden="true"><i class="fa-solid fa-grip-vertical"></i></span>'
         : '';
 
     $hidden_badge = $is_hidden
-        ? '<span class="em-wp-admin-landing-map__hidden-badge">' . esc_html__('Masqué', 'em-wp') . '</span>'
+        ? '<span class="em-site-admin-landing-map__hidden-badge">' . esc_html__('Masqué', 'em-site') . '</span>'
         : '';
 
     if ($inner_html !== '') {
         $inner = $sort_handle . $hidden_badge . $inner_html;
     } else {
-        $inner = $sort_handle . $hidden_badge . '<span class="em-wp-admin-landing-map__zone-label">' . esc_html($title) . '</span>';
+        $inner = $sort_handle . $hidden_badge . '<span class="em-site-admin-landing-map__zone-label">' . esc_html($title) . '</span>';
     }
 
     $data_attrs = '';
@@ -442,7 +442,7 @@ function em_wp_admin_render_landing_map_zone(
  *
  * @param array{interactive?:bool,show_hidden_badge?:bool,header_config?:array<string,mixed>,editing_part?:string,subzones_clickable?:bool,subzone_display?:string,disable_header_link?:bool,editing_entry_label?:string} $args
  */
-function em_wp_admin_render_landing_map_header_group(string $active_zone = '', array $args = []): void
+function em_site_admin_render_landing_map_header_group(string $active_zone = '', array $args = []): void
 {
     $interactive = !array_key_exists('interactive', $args) || !empty($args['interactive']);
     $show_hidden_badge = !array_key_exists('show_hidden_badge', $args) || !empty($args['show_hidden_badge']);
@@ -454,29 +454,29 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
         ? !empty($args['subzones_clickable'])
         : ($editing_part !== '');
     $disable_header_link = !empty($args['disable_header_link']);
-    $header_url = function_exists('em_wp_admin_rubrique_open_url')
-        ? em_wp_admin_rubrique_open_url('header')
-        : (function_exists('em_wp_admin_site_rubrique_entry_url') ? em_wp_admin_site_rubrique_entry_url('header') : '');
+    $header_url = function_exists('em_site_admin_rubrique_open_url')
+        ? em_site_admin_rubrique_open_url('header')
+        : (function_exists('em_site_admin_site_rubrique_entry_url') ? em_site_admin_site_rubrique_entry_url('header') : '');
     $header = isset($args['header_config']) && is_array($args['header_config'])
-        ? wp_parse_args($args['header_config'], em_wp_header_default_options())
-        : em_wp_admin_header_preview_config();
+        ? wp_parse_args($args['header_config'], em_site_header_default_options())
+        : em_site_admin_header_preview_config();
     $header_entry_label = trim((string) ($args['header_entry_label'] ?? ''));
-    $subzones = em_wp_admin_header_preview_subzones($header);
-    // Matrice V4 (composite HERO/SLIDER) : si fournie, les deux sous-zones sont
+    $subzones = em_site_admin_header_preview_subzones($header);
+    // Matrice EM-SITE (composite HERO/SLIDER) : si fournie, les deux sous-zones sont
     // toujours rendues mais SLIDER est masqué en mode « HERO seul » (permet la
     // bascule en direct depuis le sélecteur sans recharger).
     $is_hidden = array_key_exists('is_hidden', $args)
         ? !empty($args['is_hidden'])
-        : !em_wp_get_site_rubrique_visibility('header');
+        : !em_site_get_site_rubrique_visibility('header');
     $layout = (string) ($header['layout'] ?? 'hero_left');
     $can_swap = $interactive && count($subzones) === 2 && empty($args['disable_swap']);
     $header_style = is_array($args['zone_style'] ?? null)
         ? wp_parse_args($args['zone_style'], ['background' => '#100421', 'text' => '#ffffff'])
-        : em_wp_admin_landing_preview_zone_style('header');
-    $group_classes = 'em-wp-admin-landing-map__header-group'
+        : em_site_admin_landing_preview_zone_style('header');
+    $group_classes = 'em-site-admin-landing-map__header-group'
         . ($interactive ? ' is-sortable' : ' is-static')
         . ($layout_only ? ' is-layout-mode' : '')
-        . em_wp_admin_landing_zone_active_class('header', $active_zone)
+        . em_site_admin_landing_zone_active_class('header', $active_zone)
         . ($show_hidden_badge && $is_hidden ? ' is-rubrique-hidden' : '');
     $group_attrs = 'data-module-slug="header"'
         . ' data-header-layout="' . esc_attr($layout) . '"'
@@ -491,62 +491,62 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
         class="<?php echo esc_attr($group_classes); ?>"
         <?php echo $group_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
     >
-        <div class="em-wp-admin-landing-map__header-group-toolbar">
+        <div class="em-site-admin-landing-map__header-group-toolbar">
             <?php if ($interactive) { ?>
-                <span class="em-wp-rubriques-sortable__handle" aria-hidden="true"><i class="fa-solid fa-grip-vertical"></i></span>
+                <span class="em-site-rubriques-sortable__handle" aria-hidden="true"><i class="fa-solid fa-grip-vertical"></i></span>
             <?php } ?>
-            <span class="em-wp-admin-landing-map__header-group-title"><?php esc_html_e('HEADER', 'em-wp'); ?></span>
+            <span class="em-site-admin-landing-map__header-group-title"><?php esc_html_e('HEADER', 'em-site'); ?></span>
             <?php if ($can_swap) { ?>
                 <button
                     type="button"
-                    class="em-wp-admin-landing-map__swap-header"
-                    aria-label="<?php esc_attr_e('Inverser Hero et Slider dans HEADER', 'em-wp'); ?>"
+                    class="em-site-admin-landing-map__swap-header"
+                    aria-label="<?php esc_attr_e('Inverser Hero et Slider dans HEADER', 'em-site'); ?>"
                 >
                     <i class="fa-solid fa-right-left" aria-hidden="true"></i>
                 </button>
             <?php } ?>
             <?php if ($show_hidden_badge && $is_hidden) { ?>
-                <span class="em-wp-admin-landing-map__hidden-badge"><?php esc_html_e('Masqué', 'em-wp'); ?></span>
+                <span class="em-site-admin-landing-map__hidden-badge"><?php esc_html_e('Masqué', 'em-site'); ?></span>
             <?php } ?>
         </div>
         <?php if (!$subzones_clickable && !$disable_header_link && $header_url !== '' && $subzones !== []) { ?>
             <a
-                class="em-wp-admin-landing-map__header-group-link<?php echo $layout_only ? ' is-layout-only' : ''; ?>"
+                class="em-site-admin-landing-map__header-group-link<?php echo $layout_only ? ' is-layout-only' : ''; ?>"
                 href="<?php echo esc_url($header_url); ?>"
                 <?php if (!$layout_only) { ?>
                 data-preview-zone="header"
                 style="--em-zone-accent: <?php echo esc_attr($header_style['background']); ?>; --em-zone-text: <?php echo esc_attr($header_style['text']); ?>"
                 <?php } ?>
                 data-module-slug="header"
-                title="<?php echo esc_attr(em_wp_admin_landing_preview_zone_label('header')); ?>"
+                title="<?php echo esc_attr(em_site_admin_landing_preview_zone_label('header')); ?>"
             >
         <?php } ?>
-        <div class="em-wp-admin-landing-map__header-group-inner<?php echo ($layout_only || count($subzones) === 1) ? ' is-single' : ''; ?>">
+        <div class="em-site-admin-landing-map__header-group-inner<?php echo ($layout_only || count($subzones) === 1) ? ' is-single' : ''; ?>">
             <?php
             if ($layout_only) {
                 $placeholder = $header_entry_label !== ''
                     ? sprintf(
                         /* translators: %s: label d'item HEADER */
-                        __('HEADER %s', 'em-wp'),
+                        __('HEADER %s', 'em-site'),
                         $header_entry_label
                     )
-                    : __('HEADER', 'em-wp');
+                    : __('HEADER', 'em-site');
                 ?>
-                <span class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-empty" style="grid-column:1 / -1; --em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;" aria-hidden="true">
-                    <span class="em-wp-admin-landing-map__zone-label"><?php echo esc_html($placeholder); ?></span>
+                <span class="em-site-admin-landing-map__zone em-site-admin-landing-map__header-empty" style="grid-column:1 / -1; --em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;" aria-hidden="true">
+                    <span class="em-site-admin-landing-map__zone-label"><?php echo esc_html($placeholder); ?></span>
                 </span>
                 <?php
             } elseif ($subzones === []) {
                 ?>
                 <a
-                    class="em-wp-admin-landing-map__zone em-wp-admin-landing-map__header-empty"
-                    href="<?php echo esc_url(function_exists('em_wp_admin_rubrique_open_url') ? em_wp_admin_rubrique_open_url('header') : em_wp_admin_site_rubrique_entry_url('header')); ?>"
+                    class="em-site-admin-landing-map__zone em-site-admin-landing-map__header-empty"
+                    href="<?php echo esc_url(function_exists('em_site_admin_rubrique_open_url') ? em_site_admin_rubrique_open_url('header') : em_site_admin_site_rubrique_entry_url('header')); ?>"
                     data-preview-zone="header"
                     data-module-slug="header"
                     style="--em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;"
-                    title="<?php esc_attr_e('Configurer HEADER', 'em-wp'); ?>"
+                    title="<?php esc_attr_e('Configurer HEADER', 'em-site'); ?>"
                 >
-                    <span class="em-wp-admin-landing-map__zone-label"><?php esc_html_e('HEADER (non configuré)', 'em-wp'); ?></span>
+                    <span class="em-site-admin-landing-map__zone-label"><?php esc_html_e('HEADER (non configuré)', 'em-site'); ?></span>
                 </a>
                 <?php
             } else {
@@ -559,18 +559,18 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
 
                     $inner_html = '';
 
-                    if ($part === 'hero' && function_exists('em_wp_admin_landing_hero_structure_html')) {
-                        $inner_html = em_wp_admin_landing_hero_structure_html($catalog_slug, $entry_label);
-                    } elseif ($part === 'slider' && function_exists('em_wp_admin_landing_slider_structure_html')) {
-                        $inner_html = em_wp_admin_landing_slider_structure_html($catalog_slug, $entry_label);
+                    if ($part === 'hero' && function_exists('em_site_admin_landing_hero_structure_html')) {
+                        $inner_html = em_site_admin_landing_hero_structure_html($catalog_slug, $entry_label);
+                    } elseif ($part === 'slider' && function_exists('em_site_admin_landing_slider_structure_html')) {
+                        $inner_html = em_site_admin_landing_slider_structure_html($catalog_slug, $entry_label);
                     }
 
                     $is_disabled = $editing_part !== '' && $part !== '' && $part !== $editing_part;
                     $is_inert = !$subzones_clickable;
                     $no_link = $is_inert || $is_disabled;
-                    $zone_tooltip = $entry_label !== '' ? $entry_label : em_wp_admin_landing_preview_zone_title($zone);
+                    $zone_tooltip = $entry_label !== '' ? $entry_label : em_site_admin_landing_preview_zone_title($zone);
 
-                    em_wp_admin_render_landing_map_zone(
+                    em_site_admin_render_landing_map_zone(
                         $zone,
                         $active_zone,
                         $class_suffix,
@@ -600,7 +600,7 @@ function em_wp_admin_render_landing_map_header_group(string $active_zone = '', a
  *
  * @param array{interactive?:bool,show_hidden_badge?:bool,header_config?:array<string,mixed>,editing_part?:string,editing_entry_label?:string} $args
  */
-function em_wp_admin_render_header_structure_preview(string $active_zone = '', array $args = []): void
+function em_site_admin_render_header_structure_preview(string $active_zone = '', array $args = []): void
 {
     $preview_args = array_merge(
         [
@@ -613,17 +613,17 @@ function em_wp_admin_render_header_structure_preview(string $active_zone = '', a
         $args
     );
     $editing_part = sanitize_key((string) ($preview_args['editing_part'] ?? ''));
-    $map_classes = 'em-wp-admin-landing-map em-wp-admin-landing-map--header-only';
+    $map_classes = 'em-site-admin-landing-map em-site-admin-landing-map--header-only';
 
     if ($editing_part !== '') {
-        $map_classes .= ' em-wp-admin-landing-map--edit-' . $editing_part;
+        $map_classes .= ' em-site-admin-landing-map--edit-' . $editing_part;
     }
     ?>
     <div
         class="<?php echo esc_attr($map_classes); ?>"
-        aria-label="<?php esc_attr_e('Aperçu HEADER', 'em-wp'); ?>"
+        aria-label="<?php esc_attr_e('Aperçu HEADER', 'em-site'); ?>"
     >
-        <?php em_wp_admin_render_landing_map_header_group($active_zone, $preview_args); ?>
+        <?php em_site_admin_render_landing_map_header_group($active_zone, $preview_args); ?>
     </div>
     <?php
 }
@@ -631,23 +631,23 @@ function em_wp_admin_render_header_structure_preview(string $active_zone = '', a
 /**
  * Affiche le plan complet de la landing.
  */
-function em_wp_admin_render_landing_map(string $active_zone = ''): void
+function em_site_admin_render_landing_map(string $active_zone = ''): void
 {
-    $top_hidden = !em_wp_get_site_rubrique_visibility('top-bar');
-    $footer_hidden = !em_wp_get_site_rubrique_visibility('footer');
+    $top_hidden = !em_site_get_site_rubrique_visibility('top-bar');
+    $footer_hidden = !em_site_get_site_rubrique_visibility('footer');
     ?>
     <div
-        class="em-wp-admin-landing-map"
-        id="em-wp-admin-landing-map"
-        aria-label="<?php esc_attr_e('Squelette du template', 'em-wp'); ?>"
+        class="em-site-admin-landing-map"
+        id="em-site-admin-landing-map"
+        aria-label="<?php esc_attr_e('Squelette du template', 'em-site'); ?>"
     >
-        <?php em_wp_admin_render_landing_map_zone('top_bar', $active_zone, 'top-bar', $top_hidden, false); ?>
+        <?php em_site_admin_render_landing_map_zone('top_bar', $active_zone, 'top-bar', $top_hidden, false); ?>
 
-        <div class="em-wp-admin-landing-map__body" id="em-wp-admin-landing-map-body">
+        <div class="em-site-admin-landing-map__body" id="em-site-admin-landing-map-body">
             <?php
-            $middle_order_fn = function_exists('em_wp_get_rubrique_middle_order_for_template')
-                ? 'em_wp_get_rubrique_middle_order_for_template'
-                : 'em_wp_get_site_rubrique_middle_order';
+            $middle_order_fn = function_exists('em_site_get_rubrique_middle_order_for_template')
+                ? 'em_site_get_rubrique_middle_order_for_template'
+                : 'em_site_get_site_rubrique_middle_order';
 
             foreach ($middle_order_fn() as $module_slug) {
                 $module_slug = sanitize_key((string) $module_slug);
@@ -665,13 +665,13 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
                         'subzone_display'    => $header_active ? 'structure' : 'placeholders',
                     ];
 
-                    // Reflète la composition HEADER V4 (matrice + position) si dispo.
-                    if ($header_active && function_exists('em_wp_admin_header_section_get') && function_exists('em_wp_get_editing_template_slug')) {
-                        $tpl = (string) em_wp_get_editing_template_slug();
+                    // Reflète la composition HEADER EM-SITE (matrice + position) si dispo.
+                    if ($header_active && function_exists('em_site_admin_header_section_get') && function_exists('em_site_get_editing_template_slug')) {
+                        $tpl = (string) em_site_get_editing_template_slug();
 
                         if ($tpl !== '') {
-                            $cfg = em_wp_admin_header_section_get($tpl);
-                            $header_items = function_exists('em_wp_v4_get_items') ? em_wp_v4_get_items('headers') : [];
+                            $cfg = em_site_admin_header_section_get($tpl);
+                            $header_items = function_exists('em_site_get_items') ? em_site_get_items('headers') : [];
                             $preview_header_item = sanitize_key((string) ($cfg['header_item'] ?? ''));
                             if (($cfg['display_mode'] ?? 'single') === 'multi') {
                                 $candidate_first = sanitize_key((string) ($cfg['first_item'] ?? ''));
@@ -681,8 +681,8 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
                             }
                             if ($preview_header_item !== '' && isset($header_items[$preview_header_item])) {
                                 $header_args['header_entry_label'] = (string) $header_items[$preview_header_item];
-                                if (function_exists('em_wp_admin_header_item_config_get')) {
-                                    $header_item_cfg = em_wp_admin_header_item_config_get($preview_header_item);
+                                if (function_exists('em_site_admin_header_item_config_get')) {
+                                    $header_item_cfg = em_site_admin_header_item_config_get($preview_header_item);
                                     // On alimente le wireframe directement avec la composition
                                     // de l'item HEADER sélectionné, sans dépendre du contexte.
                                     $header_args['header_config'] = [
@@ -697,22 +697,22 @@ function em_wp_admin_render_landing_map(string $active_zone = ''): void
                         }
                     }
 
-                    em_wp_admin_render_landing_map_header_group($active_zone, $header_args);
+                    em_site_admin_render_landing_map_header_group($active_zone, $header_args);
                     continue;
                 }
 
-                $zone = em_wp_admin_landing_preview_zone_for_module($module_slug);
+                $zone = em_site_admin_landing_preview_zone_for_module($module_slug);
                 if ($zone === '') {
                     continue;
                 }
 
-                $is_hidden = !em_wp_get_site_rubrique_visibility($module_slug);
+                $is_hidden = !em_site_get_site_rubrique_visibility($module_slug);
 
-                em_wp_admin_render_landing_map_zone($zone, $active_zone, 'section', $is_hidden, true, $module_slug);
+                em_site_admin_render_landing_map_zone($zone, $active_zone, 'section', $is_hidden, true, $module_slug);
             } ?>
         </div>
 
-        <?php em_wp_admin_render_landing_map_zone('section_footer', $active_zone, 'section section-footer', $footer_hidden, false); ?>
+        <?php em_site_admin_render_landing_map_zone('section_footer', $active_zone, 'section section-footer', $footer_hidden, false); ?>
     </div>
     <?php
 }

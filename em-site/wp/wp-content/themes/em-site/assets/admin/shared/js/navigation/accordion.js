@@ -4,9 +4,9 @@
     var runtime = window.EmAdminRuntime || null;
 
     var OPEN_CLASS = 'is-open';
-    var MODULE_SELECTOR = '.em-wp-admin-module';
-    var PANEL_SELECTOR = '.em-wp-admin-module__panel';
-    var HEADER_SELECTOR = '.em-wp-admin-module__panel-header';
+    var MODULE_SELECTOR = '.em-site-admin-module';
+    var PANEL_SELECTOR = '.em-site-admin-module__panel';
+    var HEADER_SELECTOR = '.em-site-admin-module__panel-header';
 
     function syncHeaderState(panel, header) {
         header.setAttribute('aria-expanded', panel.classList.contains(OPEN_CLASS) ? 'true' : 'false');

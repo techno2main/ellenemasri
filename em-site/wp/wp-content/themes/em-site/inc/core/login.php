@@ -2,7 +2,7 @@
 /**
  * Personnalisation de la page de connexion WordPress (alignée prod).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * URL du logo animé (moonwalk) au-dessus du formulaire.
  */
-function em_wp_get_login_logo_url(): string
+function em_site_get_login_logo_url(): string
 {
     $theme_asset = get_template_directory() . '/assets/img/moonwalk.gif';
 
@@ -26,7 +26,7 @@ function em_wp_get_login_logo_url(): string
 /**
  * Version cache-bust pour un asset login.
  */
-function em_wp_login_asset_version(string $relative_path): string
+function em_site_login_asset_version(string $relative_path): string
 {
     $absolute_path = get_template_directory() . '/' . ltrim($relative_path, '/');
     $version = wp_get_theme()->get('Version');
@@ -41,38 +41,38 @@ function em_wp_login_asset_version(string $relative_path): string
 /**
  * Charge les styles de la page login.
  */
-function em_wp_enqueue_login_assets(): void
+function em_site_enqueue_login_assets(): void
 {
     $theme_uri = get_template_directory_uri();
     $login_css_path = 'assets/front/css/login.css';
 
     wp_enqueue_style(
-        'em-wp-login',
+        'em-site-login',
         $theme_uri . '/' . $login_css_path,
         [],
-        em_wp_login_asset_version($login_css_path)
+        em_site_login_asset_version($login_css_path)
     );
 }
-add_action('login_enqueue_scripts', 'em_wp_enqueue_login_assets', 20);
+add_action('login_enqueue_scripts', 'em_site_enqueue_login_assets', 20);
 
 /**
  * Moonwalk décoratif (sans lien — le lien WP h1 est retiré).
  */
-function em_wp_render_login_logo_img(): void
+function em_site_render_login_logo_img(): void
 {
-    $logo_url = em_wp_get_login_logo_url();
+    $logo_url = em_site_get_login_logo_url();
 
     if ($logo_url === '') {
         return;
     }
 
-    $alt = em_wp_customize_login_logo_text('');
+    $alt = em_site_customize_login_logo_text('');
     ?>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         var h1 = document.querySelector('#login h1');
 
-        if (!h1 || h1.querySelector('.em-wp-login-logo')) {
+        if (!h1 || h1.querySelector('.em-site-login-logo')) {
             return;
         }
 
@@ -80,7 +80,7 @@ function em_wp_render_login_logo_img(): void
         var img = document.createElement('img');
         img.src = <?php echo wp_json_encode($logo_url); ?>;
         img.alt = <?php echo wp_json_encode($alt); ?>;
-        img.className = 'em-wp-login-logo';
+        img.className = 'em-site-login-logo';
         img.width = 480;
         img.height = 480;
 
@@ -93,34 +93,34 @@ function em_wp_render_login_logo_img(): void
     </script>
     <?php
 }
-add_action('login_footer', 'em_wp_render_login_logo_img', 5);
+add_action('login_footer', 'em_site_render_login_logo_img', 5);
 
 /**
  * Texte alternatif des visuels login.
  */
-function em_wp_customize_login_logo_text(string $text): string
+function em_site_customize_login_logo_text(string $text): string
 {
     return 'Ellene Masri';
 }
-add_filter('login_headertext', 'em_wp_customize_login_logo_text');
+add_filter('login_headertext', 'em_site_customize_login_logo_text');
 
 /**
  * Lien « retour au site » sous le formulaire.
  */
-function em_wp_customize_login_site_link(string $html): string
+function em_site_customize_login_site_link(string $html): string
 {
     return sprintf(
         '<a href="%1$s" target="_blank" rel="noopener noreferrer">&larr; %2$s</a>',
         esc_url(home_url('/')),
-        esc_html__('Aller sur Ellene Masri', 'em-wp')
+        esc_html__('Aller sur Ellene Masri', 'em-site')
     );
 }
-add_filter('login_site_html_link', 'em_wp_customize_login_site_link');
+add_filter('login_site_html_link', 'em_site_customize_login_site_link');
 
 /**
  * Lien « mot de passe oublié » → nouvel onglet.
  */
-function em_wp_customize_login_lost_password_link(string $html): string
+function em_site_customize_login_lost_password_link(string $html): string
 {
     if ($html === '') {
         return $html;
@@ -128,7 +128,7 @@ function em_wp_customize_login_lost_password_link(string $html): string
 
     return str_replace('<a ', '<a target="_blank" rel="noopener noreferrer" ', $html);
 }
-add_filter('lost_password_html_link', 'em_wp_customize_login_lost_password_link');
+add_filter('lost_password_html_link', 'em_site_customize_login_lost_password_link');
 
 /**
  * Libellés français du formulaire login (install locale souvent en anglais).
@@ -138,7 +138,7 @@ add_filter('lost_password_html_link', 'em_wp_customize_login_lost_password_link'
  * @param mixed $domain
  * @return mixed
  */
-function em_wp_login_french_labels($translation, $text, $domain)
+function em_site_login_french_labels($translation, $text, $domain)
 {
     global $pagenow;
 
@@ -156,7 +156,7 @@ function em_wp_login_french_labels($translation, $text, $domain)
 
     return $labels[$text] ?? $translation;
 }
-add_filter('gettext', 'em_wp_login_french_labels', 20, 3);
+add_filter('gettext', 'em_site_login_french_labels', 20, 3);
 
 /**
  * Après déconnexion, renvoie vers la page login locale.
@@ -166,10 +166,10 @@ add_filter('gettext', 'em_wp_login_french_labels', 20, 3);
  * @param mixed $user
  * @return mixed
  */
-function em_wp_logout_redirect_to_login($redirect_to, $requested_redirect_to, $user)
+function em_site_logout_redirect_to_login($redirect_to, $requested_redirect_to, $user)
 {
     unset($requested_redirect_to, $user);
 
     return wp_login_url();
 }
-add_filter('logout_redirect', 'em_wp_logout_redirect_to_login', 20, 3);
+add_filter('logout_redirect', 'em_site_logout_redirect_to_login', 20, 3);

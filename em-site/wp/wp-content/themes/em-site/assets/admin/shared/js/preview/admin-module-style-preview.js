@@ -30,17 +30,17 @@
         root.style.setProperty('--em-module-admin-bg', bgColor);
         root.style.setProperty('--em-module-admin-text', textColor);
 
-        if (root.classList.contains('em-wp-top-bar-admin')) {
+        if (root.classList.contains('em-site-top-bar-admin')) {
             root.style.setProperty('--em-topbar-admin-bg', bgColor);
             root.style.setProperty('--em-topbar-admin-text', textColor);
         }
 
-        if (root.classList.contains('em-wp-hero-admin')) {
+        if (root.classList.contains('em-site-hero-admin')) {
             root.style.setProperty('--em-hero-admin-bg', bgColor);
             root.style.setProperty('--em-hero-admin-text', textColor);
         }
 
-        if (root.classList.contains('em-wp-slider-admin')) {
+        if (root.classList.contains('em-site-slider-admin')) {
             root.style.setProperty('--em-slider-admin-bg', bgColor);
             root.style.setProperty('--em-slider-admin-text', textColor);
         }
@@ -51,19 +51,19 @@
     function updateRubriqueColorsPanelSwatches(root) {
         const scope = root && root.nodeType === 1 ? root : document;
 
-        scope.querySelectorAll('.em-wp-rubrique-colors-panel[data-em-rubrique-bg-field]').forEach(function (panel) {
+        scope.querySelectorAll('.em-site-rubrique-colors-panel[data-em-rubrique-bg-field]').forEach(function (panel) {
             const bgFieldSuffix = panel.getAttribute('data-em-rubrique-bg-field') || '';
             const bgDefault = panel.getAttribute('data-em-rubrique-bg-default') || '#100421';
             const textFieldSuffix = panel.getAttribute('data-em-rubrique-text-field') || '';
             const textDefault = panel.getAttribute('data-em-rubrique-text-default') || '#ffffff';
-            const surface = panel.querySelector('.em-wp-rubrique-colors-panel__preview-surface');
-            const previewText = panel.querySelector('.em-wp-rubrique-colors-panel__preview-text');
+            const surface = panel.querySelector('.em-site-rubrique-colors-panel__preview-surface');
+            const previewText = panel.querySelector('.em-site-rubrique-colors-panel__preview-text');
 
             if (!surface) {
                 return;
             }
 
-            const moduleRoot = panel.closest('.em-wp-admin-module') || document;
+            const moduleRoot = panel.closest('.em-site-admin-module') || document;
             const bgInput = bgFieldSuffix !== '' ? moduleRoot.querySelector('input[name$="' + bgFieldSuffix + '"]') : null;
             const textInput = textFieldSuffix !== '' ? moduleRoot.querySelector('input[name$="' + textFieldSuffix + '"]') : null;
             const bgColor = bgInput && String(bgInput.value || '').trim()
@@ -95,12 +95,12 @@
     }
 
     function applyModuleAdminTexturePreview(root) {
-        if (!root || !root.classList.contains('em-wp-admin-module--texture-preview')) {
+        if (!root || !root.classList.contains('em-site-admin-module--texture-preview')) {
             return;
         }
 
         const textureInput = findTextureInput(root);
-        const heroTexture = root.querySelector('.em-wp-admin-module__hero-texture');
+        const heroTexture = root.querySelector('.em-site-admin-module__hero-texture');
         if (!textureInput || !heroTexture) {
             return;
         }
@@ -117,7 +117,7 @@
     }
 
     function bindTextureFieldListeners() {
-        document.querySelectorAll('.em-wp-admin-module--texture-preview').forEach(function (root) {
+        document.querySelectorAll('.em-site-admin-module--texture-preview').forEach(function (root) {
             const textureInput = findTextureInput(root);
             if (!textureInput) {
                 return;
@@ -134,8 +134,8 @@
     }
 
     function refreshAll() {
-        document.querySelectorAll('.em-wp-admin-module[data-em-admin-style]').forEach(applyModuleAdminStylePreview);
-        document.querySelectorAll('.em-wp-admin-module--texture-preview').forEach(applyModuleAdminTexturePreview);
+        document.querySelectorAll('.em-site-admin-module[data-em-admin-style]').forEach(applyModuleAdminStylePreview);
+        document.querySelectorAll('.em-site-admin-module--texture-preview').forEach(applyModuleAdminTexturePreview);
         updateRubriqueColorsPanelSwatches(document);
     }
 

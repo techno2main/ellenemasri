@@ -1,9 +1,15 @@
 # Refonte template unique avec multi-items
 
-Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-06 17:46:59
+Date: 2026-07-07
+Horodatage précis (Paris): 2026-07-07 20:13:03
 Périmètre: em-site/wp/wp-content/themes/em-site
 Statut: Implémentation admin template unique en cours
+
+## Mise à jour session (Paris): 2026-07-07 21:54:16
+
+- Purge des résidus `emv4` du builder Rubriques et du composant Scotchs terminée.
+- Le conflit fatal de fonction top-bar a été résolu par séparation des helpers admin/front.
+- Le rendu de la page Rubriques est de nouveau exécutable sans 500.
 
 Règle de suivi: toujours inclure un horodatage précis temps réel (date + heure Paris) à chaque mise à jour de ce document.
 
@@ -100,7 +106,7 @@ Détail:
 
 Convention cible validée:
 
-- aucune référence em_wp ou em_wp_v4 dans le modèle final
+- aucune référence legacy ni em_site_v4 dans le modèle final
 - aucun suffixe versionné dans le nommage métier
 - aucune branche fonctionnelle séparée natif/custom pour les slugs
 
@@ -230,3 +236,13 @@ Le plan d'action détaillé (phases, étapes, sous-étapes, critères Go/No-Go) 
 - RELEASE front: la colonne droite n'est plus figée sur des clés hardcodées ; extraction dynamique des blocs (intro/titre/lignes crédits/séparateurs) avec compatibilité legacy.
 - RELEASE admin: optimisation d'ergonomie en mode compact pour les lignes crédits, avec action rapide d'ajout de ligne crédit.
 - RELEASE admin: ajustement de la mise en forme vers une version compacte anti-scroll (moins de hauteur, meilleure lisibilité), sans modification du schéma de données.
+- Purge nomenclature: les occurrences `em_wp` résiduelles ont été supprimées du thème `em-site` (code, JS admin, variables internes), avec vérification de recherche globale à 0 dans ce périmètre.
+- Correctif runtime admin: suppression d'une collision de fonction stream et neutralisation de fichiers legacy redondants pour éviter les écrans "critical error" sur Dashboard/Rubriques.
+- Rétablissement front: ajout d'une migration one-shot de compatibilité base de données pour recopier les options `em_wp_*` / `em_wp_v4_*` vers `em_site_*` et restaurer les contenus front existants.
+- Incident Header "Our Land": correction d'une perte d'entrées causée par une migration incomplète (copie seule) via une migration v2 de fusion des tableaux legacy vers les options `em_site_*` déjà présentes.
+
+## Mise à jour session (Paris): 2026-07-07 22:08:43
+
+- Nettoyage legacy durci: suppression du migrateur de préfixes legacy dans le thème actif.
+- Le bootstrap ne charge plus de fallback de migration one-shot.
+- Vérification de non-régression statique réalisée sur le périmètre PHP modifié.

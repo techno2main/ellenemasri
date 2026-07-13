@@ -1,8 +1,8 @@
 <?php
 /**
- * Page Apparence → Thèmes : screenshot EM-WP + description riche (style.css).
+ * Page Apparence → Thèmes : screenshot EM-SITE + description riche (style.css).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Affiche le copyright auteur sans préfixe « Par » / « By ».
  */
-function em_wp_force_theme_author_label_in_preview(string $translation, string $text, string $domain): string
+function em_site_force_theme_author_label_in_preview(string $translation, string $text, string $domain): string
 {
     if (!is_admin() || $text !== 'By %s') {
         return $translation;
@@ -26,12 +26,12 @@ function em_wp_force_theme_author_label_in_preview(string $translation, string $
 
     return '%s';
 }
-add_filter('gettext', 'em_wp_force_theme_author_label_in_preview', 20, 3);
+add_filter('gettext', 'em_site_force_theme_author_label_in_preview', 20, 3);
 
 /**
  * CSS + JS page themes.php (screenshot contain, description || [b] [color] [link]).
  */
-function em_wp_customize_themes_admin_preview(): void
+function em_site_customize_themes_admin_preview(): void
 {
     if (!is_admin()) {
         return;
@@ -44,8 +44,8 @@ function em_wp_customize_themes_admin_preview(): void
     }
 
     $theme_slug = sanitize_key(get_stylesheet());
-    $hide_theme_actions = function_exists('em_wp_admin_should_limit_client_admin')
-        && em_wp_admin_should_limit_client_admin();
+    $hide_theme_actions = function_exists('em_site_admin_should_limit_client_admin')
+        && em_site_admin_should_limit_client_admin();
     ?>
     <style>
     .theme-wrap .theme-author,
@@ -149,7 +149,7 @@ function em_wp_customize_themes_admin_preview(): void
             var enrichPattern = /\|\||\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|https?:\/\/|\*\*[^*]+\*\*|\*[^*]+\*|`[^`]+`|\[(?:b|i|u|color|link)(?:=|\s|\])/i;
 
             descriptionNodes.forEach(function(node) {
-                if (!node || node.getAttribute('data-em-wp-linebreak-ready') === '1') {
+                if (!node || node.getAttribute('data-em-site-linebreak-ready') === '1') {
                     return;
                 }
 
@@ -170,7 +170,7 @@ function em_wp_customize_themes_admin_preview(): void
 
                 node.innerHTML = lines.map(renderRichDescriptionLine).join('<br>');
                 node.style.whiteSpace = 'normal';
-                node.setAttribute('data-em-wp-linebreak-ready', '1');
+                node.setAttribute('data-em-site-linebreak-ready', '1');
             });
         }
 
@@ -259,4 +259,4 @@ function em_wp_customize_themes_admin_preview(): void
     <?php } ?>
     <?php
 }
-add_action('admin_head', 'em_wp_customize_themes_admin_preview', 30);
+add_action('admin_head', 'em_site_customize_themes_admin_preview', 30);

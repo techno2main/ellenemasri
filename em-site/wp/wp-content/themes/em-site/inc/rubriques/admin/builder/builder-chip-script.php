@@ -1,9 +1,9 @@
 <?php
 /**
- * Construction des chips côté client (V4) : valeur selon le type
- * (texte, image via médiathèque, icône plateforme), exposée via EmWpV4Chip.
+ * Construction des chips côté client (EM-SITE) : valeur selon le type
+ * (texte, image via médiathèque, icône plateforme), exposée via EmSiteChip.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,121 +11,121 @@ if (!defined('ABSPATH')) {
 }
 ?>
 <script>
-window.EmWpV4Chip = (function () {
-    var PLATFORMS = <?php echo wp_json_encode(em_wp_rubrique_platform_choices()); ?>;
+window.EmSiteChip = (function () {
+    var PLATFORMS = <?php echo wp_json_encode(em_site_rubrique_platform_choices()); ?>;
     var DECOR = <?php
-        $em_wp_decor = [];
-        foreach (em_wp_rubrique_decorative_types() as $em_wp_dt) {
-            $em_wp_def = em_wp_field_type_get($em_wp_dt);
-            $em_wp_decor[$em_wp_dt] = $em_wp_def ? (string) $em_wp_def['label'] : $em_wp_dt;
+        $em_site_decor = [];
+        foreach (em_site_rubrique_decorative_types() as $em_site_dt) {
+            $em_site_def = em_site_field_type_get($em_site_dt);
+            $em_site_decor[$em_site_dt] = $em_site_def ? (string) $em_site_def['label'] : $em_site_dt;
         }
-        echo wp_json_encode($em_wp_decor);
+        echo wp_json_encode($em_site_decor);
     ?>;
-    var DECOR_COLOR = <?php echo wp_json_encode(em_wp_rubrique_decorative_color_types()); ?>;
-    var ARROW = <?php echo wp_json_encode(em_wp_rubrique_arrow_types()); ?>;
-    var TEXT_STYLE = <?php echo wp_json_encode(em_wp_rubrique_text_style_types()); ?>;
-    var FONTS = <?php echo wp_json_encode(em_wp_rubrique_font_choices()); ?>;
+    var DECOR_COLOR = <?php echo wp_json_encode(em_site_rubrique_decorative_color_types()); ?>;
+    var ARROW = <?php echo wp_json_encode(em_site_rubrique_arrow_types()); ?>;
+    var TEXT_STYLE = <?php echo wp_json_encode(em_site_rubrique_text_style_types()); ?>;
+    var FONTS = <?php echo wp_json_encode(em_site_rubrique_font_choices()); ?>;
     var TYPE_LABELS = <?php
-        $em_wp_tl = [];
-        $em_wp_ti = [];
-        foreach (em_wp_v4_builder_field_types() as $em_wp_ft) {
-            $em_wp_d = em_wp_field_type_get($em_wp_ft);
-            $em_wp_tl[$em_wp_ft] = $em_wp_d ? (string) $em_wp_d['label'] : $em_wp_ft;
-            $em_wp_ti[$em_wp_ft] = em_wp_v4_field_type_icon($em_wp_ft);
+        $em_site_tl = [];
+        $em_site_ti = [];
+        foreach (em_site_builder_field_types() as $em_site_ft) {
+            $em_site_d = em_site_field_type_get($em_site_ft);
+            $em_site_tl[$em_site_ft] = $em_site_d ? (string) $em_site_d['label'] : $em_site_ft;
+            $em_site_ti[$em_site_ft] = em_site_field_type_icon($em_site_ft);
         }
-        echo wp_json_encode($em_wp_tl);
+        echo wp_json_encode($em_site_tl);
     ?>;
-    var TYPE_ICONS = <?php echo wp_json_encode($em_wp_ti); ?>;
-    var NETWORKS = <?php echo wp_json_encode(em_wp_rubrique_network_choices()); ?>;
+    var TYPE_ICONS = <?php echo wp_json_encode($em_site_ti); ?>;
+    var NETWORKS = <?php echo wp_json_encode(em_site_rubrique_network_choices()); ?>;
     var TXT = {
-        image: '<?php echo esc_js(__('Choisir une image', 'em-wp')); ?>',
-        tape: '<?php echo esc_js(__('Scotch', 'em-wp')); ?>',
-        tapeHide: '<?php echo esc_js(__('Masquer les scotchs', 'em-wp')); ?>',
-        pick: '<?php echo esc_js(__('— Choisir —', 'em-wp')); ?>',
-        content: '<?php echo esc_js(__('Contenu…', 'em-wp')); ?>',
-        link: '<?php echo esc_js(__('Lien (https://… ou #ancre)', 'em-wp')); ?>',
-        focal: '<?php echo esc_js(__('Clique pour définir le point focal (recadrage)', 'em-wp')); ?>',
-        sizeW: '<?php echo esc_js(__('Taille', 'em-wp')); ?>',
-        sizeH: '<?php echo esc_js(__('Recadrer H px', 'em-wp')); ?>',
-        anchor: '<?php echo esc_js(__('Ancre (#section) ou URL', 'em-wp')); ?>',
-        label: '<?php echo esc_js(__('Libellé', 'em-wp')); ?>',
-        ptitle: '<?php echo esc_js(__('Titre (ex. LISTEN ON)', 'em-wp')); ?>',
-        color: '<?php echo esc_js(__('Modifier la couleur', 'em-wp')); ?>',
-        tsize: '<?php echo esc_js(__('Taille du texte (px)', 'em-wp')); ?>',
-        tfont: '<?php echo esc_js(__('Police du champ', 'em-wp')); ?>',
-        tfontInherit: '<?php echo esc_js(__('Police héritée', 'em-wp')); ?>',
-        tcolor: '<?php echo esc_js(__('Couleur du texte', 'em-wp')); ?>',
-        px: '<?php echo esc_js(__('px', 'em-wp')); ?>',
-        height: '<?php echo esc_js(__('Hauteur px', 'em-wp')); ?>',
-        hide: '<?php echo esc_js(__('Visible — cliquer pour masquer', 'em-wp')); ?>',
-        remove: '<?php echo esc_js(__('Supprimer', 'em-wp')); ?>',
-        videoUrl: '<?php echo esc_js(__('URL YouTube ou TikTok…', 'em-wp')); ?>',
-        audioUrl: '<?php echo esc_js(__('URL du fichier audio…', 'em-wp')); ?>',
-        pickVideo: '<?php echo esc_js(__('Choisir une vidéo', 'em-wp')); ?>',
-        pickAudio: '<?php echo esc_js(__('Choisir un son', 'em-wp')); ?>',
-        addImages: '<?php echo esc_js(__('Ajouter des images', 'em-wp')); ?>',
-        netTitle: '<?php echo esc_js(__('Titre (ex. FOLLOW)', 'em-wp')); ?>',
-        netAccount: '<?php echo esc_js(__('Pseudo (ex. @ellenemasri)', 'em-wp')); ?>',
-        slideDel: '<?php echo esc_js(__('Retirer', 'em-wp')); ?>',
-        text1: '<?php echo esc_js(__('Texte 1…', 'em-wp')); ?>',
-        text2: '<?php echo esc_js(__('Texte 2…', 'em-wp')); ?>',
-        pickThumb: '<?php echo esc_js(__('Choisir une miniature', 'em-wp')); ?>',
-        clickable: '<?php echo esc_js(__('Lien cliquable', 'em-wp')); ?>',
-        btnBg: '<?php echo esc_js(__('Fond', 'em-wp')); ?>',
-        btnText: '<?php echo esc_js(__('Texte', 'em-wp')); ?>',
-        btnMargBefore: '<?php echo esc_js(__('Marge avant', 'em-wp')); ?>',
-        btnMargAfter: '<?php echo esc_js(__('Marge après', 'em-wp')); ?>',
-        badgeText: '<?php echo esc_js(__('Texte du badge…', 'em-wp')); ?>',
-        badgeShape: '<?php echo esc_js(__('Forme', 'em-wp')); ?>',
-        badgeAnim: '<?php echo esc_js(__('Animation', 'em-wp')); ?>',
-        badgeRadius: '<?php echo esc_js(__('Arrondi', 'em-wp')); ?>',
-        bsPill: '<?php echo esc_js(__('Pastille (arrondi total)', 'em-wp')); ?>',
-        bsSquare: '<?php echo esc_js(__('Carré / rectangle', 'em-wp')); ?>',
-        bsTriangle: '<?php echo esc_js(__('Triangle', 'em-wp')); ?>',
-        baWiggle: '<?php echo esc_js(__('Balancement', 'em-wp')); ?>',
-        baPulse: '<?php echo esc_js(__('Pulsation', 'em-wp')); ?>',
-        baBounce: '<?php echo esc_js(__('Rebond', 'em-wp')); ?>',
-        baNone: '<?php echo esc_js(__('Aucune', 'em-wp')); ?>',
-        slTitle: '<?php echo esc_js(__('Titre du bandeau', 'em-wp')); ?>',
-        slTitlePh: '<?php echo esc_js(__('Mayami, My Miami', 'em-wp')); ?>',
-        slTitleHide: '<?php echo esc_js(__('Masquer le bandeau', 'em-wp')); ?>',
-        slBorder: '<?php echo esc_js(__('Bordure', 'em-wp')); ?>',
-        slShadow: '<?php echo esc_js(__('Ombre', 'em-wp')); ?>',
-        slBand: '<?php echo esc_js(__('Bandeau', 'em-wp')); ?>',
-        slBandText: '<?php echo esc_js(__('Texte titre', 'em-wp')); ?>',
-        slTapeHide: '<?php echo esc_js(__('Masquer les scotchs', 'em-wp')); ?>',
-        slTape: '<?php echo esc_js(__('Scotch', 'em-wp')); ?>',
-        slImage: '<?php echo esc_js(__('Image', 'em-wp')); ?>',
-        slVideo: '<?php echo esc_js(__('Vidéo YouTube', 'em-wp')); ?>',
-        slYoutube: '<?php echo esc_js(__('URL YouTube', 'em-wp')); ?>',
-        slTiktok: '<?php echo esc_js(__('URL TikTok', 'em-wp')); ?>',
-        slVideoFile: '<?php echo esc_js(__('Vidéo fichier', 'em-wp')); ?>',
-        slName: '<?php echo esc_js(__('Nom', 'em-wp')); ?>',
-        slDuration: '<?php echo esc_js(__('Durée (s)', 'em-wp')); ?>',
-        slAdd: '<?php echo esc_js(__('+ Ajouter un slide', 'em-wp')); ?>',
-        slUp: '<?php echo esc_js(__('Monter', 'em-wp')); ?>',
-        slDown: '<?php echo esc_js(__('Descendre', 'em-wp')); ?>',
-        richBold: '<?php echo esc_js(__('Gras', 'em-wp')); ?>',
-        richItalic: '<?php echo esc_js(__('Italique', 'em-wp')); ?>',
-        richUnderline: '<?php echo esc_js(__('Souligné', 'em-wp')); ?>',
-        richList: '<?php echo esc_js(__('Liste', 'em-wp')); ?>',
-        richAlignLeft: '<?php echo esc_js(__('Aligner à gauche', 'em-wp')); ?>',
-        richAlignCenter: '<?php echo esc_js(__('Centrer', 'em-wp')); ?>',
-        richAlignRight: '<?php echo esc_js(__('Aligner à droite', 'em-wp')); ?>',
-        richAlignJustify: '<?php echo esc_js(__('Justifier', 'em-wp')); ?>',
-        richInlineLink: '<?php echo esc_js(__('Ajouter un lien sur la sélection', 'em-wp')); ?>',
-        richUnlink: '<?php echo esc_js(__('Retirer le lien', 'em-wp')); ?>',
-        richAnchor: '<?php echo esc_js(__('Ajouter une ancre sur la sélection', 'em-wp')); ?>',
-        richPromptLink: '<?php echo esc_js(__('URL du lien (https://... ou #ancre)', 'em-wp')); ?>',
-        richPromptAnchor: '<?php echo esc_js(__('Nom de l\'ancre (sans #)', 'em-wp')); ?>',
-        richPlaceholder: '<?php echo esc_js(__('Contenu enrichi…', 'em-wp')); ?>',
-        richLink: '<?php echo esc_js(__('Lien global (optionnel)', 'em-wp')); ?>',
-        talign: '<?php echo esc_js(__('Alignement du texte', 'em-wp')); ?>',
-        talignInherit: '<?php echo esc_js(__('Alignement hérité', 'em-wp')); ?>',
-        left: '<?php echo esc_js(__('Gauche', 'em-wp')); ?>',
-        center: '<?php echo esc_js(__('Centre', 'em-wp')); ?>',
-        right: '<?php echo esc_js(__('Droite', 'em-wp')); ?>',
-        justify: '<?php echo esc_js(__('Justifié', 'em-wp')); ?>'
+        image: '<?php echo esc_js(__('Choisir une image', 'em-site')); ?>',
+        tape: '<?php echo esc_js(__('Scotch', 'em-site')); ?>',
+        tapeHide: '<?php echo esc_js(__('Masquer les scotchs', 'em-site')); ?>',
+        pick: '<?php echo esc_js(__('— Choisir —', 'em-site')); ?>',
+        content: '<?php echo esc_js(__('Contenu…', 'em-site')); ?>',
+        link: '<?php echo esc_js(__('Lien (https://… ou #ancre)', 'em-site')); ?>',
+        focal: '<?php echo esc_js(__('Clique pour définir le point focal (recadrage)', 'em-site')); ?>',
+        sizeW: '<?php echo esc_js(__('Taille', 'em-site')); ?>',
+        sizeH: '<?php echo esc_js(__('Recadrer H px', 'em-site')); ?>',
+        anchor: '<?php echo esc_js(__('Ancre (#section) ou URL', 'em-site')); ?>',
+        label: '<?php echo esc_js(__('Libellé', 'em-site')); ?>',
+        ptitle: '<?php echo esc_js(__('Titre (ex. LISTEN ON)', 'em-site')); ?>',
+        color: '<?php echo esc_js(__('Modifier la couleur', 'em-site')); ?>',
+        tsize: '<?php echo esc_js(__('Taille du texte (px)', 'em-site')); ?>',
+        tfont: '<?php echo esc_js(__('Police du champ', 'em-site')); ?>',
+        tfontInherit: '<?php echo esc_js(__('Police héritée', 'em-site')); ?>',
+        tcolor: '<?php echo esc_js(__('Couleur du texte', 'em-site')); ?>',
+        px: '<?php echo esc_js(__('px', 'em-site')); ?>',
+        height: '<?php echo esc_js(__('Hauteur px', 'em-site')); ?>',
+        hide: '<?php echo esc_js(__('Visible — cliquer pour masquer', 'em-site')); ?>',
+        remove: '<?php echo esc_js(__('Supprimer', 'em-site')); ?>',
+        videoUrl: '<?php echo esc_js(__('URL YouTube ou TikTok…', 'em-site')); ?>',
+        audioUrl: '<?php echo esc_js(__('URL du fichier audio…', 'em-site')); ?>',
+        pickVideo: '<?php echo esc_js(__('Choisir une vidéo', 'em-site')); ?>',
+        pickAudio: '<?php echo esc_js(__('Choisir un son', 'em-site')); ?>',
+        addImages: '<?php echo esc_js(__('Ajouter des images', 'em-site')); ?>',
+        netTitle: '<?php echo esc_js(__('Titre (ex. FOLLOW)', 'em-site')); ?>',
+        netAccount: '<?php echo esc_js(__('Pseudo (ex. @ellenemasri)', 'em-site')); ?>',
+        slideDel: '<?php echo esc_js(__('Retirer', 'em-site')); ?>',
+        text1: '<?php echo esc_js(__('Texte 1…', 'em-site')); ?>',
+        text2: '<?php echo esc_js(__('Texte 2…', 'em-site')); ?>',
+        pickThumb: '<?php echo esc_js(__('Choisir une miniature', 'em-site')); ?>',
+        clickable: '<?php echo esc_js(__('Lien cliquable', 'em-site')); ?>',
+        btnBg: '<?php echo esc_js(__('Fond', 'em-site')); ?>',
+        btnText: '<?php echo esc_js(__('Texte', 'em-site')); ?>',
+        btnMargBefore: '<?php echo esc_js(__('Marge avant', 'em-site')); ?>',
+        btnMargAfter: '<?php echo esc_js(__('Marge après', 'em-site')); ?>',
+        badgeText: '<?php echo esc_js(__('Texte du badge…', 'em-site')); ?>',
+        badgeShape: '<?php echo esc_js(__('Forme', 'em-site')); ?>',
+        badgeAnim: '<?php echo esc_js(__('Animation', 'em-site')); ?>',
+        badgeRadius: '<?php echo esc_js(__('Arrondi', 'em-site')); ?>',
+        bsPill: '<?php echo esc_js(__('Pastille (arrondi total)', 'em-site')); ?>',
+        bsSquare: '<?php echo esc_js(__('Carré / rectangle', 'em-site')); ?>',
+        bsTriangle: '<?php echo esc_js(__('Triangle', 'em-site')); ?>',
+        baWiggle: '<?php echo esc_js(__('Balancement', 'em-site')); ?>',
+        baPulse: '<?php echo esc_js(__('Pulsation', 'em-site')); ?>',
+        baBounce: '<?php echo esc_js(__('Rebond', 'em-site')); ?>',
+        baNone: '<?php echo esc_js(__('Aucune', 'em-site')); ?>',
+        slTitle: '<?php echo esc_js(__('Titre du bandeau', 'em-site')); ?>',
+        slTitlePh: '<?php echo esc_js(__('Mayami, My Miami', 'em-site')); ?>',
+        slTitleHide: '<?php echo esc_js(__('Masquer le bandeau', 'em-site')); ?>',
+        slBorder: '<?php echo esc_js(__('Bordure', 'em-site')); ?>',
+        slShadow: '<?php echo esc_js(__('Ombre', 'em-site')); ?>',
+        slBand: '<?php echo esc_js(__('Bandeau', 'em-site')); ?>',
+        slBandText: '<?php echo esc_js(__('Texte titre', 'em-site')); ?>',
+        slTapeHide: '<?php echo esc_js(__('Masquer les scotchs', 'em-site')); ?>',
+        slTape: '<?php echo esc_js(__('Scotch', 'em-site')); ?>',
+        slImage: '<?php echo esc_js(__('Image', 'em-site')); ?>',
+        slVideo: '<?php echo esc_js(__('Vidéo YouTube', 'em-site')); ?>',
+        slYoutube: '<?php echo esc_js(__('URL YouTube', 'em-site')); ?>',
+        slTiktok: '<?php echo esc_js(__('URL TikTok', 'em-site')); ?>',
+        slVideoFile: '<?php echo esc_js(__('Vidéo fichier', 'em-site')); ?>',
+        slName: '<?php echo esc_js(__('Nom', 'em-site')); ?>',
+        slDuration: '<?php echo esc_js(__('Durée (s)', 'em-site')); ?>',
+        slAdd: '<?php echo esc_js(__('+ Ajouter un slide', 'em-site')); ?>',
+        slUp: '<?php echo esc_js(__('Monter', 'em-site')); ?>',
+        slDown: '<?php echo esc_js(__('Descendre', 'em-site')); ?>',
+        richBold: '<?php echo esc_js(__('Gras', 'em-site')); ?>',
+        richItalic: '<?php echo esc_js(__('Italique', 'em-site')); ?>',
+        richUnderline: '<?php echo esc_js(__('Souligné', 'em-site')); ?>',
+        richList: '<?php echo esc_js(__('Liste', 'em-site')); ?>',
+        richAlignLeft: '<?php echo esc_js(__('Aligner à gauche', 'em-site')); ?>',
+        richAlignCenter: '<?php echo esc_js(__('Centrer', 'em-site')); ?>',
+        richAlignRight: '<?php echo esc_js(__('Aligner à droite', 'em-site')); ?>',
+        richAlignJustify: '<?php echo esc_js(__('Justifier', 'em-site')); ?>',
+        richInlineLink: '<?php echo esc_js(__('Ajouter un lien sur la sélection', 'em-site')); ?>',
+        richUnlink: '<?php echo esc_js(__('Retirer le lien', 'em-site')); ?>',
+        richAnchor: '<?php echo esc_js(__('Ajouter une ancre sur la sélection', 'em-site')); ?>',
+        richPromptLink: '<?php echo esc_js(__('URL du lien (https://... ou #ancre)', 'em-site')); ?>',
+        richPromptAnchor: '<?php echo esc_js(__('Nom de l\'ancre (sans #)', 'em-site')); ?>',
+        richPlaceholder: '<?php echo esc_js(__('Contenu enrichi…', 'em-site')); ?>',
+        richLink: '<?php echo esc_js(__('Lien global (optionnel)', 'em-site')); ?>',
+        talign: '<?php echo esc_js(__('Alignement du texte', 'em-site')); ?>',
+        talignInherit: '<?php echo esc_js(__('Alignement hérité', 'em-site')); ?>',
+        left: '<?php echo esc_js(__('Gauche', 'em-site')); ?>',
+        center: '<?php echo esc_js(__('Centre', 'em-site')); ?>',
+        right: '<?php echo esc_js(__('Droite', 'em-site')); ?>',
+        justify: '<?php echo esc_js(__('Justifié', 'em-site')); ?>'
     };
 
     function esc(s) {
@@ -139,13 +139,13 @@ window.EmWpV4Chip = (function () {
     }
 
     function toggleHtml() {
-        return '<button type="button" class="em-v4-chip__toggle" aria-pressed="false" title="' + esc(TXT.hide) + '">' +
+        return '<button type="button" class="em-site-chip__toggle" aria-pressed="false" title="' + esc(TXT.hide) + '">' +
             '<span class="dashicons dashicons-visibility" aria-hidden="true"></span></button>';
     }
 
     function actionsHtml() {
-        return '<span class="em-v4-chip__actions">' + toggleHtml() +
-            '<button type="button" class="em-v4-chip__remove" title="' + esc(TXT.remove) + '">&times;</button></span>';
+        return '<span class="em-site-chip__actions">' + toggleHtml() +
+            '<button type="button" class="em-site-chip__remove" title="' + esc(TXT.remove) + '">&times;</button></span>';
     }
 
     function platformSelectHtml() {
@@ -154,7 +154,7 @@ window.EmWpV4Chip = (function () {
             var p = PLATFORMS[k];
             opts += '<option value="' + esc(k) + '" data-icon="' + esc(p.icon) + '" data-color="' + esc(p.color || '') + '" data-label="' + esc(p.label) + '">' + esc(p.group + ' — ' + p.label) + '</option>';
         });
-        return '<select class="em-v4-chip__platform">' + opts + '</select>';
+        return '<select class="em-site-chip__platform">' + opts + '</select>';
     }
 
     var colorUid = 0;
@@ -167,18 +167,18 @@ window.EmWpV4Chip = (function () {
     }
 
     function colorField(id, valueClass, title, previewType, bgTargetId) {
-        var previewAttr = previewType ? ' data-em-wp-color-modal-preview-type="' + esc(previewType) + '"' : ' data-em-wp-color-modal-preview-type="swatch"';
-        var bgAttr = bgTargetId ? ' data-em-wp-color-modal-bg-target="' + esc(bgTargetId) + '"' : '';
-        return '<div class="em-wp-admin-color-field-row">' +
-            '<div class="em-wp-admin-color-trigger" data-em-wp-color-trigger-for="' + id + '">' +
-            '<span class="em-wp-admin-color-trigger__swatch" style="--em-wp-color-swatch:#cccccc;" aria-hidden="true"></span>' +
-            '<button type="button" class="em-wp-catalog-sommaire__edit em-wp-admin-color-trigger__edit" data-em-wp-color-modal-open data-em-wp-color-modal-target="' + id + '"' + previewAttr + bgAttr + ' title="' + esc(title) + '" aria-label="' + esc(title) + '"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>' +
-            '<input type="hidden" id="' + id + '" value="" class="em-wp-admin-color-value ' + valueClass + '">' +
+        var previewAttr = previewType ? ' data-em-site-color-modal-preview-type="' + esc(previewType) + '"' : ' data-em-site-color-modal-preview-type="swatch"';
+        var bgAttr = bgTargetId ? ' data-em-site-color-modal-bg-target="' + esc(bgTargetId) + '"' : '';
+        return '<div class="em-site-admin-color-field-row">' +
+            '<div class="em-site-admin-color-trigger" data-em-site-color-trigger-for="' + id + '">' +
+            '<span class="em-site-admin-color-trigger__swatch" style="--em-site-color-swatch:#cccccc;" aria-hidden="true"></span>' +
+            '<button type="button" class="em-site-catalog-sommaire__edit em-site-admin-color-trigger__edit" data-em-site-color-modal-open data-em-site-color-modal-target="' + id + '"' + previewAttr + bgAttr + ' title="' + esc(title) + '" aria-label="' + esc(title) + '"><i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></button>' +
+            '<input type="hidden" id="' + id + '" value="" class="em-site-admin-color-value ' + valueClass + '">' +
             '</div></div>';
     }
 
     function decorColorHtml(id) {
-        return '<span class="em-v4-chip__color">' + colorField(id, 'em-v4-chip__value', TXT.color) + '</span>';
+        return '<span class="em-site-chip__color">' + colorField(id, 'em-site-chip__value', TXT.color) + '</span>';
     }
 
     function textStyleHtml(key) {
@@ -191,34 +191,34 @@ window.EmWpV4Chip = (function () {
             + '<option value="center">' + esc(TXT.center) + '</option>'
             + '<option value="right">' + esc(TXT.right) + '</option>'
             + '<option value="justify">' + esc(TXT.justify) + '</option>';
-        return '<span class="em-v4-chip__tstyle">' +
-            '<input type="number" class="em-v4-chip__tsize" min="0" max="200" placeholder="' + esc(TXT.px) + '" title="' + esc(TXT.tsize) + '">' +
-            '<select class="em-v4-chip__tfont" title="' + esc(TXT.tfont) + '">' + fopts + '</select>' +
-            '<select class="em-v4-chip__talign" title="' + esc(TXT.talign) + '">' + aopts + '</select>' +
-            colorField(colorId('emv4ts-'), 'em-v4-chip__tcolor', TXT.tcolor) +
+        return '<span class="em-site-chip__tstyle">' +
+            '<input type="number" class="em-site-chip__tsize" min="0" max="200" placeholder="' + esc(TXT.px) + '" title="' + esc(TXT.tsize) + '">' +
+            '<select class="em-site-chip__tfont" title="' + esc(TXT.tfont) + '">' + fopts + '</select>' +
+            '<select class="em-site-chip__talign" title="' + esc(TXT.talign) + '">' + aopts + '</select>' +
+            colorField(colorId('em-site-ts-'), 'em-site-chip__tcolor', TXT.tcolor) +
             '</span>';
     }
 
 <?php require __DIR__ . '/../../../admin/shared/components/scotchs-control/scotchs-control-script.php'; ?>
 
     function imageHtml() {
-        return '<span class="em-v4-chip__media" data-url="">' +
-            '<img class="em-v4-chip__thumb" alt="" hidden>' +
-            '<button type="button" class="button button-small em-v4-chip__pick">' + esc(TXT.image) + '</button>' +
-            '<input type="hidden" class="em-v4-chip__value">' +
+        return '<span class="em-site-chip__media" data-url="">' +
+            '<img class="em-site-chip__thumb" alt="" hidden>' +
+            '<button type="button" class="button button-small em-site-chip__pick">' + esc(TXT.image) + '</button>' +
+            '<input type="hidden" class="em-site-chip__value">' +
             '</span>' +
-            '<span class="em-v4-chip__size">' +
-            '<label class="em-v4-chip__sizelabel">' + esc(TXT.sizeW) +
-            '<input type="range" class="em-v4-chip__w" min="0" max="600" step="5" value="0" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+\'px\':\'auto\')">' +
-            '<output class="em-v4-chip__wout">auto</output></label></span>' +
-            '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
+            '<span class="em-site-chip__size">' +
+            '<label class="em-site-chip__sizelabel">' + esc(TXT.sizeW) +
+            '<input type="range" class="em-site-chip__w" min="0" max="600" step="5" value="0" oninput="this.nextElementSibling.textContent=(this.value>0?this.value+\'px\':\'auto\')">' +
+            '<output class="em-site-chip__wout">auto</output></label></span>' +
+            '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">' +
             scotchsControlHtml({
-                hiddenClass: 'em-v4-chip__itape-hidden',
+                hiddenClass: 'em-site-chip__itape-hidden',
                 hiddenChecked: true,
                 hiddenLabel: TXT.tapeHide,
-                colorClass: 'em-v4-chip__itape-color',
+                colorClass: 'em-site-chip__itape-color',
                 colorLabel: TXT.tape,
-                colorIdPrefix: 'emv4itp-'
+                colorIdPrefix: 'em-site-itp-'
             });
     }
 
@@ -226,89 +226,89 @@ window.EmWpV4Chip = (function () {
 
     function valueHtml(type, key) {
         if (type === 'textarea') {
-            return '<span class="em-v4-chip__rich">'
-                + '<span class="em-v4-chip__richbar">'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="bold" title="' + esc(TXT.richBold) + '"><strong>B</strong></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="italic" title="' + esc(TXT.richItalic) + '"><em>I</em></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="underline" title="' + esc(TXT.richUnderline) + '"><span style="text-decoration:underline;">U</span></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="insertUnorderedList" title="' + esc(TXT.richList) + '">•</button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyLeft" title="' + esc(TXT.richAlignLeft) + '"><span class="dashicons dashicons-editor-alignleft" aria-hidden="true"></span></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyCenter" title="' + esc(TXT.richAlignCenter) + '"><span class="dashicons dashicons-editor-aligncenter" aria-hidden="true"></span></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyRight" title="' + esc(TXT.richAlignRight) + '"><span class="dashicons dashicons-editor-alignright" aria-hidden="true"></span></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="justifyFull" title="' + esc(TXT.richAlignJustify) + '"><span class="dashicons dashicons-editor-justify" aria-hidden="true"></span></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-action="link" title="' + esc(TXT.richInlineLink) + '"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-cmd="unlink" title="' + esc(TXT.richUnlink) + '"><span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span></button>'
-                + '<button type="button" class="button button-small em-v4-richbtn" data-action="anchor" title="' + esc(TXT.richAnchor) + '">#</button>'
-                + '<span class="em-v4-chip__richcolor" title="' + esc(TXT.tcolor) + '">' + colorField(colorId('emv4rc-'), 'em-v4-richcolor', TXT.tcolor) + '</span>'
+            return '<span class="em-site-chip__rich">'
+                + '<span class="em-site-chip__richbar">'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="bold" title="' + esc(TXT.richBold) + '"><strong>B</strong></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="italic" title="' + esc(TXT.richItalic) + '"><em>I</em></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="underline" title="' + esc(TXT.richUnderline) + '"><span style="text-decoration:underline;">U</span></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="insertUnorderedList" title="' + esc(TXT.richList) + '">•</button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="justifyLeft" title="' + esc(TXT.richAlignLeft) + '"><span class="dashicons dashicons-editor-alignleft" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="justifyCenter" title="' + esc(TXT.richAlignCenter) + '"><span class="dashicons dashicons-editor-aligncenter" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="justifyRight" title="' + esc(TXT.richAlignRight) + '"><span class="dashicons dashicons-editor-alignright" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="justifyFull" title="' + esc(TXT.richAlignJustify) + '"><span class="dashicons dashicons-editor-justify" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-action="link" title="' + esc(TXT.richInlineLink) + '"><span class="dashicons dashicons-admin-links" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-cmd="unlink" title="' + esc(TXT.richUnlink) + '"><span class="dashicons dashicons-editor-unlink" aria-hidden="true"></span></button>'
+                + '<button type="button" class="button button-small em-site-richbtn" data-action="anchor" title="' + esc(TXT.richAnchor) + '">#</button>'
+                + '<span class="em-site-chip__richcolor" title="' + esc(TXT.tcolor) + '">' + colorField(colorId('em-site-rc-'), 'em-site-richcolor', TXT.tcolor) + '</span>'
                 + '</span>'
-                + '<div class="em-v4-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="' + esc(TXT.richPlaceholder) + '"></div>'
+                + '<div class="em-site-chip__richedit" contenteditable="true" spellcheck="false" autocorrect="off" autocapitalize="off" data-gramm="false" data-placeholder="' + esc(TXT.richPlaceholder) + '"></div>'
 
-            return '<input type="text" class="em-v4-chip__ptitle" placeholder="' + esc(TXT.netTitle) + '">' +
+            return '<input type="text" class="em-site-chip__ptitle" placeholder="' + esc(TXT.netTitle) + '">' +
                 networkSelectHtml() +
-                '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
-                '<input type="text" class="em-v4-chip__paccount" placeholder="' + esc(TXT.netAccount) + '">';
+                '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">' +
+                '<input type="text" class="em-site-chip__paccount" placeholder="' + esc(TXT.netAccount) + '">';
         }
         if (type === 'text_image') {
-            return '<input type="text" class="em-v4-chip__titext" placeholder="' + esc(TXT.content) + '">' +
-                '<input type="url" class="em-v4-chip__tlink" placeholder="' + esc(TXT.link) + '">' +
+            return '<input type="text" class="em-site-chip__titext" placeholder="' + esc(TXT.content) + '">' +
+                '<input type="url" class="em-site-chip__tlink" placeholder="' + esc(TXT.link) + '">' +
                 textStyleHtml(key) +
-                '<span class="em-v4-chip__ti-image">' + imageHtml() + '</span>';
+                '<span class="em-site-chip__ti-image">' + imageHtml() + '</span>';
         }
         if (type === 'text_text') {
-            return '<span class="em-v4-chip__tt-part"><input type="text" class="em-v4-chip__titext" placeholder="' + esc(TXT.text1) + '"><input type="url" class="em-v4-chip__tlink" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>' +
-                '<span class="em-v4-chip__tt-part"><input type="text" class="em-v4-chip__titext2" placeholder="' + esc(TXT.text2) + '"><input type="url" class="em-v4-chip__tlink2" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>';
+            return '<span class="em-site-chip__tt-part"><input type="text" class="em-site-chip__titext" placeholder="' + esc(TXT.text1) + '"><input type="url" class="em-site-chip__tlink" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>' +
+                '<span class="em-site-chip__tt-part"><input type="text" class="em-site-chip__titext2" placeholder="' + esc(TXT.text2) + '"><input type="url" class="em-site-chip__tlink2" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>';
         }
         if (type === 'image') {
             return imageHtml();
         }
         if (type === 'platform_block') {
-            return '<input type="text" class="em-v4-chip__ptitle" placeholder="' + esc(TXT.ptitle) + '">' +
+            return '<input type="text" class="em-site-chip__ptitle" placeholder="' + esc(TXT.ptitle) + '">' +
                 platformSelectHtml() +
-                '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
+                '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
         if (type === 'button') {
-            var btShape = '<select class="em-v4-chip__btnshape">'
+            var btShape = '<select class="em-site-chip__btnshape">'
                 + '<option value="pill">' + esc(TXT.bsPill) + '</option>'
                 + '<option value="square">' + esc(TXT.bsSquare) + '</option>'
                 + '<option value="triangle">' + esc(TXT.bsTriangle) + '</option></select>';
-            var btAnim = '<select class="em-v4-chip__btnanim">'
+            var btAnim = '<select class="em-site-chip__btnanim">'
                 + '<option value="none">' + esc(TXT.baNone) + '</option>'
                 + '<option value="wiggle">' + esc(TXT.baWiggle) + '</option>'
                 + '<option value="pulse">' + esc(TXT.baPulse) + '</option>'
                 + '<option value="bounce">' + esc(TXT.baBounce) + '</option></select>';
-            return '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">' +
-                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('emv4bbg-'), 'em-v4-chip__btnbg', TXT.btnBg) + '</span>' +
-                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4btx-'), 'em-v4-chip__btntext', TXT.btnText) + '</span>' +
-                '<label class="em-v4-chip__btnmargin"><span>' + esc(TXT.btnMargBefore) + '</span><input type="number" class="em-v4-chip__btnml" min="0" max="200" value="0"></label>' +
-                '<label class="em-v4-chip__btnmargin"><span>' + esc(TXT.btnMargAfter) + '</span><input type="number" class="em-v4-chip__btnmr" min="0" max="200" value="0"></label>' +
-                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + btShape + '</label>' +
-                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeAnim) + '</span>' + btAnim + '</label>' +
-                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeRadius) + '</span><input type="number" class="em-v4-chip__btnradius" min="0" max="40" value="6"></label>';
+            return '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('em-site-bbg-'), 'em-site-chip__btnbg', TXT.btnBg) + '</span>' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('em-site-btx-'), 'em-site-chip__btntext', TXT.btnText) + '</span>' +
+                '<label class="em-site-chip__btnmargin"><span>' + esc(TXT.btnMargBefore) + '</span><input type="number" class="em-site-chip__btnml" min="0" max="200" value="0"></label>' +
+                '<label class="em-site-chip__btnmargin"><span>' + esc(TXT.btnMargAfter) + '</span><input type="number" class="em-site-chip__btnmr" min="0" max="200" value="0"></label>' +
+                '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + btShape + '</label>' +
+                '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeAnim) + '</span>' + btAnim + '</label>' +
+                '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeRadius) + '</span><input type="number" class="em-site-chip__btnradius" min="0" max="40" value="6"></label>';
         }
         if (type === 'animated_badge') {
-            var bShape = '<select class="em-v4-chip__badgeshape">'
+            var bShape = '<select class="em-site-chip__badgeshape">'
                 + '<option value="pill">' + esc(TXT.bsPill) + '</option>'
                 + '<option value="square">' + esc(TXT.bsSquare) + '</option>'
                 + '<option value="triangle">' + esc(TXT.bsTriangle) + '</option></select>';
-            var bAnim = '<select class="em-v4-chip__badgeanim">'
+            var bAnim = '<select class="em-site-chip__badgeanim">'
                 + '<option value="wiggle">' + esc(TXT.baWiggle) + '</option>'
                 + '<option value="pulse">' + esc(TXT.baPulse) + '</option>'
                 + '<option value="bounce">' + esc(TXT.baBounce) + '</option>'
                 + '<option value="none">' + esc(TXT.baNone) + '</option></select>';
-            return '<input type="text" class="em-v4-chip__btext" placeholder="' + esc(TXT.badgeText) + '">' +
-                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('emv4babg-'), 'em-v4-chip__badgebg', TXT.btnBg) + '</span>' +
-                '<span class="em-v4-chip__btncolor"><span class="em-v4-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('emv4baink-'), 'em-v4-chip__badgeink', TXT.btnText) + '</span>' +
-                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + bShape + '</label>' +
-                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeAnim) + '</span>' + bAnim + '</label>' +
-                '<label class="em-v4-chip__badgeopt"><span>' + esc(TXT.badgeRadius) + '</span><input type="number" class="em-v4-chip__badgeradius" min="0" max="40" value="6"></label>';
+            return '<input type="text" class="em-site-chip__btext" placeholder="' + esc(TXT.badgeText) + '">' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnBg) + '</span>' + colorField(colorId('em-site-babg-'), 'em-site-chip__badgebg', TXT.btnBg) + '</span>' +
+                '<span class="em-site-chip__btncolor"><span class="em-site-chip__btncolor-label">' + esc(TXT.btnText) + '</span>' + colorField(colorId('em-site-baink-'), 'em-site-chip__badgeink', TXT.btnText) + '</span>' +
+                '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeShape) + '</span>' + bShape + '</label>' +
+                '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeAnim) + '</span>' + bAnim + '</label>' +
+                '<label class="em-site-chip__badgeopt"><span>' + esc(TXT.badgeRadius) + '</span><input type="number" class="em-site-chip__badgeradius" min="0" max="40" value="6"></label>';
         }
         if (type === 'icon') {
             return platformSelectHtml() +
-                '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.link) + '">';
+                '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
-        var input = '<input type="text" class="em-v4-chip__value" placeholder="' + esc(TXT.content) + '">';
+        var input = '<input type="text" class="em-site-chip__value" placeholder="' + esc(TXT.content) + '">';
         if (type === 'text') {
-            input += '<input type="url" class="em-v4-chip__tlink" placeholder="' + esc(TXT.link) + '">';
+            input += '<input type="url" class="em-site-chip__tlink" placeholder="' + esc(TXT.link) + '">';
         }
         if (TEXT_STYLE.indexOf(type) !== -1) { input += textStyleHtml(key); }
         return input;
@@ -317,59 +317,59 @@ window.EmWpV4Chip = (function () {
     function build(type, label) {
         var key = 'f' + Math.random().toString(36).slice(2, 9);
         var chip = document.createElement('div');
-        chip.className = 'em-v4-chip';
+        chip.className = 'em-site-chip';
         chip.setAttribute('draggable', 'true');
         chip.setAttribute('data-key', key);
         chip.setAttribute('data-type', type);
         chip.setAttribute('data-hidden', '0');
 
         if (DECOR[type] !== undefined) {
-            chip.classList.add('em-v4-chip--decor');
-            var colorPart = DECOR_COLOR.indexOf(type) !== -1 ? decorColorHtml(colorId('emv4dec-')) : '';
-            var urlPart = ARROW.indexOf(type) !== -1 ? '<input type="url" class="em-v4-chip__url" placeholder="' + esc(TXT.anchor) + '">' : '';
-            var heightPart = type === 'sep_blank' ? '<input type="number" class="em-v4-chip__value em-v4-chip__height" min="0" max="400" placeholder="' + esc(TXT.height) + '">' : '';
+            chip.classList.add('em-site-chip--decor');
+            var colorPart = DECOR_COLOR.indexOf(type) !== -1 ? decorColorHtml(colorId('em-site-dec-')) : '';
+            var urlPart = ARROW.indexOf(type) !== -1 ? '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.anchor) + '">' : '';
+            var heightPart = type === 'sep_blank' ? '<input type="number" class="em-site-chip__value em-site-chip__height" min="0" max="400" placeholder="' + esc(TXT.height) + '">' : '';
             chip.innerHTML =
-                '<span class="em-v4-chip__drag dashicons dashicons-move" aria-hidden="true"></span>' +
-                '<span class="em-v4-chip__type"><span class="em-v4-chip__typeicon dashicons ' + esc(TYPE_ICONS[type] || 'dashicons-marker') + '" aria-hidden="true"></span>' + esc(DECOR[type]) + '</span>' +
-                '<input type="hidden" class="em-v4-chip__label" value="">' +
+                '<span class="em-site-chip__drag dashicons dashicons-move" aria-hidden="true"></span>' +
+                '<span class="em-site-chip__type"><span class="em-site-chip__typeicon dashicons ' + esc(TYPE_ICONS[type] || 'dashicons-marker') + '" aria-hidden="true"></span>' + esc(DECOR[type]) + '</span>' +
+                '<input type="hidden" class="em-site-chip__label" value="">' +
                 colorPart + urlPart + heightPart + actionsHtml();
-            chip.querySelector('.em-v4-chip__remove').setAttribute('data-label', DECOR[type]);
+            chip.querySelector('.em-site-chip__remove').setAttribute('data-label', DECOR[type]);
             return chip;
         }
 
         var labelInput = (type === 'platform_block' || type === 'network_block' || type === 'animated_badge' || type === 'slider' || isTextFamily(type))
-            ? '<input type="hidden" class="em-v4-chip__label">'
-            : '<input type="text" class="em-v4-chip__label" placeholder="' + esc(TXT.label) + '">';
+            ? '<input type="hidden" class="em-site-chip__label">'
+            : '<input type="text" class="em-site-chip__label" placeholder="' + esc(TXT.label) + '">';
         chip.innerHTML =
-            '<span class="em-v4-chip__drag dashicons dashicons-move" aria-hidden="true"></span>' +
-            '<span class="em-v4-chip__type"><span class="em-v4-chip__typeicon dashicons ' + esc(TYPE_ICONS[type] || 'dashicons-marker') + '" aria-hidden="true"></span>' + esc(TYPE_LABELS[type] || type) + '</span>' +
-            '<span class="em-v4-chip__fields">' +
+            '<span class="em-site-chip__drag dashicons dashicons-move" aria-hidden="true"></span>' +
+            '<span class="em-site-chip__type"><span class="em-site-chip__typeicon dashicons ' + esc(TYPE_ICONS[type] || 'dashicons-marker') + '" aria-hidden="true"></span>' + esc(TYPE_LABELS[type] || type) + '</span>' +
+            '<span class="em-site-chip__fields">' +
                 labelInput +
                 valueHtml(type, key) +
             '</span>' +
             actionsHtml();
-        chip.querySelector('.em-v4-chip__label').value = label;
-        chip.querySelector('.em-v4-chip__remove').setAttribute('data-label', label);
+        chip.querySelector('.em-site-chip__label').value = label;
+        chip.querySelector('.em-site-chip__remove').setAttribute('data-label', label);
         return chip;
     }
 
     function openMedia(btn, update) {
         if (!window.wp || !window.wp.media) { return; }
-        var chip = btn.closest('.em-v4-chip');
+        var chip = btn.closest('.em-site-chip');
         var type = chip.getAttribute('data-type');
         if (type === 'video_url') { return openThumb(chip, update); }
         if (type === 'video_file' || type === 'audio_file') { return openAv(chip, type, update); }
         var frame = window.wp.media({ title: TXT.image, multiple: false, library: { type: 'image' } });
         frame.on('select', function () {
             var att = frame.state().get('selection').first().toJSON();
-            var media = chip.querySelector('.em-v4-chip__media');
-            var hidden = chip.querySelector('.em-v4-chip__value');
-            var thumb = chip.querySelector('.em-v4-chip__thumb');
+            var media = chip.querySelector('.em-site-chip__media');
+            var hidden = chip.querySelector('.em-site-chip__value');
+            var thumb = chip.querySelector('.em-site-chip__thumb');
             var sizes = att.sizes || {};
             hidden.value = att.id;
             media.setAttribute('data-url', (sizes.large ? sizes.large.url : att.url));
             if (thumb) { thumb.src = (sizes.medium ? sizes.medium.url : att.url); thumb.hidden = false; }
-            var dot = chip.querySelector('.em-v4-chip__focaldot');
+            var dot = chip.querySelector('.em-site-chip__focaldot');
             if (dot) { dot.hidden = false; }
             update();
         });
@@ -378,15 +378,15 @@ window.EmWpV4Chip = (function () {
 
     // Point focal : positionne fx/fy (%) selon le clic sur la vignette.
     function setFocal(focal, e, update) {
-        var img = focal.querySelector('.em-v4-chip__thumb');
+        var img = focal.querySelector('.em-site-chip__thumb');
         if (!img || img.hidden) { return; }
         var r = img.getBoundingClientRect();
         if (!r.width || !r.height) { return; }
         var fx = Math.max(0, Math.min(100, Math.round((e.clientX - r.left) / r.width * 100)));
         var fy = Math.max(0, Math.min(100, Math.round((e.clientY - r.top) / r.height * 100)));
-        var chip = focal.closest('.em-v4-chip');
-        var ix = chip.querySelector('.em-v4-chip__fx'), iy = chip.querySelector('.em-v4-chip__fy');
-        var dot = focal.querySelector('.em-v4-chip__focaldot');
+        var chip = focal.closest('.em-site-chip');
+        var ix = chip.querySelector('.em-site-chip__fx'), iy = chip.querySelector('.em-site-chip__fy');
+        var dot = focal.querySelector('.em-site-chip__focaldot');
         if (ix) { ix.value = fx; } if (iy) { iy.value = fy; }
         if (dot) { dot.hidden = false; dot.style.left = fx + '%'; dot.style.top = fy + '%'; }
         update();
@@ -394,10 +394,10 @@ window.EmWpV4Chip = (function () {
 
     // Lit le style de texte d'une chip (taille px, clé de police, couleur hex).
     function readStyle(chip) {
-        var sz = chip.querySelector('.em-v4-chip__tsize');
-        var fn = chip.querySelector('.em-v4-chip__tfont');
-        var al = chip.querySelector('.em-v4-chip__talign');
-        var cl = chip.querySelector('.em-v4-chip__tcolor');
+        var sz = chip.querySelector('.em-site-chip__tsize');
+        var fn = chip.querySelector('.em-site-chip__tfont');
+        var al = chip.querySelector('.em-site-chip__talign');
+        var cl = chip.querySelector('.em-site-chip__tcolor');
         return { size: sz ? (parseInt(sz.value, 10) || 0) : 0, font: fn ? fn.value : '', align: al ? al.value : '', color: cl ? cl.value : '' };
     }
 

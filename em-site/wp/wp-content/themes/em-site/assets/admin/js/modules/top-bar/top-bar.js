@@ -24,13 +24,13 @@
     }
 
     function applyAdminColorPreview() {
-        const root = document.querySelector('.em-wp-top-bar-admin');
+        const root = document.querySelector('.em-site-top-bar-admin');
         if (!root) {
             return;
         }
 
-        const bgInput = document.querySelector('input[name="em_wp_top_bar_options[background_color]"]');
-        const textInput = document.querySelector('input[name="em_wp_top_bar_options[text_color]"]');
+        const bgInput = document.querySelector('input[name="em_site_top_bar_options[background_color]"]');
+        const textInput = document.querySelector('input[name="em_site_top_bar_options[text_color]"]');
         const bg = bgInput ? String(bgInput.value || '').trim() : '';
         const text = textInput ? String(textInput.value || '').trim() : '';
 
@@ -42,7 +42,7 @@
     }
 
     function bindMediaPicker() {
-        $('.em-wp-top-bar-media-button').on('click', function (event) {
+        $('.em-site-top-bar-media-button').on('click', function (event) {
             event.preventDefault();
             const button = $(this);
             const input = $('#' + button.data('target'));
@@ -62,7 +62,7 @@
                 input.trigger('change');
 
                 if (window.EmWpAdminModuleStylePreview && typeof window.EmWpAdminModuleStylePreview.applyTexture === 'function') {
-                    const root = input.closest('.em-wp-admin-module--texture-preview');
+                    const root = input.closest('.em-site-admin-module--texture-preview');
                     if (root) {
                         window.EmWpAdminModuleStylePreview.applyTexture(root);
                     }
@@ -74,7 +74,7 @@
     }
 
     function initImagePreviews() {
-        $('.em-wp-top-bar-media-button').each(function () {
+        $('.em-site-top-bar-media-button').each(function () {
             const button = $(this);
             const input = $('#' + button.data('target'));
             const preview = $('#' + button.data('preview'));
@@ -91,7 +91,7 @@
     }
 
     function initPreviewState() {
-        $('.em-wp-top-bar-logo-preview').each(function () {
+        $('.em-site-top-bar-logo-preview').each(function () {
             const preview = $(this);
             if (!preview.find('img').length) {
                 preview.addClass('is-empty');
@@ -100,8 +100,8 @@
     }
 
     function initBackgroundImageToggle() {
-        const checkbox = $('#em-wp-top-bar-bg-image-enabled');
-        const fields = $('#em-wp-top-bar-bg-fields');
+        const checkbox = $('#em-site-top-bar-bg-image-enabled');
+        const fields = $('#em-site-top-bar-bg-fields');
 
         if (!checkbox.length || !fields.length) {
             return;
@@ -116,12 +116,12 @@
     }
 
     function reindexStreamPlatformFields() {
-        const list = document.getElementById('em-wp-stream-platform-list');
+        const list = document.getElementById('em-site-stream-platform-list');
         if (!list) {
             return;
         }
 
-        const optionName = list.getAttribute('data-option-name') || 'em_wp_stream_options';
+        const optionName = list.getAttribute('data-option-name') || 'em_site_stream_options';
         const fieldKey = list.getAttribute('data-field-key') || 'platforms';
         const fieldPattern = new RegExp('^[^\\[]+\\[' + fieldKey + '\\]\\[\\d+\\]');
         const items = Array.from(list.querySelectorAll('[data-stream-link-item]'));
@@ -136,8 +136,8 @@
         });
 
         items.forEach(function (panel, index) {
-            const up = panel.querySelector('.em-wp-top-bar-platform-item__move--up');
-            const down = panel.querySelector('.em-wp-top-bar-platform-item__move--down');
+            const up = panel.querySelector('.em-site-top-bar-platform-item__move--up');
+            const down = panel.querySelector('.em-site-top-bar-platform-item__move--down');
             if (up) {
                 up.disabled = index === 0;
             }
@@ -148,7 +148,7 @@
     }
 
     function moveStreamPlatform(panel, direction) {
-        const list = document.getElementById('em-wp-stream-platform-list');
+        const list = document.getElementById('em-site-stream-platform-list');
         if (!list || !panel) {
             return;
         }
@@ -163,8 +163,8 @@
     }
 
     function bindStreamPlatformListManager() {
-        const streamList = document.getElementById('em-wp-stream-platform-list');
-        const streamForm = document.getElementById('em-wp-stream-form');
+        const streamList = document.getElementById('em-site-stream-platform-list');
+        const streamForm = document.getElementById('em-site-stream-form');
 
         if (!streamList) {
             return;
@@ -172,21 +172,21 @@
 
         if (window.EmWpSlideSortable) {
             new window.EmWpSlideSortable(streamList, {
-                handle: '.em-wp-top-bar-platform-item__drag',
+                handle: '.em-site-top-bar-platform-item__drag',
                 item: '[data-stream-link-item]',
                 onEnd: reindexStreamPlatformFields
             });
         }
 
         streamList.addEventListener('click', function (event) {
-            if (event.target.closest('.em-wp-top-bar-platform-item__drag')) {
+            if (event.target.closest('.em-site-top-bar-platform-item__drag')) {
                 event.preventDefault();
                 event.stopPropagation();
                 return;
             }
 
-            const moveUp = event.target.closest('.em-wp-top-bar-platform-item__move--up');
-            const moveDown = event.target.closest('.em-wp-top-bar-platform-item__move--down');
+            const moveUp = event.target.closest('.em-site-top-bar-platform-item__move--up');
+            const moveDown = event.target.closest('.em-site-top-bar-platform-item__move--down');
 
             if (moveUp) {
                 event.preventDefault();
@@ -210,12 +210,12 @@
     }
 
     function refreshTypoPreview(preview) {
-        const panel = preview.closest('.em-wp-admin-module__panel-body') || preview.parentNode;
+        const panel = preview.closest('.em-site-admin-module__panel-body') || preview.parentNode;
         if (!panel) {
             return;
         }
 
-        const select = panel.querySelector('[data-em-wp-topbar-font]');
+        const select = panel.querySelector('[data-em-site-topbar-font]');
         const labelInput = panel.querySelector('input[name$="[label]"]');
         const colorInput = panel.querySelector('input[name$="[text_color]"]');
 
@@ -236,7 +236,7 @@
 
     function initTypoPreview() {
         const previews = Array.prototype.slice.call(
-            document.querySelectorAll('[data-em-wp-topbar-typo-preview]')
+            document.querySelectorAll('[data-em-site-topbar-typo-preview]')
         );
 
         if (!previews.length) {
@@ -244,12 +244,12 @@
         }
 
         previews.forEach(function (preview) {
-            const panel = preview.closest('.em-wp-admin-module__panel-body') || preview.parentNode;
+            const panel = preview.closest('.em-site-admin-module__panel-body') || preview.parentNode;
             if (!panel) {
                 return;
             }
 
-            const select = panel.querySelector('[data-em-wp-topbar-font]');
+            const select = panel.querySelector('[data-em-site-topbar-font]');
             const labelInput = panel.querySelector('input[name$="[label]"]');
 
             if (select) {

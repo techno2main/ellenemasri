@@ -1,9 +1,9 @@
 <?php
 /**
- * Helpers des champs média (V4) : vidéo (URL / fichier), son (URL / fichier),
+ * Helpers des champs média (EM-SITE) : vidéo (URL / fichier), son (URL / fichier),
  * slider (galerie d'images) et bloc réseau (TikTok / Instagram / YouTube).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
  *
  * @param mixed $value
  */
-function em_wp_rubrique_media_id_value($value): int
+function em_site_rubrique_media_id_value($value): int
 {
     if (is_array($value)) {
         return absint($value['id'] ?? 0);
@@ -29,9 +29,9 @@ function em_wp_rubrique_media_id_value($value): int
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_media_id($value): string
+function em_site_field_sanitize_media_id($value): string
 {
-    $id = em_wp_rubrique_media_id_value($value);
+    $id = em_site_rubrique_media_id_value($value);
 
     return $id > 0 ? (string) $id : '';
 }
@@ -42,7 +42,7 @@ function em_wp_field_sanitize_media_id($value): string
  * @param mixed $value
  * @return array<int, int>
  */
-function em_wp_rubrique_slider_value($value): array
+function em_site_rubrique_slider_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -66,19 +66,19 @@ function em_wp_rubrique_slider_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_slider($value): string
+function em_site_field_sanitize_slider($value): string
 {
-    $ids = em_wp_rubrique_slider_value($value);
+    $ids = em_site_rubrique_slider_value($value);
 
     return $ids === [] ? '' : (string) wp_json_encode($ids);
 }
 
 /**
- * Structure d'un slide V4 (vide).
+ * Structure d'un slide EM-SITE (vide).
  *
  * @return array<string, mixed>
  */
-function em_wp_rubrique_slide_defaults(): array
+function em_site_rubrique_slide_defaults(): array
 {
     return [
         'type'             => 'image',
@@ -94,12 +94,12 @@ function em_wp_rubrique_slide_defaults(): array
 }
 
 /**
- * Normalise un slide V4 (types autorisés, champs complets).
+ * Normalise un slide EM-SITE (types autorisés, champs complets).
  *
  * @param array<string, mixed> $item
  * @return array<string, mixed>
  */
-function em_wp_rubrique_slide_normalize(array $item): array
+function em_site_rubrique_slide_normalize(array $item): array
 {
     $type = sanitize_key((string) ($item['type'] ?? 'image'));
     if (!in_array($type, ['image', 'video', 'tiktok'], true)) {
@@ -120,7 +120,7 @@ function em_wp_rubrique_slide_normalize(array $item): array
 }
 
 /**
- * Décode la valeur d'un champ « Slider » V4 en configuration complète :
+ * Décode la valeur d'un champ « Slider » EM-SITE en configuration complète :
  * bandeau titre (texte + couleurs) + liste de slides riches.
  *
  * Rétrocompat : une ancienne valeur galerie (liste d'IDs d'images) est convertie
@@ -129,7 +129,7 @@ function em_wp_rubrique_slide_normalize(array $item): array
  * @param mixed $value
  * @return array<string, mixed>
  */
-function em_wp_rubrique_slides_config($value): array
+function em_site_rubrique_slides_config($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -157,7 +157,7 @@ function em_wp_rubrique_slides_config($value): array
             $att_id = absint(is_array($id) ? ($id['id'] ?? 0) : $id);
             $url = $att_id > 0 ? (string) wp_get_attachment_image_url($att_id, 'large') : '';
             if ($url !== '') {
-                $slide = em_wp_rubrique_slide_defaults();
+                $slide = em_site_rubrique_slide_defaults();
                 $slide['image'] = $url;
                 $config['slides'][] = $slide;
             }
@@ -179,7 +179,7 @@ function em_wp_rubrique_slides_config($value): array
     $slides = is_array($decoded['slides'] ?? null) ? $decoded['slides'] : [];
     foreach ($slides as $slide) {
         if (is_array($slide)) {
-            $config['slides'][] = em_wp_rubrique_slide_normalize($slide);
+            $config['slides'][] = em_site_rubrique_slide_normalize($slide);
         }
     }
 
@@ -187,13 +187,13 @@ function em_wp_rubrique_slides_config($value): array
 }
 
 /**
- * Sanitise un champ « Slider » V4 : configuration encodée en JSON ('' si vide).
+ * Sanitise un champ « Slider » EM-SITE : configuration encodée en JSON ('' si vide).
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_slides($value): string
+function em_site_field_sanitize_slides($value): string
 {
-    $config = em_wp_rubrique_slides_config($value);
+    $config = em_site_rubrique_slides_config($value);
 
     if (
         $config['slides'] === []
@@ -215,7 +215,7 @@ function em_wp_field_sanitize_slides($value): string
 /**
  * Identifiant YouTube depuis une URL (autonome, dispo admin + front).
  */
-function em_wp_rubrique_slide_youtube_id(string $url): string
+function em_site_rubrique_slide_youtube_id(string $url): string
 {
     if ($url !== '' && preg_match('~(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{11})~', $url, $m)) {
         return (string) ($m[1] ?? '');
@@ -227,7 +227,7 @@ function em_wp_rubrique_slide_youtube_id(string $url): string
 /**
  * Identifiant vidéo TikTok depuis une URL.
  */
-function em_wp_rubrique_slide_tiktok_id(string $url): string
+function em_site_rubrique_slide_tiktok_id(string $url): string
 {
     if ($url !== '' && preg_match('~/video/(\d+)~', $url, $m)) {
         return (string) ($m[1] ?? '');
@@ -244,13 +244,13 @@ function em_wp_rubrique_slide_tiktok_id(string $url): string
  * @param array<int, array<string, mixed>> $slides
  * @return array<int, array<string, mixed>>
  */
-function em_wp_rubrique_slides_collect(array $slides): array
+function em_site_rubrique_slides_collect(array $slides): array
 {
     $out = [];
 
     $normalize_media = static function (string $media_url): string {
-        if (function_exists('em_wp_slider_front_media_url')) {
-            return em_wp_slider_front_media_url($media_url);
+        if (function_exists('em_site_slider_front_media_url')) {
+            return em_site_slider_front_media_url($media_url);
         }
 
         return $media_url;
@@ -261,13 +261,13 @@ function em_wp_rubrique_slides_collect(array $slides): array
             continue;
         }
 
-        $slide = em_wp_rubrique_slide_normalize($slide);
+        $slide = em_site_rubrique_slide_normalize($slide);
         $position = (int) $index + 1;
-        $name = $slide['name'] !== '' ? $slide['name'] : sprintf(__('Slide %d', 'em-wp'), $position);
+        $name = $slide['name'] !== '' ? $slide['name'] : sprintf(__('Slide %d', 'em-site'), $position);
         $delay_ms = max(1, (int) $slide['duration']) * 1000;
 
         if ($slide['type'] === 'video') {
-            $video_id = em_wp_rubrique_slide_youtube_id($slide['video_url']);
+            $video_id = em_site_rubrique_slide_youtube_id($slide['video_url']);
             if ($video_id === '') {
                 continue;
             }
@@ -287,7 +287,7 @@ function em_wp_rubrique_slides_collect(array $slides): array
                 'delay_ms'         => $delay_ms,
                 'tiktok_url'       => $slide['tiktok_url'],
                 'tiktok_video_url' => $normalize_media($slide['tiktok_video_url']),
-                'tiktok_video_id'  => em_wp_rubrique_slide_tiktok_id($slide['tiktok_url']),
+                'tiktok_video_id'  => em_site_rubrique_slide_tiktok_id($slide['tiktok_url']),
                 'image'            => $normalize_media($slide['image']),
                 'alt'              => $slide['alt_text'],
             ];
@@ -311,14 +311,14 @@ function em_wp_rubrique_slides_collect(array $slides): array
 }
 
 /**
- * HTML front d'un champ « Slider » V4 : réutilise le template-part mayami
+ * HTML front d'un champ « Slider » EM-SITE : réutilise le template-part mayami
  * (cadre + slides + bandeau titre + contrôles) pour un rendu identique au site.
  *
  * @param array<string, mixed> $config
  */
-function em_wp_rubrique_slides_front_html(array $config): string
+function em_site_rubrique_slides_front_html(array $config): string
 {
-    $slides = em_wp_rubrique_slides_collect(is_array($config['slides'] ?? null) ? $config['slides'] : []);
+    $slides = em_site_rubrique_slides_collect(is_array($config['slides'] ?? null) ? $config['slides'] : []);
 
     if ($slides === [] && trim((string) ($config['title'] ?? '')) === '') {
         return '';
@@ -334,8 +334,8 @@ function em_wp_rubrique_slides_front_html(array $config): string
         'footer_text'         => (string) ($config['footer_text'] ?? ''),
     ];
 
-    // Le champ « Slider » V4 rend TOUJOURS le template mayami : on garantit le
-    // chargement du CSS mayami partout où il est rendu (front, wireframe du
+    // Le champ « Slider » EM-SITE rend un slider partagé : on garantit le
+    // chargement du CSS partagé partout où il est rendu (front, wireframe du
     // squelette, aperçu builder) — sinon les slides s'empilent en pleine hauteur
     // au lieu d'occuper le cadre du slider. WP imprime les styles tardifs en
     // pied de page (front comme admin), donc l'appel reste valide pendant le rendu.
@@ -344,7 +344,7 @@ function em_wp_rubrique_slides_front_html(array $config): string
         $slider_css_path = get_template_directory() . '/' . $slider_css_rel;
         if (file_exists($slider_css_path)) {
             wp_enqueue_style(
-                'em-wp-slider-mayami',
+                'em-site-slider-preview',
                 get_template_directory_uri() . '/' . $slider_css_rel,
                 [],
                 (string) filemtime($slider_css_path)
@@ -352,19 +352,19 @@ function em_wp_rubrique_slides_front_html(array $config): string
         }
     }
 
-    if (!function_exists('em_wp_render_slider_mayami')) {
+    if (!function_exists('em_site_render_slider_mayami')) {
         $slider_render_file = get_template_directory() . '/inc/front/modules/slider/render.php';
         if (file_exists($slider_render_file)) {
             require_once $slider_render_file;
         }
     }
 
-    if (!function_exists('em_wp_render_slider_mayami')) {
+    if (!function_exists('em_site_render_slider_mayami')) {
         return '';
     }
 
     ob_start();
-    em_wp_render_slider_mayami($slider, $slides);
+    em_site_render_slider_mayami($slider, $slides);
 
     return (string) ob_get_clean();
 }
@@ -374,7 +374,7 @@ function em_wp_rubrique_slides_front_html(array $config): string
  *
  * @return array{provider:string, id:string}
  */
-function em_wp_rubrique_video_provider(string $url): array
+function em_site_rubrique_video_provider(string $url): array
 {
     $url = trim($url);
 
@@ -401,7 +401,7 @@ function em_wp_rubrique_video_provider(string $url): array
  * @param mixed $value
  * @return array{url:string, thumb:int, clickable:bool, tapes_hidden:bool, tapes_color:string}
  */
-function em_wp_rubrique_video_url_value($value): array
+function em_site_rubrique_video_url_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -423,9 +423,9 @@ function em_wp_rubrique_video_url_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_video_url($value): string
+function em_site_field_sanitize_video_url($value): string
 {
-    $v = em_wp_rubrique_video_url_value($value);
+    $v = em_site_rubrique_video_url_value($value);
     $url = esc_url_raw($v['url']);
     $thumb = absint($v['thumb']);
 
@@ -445,9 +445,9 @@ function em_wp_field_sanitize_video_url($value): string
 /**
  * Miniature automatique d'une URL vidéo (YouTube uniquement). '' sinon.
  */
-function em_wp_rubrique_video_auto_thumb(string $url): string
+function em_site_rubrique_video_auto_thumb(string $url): string
 {
-    $info = em_wp_rubrique_video_provider($url);
+    $info = em_site_rubrique_video_provider($url);
 
     return $info['provider'] === 'youtube' && $info['id'] !== ''
         ? 'https://i.ytimg.com/vi/' . $info['id'] . '/hqdefault.jpg'
@@ -455,7 +455,7 @@ function em_wp_rubrique_video_auto_thumb(string $url): string
 }
 
 /** Façade poster (image + bouton lecture) d'une vidéo. */
-function em_wp_rubrique_video_facade(string $poster): string
+function em_site_rubrique_video_facade(string $poster): string
 {
     return '<span class="em-rubrique__video-facade">'
         . '<img class="em-rubrique__video-poster" src="' . esc_url($poster) . '" alt="" loading="lazy">'
@@ -469,7 +469,7 @@ function em_wp_rubrique_video_facade(string $poster): string
  *
  * @param array{url:string, thumb:int, clickable:bool} $data
  */
-function em_wp_rubrique_video_url_html(array $data): string
+function em_site_rubrique_video_url_html(array $data): string
 {
     $url = trim((string) ($data['url'] ?? ''));
     $thumb_id = absint($data['thumb'] ?? 0);
@@ -483,37 +483,37 @@ function em_wp_rubrique_video_url_html(array $data): string
 
     if (!$clickable) {
         if ($custom === '') {
-            return em_wp_rubrique_video_embed_html($url);
+            return em_site_rubrique_video_embed_html($url);
         }
 
-        $embed = em_wp_rubrique_video_embed_html($url);
+        $embed = em_site_rubrique_video_embed_html($url);
         if ($embed === '') {
-            return '<span class="em-rubrique__videourl">' . em_wp_rubrique_video_facade($custom) . '</span>';
+            return '<span class="em-rubrique__videourl">' . em_site_rubrique_video_facade($custom) . '</span>';
         }
         return '<span class="em-rubrique__videourl em-rubrique__video-toplay" data-embed="' . esc_attr($embed)
             . '" onclick="this.innerHTML=this.dataset.embed" role="button" tabindex="0">'
-            . em_wp_rubrique_video_facade($custom) . '</span>';
+            . em_site_rubrique_video_facade($custom) . '</span>';
     }
 
-    $poster = $custom !== '' ? $custom : em_wp_rubrique_video_auto_thumb($url);
+    $poster = $custom !== '' ? $custom : em_site_rubrique_video_auto_thumb($url);
     if ($poster === '') {
-        return em_wp_rubrique_video_embed_html($url);
+        return em_site_rubrique_video_embed_html($url);
     }
 
     if ($url === '') {
-        return '<span class="em-rubrique__videourl">' . em_wp_rubrique_video_facade($poster) . '</span>';
+        return '<span class="em-rubrique__videourl">' . em_site_rubrique_video_facade($poster) . '</span>';
     }
 
     $target = strpos($url, '#') === 0 ? '' : ' target="_blank" rel="noopener noreferrer"';
 
     return '<a class="em-rubrique__videourl em-rubrique__link--media" href="' . esc_url($url) . '"' . $target . '>'
-        . em_wp_rubrique_video_facade($poster) . '</a>';
+        . em_site_rubrique_video_facade($poster) . '</a>';
 }
 
 /**
  * HTML d'une vidéo embarquée depuis une URL (YouTube / TikTok). Repli : lien.
  */
-function em_wp_rubrique_video_embed_html(string $url): string
+function em_site_rubrique_video_embed_html(string $url): string
 {
     $url = trim($url);
 
@@ -521,7 +521,7 @@ function em_wp_rubrique_video_embed_html(string $url): string
         return '';
     }
 
-    $info = em_wp_rubrique_video_provider($url);
+    $info = em_site_rubrique_video_provider($url);
     $src = '';
 
     if ($info['provider'] === 'youtube' && $info['id'] !== '') {
@@ -542,7 +542,7 @@ function em_wp_rubrique_video_embed_html(string $url): string
 /**
  * HTML d'une vidéo fichier (média) : balise <video>. '' si introuvable.
  */
-function em_wp_rubrique_video_file_html(int $id): string
+function em_site_rubrique_video_file_html(int $id): string
 {
     $url = $id > 0 ? wp_get_attachment_url($id) : '';
 
@@ -556,7 +556,7 @@ function em_wp_rubrique_video_file_html(int $id): string
 /**
  * HTML d'un son (fichier média ou URL) : balise <audio>. '' si vide.
  */
-function em_wp_rubrique_audio_html(string $url): string
+function em_site_rubrique_audio_html(string $url): string
 {
     $url = trim($url);
 
@@ -568,7 +568,7 @@ function em_wp_rubrique_audio_html(string $url): string
  *
  * @param array<int, int> $ids
  */
-function em_wp_rubrique_slider_html(array $ids, string $alt = ''): string
+function em_site_rubrique_slider_html(array $ids, string $alt = ''): string
 {
     $slides = '';
 
@@ -585,15 +585,15 @@ function em_wp_rubrique_slider_html(array $ids, string $alt = ''): string
 /**
  * Choix de plateformes limités aux RÉSEAUX sociaux (TikTok, Instagram, YouTube).
  *
- * Même structure que em_wp_rubrique_platform_choices(), filtrée sur « social: ».
+ * Même structure que em_site_rubrique_platform_choices(), filtrée sur « social: ».
  *
  * @return array<string, array{label:string, icon:string, color:string, group:string}>
  */
-function em_wp_rubrique_network_choices(): array
+function em_site_rubrique_network_choices(): array
 {
     $choices = [];
 
-    foreach (em_wp_rubrique_platform_choices() as $key => $choice) {
+    foreach (em_site_rubrique_platform_choices() as $key => $choice) {
         if (strpos($key, 'social:') === 0) {
             $choices[$key] = $choice;
         }

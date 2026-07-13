@@ -1,6 +1,6 @@
 <?php
 /**
- * Schéma du LAY-OUT (V4) — grille par LIGNE.
+ * Schéma du LAY-OUT (EM-SITE) — grille par LIGNE.
  *
  * Chaque ligne définit son propre nombre de colonnes (1 à 4) et l'alignement de
  * chacune. Le lay-out est donc une liste de lignes :
@@ -9,7 +9,7 @@
  * Les champs se positionnent par `row` (index de ligne) et `col` (colonne de la
  * ligne). Le rendu final utilise une grille CSS (repeat(columns, 1fr)) par ligne.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
 /**
  * Nombre maximal de colonnes d'une ligne.
  */
-function em_wp_rubrique_max_columns(): int
+function em_site_rubrique_max_columns(): int
 {
     return 4;
 }
@@ -29,28 +29,28 @@ function em_wp_rubrique_max_columns(): int
  *
  * @return array<string, string>
  */
-function em_wp_rubrique_alignments(): array
+function em_site_rubrique_alignments(): array
 {
     return [
-        'left'    => __('Aligné à gauche', 'em-wp'),
-        'center'  => __('Centré', 'em-wp'),
-        'right'   => __('Aligné à droite', 'em-wp'),
-        'justify' => __('Justifié', 'em-wp'),
+        'left'    => __('Aligné à gauche', 'em-site'),
+        'center'  => __('Centré', 'em-site'),
+        'right'   => __('Aligné à droite', 'em-site'),
+        'justify' => __('Justifié', 'em-site'),
     ];
 }
 
 /**
  * Alignement valide (repli « left »).
  */
-function em_wp_rubrique_valid_align(string $align): string
+function em_site_rubrique_valid_align(string $align): string
 {
-    return isset(em_wp_rubrique_alignments()[$align]) ? $align : 'left';
+    return isset(em_site_rubrique_alignments()[$align]) ? $align : 'left';
 }
 
 /**
  * Alignement par défaut d'une colonne selon sa position.
  */
-function em_wp_rubrique_default_align(int $index, int $columns): string
+function em_site_rubrique_default_align(int $index, int $columns): string
 {
     if ($columns <= 1) {
         return 'center';
@@ -68,7 +68,7 @@ function em_wp_rubrique_default_align(int $index, int $columns): string
  *
  * @param mixed $col
  */
-function em_wp_rubrique_col_to_int($col): int
+function em_site_rubrique_col_to_int($col): int
 {
     if (is_string($col)) {
         $map = ['left' => 1, 'center' => 2, 'right' => 3];
@@ -82,7 +82,7 @@ function em_wp_rubrique_col_to_int($col): int
 /**
  * Index de colonne valide (1..columns).
  */
-function em_wp_rubrique_valid_col(int $col, int $columns): int
+function em_site_rubrique_valid_col(int $col, int $columns): int
 {
     $columns = max(1, $columns);
 
@@ -94,7 +94,7 @@ function em_wp_rubrique_valid_col(int $col, int $columns): int
  *
  * @param array<int, array<string, mixed>> $fields
  */
-function em_wp_rubrique_fields_row_count(array $fields): int
+function em_site_rubrique_fields_row_count(array $fields): int
 {
     $max = 1;
 
@@ -115,7 +115,7 @@ function em_wp_rubrique_fields_row_count(array $fields): int
  * @param array<int, array<string, mixed>> $fields champs (pour déduire le nombre de lignes)
  * @return array{rows:array<int,array{columns:int,align:array<int,string>,title:string,col_titles:array<int,string>}>}
  */
-function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
+function em_site_rubrique_normalize_layout($raw, array $fields = []): array
 {
     $raw = is_array($raw) ? $raw : [];
     $rows_raw = is_array($raw['rows'] ?? null) ? array_values($raw['rows']) : null;
@@ -124,7 +124,7 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
     $legacy_cols = (int) ($raw['columns'] ?? 0);
     $legacy_align = is_array($raw['align'] ?? null) ? $raw['align'] : [];
 
-    $count = max(1, em_wp_rubrique_fields_row_count($fields), $rows_raw !== null ? count($rows_raw) : 0);
+    $count = max(1, em_site_rubrique_fields_row_count($fields), $rows_raw !== null ? count($rows_raw) : 0);
 
     $rows = [];
 
@@ -143,13 +143,13 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
             $col_titles_src = [];
         }
 
-        $cols = min(em_wp_rubrique_max_columns(), max(1, $cols));
+        $cols = min(em_site_rubrique_max_columns(), max(1, $cols));
         $align = [];
         $col_titles = [];
 
         for ($c = 1; $c <= $cols; $c++) {
             $value = isset($align_src[$c]) ? (string) $align_src[$c] : '';
-            $align[$c] = $value !== '' ? em_wp_rubrique_valid_align($value) : em_wp_rubrique_default_align($c, $cols);
+            $align[$c] = $value !== '' ? em_site_rubrique_valid_align($value) : em_site_rubrique_default_align($c, $cols);
 
             $raw_title = isset($col_titles_src[$c]) ? (string) $col_titles_src[$c] : '';
             $col_titles[$c] = sanitize_text_field($raw_title);
@@ -167,7 +167,7 @@ function em_wp_rubrique_normalize_layout($raw, array $fields = []): array
  * @param array<string, mixed> $layout
  * @return array<int, array{columns:int, align:array<int,string>, title:string, col_titles:array<int,string>}>
  */
-function em_wp_rubrique_layout_rows(array $layout): array
+function em_site_rubrique_layout_rows(array $layout): array
 {
     return is_array($layout['rows'] ?? null) ? array_values($layout['rows']) : [];
 }
@@ -177,9 +177,9 @@ function em_wp_rubrique_layout_rows(array $layout): array
  *
  * @param array<string, mixed> $layout
  */
-function em_wp_rubrique_layout_col_title_for(array $layout, int $row, int $col): string
+function em_site_rubrique_layout_col_title_for(array $layout, int $row, int $col): string
 {
-    $rows = em_wp_rubrique_layout_rows($layout);
+    $rows = em_site_rubrique_layout_rows($layout);
     $entry = $rows[$row - 1] ?? null;
     $col_titles = is_array($entry['col_titles'] ?? null) ? $entry['col_titles'] : [];
     $value = isset($col_titles[$col]) ? (string) $col_titles[$col] : '';
@@ -192,9 +192,9 @@ function em_wp_rubrique_layout_col_title_for(array $layout, int $row, int $col):
  *
  * @param array<string, mixed> $layout
  */
-function em_wp_rubrique_layout_title_for(array $layout, int $row): string
+function em_site_rubrique_layout_title_for(array $layout, int $row): string
 {
-    $rows = em_wp_rubrique_layout_rows($layout);
+    $rows = em_site_rubrique_layout_rows($layout);
     $entry = $rows[$row - 1] ?? null;
 
     return is_array($entry) ? sanitize_text_field((string) ($entry['title'] ?? '')) : '';
@@ -205,9 +205,9 @@ function em_wp_rubrique_layout_title_for(array $layout, int $row): string
  *
  * @param array<string, mixed> $layout
  */
-function em_wp_rubrique_layout_row_count(array $layout): int
+function em_site_rubrique_layout_row_count(array $layout): int
 {
-    return max(1, count(em_wp_rubrique_layout_rows($layout)));
+    return max(1, count(em_site_rubrique_layout_rows($layout)));
 }
 
 /**
@@ -215,12 +215,12 @@ function em_wp_rubrique_layout_row_count(array $layout): int
  *
  * @param array<string, mixed> $layout
  */
-function em_wp_rubrique_layout_columns_for(array $layout, int $row): int
+function em_site_rubrique_layout_columns_for(array $layout, int $row): int
 {
-    $rows = em_wp_rubrique_layout_rows($layout);
+    $rows = em_site_rubrique_layout_rows($layout);
     $entry = $rows[$row - 1] ?? null;
 
-    return is_array($entry) ? min(em_wp_rubrique_max_columns(), max(1, (int) ($entry['columns'] ?? 1))) : 1;
+    return is_array($entry) ? min(em_site_rubrique_max_columns(), max(1, (int) ($entry['columns'] ?? 1))) : 1;
 }
 
 /**
@@ -228,14 +228,14 @@ function em_wp_rubrique_layout_columns_for(array $layout, int $row): int
  *
  * @param array<string, mixed> $layout
  */
-function em_wp_rubrique_layout_align_for(array $layout, int $row, int $col): string
+function em_site_rubrique_layout_align_for(array $layout, int $row, int $col): string
 {
-    $rows = em_wp_rubrique_layout_rows($layout);
+    $rows = em_site_rubrique_layout_rows($layout);
     $entry = $rows[$row - 1] ?? null;
     $align = is_array($entry['align'] ?? null) ? $entry['align'] : [];
-    $columns = em_wp_rubrique_layout_columns_for($layout, $row);
+    $columns = em_site_rubrique_layout_columns_for($layout, $row);
 
     $value = isset($align[$col]) ? (string) $align[$col] : '';
 
-    return $value !== '' ? em_wp_rubrique_valid_align($value) : em_wp_rubrique_default_align($col, $columns);
+    return $value !== '' ? em_site_rubrique_valid_align($value) : em_site_rubrique_default_align($col, $columns);
 }

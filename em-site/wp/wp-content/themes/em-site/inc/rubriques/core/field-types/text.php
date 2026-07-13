@@ -1,9 +1,9 @@
 <?php
 /**
- * Helpers des champs texte composites (V4) :
+ * Helpers des champs texte composites (EM-SITE) :
  * « Texte + Image » (text_image) et « Texte + Texte » (text_text).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  * Famille des champs « texte » (un seul champ de saisie = le contenu affiché,
  * avec lien URL/ancre optionnel) : texte, texte enrichi, texte+image, texte+texte.
  */
-function em_wp_rubrique_field_is_text_family(string $type): bool
+function em_site_rubrique_field_is_text_family(string $type): bool
 {
     return in_array($type, ['text', 'textarea', 'text_image', 'text_text'], true);
 }
@@ -23,7 +23,7 @@ function em_wp_rubrique_field_is_text_family(string $type): bool
  * Rend un texte échappé, enveloppé dans un lien (URL/ancre) s'il est fourni.
  * Lien externe → nouvel onglet ; ancre interne (#) → même page.
  */
-function em_wp_rubrique_text_link_wrap(string $text, string $link): string
+function em_site_rubrique_text_link_wrap(string $text, string $link): string
 {
     $html = esc_html($text);
 
@@ -45,7 +45,7 @@ function em_wp_rubrique_text_link_wrap(string $text, string $link): string
  * @param mixed $value
  * @return array{text:string, link:string}
  */
-function em_wp_rubrique_text_value($value): array
+function em_site_rubrique_text_value($value): array
 {
     if (is_array($value)) {
         return ['text' => (string) ($value['text'] ?? ''), 'link' => (string) ($value['link'] ?? '')];
@@ -64,7 +64,7 @@ function em_wp_rubrique_text_value($value): array
 /**
  * Détermine si un texte contient déjà du HTML.
  */
-function em_wp_rubrique_text_has_html(string $text): bool
+function em_site_rubrique_text_has_html(string $text): bool
 {
     return (bool) preg_match('/<[^>]+>/', $text);
 }
@@ -75,13 +75,13 @@ function em_wp_rubrique_text_has_html(string $text): bool
  * - Si HTML détecté: conserve uniquement les balises autorisées (wp_kses_post)
  * - Sinon: convertit les retours ligne en <br>
  */
-function em_wp_rubrique_textarea_render_html(string $text): string
+function em_site_rubrique_textarea_render_html(string $text): string
 {
     if ($text === '') {
         return '';
     }
 
-    if (em_wp_rubrique_text_has_html($text)) {
+    if (em_site_rubrique_text_has_html($text)) {
         return wp_kses_post($text);
     }
 
@@ -91,9 +91,9 @@ function em_wp_rubrique_textarea_render_html(string $text): string
 /**
  * Prépare la valeur d'un textarea riche pour l'éditeur admin (contenteditable).
  */
-function em_wp_rubrique_textarea_editor_html(string $text): string
+function em_site_rubrique_textarea_editor_html(string $text): string
 {
-    return em_wp_rubrique_textarea_render_html($text);
+    return em_site_rubrique_textarea_render_html($text);
 }
 
 /**
@@ -102,9 +102,9 @@ function em_wp_rubrique_textarea_editor_html(string $text): string
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_text($value): string
+function em_site_field_sanitize_text($value): string
 {
-    $v = em_wp_rubrique_text_value($value);
+    $v = em_site_rubrique_text_value($value);
     $text = sanitize_text_field($v['text']);
     $link = esc_url_raw($v['link']);
 
@@ -120,9 +120,9 @@ function em_wp_field_sanitize_text($value): string
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_textarea($value): string
+function em_site_field_sanitize_textarea($value): string
 {
-    $v = em_wp_rubrique_text_value($value);
+    $v = em_site_rubrique_text_value($value);
     $text = wp_kses_post($v['text']);
     $link = esc_url_raw($v['link']);
 
@@ -139,7 +139,7 @@ function em_wp_field_sanitize_textarea($value): string
  * @param mixed $value
  * @return array{text:string, link:string, style:array{size:int,font:string,color:string}, image:array}
  */
-function em_wp_rubrique_text_image_value($value): array
+function em_site_rubrique_text_image_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -150,8 +150,8 @@ function em_wp_rubrique_text_image_value($value): array
     return [
         'text'  => (string) ($decoded['text'] ?? ''),
         'link'  => (string) ($decoded['link'] ?? ''),
-        'style' => em_wp_rubrique_normalize_text_style($decoded['style'] ?? []),
-        'image' => em_wp_rubrique_image_value($decoded['image'] ?? ''),
+        'style' => em_site_rubrique_normalize_text_style($decoded['style'] ?? []),
+        'image' => em_site_rubrique_image_value($decoded['image'] ?? ''),
     ];
 }
 
@@ -160,12 +160,12 @@ function em_wp_rubrique_text_image_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_text_image($value): string
+function em_site_field_sanitize_text_image($value): string
 {
-    $ti = em_wp_rubrique_text_image_value($value);
+    $ti = em_site_rubrique_text_image_value($value);
     $text = sanitize_text_field($ti['text']);
     $link = esc_url_raw($ti['link']);
-    $image = em_wp_rubrique_image_value(em_wp_field_sanitize_image($ti['image']));
+    $image = em_site_rubrique_image_value(em_site_field_sanitize_image($ti['image']));
 
     if ($text === '' && (int) $image['id'] === 0 && $image['link'] === '') {
         return '';
@@ -174,7 +174,7 @@ function em_wp_field_sanitize_text_image($value): string
     return (string) wp_json_encode([
         'text'  => $text,
         'link'  => $link,
-        'style' => em_wp_rubrique_normalize_text_style($ti['style']),
+        'style' => em_site_rubrique_normalize_text_style($ti['style']),
         'image' => $image,
     ]);
 }
@@ -185,7 +185,7 @@ function em_wp_field_sanitize_text_image($value): string
  * @param mixed $value
  * @return array{text:string, link:string, style:array, text2:string, link2:string, style2:array}
  */
-function em_wp_rubrique_text_text_value($value): array
+function em_site_rubrique_text_text_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
@@ -196,10 +196,10 @@ function em_wp_rubrique_text_text_value($value): array
     return [
         'text'   => (string) ($decoded['text'] ?? ''),
         'link'   => (string) ($decoded['link'] ?? ''),
-        'style'  => em_wp_rubrique_normalize_text_style($decoded['style'] ?? []),
+        'style'  => em_site_rubrique_normalize_text_style($decoded['style'] ?? []),
         'text2'  => (string) ($decoded['text2'] ?? ''),
         'link2'  => (string) ($decoded['link2'] ?? ''),
-        'style2' => em_wp_rubrique_normalize_text_style($decoded['style2'] ?? []),
+        'style2' => em_site_rubrique_normalize_text_style($decoded['style2'] ?? []),
     ];
 }
 
@@ -208,9 +208,9 @@ function em_wp_rubrique_text_text_value($value): array
  *
  * @param mixed $value
  */
-function em_wp_field_sanitize_text_text($value): string
+function em_site_field_sanitize_text_text($value): string
 {
-    $tt = em_wp_rubrique_text_text_value($value);
+    $tt = em_site_rubrique_text_text_value($value);
     $text = sanitize_text_field($tt['text']);
     $text2 = sanitize_text_field($tt['text2']);
 
@@ -221,9 +221,9 @@ function em_wp_field_sanitize_text_text($value): string
     return (string) wp_json_encode([
         'text'   => $text,
         'link'   => esc_url_raw($tt['link']),
-        'style'  => em_wp_rubrique_normalize_text_style($tt['style']),
+        'style'  => em_site_rubrique_normalize_text_style($tt['style']),
         'text2'  => $text2,
         'link2'  => esc_url_raw($tt['link2']),
-        'style2' => em_wp_rubrique_normalize_text_style($tt['style2']),
+        'style2' => em_site_rubrique_normalize_text_style($tt['style2']),
     ]);
 }

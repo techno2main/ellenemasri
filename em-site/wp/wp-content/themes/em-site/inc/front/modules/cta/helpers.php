@@ -2,7 +2,7 @@
 /**
  * Helpers front de la rubrique CTA.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -11,21 +11,21 @@ if (!defined('ABSPATH')) {
 
 function em_site_cta_active_template(): string
 {
-	$slug = sanitize_key((string) get_option('em_wp_active_template', ''));
+	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
 }
 
 function em_site_cta_item_option_name(string $template_slug): string
 {
-	$instance = get_option('em_wp_v4_instance_' . $template_slug . '_cta', []);
+	$instance = get_option('em_site_instance_' . $template_slug . '_cta', []);
 	$item_slug = is_array($instance) ? sanitize_key((string) ($instance['item'] ?? '')) : '';
 
 	if ($item_slug === '') {
 		$item_slug = 'cta-' . $template_slug;
 	}
 
-	return 'em_wp_v4_item_cta_' . $item_slug;
+	return 'em_site_item_cta_' . $item_slug;
 }
 
 function em_site_cta_item(): array

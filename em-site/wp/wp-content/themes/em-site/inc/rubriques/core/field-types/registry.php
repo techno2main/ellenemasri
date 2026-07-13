@@ -1,11 +1,11 @@
 <?php
 /**
- * Registre des TYPES DE CHAMP (V4).
+ * Registre des TYPES DE CHAMP (EM-SITE).
  *
  * Un « type de champ » décrit la nature technique d'un champ (texte, image,
  * couleur, toggle, bouton répétable, slides…). Il est réutilisable par tous les
  * modèles de toutes les rubriques. Les types sont déclarés via le filtre
- * `em_wp_field_types` (cf. builtin.php) et restent extensibles par du code tiers.
+ * `em_site_field_types` (cf. builtin.php) et restent extensibles par du code tiers.
  *
  * Forme d'un type de champ :
  *   [
@@ -16,7 +16,7 @@
  *     'render_front' => callable|null,      // rendu front (branché plus tard)
  *   ]
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -28,7 +28,7 @@ if (!defined('ABSPATH')) {
  *
  * @return array<string, array<string, mixed>>
  */
-function em_wp_field_type_registry(): array
+function em_site_field_type_registry(): array
 {
     static $cache = null;
 
@@ -41,7 +41,7 @@ function em_wp_field_type_registry(): array
      *
      * @param array<string, array<string, mixed>> $types
      */
-    $types = (array) apply_filters('em_wp_field_types', []);
+    $types = (array) apply_filters('em_site_field_types', []);
     $normalized = [];
 
     foreach ($types as $key => $definition) {
@@ -51,7 +51,7 @@ function em_wp_field_type_registry(): array
             continue;
         }
 
-        $normalized[$key] = em_wp_field_type_normalize($key, $definition);
+        $normalized[$key] = em_site_field_type_normalize($key, $definition);
     }
 
     $cache = $normalized;
@@ -65,7 +65,7 @@ function em_wp_field_type_registry(): array
  * @param array<string, mixed> $definition
  * @return array<string, mixed>
  */
-function em_wp_field_type_normalize(string $key, array $definition): array
+function em_site_field_type_normalize(string $key, array $definition): array
 {
     $sanitize = $definition['sanitize'] ?? 'sanitize_text_field';
 
@@ -79,7 +79,7 @@ function em_wp_field_type_normalize(string $key, array $definition): array
         'label'        => (string) ($definition['label'] ?? $key),
         'default'      => $definition['default'] ?? '',
         'sanitize'     => $sanitize,
-        'icon'         => $icon !== '' ? $icon : em_wp_field_type_default_icon($key),
+        'icon'         => $icon !== '' ? $icon : em_site_field_type_default_icon($key),
         'render_admin' => is_callable($definition['render_admin'] ?? null) ? $definition['render_admin'] : null,
         'render_front' => is_callable($definition['render_front'] ?? null) ? $definition['render_front'] : null,
     ];
@@ -88,7 +88,7 @@ function em_wp_field_type_normalize(string $key, array $definition): array
 /**
  * Icône Dashicon par défaut associée à un type de champ (pour la palette/builder).
  */
-function em_wp_field_type_default_icon(string $key): string
+function em_site_field_type_default_icon(string $key): string
 {
     $map = [
         'text'           => 'dashicons-editor-textcolor',
@@ -124,11 +124,11 @@ function em_wp_field_type_default_icon(string $key): string
 /**
  * Un type de champ existe-t-il ?
  */
-function em_wp_field_type_exists(string $key): bool
+function em_site_field_type_exists(string $key): bool
 {
     $key = sanitize_key($key);
 
-    return $key !== '' && isset(em_wp_field_type_registry()[$key]);
+    return $key !== '' && isset(em_site_field_type_registry()[$key]);
 }
 
 /**
@@ -136,11 +136,11 @@ function em_wp_field_type_exists(string $key): bool
  *
  * @return array<string, mixed>|null
  */
-function em_wp_field_type_get(string $key): ?array
+function em_site_field_type_get(string $key): ?array
 {
     $key = sanitize_key($key);
 
-    return em_wp_field_type_registry()[$key] ?? null;
+    return em_site_field_type_registry()[$key] ?? null;
 }
 
 /**
@@ -148,9 +148,9 @@ function em_wp_field_type_get(string $key): ?array
  *
  * @return mixed
  */
-function em_wp_field_type_default(string $key)
+function em_site_field_type_default(string $key)
 {
-    $type = em_wp_field_type_get($key);
+    $type = em_site_field_type_get($key);
 
     return $type['default'] ?? '';
 }
@@ -161,9 +161,9 @@ function em_wp_field_type_default(string $key)
  * @param mixed $value
  * @return mixed
  */
-function em_wp_field_type_sanitize(string $key, $value)
+function em_site_field_type_sanitize(string $key, $value)
 {
-    $type = em_wp_field_type_get($key);
+    $type = em_site_field_type_get($key);
     $sanitize = $type['sanitize'] ?? 'sanitize_text_field';
 
     return call_user_func($sanitize, $value);

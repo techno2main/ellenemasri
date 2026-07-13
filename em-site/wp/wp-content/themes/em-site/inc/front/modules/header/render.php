@@ -2,7 +2,7 @@
 /**
  * Rendu front de la rubrique HEADER composite (HERO + SLIDER).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -13,13 +13,13 @@ require_once __DIR__ . '/compose.php';
 require_once dirname(__DIR__) . '/hero/render.php';
 require_once dirname(__DIR__) . '/slider/render.php';
 
-function em_wp_render_header(): void
+function em_site_render_header(): void
 {
 	$entries = em_site_header_entries();
 	$display_mode = (string) (em_site_header_instance_config(em_site_header_active_template())['display_mode'] ?? 'single');
 	$transition_mode = 'manual';
 	$transition_timer = 6;
-	$instance_cfg = get_option('em_wp_v4_instance_' . sanitize_key(em_site_header_active_template()) . '_header', []);
+	$instance_cfg = get_option('em_site_instance_' . sanitize_key(em_site_header_active_template()) . '_header', []);
 	if (is_array($instance_cfg)) {
 		$transition_mode = sanitize_key((string) ($instance_cfg['transition_mode'] ?? 'manual'));
 		$transition_timer = (int) ($instance_cfg['transition_timer'] ?? 6);
@@ -92,14 +92,14 @@ function em_wp_render_header(): void
 	?>
 	<section id="hero" class="em-section em-section--header" data-em-rubrique="header" data-em-header-mode="<?php echo esc_attr($is_multi ? 'multi' : 'single'); ?>" data-em-header-transition="<?php echo esc_attr($is_multi ? $transition_mode : 'manual'); ?>" data-em-header-timer="<?php echo esc_attr((string) ($is_multi ? $transition_timer : 6)); ?>">
 		<?php if ($is_multi) : ?>
-			<nav class="em-header-switch" aria-label="<?php esc_attr_e('Navigation Header', 'em-wp'); ?>">
-				<button type="button" class="em-header-switch__btn" data-em-header-prev aria-label="<?php esc_attr_e('Item précédent', 'em-wp'); ?>">&larr;</button>
-				<div class="em-header-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Header', 'em-wp'); ?>">
+			<nav class="em-header-switch" aria-label="<?php esc_attr_e('Navigation Header', 'em-site'); ?>">
+				<button type="button" class="em-header-switch__btn" data-em-header-prev aria-label="<?php esc_attr_e('Item précédent', 'em-site'); ?>">&larr;</button>
+				<div class="em-header-switch__dots" role="tablist" aria-label="<?php esc_attr_e('Items Header', 'em-site'); ?>">
 					<?php foreach ($rendered_entries as $idx => $rendered_entry) : ?>
-						<button type="button" class="em-header-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-header-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-wp'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
+						<button type="button" class="em-header-switch__dot<?php echo $idx === 0 ? ' is-active' : ''; ?>" data-em-header-dot="<?php echo esc_attr((string) $idx); ?>" aria-label="<?php echo esc_attr(sprintf(__('Afficher item %d', 'em-site'), $idx + 1)); ?>" aria-selected="<?php echo $idx === 0 ? 'true' : 'false'; ?>"></button>
 					<?php endforeach; ?>
 				</div>
-				<button type="button" class="em-header-switch__btn" data-em-header-next aria-label="<?php esc_attr_e('Item suivant', 'em-wp'); ?>">&rarr;</button>
+				<button type="button" class="em-header-switch__btn" data-em-header-next aria-label="<?php esc_attr_e('Item suivant', 'em-site'); ?>">&rarr;</button>
 			</nav>
 		<?php endif; ?>
 

@@ -2,7 +2,7 @@
 /**
  * Helpers front: rendu des champs texte selon leur type réel dans item.fields.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {

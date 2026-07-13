@@ -2,43 +2,46 @@
 /**
  * Menus latéraux admin (Lot B) pour rapprochement source.
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
+// Fichier legacy conservé pour historique. Les menus actifs sont dans pages/dashboard/* et pages/rubriques/*.
+return;
+
 function em_site_admin_templates_page_slug(): string
 {
-    return function_exists('em_wp_admin_template_parent_page_slug')
-        ? em_wp_admin_template_parent_page_slug()
+    return function_exists('em_site_admin_template_parent_page_slug')
+        ? em_site_admin_template_parent_page_slug()
         : 'em-template';
 }
 
 function em_site_admin_rubriques_page_slug(): string
 {
-    return function_exists('em_wp_v4_page_slug')
-        ? em_wp_v4_page_slug()
+    return function_exists('em_site_page_slug')
+        ? em_site_page_slug()
         : 'em-rubriques-overview';
 }
 
 function em_site_admin_vlb_page_slug(): string
 {
-    return function_exists('em_wp_admin_menu_vlb_parent_slug')
-        ? em_wp_admin_menu_vlb_parent_slug()
+    return function_exists('em_site_admin_menu_vlb_parent_slug')
+        ? em_site_admin_menu_vlb_parent_slug()
         : 'mayami_visual_links_builder';
 }
 
 function em_site_admin_register_secondary_menus(): void
 {
-    if (function_exists('em_wp_admin_template_parent_page_slug') && function_exists('em_wp_v4_page_slug')) {
+    if (function_exists('em_site_admin_template_parent_page_slug') && function_exists('em_site_page_slug')) {
         return;
     }
 
     add_menu_page(
-        __('Templates', 'em-wp'),
-        __('TEMPLATES', 'em-wp'),
+        __('Templates', 'em-site'),
+        __('TEMPLATES', 'em-site'),
         'manage_options',
         em_site_admin_templates_page_slug(),
         'em_site_admin_render_templates_page',
@@ -47,8 +50,8 @@ function em_site_admin_register_secondary_menus(): void
     );
 
     add_menu_page(
-        __('Rubriques', 'em-wp'),
-        __('RUBRIQUES', 'em-wp'),
+        __('Rubriques', 'em-site'),
+        __('RUBRIQUES', 'em-site'),
         'manage_options',
         em_site_admin_rubriques_page_slug(),
         'em_site_admin_render_rubriques_page',
@@ -57,8 +60,8 @@ function em_site_admin_register_secondary_menus(): void
     );
 
     add_menu_page(
-        __('Visual Links Builder', 'em-wp'),
-        __('VLB', 'em-wp'),
+        __('Visual Links Builder', 'em-site'),
+        __('VLB', 'em-site'),
         'manage_options',
         em_site_admin_vlb_page_slug(),
         'em_site_admin_render_vlb_page',
@@ -84,12 +87,12 @@ function em_site_admin_rename_native_menus(): void
         $slug = (string) ($item[2] ?? '');
 
         if ($slug === 'upload.php') {
-            $menu[$index][0] = __('MEDIAS', 'em-wp');
+            $menu[$index][0] = __('MEDIAS', 'em-site');
             continue;
         }
 
         if ($slug === 'options-general.php') {
-            $menu[$index][0] = __('PARAMÈTRES', 'em-wp');
+            $menu[$index][0] = __('PARAMÈTRES', 'em-site');
         }
     }
 }
@@ -105,8 +108,8 @@ function em_site_admin_group_settings_menus(): void
 
     add_submenu_page(
         'options-general.php',
-        __('Apparence', 'em-wp'),
-        __('Apparence', 'em-wp'),
+        __('Apparence', 'em-site'),
+        __('Apparence', 'em-site'),
         'manage_options',
         'themes.php'
     );
@@ -118,7 +121,7 @@ function em_site_admin_group_settings_menus(): void
             $slug = (string) ($submenu_item[2] ?? '');
 
             if ($slug === 'options-general.php') {
-                $submenu['options-general.php'][$index][0] = __('Settings', 'em-wp');
+                $submenu['options-general.php'][$index][0] = __('Settings', 'em-site');
             }
         }
     }

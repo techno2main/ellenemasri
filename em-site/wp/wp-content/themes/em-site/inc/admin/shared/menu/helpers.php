@@ -2,7 +2,7 @@
 /**
  * Helpers menu admin (structures, décalage positions).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 /**
  * Décale les entrées du menu admin à partir d'une position (clés entières).
  */
-function em_wp_admin_shift_admin_menu_positions(int $from_position, int $offset): void
+function em_site_admin_shift_admin_menu_positions(int $from_position, int $offset): void
 {
     global $menu;
 
@@ -45,7 +45,7 @@ function em_wp_admin_shift_admin_menu_positions(int $from_position, int $offset)
  *
  * @return array<int, string>
  */
-function em_wp_admin_menu_separator_item(string $slug, string $class_suffix): array
+function em_site_admin_menu_separator_item(string $slug, string $class_suffix): array
 {
     return [
         '',
@@ -63,7 +63,7 @@ function em_wp_admin_menu_separator_item(string $slug, string $class_suffix): ar
  *
  * @return array<int, string>
  */
-function em_wp_admin_menu_section_label_item(string $slug, string $label, string $class_suffix): array
+function em_site_admin_menu_section_label_item(string $slug, string $label, string $class_suffix): array
 {
     return [
         $label,
@@ -81,7 +81,7 @@ function em_wp_admin_menu_section_label_item(string $slug, string $label, string
  *
  * @return string[]
  */
-function em_wp_admin_native_settings_menu_order(): array
+function em_site_admin_native_settings_menu_order(): array
 {
     return [
         'themes.php',
@@ -91,16 +91,16 @@ function em_wp_admin_native_settings_menu_order(): array
 }
 
 /**
- * Indique si l'entrée menu est un séparateur WordPress natif (pas em-wp).
+ * Indique si l'entrée menu est un séparateur WordPress natif (pas em-site).
  *
  * @param array<int, string> $item
  */
-function em_wp_admin_is_native_wp_menu_separator(array $item): bool
+function em_site_admin_is_native_wp_menu_separator(array $item): bool
 {
     $slug  = (string) ($item[2] ?? '');
     $class = (string) ($item[4] ?? '');
 
-    if (in_array($slug, em_wp_admin_menu_chrome_slugs(), true)) {
+    if (in_array($slug, em_site_admin_menu_chrome_slugs(), true)) {
         return false;
     }
 

@@ -1,7 +1,7 @@
 (function () {
-    window.emWpInitMayamiSlider = function (root) {
-        if (typeof window.emSiteInitMayamiSlider === 'function') {
-            window.emSiteInitMayamiSlider(root);
+    window.emWpInitSlider = function (root) {
+        if (typeof window.emSiteInitSlider === 'function') {
+            window.emSiteInitSlider(root);
         }
     };
 })();

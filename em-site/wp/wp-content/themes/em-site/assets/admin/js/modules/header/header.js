@@ -10,7 +10,7 @@
             return '';
         }
 
-        var checked = field.querySelector('.em-wp-admin-catalog-slug-switch:checked');
+        var checked = field.querySelector('.em-site-admin-catalog-slug-switch:checked');
 
         if (!checked) {
             return '';
@@ -46,7 +46,7 @@
     }
 
     function syncHeaderLayoutWireframeLabels(form) {
-        var preview = form.querySelector('.em-wp-header-admin__layout-preview');
+        var preview = form.querySelector('.em-site-header-admin__layout-preview');
 
         if (!preview) {
             return;
@@ -58,10 +58,10 @@
         var sliderHintName = getCatalogChoiceLabel(form, 'slider', 'data-choice-label');
         var heroLabel = preview.querySelector('[data-layout-part="hero"]');
         var sliderLabel = preview.querySelector('[data-layout-part="slider"]');
-        var heroPart = heroLabel ? heroLabel.closest('.em-wp-header-admin__layout-part') : null;
-        var sliderPart = sliderLabel ? sliderLabel.closest('.em-wp-header-admin__layout-part') : null;
+        var heroPart = heroLabel ? heroLabel.closest('.em-site-header-admin__layout-part') : null;
+        var sliderPart = sliderLabel ? sliderLabel.closest('.em-site-header-admin__layout-part') : null;
         var hint = preview.parentElement
-            ? preview.parentElement.querySelector('.em-wp-header-admin__layout-hint')
+            ? preview.parentElement.querySelector('.em-site-header-admin__layout-hint')
             : null;
         var layout = preview.getAttribute('data-header-layout') || 'hero_left';
 
@@ -90,19 +90,19 @@
     }
 
     function initHeaderLayoutSwitcher() {
-        var form = document.getElementById('em-wp-header-form');
+        var form = document.getElementById('em-site-header-form');
 
         if (!form) {
             return;
         }
 
-        document.querySelectorAll('.em-wp-header-admin__layout-preview').forEach(function (preview) {
-            var swapButton = preview.querySelector('.em-wp-header-admin__layout-swap');
+        document.querySelectorAll('.em-site-header-admin__layout-preview').forEach(function (preview) {
+            var swapButton = preview.querySelector('.em-site-header-admin__layout-swap');
             var hiddenInput = preview.parentElement
-                ? preview.parentElement.querySelector('.em-wp-header-admin__layout-input')
+                ? preview.parentElement.querySelector('.em-site-header-admin__layout-input')
                 : null;
             var hint = preview.parentElement
-                ? preview.parentElement.querySelector('.em-wp-header-admin__layout-hint')
+                ? preview.parentElement.querySelector('.em-site-header-admin__layout-hint')
                 : null;
 
             if (!swapButton || !hiddenInput) {
@@ -130,7 +130,7 @@
                 applyLayout(nextLayout);
             });
 
-            var wireframe = preview.querySelector('.em-wp-header-admin__layout-wireframe');
+            var wireframe = preview.querySelector('.em-site-header-admin__layout-wireframe');
             if (wireframe) {
                 wireframe.addEventListener('click', function () {
                     swapButton.click();
@@ -141,7 +141,7 @@
         });
 
         form.addEventListener('change', function (event) {
-            if (!event.target.classList.contains('em-wp-admin-catalog-slug-input')) {
+            if (!event.target.classList.contains('em-site-admin-catalog-slug-input')) {
                 return;
             }
 
@@ -154,7 +154,7 @@
     function boot() {
         initHeaderLayoutSwitcher();
 
-        document.querySelectorAll('.em-wp-header-media-button').forEach(function (button) {
+        document.querySelectorAll('.em-site-header-media-button').forEach(function (button) {
             button.addEventListener('click', function () {
                 var targetId = button.getAttribute('data-target');
                 var previewId = button.getAttribute('data-preview');

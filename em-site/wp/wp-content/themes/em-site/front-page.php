@@ -2,7 +2,7 @@
 /**
  * Wrapper front-page.
  *
- * @package em-wp
+ * @package em-site
  */
 
 get_header();

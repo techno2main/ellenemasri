@@ -1,16 +1,29 @@
 # PA - Refonte Gestion Template
 
-Date: 2026-07-05
-Horodatage précis (Paris): 2026-07-05 22:43:47
+Date: 2026-07-07
+Horodatage précis (Paris): 2026-07-07 20:13:03
 Périmètre: em-site/wp/wp-content/themes/em-site
 Branche: feature/refonte-template-gestion
 Statut: Implémentation admin template unique en cours (jalon UI atteint)
 
+## Mise à jour session (Paris): 2026-07-07 21:54:16
+
+- Lot `emv4` purgé sur le builder Rubriques et le composant Scotchs.
+- Conflit fatal top-bar corrigé par séparation des helpers admin et front.
+- Validation du lot: grep global `emv4` à 0 sur le thème actif, page `em-rubriques-overview` rétablie.
+
 Mises à jour de session:
+
+- Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).
+- Correctif appliqué: migration v2 de fusion legacy -> em_site dans `inc/core/legacy-option-prefix-migration.php` pour restaurer les clés/items manquants (catalogues HEADER inclus) quand la clé cible existe déjà.
+
+- Purge nomenclature finalisée sur le thème actif: suppression des occurrences `em_wp_` résiduelles dans le code et les scripts admin/front.
+- Stabilisation runtime admin: correction d'une collision de fonction (`em_site_stream_player_height`) et neutralisation de fichiers legacy (`menu.php`, `dashboard-menus.php`, `dashboard-routing.php`) qui provoquaient des redéfinitions fatales.
+- Rétablissement front: ajout d'une migration one-shot des options WordPress legacy (`em_wp_*` / `em_wp_v4_*`) vers le préfixe cible `em_site_*` via `inc/core/legacy-option-prefix-migration.php` pour restaurer les données existantes.
 
 - Correction d'une régression admin: mode Multi rétabli pour toutes les rubriques sauf TOP-BAR et FOOTER (restent imposées en Unique).
 - RELEASE front: branchement du mode Multi (instances, navigation prev/next, dots, timer auto/manuelle, hash d'item).
-- RELEASE front: correction de disparition de section via fallback robuste de résolution des items (`em_wp_v4_get_items` + store brut + slug sélectionné + slug par défaut).
+- RELEASE front: correction de disparition de section via fallback robuste de résolution des items (`em_site_v4_get_items` + store brut + slug sélectionné + slug par défaut).
 - RELEASE front: structuration dynamique de la colonne droite (intro, titre, lignes crédits, séparateurs) avec fallback legacy pour rollback immédiat.
 - RELEASE admin: premier niveau d'optimisation UX builder (mode compact crédits + ajout rapide d'une ligne crédit) pour réduire la complexité d'édition.
 - RELEASE admin (itération UX): remplacement du layout trop haut par une version compacte anti-scroll (lecture améliorée sans hausse de hauteur), en conservant strictement le même stockage de données.
@@ -707,7 +720,7 @@ Critères de sortie Phase 7:
 - Règle UX affinée: en Unique imposé (TOP-BAR/FOOTER), le titre "Items disponibles pour ..." est masqué.
 - HEADER: le sélecteur "Principe d'affichage" (Unique/Multi) est affiché avant la zone "Composition du HEADER".
 - Correction confusion HEADER: le mode Unique/Multi est désormais indépendant de la composition HERO/SLIDER (plus de bascule automatique).
-- Fix UI couleur (builder Rubriques): compat variables CSS `--em-wp-color-swatch` / `--em-color-swatch` pour éviter les swatches gris et rétablir la mise à jour live dans la modale.
+- Fix UI couleur (builder Rubriques): compat variables CSS `--em-site-color-swatch` / `--em-color-swatch` pour éviter les swatches gris et rétablir la mise à jour live dans la modale.
 - STREAM Multi finalisé: config branchée (manuel/auto + timer), premier item par défaut, masquage d'items dans la rotation, persistance AJAX et rendu front multi-items.
 - Ajustement UI STREAM: en mode Multi la radio gauche (mode Unique) est masquée; en Multi+Manuelle, les checkbox d'inclusion et le choix "Premier item" sont masqués.
 - Règle UI renforcée: en mode Unique, seule la radio gauche reste visible (aucun contrôle Multi affiché).
@@ -737,3 +750,9 @@ Critères de sortie Phase 7:
 - Correctif front VIDEO (champ texte enrichi): rendu row description compatible avec stockage `textarea`/JSON (`text` + `link`) + fallback legacy, avec affichage HTML sécurisé.
 - Renforcement anti-régression type de champ: résolution dynamique de la clé front VIDEO par position (`row=4`,`col=1`) + type réel (`text`/`textarea`) au lieu d'un key figé.
 - Correctif style typographique dynamique: application front de `options.style` (taille/police/couleur/alignement) pour le champ texte VIDEO résolu dynamiquement.
+
+## Mise à jour session (Paris): 2026-07-07 22:08:43
+
+- Application de la politique "clean 100%": suppression du migrateur legacy de préfixes.
+- Débranchement du chargement dans le bootstrap du thème.
+- Vérification post-lot: références migrateur à 0 et préfixes legacy em_wp à 0 dans les PHP du thème actif.

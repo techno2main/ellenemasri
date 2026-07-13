@@ -137,7 +137,7 @@
 
     function getTemplateAccentColor() {
         var draft = State.getDraft();
-        var colorInput = document.getElementById('em-wp-template-new-color');
+        var colorInput = document.getElementById('em-site-template-new-color');
         var color = draft && draft.color ? draft.color : '';
 
         if (!color && colorInput) {
@@ -168,11 +168,11 @@
 
         available.forEach(function (item) {
             var li = document.createElement('li');
-            li.className = 'em-wp-template-wizard-skeleton__picker-item';
+            li.className = 'em-site-template-wizard-skeleton__picker-item';
 
             var btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'em-wp-template-wizard-skeleton__picker-add';
+            btn.className = 'em-site-template-wizard-skeleton__picker-add';
             btn.value = item.slug;
             btn.setAttribute('data-rubrique-slug', item.slug);
             btn.setAttribute(
@@ -181,11 +181,11 @@
             );
 
             var icon = document.createElement('span');
-            icon.className = 'em-wp-template-wizard-skeleton__picker-add-icon';
+            icon.className = 'em-site-template-wizard-skeleton__picker-add-icon';
             icon.setAttribute('aria-hidden', 'true');
 
             var text = document.createElement('span');
-            text.className = 'em-wp-template-wizard-skeleton__picker-label';
+            text.className = 'em-site-template-wizard-skeleton__picker-label';
             text.textContent = item.label;
 
             btn.appendChild(icon);
@@ -214,8 +214,8 @@
         var accentColor = getTemplateAccentColor();
 
         listEl.innerHTML = '';
-        listEl.classList.remove('em-wp-template-wizard-skeleton__list--readonly');
-        listEl.style.setProperty('--em-wp-skeleton-accent', accentColor);
+        listEl.classList.remove('em-site-template-wizard-skeleton__list--readonly');
+        listEl.style.setProperty('--em-site-skeleton-accent', accentColor);
 
         order.forEach(function (slug, index) {
             var def = defs[slug];
@@ -225,14 +225,14 @@
             }
 
             var li = document.createElement('li');
-            li.className = 'em-wp-template-wizard-skeleton__item';
+            li.className = 'em-site-template-wizard-skeleton__item';
             li.setAttribute('data-rubrique', slug);
 
             if (showMoves && canDragSort(slug)) {
                 li.classList.add('is-sortable');
 
                 var handle = document.createElement('span');
-                handle.className = 'em-wp-template-wizard-skeleton__drag em-wp-slide-sortable__handle';
+                handle.className = 'em-site-template-wizard-skeleton__drag em-site-slide-sortable__handle';
                 handle.setAttribute('role', 'button');
                 handle.setAttribute('tabindex', '0');
                 handle.setAttribute('aria-label', i18n.dragRubrique || 'Glisser pour reordonner');
@@ -242,10 +242,10 @@
             }
 
             var main = document.createElement('span');
-            main.className = 'em-wp-template-wizard-skeleton__item-main';
+            main.className = 'em-site-template-wizard-skeleton__item-main';
 
             var title = document.createElement('span');
-            title.className = 'em-wp-template-wizard-skeleton__item-label';
+            title.className = 'em-site-template-wizard-skeleton__item-label';
             title.textContent = def.label || slug;
 
             var isDefault = isDefaultSkeletonSlug(slug);
@@ -253,7 +253,7 @@
 
             if (isDefault) {
                 badge = document.createElement('span');
-                badge.className = 'em-wp-template-wizard-skeleton__item-badge is-default';
+                badge.className = 'em-site-template-wizard-skeleton__item-badge is-default';
                 badge.textContent = i18n.skeletonBadgeDefault || '(Rubrique de base)';
                 main.appendChild(title);
                 main.appendChild(badge);
@@ -265,12 +265,12 @@
 
             if (showMoves || showRemove) {
                 var actions = document.createElement('span');
-                actions.className = 'em-wp-template-wizard-skeleton__item-actions';
+                actions.className = 'em-site-template-wizard-skeleton__item-actions';
 
                 if (showMoves && index > 0 && order[index - 1] !== 'top-bar' && slug !== 'footer') {
                     var up = document.createElement('button');
                     up.type = 'button';
-                    up.className = 'em-wp-template-wizard-skeleton__move';
+                    up.className = 'em-site-template-wizard-skeleton__move';
                     up.setAttribute('data-move', 'up');
                     up.setAttribute('aria-label', 'Monter');
                     up.innerHTML = '<i class="fa-solid fa-arrow-up" aria-hidden="true"></i>';
@@ -280,7 +280,7 @@
                 if (showMoves && index < order.length - 1 && slug !== 'top-bar' && order[index + 1] !== 'footer') {
                     var down = document.createElement('button');
                     down.type = 'button';
-                    down.className = 'em-wp-template-wizard-skeleton__move';
+                    down.className = 'em-site-template-wizard-skeleton__move';
                     down.setAttribute('data-move', 'down');
                     down.setAttribute('aria-label', 'Descendre');
                     down.innerHTML = '<i class="fa-solid fa-arrow-down" aria-hidden="true"></i>';
@@ -290,7 +290,7 @@
                 if (showRemove && canRemove(slug, def)) {
                     if (!isDefault) {
                         var addedBadge = document.createElement('span');
-                        addedBadge.className = 'em-wp-template-wizard-skeleton__item-badge is-added';
+                        addedBadge.className = 'em-site-template-wizard-skeleton__item-badge is-added';
                         addedBadge.textContent = i18n.skeletonBadgeAdded || 'Rubrique ajoutee';
                         addedBadge.style.color = accentColor;
                         actions.appendChild(addedBadge);
@@ -298,7 +298,7 @@
 
                     var remove = document.createElement('button');
                     remove.type = 'button';
-                    remove.className = 'em-wp-template-wizard-skeleton__remove';
+                    remove.className = 'em-site-template-wizard-skeleton__remove';
                     remove.setAttribute(
                         'aria-label',
                         ((State.config.i18n && State.config.i18n.removeRubriqueLabel) || 'Retirer %s').replace('%s', def.label || slug)
@@ -314,10 +314,10 @@
         });
 
         var availableCount = renderPicker(pickerListEl, pickerEmptyEl, order, defs);
-        var pickerRow = addWrap ? addWrap.querySelector('.em-wp-template-wizard-skeleton__picker-row') : null;
+        var pickerRow = addWrap ? addWrap.querySelector('.em-site-template-wizard-skeleton__picker-row') : null;
 
         if (pickerListEl) {
-            pickerListEl.style.setProperty('--em-wp-skeleton-accent', accentColor);
+            pickerListEl.style.setProperty('--em-site-skeleton-accent', accentColor);
         }
 
         if (pickerRow) {

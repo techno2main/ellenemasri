@@ -2,7 +2,7 @@
 /**
  * Composants UI partagés — grilles de cartes sommaire (Accueil, Catalogues, Templates…).
  *
- * @package em-wp
+ * @package em-site
  */
 
 if (!defined('ABSPATH')) {
@@ -14,24 +14,24 @@ require_once dirname(__DIR__, 2) . '/hub-breadcrumb/hub-breadcrumb.php';
 /**
  * Enqueue CSS/JS communs aux pages sommaire à cartes.
  */
-function em_wp_admin_hub_cards_enqueue_assets(): void
+function em_site_admin_hub_cards_enqueue_assets(): void
 {
-    em_wp_admin_enqueue_shared_assets();
+    em_site_admin_enqueue_shared_assets();
 
     wp_enqueue_style('dashicons');
 
     wp_enqueue_style(
-        'em-wp-admin-hub-cards',
+        'em-site-admin-hub-cards',
         get_template_directory_uri() . '/assets/admin/shared/css/hub-cards.css',
-        ['em-wp-admin-module-common', 'em-wp-admin-live-badge', 'dashicons'],
-        em_wp_admin_asset_version('assets/admin/shared/css/hub-cards.css')
+        ['em-site-admin-module-common', 'em-site-admin-live-badge', 'dashicons'],
+        em_site_admin_asset_version('assets/admin/shared/css/hub-cards.css')
     );
 
     wp_enqueue_script(
-        'em-wp-admin-hub-sommaire-preview',
+        'em-site-admin-hub-sommaire-preview',
         get_template_directory_uri() . '/assets/admin/shared/js/preview/hub-sommaire-preview.js',
         [],
-        em_wp_admin_asset_version('assets/admin/shared/js/preview/hub-sommaire-preview.js'),
+        em_site_admin_asset_version('assets/admin/shared/js/preview/hub-sommaire-preview.js'),
         true
     );
 
@@ -40,7 +40,7 @@ function em_wp_admin_hub_cards_enqueue_assets(): void
 /**
  * Prénom (ou repli) de l'admin connecté pour les en-têtes sommaire.
  */
-function em_wp_admin_hub_greeting_name(): string
+function em_site_admin_hub_greeting_name(): string
 {
     $user = wp_get_current_user();
 
@@ -68,7 +68,7 @@ function em_wp_admin_hub_greeting_name(): string
  *
  * @return array<string, array<string, bool>>
  */
-function em_wp_admin_hub_intro_html_allowed_tags(): array
+function em_site_admin_hub_intro_html_allowed_tags(): array
 {
     return [
         'nav'    => [
@@ -97,15 +97,15 @@ function em_wp_admin_hub_intro_html_allowed_tags(): array
 /**
  * Ouvre la zone sticky (fil d'Ariane + onglets).
  */
-function em_wp_admin_hub_sticky_head_open(): void
+function em_site_admin_hub_sticky_head_open(): void
 {
-    echo '<div class="em-wp-hub__sticky-head">';
+    echo '<div class="em-site-hub__sticky-head">';
 }
 
 /**
  * Ferme la zone sticky hub.
  */
-function em_wp_admin_hub_sticky_head_close(): void
+function em_site_admin_hub_sticky_head_close(): void
 {
     echo '</div>';
 }
@@ -113,7 +113,7 @@ function em_wp_admin_hub_sticky_head_close(): void
 /**
  * En-tête sommaire partagé (avatar + description + flèche).
  */
-function em_wp_admin_hub_render_sommaire_header(
+function em_site_admin_hub_render_sommaire_header(
     string $description = '',
     string $icon_class = 'dashicons-dashboard',
     bool $description_allows_html = false,
@@ -123,7 +123,7 @@ function em_wp_admin_hub_render_sommaire_header(
     bool $sticky_head = false
 ): void {
     if ($sticky_head) {
-        em_wp_admin_hub_sticky_head_open();
+        em_site_admin_hub_sticky_head_open();
     }
 
     $icon_class = trim($icon_class);
@@ -132,31 +132,31 @@ function em_wp_admin_hub_render_sommaire_header(
         $icon_class = 'dashicons ' . $icon_class;
     }
 
-    $greeting_name = em_wp_admin_hub_greeting_name();
+    $greeting_name = em_site_admin_hub_greeting_name();
 
     $breadcrumb_html = '';
 
     if ($breadcrumb !== null && $breadcrumb !== []) {
-        $breadcrumb_html = em_wp_admin_hub_breadcrumb_html($breadcrumb);
+        $breadcrumb_html = em_site_admin_hub_breadcrumb_html($breadcrumb);
     } elseif ($breadcrumb === null) {
-        $auto_crumbs = em_wp_admin_hub_resolve_breadcrumb_crumbs();
+        $auto_crumbs = em_site_admin_hub_resolve_breadcrumb_crumbs();
         if ($auto_crumbs !== []) {
-            $breadcrumb_html = em_wp_admin_hub_breadcrumb_html($auto_crumbs);
+            $breadcrumb_html = em_site_admin_hub_breadcrumb_html($auto_crumbs);
         }
     }
     ?>
-    <h1 class="em-wp-hub__greeting">
-        <span class="<?php echo esc_attr($icon_class); ?> em-wp-hub__greeting-icon" aria-hidden="true"></span>
-        <span class="em-wp-hub__greeting-text">
+    <h1 class="em-site-hub__greeting">
+        <span class="<?php echo esc_attr($icon_class); ?> em-site-hub__greeting-icon" aria-hidden="true"></span>
+        <span class="em-site-hub__greeting-text">
             <?php
             if ($greeting_name !== '') {
                 printf(
                     /* translators: %s: admin first name */
-                    esc_html__('%s', 'em-wp'),
+                    esc_html__('%s', 'em-site'),
                     esc_html($greeting_name)
                 );
             } else {
-                esc_html_e('em-wp');
+                esc_html_e('em-site');
             }
             ?>
         </span>
@@ -165,18 +165,18 @@ function em_wp_admin_hub_render_sommaire_header(
             get_current_user_id(),
             40,
             '',
-            $greeting_name !== '' ? sprintf(__('Avatar de %s', 'em-wp'), $greeting_name) : __('Avatar', 'em-wp'),
-            ['class' => 'em-wp-hub__greeting-avatar']
+            $greeting_name !== '' ? sprintf(__('Avatar de %s', 'em-site'), $greeting_name) : __('Avatar', 'em-site'),
+            ['class' => 'em-site-hub__greeting-avatar']
         );
         ?>
     </h1>
 
     <?php if ($breadcrumb_html !== '') { ?>
-        <div class="em-wp-hub__breadcrumb"><?php echo wp_kses($breadcrumb_html, em_wp_admin_hub_intro_html_allowed_tags()); ?></div>
+        <div class="em-site-hub__breadcrumb"><?php echo wp_kses($breadcrumb_html, em_site_admin_hub_intro_html_allowed_tags()); ?></div>
     <?php } elseif ($description !== '') { ?>
-        <p class="description em-wp-hub__intro-text em-wp-hub__breadcrumb"><?php
+        <p class="description em-site-hub__intro-text em-site-hub__breadcrumb"><?php
             if ($description_allows_html) {
-                echo wp_kses($description, em_wp_admin_hub_intro_html_allowed_tags());
+                echo wp_kses($description, em_site_admin_hub_intro_html_allowed_tags());
             } else {
                 echo esc_html($description);
             }
@@ -187,7 +187,7 @@ function em_wp_admin_hub_render_sommaire_header(
     if (is_callable($context_banner_renderer)) {
         $context_banner_renderer();
     } elseif ($show_template_banner) {
-        em_wp_admin_render_template_editing_banner();
+        em_site_admin_render_template_editing_banner();
     }
     ?>
     <?php
@@ -196,23 +196,23 @@ function em_wp_admin_hub_render_sommaire_header(
 /**
  * Rendu du titre d'une carte (icône dashicons + libellé).
  */
-function em_wp_admin_hub_render_card_title(string $title, string $icon_class, ?callable $after_icon = null, string $icon_color = ''): void
+function em_site_admin_hub_render_card_title(string $title, string $icon_class, ?callable $after_icon = null, string $icon_color = ''): void
 {
     $icon_class = trim($icon_class);
-    $icon_style = $icon_color !== '' ? ' style="--em-wp-card-accent: ' . esc_attr($icon_color) . ';"' : '';
+    $icon_style = $icon_color !== '' ? ' style="--em-site-card-accent: ' . esc_attr($icon_color) . ';"' : '';
 
     if ($icon_class !== '' && !str_contains($icon_class, 'dashicons ')) {
         $icon_class = 'dashicons ' . $icon_class;
     }
     ?>
-    <h2 class="em-wp-hub__card-title">
-        <span class="<?php echo esc_attr($icon_class); ?> em-wp-hub__card-title-icon"<?php echo $icon_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> aria-hidden="true"></span>
+    <h2 class="em-site-hub__card-title">
+        <span class="<?php echo esc_attr($icon_class); ?> em-site-hub__card-title-icon"<?php echo $icon_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> aria-hidden="true"></span>
         <?php
         if ($after_icon !== null) {
             $after_icon();
         }
         ?>
-        <span class="em-wp-hub__card-title-label"><?php echo esc_html($title); ?></span>
+        <span class="em-site-hub__card-title-label"><?php echo esc_html($title); ?></span>
     </h2>
     <?php
 }
@@ -220,15 +220,15 @@ function em_wp_admin_hub_render_card_title(string $title, string $icon_class, ?c
 /**
  * Pastille compacte — nombre d'entrées (cartes sommaire).
  */
-function em_wp_admin_hub_render_count_badge(int $count): void
+function em_site_admin_hub_render_count_badge(int $count): void
 {
     $count = max(0, $count);
     ?>
     <span
-        class="em-wp-hub__count-badge"
+        class="em-site-hub__count-badge"
         aria-label="<?php echo esc_attr(sprintf(
             /* translators: %d: number of catalog items */
-            _n('%d item', '%d items', $count, 'em-wp'),
+            _n('%d item', '%d items', $count, 'em-site'),
             $count
         )); ?>"
     ><?php echo esc_html((string) $count); ?></span>
@@ -238,14 +238,14 @@ function em_wp_admin_hub_render_count_badge(int $count): void
 /**
  * Texte description carte catalogue (nom d'item en majuscules).
  */
-function em_wp_admin_hub_catalog_card_description_text(string $item_name, string $rubrique_name, string $module_slug = ''): string
+function em_site_admin_hub_catalog_card_description_text(string $item_name, string $rubrique_name, string $module_slug = ''): string
 {
     $rubrique = mb_strtoupper(trim($rubrique_name));
 
     return (string) sprintf(
         /* translators: 1: literal "items", 2: rubrique name */
-        __('Liste des %1$s disponibles pour la rubrique %2$s.', 'em-wp'),
-        __('items', 'em-wp'),
+        __('Liste des %1$s disponibles pour la rubrique %2$s.', 'em-site'),
+        __('items', 'em-site'),
         $rubrique
     );
 }

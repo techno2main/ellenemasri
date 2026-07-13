@@ -6,7 +6,7 @@
 
  *
 
- * @package em-wp
+ * @package em-site
 
  */
 
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
 
 
 
-function em_wp_social_page_slug(): string
+function em_site_social_page_slug(): string
 
 {
 
@@ -30,11 +30,11 @@ function em_wp_social_page_slug(): string
 
 
 
-function em_wp_social_form_option_key(): string
+function em_site_social_form_option_key(): string
 
 {
 
-    return em_wp_social_option_name(em_wp_social_admin_template_slug());
+    return em_site_social_option_name(em_site_social_admin_template_slug());
 
 }
 
@@ -50,7 +50,7 @@ function em_wp_social_form_option_key(): string
 
  */
 
-function em_wp_social_rubrique_default_options(): array
+function em_site_social_rubrique_default_options(): array
 
 {
 
@@ -80,7 +80,7 @@ function em_wp_social_rubrique_default_options(): array
 
  */
 
-function em_wp_social_catalog_default_options(): array
+function em_site_social_catalog_default_options(): array
 
 {
 
@@ -88,9 +88,9 @@ function em_wp_social_catalog_default_options(): array
 
 
 
-    foreach (array_keys(em_wp_social_platform_definitions()) as $slug) {
+    foreach (array_keys(em_site_social_platform_definitions()) as $slug) {
 
-        $platforms[] = em_wp_social_default_platform_item($slug);
+        $platforms[] = em_site_social_default_platform_item($slug);
 
     }
 
@@ -98,13 +98,13 @@ function em_wp_social_catalog_default_options(): array
 
     return [
 
-        'kicker'           => __('02 / Follow', 'em-wp'),
+        'kicker'           => __('02 / Follow', 'em-site'),
 
-        'title_left'       => __('Join the', 'em-wp'),
+        'title_left'       => __('Join the', 'em-site'),
 
-        'title_right'      => __('journey', 'em-wp'),
+        'title_right'      => __('journey', 'em-site'),
 
-        'description'      => __('Share clips, updates, and behind-the-scenes moments.', 'em-wp'),
+        'description'      => __('Share clips, updates, and behind-the-scenes moments.', 'em-site'),
 
         'platforms'        => $platforms,
 

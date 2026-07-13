@@ -6,7 +6,7 @@
 
  *
 
- * @package em-wp
+ * @package em-site
 
  */
 
