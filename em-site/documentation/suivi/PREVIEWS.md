@@ -9,6 +9,12 @@ Document de référence pour déléguer le debug de l’aperçu admin Rubriques,
 
 ## Situation actuelle
 
+### Mise à jour 2026-07-13 11:44:02 (Paris)
+
+- ✅ Bandeau sticky preview harmonisé : libellé et boutons en majuscules.
+- ✅ Confirmation `Retourner aux modifications` branchée sur la modale mutualisée `EmWpAdminConfirm` avec styles partagés du site.
+- ✅ Flux de retour corrigé : après confirmation, l'onglet preview redonne le focus à l'onglet Template puis se ferme (`window.close()`), avec fallback de redirection seulement si la fermeture est bloquée.
+
 ### Mise à jour 2026-07-13 10:47:45 (Paris)
 
 - ✅ URL d'aperçu site rendue générique: `http://localhost:8290/?preview=site`.

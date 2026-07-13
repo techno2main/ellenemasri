@@ -11,6 +11,14 @@ if (!defined('ABSPATH')) {
 
 function em_site_stream_active_template(): string
 {
+	if (function_exists('em_site_get_active_template_slug')) {
+		$slug = em_site_get_active_template_slug();
+
+		if ($slug !== '') {
+			return $slug;
+		}
+	}
+
 	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
@@ -22,7 +30,10 @@ function em_site_stream_instance(string $template_slug = ''): array
 		$template_slug = em_site_stream_active_template();
 	}
 
-	$instance = get_option('em_site_instance_' . $template_slug . '_stream', []);
+	$instance_option = function_exists('em_site_instance_option_name')
+		? em_site_instance_option_name($template_slug, 'stream')
+		: 'em_site_instance_' . $template_slug . '_stream';
+	$instance = get_option($instance_option, []);
 
 	return is_array($instance) ? $instance : [];
 }
@@ -38,7 +49,9 @@ function em_site_stream_item_option_name(string $template_slug, string $item_slu
 		$item_slug = 'stream-' . $template_slug;
 	}
 
-	return 'em_site_item_stream_' . $item_slug;
+	return function_exists('em_site_item_option_name')
+		? em_site_item_option_name('stream', $item_slug)
+		: 'em_site_item_stream_' . $item_slug;
 }
 
 /**
@@ -83,7 +96,10 @@ function em_site_stream_resolved_config(string $template_slug = ''): array
 	}
 
 	if ($item_slugs === []) {
-		$raw_items = get_option('em_site_items_stream', []);
+		$items_option = function_exists('em_site_items_option_name')
+			? em_site_items_option_name('stream')
+			: 'em_site_items_stream';
+		$raw_items = get_option($items_option, []);
 		if (is_array($raw_items)) {
 			$item_slugs = array_map('sanitize_key', array_keys($raw_items));
 			$item_slugs = array_values(array_filter($item_slugs, static function (string $slug): bool {

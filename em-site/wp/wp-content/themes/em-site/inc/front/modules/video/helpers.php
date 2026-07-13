@@ -11,6 +11,14 @@ if (!defined('ABSPATH')) {
 
 function em_site_video_active_template(): string
 {
+	if (function_exists('em_site_get_active_template_slug')) {
+		$slug = em_site_get_active_template_slug();
+
+		if ($slug !== '') {
+			return $slug;
+		}
+	}
+
 	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
@@ -25,7 +33,9 @@ function em_site_video_item_option_name(string $template_slug): string
 		$item_slug = 'video-' . $template_slug;
 	}
 
-	return 'em_site_item_video_' . $item_slug;
+	return function_exists('em_site_item_option_name')
+		? em_site_item_option_name('video', $item_slug)
+		: 'em_site_item_video_' . $item_slug;
 }
 
 function em_site_video_instance(string $template_slug = ''): array
@@ -35,7 +45,10 @@ function em_site_video_instance(string $template_slug = ''): array
 	}
 
 	$template_slug = sanitize_key($template_slug);
-	$instance = get_option('em_site_instance_' . $template_slug . '_video', []);
+	$instance_option = function_exists('em_site_instance_option_name')
+		? em_site_instance_option_name($template_slug, 'video')
+		: 'em_site_instance_' . $template_slug . '_video';
+	$instance = get_option($instance_option, []);
 
 	return is_array($instance) ? $instance : [];
 }
@@ -73,7 +86,10 @@ function em_site_video_resolved_config(string $template_slug = ''): array
 	}
 
 	if ($item_slugs === []) {
-		$raw_items = get_option('em_site_items_video', []);
+		$items_option = function_exists('em_site_items_option_name')
+			? em_site_items_option_name('video')
+			: 'em_site_items_video';
+		$raw_items = get_option($items_option, []);
 		if (is_array($raw_items)) {
 			foreach ($raw_items as $raw_slug => $_label) {
 				$raw_slug = sanitize_key((string) $raw_slug);
@@ -152,7 +168,9 @@ function em_site_video_item_by_slug(string $item_slug): array
 		return [];
 	}
 
-	$option_name = 'em_site_item_video_' . $item_slug;
+	$option_name = function_exists('em_site_item_option_name')
+		? em_site_item_option_name('video', $item_slug)
+		: 'em_site_item_video_' . $item_slug;
 	$item = get_option($option_name, []);
 
 	return is_array($item) ? $item : [];

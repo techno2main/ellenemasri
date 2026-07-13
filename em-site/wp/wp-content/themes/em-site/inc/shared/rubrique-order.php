@@ -14,7 +14,11 @@ if (!defined('ABSPATH')) {
  */
 function em_site_site_rubrique_order_option_name(): string
 {
-    return 'em_site_site_rubrique_order';
+    $option_name = 'em_site_site_rubrique_order';
+
+    return function_exists('em_site_option_channelize_name')
+        ? em_site_option_channelize_name($option_name)
+        : $option_name;
 }
 
 /**
@@ -22,7 +26,11 @@ function em_site_site_rubrique_order_option_name(): string
  */
 function em_site_site_rubrique_visibility_option_name(): string
 {
-    return 'em_site_site_rubrique_visibility';
+    $option_name = 'em_site_site_rubrique_visibility';
+
+    return function_exists('em_site_option_channelize_name')
+        ? em_site_option_channelize_name($option_name)
+        : $option_name;
 }
 
 /**

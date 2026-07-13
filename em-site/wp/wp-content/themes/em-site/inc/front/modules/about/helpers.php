@@ -11,6 +11,14 @@ if (!defined('ABSPATH')) {
 
 function em_site_about_active_template(): string
 {
+	if (function_exists('em_site_get_active_template_slug')) {
+		$slug = em_site_get_active_template_slug();
+
+		if ($slug !== '') {
+			return $slug;
+		}
+	}
+
 	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
@@ -18,14 +26,19 @@ function em_site_about_active_template(): string
 
 function em_site_about_item_option_name(string $template_slug): string
 {
-	$instance = get_option('em_site_instance_' . $template_slug . '_about', []);
+	$instance_option = function_exists('em_site_instance_option_name')
+		? em_site_instance_option_name($template_slug, 'about')
+		: 'em_site_instance_' . $template_slug . '_about';
+	$instance = get_option($instance_option, []);
 	$item_slug = is_array($instance) ? sanitize_key((string) ($instance['item'] ?? '')) : '';
 
 	if ($item_slug === '') {
 		$item_slug = 'about-default';
 	}
 
-	return 'em_site_item_about_' . $item_slug;
+	return function_exists('em_site_item_option_name')
+		? em_site_item_option_name('about', $item_slug)
+		: 'em_site_item_about_' . $item_slug;
 }
 
 function em_site_about_item(): array

@@ -19,7 +19,15 @@ if (!defined('ABSPATH')) {
  */
 function em_site_option_prefix(): string
 {
-    return 'em_site_';
+    if (function_exists('em_site_option_storage_channel') && em_site_option_storage_channel() === 'live') {
+        return function_exists('em_site_option_live_prefix')
+            ? em_site_option_live_prefix()
+            : 'em_site_live_';
+    }
+
+    return function_exists('em_site_option_draft_prefix')
+        ? em_site_option_draft_prefix()
+        : 'em_site_';
 }
 
 /**
@@ -36,6 +44,31 @@ function em_site_items_option_name(string $type_slug): string
 function em_site_item_option_name(string $type_slug, string $item_slug): string
 {
     return em_site_option_prefix() . 'item_' . sanitize_key($type_slug) . '_' . sanitize_key($item_slug);
+}
+
+/**
+ * Extrait le slug item à partir d'un nom d'option item (draft ou live).
+ */
+function em_site_item_slug_from_option_name(string $option_name, string $type_slug): string
+{
+    $type_slug = sanitize_key($type_slug);
+
+    if ($type_slug === '') {
+        return '';
+    }
+
+    $prefixes = [
+        'em_site_item_' . $type_slug . '_',
+        'em_site_live_item_' . $type_slug . '_',
+    ];
+
+    foreach ($prefixes as $prefix) {
+        if (str_starts_with($option_name, $prefix)) {
+            return sanitize_key((string) substr($option_name, strlen($prefix)));
+        }
+    }
+
+    return '';
 }
 
 /**

@@ -19,7 +19,10 @@ function em_site_render_header(): void
 	$display_mode = (string) (em_site_header_instance_config(em_site_header_active_template())['display_mode'] ?? 'single');
 	$transition_mode = 'manual';
 	$transition_timer = 6;
-	$instance_cfg = get_option('em_site_instance_' . sanitize_key(em_site_header_active_template()) . '_header', []);
+	$instance_option = function_exists('em_site_instance_option_name')
+		? em_site_instance_option_name(sanitize_key(em_site_header_active_template()), 'header')
+		: 'em_site_instance_' . sanitize_key(em_site_header_active_template()) . '_header';
+	$instance_cfg = get_option($instance_option, []);
 	if (is_array($instance_cfg)) {
 		$transition_mode = sanitize_key((string) ($instance_cfg['transition_mode'] ?? 'manual'));
 		$transition_timer = (int) ($instance_cfg['transition_timer'] ?? 6);

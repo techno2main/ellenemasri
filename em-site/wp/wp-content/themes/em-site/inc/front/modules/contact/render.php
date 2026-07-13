@@ -19,7 +19,9 @@ function em_site_render_contact(): void
 	}
 
 	$item_option_name = em_site_contact_item_option_name(em_site_contact_active_template());
-	$item_slug = str_replace('em_site_item_contacts_', '', $item_option_name);
+	$item_slug = function_exists('em_site_item_slug_from_option_name')
+		? em_site_item_slug_from_option_name($item_option_name, 'contacts')
+		: str_replace('em_site_item_contacts_', '', $item_option_name);
 	$content = is_array($item['content'] ?? null) ? $item['content'] : [];
 	$footer_html = em_site_front_render_rubrique_footer('contacts', $item_slug, '', [], $content);
 	if ($footer_html === '') {

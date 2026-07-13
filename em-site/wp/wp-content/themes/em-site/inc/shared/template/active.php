@@ -53,6 +53,113 @@ function em_site_template_preview_site_query_value(): string
 }
 
 /**
+ * Préfixe historique des options EM-SITE (canal brouillon).
+ */
+function em_site_option_draft_prefix(): string
+{
+    return 'em_site_';
+}
+
+/**
+ * Préfixe des options EM-SITE publiées (canal live).
+ */
+function em_site_option_live_prefix(): string
+{
+    return 'em_site_live_';
+}
+
+/**
+ * Canal de stockage à utiliser pour la requête courante.
+ *
+ * - admin + aperçu front: brouillon
+ * - front public: live
+ */
+function em_site_option_storage_channel(): string
+{
+    if (is_admin()) {
+        return 'draft';
+    }
+
+    if (function_exists('em_site_get_preview_template_slug') && em_site_get_preview_template_slug() !== '') {
+        return 'draft';
+    }
+
+    return 'live';
+}
+
+/**
+ * Convertit un nom d'option brouillon vers son équivalent live.
+ */
+function em_site_option_live_name_from_draft(string $draft_option_name): string
+{
+    $draft_option_name = (string) $draft_option_name;
+
+    if (!str_starts_with($draft_option_name, em_site_option_draft_prefix())) {
+        return $draft_option_name;
+    }
+
+    return em_site_option_live_prefix() . substr($draft_option_name, strlen(em_site_option_draft_prefix()));
+}
+
+/**
+ * Convertit un nom d'option live vers son équivalent brouillon.
+ */
+function em_site_option_draft_name_from_live(string $live_option_name): string
+{
+    $live_option_name = (string) $live_option_name;
+
+    if (!str_starts_with($live_option_name, em_site_option_live_prefix())) {
+        return $live_option_name;
+    }
+
+    return em_site_option_draft_prefix() . substr($live_option_name, strlen(em_site_option_live_prefix()));
+}
+
+/**
+ * Vérifie si une option live existe déjà en base.
+ */
+function em_site_option_live_exists(string $live_option_name): bool
+{
+    static $exists_cache = [];
+
+    if (isset($exists_cache[$live_option_name])) {
+        return $exists_cache[$live_option_name];
+    }
+
+    $exists_cache[$live_option_name] = get_option($live_option_name, null) !== null;
+
+    return $exists_cache[$live_option_name];
+}
+
+/**
+ * Applique le canal live/brouillon à un nom d'option EM-SITE.
+ */
+function em_site_option_channelize_name(string $draft_option_name, string $channel = ''): string
+{
+    $draft_option_name = (string) $draft_option_name;
+
+    if ($draft_option_name === '' || !str_starts_with($draft_option_name, em_site_option_draft_prefix())) {
+        return $draft_option_name;
+    }
+
+    if ($channel === '') {
+        $channel = em_site_option_storage_channel();
+    }
+
+    if ($channel !== 'live') {
+        return $draft_option_name;
+    }
+
+    $live_option_name = em_site_option_live_name_from_draft($draft_option_name);
+
+    // Tant qu'une option live n'existe pas encore, on retombe sur le brouillon
+    // pour garantir la rétrocompatibilité initiale.
+    return em_site_option_live_exists($live_option_name)
+        ? $live_option_name
+        : $draft_option_name;
+}
+
+/**
  * Construit l'URL d'aperçu simplifiée du site (`?preview=site`).
  *
  * Le paramètre `$slug` est conservé pour compatibilité d'API.
@@ -177,80 +284,203 @@ function em_site_front_preview_aware_url(string $url): string
 }
 
 /**
- * Barre flottante « Fermer l'aperçu » affichée en front lors d'un aperçu.
+ * Charge la modale de confirmation mutualisée pour le front preview.
  */
-function em_site_front_render_preview_close_bar(): void
+function em_site_front_enqueue_preview_modal_assets(): void
 {
     if (is_admin() || !em_site_front_is_template_preview()) {
         return;
     }
 
+    $theme_uri = get_template_directory_uri();
+
+    wp_enqueue_style(
+        'em-site-admin-confirm-modal-base',
+        $theme_uri . '/assets/admin/shared/css/module-common/nested-lists-and-media.css',
+        [],
+        null
+    );
+    wp_enqueue_style(
+        'em-site-admin-confirm-modal-actions',
+        $theme_uri . '/assets/admin/shared/css/module-common/confirm-modal-actions.css',
+        ['em-site-admin-confirm-modal-base'],
+        null
+    );
+
+    wp_enqueue_script(
+        'em-site-admin-class-prefix-compat',
+        $theme_uri . '/assets/admin/shared/js/compat/class-prefix-compat.js',
+        [],
+        null,
+        true
+    );
+
+    wp_enqueue_script(
+        'em-site-admin-confirm-modal',
+        $theme_uri . '/assets/admin/shared/js/modals/confirm-modal.js',
+        ['em-site-admin-class-prefix-compat'],
+        null,
+        true
+    );
+}
+add_action('wp_enqueue_scripts', 'em_site_front_enqueue_preview_modal_assets');
+
+/**
+ * Barre sticky d'aperçu front (publication + retour admin).
+ */
+function em_site_front_render_preview_action_bar(): void
+{
+    if (is_admin() || !em_site_front_is_template_preview() || !current_user_can('manage_options')) {
+        return;
+    }
+
     $slug = em_site_get_preview_template_slug();
-    $registry = function_exists('em_site_template_registry') ? em_site_template_registry() : [];
-    $label = (string) ($registry[$slug]['label'] ?? $slug);
-    // Repli si le navigateur refuse window.close() (aperçu ouvert manuellement) :
-    // on revient sur la page d'édition du template dans l'admin.
-    $close_url = admin_url('admin.php?page=em-rubriques');
+    $publish_url = add_query_arg([
+        'action'   => 'em_site_publish_preview_template',
+        'template' => $slug,
+        '_wpnonce' => wp_create_nonce('em_site_publish_preview_template'),
+    ], admin_url('admin-post.php'));
+
+    $back_url = function_exists('em_site_admin_templates_page_url')
+        ? em_site_admin_templates_page_url()
+        : admin_url('admin.php?page=em-template');
     ?>
     <div id="em-site-preview-bar" class="em-site-preview-bar" role="status">
-        <span class="em-site-preview-bar__label">
-            <span class="em-site-preview-bar__eye" aria-hidden="true">&#128065;</span>
-            <?php echo esc_html(sprintf(__('Aperçu : %s', 'em-site'), $label)); ?>
-        </span>
-        <a class="em-site-preview-bar__close" href="<?php echo esc_url($close_url); ?>">
-            <span aria-hidden="true">&times;</span>
-            <?php esc_html_e('Fermer l\'aperçu', 'em-site'); ?>
-        </a>
+        <div class="em-site-preview-bar__inner">
+            <span class="em-site-preview-bar__label">
+                <?php esc_html_e('APERÇU DU SITE AVANT MISE EN LIGNE', 'em-site'); ?>
+            </span>
+            <div class="em-site-preview-bar__actions">
+                <a class="em-site-preview-bar__publish" href="<?php echo esc_url($publish_url); ?>">
+                    <?php esc_html_e('VALIDER LA MISE EN LIGNE', 'em-site'); ?>
+                </a>
+                <a
+                    class="em-site-preview-bar__back"
+                    href="<?php echo esc_url($back_url); ?>"
+                    data-em-site-preview-back="1"
+                >
+                    <?php esc_html_e('RETOURNER AUX MODIFICATIONS', 'em-site'); ?>
+                </a>
+            </div>
+        </div>
     </div>
     <style>
         #em-site-preview-bar {
-            position: fixed;
+            position: sticky;
+            top: 0;
             z-index: 99999;
-            left: 50%;
-            bottom: 18px;
-            transform: translateX(-50%);
-            display: inline-flex;
-            align-items: center;
-            gap: 14px;
-            max-width: calc(100vw - 24px);
-            padding: 8px 10px 8px 16px;
-            border-radius: 999px;
-            background: rgba(17, 4, 33, 0.92);
-            color: #fff;
+            width: 100%;
+            box-sizing: border-box;
+            background: #fff4d6;
+            color: #1c1230;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 13px;
-            line-height: 1;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+            border-bottom: 1px solid rgba(28, 18, 48, 0.15);
+            backdrop-filter: blur(6px);
+        }
+        #em-site-preview-bar .em-site-preview-bar__inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 56px;
+            padding: 12px 14px;
         }
         #em-site-preview-bar .em-site-preview-bar__label {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
+            font-size: 13px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            min-width: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: #1c1230;
+            padding-left: 45px;
         }
-        #em-site-preview-bar .em-site-preview-bar__close {
+        #em-site-preview-bar .em-site-preview-bar__actions {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            padding: 7px 14px;
+            gap: 8px;
+            flex-shrink: 0;
+            padding-right: 45px;
+        }
+        #em-site-preview-bar .em-site-preview-bar__publish,
+        #em-site-preview-bar .em-site-preview-bar__back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
             border-radius: 999px;
-            background: #b61220;
-            color: #fff;
+            color: #ffffff;
             text-decoration: none;
+            font-size: 12px;
             font-weight: 700;
-            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: .03em;
         }
-        #em-site-preview-bar .em-site-preview-bar__close:hover,
-        #em-site-preview-bar .em-site-preview-bar__close:focus {
-            background: #8e0a05;
+        #em-site-preview-bar .em-site-preview-bar__publish {
+            background: #0c8f4a;
+        }
+        #em-site-preview-bar .em-site-preview-bar__publish:hover,
+        #em-site-preview-bar .em-site-preview-bar__publish:focus {
+            background: #08753c;
             color: #fff;
         }
-        #em-site-preview-bar .em-site-preview-bar__close span {
-            font-size: 18px;
-            line-height: 1;
+        #em-site-preview-bar .em-site-preview-bar__back {
+            background: #34313d;
+        }
+        #em-site-preview-bar .em-site-preview-bar__back:hover,
+        #em-site-preview-bar .em-site-preview-bar__back:focus {
+            background: #272430;
+            color: #ffffff;
+        }
+
+        /*
+         * En mode preview, la top-bar sticky doit commencer sous la barre draft,
+         * sinon elle est partiellement recouverte lors du scroll.
+         */
+        :root {
+            --em-preview-bar-height: 56px;
+            --em-sticky-top-bar-offset: calc(112px + var(--em-preview-bar-height));
+        }
+        .em-section--top-bar {
+            top: var(--em-preview-bar-height) !important;
+        }
+        body.admin-bar .em-section--top-bar {
+            top: calc(var(--em-preview-bar-height) + 32px) !important;
+        }
+        @media (max-width: 760px) {
+            #em-site-preview-bar .em-site-preview-bar__inner {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 10px 14px;
+                min-height: 0;
+            }
+            #em-site-preview-bar .em-site-preview-bar__actions {
+                width: 100%;
+            }
+            #em-site-preview-bar .em-site-preview-bar__publish,
+            #em-site-preview-bar .em-site-preview-bar__back {
+                flex: 1 1 0;
+            }
+            :root {
+                --em-preview-bar-height: 96px;
+            }
+            body.admin-bar .em-section--top-bar {
+                top: calc(var(--em-preview-bar-height) + 46px) !important;
+            }
+        }
+
+        /* Front preview: même base typographique que les modales admin partagées. */
+        .em-site-admin-confirm,
+        .em-admin-confirm {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        }
+        body.em-site-admin-confirm-open {
+            overflow: hidden;
         }
     </style>
     <script>
@@ -258,37 +488,175 @@ function em_site_front_render_preview_close_bar(): void
             var bar = document.getElementById('em-site-preview-bar');
             if (!bar) { return; }
 
-            // Aperçu chargé dans un iframe (miniature popover) : on masque la barre.
             if (window.top !== window.self) {
                 bar.parentNode.removeChild(bar);
                 return;
             }
 
-            var closeBtn = bar.querySelector('.em-site-preview-bar__close');
-            if (!closeBtn) { return; }
+            var inner = bar.querySelector('.em-site-preview-bar__inner');
 
-            closeBtn.addEventListener('click', function (event) {
-                event.preventDefault();
+            var backBtn = bar.querySelector('[data-em-site-preview-back="1"]');
 
-                // Repli : page admin d'origine (referrer) ou lien par défaut.
-                var ref = document.referrer || '';
-                var fallback = ref.indexOf('/wp-admin/') !== -1
-                    ? ref
-                    : (closeBtn.getAttribute('href') || '/');
+            function findTopBarColumns(topBar) {
+                var cols = topBar ? topBar.querySelectorAll('.em-rubrique__col') : [];
+                var logoCol = null;
+                var rightCol = null;
 
-                // L'onglet ne peut se fermer que s'il a été ouvert par script.
-                window.close();
+                for (var i = 0; i < cols.length; i++) {
+                    var col = cols[i];
+                    var rect = col.getBoundingClientRect();
+                    if (rect.width <= 0 || rect.height <= 0) { continue; }
 
-                // Si la fermeture est bloquée, on redirige vers l'admin.
-                window.setTimeout(function () {
-                    window.location.href = fallback;
-                }, 150);
-            });
+                    var hasLogo = !!col.querySelector('.em-rubrique__imgwrap, .em-rubrique__image, img');
+                    var hasPlatforms = !!col.querySelector('.top-bar-platform-link');
+                    var colText = (col.textContent || '').trim();
+                    var hasVisit = /visit\s+our\s+store!?/i.test(colText);
+
+                    if (!logoCol && hasLogo) {
+                        logoCol = col;
+                    }
+
+                    if (hasPlatforms || hasVisit) {
+                        if (!rightCol) {
+                            rightCol = col;
+                        } else {
+                            var rightRect = rightCol.getBoundingClientRect();
+                            if (rect.right > rightRect.right) {
+                                rightCol = col;
+                            }
+                        }
+                    }
+                }
+
+                return {
+                    logoCol: logoCol,
+                    rightCol: rightCol,
+                };
+            }
+
+            function clamp(val, min, max) {
+                return Math.min(max, Math.max(min, val));
+            }
+
+            function parsePx(val, fallback) {
+                var n = parseFloat(val || '');
+                return Number.isFinite(n) ? n : fallback;
+            }
+
+            function syncPreviewBarAlignment() {
+                if (!inner || window.innerWidth <= 760) {
+                    if (inner) {
+                        inner.style.paddingLeft = '14px';
+                        inner.style.paddingRight = '14px';
+                    }
+                    return;
+                }
+
+                var topBar = document.querySelector('.em-section--top-bar');
+                if (!topBar) {
+                    inner.style.paddingLeft = '14px';
+                    inner.style.paddingRight = '14px';
+                    return;
+                }
+
+                var anchors = findTopBarColumns(topBar);
+                var logoAnchor = anchors.logoCol;
+                var visitAnchor = anchors.rightCol;
+
+                if (!logoAnchor || !visitAnchor) {
+                    var rubrique = topBar.querySelector('.em-rubrique');
+                    if (!rubrique) {
+                        inner.style.paddingLeft = '14px';
+                        inner.style.paddingRight = '14px';
+                        return;
+                    }
+
+                    var cs = window.getComputedStyle(rubrique);
+                    inner.style.paddingLeft = cs.paddingLeft;
+                    inner.style.paddingRight = cs.paddingRight;
+                    return;
+                }
+
+                var rubriqueEl = topBar.querySelector('.em-rubrique');
+                var rubriqueStyle = rubriqueEl ? window.getComputedStyle(rubriqueEl) : null;
+                var fallbackLeft = rubriqueStyle ? parsePx(rubriqueStyle.paddingLeft, 14) : 14;
+                var fallbackRight = rubriqueStyle ? parsePx(rubriqueStyle.paddingRight, 14) : 14;
+
+                var logoRect = logoAnchor.getBoundingClientRect();
+                var visitRect = visitAnchor.getBoundingClientRect();
+
+                // Alignement demandé: gauche sur colonne logo, droite sur bloc Visit+plateformes.
+                var left = clamp(Math.round(logoRect.left), 14, 360);
+                var right = clamp(Math.round(window.innerWidth - visitRect.right), 14, 360);
+
+                // Garde-fou: ne jamais étrangler la zone centrale.
+                if (left + right > (window.innerWidth - 280)) {
+                    left = clamp(Math.round(fallbackLeft), 14, 220);
+                    right = clamp(Math.round(fallbackRight), 14, 220);
+                }
+
+                inner.style.paddingLeft = left + 'px';
+                inner.style.paddingRight = right + 'px';
+            }
+
+            syncPreviewBarAlignment();
+            window.setTimeout(syncPreviewBarAlignment, 80);
+            window.addEventListener('resize', syncPreviewBarAlignment);
+
+            if (backBtn) {
+                backBtn.addEventListener('click', function (event) {
+                    event.preventDefault();
+
+                    function returnToTemplateTab() {
+                        var targetHref = backBtn.getAttribute('href') || '';
+
+                        // Si la preview a été ouverte depuis l'admin, on revient sur l'onglet parent.
+                        if (window.opener && !window.opener.closed) {
+                            try {
+                                if (targetHref && window.opener.location && window.opener.location.href !== targetHref) {
+                                    window.opener.location.href = targetHref;
+                                }
+                                window.opener.focus();
+                            } catch (e) {
+                                // Cross-origin/sécurité: on tente au moins de focaliser l'onglet parent.
+                                try {
+                                    window.opener.focus();
+                                } catch (e2) {
+                                    // no-op
+                                }
+                            }
+                        }
+
+                        // Comportement attendu: fermer l'onglet preview après confirmation.
+                        window.close();
+
+                        // Fallback si fermeture bloquée par le navigateur.
+                        window.setTimeout(function () {
+                            if (!window.closed && targetHref) {
+                                window.location.replace(targetHref);
+                            }
+                        }, 40);
+                    }
+
+                    var confirmApi = window.EmWpAdminConfirm;
+                    if (!confirmApi || typeof confirmApi.beforeQuitEditing !== 'function') {
+                        returnToTemplateTab();
+                        return;
+                    }
+
+                    confirmApi.beforeQuitEditing(returnToTemplateTab, {
+                        title: 'Retour aux modifications',
+                        message: 'Retourner à la page Template sans mise en ligne ? Les dernières modifications ne seront pas publiées.',
+                        confirmLabel: 'Retourner aux modifications',
+                        cancelLabel: 'Rester sur l\'aperçu',
+                    });
+                });
+            }
         })();
     </script>
     <?php
 }
-add_action('wp_footer', 'em_site_front_render_preview_close_bar');
+add_action('wp_body_open', 'em_site_front_render_preview_action_bar');
 
 /**
  * Slug du template actif sur le site (front live).
@@ -457,4 +825,102 @@ function em_site_get_editing_template_label(): string
 
     return $slug;
 }
+
+/**
+ * Copie toutes les options brouillon em_site_* vers le canal live em_site_live_*.
+ */
+function em_site_publish_copy_draft_options_to_live(): int
+{
+    global $wpdb;
+
+    if (!isset($wpdb) || !is_object($wpdb)) {
+        return 0;
+    }
+
+    $table = isset($wpdb->options) ? (string) $wpdb->options : '';
+
+    if ($table === '') {
+        return 0;
+    }
+
+    $draft_like = $wpdb->esc_like(em_site_option_draft_prefix()) . '%';
+    $live_like = $wpdb->esc_like(em_site_option_live_prefix()) . '%';
+
+    $rows = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT option_name, option_value FROM {$table} WHERE option_name LIKE %s AND option_name NOT LIKE %s",
+            $draft_like,
+            $live_like
+        ),
+        ARRAY_A
+    );
+
+    if (!is_array($rows) || $rows === []) {
+        return 0;
+    }
+
+    $copied = 0;
+
+    foreach ($rows as $row) {
+        $draft_name = (string) ($row['option_name'] ?? '');
+
+        if ($draft_name === '' || !str_starts_with($draft_name, em_site_option_draft_prefix())) {
+            continue;
+        }
+
+        $live_name = em_site_option_live_name_from_draft($draft_name);
+        $value_raw = $row['option_value'] ?? null;
+        $value = maybe_unserialize($value_raw);
+
+        update_option($live_name, $value, false);
+        $copied++;
+    }
+
+    return $copied;
+}
+
+/**
+ * Bootstrap initial: crée un snapshot live depuis l'état courant si absent.
+ */
+function em_site_option_maybe_bootstrap_live_snapshot(): void
+{
+    if (get_option('em_site_live_bootstrapped', '') === '1') {
+        return;
+    }
+
+    em_site_publish_copy_draft_options_to_live();
+    update_option('em_site_live_bootstrapped', '1', false);
+}
+add_action('init', 'em_site_option_maybe_bootstrap_live_snapshot', 20);
+
+/**
+ * Action admin-post: publie le brouillon en live puis active le template demandé.
+ */
+function em_site_handle_publish_preview_template_action(): void
+{
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('Accès refusé.', 'em-site'), 403);
+    }
+
+    check_admin_referer('em_site_publish_preview_template');
+
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended
+    $requested_template = sanitize_key((string) wp_unslash($_REQUEST['template'] ?? ''));
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+    $template_slug = em_site_template_sanitize_slug($requested_template);
+
+    if ($template_slug === '' || !em_site_template_exists($template_slug)) {
+        wp_die(esc_html__('Template invalide.', 'em-site'), 400);
+    }
+
+    em_site_publish_copy_draft_options_to_live();
+    em_site_set_active_template_slug($template_slug);
+    update_option('em_site_live_last_published_at', current_time('mysql'), false);
+
+    $redirect = home_url('/');
+    wp_safe_redirect(add_query_arg('published', '1', $redirect));
+    exit;
+}
+add_action('admin_post_em_site_publish_preview_template', 'em_site_handle_publish_preview_template_action');
 

@@ -38,6 +38,14 @@ function em_site_header_font_stack(string $font_key): string
 
 function em_site_header_active_template(): string
 {
+    if (function_exists('em_site_get_active_template_slug')) {
+        $slug = em_site_get_active_template_slug();
+
+        if ($slug !== '') {
+            return $slug;
+        }
+    }
+
     $slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
     return $slug !== '' ? $slug : 'mayami';
@@ -71,10 +79,18 @@ function em_site_header_catalog_items(): array
         return is_array($items) ? $items : [];
     }
 
-    $items = get_option('em_site_items_' . $type, []);
+    $items_option = function_exists('em_site_items_option_name')
+        ? em_site_items_option_name($type)
+        : 'em_site_items_' . $type;
+    $items = get_option($items_option, []);
     if (!is_array($items) || $items === []) {
         // Repli legacy tolérant si un ancien nom d'option existe encore.
-        $items = get_option('em_site_items_header', []);
+        $items = get_option(
+            function_exists('em_site_items_option_name')
+                ? em_site_items_option_name('header')
+                : 'em_site_items_header',
+            []
+        );
     }
 
     if (!is_array($items)) {
@@ -233,7 +249,10 @@ function em_site_header_config_normalize(array $raw): array
  */
 function em_site_header_instance_config(string $template): array
 {
-    $instance = get_option('em_site_instance_' . sanitize_key($template) . '_header', []);
+    $instance_option = function_exists('em_site_instance_option_name')
+        ? em_site_instance_option_name(sanitize_key($template), 'header')
+        : 'em_site_instance_' . sanitize_key($template) . '_header';
+    $instance = get_option($instance_option, []);
     $display_mode = is_array($instance) ? sanitize_key((string) ($instance['display_mode'] ?? 'single')) : 'single';
     $transition_mode = is_array($instance) ? sanitize_key((string) ($instance['transition_mode'] ?? 'manual')) : 'manual';
     if (!in_array($display_mode, ['single', 'multi'], true)) {
@@ -441,7 +460,10 @@ function em_site_header_part_item(string $part, string $item_slug): array
             continue;
         }
 
-        $item = get_option('em_site_item_' . $candidate_type . '_' . $item_slug, []);
+        $item_option = function_exists('em_site_item_option_name')
+            ? em_site_item_option_name($candidate_type, $item_slug)
+            : 'em_site_item_' . $candidate_type . '_' . $item_slug;
+        $item = get_option($item_option, []);
         if (is_array($item) && $item !== []) {
             return $item;
         }
@@ -454,7 +476,10 @@ function em_site_header_part_item(string $part, string $item_slug): array
             if ($candidate_type === '') {
                 continue;
             }
-            $item = get_option('em_site_item_' . $candidate_type . '_' . $item_slug, []);
+            $item_option = function_exists('em_site_item_option_name')
+                ? em_site_item_option_name($candidate_type, $item_slug)
+                : 'em_site_item_' . $candidate_type . '_' . $item_slug;
+            $item = get_option($item_option, []);
             if (is_array($item) && $item !== []) {
                 return $item;
             }

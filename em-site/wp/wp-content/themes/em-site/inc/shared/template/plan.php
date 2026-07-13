@@ -14,7 +14,11 @@ if (!defined('ABSPATH')) {
  */
 function em_site_template_plans_option_name(): string
 {
-    return 'em_site_template_plans';
+    $option_name = 'em_site_template_plans';
+
+    return function_exists('em_site_option_channelize_name')
+        ? em_site_option_channelize_name($option_name)
+        : $option_name;
 }
 
 /**

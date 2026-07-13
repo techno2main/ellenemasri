@@ -14,6 +14,14 @@ if (!defined('ABSPATH')) {
  */
 function em_site_front_active_template_slug(): string
 {
+	if (function_exists('em_site_get_active_template_slug')) {
+		$slug = em_site_get_active_template_slug();
+
+		if ($slug !== '') {
+			return $slug;
+		}
+	}
+
 	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
 	return $slug !== '' ? $slug : 'mayami';
@@ -48,7 +56,12 @@ function em_site_front_module_is_visible(string $module_slug): bool
 	}
 
 	// 1) Squelette template: si une rubrique est absente du plan, on ne la rend pas.
-	$plans = get_option('em_site_template_plans', []);
+	$plans = get_option(
+		function_exists('em_site_template_plans_option_name')
+			? em_site_template_plans_option_name()
+			: 'em_site_template_plans',
+		[]
+	);
 	if (is_array($plans)
 		&& isset($plans[$template_slug]['order'])
 		&& is_array($plans[$template_slug]['order'])
@@ -72,7 +85,12 @@ function em_site_front_module_is_visible(string $module_slug): bool
 	}
 
 	// 2) Store visibilité explicite par template.
-	$visibility_store = get_option('em_site_template_visibility', []);
+	$visibility_store = get_option(
+		function_exists('em_site_template_visibility_option_name')
+			? em_site_template_visibility_option_name()
+			: 'em_site_template_visibility',
+		[]
+	);
 	if (is_array($visibility_store) && isset($visibility_store[$template_slug]) && is_array($visibility_store[$template_slug])) {
 		$bucket = $visibility_store[$template_slug];
 		$seen_value = false;
@@ -101,7 +119,9 @@ function em_site_front_module_is_visible(string $module_slug): bool
 			continue;
 		}
 
-		$option_name = 'em_site_' . $option_slug . '_' . $template_slug . '_options';
+		$option_name = function_exists('em_site_template_option_name')
+			? em_site_template_option_name($option_slug, $template_slug)
+			: 'em_site_' . $option_slug . '_' . $template_slug . '_options';
 		$saved = get_option($option_name, []);
 		if (is_array($saved) && array_key_exists('enabled', $saved) && !(bool) $saved['enabled']) {
 			return false;
