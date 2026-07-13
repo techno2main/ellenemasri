@@ -175,6 +175,17 @@
                 }
 
                 ns.setStatus(ctx, (payload.data && payload.data.message) || (ctx.config.i18n && ctx.config.i18n.visibilitySaved), false);
+
+                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
+                    window.EmSitePreviewButton.markReady();
+                }
+
+                document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
+                    detail: {
+                        source: 'rubrique-visibility',
+                        moduleSlug: moduleSlug,
+                    },
+                }));
             })
             .catch(function () {
                 ns.updateVisibilityUI(ctx, moduleSlug, previousVisible);

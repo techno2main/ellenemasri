@@ -102,6 +102,17 @@
 
                 setStatus((payload.data && payload.data.message) || config.i18n.saved, false);
 
+                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
+                    window.EmSitePreviewButton.markReady();
+                }
+
+                document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
+                    detail: {
+                        source: action,
+                        rubriqueSlug: rubriqueSlug,
+                    },
+                }));
+
                 if (payload.data && payload.data.reload) {
                     window.location.reload();
                 }

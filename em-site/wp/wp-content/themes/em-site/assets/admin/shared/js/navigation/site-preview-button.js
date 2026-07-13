@@ -63,6 +63,12 @@
         refreshButtonsState();
     }
 
+    function publishPreviewButtonApi() {
+        window.EmSitePreviewButton = window.EmSitePreviewButton || {};
+        window.EmSitePreviewButton.markReady = markReadyAndRefresh;
+        window.EmSitePreviewButton.clearReady = clearReadyAndRefresh;
+    }
+
     function clearReadyFromPublishedSignal(rawValue) {
         if (!rawValue) {
             return false;
@@ -168,6 +174,8 @@
             return;
         }
 
+        publishPreviewButtonApi();
+
         try {
             clearReadyFromPublishedSignal(window.localStorage.getItem('emSiteLastPublishedTemplate'));
         } catch (e) {
@@ -177,6 +185,9 @@
         document.addEventListener('click', onClick);
         document.addEventListener('click', onSaveClick, true);
         document.addEventListener('submit', onSubmit, true);
+        document.addEventListener('emSiteDraftChanged', function () {
+            markReadyAndRefresh();
+        });
         window.addEventListener('storage', function (event) {
             if (!event || !event.key) {
                 return;

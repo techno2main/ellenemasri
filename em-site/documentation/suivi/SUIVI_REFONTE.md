@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-13 18:31:38.
+3. Derni?re mise ? jour : 2026-07-13 18:44:54.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,13 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-13 18:44:54 (Paris)
+
+- Correctif du flux Rubriques: les actions AJAX (masquer/afficher, ordre, layout HEADER, ajout/retrait) marquent d?sormais l'?tat brouillon comme modifi?.
+- Raccordement du bouton `APER?U AVANT MISE EN LIGNE`: r?activation automatique apr?s modifications Rubriques sans sauvegarde de formulaire classique.
+- Ajout d'une API JS de pilotage du bouton preview (`markReady` / `clearReady`) et d'un ?v?nement global `emSiteDraftChanged` pour synchroniser l'?tat UI.
+- Clarification fonctionnelle valid?e: le front public reste sur le canal live tant qu'il n'y a pas de validation de mise en ligne.
 
 ### 2026-07-13 18:31:38 (Paris)
 

@@ -103,6 +103,16 @@
                 }
 
                 ns.setStatus(ctx, (payload.data && payload.data.message) || ctx.config.i18n.saved, false);
+
+                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
+                    window.EmSitePreviewButton.markReady();
+                }
+
+                document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
+                    detail: {
+                        source: 'rubrique-order',
+                    },
+                }));
             })
             .catch(function () {
                 ns.setStatus(ctx, ctx.config.i18n.error, true);
@@ -142,6 +152,16 @@
                 }
 
                 ns.setStatus(ctx, (payload.data && payload.data.message) || (ctx.config.i18n && ctx.config.i18n.layoutSaved), false);
+
+                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
+                    window.EmSitePreviewButton.markReady();
+                }
+
+                document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
+                    detail: {
+                        source: 'header-layout',
+                    },
+                }));
             })
             .catch(function () {
                 ns.setStatus(ctx, (ctx.config.i18n && ctx.config.i18n.layoutError) || 'Impossible d\'enregistrer le layout HEADER.', true);

@@ -9,6 +9,12 @@ Document de référence pour déléguer le debug de l’aperçu admin Rubriques,
 
 ## Situation actuelle
 
+### Mise à jour 2026-07-13 18:44:54 (Paris)
+
+- ✅ Correctif JS sur la page Rubriques: les actions AJAX de visibilit?/ordre/layout/add-remove d?clenchent maintenant l'?tat `draft modifi?`.
+- ✅ Le bouton `APER?U AVANT MISE EN LIGNE` se r?active correctement apr?s masquage d'une rubrique (ex: VIDEO).
+- ✅ Synchronisation unifi?e via ?v?nement `emSiteDraftChanged` et API `EmSitePreviewButton.markReady()`.
+
 ### Mise à jour 2026-07-13 18:31:38 (Paris)
 
 - ✅ Libellé wireframe renforcé: `SQUELETTE` devient `SQUELETTE DE MON SITE`.

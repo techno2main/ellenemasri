@@ -39,6 +39,13 @@ Statut: Implémentation admin template unique en cours (jalon UI atteint)
 - Preview: libellé `Aperçu images` harmonisé en `Aperçu en images` (y compris variantes contextualisées).
 - Validation technique: lint PHP des fichiers touchés sans erreur.
 
+## Mise à jour session (Paris): 2026-07-13 18:44:54
+
+- Correctif Rubriques AJAX: la bascule de visibilit?, le tri, le layout HEADER et les actions add/remove marquent explicitement le brouillon comme modifi?.
+- Correctif UX preview: r?activation du bouton `APER?U AVANT MISE EN LIGNE` apr?s masquage/affichage de rubrique.
+- Ajout d'un point d'extension JS commun `EmSitePreviewButton` + ?v?nement `emSiteDraftChanged` pour fiabiliser la d?tection d'?tat draft.
+- Rappel m?tier conserv?: le front public affiche le canal live jusqu'? validation de mise en ligne.
+
 Mises à jour de session:
 
 - Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).
