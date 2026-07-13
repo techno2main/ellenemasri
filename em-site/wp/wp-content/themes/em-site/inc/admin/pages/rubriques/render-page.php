@@ -230,11 +230,7 @@ function em_site_admin_render_rubriques_page(): void
                                         href="<?php echo esc_url($em_site_site_preview_url); ?>"
                                         target="_blank"
                                         rel="noopener"
-                                        title="<?php echo esc_attr(sprintf(
-                                            /* translators: %s: template label */
-                                            __('Prévisualiser le site (%s) dans un nouvel onglet', 'em-site'),
-                                            $editing_template_label
-                                        )); ?>"
+                                        title="<?php esc_attr_e('Prévisualiser le site dans un nouvel onglet', 'em-site'); ?>"
                                     >
                                         <span class="dashicons dashicons-external" aria-hidden="true"></span>
                                         <span><?php esc_html_e('APERÇU', 'em-site'); ?></span>

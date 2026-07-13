@@ -25,9 +25,13 @@ function em_site_render_preview_script(): void
     }
 
     $done = true;
+    $preview_css = function_exists('em_site_admin_rubriques_preview_css')
+        ? em_site_admin_rubriques_preview_css()
+        : '';
     ?>
     <script>
     window.EmSitePreview = (function () {
+        var PREVIEW_CSS = <?php echo wp_json_encode($preview_css); ?>;
         var FONTS = <?php echo wp_json_encode(em_site_rubrique_font_choices()); ?>;
         var MASKED = '<?php echo esc_js(__('Masqué', 'em-site')); ?>';
 
@@ -473,12 +477,18 @@ function em_site_render_preview_script(): void
                 '<meta name="viewport" content="width=device-width, initial-scale=1">' +
                 '<title>' + esc('<?php echo esc_js(__('Aperçu', 'em-site')); ?>') + '</title>' +
                 popoutStyles() +
+                (PREVIEW_CSS ? '<style id="em-site-preview-css">' + PREVIEW_CSS + '</style>' : '') +
                 '<style>html,body{margin:0;padding:0;background:#f0f0f1;}' +
+                'body.em-rubrique-popout-body{min-width:1120px;}' +
                 '.em-rubrique-popout{padding:24px;}' +
-                '.em-rubrique-popout .em-site-livepreview{display:block!important;border:0;margin:0;}</style>' +
-                '</head><body><div class="em-rubrique-popout"><div class="em-site-livepreview">' + inner + '</div></div></body></html>'
+                '.em-rubrique-popout .em-site-livepreview{display:block!important;border:0;margin:0;overflow:visible;}</style>' +
+                '</head><body class="em-rubrique-popout-body"><div class="em-rubrique-popout"><div class="em-site-livepreview">' + inner + '</div></div></body></html>'
             );
             win.document.close();
+            if (typeof initSliders === 'function') {
+                var stage = win.document.querySelector('.em-rubrique-popout .em-site-livepreview');
+                if (stage) { initSliders(stage); }
+            }
         }
 
         function openWindow(previewNode) {

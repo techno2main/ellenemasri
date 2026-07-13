@@ -13,6 +13,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/overview/parts/actions-create-and-css.php';
+
 /**
  * Enregistre la page (menu top-level dédié).
  */
@@ -1023,57 +1025,5 @@ function em_site_overview_render_styles(): void
     // les styles spécifiques de la page (qui peuvent surcharger ponctuellement).
     require __DIR__ . '/overview-fields.php';
     require __DIR__ . '/overview-styles.php';
-}
-
-/**
- * CSS de PREVIEW ADMIN Rubriques lu depuis une source dédiée et explicitement
- * nommée "rubriques-preview", afin de séparer clairement les
- * responsabilités (admin preview vs styles des modules front).
- *
- * @return string CSS concaténé (sans balise <style>).
- */
-function em_site_admin_rubriques_preview_css(): string
-{
-    static $css = null;
-
-    if ($css !== null) {
-        return $css;
-    }
-
-    $css = '';
-    $base = get_template_directory() . '/assets/admin/css/rubriques-preview/';
-    foreach (
-        [
-            'admin-preview-render-base.css',
-            'admin-preview-render-media.css',
-            'admin-preview-render-components.css',
-            'admin-preview-render-header.css',
-            'admin-preview-render-layout.css',
-        ] as $file
-    ) {
-        $path = $base . $file;
-        if (is_readable($path)) {
-            $css .= (string) file_get_contents($path) . "\n";
-        }
-    }
-
-    // Le preview admin doit utiliser les règles du SLIDER front pour afficher
-    // correctement les slides (hero+slider, slider seul, position gauche/droite).
-    $slider_css = get_template_directory() . '/assets/front/shared/css/slider.css';
-    if (is_readable($slider_css)) {
-        $css .= (string) file_get_contents($slider_css) . "\n";
-    }
-
-    return $css;
-}
-
-/**
- * Compatibilité rétroactive: ancien nom conservé comme alias.
- *
- * @return string
- */
-function em_site_rubriques_admin_render_css(): string
-{
-    return em_site_admin_rubriques_preview_css();
 }
 

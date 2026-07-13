@@ -1430,7 +1430,7 @@ if (!defined('ABSPATH')) {
     .em-site-preview__toggle[aria-pressed="true"] { color:#1d2327; background:#eef2f7; }
     .em-site-preview__toggle .dashicons { font-size:18px; width:18px; height:18px; }
     .em-site-preview__popout .dashicons { font-size:16px; width:16px; height:16px; }
-    .em-site-preview__frame, .em-site-livepreview { border:1px dashed #cbd5e1; border-radius:6px; overflow:hidden; }
+    .em-site-preview__frame, .em-site-livepreview { border:1px dashed #cbd5e1; border-radius:6px; overflow:visible; }
     .em-site-livepreview { margin-top:8px; }
     .em-site-livepreview[hidden] { display:none; }
     .em-site-livepreview:empty::before { content:"…"; display:block; padding:18px; color:#9ca3af; text-align:center; }

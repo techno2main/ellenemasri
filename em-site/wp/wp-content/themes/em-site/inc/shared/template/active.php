@@ -29,7 +29,7 @@ function em_site_editing_template_user_meta_key(): string
  * Action du nonce utilisé pour l'aperçu d'un template (front).
  *
  * Conservé pour compatibilité ; l'aperçu repose désormais sur la capacité
- * `manage_options` (URL simplifiée `?preview=slug`).
+ * `manage_options` (URL simplifiée `?preview=site`).
  */
 function em_site_template_preview_nonce_action(): string
 {
@@ -45,7 +45,17 @@ function em_site_template_preview_query_var(): string
 }
 
 /**
- * Construit l'URL d'aperçu simplifiée d'un template (`?preview=slug`).
+ * Valeur générique utilisée dans l'URL d'aperçu du site.
+ */
+function em_site_template_preview_site_query_value(): string
+{
+    return 'site';
+}
+
+/**
+ * Construit l'URL d'aperçu simplifiée du site (`?preview=site`).
+ *
+ * Le paramètre `$slug` est conservé pour compatibilité d'API.
  */
 function em_site_template_preview_url(string $slug, string $base_url = ''): string
 {
@@ -57,7 +67,12 @@ function em_site_template_preview_url(string $slug, string $base_url = ''): stri
 
     $base_url = $base_url !== '' ? $base_url : home_url('/');
 
-    return add_query_arg(em_site_template_preview_query_var(), $slug, $base_url);
+    // URL d'aperçu stable, indépendante du slug (compatibilité bookmarks/outils).
+    return add_query_arg(
+        em_site_template_preview_query_var(),
+        em_site_template_preview_site_query_value(),
+        $base_url
+    );
 }
 
 /**
@@ -66,6 +81,9 @@ function em_site_template_preview_url(string $slug, string $base_url = ''): stri
  * Permet de prévisualiser un template sans le passer en live. N'est honoré que
  * sur le front, pour un utilisateur autorisé (manage_options). Retourne '' si
  * aucun aperçu valide n'est demandé.
+ *
+ * Accepte `?preview=site` (générique) et conserve la compatibilité legacy avec
+ * `?preview=<slug>`.
  */
 function em_site_get_preview_template_slug(): string
 {
@@ -98,6 +116,33 @@ function em_site_get_preview_template_slug(): string
 
     $preview = em_site_template_sanitize_slug((string) wp_unslash($requested));
     // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+    if ($preview === em_site_template_preview_site_query_value()) {
+        $editing = em_site_get_explicit_editing_template_slug();
+
+        if ($editing !== '') {
+            $resolved = $editing;
+
+            return $resolved;
+        }
+
+        em_site_template_maybe_bootstrap_options();
+        $active = em_site_template_sanitize_slug((string) get_option(em_site_active_template_option_name(), ''));
+
+        if ($active !== '' && em_site_template_exists($active)) {
+            $resolved = $active;
+
+            return $resolved;
+        }
+
+        $default = em_site_template_default_slug();
+
+        if ($default !== '' && em_site_template_exists($default)) {
+            $resolved = $default;
+        }
+
+        return $resolved;
+    }
 
     if ($preview !== '' && em_site_template_exists($preview)) {
         $resolved = $preview;
