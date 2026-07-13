@@ -9,6 +9,13 @@ Document de référence pour déléguer le debug de l’aperçu admin Rubriques,
 
 ## Situation actuelle
 
+### Mise à jour 2026-07-13 17:35:28 (Paris)
+
+- ✅ Fallback front des rubriques mutualisé dans un seul fichier: `inc/front/fallback-rubrique.php`.
+- ✅ Comportement fallback unifié: sortie minimale identique pour chaque rubrique (nom uniquement, en MAJUSCULES).
+- ✅ Ménage technique validé: suppression de l'ancienne grille de placeholders front.
+- ✅ Résolution du template actif corrigée: plus de repli hardcodé vers `mayami` dans la chaîne front/partagée.
+
 ### Mise à jour 2026-07-13 12:58:23 (Paris)
 
 - ✅ Stabilité URL admin: la navigation du hub depuis Template conserve `admin.php?page=em-template` (plus de retour parasite vers `page=em-rubriques`).

@@ -150,13 +150,8 @@ function em_site_option_channelize_name(string $draft_option_name, string $chann
         return $draft_option_name;
     }
 
-    $live_option_name = em_site_option_live_name_from_draft($draft_option_name);
-
-    // Tant qu'une option live n'existe pas encore, on retombe sur le brouillon
-    // pour garantir la rétrocompatibilité initiale.
-    return em_site_option_live_exists($live_option_name)
-        ? $live_option_name
-        : $draft_option_name;
+    // Mode strict: en front live, on lit exclusivement le canal live.
+    return em_site_option_live_name_from_draft($draft_option_name);
 }
 
 /**
@@ -775,7 +770,22 @@ function em_site_get_active_template_slug(): string
         return $slug;
     }
 
-    return em_site_template_default_slug();
+    if (function_exists('em_site_template_registry')) {
+        $registry = em_site_template_registry();
+
+        if (is_array($registry) && $registry !== []) {
+            $keys = array_values(array_filter(array_map(
+                static fn($key): string => em_site_template_sanitize_slug((string) $key),
+                array_keys($registry)
+            )));
+
+            if ($keys !== []) {
+                return $keys[0];
+            }
+        }
+    }
+
+    return '';
 }
 
 /**

@@ -24,7 +24,26 @@ function em_site_front_active_template_slug(): string
 
 	$slug = sanitize_key((string) get_option('em_site_active_template', ''));
 
-	return $slug !== '' ? $slug : 'mayami';
+	if ($slug !== '') {
+		return $slug;
+	}
+
+	if (function_exists('em_site_template_registry')) {
+		$registry = em_site_template_registry();
+
+		if (is_array($registry) && $registry !== []) {
+			$keys = array_values(array_filter(array_map(
+				static fn($key): string => sanitize_key((string) $key),
+				array_keys($registry)
+			)));
+
+			if ($keys !== []) {
+				return $keys[0];
+			}
+		}
+	}
+
+	return '';
 }
 
 /**
@@ -132,116 +151,34 @@ function em_site_front_module_is_visible(string $module_slug): bool
 }
 
 /**
- * Retourne l'ordre des rubriques front a importer et controler.
- *
- * @return array<int, array{slug:string,label:string}>
+ * Rend un module front ou son fallback mutualisé si le module n'est pas prêt.
  */
-function em_site_front_rubrique_placeholders(): array
-{
-	$items = [
-		['slug' => 'top-bar', 'label' => 'TOP-BAR'],
-		['slug' => 'header', 'label' => 'HEADER (HERO + SLIDER)'],
-		['slug' => 'stream', 'label' => 'STREAM'],
-		['slug' => 'social', 'label' => 'SOCIAL'],
-		['slug' => 'video', 'label' => 'VIDEO'],
-		['slug' => 'release', 'label' => 'RELEASE'],
-		['slug' => 'cta', 'label' => 'CTA'],
-		['slug' => 'about', 'label' => 'ABOUT'],
-		['slug' => 'contact', 'label' => 'CONTACT'],
-		['slug' => 'footer', 'label' => 'FOOTER'],
-	];
-
-	if (function_exists('em_site_top_bar_is_ready') && em_site_top_bar_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'top-bar'
-		));
+function em_site_front_render_module_or_fallback(
+	string $module_slug,
+	string $render_function,
+	string $ready_function
+): void {
+	if (!em_site_front_module_is_visible($module_slug)) {
+		return;
 	}
 
-	if (function_exists('em_site_header_is_ready') && em_site_header_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'header'
-		));
+	if (!function_exists($render_function)) {
+		if (function_exists('em_site_render_front_rubrique_fallback')) {
+			em_site_render_front_rubrique_fallback($module_slug);
+		}
+		return;
 	}
 
-	if (function_exists('em_site_stream_is_ready') && em_site_stream_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'stream'
-		));
+	$is_ready = function_exists($ready_function) ? (bool) call_user_func($ready_function) : true;
+
+	if (!$is_ready) {
+		if (function_exists('em_site_render_front_rubrique_fallback')) {
+			em_site_render_front_rubrique_fallback($module_slug);
+		}
+		return;
 	}
 
-	if (function_exists('em_site_social_is_ready') && em_site_social_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'social'
-		));
-	}
-
-	if (function_exists('em_site_video_is_ready') && em_site_video_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'video'
-		));
-	}
-
-	if (function_exists('em_site_release_is_ready') && em_site_release_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'release'
-		));
-	}
-
-	if (function_exists('em_site_cta_is_ready') && em_site_cta_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'cta'
-		));
-	}
-
-	if (function_exists('em_site_about_is_ready') && em_site_about_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'about'
-		));
-	}
-
-	if (function_exists('em_site_contact_is_ready') && em_site_contact_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'contact'
-		));
-	}
-
-	if (function_exists('em_site_footer_is_ready') && em_site_footer_is_ready()) {
-		$items = array_values(array_filter(
-			$items,
-			static fn(array $item): bool => ($item['slug'] ?? '') !== 'footer'
-		));
-	}
-
-	return $items;
-}
-
-/**
- * Affiche une grille de placeholders visuels pour le pilotage rubrique par rubrique.
- */
-function em_site_render_front_placeholders(): void
-{
-	?>
-	<section class="em-front-placeholders" aria-label="Rubriques front a importer">
-		<div class="em-front-placeholders__grid">
-			<?php foreach (em_site_front_rubrique_placeholders() as $index => $rubrique) : ?>
-				<article class="em-rubrique-placeholder em-rubrique-placeholder--<?php echo esc_attr($rubrique['slug']); ?>" data-rubrique="<?php echo esc_attr($rubrique['slug']); ?>">
-					<span class="em-rubrique-placeholder__index"><?php echo esc_html(str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT)); ?></span>
-					<h2><?php echo esc_html($rubrique['label']); ?></h2>
-					<p>En attente d'import officiel</p>
-				</article>
-			<?php endforeach; ?>
-		</div>
-	</section>
-	<?php
+	call_user_func($render_function);
 }
 
 /**
@@ -249,45 +186,14 @@ function em_site_render_front_placeholders(): void
  */
 function em_site_render_front_page(): void
 {
-	if (function_exists('em_site_render_top_bar') && em_site_front_module_is_visible('top-bar')) {
-		em_site_render_top_bar();
-	}
-
-	if (function_exists('em_site_render_header') && em_site_front_module_is_visible('header')) {
-		em_site_render_header();
-	}
-
-	if (function_exists('em_site_render_stream') && em_site_front_module_is_visible('stream')) {
-		em_site_render_stream();
-	}
-
-	if (function_exists('em_site_render_social') && em_site_front_module_is_visible('social')) {
-		em_site_render_social();
-	}
-
-	if (function_exists('em_site_render_video') && em_site_front_module_is_visible('video')) {
-		em_site_render_video();
-	}
-
-	if (function_exists('em_site_render_release') && em_site_front_module_is_visible('release')) {
-		em_site_render_release();
-	}
-
-	if (function_exists('em_site_render_cta') && em_site_front_module_is_visible('cta')) {
-		em_site_render_cta();
-	}
-
-	if (function_exists('em_site_render_contact') && em_site_front_module_is_visible('contact')) {
-		em_site_render_contact();
-	}
-
-	if (function_exists('em_site_render_about') && em_site_front_module_is_visible('about')) {
-		em_site_render_about();
-	}
-
-	if (function_exists('em_site_render_footer') && em_site_front_module_is_visible('footer')) {
-		em_site_render_footer();
-	}
-
-	em_site_render_front_placeholders();
+	em_site_front_render_module_or_fallback('top-bar', 'em_site_render_top_bar', 'em_site_top_bar_is_ready');
+	em_site_front_render_module_or_fallback('header', 'em_site_render_header', 'em_site_header_is_ready');
+	em_site_front_render_module_or_fallback('stream', 'em_site_render_stream', 'em_site_stream_is_ready');
+	em_site_front_render_module_or_fallback('social', 'em_site_render_social', 'em_site_social_is_ready');
+	em_site_front_render_module_or_fallback('video', 'em_site_render_video', 'em_site_video_is_ready');
+	em_site_front_render_module_or_fallback('release', 'em_site_render_release', 'em_site_release_is_ready');
+	em_site_front_render_module_or_fallback('cta', 'em_site_render_cta', 'em_site_cta_is_ready');
+	em_site_front_render_module_or_fallback('contact', 'em_site_render_contact', 'em_site_contact_is_ready');
+	em_site_front_render_module_or_fallback('about', 'em_site_render_about', 'em_site_about_is_ready');
+	em_site_front_render_module_or_fallback('footer', 'em_site_render_footer', 'em_site_footer_is_ready');
 }

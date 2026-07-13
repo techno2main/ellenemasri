@@ -20,6 +20,7 @@ require_once __DIR__ . '/shared/stream-platforms.php';
 require_once __DIR__ . '/front/rendering/fields.php';
 require_once __DIR__ . '/front/rendering/style-vars.php';
 require_once __DIR__ . '/front/rendering/engine.php';
+require_once __DIR__ . '/front/fallback-rubrique.php';
 require_once __DIR__ . '/front/modules/top-bar/render.php';
 require_once __DIR__ . '/front/modules/header/render.php';
 require_once __DIR__ . '/front/modules/stream/render.php';

@@ -18,6 +18,13 @@ Statut: Implémentation admin template unique en cours (jalon UI atteint)
 - Flux preview avant mise en ligne fiabilisé: retour ciblé vers l'onglet admin d'origine après publication, puis fermeture de l'onglet preview.
 - Ajustements UI validés sur l'en-tête wireframe: suppression du badge `LIVE`, suppression du bouton local d'aperçu redondant, renommage des libellés en `VOIR IMAGES` et `Aperçu images`.
 
+## Mise à jour session (Paris): 2026-07-13 17:35:28
+
+- Fallback front des rubriques centralisé dans `inc/front/fallback-rubrique.php` pour un pilotage unique.
+- Contrat fallback simplifié: affichage strict du nom de rubrique en MAJUSCULES, sans contenu additionnel.
+- Suppression du mécanisme précédent de placeholders front pour réduire la dispersion des comportements.
+- Retrait du fallback hardcodé `mayami` dans la résolution du template actif (front + shared), aligné avec le mode template unique.
+
 Mises à jour de session:
 
 - Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).

@@ -62,6 +62,36 @@ function em_site_header_decode_json_field($value): array
     return is_array($decoded) ? $decoded : [];
 }
 
+/**
+ * Nom d'option à lire pour le front HEADER selon le canal courant.
+ *
+ * En front live, on lit STRICTEMENT la clé live correspondante pour éviter
+ * toute fuite d'un brouillon non publié.
+ */
+function em_site_header_front_option_name(string $draft_option_name): string
+{
+    $draft_option_name = (string) $draft_option_name;
+
+    if ($draft_option_name === '') {
+        return '';
+    }
+
+    if (
+        function_exists('em_site_option_storage_channel')
+        && em_site_option_storage_channel() === 'live'
+    ) {
+        if (function_exists('em_site_option_live_name_from_draft')) {
+            return em_site_option_live_name_from_draft($draft_option_name);
+        }
+
+        if (strpos($draft_option_name, 'em_site_') === 0) {
+            return 'em_site_live_' . substr($draft_option_name, strlen('em_site_'));
+        }
+    }
+
+    return $draft_option_name;
+}
+
 function em_site_header_catalog_type_slug(): string
 {
     return 'headers';
@@ -332,7 +362,7 @@ function em_site_header_instance_config(string $template): array
 function em_site_header_item_config(string $header_item_slug): array
 {
     foreach (em_site_header_slug_variants($header_item_slug) as $candidate_slug) {
-        $raw = get_option('em_site_header_item_cfg_' . $candidate_slug, []);
+        $raw = get_option(em_site_header_front_option_name('em_site_header_item_cfg_' . $candidate_slug), []);
         if (is_array($raw) && $raw !== []) {
             return [
                 'slug' => $candidate_slug,
@@ -341,7 +371,7 @@ function em_site_header_item_config(string $header_item_slug): array
         }
     }
 
-    $raw = get_option('em_site_header_item_cfg_' . sanitize_key($header_item_slug), []);
+    $raw = get_option(em_site_header_front_option_name('em_site_header_item_cfg_' . sanitize_key($header_item_slug)), []);
 
     return [
         'slug' => sanitize_key($header_item_slug),
@@ -354,7 +384,7 @@ function em_site_header_item_config(string $header_item_slug): array
  */
 function em_site_header_entry_from_legacy(string $template): array
 {
-    $legacy = get_option('em_site_header_' . sanitize_key($template), []);
+    $legacy = get_option(em_site_header_front_option_name('em_site_header_' . sanitize_key($template)), []);
     if (!is_array($legacy)) {
         $legacy = [];
     }

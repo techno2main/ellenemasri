@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-13 12:58:23.
+3. Derni?re mise ? jour : 2026-07-13 17:35:28.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,14 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-13 17:35:28 (Paris)
+
+- Mutualisation du fallback front des rubriques dans un fichier unique: `inc/front/fallback-rubrique.php`.
+- Rendu fallback simplifi? et uniforme pour toutes les rubriques: affichage exclusif du nom de rubrique en MAJUSCULES.
+- M?nage appliqu?: suppression du syst?me historique de placeholders front distribu?s.
+- R?solution du template actif durcie: suppression du repli hardcod? `mayami` dans le front et dans le resolver partag? (template actif valide, sinon premier slug du registre).
+- Contr?les techniques ex?cut?s: `php -l` sur les fichiers modifi?s, sans erreur.
 
 ### 2026-07-13 12:58:23 (Paris)
 
