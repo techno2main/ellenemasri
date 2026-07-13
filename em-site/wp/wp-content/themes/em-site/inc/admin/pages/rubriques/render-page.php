@@ -235,17 +235,17 @@ function em_site_admin_render_rubriques_page(): void
     $template_slug = em_site_get_editing_template_slug();
     $unique_mode = function_exists('em_site_template_unique_mode_enabled') && em_site_template_unique_mode_enabled();
     $map_title_default = $unique_mode
-        ? __('Squelette', 'em-site')
+        ? __('Squelette de mon site', 'em-site')
         : sprintf(
             /* translators: %s: template label */
-            __('Squelette %s', 'em-site'),
+            __('Squelette de %s', 'em-site'),
             $editing_template_label
         );
     $map_title_preview = $unique_mode
-        ? __('Aperçu images', 'em-site')
+        ? __('Aperçu en images', 'em-site')
         : sprintf(
             /* translators: %s: template label */
-            __('Aperçu images %s', 'em-site'),
+            __('Aperçu en images %s', 'em-site'),
             $editing_template_label
         );
     $has_proposable_rubriques = function_exists('em_site_admin_template_proposable_rubrique_definitions')
@@ -274,7 +274,7 @@ function em_site_admin_render_rubriques_page(): void
                         aria-expanded="false"
                     >
                         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                        <?php esc_html_e('Ajouter Rubrique', 'em-site'); ?>
+                        <?php esc_html_e('Insérer une Rubrique', 'em-site'); ?>
                     </button>
 
                     <?php

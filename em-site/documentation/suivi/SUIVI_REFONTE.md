@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-13 18:15:09.
+3. Derni?re mise ? jour : 2026-07-13 18:31:38.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,13 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-13 18:31:38 (Paris)
+
+- Ajustement de wording sur le bloc Rubriques: bouton d'action renomm? en `Ins?rer une Rubrique`.
+- Ajustement de wording wireframe: `SQUELETTE` remplac? par `SQUELETTE DE MON SITE`.
+- Ajustement de wording preview: `Aper?u images` remplac? par `Aper?u en images` (et variante contextualis?e).
+- Contr?les techniques ex?cut?s: `php -l` sur les fichiers PHP modifi?s, sans erreur.
 
 ### 2026-07-13 18:15:09 (Paris)
 

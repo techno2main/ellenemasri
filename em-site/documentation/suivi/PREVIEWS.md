@@ -9,6 +9,12 @@ Document de référence pour déléguer le debug de l’aperçu admin Rubriques,
 
 ## Situation actuelle
 
+### Mise à jour 2026-07-13 18:31:38 (Paris)
+
+- ✅ Libellé wireframe renforcé: `SQUELETTE` devient `SQUELETTE DE MON SITE`.
+- ✅ Libellé d'aperçu harmonisé: `Aperçu images` devient `Aperçu en images`.
+- ✅ Libellé du bouton d'ajout rubrique harmonisé: `Insérer une Rubrique`.
+
 ### Mise à jour 2026-07-13 18:15:09 (Paris)
 
 - ✅ Lot de polish Dashboard/Rubriques consolidé côté BO (libellés, badges, interactions).

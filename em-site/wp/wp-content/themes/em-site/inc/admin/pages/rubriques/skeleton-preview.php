@@ -83,7 +83,7 @@ function em_site_admin_render_skeleton_full_preview(array $definitions, string $
     }
 
     $label_off = __('VOIR IMAGES', 'em-site');
-    $label_on = __('SQUELETTE', 'em-site');
+    $label_on = __('SQUELETTE DE MON SITE', 'em-site');
     ?>
     <div class="em-site-skeleton-fullprev">
         <button

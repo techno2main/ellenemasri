@@ -32,6 +32,13 @@ Statut: Implémentation admin template unique en cours (jalon UI atteint)
 - Wireframe HEADER/Rubriques: retouches de parité visuelle (hover + espacements) sans modification du fond validé.
 - Correctif d'interaction sur le badge `DEFAULT LIVE`: maintien du style constant au survol (pas de soulignement, pas de teinte lien navigateur).
 
+## Mise à jour session (Paris): 2026-07-13 18:31:38
+
+- Bloc Rubriques: bouton principal renommé en `Insérer une Rubrique`.
+- Wireframe: libellé de bascule mis à jour en `SQUELETTE DE MON SITE`.
+- Preview: libellé `Aperçu images` harmonisé en `Aperçu en images` (y compris variantes contextualisées).
+- Validation technique: lint PHP des fichiers touchés sans erreur.
+
 Mises à jour de session:
 
 - Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).
