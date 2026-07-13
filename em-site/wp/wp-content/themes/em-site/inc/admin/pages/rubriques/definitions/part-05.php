@@ -98,7 +98,9 @@ function em_site_admin_rubrique_render_entry_tabs(string $active_module_slug = '
     em_site_admin_rubrique_render_edit_navbar(
         $tabs,
         $resolved_module,
-        em_site_admin_rubriques_page_slug(),
+        function_exists('em_site_admin_rubriques_context_page_slug')
+            ? em_site_admin_rubriques_context_page_slug()
+            : em_site_admin_rubriques_page_slug(),
         $show_add_rubrique
     );
 

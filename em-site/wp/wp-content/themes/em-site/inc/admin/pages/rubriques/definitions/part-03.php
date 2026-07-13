@@ -8,7 +8,9 @@ function em_site_admin_rubrique_open_url(string $module_slug): string
     }
 
     $args = [
-        'page' => em_site_admin_rubriques_page_slug(),
+        'page' => function_exists('em_site_admin_rubriques_context_page_slug')
+            ? em_site_admin_rubriques_context_page_slug()
+            : em_site_admin_rubriques_page_slug(),
         'open' => $module_slug,
     ];
 
@@ -28,7 +30,11 @@ function em_site_admin_rubrique_open_url(string $module_slug): string
  */
 function em_site_admin_rubrique_close_url(): string
 {
-    $args = ['page' => em_site_admin_rubriques_page_slug()];
+    $args = [
+        'page' => function_exists('em_site_admin_rubriques_context_page_slug')
+            ? em_site_admin_rubriques_context_page_slug()
+            : em_site_admin_rubriques_page_slug(),
+    ];
 
     $template_slug = function_exists('em_site_get_editing_template_slug')
         ? (string) em_site_get_editing_template_slug()

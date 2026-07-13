@@ -1,0 +1,42 @@
+.em-site-site-preview-btn.is-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.em-site-site-preview-btn.is-disabled:hover,
+.em-site-site-preview-btn.is-disabled:focus {
+    opacity: 0.45;
+}
+
+.em-hub__greeting .em-site-site-preview-btn--top {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 10px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(117, 24, 32, 0.35);
+    background: #ffffff;
+    color: #751820;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.em-hub__greeting .em-site-site-preview-btn--top .dashicons {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    line-height: 14px;
+}
+
+.em-hub__greeting .em-site-site-preview-btn--top:hover,
+.em-hub__greeting .em-site-site-preview-btn--top:focus {
+    border-color: #751820;
+    background: linear-gradient(180deg, #751820 0%, #4e080e 100%);
+    color: #ffffff;
+}

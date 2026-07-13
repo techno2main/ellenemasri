@@ -12,6 +12,12 @@ Statut: Implémentation admin template unique en cours (jalon UI atteint)
 - Conflit fatal top-bar corrigé par séparation des helpers admin et front.
 - Validation du lot: grep global `emv4` à 0 sur le thème actif, page `em-rubriques-overview` rétablie.
 
+## Mise à jour session (Paris): 2026-07-13 12:58:23
+
+- Navigation Template stabilisée: conservation de l'URL `admin.php?page=em-template` pendant les interactions du squelette (ouverture/fermeture rubrique, toggles wireframe).
+- Flux preview avant mise en ligne fiabilisé: retour ciblé vers l'onglet admin d'origine après publication, puis fermeture de l'onglet preview.
+- Ajustements UI validés sur l'en-tête wireframe: suppression du badge `LIVE`, suppression du bouton local d'aperçu redondant, renommage des libellés en `VOIR IMAGES` et `Aperçu images`.
+
 Mises à jour de session:
 
 - Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).

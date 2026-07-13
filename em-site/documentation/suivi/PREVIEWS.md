@@ -9,6 +9,13 @@ Document de référence pour déléguer le debug de l’aperçu admin Rubriques,
 
 ## Situation actuelle
 
+### Mise à jour 2026-07-13 12:58:23 (Paris)
+
+- ✅ Stabilité URL admin: la navigation du hub depuis Template conserve `admin.php?page=em-template` (plus de retour parasite vers `page=em-rubriques`).
+- ✅ Retour post-publication durci: l'URL admin source est transmise à la preview, puis réappliquée sur l'onglet parent avant focus/fermeture.
+- ✅ Régression wireframe corrigée: les assets Rubriques nécessaires au rendu images/header sont chargés aussi en contexte Template.
+- ✅ Nettoyage UX du bandeau wireframe: bouton local d'aperçu retiré, bouton `PREVIEW` renommé en `VOIR IMAGES`, libellé `Aperçu` renommé en `Aperçu images`, badge `LIVE` retiré.
+
 ### Mise à jour 2026-07-13 11:44:02 (Paris)
 
 - ✅ Bandeau sticky preview harmonisé : libellé et boutons en majuscules.

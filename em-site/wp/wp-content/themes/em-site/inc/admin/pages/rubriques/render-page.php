@@ -129,9 +129,6 @@ function em_site_admin_render_rubriques_page(): void
     $definitions = em_site_admin_site_rubrique_definitions();
     $editing_template_label = em_site_get_editing_template_label();
     $template_slug = em_site_get_editing_template_slug();
-    $is_template_live = function_exists('em_site_get_active_template_slug')
-        && $template_slug !== ''
-        && em_site_get_active_template_slug() === $template_slug;
     $unique_mode = function_exists('em_site_template_unique_mode_enabled') && em_site_template_unique_mode_enabled();
     $map_title_default = $unique_mode
         ? __('Squelette', 'em-site')
@@ -141,16 +138,12 @@ function em_site_admin_render_rubriques_page(): void
             $editing_template_label
         );
     $map_title_preview = $unique_mode
-        ? __('Aperçu', 'em-site')
+        ? __('Aperçu images', 'em-site')
         : sprintf(
             /* translators: %s: template label */
-            __('Aperçu %s', 'em-site'),
+            __('Aperçu images %s', 'em-site'),
             $editing_template_label
         );
-    // Couleur d'accent du template (violet pour Mayami…) pour le badge LIVE.
-    $template_accent = function_exists('em_site_get_template_color')
-        ? em_site_get_template_color($template_slug)
-        : '';
     $has_proposable_rubriques = function_exists('em_site_admin_template_proposable_rubrique_definitions')
         && em_site_admin_template_proposable_rubrique_definitions() !== [];
     ?>
@@ -210,32 +203,6 @@ function em_site_admin_render_rubriques_page(): void
                                     data-title-default="<?php echo esc_attr($map_title_default); ?>"
                                     data-title-preview="<?php echo esc_attr($map_title_preview); ?>"
                                 ><?php echo esc_html($map_title_default); ?></span>
-                                <?php if ($is_template_live) { ?>
-                                    <span
-                                        class="em-site-rubriques-admin__live-badge"
-                                        title="<?php esc_attr_e('Template actif sur le site', 'em-site'); ?>"
-                                        <?php if ($template_accent !== '') { ?>style="--em-site-live-color: <?php echo esc_attr($template_accent); ?>;"<?php } ?>
-                                    >
-                                        <span class="em-site-rubriques-admin__live-dot" aria-hidden="true"></span><?php esc_html_e('LIVE', 'em-site'); ?>
-                                    </span>
-                                <?php } ?>
-                                <?php
-                                $em_site_site_preview_url = function_exists('em_site_template_preview_url')
-                                    ? (string) em_site_template_preview_url((string) $template_slug)
-                                    : '';
-                                if ($em_site_site_preview_url !== '') {
-                                    ?>
-                                    <a
-                                        class="em-site-rubriques-admin__site-preview"
-                                        href="<?php echo esc_url($em_site_site_preview_url); ?>"
-                                        target="_blank"
-                                        rel="noopener"
-                                        title="<?php esc_attr_e('Prévisualiser le site dans un nouvel onglet', 'em-site'); ?>"
-                                    >
-                                        <span class="dashicons dashicons-external" aria-hidden="true"></span>
-                                        <span><?php esc_html_e('APERÇU', 'em-site'); ?></span>
-                                    </a>
-                                <?php } ?>
                             </span>
                             <?php
                             if (function_exists('em_site_admin_render_skeleton_full_preview')) {

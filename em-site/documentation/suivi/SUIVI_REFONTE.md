@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-09 10:57:56.
+3. Derni?re mise ? jour : 2026-07-13 12:58:23.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,13 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-13 12:58:23 (Paris)
+
+- Stabilisation du hub Template/Rubriques sans bascule d'URL: conservation de `page=em-template` lors des clics sur les zones et actions du squelette.
+- Correction de r?gression d'affichage: rechargement des assets Rubriques (CSS/JS wireframe + header preview) ?galement en contexte `page=em-template`.
+- Harmonisation UX de la zone wireframe: suppression du bouton local `APER?U AVANT MISE EN LIGNE`, renommage `PREVIEW` en `VOIR IMAGES`, renommage du libell? `Aper?u` en `Aper?u images`, suppression du badge `LIVE` dans cet en-t?te.
+- Flux preview front durci: transmission d'une URL admin de retour explicite et focus/fermeture de l'onglet preview apr?s mise en ligne vers l'onglet source attendu.
 
 ### 2026-07-07 21:54:16 (Paris)
 

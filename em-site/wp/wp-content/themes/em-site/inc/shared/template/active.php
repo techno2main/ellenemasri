@@ -326,6 +326,41 @@ function em_site_front_enqueue_preview_modal_assets(): void
 add_action('wp_enqueue_scripts', 'em_site_front_enqueue_preview_modal_assets');
 
 /**
+ * Retourne une URL de retour admin valide pour quitter l'aperçu.
+ */
+function em_site_preview_admin_return_url(): string
+{
+    $fallback = function_exists('em_site_admin_template_choice_admin_url')
+        ? em_site_admin_template_choice_admin_url()
+        : admin_url('admin.php?page=em-template');
+
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended
+    $raw = (string) wp_unslash($_REQUEST['em_site_return'] ?? '');
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+    if ($raw === '') {
+        return $fallback;
+    }
+
+    $candidate = esc_url_raw($raw);
+    if ($candidate === '') {
+        return $fallback;
+    }
+
+    $validated = wp_validate_redirect($candidate, $fallback);
+    if ($validated === '') {
+        return $fallback;
+    }
+
+    $admin_base = admin_url();
+    if ($admin_base !== '' && strpos($validated, $admin_base) !== 0) {
+        return $fallback;
+    }
+
+    return $validated;
+}
+
+/**
  * Barre sticky d'aperçu front (publication + retour admin).
  */
 function em_site_front_render_preview_action_bar(): void
@@ -338,12 +373,11 @@ function em_site_front_render_preview_action_bar(): void
     $publish_url = add_query_arg([
         'action'   => 'em_site_publish_preview_template',
         'template' => $slug,
+        'em_site_return' => em_site_preview_admin_return_url(),
         '_wpnonce' => wp_create_nonce('em_site_publish_preview_template'),
     ], admin_url('admin-post.php'));
 
-    $back_url = function_exists('em_site_admin_templates_page_url')
-        ? em_site_admin_templates_page_url()
-        : admin_url('admin.php?page=em-template');
+    $back_url = em_site_preview_admin_return_url();
     ?>
     <div id="em-site-preview-bar" class="em-site-preview-bar" role="status">
         <div class="em-site-preview-bar__inner">
@@ -659,6 +693,70 @@ function em_site_front_render_preview_action_bar(): void
 add_action('wp_body_open', 'em_site_front_render_preview_action_bar');
 
 /**
+ * Après publication, ferme l'onglet preview et rend le focus à l'onglet source.
+ */
+function em_site_front_maybe_close_after_publish(): void
+{
+    if (is_admin() || !function_exists('current_user_can') || !current_user_can('manage_options')) {
+        return;
+    }
+
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended
+    $published = sanitize_text_field((string) wp_unslash($_GET['published'] ?? ''));
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+    if ($published !== '1') {
+        return;
+    }
+
+    // phpcs:disable WordPress.Security.NonceVerification.Recommended
+    $published_template = sanitize_key((string) wp_unslash($_GET['published_template'] ?? ''));
+    // phpcs:enable WordPress.Security.NonceVerification.Recommended
+    $return_url = em_site_preview_admin_return_url();
+    ?>
+    <script>
+        (function () {
+            var publishedTemplate = <?php echo wp_json_encode($published_template); ?>;
+            var targetHref = <?php echo wp_json_encode($return_url); ?>;
+
+            try {
+                window.localStorage.setItem('emSiteLastPublishedTemplate', JSON.stringify({
+                    template: publishedTemplate || '',
+                    at: Date.now()
+                }));
+            } catch (e) {
+                // no-op
+            }
+
+            if (window.opener && !window.opener.closed) {
+                try {
+                    if (targetHref && window.opener.location && window.opener.location.href !== targetHref) {
+                        window.opener.location.href = targetHref;
+                    }
+                } catch (e) {
+                    // no-op
+                }
+
+                try {
+                    window.opener.focus();
+                } catch (e2) {
+                    // no-op
+                }
+
+                window.close();
+                return;
+            }
+
+            if (targetHref) {
+                window.location.replace(targetHref);
+            }
+        })();
+    </script>
+    <?php
+}
+add_action('wp_footer', 'em_site_front_maybe_close_after_publish', 100);
+
+/**
  * Slug du template actif sur le site (front live).
  */
 function em_site_get_active_template_slug(): string
@@ -909,6 +1007,7 @@ function em_site_handle_publish_preview_template_action(): void
     // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
     $template_slug = em_site_template_sanitize_slug($requested_template);
+    $return_url = em_site_preview_admin_return_url();
 
     if ($template_slug === '' || !em_site_template_exists($template_slug)) {
         wp_die(esc_html__('Template invalide.', 'em-site'), 400);
@@ -919,7 +1018,11 @@ function em_site_handle_publish_preview_template_action(): void
     update_option('em_site_live_last_published_at', current_time('mysql'), false);
 
     $redirect = home_url('/');
-    wp_safe_redirect(add_query_arg('published', '1', $redirect));
+    wp_safe_redirect(add_query_arg([
+        'published' => '1',
+        'published_template' => $template_slug,
+        'em_site_return' => $return_url,
+    ], $redirect));
     exit;
 }
 add_action('admin_post_em_site_publish_preview_template', 'em_site_handle_publish_preview_template_action');

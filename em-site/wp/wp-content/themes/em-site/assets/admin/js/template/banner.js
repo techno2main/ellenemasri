@@ -13,20 +13,6 @@
         var quitForm = document.getElementById('em-site-template-banner-quit-form');
         var formDirty = window.EmWpModuleFormDirty;
 
-        // Aperçu : ouverture par script (window.open) pour que l'onglet d'aperçu
-        // puisse se refermer lui-même (window.close) via le bouton « Fermer l'aperçu ».
-        var previewLink = document.querySelector('.em-site-template-banner__preview');
-        if (previewLink) {
-            previewLink.addEventListener('click', function (event) {
-                var url = previewLink.getAttribute('href');
-                if (!url) {
-                    return;
-                }
-                event.preventDefault();
-                window.open(url, '_blank');
-            });
-        }
-
         if (editingSelect) {
             var editingForm = editingSelect.closest('.em-site-template-banner__form--editing');
             var previousEditingSlug = editingSelect.value;

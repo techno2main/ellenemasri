@@ -102,7 +102,7 @@ function em_site_admin_rubrique_should_show_nav(string $page_slug = ''): bool
         return false;
     }
 
-    if ($page_slug === em_site_admin_rubriques_page_slug()) {
+    if (function_exists('em_site_admin_is_rubriques_hub_page_slug') && em_site_admin_is_rubriques_hub_page_slug($page_slug)) {
         return true;
     }
 
@@ -156,7 +156,7 @@ function em_site_admin_rubrique_resolve_active_module(string $module_slug = ''):
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
 
-    if ($page_slug === em_site_admin_rubriques_page_slug()) {
+    if (function_exists('em_site_admin_is_rubriques_hub_page_slug') && em_site_admin_is_rubriques_hub_page_slug($page_slug)) {
         // Sur le squelette, l'onglet actif suit la rubrique ouverte en dessous.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         return sanitize_key((string) ($_GET['open'] ?? ''));

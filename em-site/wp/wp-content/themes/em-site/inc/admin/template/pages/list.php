@@ -119,6 +119,13 @@ function em_site_admin_render_template_choice_page(): void
         em_site_set_editing_template_slug($target_slug);
     }
 
+    // La page parent TEMPLATE garde son URL dédiée, mais affiche le hub Rubriques
+    // pour rester cohérente avec le flux d'édition existant.
+    if (function_exists('em_site_admin_render_rubriques_page')) {
+        em_site_admin_render_rubriques_page();
+        return;
+    }
+
     em_site_admin_safe_redirect(em_site_admin_rubriques_admin_url());
 }
 

@@ -161,6 +161,16 @@ function em_site_admin_hub_render_sommaire_header(
             ?>
         </span>
         <?php
+        if (function_exists('em_site_admin_render_site_preview_button')) {
+            em_site_admin_render_site_preview_button([
+                'class' => 'em-site-site-preview-btn--top',
+                'icon_class' => 'dashicons dashicons-external',
+                'title' => __('Prévisualiser le site avant mise en ligne dans un nouvel onglet', 'em-site'),
+                'label' => __('APERÇU AVANT MISE EN LIGNE', 'em-site'),
+            ]);
+        }
+        ?>
+        <?php
         echo get_avatar(
             get_current_user_id(),
             40,

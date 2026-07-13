@@ -45,7 +45,7 @@ function em_site_admin_rubriques_enqueue(string $hook_suffix): void
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
     $page_slug = sanitize_key((string) ($_GET['page'] ?? ''));
 
-    if ($page_slug !== em_site_admin_rubriques_page_slug()) {
+    if (!function_exists('em_site_admin_is_rubriques_hub_page_slug') || !em_site_admin_is_rubriques_hub_page_slug($page_slug)) {
         return;
     }
 

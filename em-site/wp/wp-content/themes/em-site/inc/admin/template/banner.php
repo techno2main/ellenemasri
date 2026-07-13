@@ -303,19 +303,6 @@ function em_site_admin_template_render_banner(): void
                     </select>
                 </form>
                 <div class="em-site-template-banner__actions">
-                    <a
-                        class="em-site-template-banner__preview"
-                        href="<?php echo esc_url(em_site_template_preview_url($editing_slug)); ?>"
-                        target="_blank"
-                        title="<?php echo esc_attr(sprintf(
-                            /* translators: %s: template label */
-                            __('Prévisualiser le template %s dans un nouvel onglet', 'em-site'),
-                            $editing_label
-                        )); ?>"
-                    >
-                        <i class="fa-solid fa-eye" aria-hidden="true"></i>
-                        <?php esc_html_e('Aperçu', 'em-site'); ?>
-                    </a>
                     <button type="button" class="em-site-template-banner__save" id="em-site-template-banner-save" disabled aria-disabled="true">
                         <?php esc_html_e('Enregistrer', 'em-site'); ?>
                     </button>

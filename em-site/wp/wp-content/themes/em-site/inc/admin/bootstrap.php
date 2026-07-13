@@ -13,6 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 require_once __DIR__ . '/shared/components/style-panel/style-panel.php';
+require_once __DIR__ . '/shared/components/site-preview-button/site-preview-button.php';
 require_once __DIR__ . '/shared/assets.php';
 require_once __DIR__ . '/shared/components/color-picker/color-picker.php';
 require_once __DIR__ . '/shared/components/hub-cards/hub-cards.php';
