@@ -23,11 +23,8 @@ function em_site_admin_rubriques_render_list_item(string $module_slug, array $de
             ? em_site_admin_rubrique_skeleton_label($module_slug)
             : (string) ($definition['label'] ?? $module_slug));
     $preview_zone = (string) ($definition['preview_zone'] ?? '');
-    $preview_style = function_exists('em_site_admin_module_style_colors_for_preview')
-        ? em_site_admin_module_style_colors_for_preview($module_slug)
-        : ['background' => (string) ($definition['accent_color'] ?? '#646970'), 'text' => '#ffffff'];
-    $accent_color = (string) $preview_style['background'];
-    $text_color = (string) $preview_style['text'];
+    $accent_color = '#4f080e';
+    $text_color = '#ffffff';
 
     $is_coming_soon = !empty($definition['coming_soon']);
     $is_sortable = em_site_site_rubrique_is_reorderable($module_slug);

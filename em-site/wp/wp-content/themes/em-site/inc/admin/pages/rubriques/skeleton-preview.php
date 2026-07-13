@@ -178,15 +178,63 @@ function em_site_admin_render_skeleton_preview_assets(): void
         box-shadow: inset 4px 0 0 var(--em-rubrique-accent, #646970);
     }
 
-    /* HEADER (mode placeholder du wireframe): pas d'encadrement bleu au survol. */
+    /* HEADER (mode placeholder): mêmes métriques que les lignes standard. */
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode .em-site-admin-landing-map__header-group-toolbar,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode .em-admin-landing-map__header-group-toolbar {
+        gap: 8px !important;
+        padding: 0 8px !important;
+        min-height: 26px;
+        align-items: center;
+    }
+
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode .em-site-admin-landing-map__header-group-title,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode .em-admin-landing-map__header-group-title {
+        flex: 1;
+        text-align: left;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .05em;
+        line-height: 1.15;
+        text-transform: uppercase;
+        color: #374151;
+        padding: 2px 6px;
+    }
+
+    /* HEADER (mode placeholder): même hover que les lignes standard. */
     .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode:hover,
     .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode.is-active,
     .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode:has(> .em-site-admin-landing-map__header-group-link.is-layout-only:focus-visible),
     .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:hover,
     .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode.is-active,
     .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:has(> .em-admin-landing-map__header-group-link.is-layout-only:focus-visible) {
-        outline:none !important;
-        box-shadow:none !important;
+        background: var(--em-zone-accent, #c7ccd4) !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    /* Le placeholder interne HEADER portait un fond fixe; on lui applique la même
+       teinte hover que les autres lignes pour un rendu strictement identique. */
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode:hover .em-site-admin-landing-map__header-empty,
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode.is-active .em-site-admin-landing-map__header-empty,
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode:has(> .em-site-admin-landing-map__header-group-link.is-layout-only:focus-visible) .em-site-admin-landing-map__header-empty,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:hover .em-admin-landing-map__header-empty,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode.is-active .em-admin-landing-map__header-empty,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:has(> .em-admin-landing-map__header-group-link.is-layout-only:focus-visible) .em-admin-landing-map__header-empty {
+        background: var(--em-zone-accent, #c7ccd4) !important;
+    }
+
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode:hover .em-site-admin-landing-map__header-group-title,
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode.is-active .em-site-admin-landing-map__header-group-title,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:hover .em-admin-landing-map__header-group-title,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode.is-active .em-admin-landing-map__header-group-title {
+        color: var(--em-zone-text, #374151) !important;
+    }
+
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode:hover .em-site-rubriques-sortable__handle,
+    .em-site-rubriques-admin .em-site-admin-landing-map__header-group.is-layout-mode.is-active .em-site-rubriques-sortable__handle,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode:hover .em-rubriques-sortable__handle,
+    .em-site-rubriques-admin .em-admin-landing-map__header-group.is-layout-mode.is-active .em-rubriques-sortable__handle {
+        color: #ffffff !important;
     }
 
     /* Wireframe plus large (desktop) pour mieux voir les aperçus. */

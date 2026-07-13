@@ -25,6 +25,13 @@ Statut: Implémentation admin template unique en cours (jalon UI atteint)
 - Suppression du mécanisme précédent de placeholders front pour réduire la dispersion des comportements.
 - Retrait du fallback hardcodé `mayami` dans la résolution du template actif (front + shared), aligné avec le mode template unique.
 
+## Mise à jour session (Paris): 2026-07-13 18:15:09
+
+- Dashboard finalisé sur le lot UI demandé: libellés harmonisés (`MON TEMPLATE`, copies associées) et badges nettoyés.
+- Bloc Rubriques ajusté: badge d'action `GÉRER LES RUBRIQUES` et liste des rubriques conservés avec rendu allégé.
+- Wireframe HEADER/Rubriques: retouches de parité visuelle (hover + espacements) sans modification du fond validé.
+- Correctif d'interaction sur le badge `DEFAULT LIVE`: maintien du style constant au survol (pas de soulignement, pas de teinte lien navigateur).
+
 Mises à jour de session:
 
 - Incident critique traité: disparition du HEADER "Our Land" après purge legacy; cause identifiée côté migration de préfixes (copie seule, sans fusion des tableaux existants).

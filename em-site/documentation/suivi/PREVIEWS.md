@@ -9,6 +9,13 @@ Document de référence pour déléguer le debug de l’aperçu admin Rubriques,
 
 ## Situation actuelle
 
+### Mise à jour 2026-07-13 18:15:09 (Paris)
+
+- ✅ Lot de polish Dashboard/Rubriques consolidé côté BO (libellés, badges, interactions).
+- ✅ Carte `MON TEMPLATE`: badge `DEFAULT LIVE` maintenu cliquable avec états lien figés (pas de soulignement ni bascule de couleur au survol).
+- ✅ Wireframe Rubriques/HEADER: ajustements de parité de survol et d'espacements conservés avec fond inchangé.
+- ✅ Bloc `Ajouter Rubrique` compacté et clarifié pour réduire la hauteur visuelle sans perdre l'accès aux actions.
+
 ### Mise à jour 2026-07-13 17:35:28 (Paris)
 
 - ✅ Fallback front des rubriques mutualisé dans un seul fichier: `inc/front/fallback-rubrique.php`.

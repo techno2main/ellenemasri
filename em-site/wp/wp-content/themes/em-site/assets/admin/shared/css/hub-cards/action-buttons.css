@@ -171,6 +171,18 @@
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
 }
 
+.em-site-hub__card-live-status > .em-hub__template-live-pill,
+.em-site-hub__card-live-status > .em-hub__template-live-pill:hover,
+.em-site-hub__card-live-status > .em-hub__template-live-pill:focus,
+.em-site-hub__card-live-status > .em-hub__template-live-pill:focus-visible,
+.em-site-hub__card-live-status > .em-hub__template-live-pill:active,
+.em-site-hub__card-live-status > .em-hub__template-live-pill:visited {
+    color: var(--em-template-text, #ffffff);
+    text-decoration: none;
+    background: var(--em-template-accent, #751820);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
 /* Accueil — base onglets (fallback après retrait des CSS catalog legacy). */
 .em-dashboard .em-catalog-edit__nav,
 .em-templates-sommaire .em-catalog-edit__nav {

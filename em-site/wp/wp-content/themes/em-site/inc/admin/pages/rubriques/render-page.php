@@ -25,6 +25,112 @@ function em_site_admin_render_template_skeleton_add_panel(): void
     $default_position = in_array('__before_footer__', $position_values, true)
         ? '__before_footer__'
         : (string) ($position_values[count($position_values) - 1] ?? '__start__');
+
+    static $panel_styles_done = false;
+
+    if (!$panel_styles_done) {
+        $panel_styles_done = true;
+        ?>
+        <style>
+        .em-site-rubrique-skeleton-add-panel {
+            max-width: 1220px;
+            border: 1px solid #d6c2c6;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 8px 22px -18px rgba(78, 8, 14, .45);
+        }
+
+        .em-site-rubrique-skeleton-add-panel .em-site-catalog-sommaire__create-panel-inner {
+            padding: 14px 16px;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__status {
+            margin: 0 0 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__available-head {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 12px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid #e4cfd3;
+            background: #fbf4f5;
+            color: #4f080e;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 10px;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__item {
+            border: 1px solid #ead9dc;
+            border-radius: 10px;
+            background: #fffaf9;
+            padding: 10px 12px;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__item-head {
+            margin: 0 0 8px;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__item-title {
+            margin: 0;
+            color: #4f080e;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__fields {
+            margin: 0;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__fields .em-site-catalog-sommaire__field {
+            margin: 0;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__note {
+            grid-column: 1 / -1;
+            margin: 2px 0 0;
+            font-size: 12px;
+            color: #6b7280;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .em-site-rubrique-skeleton-add-panel__actions {
+            margin: 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 920px) {
+            .em-site-rubrique-skeleton-add-panel__list {
+                grid-template-columns: 1fr;
+            }
+        }
+        </style>
+        <?php
+    }
     ?>
     <div
         class="em-site-catalog-sommaire__create-panel em-site-catalog-sommaire__create-panel--module em-site-rubrique-skeleton-add-panel"
@@ -32,24 +138,22 @@ function em_site_admin_render_template_skeleton_add_panel(): void
         hidden
     >
         <div class="em-site-catalog-sommaire__create-panel-inner">
-            <header class="em-site-catalog-sommaire__create-panel-head">
-                <h3 class="em-site-catalog-sommaire__create-panel-title"><?php esc_html_e('Ajouter une rubrique', 'em-site'); ?></h3>
-                <p class="em-site-catalog-sommaire__create-panel-desc">
-                    <?php esc_html_e('Configurez la rubrique, puis cliquez sur Insérer.', 'em-site'); ?>
-                </p>
-                <p
-                    class="em-site-rubrique-skeleton-add-panel__status"
-                    id="em-site-rubrique-skeleton-add-status"
-                    aria-live="polite"
-                    hidden
-                ></p>
-            </header>
+            <p
+                class="em-site-rubrique-skeleton-add-panel__status"
+                id="em-site-rubrique-skeleton-add-status"
+                aria-live="polite"
+                hidden
+            ></p>
 
             <?php if ($proposable === []) { ?>
                 <p class="em-site-rubrique-skeleton-add-panel__empty">
                     <?php esc_html_e('Aucune rubrique disponible pour le moment.', 'em-site'); ?>
                 </p>
             <?php } else { ?>
+                <p class="em-site-rubrique-skeleton-add-panel__available-head">
+                    <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+                    <?php esc_html_e('Rubriques disponibles', 'em-site'); ?>
+                </p>
                 <ul class="em-site-rubrique-skeleton-add-panel__list">
                     <?php foreach ($proposable as $rubrique_slug => $definition) {
                         $label = function_exists('em_site_admin_rubrique_skeleton_label')
@@ -170,7 +274,7 @@ function em_site_admin_render_rubriques_page(): void
                         aria-expanded="false"
                     >
                         <i class="fa-solid fa-plus" aria-hidden="true"></i>
-                        <?php esc_html_e('Nouvelle Rubrique', 'em-site'); ?>
+                        <?php esc_html_e('Ajouter Rubrique', 'em-site'); ?>
                     </button>
 
                     <?php

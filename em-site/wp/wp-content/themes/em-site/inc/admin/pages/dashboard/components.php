@@ -123,6 +123,44 @@ function em_site_admin_dashboard_render_live_template_badge(string $active_label
 }
 
 /**
+ * Badge template dédié au Dashboard (bloc Mon Template).
+ */
+function em_site_admin_dashboard_render_template_context_badge(string $active_label, string $active_slug): void
+{
+    $template_url = function_exists('em_site_admin_template_choice_admin_url')
+        ? em_site_admin_template_choice_admin_url()
+        : add_query_arg(['page' => 'em-template'], admin_url('admin.php'));
+    $active_slug = sanitize_key($active_slug);
+    $style_attr = function_exists('em_site_admin_template_tab_style_attr')
+        ? em_site_admin_template_tab_style_attr($active_slug)
+        : '';
+
+    ?>
+    <div class="em-site-hub__card-live-status">
+        <p class="em-site-hub__card-live-status-prefix">
+            <?php esc_html_e("C'est ici que tu définis le squelette de ton site", 'em-site'); ?>
+        </p>
+        <a
+            class="em-hub__template-live-pill"
+            href="<?php echo esc_url($template_url); ?>"
+            aria-label="<?php esc_attr_e('Ouvrir la page Template', 'em-site'); ?>"
+            <?php if ($style_attr !== '') { ?>
+                style="<?php echo esc_attr($style_attr); ?>"
+            <?php } ?>
+        >
+            <span class="em-hub__template-live-pill-name"><?php echo esc_html(mb_strtoupper(trim($active_label))); ?></span>
+            <span class="em-hub__template-live-pill-live">
+                <span class="em-hub__live-indicator" aria-hidden="true">
+                    <span class="em-hub__live-dot"></span>
+                </span>
+                <?php esc_html_e('Live', 'em-site'); ?>
+            </span>
+        </a>
+    </div>
+    <?php
+}
+
+/**
  * Pastille liste des templates existants (MAYAMI, CLIENT, …).
  */
 function em_site_admin_dashboard_render_templates_badge(): void
@@ -274,7 +312,7 @@ function em_site_admin_dashboard_nav_tab_definitions(): array
             'url'        => em_site_admin_dashboard_rubriques_overview_url(),
         ],
         'templates' => [
-            'menu_title' => __('MES TEMPLATES', 'em-site'),
+            'menu_title' => __('MON TEMPLATE', 'em-site'),
             'url'        => function_exists('em_site_admin_template_choice_admin_url') ? em_site_admin_template_choice_admin_url() : '',
         ],
         'medias' => [

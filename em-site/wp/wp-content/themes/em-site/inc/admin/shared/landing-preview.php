@@ -533,7 +533,7 @@ function em_site_admin_render_landing_map_header_group(string $active_zone = '',
                     : __('HEADER', 'em-site');
                 ?>
                 <span class="em-site-admin-landing-map__zone em-site-admin-landing-map__header-empty" style="grid-column:1 / -1; --em-zone-accent:#c7ccd4; --em-zone-text:#374151; background:#d1d5db; color:#374151;" aria-hidden="true">
-                    <span class="em-site-admin-landing-map__zone-label"><?php echo esc_html($placeholder); ?></span>
+                    <span class="screen-reader-text"><?php echo esc_html($placeholder); ?></span>
                 </span>
                 <?php
             } elseif ($subzones === []) {

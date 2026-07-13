@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-13 17:35:28.
+3. Derni?re mise ? jour : 2026-07-13 18:15:09.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,14 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-13 18:15:09 (Paris)
+
+- Lot de finition UI Dashboard/Rubriques appliqu?: renommages et copies harmonis?es sur la carte `MON TEMPLATE` et les zones Rubriques.
+- Wireframe Rubriques align? visuellement sur le comportement attendu (HEADER, espacements, interactions de survol), avec conservation de l'arri?re-plan valid?.
+- Uniformisation visuelle des filets verticaux Rubriques sur la teinte `#4f080e`.
+- Bloc d'ajout rubrique refondu: intitul? `Ajouter Rubrique`, suppression des lignes explicatives superflues, panneau plus compact et plus lisible.
+- Stabilisation du badge `DEFAULT LIVE` cliquable dans le Dashboard: verrouillage des ?tats lien pour ?viter soulignement/changement de couleur au survol.
 
 ### 2026-07-13 17:35:28 (Paris)
 
