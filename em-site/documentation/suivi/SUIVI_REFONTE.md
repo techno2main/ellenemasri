@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-14 16:17:53.
+3. Derni?re mise ? jour : 2026-07-14 16:42:56.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,14 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-14 16:42:56 (Paris)
+
+- Correctif de coh?rence final appliqu? sur le flux Rubriques: les cartes/menu de `em-rubriques-overview` r?solvent d?sormais l'ic?ne via le resolver central (`em_site_rubrique_icon`) au lieu de conserver prioritairement l'ic?ne fig?e du type.
+- Fiabilisation de la pr?-s?lection dans `Ic?nes BO`: les s?lecteurs `Menus` et `Rubriques` utilisent maintenant les helpers partag?s (`em_site_site_icon` / `em_site_rubrique_icon`) pour refl?ter la valeur r?elle des overrides enregistr?s.
+- Alignement fallback `CONTACT` consolid?: `dashicons-email-alt2` harmonis? entre map centrale et liste attribu?e.
+- Whitelist active synchronis?e avec l'?tat valid?: retrait de `dashicons-align-left`, `dashicons-list-view` et `dashicons-share` de `dashicons-list.txt` (ic?nes masqu?es).
+- Contr?les techniques ex?cut?s: `php -l` OK sur `icons.php` et `dashicons-preview.php`, diagnostics sans erreur sur les fichiers modifi?s.
 
 ### 2026-07-14 16:17:53 (Paris)
 

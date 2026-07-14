@@ -88,14 +88,14 @@ function em_site_rubrique_icons_map(): array
         'ctas'            => 'dashicons-megaphone',
         'about'           => 'dashicons-star-filled',
         'abouts'          => 'dashicons-star-filled',
-        'contact'         => 'dashicons-email-alt',
-        'contacts'        => 'dashicons-email-alt',
+        'contact'         => 'dashicons-email-alt2',
+        'contacts'        => 'dashicons-email-alt2',
         'footer'          => 'dashicons-align-center',
         'newsletters'     => 'dashicons-list-view',
         'custom-about'    => 'dashicons-star-filled',
         'custom-abouts'   => 'dashicons-star-filled',
-        'custom-contact'  => 'dashicons-email-alt',
-        'custom-contacts' => 'dashicons-email-alt',
+        'custom-contact'  => 'dashicons-email-alt2',
+        'custom-contacts' => 'dashicons-email-alt2',
     ];
 }
 
@@ -167,19 +167,11 @@ function em_site_icons_sanitize_overrides_map($value): array
  */
 function em_site_site_icons_overrides(): array
 {
-    static $cache = null;
-
-    if (is_array($cache)) {
-        return $cache;
-    }
-
     $raw = function_exists('get_option')
         ? get_option(em_site_site_icons_override_option_name(), [])
         : [];
 
-    $cache = em_site_icons_sanitize_overrides_map($raw);
-
-    return $cache;
+    return em_site_icons_sanitize_overrides_map($raw);
 }
 
 /**
@@ -187,19 +179,11 @@ function em_site_site_icons_overrides(): array
  */
 function em_site_rubrique_icons_overrides(): array
 {
-    static $cache = null;
-
-    if (is_array($cache)) {
-        return $cache;
-    }
-
     $raw = function_exists('get_option')
         ? get_option(em_site_rubrique_icons_override_option_name(), [])
         : [];
 
-    $cache = em_site_icons_sanitize_overrides_map($raw);
-
-    return $cache;
+    return em_site_icons_sanitize_overrides_map($raw);
 }
 
 /**
@@ -256,21 +240,73 @@ function em_site_rubrique_icon(string $slug, string $fallback = 'dashicons-scree
 {
     $slug = sanitize_key($slug);
 
+    $candidate_keys = [];
+
     if ($slug !== '') {
+        $candidate_keys[] = $slug;
+
+        // Robustesse g?n?rique: certains contextes utilisent une cl? singuli?re
+        // (newsletter, contact) et d'autres la forme plurielle.
+        if (substr($slug, -1) === 's') {
+            $candidate_keys[] = rtrim($slug, 's');
+        } else {
+            $candidate_keys[] = $slug . 's';
+        }
+
+        // Compatibilit? legacy CONTACT: selon les ?crans le slug peut ?tre
+        // `contact` ou `contacts`. On regarde les deux pour garantir la
+        // m?me ic?ne partout (menu gauche, cartes Rubriques, page Ic?nes BO).
+        if ($slug === 'contact') {
+            $candidate_keys[] = 'contacts';
+            $candidate_keys[] = 'custom-contact';
+            $candidate_keys[] = 'custom-contacts';
+        } elseif ($slug === 'contacts') {
+            $candidate_keys[] = 'contact';
+            $candidate_keys[] = 'custom-contacts';
+            $candidate_keys[] = 'custom-contact';
+        }
+
+        $candidate_keys = array_values(array_unique(array_filter($candidate_keys, static function ($key): bool {
+            return is_string($key) && $key !== '';
+        })));
+
+        // Alias custom-* pour couvrir les rubriques construites dynamiquement.
+        $custom_keys = [];
+        foreach ($candidate_keys as $candidate_key) {
+            $custom_keys[] = 'custom-' . $candidate_key;
+        }
+
+        $candidate_keys = array_values(array_unique(array_merge(
+            $candidate_keys,
+            array_filter($custom_keys, static function ($key): bool {
+                return is_string($key) && $key !== '';
+            })
+        )));
+    }
+
+    if ($candidate_keys !== []) {
         $overrides = em_site_rubrique_icons_overrides();
 
-        if (isset($overrides[$slug]) && $overrides[$slug] !== '') {
-            return (string) $overrides[$slug];
+        foreach ($candidate_keys as $candidate_key) {
+            if (isset($overrides[$candidate_key]) && $overrides[$candidate_key] !== '') {
+                return (string) $overrides[$candidate_key];
+            }
         }
     }
 
     $map = em_site_rubrique_icons_map();
 
-    if ($slug !== '' && isset($map[$slug]) && $map[$slug] !== '') {
-        $candidate = (string) $map[$slug];
+    if ($candidate_keys !== []) {
+        foreach ($candidate_keys as $candidate_key) {
+            if (!isset($map[$candidate_key]) || $map[$candidate_key] === '') {
+                continue;
+            }
 
-        if (em_site_dashicon_is_allowed($candidate)) {
-            return $candidate;
+            $candidate = (string) $map[$candidate_key];
+
+            if (em_site_dashicon_is_allowed($candidate)) {
+                return $candidate;
+            }
         }
     }
 

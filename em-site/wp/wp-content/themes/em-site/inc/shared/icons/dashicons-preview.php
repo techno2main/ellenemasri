@@ -201,7 +201,7 @@ function em_site_icons_collect_attributed(array $all_icons, string $fallback_ico
     ['key' => 'release', 'label' => 'RELEASES', 'fallback' => 'dashicons-album'],
     ['key' => 'cta', 'label' => 'CTAS', 'fallback' => 'dashicons-megaphone'],
     ['key' => 'about', 'label' => 'ABOUT', 'fallback' => 'dashicons-star-filled'],
-    ['key' => 'contact', 'label' => 'CONTACT', 'fallback' => 'dashicons-email-alt'],
+    ['key' => 'contact', 'label' => 'CONTACT', 'fallback' => 'dashicons-email-alt2'],
     ['key' => 'newsletters', 'label' => 'NEWSLETTERS', 'fallback' => 'dashicons-list-view'],
     ['key' => 'footer', 'label' => 'FOOTER', 'fallback' => 'dashicons-align-center'],
   ];
@@ -1160,7 +1160,9 @@ $grouped_selectable_icons = em_site_icons_group_by_category($selectable_icons);
                   $assoc = (string) ($entry['label'] ?? '');
                   $entry_key = sanitize_key((string) ($entry['key'] ?? ''));
                   $current_icon = $entry_key !== '' && isset($site_overrides[$entry_key]) ? (string) $site_overrides[$entry_key] : $icon;
-                  $current_icon = isset($active_map[$current_icon]) ? $current_icon : $icon;
+                  $current_icon = in_array($current_icon, $selectable_icons, true)
+                    ? $current_icon
+                    : (($selectable_icons[0] ?? '') !== '' ? (string) $selectable_icons[0] : $icon);
                   ?>
                   <label class="item item-attributed<?php echo $checked ? ' is-active' : ''; ?>" data-icon-item>
                     <span class="dashicons <?php echo htmlspecialchars($icon, ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></span>
@@ -1213,11 +1215,17 @@ $grouped_selectable_icons = em_site_icons_group_by_category($selectable_icons);
                   $entry_key = sanitize_key((string) ($entry['key'] ?? ''));
                   $entry_scope = (string) ($entry['scope'] ?? 'rubrique');
                   if ($entry_scope === 'site') {
-                    $current_icon = $entry_key !== '' && isset($site_overrides[$entry_key]) ? (string) $site_overrides[$entry_key] : $icon;
+                    $current_icon = $entry_key !== '' && function_exists('em_site_site_icon')
+                      ? em_site_site_icon($entry_key, $icon)
+                      : ($entry_key !== '' && isset($site_overrides[$entry_key]) ? (string) $site_overrides[$entry_key] : $icon);
                   } else {
-                    $current_icon = $entry_key !== '' && isset($rubrique_overrides[$entry_key]) ? (string) $rubrique_overrides[$entry_key] : $icon;
+                    $current_icon = $entry_key !== '' && function_exists('em_site_rubrique_icon')
+                      ? em_site_rubrique_icon($entry_key, $icon)
+                      : ($entry_key !== '' && isset($rubrique_overrides[$entry_key]) ? (string) $rubrique_overrides[$entry_key] : $icon);
                   }
-                  $current_icon = isset($active_map[$current_icon]) ? $current_icon : $icon;
+                  $current_icon = in_array($current_icon, $selectable_icons, true)
+                    ? $current_icon
+                    : (($selectable_icons[0] ?? '') !== '' ? (string) $selectable_icons[0] : $icon);
                   $field_name = $entry_scope === 'site' ? 'site_icon_overrides' : 'rubrique_icon_overrides';
                   ?>
                   <label class="item item-attributed<?php echo $checked ? ' is-active' : ''; ?>" data-icon-item>

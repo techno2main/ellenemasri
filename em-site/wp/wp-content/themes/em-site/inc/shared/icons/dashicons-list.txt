@@ -20,7 +20,6 @@ dashicons-airplane
 dashicons-album
 dashicons-align-center
 dashicons-align-full-width
-dashicons-align-left
 dashicons-align-right
 dashicons-align-wide
 dashicons-awards
@@ -90,7 +89,6 @@ dashicons-instagram
 dashicons-laptop
 dashicons-layout
 dashicons-lightbulb
-dashicons-list-view
 dashicons-lock
 dashicons-marker
 dashicons-media-archive
@@ -120,7 +118,6 @@ dashicons-printer
 dashicons-products
 dashicons-screenoptions
 dashicons-search
-dashicons-share
 dashicons-share1
 dashicons-shield
 dashicons-shield-alt

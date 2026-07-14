@@ -54,15 +54,17 @@ if (!function_exists('em_site_overview_type_icon')) {
     {
         $fallback = (string) ($type['icon'] ?? 'dashicons-screenoptions');
 
-        if ($fallback !== '') {
-            return $fallback;
-        }
-
         if (function_exists('em_site_rubrique_icon')) {
-            return em_site_rubrique_icon($slug, 'dashicons-screenoptions');
+            $icon_key = sanitize_key($slug);
+
+            if (function_exists('em_site_rubrique_icon_key_from_definition')) {
+                $icon_key = em_site_rubrique_icon_key_from_definition($slug, $type);
+            }
+
+            return em_site_rubrique_icon($icon_key, $fallback !== '' ? $fallback : 'dashicons-screenoptions');
         }
 
-        return 'dashicons-screenoptions';
+        return $fallback !== '' ? $fallback : 'dashicons-screenoptions';
     }
 }
 

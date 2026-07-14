@@ -28,6 +28,14 @@ P?rim?tre scann? : em-site/wp/wp-content/themes/em-site
 - Mise ? jour du menu admin Param?tres : ordre des entr?es ajust? (`Ic?nes BO` en premier), libell? unifi? `Ic?nes BO`, ic?ne de menu fix?e sur `dashicons-image-filter`.
 - Mise ? jour de l'en-t?te de la page manager avec `dashicons-image-filter` et ouverture par d?faut du bloc `Ic?nes attribu?es`.
 
+## Mise ? jour structurelle (Paris) : 2026-07-14 16:42:56
+
+- Correctif de propagation des overrides dans `inc/rubriques/admin/pages/overview.php`: la fonction `em_site_overview_type_icon` passe maintenant syst?matiquement par `em_site_rubrique_icon(...)`, avec cl? normalis?e, pour supprimer les retours visuels sur ic?ne fig?e.
+- Correctif de fiabilit? dans `inc/shared/icons/dashicons-preview.php`: r?solution de la valeur courante des s?lecteurs via les resolvers centraux (`em_site_site_icon` / `em_site_rubrique_icon`) au lieu d'un fallback partiel local.
+- Harmonisation de la map `CONTACT` dans `inc/shared/icons/icons.php` vers `dashicons-email-alt2` pour alignement complet des ?crans.
+- Mise ? jour de la whitelist active `inc/shared/icons/dashicons-list.txt`: suppression de `dashicons-align-left`, `dashicons-list-view`, `dashicons-share` conform?ment ? l'?tat masqu? valid?.
+- Validation de non-r?gression ex?cut?e: lint PHP OK et diagnostics de fichiers modifi?s sans erreur.
+
 ## Mise ? jour structurelle (Paris) : 2026-07-07 12:56:24
 
 - Migration de composants BO partag?s vers `inc/admin/shared/components/` avec sous-dossier d?di? par composant.
