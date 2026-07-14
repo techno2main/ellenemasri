@@ -4,6 +4,7 @@ function em_site_admin_menu_layout_ensure_medias_entries(array $relocate): array
     $capability = em_site_admin_menu_capability();
     $parent_slug = em_site_admin_media_parent_menu_slug();
     $medias_icon = function_exists('em_site_site_icon') ? em_site_site_icon('medias', 'dashicons-admin-media') : 'dashicons-admin-media';
+    $library_icon = function_exists('em_site_site_icon') ? em_site_site_icon('library', $medias_icon) : $medias_icon;
     $media_add_icon = function_exists('em_site_site_icon') ? em_site_site_icon('media-add', 'dashicons-plus-alt') : 'dashicons-plus-alt';
 
     if (!isset($relocate[$parent_slug]) || !is_array($relocate[$parent_slug])) {
@@ -38,7 +39,7 @@ function em_site_admin_menu_layout_ensure_medias_entries(array $relocate): array
         __('Librairie', 'em-site'),
         'menu-top em-site-menu-accordion-child em-site-menu-accordion-medias-child',
         'upload',
-        $medias_icon,
+        $library_icon,
     ];
 
     $relocate['media-new.php'] = [

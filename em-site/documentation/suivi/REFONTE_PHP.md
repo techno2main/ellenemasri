@@ -12,6 +12,22 @@ P?rim?tre scann? : em-site/wp/wp-content/themes/em-site
 - Rec?blage des rendus admin/modules/rubriques vers les helpers partag?s (`em_site_site_icon`, `em_site_rubrique_icon`) pour ?liminer les hardcodes et respecter le fallback global.
 - Fiabilisation s?curit?/enregistrement de la page manager : nonce WordPress + validation fallback robuste.
 
+## Mise ? jour structurelle (Paris) : 2026-07-14 14:25:17
+
+- Ajout d'overrides persistants par item pour les ic?nes de menus/pages admin (`em_site_site_icons_overrides`) et de rubriques (`em_site_rubrique_icons_overrides`).
+- Ajout de fonctions de sanitization centralis?es pour les maps d'overrides et rec?blage des helpers `em_site_site_icon` / `em_site_rubrique_icon` pour prioriser ces overrides.
+- Extension de l'interface `dashicons-preview.php` avec un s?lecteur d'ic?ne par item (Menus/Rubriques) branch? sur les ic?nes actives.
+- Sauvegarde conjointe whitelist+fallback+assignations, avec auto-activation des ic?nes choisies dans les overrides.
+
+## Mise ? jour structurelle (Paris) : 2026-07-14 16:17:53
+
+- Rationalisation du fallback dans `inc/shared/icons/dashicons-preview.php` : suppression de l'UI de fallback et fallback d'ex?cution fig? sur `dashicons-warning`.
+- Remplacement de la colonne `Fallback` par un statut dynamique `Affich?e/Masqu?e` dans la section `Ic?nes disponibles`.
+- Re-c?blage des options de dropdown des blocs `Ic?nes attribu?es` pour n'exposer que les ic?nes actives, group?es et ordonn?es par cat?gories.
+- Mise ? jour du comptage de `Ic?nes disponibles` (global + cat?gories) pour exclure les ic?nes masqu?es.
+- Mise ? jour du menu admin Param?tres : ordre des entr?es ajust? (`Ic?nes BO` en premier), libell? unifi? `Ic?nes BO`, ic?ne de menu fix?e sur `dashicons-image-filter`.
+- Mise ? jour de l'en-t?te de la page manager avec `dashicons-image-filter` et ouverture par d?faut du bloc `Ic?nes attribu?es`.
+
 ## Mise ? jour structurelle (Paris) : 2026-07-07 12:56:24
 
 - Migration de composants BO partag?s vers `inc/admin/shared/components/` avec sous-dossier d?di? par composant.

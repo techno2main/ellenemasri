@@ -23,8 +23,8 @@ function em_site_admin_register_dashicons_manager_page(): void
 {
     add_submenu_page(
         null,
-        __('Gestion Dashicons', 'em-site'),
-        __('Gestion Dashicons', 'em-site'),
+        __('Icônes BO', 'em-site'),
+        __('Icônes BO', 'em-site'),
         em_site_admin_menu_capability(),
         em_site_admin_dashicons_manager_page_slug(),
         'em_site_admin_render_dashicons_manager_page'

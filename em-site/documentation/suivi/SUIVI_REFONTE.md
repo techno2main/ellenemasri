@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-13 18:44:54.
+3. Derni?re mise ? jour : 2026-07-14 16:17:53.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,25 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-14 16:17:53 (Paris)
+
+- Refonte compl?te de la page `Ic?nes BO` c?t? UX et logique: suppression du bloc fallback visible, fallback interne fig? sur `dashicons-warning`.
+- Les ic?nes disponibles passent en mode statut explicite `Affich?e` / `Masqu?e` selon la case ? cocher.
+- Les dropdowns de changement d'ic?ne utilisent uniquement les ic?nes actives (non masqu?es), group?es par cat?gories dans le m?me ordre que la section `Ic?nes disponibles`.
+- Ajout de s?parateurs visuels entre cat?gories dans le menu d?roulant des ic?nes.
+- Alignement de l'affichage `Ic?nes disponibles`: les ic?nes d?coch?es sont retir?es de la liste par d?faut.
+- Ajustements UI finalis?s: titres principaux en majuscules, espacement du bloc `Ic?nes attribu?es` resserr?, filet superflu supprim? dans `Ic?nes disponibles`.
+- Menu gauche Param?tres harmonis?: renommage en `Ic?nes BO`, mise en premier dans la section, liens en majuscules.
+- Ic?ne de la page `Ic?nes BO` harmonis?e sur `dashicons-image-filter` dans l'en-t?te et dans le menu lat?ral.
+
+### 2026-07-14 14:25:17 (Paris)
+
+- Sous-étape `édition fine par item` implémentée dans la page Gestion des icônes.
+- Ajout d'un sélecteur d'icône par entrée dans les blocs `Menus` et `Rubriques` pour permettre un changement ciblé sans modifier le code source.
+- Enregistrement unifié : la sauvegarde persiste désormais à la fois la whitelist active + le fallback + les assignations fines par item.
+- Les assignations fines forcent automatiquement l'activation de l'icône choisie dans la liste active pour éviter les incohérences.
+- Contrôles techniques exécutés après implémentation : diagnostics sans erreur et `php -l` OK sur les fichiers modifiés.
 
 ### 2026-07-14 14:10:33 (Paris)
 

@@ -3,9 +3,7 @@ function em_site_admin_menu_layout_ensure_settings_entries(array $relocate): arr
 {
     $capability = em_site_admin_menu_capability();
     $dashicons_slug = em_site_admin_dashicons_manager_page_slug();
-    $dashicons_manager_icon = function_exists('em_site_site_icon')
-        ? em_site_site_icon('generic', 'dashicons-art')
-        : 'dashicons-art';
+    $dashicons_manager_icon = 'dashicons-image-filter';
 
     if (!isset($relocate['em-site-menu-wp-settings-label'])) {
         $relocate['em-site-menu-wp-settings-label'] = [
@@ -27,10 +25,10 @@ function em_site_admin_menu_layout_ensure_settings_entries(array $relocate): arr
 
     if (!isset($relocate[$dashicons_slug]) || !is_array($relocate[$dashicons_slug])) {
         $relocate[$dashicons_slug] = [
-            __('Gestion Dashicons', 'em-site'),
+            __('Icônes BO', 'em-site'),
             $capability,
             'admin.php?page=' . $dashicons_slug,
-            __('Gestion Dashicons', 'em-site'),
+            __('Icônes BO', 'em-site'),
             'menu-top em-site-menu-accordion-child em-site-menu-accordion-settings-child',
             $dashicons_slug,
             $dashicons_manager_icon,

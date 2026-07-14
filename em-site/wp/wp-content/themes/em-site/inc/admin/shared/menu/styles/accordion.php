@@ -73,6 +73,8 @@
 
         #adminmenu li.em-site-menu-accordion-settings-child .wp-menu-name {
             padding-left: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
         }
 
         /* Sous-menus Catalogues / Templates / Médias — décalage visuel sans toucher au PHP */

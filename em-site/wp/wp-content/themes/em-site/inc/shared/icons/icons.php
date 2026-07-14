@@ -111,9 +111,9 @@ function em_site_site_icons_map(): array
         'template'       => 'dashicons-layout',
         'rubriques'      => 'dashicons-screenoptions',
         'medias'         => 'dashicons-admin-media',
+        'library'        => 'dashicons-admin-media',
         'settings'       => 'dashicons-admin-settings',
         'appearance'     => 'dashicons-admin-appearance',
-        'catalogues'     => 'dashicons-index-card',
         'vlb'            => 'dashicons-format-image',
         'media-add'      => 'dashicons-plus-alt',
         'generic'        => 'dashicons-admin-generic',
@@ -121,12 +121,103 @@ function em_site_site_icons_map(): array
 }
 
 /**
+ * Nom d'option WP pour les overrides des icônes de menus/pages admin.
+ */
+function em_site_site_icons_override_option_name(): string
+{
+    return 'em_site_site_icons_overrides';
+}
+
+/**
+ * Nom d'option WP pour les overrides des icônes de rubriques.
+ */
+function em_site_rubrique_icons_override_option_name(): string
+{
+    return 'em_site_rubrique_icons_overrides';
+}
+
+/**
+ * @param mixed $value
+ * @return array<string, string>
+ */
+function em_site_icons_sanitize_overrides_map($value): array
+{
+    if (!is_array($value)) {
+        return [];
+    }
+
+    $clean = [];
+
+    foreach ($value as $raw_key => $raw_icon) {
+        $key = sanitize_key((string) $raw_key);
+        $icon = trim((string) $raw_icon);
+
+        if ($key === '' || !em_site_dashicon_is_allowed($icon)) {
+            continue;
+        }
+
+        $clean[$key] = $icon;
+    }
+
+    return $clean;
+}
+
+/**
+ * @return array<string, string>
+ */
+function em_site_site_icons_overrides(): array
+{
+    static $cache = null;
+
+    if (is_array($cache)) {
+        return $cache;
+    }
+
+    $raw = function_exists('get_option')
+        ? get_option(em_site_site_icons_override_option_name(), [])
+        : [];
+
+    $cache = em_site_icons_sanitize_overrides_map($raw);
+
+    return $cache;
+}
+
+/**
+ * @return array<string, string>
+ */
+function em_site_rubrique_icons_overrides(): array
+{
+    static $cache = null;
+
+    if (is_array($cache)) {
+        return $cache;
+    }
+
+    $raw = function_exists('get_option')
+        ? get_option(em_site_rubrique_icons_override_option_name(), [])
+        : [];
+
+    $cache = em_site_icons_sanitize_overrides_map($raw);
+
+    return $cache;
+}
+
+/**
  * Retourne l'icône d'un hub/page admin du site.
  */
 function em_site_site_icon(string $key, string $fallback = 'dashicons-admin-generic'): string
 {
-    $map = em_site_site_icons_map();
     $normalized_key = sanitize_key($key);
+
+    if ($normalized_key !== '') {
+        $overrides = em_site_site_icons_overrides();
+
+        if (isset($overrides[$normalized_key]) && $overrides[$normalized_key] !== '') {
+            return (string) $overrides[$normalized_key];
+        }
+    }
+
+    $map = em_site_site_icons_map();
 
     if ($normalized_key !== '' && isset($map[$normalized_key]) && $map[$normalized_key] !== '') {
         $candidate = (string) $map[$normalized_key];
@@ -164,6 +255,15 @@ function em_site_dashicon_is_allowed(string $icon): bool
 function em_site_rubrique_icon(string $slug, string $fallback = 'dashicons-screenoptions'): string
 {
     $slug = sanitize_key($slug);
+
+    if ($slug !== '') {
+        $overrides = em_site_rubrique_icons_overrides();
+
+        if (isset($overrides[$slug]) && $overrides[$slug] !== '') {
+            return (string) $overrides[$slug];
+        }
+    }
+
     $map = em_site_rubrique_icons_map();
 
     if ($slug !== '' && isset($map[$slug]) && $map[$slug] !== '') {

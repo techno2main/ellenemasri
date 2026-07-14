@@ -181,8 +181,8 @@ function em_site_icons_attributed_rubrique_label(string $module_slug, array $def
  * @param array<int, string> $all_icons
  * @return array{
  *   icons: array<int, string>,
- *   menus: array<int, array{icon:string,label:string}>,
- *   rubriques: array<int, array{icon:string,label:string}>
+ *   menus: array<int, array{icon:string,label:string,key:string,scope:string}>,
+ *   rubriques: array<int, array{icon:string,label:string,key:string,scope:string}>
  * }
  */
 function em_site_icons_collect_attributed(array $all_icons, string $fallback_icon): array
@@ -190,75 +190,79 @@ function em_site_icons_collect_attributed(array $all_icons, string $fallback_ico
   $rubriques = [];
   $used_icons = [];
 
-  if (function_exists('em_site_admin_site_rubrique_modules') && function_exists('em_site_admin_site_rubrique_definitions')) {
-    $definitions = (array) em_site_admin_site_rubrique_definitions();
+  $rubrique_entries = [
+    ['key' => 'top-bar', 'label' => 'TOP-BAR', 'fallback' => 'dashicons-align-wide'],
+    ['key' => 'header', 'label' => 'HEADER', 'fallback' => 'dashicons-columns'],
+    ['key' => 'heros', 'label' => 'HEROS', 'fallback' => 'dashicons-format-image'],
+    ['key' => 'sliders', 'label' => 'SLIDERS', 'fallback' => 'dashicons-images-alt2'],
+    ['key' => 'stream', 'label' => 'STREAMS', 'fallback' => 'dashicons-format-audio'],
+    ['key' => 'social', 'label' => 'SOCIALS', 'fallback' => 'dashicons-share'],
+    ['key' => 'video', 'label' => 'VIDEOS', 'fallback' => 'dashicons-video-alt3'],
+    ['key' => 'release', 'label' => 'RELEASES', 'fallback' => 'dashicons-album'],
+    ['key' => 'cta', 'label' => 'CTAS', 'fallback' => 'dashicons-megaphone'],
+    ['key' => 'about', 'label' => 'ABOUT', 'fallback' => 'dashicons-star-filled'],
+    ['key' => 'contact', 'label' => 'CONTACT', 'fallback' => 'dashicons-email-alt'],
+    ['key' => 'newsletters', 'label' => 'NEWSLETTERS', 'fallback' => 'dashicons-list-view'],
+    ['key' => 'footer', 'label' => 'FOOTER', 'fallback' => 'dashicons-align-center'],
+  ];
 
-    foreach ((array) em_site_admin_site_rubrique_modules() as $module_slug) {
-      $module_slug = sanitize_key((string) $module_slug);
-      $definition = isset($definitions[$module_slug]) && is_array($definitions[$module_slug])
-        ? $definitions[$module_slug]
-        : [];
+  foreach ($rubrique_entries as $entry) {
+    $rubrique_key = sanitize_key((string) ($entry['key'] ?? ''));
+    $label = (string) ($entry['label'] ?? $rubrique_key);
+    $fallback = (string) ($entry['fallback'] ?? 'dashicons-admin-generic');
 
-      $icon_key = function_exists('em_site_rubrique_icon_key_from_definition')
-        ? (string) em_site_rubrique_icon_key_from_definition($module_slug, $definition)
-        : $module_slug;
+    $icon = function_exists('em_site_rubrique_icon')
+      ? (string) em_site_rubrique_icon($rubrique_key, $fallback)
+      : $fallback;
 
-      $fallback = (string) ($definition['icon'] ?? 'dashicons-screenoptions');
-      $icon = function_exists('em_site_rubrique_icon')
-        ? (string) em_site_rubrique_icon($icon_key, $fallback)
-        : $fallback;
-
-      if (strpos($icon, 'dashicons-') !== 0 || $icon === $fallback_icon || isset($used_icons[$icon])) {
-        continue;
-      }
-
-      $rubriques[] = [
-        'icon' => $icon,
-        'label' => em_site_icons_attributed_rubrique_label($module_slug, $definition),
-      ];
-      $used_icons[$icon] = true;
-    }
-  }
-
-  // Rubriques demandées explicitement dans ce bloc.
-  $site_map = function_exists('em_site_site_icons_map') ? (array) em_site_site_icons_map() : [];
-  foreach (['vlb' => 'VLB', 'template' => 'TEMPLATE'] as $key => $label) {
-    $icon = (string) ($site_map[$key] ?? '');
-
-    if ($icon === '' || strpos($icon, 'dashicons-') !== 0 || $icon === $fallback_icon || isset($used_icons[$icon])) {
+    if ($icon === '' || strpos($icon, 'dashicons-') !== 0) {
       continue;
     }
 
     $rubriques[] = [
       'icon' => $icon,
       'label' => $label,
+      'key' => $rubrique_key,
+      'scope' => 'rubrique',
     ];
     $used_icons[$icon] = true;
   }
 
+  $site_map = function_exists('em_site_site_icons_map') ? (array) em_site_site_icons_map() : [];
+
   $menus = [];
 
-  // Menus du site (hors VLB/TEMPLATE déplacés en section Rubriques).
-  $menu_label_map = [
-    'dashboard' => 'DASHBOARD',
-    'rubriques' => 'RUBRIQUES',
-    'medias' => 'MEDIAS',
-    'settings' => 'SETTINGS',
-    'appearance' => 'APPARENCE',
-    'catalogues' => 'CATALOGUES',
-    'media-add' => 'MEDIA ADD',
+  // Ordre explicitement aligné sur le menu gauche demandé.
+  $menu_entries = [
+    ['key' => 'dashboard', 'label' => 'DASHBOARD', 'fallback' => 'dashicons-dashboard'],
+    ['key' => 'medias', 'label' => 'MEDIAS', 'fallback' => 'dashicons-admin-media'],
+    ['key' => 'library', 'label' => 'LIBRAIRIE', 'fallback' => 'dashicons-admin-media'],
+    ['key' => 'media-add', 'label' => 'AJOUTER MÉDIA', 'fallback' => 'dashicons-plus-alt'],
+    ['key' => 'template', 'label' => 'TEMPLATE', 'fallback' => 'dashicons-layout'],
+    ['key' => 'rubriques', 'label' => 'RUBRIQUES', 'fallback' => 'dashicons-screenoptions'],
+    ['key' => 'vlb', 'label' => 'VLB', 'fallback' => 'dashicons-format-image'],
+    ['key' => 'appearance', 'label' => 'APPARENCE', 'fallback' => 'dashicons-admin-appearance'],
+    ['key' => 'settings', 'label' => 'SETTINGS', 'fallback' => 'dashicons-admin-settings'],
   ];
 
-  foreach ($menu_label_map as $menu_key => $menu_label) {
-    $icon = (string) ($site_map[$menu_key] ?? '');
+  foreach ($menu_entries as $entry) {
+    $menu_key = sanitize_key((string) ($entry['key'] ?? ''));
+    $menu_label = (string) ($entry['label'] ?? strtoupper($menu_key));
+    $fallback = (string) ($entry['fallback'] ?? 'dashicons-admin-generic');
 
-    if ($icon === '' || strpos($icon, 'dashicons-') !== 0 || $icon === $fallback_icon || isset($used_icons[$icon])) {
+    $icon = function_exists('em_site_site_icon')
+      ? (string) em_site_site_icon($menu_key, $fallback)
+      : ((string) ($site_map[$menu_key] ?? $fallback));
+
+    if ($icon === '' || strpos($icon, 'dashicons-') !== 0) {
       continue;
     }
 
     $menus[] = [
       'icon' => $icon,
       'label' => $menu_label,
+      'key' => $menu_key,
+      'scope' => 'site',
     ];
     $used_icons[$icon] = true;
   }
@@ -278,6 +282,33 @@ function em_site_icons_collect_attributed(array $all_icons, string $fallback_ico
     'menus' => $menus,
     'rubriques' => $rubriques,
   ];
+}
+
+/**
+ * @param mixed $payload
+ * @param array<string, bool> $allowed_icons
+ * @return array<string, string>
+ */
+function em_site_icons_sanitize_posted_overrides($payload, array $allowed_icons): array
+{
+  if (!is_array($payload)) {
+    return [];
+  }
+
+  $clean = [];
+
+  foreach ($payload as $raw_key => $raw_icon) {
+    $key = sanitize_key((string) $raw_key);
+    $icon = trim((string) $raw_icon);
+
+    if ($key === '' || !isset($allowed_icons[$icon])) {
+      continue;
+    }
+
+    $clean[$key] = $icon;
+  }
+
+  return $clean;
 }
 
 /**
@@ -340,7 +371,7 @@ function em_site_icons_write_txt(string $path, array $active_icons, string $fall
 }
 
 $all_icons = em_site_icons_extract_from_css($css_file);
-$fallback_icon = em_site_icons_extract_fallback_from_txt($list_file, $fallback_icon);
+$fallback_icon = 'dashicons-warning';
 $active_icons = em_site_icons_extract_from_txt($list_file);
 
 if ($all_icons === []) {
@@ -373,18 +404,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selected = isset($_POST['active_icons']) && is_array($_POST['active_icons']) ? $_POST['active_icons'] : [];
     $selected = array_values(array_unique(array_map('strval', $selected)));
 
-    $posted_fallback = isset($_POST['fallback_icon']) ? trim((string) $_POST['fallback_icon']) : '';
-    if ($posted_fallback !== '' && strpos($posted_fallback, 'dashicons-') === 0) {
-      $fallback_icon = $posted_fallback;
-    }
-
     $allowed = array_flip($all_icons);
     $selected = array_values(array_filter($selected, static function (string $icon) use ($allowed): bool {
       return isset($allowed[$icon]);
     }));
 
-    if (!isset($allowed[$fallback_icon])) {
-      $fallback_icon = 'dashicons-warning';
+    $fallback_icon = 'dashicons-warning';
+
+    $site_overrides_posted = em_site_icons_sanitize_posted_overrides(
+      $_POST['site_icon_overrides'] ?? [],
+      $allowed
+    );
+    $rubrique_overrides_posted = em_site_icons_sanitize_posted_overrides(
+      $_POST['rubrique_icon_overrides'] ?? [],
+      $allowed
+    );
+
+    foreach ([$site_overrides_posted, $rubrique_overrides_posted] as $override_map) {
+      foreach ($override_map as $icon) {
+        if (!in_array($icon, $selected, true)) {
+          $selected[] = $icon;
+        }
+      }
     }
 
     if (!in_array($fallback_icon, $selected, true)) {
@@ -392,11 +433,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (em_site_icons_write_txt($list_file, $selected, $fallback_icon)) {
+      $site_option_name = function_exists('em_site_site_icons_override_option_name')
+        ? (string) em_site_site_icons_override_option_name()
+        : 'em_site_site_icons_overrides';
+      $rubrique_option_name = function_exists('em_site_rubrique_icons_override_option_name')
+        ? (string) em_site_rubrique_icons_override_option_name()
+        : 'em_site_rubrique_icons_overrides';
+
+      if (function_exists('update_option') && function_exists('delete_option')) {
+        if ($site_overrides_posted !== []) {
+          update_option($site_option_name, $site_overrides_posted, false);
+        } else {
+          delete_option($site_option_name);
+        }
+
+        if ($rubrique_overrides_posted !== []) {
+          update_option($rubrique_option_name, $rubrique_overrides_posted, false);
+        } else {
+          delete_option($rubrique_option_name);
+        }
+      }
+
       $fallback_icon = em_site_icons_extract_fallback_from_txt($list_file, $fallback_icon);
       $active_icons = em_site_icons_extract_from_txt($list_file);
       $active_icons = em_site_icons_order_with_fallback_first($active_icons, $fallback_icon);
       $all_icons = em_site_icons_order_with_fallback_first($all_icons, $fallback_icon);
-      $notice = 'Liste Dashicons enregistrée.';
+      $notice = 'Liste Dashicons et assignations enregistrées.';
       $notice_type = 'ok';
     } else {
       $notice = 'Impossible d\'écrire dans dashicons-list.txt.';
@@ -406,6 +468,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $active_map = array_flip($active_icons);
+$site_overrides = function_exists('em_site_site_icons_overrides') ? (array) em_site_site_icons_overrides() : [];
+$rubrique_overrides = function_exists('em_site_rubrique_icons_overrides') ? (array) em_site_rubrique_icons_overrides() : [];
 $token = function_exists('wp_create_nonce') ? (string) wp_create_nonce($nonce_action) : '';
 $icons_without_fallback = array_values(array_filter($all_icons, static function (string $icon) use ($fallback_icon): bool {
   return $icon !== $fallback_icon;
@@ -415,10 +479,18 @@ $attributed_icons = $attributed_meta['icons'];
 $attributed_menus = isset($attributed_meta['menus']) && is_array($attributed_meta['menus']) ? $attributed_meta['menus'] : [];
 $attributed_rubriques = isset($attributed_meta['rubriques']) && is_array($attributed_meta['rubriques']) ? $attributed_meta['rubriques'] : [];
 $attributed_lookup = array_flip($attributed_icons);
-$category_icons = array_values(array_filter($icons_without_fallback, static function (string $icon) use ($attributed_lookup): bool {
+$category_icons = array_values(array_filter($active_icons, static function (string $icon) use ($fallback_icon, $attributed_lookup): bool {
+  if ($icon === $fallback_icon) {
+    return false;
+  }
+
   return !isset($attributed_lookup[$icon]);
 }));
 $grouped_icons = em_site_icons_group_by_category($category_icons);
+$selectable_icons = array_values(array_filter($active_icons, static function (string $icon) use ($fallback_icon): bool {
+  return $icon !== $fallback_icon;
+}));
+$grouped_selectable_icons = em_site_icons_group_by_category($selectable_icons);
 ?><!doctype html>
 <html lang="fr">
 <head>
@@ -455,6 +527,38 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
     p {
       margin: 0;
       color: var(--muted);
+    }
+    .page-intro {
+      margin-top: 4px;
+      display: block;
+    }
+    .page-intro p {
+      margin: 0;
+      display: inline;
+      line-height: 2;
+    }
+    .page-intro .em-site-savebar__btn,
+    .page-intro .button.button-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 8px;
+      vertical-align: baseline;
+      white-space: nowrap;
+      min-height: 30px;
+    }
+    .page-intro .em-site-savebar__btn:disabled,
+    .page-intro .em-site-savebar__btn[disabled],
+    .page-intro .button.button-primary:disabled,
+    .page-intro .button.button-primary[disabled] {
+      border-color: #a87a7a !important;
+      background: linear-gradient(180deg, #d6a4a4 0%, #a87a7a 100%) !important;
+      color: #fff !important;
+      opacity: 1 !important;
+      text-shadow: none !important;
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset, 0 2px 8px rgba(168, 122, 122, 0.16) !important;
+      font-weight: 700;
+      cursor: not-allowed;
     }
     .meta {
       margin-top: 10px;
@@ -504,9 +608,9 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       color: #fff;
     }
     .toolbar .submit:disabled {
-      border-color: #c4c7ce;
-      background: #e5e7eb;
-      color: #6b7280;
+      border-color: #9ca3af;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+      color: #475569;
       cursor: not-allowed;
       opacity: 1;
     }
@@ -570,9 +674,6 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       border-color: #7f1d1d;
       box-shadow: 0 0 0 1px #7f1d1d;
     }
-    .item.is-fallback input[type="checkbox"] {
-      display: none;
-    }
     .item .dashicons {
       width: 24px;
       height: 24px;
@@ -586,18 +687,29 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       line-height: 1.35;
       word-break: break-word;
     }
-    .fallback-choice {
+    .item-visibility-status {
       margin-left: auto;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
       color: #334155;
       font-size: 11px;
       font-weight: 600;
       white-space: nowrap;
+      padding: 2px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      background: #f8fafc;
     }
-    .fallback-choice input {
-      margin: 0;
+    .item-visibility-status.is-visible {
+      color: #166534;
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+    .item-visibility-status.is-hidden {
+      color: #7f1d1d;
+      border-color: #fecaca;
+      background: #fef2f2;
     }
     .item-toggle-placeholder {
       width: 16px;
@@ -608,7 +720,7 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       background: #f3f4f6;
     }
     .em-site-icons-admin-head {
-      margin-bottom: 18px;
+      margin-bottom: 8px;
     }
     .em-site-icons-admin-head .em-site-site-preview-btn--top {
       display: none !important;
@@ -641,7 +753,7 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px #dcdcde;
     }
     .em-site-icons-admin .em-site-hub__breadcrumb {
-      margin: 0 0 14px;
+      margin: 0 0 6px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
@@ -660,7 +772,7 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       border: 1px solid #d8dbe0;
       border-radius: 10px;
       background: #fff;
-      overflow: hidden;
+      overflow: visible;
     }
     .category > summary {
       list-style: none;
@@ -686,6 +798,7 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
     .category .category-inner {
       padding: 10px;
       background: #fff;
+      overflow: visible;
     }
     .category > summary::after {
       content: '+';
@@ -696,6 +809,18 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
     .category[open] > summary::after {
       content: '−';
     }
+    .category[data-accordion-group="main"][open] {
+      border-color: #9a2a2a;
+      box-shadow: 0 0 0 1px #9a2a2a;
+    }
+    .category[data-accordion-group="main"][open] > summary {
+      background: #f7ecec;
+      color: #5d1212;
+    }
+    .category[data-accordion-group="main"] > summary > span:first-child {
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
     .em-site-icons-admin h1 {
       margin-top: 2px;
       margin-bottom: 8px;
@@ -703,21 +828,16 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
     .em-site-icons-admin p {
       margin-bottom: 8px;
     }
-    .fallback-fixed {
-      margin-top: 14px;
-      margin-bottom: 8px;
-    }
-    .fallback-fixed-title {
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #475569;
-      margin: 0 0 8px;
-    }
     .attributed-fixed {
-      margin-top: 12px;
-      margin-bottom: 8px;
+      margin-top: 0;
+      margin-bottom: 4px;
+      padding-top: 2px;
+    }
+    .attributed-fixed > .category {
+      margin-top: 8px;
+    }
+    .attributed-fixed > .category:first-child {
+      margin-top: 2px;
     }
     .attributed-fixed-title {
       font-size: 12px;
@@ -726,52 +846,6 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       letter-spacing: 0.06em;
       color: #475569;
       margin: 0;
-    }
-    .fallback-inline {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      align-items: center;
-      margin-top: 8px;
-    }
-    .fallback-inline .item {
-      margin-top: 0;
-    }
-    .fallback-help-inline {
-      grid-column: 2 / -1;
-      margin: 0;
-    }
-    @media (max-width: 1600px) {
-      .fallback-inline {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-      .fallback-help-inline {
-        grid-column: 2 / -1;
-      }
-    }
-    @media (max-width: 1280px) {
-      .fallback-inline {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      .fallback-help-inline {
-        grid-column: 2 / -1;
-      }
-    }
-    @media (max-width: 980px) {
-      .fallback-inline {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .fallback-help-inline {
-        grid-column: 1 / -1;
-      }
-    }
-    @media (max-width: 640px) {
-      .fallback-inline {
-        grid-template-columns: 1fr;
-      }
-      .fallback-help-inline {
-        grid-column: 1 / -1;
-      }
     }
     .attributed-subtitle {
       font-size: 11px;
@@ -782,9 +856,9 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       margin: 8px 0 0;
     }
     .other-icons-fixed {
-      margin-top: 18px;
-      padding-top: 10px;
-      border-top: 1px solid #d8dbe0;
+      margin-top: 0;
+      padding-top: 0;
+      border-top: 0;
     }
     .other-icons-title {
       font-size: 12px;
@@ -793,28 +867,6 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       letter-spacing: 0.06em;
       color: #475569;
       margin: 0 0 8px;
-    }
-    .fallback-help-card {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      min-height: 54px;
-      border: 1px solid #d0d5dd;
-      border-radius: 10px;
-      background: #f8fafc;
-      padding: 8px 10px;
-      color: #334155;
-      font-size: 13px;
-      line-height: 1.35;
-      box-sizing: border-box;
-    }
-    .fallback-help-card .dashicons {
-      width: 18px;
-      height: 18px;
-      font-size: 18px;
-      line-height: 18px;
-      color: #7f1d1d;
-      flex: 0 0 auto;
     }
     .item-associations {
       margin-left: auto;
@@ -838,6 +890,225 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       letter-spacing: 0.02em;
       white-space: nowrap;
     }
+    .item-editor {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .item-editor label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .item-editor select {
+      min-width: 210px;
+      max-width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      color: #1f2937;
+      font-size: 12px;
+      line-height: 1.3;
+      padding: 6px 8px;
+      height: 34px;
+    }
+    .item-editor select[data-icon-picker="1"] {
+      display: none;
+    }
+    .icon-picker {
+      position: relative;
+      width: min(100%, 280px);
+      min-width: 180px;
+    }
+    .icon-picker__trigger {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      background: #fff;
+      color: #1f2937;
+      font-size: 12px;
+      line-height: 1.2;
+      padding: 9px 34px 9px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      text-align: left;
+      box-sizing: border-box;
+    }
+    .icon-picker__trigger::after {
+      content: '▾';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 11px;
+      pointer-events: none;
+    }
+    .icon-picker.is-open .icon-picker__trigger {
+      border-color: #7f1d1d;
+      box-shadow: 0 0 0 1px #7f1d1d;
+    }
+    .icon-picker__menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      z-index: 30;
+      border: 2px solid #8b95a7;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+      max-height: 220px;
+      overflow: auto;
+      display: none;
+    }
+    .icon-picker.is-open .icon-picker__menu {
+      display: block;
+    }
+    .icon-picker__option {
+      width: 100%;
+      border: 0;
+      border-bottom: 1px solid #f1f5f9;
+      background: #fff;
+      color: #1f2937;
+      font-size: 12px;
+      line-height: 1.2;
+      padding: 9px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      text-align: left;
+      min-height: 38px;
+    }
+    .icon-picker__option:last-child {
+      border-bottom: 0;
+    }
+    .icon-picker__option:hover,
+    .icon-picker__option:focus {
+      background: #f8fafc;
+      outline: none;
+    }
+    .icon-picker__option.is-selected {
+      background: #eef2ff;
+      color: #1e1b4b;
+      font-weight: 700;
+    }
+    .icon-picker__icon {
+      color: var(--accent);
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+      line-height: 18px;
+      flex: 0 0 auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-picker__label {
+      display: inline-flex;
+      align-items: center;
+      line-height: 1.25;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .attributed-fixed .item.item-attributed {
+      display: grid;
+      grid-template-columns: 24px minmax(70px, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      cursor: default;
+      min-height: 72px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+    .icon-picker__group {
+      padding-bottom: 6px;
+    }
+    .icon-picker__group + .icon-picker__group {
+      border-top: 1px solid #dbe3ef;
+      margin-top: 4px;
+      padding-top: 8px;
+    }
+    .icon-picker__group:last-child {
+      padding-bottom: 0;
+    }
+    .icon-picker__group-title {
+      display: block;
+      padding: 8px 10px 6px;
+      margin: 0;
+      color: #64748b;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .attributed-fixed .item.item-attributed .name {
+      white-space: nowrap;
+      word-break: normal;
+      overflow-wrap: normal;
+      min-width: 80px;
+    }
+    .attributed-fixed .item.item-attributed .item-associations {
+      margin-left: 0;
+      justify-content: flex-end;
+    }
+    .attributed-fixed .item.item-attributed .item-editor {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      margin-left: 0;
+      width: auto;
+      justify-content: flex-start;
+      margin-top: 2px;
+      align-items: center;
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+    .attributed-fixed .item.item-attributed .item-editor label {
+      display: inline-flex;
+      align-items: center;
+      margin: 0;
+      font-size: 10px;
+      font-weight: 700;
+      color: #334155;
+      line-height: 1.2;
+      white-space: nowrap;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+    .attributed-fixed .item.item-attributed .item-editor select {
+      min-width: 140px;
+      width: min(100%, 180px);
+    }
+    .attributed-fixed .item.item-attributed .item-editor .icon-picker {
+      width: min(100%, 180px);
+      min-width: 140px;
+    }
+    @media (max-width: 980px) {
+      .attributed-fixed .item.item-attributed {
+        grid-template-columns: 24px 1fr;
+      }
+      .attributed-fixed .item.item-attributed .item-associations {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-content: flex-start;
+      }
+      .attributed-fixed .item.item-attributed .item-editor {
+        grid-column: 1 / -1;
+        grid-row: 3;
+        flex-wrap: nowrap;
+      }
+    }
   </style>
 </head>
 <body>
@@ -848,65 +1119,32 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
         $breadcrumb = function_exists('em_site_admin_hub_breadcrumb_crumb')
           ? [em_site_admin_hub_breadcrumb_crumb(__('Gestion des icônes', 'em-site'))]
           : null;
-        em_site_admin_hub_render_sommaire_header('', 'dashicons-screenoptions', false, false, null, $breadcrumb, true);
+        em_site_admin_hub_render_sommaire_header('', 'dashicons-image-filter', false, false, null, $breadcrumb, true);
         ?>
       </div>
     <?php endif; ?>
 
-    <p>Active ou désactive les icônes utilisées dans le menu déroulant du back-office.</p>
+    <div class="page-intro">
+      <p>Ici, tu gères toutes les icônes utilisées dans le back-office.
+        <button class="button button-primary em-site-savebar__btn" id="save-list" type="submit" form="em-site-icons-form" disabled>Enregsitrer</button>
+      </p>
+    </div>
 
     <?php if ($notice !== ''): ?>
       <div class="notice <?php echo $notice_type === 'error' ? 'error' : 'ok'; ?>"><?php echo htmlspecialchars($notice, ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>
 
-    <form method="post" action="">
+    <form id="em-site-icons-form" method="post" action="">
       <input type="hidden" name="em_site_icons_token" value="<?php echo htmlspecialchars($token, ENT_QUOTES, 'UTF-8'); ?>">
 
-      <div class="toolbar">
-        <button type="button" id="select-all">Tout sélectionner</button>
-        <button type="button" id="select-none">Tout désélectionner (sauf fallback)</button>
-        <button class="submit" id="save-list" type="submit" disabled>Enregsitrer</button>
-      </div>
-
-      <?php $fallback_label = (string) preg_replace('/^dashicons-/', '', $fallback_icon); ?>
-      <section class="fallback-fixed" aria-label="Icône fallback">
-        <p class="fallback-fixed-title">Icône fallback active</p>
-        <div class="fallback-inline">
-          <label class="item is-active is-fallback" data-icon-item>
-            <input
-              type="checkbox"
-              name="active_icons[]"
-              value="<?php echo htmlspecialchars($fallback_icon, ENT_QUOTES, 'UTF-8'); ?>"
-              checked
-              disabled
-              data-locked="1"
-            >
-            <span class="dashicons <?php echo htmlspecialchars($fallback_icon, ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></span>
-            <span class="name">
-              <?php echo htmlspecialchars($fallback_label, ENT_QUOTES, 'UTF-8'); ?>
-            </span>
-            <span class="fallback-choice">
-              <input
-                type="radio"
-                name="fallback_icon"
-                value="<?php echo htmlspecialchars($fallback_icon, ENT_QUOTES, 'UTF-8'); ?>"
-                checked
-                data-fallback-radio="1"
-              >
-              Fallback
-            </span>
-          </label>
-          <div class="fallback-help-inline fallback-help-card">
-            <span class="dashicons dashicons-info-outline" aria-hidden="true"></span>
-            <span>Icône 'Fallback' : elle sera utilisée si tu masques une icône déjà attribuée sur le site.</span>
-          </div>
-        </div>
-      </section>
-
       <?php if ($attributed_icons !== []): ?>
-        <section class="attributed-fixed" aria-label="Icônes attribuées">
-          <p class="attributed-fixed-title">Icônes attribuées</p>
-          <details class="category">
+        <details class="category" data-accordion-group="main" aria-label="Icônes attribuées" open>
+          <summary>
+            <span>Icônes attribuées</span>
+            <span class="category-count"><?php echo (int) count($attributed_icons); ?> icônes</span>
+          </summary>
+          <div class="category-inner attributed-fixed">
+          <details class="category" data-accordion-group="attributed-sub">
             <summary>
               <span>Menus</span>
               <span class="category-count"><?php echo (int) count($attributed_menus); ?> icônes</span>
@@ -920,13 +1158,37 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
                   $checked = isset($active_map[$icon]);
                   $label = (string) preg_replace('/^dashicons-/', '', $icon);
                   $assoc = (string) ($entry['label'] ?? '');
+                  $entry_key = sanitize_key((string) ($entry['key'] ?? ''));
+                  $current_icon = $entry_key !== '' && isset($site_overrides[$entry_key]) ? (string) $site_overrides[$entry_key] : $icon;
+                  $current_icon = isset($active_map[$current_icon]) ? $current_icon : $icon;
                   ?>
-                  <label class="item<?php echo $checked ? ' is-active' : ''; ?>" data-icon-item>
-                    <span class="item-toggle-placeholder" aria-hidden="true"></span>
+                  <label class="item item-attributed<?php echo $checked ? ' is-active' : ''; ?>" data-icon-item>
                     <span class="dashicons <?php echo htmlspecialchars($icon, ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></span>
                     <span class="name"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></span>
                     <?php if ($assoc !== ''): ?>
                       <span class="item-associations"><span class="assoc"><?php echo htmlspecialchars($assoc, ENT_QUOTES, 'UTF-8'); ?></span></span>
+                    <?php endif; ?>
+                    <?php if ($entry_key !== ''): ?>
+                      <span class="item-editor">
+                        <label for="menu-icon-<?php echo htmlspecialchars($entry_key, ENT_QUOTES, 'UTF-8'); ?>">Changer l’icône</label>
+                        <select
+                          id="menu-icon-<?php echo htmlspecialchars($entry_key, ENT_QUOTES, 'UTF-8'); ?>"
+                          name="site_icon_overrides[<?php echo htmlspecialchars($entry_key, ENT_QUOTES, 'UTF-8'); ?>]"
+                          data-icon-picker="1"
+                        >
+                          <?php foreach ($grouped_selectable_icons as $choice_category_label => $choice_icons): ?>
+                            <?php foreach ($choice_icons as $choice_icon): ?>
+                              <option
+                                value="<?php echo htmlspecialchars($choice_icon, ENT_QUOTES, 'UTF-8'); ?>"
+                                data-category="<?php echo htmlspecialchars((string) $choice_category_label, ENT_QUOTES, 'UTF-8'); ?>"
+                                <?php echo $choice_icon === $current_icon ? 'selected' : ''; ?>
+                              >
+                                <?php echo htmlspecialchars((string) preg_replace('/^dashicons-/', '', $choice_icon), ENT_QUOTES, 'UTF-8'); ?>
+                              </option>
+                            <?php endforeach; ?>
+                          <?php endforeach; ?>
+                        </select>
+                      </span>
                     <?php endif; ?>
                   </label>
                 <?php endforeach; ?>
@@ -934,7 +1196,7 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
             </div>
           </details>
 
-          <details class="category">
+          <details class="category" data-accordion-group="attributed-sub">
             <summary>
               <span>Rubriques</span>
               <span class="category-count"><?php echo (int) count($attributed_rubriques); ?> icônes</span>
@@ -948,59 +1210,107 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
                   $checked = isset($active_map[$icon]);
                   $label = (string) preg_replace('/^dashicons-/', '', $icon);
                   $assoc = (string) ($entry['label'] ?? '');
+                  $entry_key = sanitize_key((string) ($entry['key'] ?? ''));
+                  $entry_scope = (string) ($entry['scope'] ?? 'rubrique');
+                  if ($entry_scope === 'site') {
+                    $current_icon = $entry_key !== '' && isset($site_overrides[$entry_key]) ? (string) $site_overrides[$entry_key] : $icon;
+                  } else {
+                    $current_icon = $entry_key !== '' && isset($rubrique_overrides[$entry_key]) ? (string) $rubrique_overrides[$entry_key] : $icon;
+                  }
+                  $current_icon = isset($active_map[$current_icon]) ? $current_icon : $icon;
+                  $field_name = $entry_scope === 'site' ? 'site_icon_overrides' : 'rubrique_icon_overrides';
                   ?>
-                  <label class="item<?php echo $checked ? ' is-active' : ''; ?>" data-icon-item>
-                    <span class="item-toggle-placeholder" aria-hidden="true"></span>
+                  <label class="item item-attributed<?php echo $checked ? ' is-active' : ''; ?>" data-icon-item>
                     <span class="dashicons <?php echo htmlspecialchars($icon, ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></span>
                     <span class="name"><?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?></span>
                     <?php if ($assoc !== ''): ?>
                       <span class="item-associations"><span class="assoc"><?php echo htmlspecialchars($assoc, ENT_QUOTES, 'UTF-8'); ?></span></span>
+                    <?php endif; ?>
+                    <?php if ($entry_key !== ''): ?>
+                      <span class="item-editor">
+                        <label for="rubrique-icon-<?php echo htmlspecialchars($entry_scope . '-' . $entry_key, ENT_QUOTES, 'UTF-8'); ?>">Changer l’icône</label>
+                        <select
+                          id="rubrique-icon-<?php echo htmlspecialchars($entry_scope . '-' . $entry_key, ENT_QUOTES, 'UTF-8'); ?>"
+                          name="<?php echo htmlspecialchars($field_name, ENT_QUOTES, 'UTF-8'); ?>[<?php echo htmlspecialchars($entry_key, ENT_QUOTES, 'UTF-8'); ?>]"
+                          data-icon-picker="1"
+                        >
+                          <?php foreach ($grouped_selectable_icons as $choice_category_label => $choice_icons): ?>
+                            <?php foreach ($choice_icons as $choice_icon): ?>
+                              <option
+                                value="<?php echo htmlspecialchars($choice_icon, ENT_QUOTES, 'UTF-8'); ?>"
+                                data-category="<?php echo htmlspecialchars((string) $choice_category_label, ENT_QUOTES, 'UTF-8'); ?>"
+                                <?php echo $choice_icon === $current_icon ? 'selected' : ''; ?>
+                              >
+                                <?php echo htmlspecialchars((string) preg_replace('/^dashicons-/', '', $choice_icon), ENT_QUOTES, 'UTF-8'); ?>
+                              </option>
+                            <?php endforeach; ?>
+                          <?php endforeach; ?>
+                        </select>
+                      </span>
                     <?php endif; ?>
                   </label>
                 <?php endforeach; ?>
               </section>
             </div>
           </details>
-        </section>
+          </div>
+        </details>
       <?php endif; ?>
 
-      <section class="other-icons-fixed" aria-label="Autres icônes">
-        <p class="other-icons-title">Autres icônes</p>
+      <?php
+      $available_count = 0;
+      foreach ($grouped_icons as $icons_in_category) {
+        if (!is_array($icons_in_category)) {
+          continue;
+        }
+
+        foreach ($icons_in_category as $icon) {
+          if (isset($active_map[$icon])) {
+            $available_count++;
+          }
+        }
+      }
+      ?>
+      <details class="category" data-accordion-group="main" aria-label="Icônes disponibles">
+        <summary>
+          <span>Icônes disponibles</span>
+          <span class="category-count"><?php echo $available_count; ?> icônes</span>
+        </summary>
+        <div class="category-inner other-icons-fixed">
         <?php foreach ($grouped_icons as $category_label => $category_icons): ?>
-          <details class="category">
+          <?php
+          $category_visible_count = 0;
+          foreach ($category_icons as $icon) {
+            if (isset($active_map[$icon])) {
+              $category_visible_count++;
+            }
+          }
+          ?>
+          <details class="category" data-accordion-group="available-sub">
             <summary>
               <span><?php echo htmlspecialchars((string) $category_label, ENT_QUOTES, 'UTF-8'); ?></span>
-              <span class="category-count"><?php echo (int) count($category_icons); ?> icônes</span>
+              <span class="category-count"><?php echo $category_visible_count; ?> icônes</span>
             </summary>
             <div class="category-inner">
               <section class="grid" aria-live="polite">
                 <?php foreach ($category_icons as $icon): ?>
                   <?php
                   $checked = isset($active_map[$icon]);
-                  $locked = ($icon === $fallback_icon);
                   $label = (string) preg_replace('/^dashicons-/', '', $icon);
                   ?>
-                  <label class="item<?php echo $checked ? ' is-active' : ''; ?><?php echo $locked ? ' is-fallback' : ''; ?>" data-icon-item>
+                  <label class="item<?php echo $checked ? ' is-active' : ''; ?>" data-icon-item>
                     <input
                       type="checkbox"
                       name="active_icons[]"
                       value="<?php echo htmlspecialchars($icon, ENT_QUOTES, 'UTF-8'); ?>"
                       <?php echo $checked ? 'checked' : ''; ?>
-                      <?php echo $locked ? 'disabled data-locked="1"' : ''; ?>
                     >
                     <span class="dashicons <?php echo htmlspecialchars($icon, ENT_QUOTES, 'UTF-8'); ?>" aria-hidden="true"></span>
                     <span class="name">
                       <?php echo htmlspecialchars($label, ENT_QUOTES, 'UTF-8'); ?>
                     </span>
-                    <span class="fallback-choice">
-                      <input
-                        type="radio"
-                        name="fallback_icon"
-                        value="<?php echo htmlspecialchars($icon, ENT_QUOTES, 'UTF-8'); ?>"
-                        <?php echo $locked ? 'checked' : ''; ?>
-                        data-fallback-radio="1"
-                      >
-                      Fallback
+                    <span class="item-visibility-status <?php echo $checked ? 'is-visible' : 'is-hidden'; ?>" data-visibility-status>
+                      <?php echo $checked ? 'Affichée' : 'Masquée'; ?>
                     </span>
                   </label>
                 <?php endforeach; ?>
@@ -1008,28 +1318,33 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
             </div>
           </details>
         <?php endforeach; ?>
-      </section>
+        </div>
+      </details>
     </form>
   </main>
 
   <script>
     (function () {
-      var form = document.querySelector('form[method="post"]');
+      var form = document.getElementById('em-site-icons-form') || document.querySelector('form[method="post"]');
       var items = Array.prototype.slice.call(document.querySelectorAll('[data-icon-item]'));
-      var selectAll = document.getElementById('select-all');
-      var selectNone = document.getElementById('select-none');
       var saveButton = document.getElementById('save-list');
+      var iconPickers = Array.prototype.slice.call(document.querySelectorAll('[data-icon-picker="1"]'));
+      var accordionPanels = Array.prototype.slice.call(document.querySelectorAll('details.category[data-accordion-group]'));
       var initialState = '';
 
       function buildState() {
-        if (!form) { return ''; }
+        if (!form) {
+          return '';
+        }
 
         var formData = new FormData(form);
         var pairs = [];
 
         formData.forEach(function (value, key) {
-          // Le nonce est stable sur la page mais inutile pour la détection d'édition.
-          if (key === 'em_site_icons_token') { return; }
+          if (key === 'em_site_icons_token') {
+            return;
+          }
+
           pairs.push(String(key) + '=' + String(value));
         });
 
@@ -1038,63 +1353,202 @@ $grouped_icons = em_site_icons_group_by_category($category_icons);
       }
 
       function syncDirty() {
-        if (!saveButton) { return; }
+        if (!saveButton) {
+          return;
+        }
+
         saveButton.disabled = (buildState() === initialState);
       }
 
       function syncState() {
         items.forEach(function (item) {
           var checkbox = item.querySelector('input[type="checkbox"]');
-          var radio = item.querySelector('[data-fallback-radio="1"]');
-          if (!checkbox) { return; }
 
-          var isFallback = !!(radio && radio.checked);
-          checkbox.disabled = isFallback;
-          item.classList.toggle('is-fallback', isFallback);
-
-          if (isFallback && !checkbox.checked) {
-            checkbox.checked = true;
+          if (!checkbox) {
+            return;
           }
 
           item.classList.toggle('is-active', !!checkbox.checked);
+
+          var status = item.querySelector('[data-visibility-status]');
+          if (status) {
+            status.textContent = checkbox.checked ? 'Affichée' : 'Masquée';
+            status.classList.toggle('is-visible', !!checkbox.checked);
+            status.classList.toggle('is-hidden', !checkbox.checked);
+          }
         });
 
         syncDirty();
       }
 
+      function buildIconPicker(select) {
+        if (!select || select.dataset.iconPickerReady === '1') {
+          return;
+        }
+
+        var options = Array.prototype.slice.call(select.options || []);
+        if (options.length === 0) {
+          return;
+        }
+
+        var wrapper = document.createElement('div');
+        wrapper.className = 'icon-picker';
+
+        var trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'icon-picker__trigger';
+
+        var menu = document.createElement('div');
+        menu.className = 'icon-picker__menu';
+
+        function sanitizeIconClass(value) {
+          var iconValue = String(value || '').trim();
+          if (!/^dashicons-[a-z0-9-]+$/.test(iconValue)) {
+            return 'dashicons-warning';
+          }
+          return iconValue;
+        }
+
+        function getSelectedOption() {
+          var selectedIndex = select.selectedIndex;
+          if (selectedIndex < 0 || selectedIndex >= options.length) {
+            return options[0];
+          }
+          return options[selectedIndex];
+        }
+
+        function renderTrigger() {
+          var current = getSelectedOption();
+          var iconClass = sanitizeIconClass(current.value);
+          var label = String(current.text || '').trim();
+
+          trigger.innerHTML = '';
+
+          var icon = document.createElement('span');
+          icon.className = 'dashicons icon-picker__icon ' + iconClass;
+
+          var text = document.createElement('span');
+          text.className = 'icon-picker__label';
+          text.textContent = label;
+
+          trigger.appendChild(icon);
+          trigger.appendChild(text);
+        }
+
+        function renderMenu() {
+          menu.innerHTML = '';
+
+          var grouped = {};
+          var orderedCategories = [];
+
+          options.forEach(function (opt) {
+            var category = String(opt.getAttribute('data-category') || 'Divers').trim();
+            if (!grouped[category]) {
+              grouped[category] = [];
+              orderedCategories.push(category);
+            }
+            grouped[category].push(opt);
+          });
+
+          orderedCategories.forEach(function (category) {
+            var group = document.createElement('div');
+            group.className = 'icon-picker__group';
+
+            var title = document.createElement('p');
+            title.className = 'icon-picker__group-title';
+            title.textContent = category;
+            group.appendChild(title);
+
+            grouped[category].forEach(function (opt) {
+              var iconClass = sanitizeIconClass(opt.value);
+              var label = String(opt.text || '').trim();
+
+              var optionButton = document.createElement('button');
+              optionButton.type = 'button';
+              optionButton.className = 'icon-picker__option' + (opt.selected ? ' is-selected' : '');
+
+              var icon = document.createElement('span');
+              icon.className = 'dashicons icon-picker__icon ' + iconClass;
+
+              var text = document.createElement('span');
+              text.className = 'icon-picker__label';
+              text.textContent = label;
+
+              optionButton.appendChild(icon);
+              optionButton.appendChild(text);
+
+              optionButton.addEventListener('click', function () {
+                select.value = opt.value;
+                options.forEach(function (candidate) {
+                  candidate.selected = (candidate.value === opt.value);
+                });
+                renderTrigger();
+                renderMenu();
+                wrapper.classList.remove('is-open');
+                syncDirty();
+              });
+
+              group.appendChild(optionButton);
+            });
+
+            menu.appendChild(group);
+          });
+        }
+
+        trigger.addEventListener('click', function () {
+          wrapper.classList.toggle('is-open');
+        });
+
+        document.addEventListener('click', function (event) {
+          if (!wrapper.contains(event.target)) {
+            wrapper.classList.remove('is-open');
+          }
+        });
+
+        renderTrigger();
+        renderMenu();
+
+        wrapper.appendChild(trigger);
+        wrapper.appendChild(menu);
+
+        select.insertAdjacentElement('afterend', wrapper);
+        select.dataset.iconPickerReady = '1';
+      }
+
       items.forEach(function (item) {
         var checkbox = item.querySelector('input[type="checkbox"]');
-        if (!checkbox) { return; }
-
-        checkbox.addEventListener('change', syncState);
-
-        var radio = item.querySelector('[data-fallback-radio="1"]');
-        if (radio) {
-          radio.addEventListener('change', syncState);
+        if (checkbox) {
+          checkbox.addEventListener('change', syncState);
         }
       });
 
-      if (selectAll) {
-        selectAll.addEventListener('click', function () {
-          items.forEach(function (item) {
-            var checkbox = item.querySelector('input[type="checkbox"]');
-            if (!checkbox || checkbox.disabled) { return; }
-            checkbox.checked = true;
-          });
-          syncState();
-        });
-      }
+      iconPickers.forEach(function (select) {
+        buildIconPicker(select);
+        select.addEventListener('change', syncDirty);
+      });
 
-      if (selectNone) {
-        selectNone.addEventListener('click', function () {
-          items.forEach(function (item) {
-            var checkbox = item.querySelector('input[type="checkbox"]');
-            if (!checkbox || checkbox.disabled) { return; }
-            checkbox.checked = false;
+      accordionPanels.forEach(function (panel) {
+        panel.addEventListener('toggle', function () {
+          if (!panel.open) {
+            return;
+          }
+
+          var group = panel.getAttribute('data-accordion-group') || '';
+          if (!group) {
+            return;
+          }
+
+          accordionPanels.forEach(function (other) {
+            if (other === panel) {
+              return;
+            }
+
+            if ((other.getAttribute('data-accordion-group') || '') === group) {
+              other.open = false;
+            }
           });
-          syncState();
         });
-      }
+      });
 
       syncState();
       initialState = buildState();

@@ -41,14 +41,8 @@ function em_site_admin_apply_menu_layout(): void
     }
 
     $relocate = em_site_admin_menu_layout_ensure_medias_entries($relocate);
-    $relocate = em_site_admin_menu_layout_ensure_catalog_entries($relocate);
-    // Demande UI: masquer l'entree parent « CATALOGUES » dans le menu gauche,
-    // sans impacter les autres blocs.
-    if (function_exists('em_site_catalog_parent_menu_slug')) {
-        unset($relocate[em_site_catalog_parent_menu_slug()]);
-        // Retire aussi uniquement le filet du bloc catalogues.
-        unset($relocate['separator-em-site-after-catalog']);
-    }
+    // Purge legacy: le bloc Catalogues n'est plus injecté dans la sidebar.
+    unset($relocate['separator-em-site-after-catalog']);
     $relocate = em_site_admin_menu_layout_ensure_template_entries($relocate);
     $relocate = em_site_admin_menu_layout_ensure_rubrique_entries($relocate);
     $relocate = em_site_admin_menu_layout_ensure_settings_entries($relocate);
