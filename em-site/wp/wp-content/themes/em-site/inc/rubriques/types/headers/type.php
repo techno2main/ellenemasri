@@ -24,7 +24,7 @@ function em_site_rubrique_type_headers(array $types): array
         'label'        => __('HEADER', 'em-site'),
         'label_plural' => __('HEADER', 'em-site'),
         'noun'         => __('Header', 'em-site'),
-        'icon'         => 'dashicons-screenoptions',
+        'icon'         => 'dashicons-columns',
         'layout'       => ['columns' => 1, 'align' => [1 => 'left']],
         // Le contenu propre de l\'assemblage est piloté par le panneau HEADER.
         'starter'      => em_site_rubrique_default_appearance_fields(),

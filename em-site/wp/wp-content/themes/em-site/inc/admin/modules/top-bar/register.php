@@ -14,13 +14,17 @@ if (!defined('ABSPATH')) {
  */
 function em_site_top_bar_add_admin_page(): void
 {
+    $top_bar_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('top-bar', 'dashicons-align-wide')
+        : 'dashicons-align-wide';
+
     add_menu_page(
         __('TOP-BAR', 'em-site'),
         __('TOP-BAR', 'em-site'),
         'manage_options',
         em_site_top_bar_page_slug(),
         'em_site_top_bar_render_admin_page',
-        'dashicons-align-wide',
+        $top_bar_icon,
         em_site_admin_menu_position_top_bar()
     );
 }

@@ -39,8 +39,12 @@ function em_site_overview_menu(): void
     // Le slug « …&type=<slug> » ouvre la carte correspondante de l'aperçu.
     // Le libellé porte une icône Dashicon (rendu HTML accepté par le menu).
     foreach (em_site_ordered_types() as $slug => $type) {
-        $label = (string) ($type['label_plural'] ?? $type['label']);
-        $icon = (string) ($type['icon'] ?? 'dashicons-screenoptions');
+        $label = function_exists('em_site_overview_type_label')
+            ? em_site_overview_type_label((string) $slug, $type)
+            : (string) ($type['label_plural'] ?? $type['label']);
+        $icon = function_exists('em_site_overview_type_icon')
+            ? em_site_overview_type_icon((string) $slug, $type)
+            : (string) ($type['icon'] ?? 'dashicons-screenoptions');
         $menu_title = '<span class="dashicons ' . esc_attr($icon) . ' em-site-rubrique-submenu__icon" aria-hidden="true"></span>'
             . '<span class="em-site-rubrique-submenu__text">' . esc_html($label) . '</span>';
 

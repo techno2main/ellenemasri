@@ -74,6 +74,8 @@ function em_site_admin_render_templates_registered_table(
 
 ): void {
 
+    $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
+
     ?>
 
     <section class="em-site-catalog-sommaire__section" aria-labelledby="<?php echo esc_attr($registered_title_id); ?>">
@@ -82,7 +84,7 @@ function em_site_admin_render_templates_registered_table(
 
             <div id="<?php echo esc_attr($registered_title_id); ?>" class="em-site-catalog-sommaire__section-title">
 
-                <?php em_site_admin_hub_render_card_title(__('TEMPLATES ENREGISTRÉS', 'em-site'), 'dashicons-layout'); ?>
+                <?php em_site_admin_hub_render_card_title(__('TEMPLATES ENREGISTRÉS', 'em-site'), $template_icon); ?>
 
             </div>
 

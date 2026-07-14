@@ -390,6 +390,10 @@ function em_site_admin_menu_accordion_body_class($classes)
         $classes .= ' em-site-accordion-medias-open';
     }
 
+    if ($page_slug === em_site_admin_dashicons_manager_page_slug()) {
+        $classes .= ' em-site-accordion-settings-open';
+    }
+
     if ($pagenow !== 'admin.php') {
         return $classes;
     }

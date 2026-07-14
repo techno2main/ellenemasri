@@ -11,13 +11,17 @@ if (!defined('ABSPATH')) {
 
 function em_site_release_register_admin(): void
 {
+    $release_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('release', 'dashicons-album')
+        : 'dashicons-album';
+
     add_menu_page(
         __('RELEASE', 'em-site'),
         __('RELEASE', 'em-site'),
         'manage_options',
         em_site_release_page_slug(),
         'em_site_release_render_admin_page',
-        'dashicons-album',
+        $release_icon,
         em_site_admin_menu_position_for_site_module('release')
     );
 }

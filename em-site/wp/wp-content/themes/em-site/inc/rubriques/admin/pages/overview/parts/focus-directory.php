@@ -90,7 +90,10 @@ if (!function_exists('em_site_overview_item_label_fallback')) {
 
 function em_site_overview_render_focus_back(string $active_slug, array $type): void
 {
-    $label = em_site_overview_display_text((string) ($type['label_plural'] ?? $type['label'] ?? $active_slug));
+    $raw_label = function_exists('em_site_overview_type_label')
+        ? em_site_overview_type_label((string) $active_slug, $type)
+        : (string) ($type['label_plural'] ?? $type['label'] ?? $active_slug);
+    $label = em_site_overview_display_text($raw_label);
     ?>
     <div class="em-site-overview__focus-bar" data-overview-focusbar>
         <a href="<?php echo esc_url(em_site_overview_summary_url()); ?>" class="em-site-overview__focus-back" data-overview-back>
@@ -130,8 +133,13 @@ function em_site_overview_render_directory(array $types, string $active_slug): v
                 $slug = (string) $slug;
                 $items = em_site_get_items($slug);
                 $count = count($items);
-                $label = em_site_overview_display_text((string) ($type['label_plural'] ?? $type['label'] ?? $slug));
-                $icon = (string) ($type['icon'] ?? 'dashicons-screenoptions');
+                $raw_label = function_exists('em_site_overview_type_label')
+                    ? em_site_overview_type_label((string) $slug, $type)
+                    : (string) ($type['label_plural'] ?? $type['label'] ?? $slug);
+                $label = em_site_overview_display_text($raw_label);
+                $icon = function_exists('em_site_overview_type_icon')
+                    ? em_site_overview_type_icon((string) $slug, $type)
+                    : (string) ($type['icon'] ?? 'dashicons-screenoptions');
                 $is_active = ($active_slug === $slug);
                 ?>
                 <a

@@ -14,13 +14,17 @@ if (!defined('ABSPATH')) {
  */
 function em_site_admin_rubriques_add_admin_page(): void
 {
+    $rubriques_icon = function_exists('em_site_site_icon')
+        ? em_site_site_icon('rubriques', 'dashicons-admin-home')
+        : 'dashicons-admin-home';
+
     add_menu_page(
         __('Rubriques', 'em-site'),
         __('RUBRIQUES', 'em-site'),
         'manage_options',
         em_site_admin_rubriques_page_slug(),
         'em_site_admin_render_rubriques_page',
-        'dashicons-admin-home',
+        $rubriques_icon,
         em_site_admin_menu_section_label_position()
     );
 }

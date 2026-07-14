@@ -11,13 +11,17 @@ if (!defined('ABSPATH')) {
 
 function em_site_video_register_admin(): void
 {
+    $video_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('video', 'dashicons-video-alt3')
+        : 'dashicons-video-alt3';
+
     add_menu_page(
         __('VIDEO', 'em-site'),
         __('VIDEO', 'em-site'),
         'manage_options',
         em_site_video_page_slug(),
         'em_site_video_render_admin_page',
-        'dashicons-video-alt3',
+        $video_icon,
         em_site_admin_menu_position_for_site_module('video')
     );
 }

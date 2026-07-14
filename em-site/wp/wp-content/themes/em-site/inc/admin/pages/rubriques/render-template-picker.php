@@ -102,10 +102,11 @@ function em_site_admin_render_rubriques_template_picker(): void
     $create_url = function_exists('em_site_admin_template_create_admin_url')
         ? em_site_admin_template_create_admin_url()
         : '';
+    $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
     ?>
     <div class="wrap em-site-admin-module em-site-hub-sommaire em-site-templates-sommaire em-site-templates-admin" data-active-slug="<?php echo esc_attr($active_slug); ?>">
         <?php
-        em_site_admin_hub_render_sommaire_header('', 'dashicons-layout', false, true, null, null, true);
+        em_site_admin_hub_render_sommaire_header('', $template_icon, false, true, null, null, true);
         em_site_admin_template_render_nav_tabs();
         ?>
 
@@ -137,7 +138,7 @@ function em_site_admin_render_rubriques_template_picker(): void
                         >
                             <header class="em-site-hub__card-header">
                                 <div class="em-site-hub__card-heading">
-                                    <?php em_site_admin_hub_render_card_title($card_title, 'dashicons-layout', null, $color); ?>
+                                    <?php em_site_admin_hub_render_card_title($card_title, $template_icon, null, $color); ?>
                                 </div>
                                 <div class="em-site-hub__card-header-actions">
                                     <a

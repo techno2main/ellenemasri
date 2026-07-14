@@ -3,6 +3,8 @@ function em_site_admin_menu_layout_ensure_medias_entries(array $relocate): array
 {
     $capability = em_site_admin_menu_capability();
     $parent_slug = em_site_admin_media_parent_menu_slug();
+    $medias_icon = function_exists('em_site_site_icon') ? em_site_site_icon('medias', 'dashicons-admin-media') : 'dashicons-admin-media';
+    $media_add_icon = function_exists('em_site_site_icon') ? em_site_site_icon('media-add', 'dashicons-plus-alt') : 'dashicons-plus-alt';
 
     if (!isset($relocate[$parent_slug]) || !is_array($relocate[$parent_slug])) {
         $relocate[$parent_slug] = [
@@ -12,7 +14,7 @@ function em_site_admin_menu_layout_ensure_medias_entries(array $relocate): array
             __('MEDIAS', 'em-site'),
             'menu-top em-site-menu-accordion-parent em-site-menu-accordion-medias-parent',
             $parent_slug,
-            'dashicons-admin-media',
+            $medias_icon,
         ];
     } else {
         $relocate[$parent_slug][1] = $capability;
@@ -36,7 +38,7 @@ function em_site_admin_menu_layout_ensure_medias_entries(array $relocate): array
         __('Librairie', 'em-site'),
         'menu-top em-site-menu-accordion-child em-site-menu-accordion-medias-child',
         'upload',
-        'dashicons-admin-media',
+        $medias_icon,
     ];
 
     $relocate['media-new.php'] = [
@@ -46,7 +48,7 @@ function em_site_admin_menu_layout_ensure_medias_entries(array $relocate): array
         __('Ajouter', 'em-site'),
         'menu-top em-site-menu-accordion-child em-site-menu-accordion-medias-child',
         'media-new',
-        'dashicons-plus-alt',
+        $media_add_icon,
     ];
 
     return $relocate;
@@ -93,6 +95,12 @@ function em_site_admin_menu_layout_ensure_catalog_entries(array $relocate): arra
 
     $capability = em_site_admin_menu_capability();
     $parent_slug = em_site_catalog_parent_menu_slug();
+    $catalogues_icon = function_exists('em_site_site_icon')
+        ? em_site_site_icon('catalogues', 'dashicons-index-card')
+        : 'dashicons-index-card';
+    $catalog_entry_icon = function_exists('em_site_site_icon')
+        ? em_site_site_icon('generic', 'dashicons-marker')
+        : 'dashicons-marker';
 
     $relocate[$parent_slug] = [
         __('CATALOGUES', 'em-site'),
@@ -101,7 +109,7 @@ function em_site_admin_menu_layout_ensure_catalog_entries(array $relocate): arra
         __('Catalogues', 'em-site'),
         'menu-top em-site-menu-accordion-parent em-site-menu-accordion-catalog-parent',
         $parent_slug,
-        'dashicons-index-card',
+        $catalogues_icon,
     ];
 
     if (!function_exists('em_site_admin_catalog_menu_modules') || !function_exists('em_site_catalog_menu_definitions')) {
@@ -147,7 +155,7 @@ function em_site_admin_menu_layout_ensure_catalog_entries(array $relocate): arra
                     $entry_label,
                     'menu-top em-site-menu-accordion-child em-site-menu-accordion-catalog-child em-site-menu-accordion-catalog-entry-child em-site-menu-catalog-' . $entry_module . '-entry',
                     $entry_slug,
-                    'dashicons-marker',
+                    $catalog_entry_icon,
                 ];
             }
         }
@@ -171,6 +179,8 @@ function em_site_admin_menu_layout_ensure_template_entries(array $relocate): arr
     $capability = em_site_admin_menu_capability();
     $parent_slug = em_site_admin_template_parent_page_slug();
     $parent_label = __('TEMPLATE', 'em-site');
+    $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
+    $appearance_icon = function_exists('em_site_site_icon') ? em_site_site_icon('appearance', 'dashicons-admin-appearance') : 'dashicons-admin-appearance';
     $unique_mode = function_exists('em_site_template_unique_mode_enabled') && em_site_template_unique_mode_enabled();
     $editing_template_slug = function_exists('em_site_get_explicit_editing_template_slug')
         ? em_site_get_explicit_editing_template_slug()
@@ -183,7 +193,7 @@ function em_site_admin_menu_layout_ensure_template_entries(array $relocate): arr
         __('Template', 'em-site'),
         'menu-top em-site-menu-accordion-parent em-site-menu-accordion-templates-parent',
         $parent_slug,
-        'dashicons-layout',
+        $template_icon,
     ];
 
     if ($unique_mode) {
@@ -214,7 +224,7 @@ function em_site_admin_menu_layout_ensure_template_entries(array $relocate): arr
             $menu_label,
             $child_classes,
             $page_slug,
-            'dashicons-admin-appearance',
+            $appearance_icon,
         ];
     }
 

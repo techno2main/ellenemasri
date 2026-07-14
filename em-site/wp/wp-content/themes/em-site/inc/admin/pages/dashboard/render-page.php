@@ -22,10 +22,11 @@ function em_site_admin_render_dashboard_page(): void
     $active_slug = em_site_get_active_template_slug();
     $active_label = (string) ($registry[$active_slug]['label'] ?? $active_slug);
     $has_context = em_site_admin_has_template_context();
+    $dashboard_icon = function_exists('em_site_site_icon') ? em_site_site_icon('dashboard', 'dashicons-dashboard') : 'dashicons-dashboard';
     ?>
     <div class="wrap em-site-admin-module em-site-hub-sommaire em-site-dashboard">
         <?php
-        em_site_admin_hub_render_sommaire_header('', 'dashicons-dashboard', false, true, null, null, true);
+        em_site_admin_hub_render_sommaire_header('', $dashboard_icon, false, true, null, null, true);
         em_site_admin_dashboard_render_nav_tabs();
         ?>
 

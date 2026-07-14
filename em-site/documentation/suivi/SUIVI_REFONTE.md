@@ -28,6 +28,18 @@
 
 ## Journal d'avancement
 
+### 2026-07-14 14:10:33 (Paris)
+
+- Livraison du lot Gestion des icônes admin: ajout d'une page dédiée accessible depuis Paramètres et intégrée au menu accordéon.
+- Centralisation de la logique d'icônes/fallback dans un socle partagé (`inc/shared/icons/icons.php`) avec lecture dynamique de la whitelist active (`dashicons-list.txt`).
+- Fiabilisation du fallback global: fallback persistant, validé et imposé en première position dans la liste active.
+- Refonte UX de la page Gestion des icônes: sections repliables, séparation `Icônes attribuées` / `Autres icônes`, bloc fallback en tête non désactivable.
+- Durcissement du flux d'enregistrement: passage au nonce WordPress et suppression du jeton session custom.
+- Ajustement final de l'action de sauvegarde: bouton `Enregsitrer` activé uniquement en cas de modification détectée côté formulaire.
+- Ajustement d'ergonomie sur les icônes déjà attribuées: retrait des cases à cocher dans les cartes d'attribution.
+- Alignement du rendu admin sur le fallback partagé: remplacement des icônes hardcodées sur les zones actives (dashboard, modules, rubriques, menu admin) via helpers centralisés.
+- Contrôle technique effectué: `php -l` sur le manager d'icônes sans erreur de syntaxe.
+
 ### 2026-07-13 18:44:54 (Paris)
 
 - Correctif du flux Rubriques: les actions AJAX (masquer/afficher, ordre, layout HEADER, ajout/retrait) marquent d?sormais l'?tat brouillon comme modifi?.

@@ -1,16 +1,46 @@
 <?php
 function em_site_admin_menu_layout_ensure_settings_entries(array $relocate): array
 {
+    $capability = em_site_admin_menu_capability();
+    $dashicons_slug = em_site_admin_dashicons_manager_page_slug();
+    $dashicons_manager_icon = function_exists('em_site_site_icon')
+        ? em_site_site_icon('generic', 'dashicons-art')
+        : 'dashicons-art';
+
     if (!isset($relocate['em-site-menu-wp-settings-label'])) {
-        $relocate['em-site-menu-wp-settings-label'] = em_site_admin_menu_section_label_item(
-            'em-site-menu-wp-settings-label',
+        $relocate['em-site-menu-wp-settings-label'] = [
             __('Paramètres', 'em-site'),
-            'em-site-menu-wp-settings-label em-site-menu-accordion-parent em-site-menu-accordion-settings-parent'
-        );
+            'read',
+            '#',
+            __('Paramètres', 'em-site'),
+            'em-site-menu-wp-settings-label em-site-menu-accordion-parent em-site-menu-accordion-settings-parent menu-top',
+            '',
+            'none',
+        ];
     } elseif (function_exists('em_site_admin_menu_item_append_class')) {
+        $relocate['em-site-menu-wp-settings-label'][2] = '#';
         $relocate['em-site-menu-wp-settings-label'] = em_site_admin_menu_item_append_class(
             $relocate['em-site-menu-wp-settings-label'],
             'em-site-menu-accordion-parent em-site-menu-accordion-settings-parent'
+        );
+    }
+
+    if (!isset($relocate[$dashicons_slug]) || !is_array($relocate[$dashicons_slug])) {
+        $relocate[$dashicons_slug] = [
+            __('Gestion Dashicons', 'em-site'),
+            $capability,
+            'admin.php?page=' . $dashicons_slug,
+            __('Gestion Dashicons', 'em-site'),
+            'menu-top em-site-menu-accordion-child em-site-menu-accordion-settings-child',
+            $dashicons_slug,
+            $dashicons_manager_icon,
+        ];
+    }
+
+    if (function_exists('em_site_admin_menu_item_append_class')) {
+        $relocate[$dashicons_slug] = em_site_admin_menu_item_append_class(
+            $relocate[$dashicons_slug],
+            'em-site-menu-accordion-child em-site-menu-accordion-settings-child'
         );
     }
 

@@ -113,7 +113,9 @@ function em_site_admin_point_dashboard_to_home(): void
         $menu[$position][3] = 'DASHBOARD';
         $menu[$position][2] = 'index.php';
         $menu[$position][4] = trim(((string) ($item[4] ?? 'menu-top')) . ' em-site-menu-dashboard-entry');
-        $menu[$position][6] = 'dashicons-dashboard';
+        $menu[$position][6] = function_exists('em_site_site_icon')
+            ? em_site_site_icon('dashboard', 'dashicons-dashboard')
+            : 'dashicons-dashboard';
     }
 
     foreach ($menu as $position => $item) {

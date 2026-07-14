@@ -35,6 +35,7 @@ function em_site_admin_rubrique_reserved_menu_slugs(): array
         'em-site-menu-wp-settings-label',
         'themes.php',
         'options-general.php',
+        em_site_admin_dashicons_manager_page_slug(),
         'plugins.php',
     ];
 

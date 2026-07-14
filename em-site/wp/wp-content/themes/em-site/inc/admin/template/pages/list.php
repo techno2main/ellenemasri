@@ -158,13 +158,16 @@ function em_site_admin_templates_page_url(): string
  */
 function em_site_admin_templates_register_menu(): void
 {
+    $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
+    $appearance_icon = function_exists('em_site_site_icon') ? em_site_site_icon('appearance', 'dashicons-admin-appearance') : 'dashicons-admin-appearance';
+
     add_menu_page(
         __('Template', 'em-site'),
         __('TEMPLATE', 'em-site'),
         'manage_options',
         em_site_admin_template_parent_page_slug(),
         'em_site_admin_render_template_choice_page',
-        'dashicons-layout',
+        $template_icon,
         em_site_admin_menu_templates_position()
     );
 
@@ -180,7 +183,7 @@ function em_site_admin_templates_register_menu(): void
                 'manage_options',
                 em_site_admin_template_entry_page_slug($slug),
                 'em_site_admin_render_template_entry_page',
-                'dashicons-admin-appearance',
+                $appearance_icon,
                 em_site_admin_menu_position_for_template($slug)
             );
         }

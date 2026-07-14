@@ -156,6 +156,8 @@ function em_site_site_rubrique_is_visibility_toggle(string $module_slug): bool
  */
 function em_site_get_site_rubrique_visibility(string $module_slug, ?string $template_slug = null): bool
 {
+    $module_slug = sanitize_key($module_slug);
+
     if (!em_site_site_rubrique_is_visibility_toggle($module_slug)) {
         return true;
     }
@@ -164,6 +166,23 @@ function em_site_get_site_rubrique_visibility(string $module_slug, ?string $temp
         return em_site_get_header_rubrique_visibility($template_slug);
     }
 
+    // Priorité au store de visibilité par template quand un contexte template est résolu.
+    if (function_exists('em_site_resolve_rubrique_visibility_template_slug')
+        && function_exists('em_site_template_visibility_store')) {
+        $resolved_template_slug = em_site_resolve_rubrique_visibility_template_slug($template_slug);
+
+        if ($resolved_template_slug !== '') {
+            $store = em_site_template_visibility_store();
+
+            if (isset($store[$resolved_template_slug])
+                && is_array($store[$resolved_template_slug])
+                && array_key_exists($module_slug, $store[$resolved_template_slug])) {
+                return (bool) $store[$resolved_template_slug][$module_slug];
+            }
+        }
+    }
+
+    // Fallback compat: anciennes rubriques à options template-scoped (enabled).
     if (em_site_rubrique_uses_template_scoped_options($module_slug)) {
         return em_site_get_rubrique_enabled_for_template($module_slug, $template_slug);
     }
@@ -182,6 +201,8 @@ function em_site_get_site_rubrique_visibility(string $module_slug, ?string $temp
  */
 function em_site_set_site_rubrique_visibility(string $module_slug, bool $visible, ?string $template_slug = null): bool
 {
+    $module_slug = sanitize_key($module_slug);
+
     if (!em_site_site_rubrique_is_visibility_toggle($module_slug)) {
         return false;
     }
@@ -190,8 +211,21 @@ function em_site_set_site_rubrique_visibility(string $module_slug, bool $visible
         return em_site_set_header_rubrique_visibility($visible, $template_slug);
     }
 
-    if (em_site_rubrique_uses_template_scoped_options($module_slug)) {
-        return em_site_set_rubrique_enabled_for_template($module_slug, $visible, $template_slug);
+    // Priorité au store de visibilité par template (front/live le lit directement).
+    if (function_exists('em_site_resolve_rubrique_visibility_template_slug')
+        && function_exists('em_site_set_template_rubrique_visibility')) {
+        $resolved_template_slug = em_site_resolve_rubrique_visibility_template_slug($template_slug);
+
+        if ($resolved_template_slug !== ''
+            && !em_site_set_template_rubrique_visibility($resolved_template_slug, $module_slug, $visible)) {
+            return false;
+        }
+    }
+
+    // Compatibilité V2: conserver enabled synchronisé pour les rubriques scoped.
+    if (em_site_rubrique_uses_template_scoped_options($module_slug)
+        && !em_site_set_rubrique_enabled_for_template($module_slug, $visible, $template_slug)) {
+        return false;
     }
 
     $saved = get_option(em_site_site_rubrique_visibility_option_name(), []);

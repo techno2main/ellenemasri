@@ -3,6 +3,15 @@
 Date (Paris) : 2026-07-05 17:11:19
 P?rim?tre scann? : em-site/wp/wp-content/themes/em-site
 
+## Mise ? jour structurelle (Paris) : 2026-07-14 14:10:33
+
+- Ajout d'un socle central de gestion d'ic?nes partag? : `inc/shared/icons/icons.php`.
+- Ajout d'une liste d'ic?nes active persist?e : `inc/shared/icons/dashicons-list.txt`.
+- Ajout d'une page admin de pilotage des ic?nes : `inc/shared/icons/dashicons-preview.php`.
+- Ajout du point d'entr?e menu d?di? pour l'acc?s Param?tres : `inc/admin/shared/menu/dashicons-manager.php`.
+- Rec?blage des rendus admin/modules/rubriques vers les helpers partag?s (`em_site_site_icon`, `em_site_rubrique_icon`) pour ?liminer les hardcodes et respecter le fallback global.
+- Fiabilisation s?curit?/enregistrement de la page manager : nonce WordPress + validation fallback robuste.
+
 ## Mise ? jour structurelle (Paris) : 2026-07-07 12:56:24
 
 - Migration de composants BO partag?s vers `inc/admin/shared/components/` avec sous-dossier d?di? par composant.

@@ -11,13 +11,17 @@ if (!defined('ABSPATH')) {
 
 function em_site_social_register_admin(): void
 {
+    $social_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('social', 'dashicons-share')
+        : 'dashicons-share';
+
     add_menu_page(
         __('SOCIAL', 'em-site'),
         __('SOCIAL', 'em-site'),
         'manage_options',
         em_site_social_page_slug(),
         'em_site_social_render_admin_page',
-        'dashicons-share',
+        $social_icon,
         em_site_admin_menu_position_for_site_module('social')
     );
 }

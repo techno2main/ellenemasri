@@ -12,6 +12,7 @@ if (!defined('ABSPATH')) {
 
 function mayami_register_visual_links_html_menu() {
     $root_slug = 'mayami_visual_links_builder';
+    $vlb_icon = function_exists('em_site_site_icon') ? em_site_site_icon('vlb', 'dashicons-format-image') : 'dashicons-format-image';
 
     add_menu_page(
         'VISUAL LINKS BUILDER (VLB)',
@@ -19,7 +20,7 @@ function mayami_register_visual_links_html_menu() {
         'manage_options',
         $root_slug,
         'mayami_render_visual_links_html_builder_page',
-        'dashicons-format-image',
+        $vlb_icon,
         3
     );
 

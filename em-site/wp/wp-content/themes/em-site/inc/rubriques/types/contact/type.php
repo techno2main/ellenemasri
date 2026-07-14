@@ -21,9 +21,9 @@ function em_site_rubrique_type_contacts(array $types): array
 {
     $types['contacts'] = [
         'label'        => __('CONTACT', 'em-site'),
-        'label_plural' => __('CONTACTS', 'em-site'),
+        'label_plural' => __('CONTACT', 'em-site'),
         'noun'         => __('Contact', 'em-site'),
-        'icon'         => 'dashicons-screenoptions',
+        'icon'         => 'dashicons-email-alt',
         'layout'       => ['columns' => 1, 'align' => [1 => 'left']],
         'starter'      => em_site_rubrique_default_appearance_fields(),
     ];

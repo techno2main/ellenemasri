@@ -15,6 +15,57 @@ if (!defined('ABSPATH')) {
 
 require_once __DIR__ . '/overview/parts/actions-create-and-css.php';
 
+if (!function_exists('em_site_overview_type_label')) {
+    /**
+     * Libellé normalisé d'une rubrique pour l'overview (cartes + menu).
+     *
+     * @param array<string,mixed> $type
+     */
+    function em_site_overview_type_label(string $slug, array $type): string
+    {
+        $slug = sanitize_key($slug);
+
+        $forced = [
+            'about'           => 'ABOUT',
+            'abouts'          => 'ABOUT',
+            'custom-about'    => 'ABOUT',
+            'custom-abouts'   => 'ABOUT',
+            'contact'         => 'CONTACT',
+            'contacts'        => 'CONTACT',
+            'custom-contact'  => 'CONTACT',
+            'custom-contacts' => 'CONTACT',
+        ];
+
+        if (isset($forced[$slug])) {
+            return (string) __($forced[$slug], 'em-site');
+        }
+
+        return (string) ($type['label_plural'] ?? $type['label'] ?? strtoupper($slug));
+    }
+}
+
+if (!function_exists('em_site_overview_type_icon')) {
+    /**
+     * Icône normalisée d'une rubrique pour l'overview (cartes + menu).
+     *
+     * @param array<string,mixed> $type
+     */
+    function em_site_overview_type_icon(string $slug, array $type): string
+    {
+        $fallback = (string) ($type['icon'] ?? 'dashicons-screenoptions');
+
+        if ($fallback !== '') {
+            return $fallback;
+        }
+
+        if (function_exists('em_site_rubrique_icon')) {
+            return em_site_rubrique_icon($slug, 'dashicons-screenoptions');
+        }
+
+        return 'dashicons-screenoptions';
+    }
+}
+
 /**
  * Enregistre la page (menu top-level dédié).
  */
@@ -27,13 +78,15 @@ function em_site_overview_menu(): void
         $position = em_site_admin_menu_separator_bottom_position() + 1;
     }
 
+    $rubriques_icon = function_exists('em_site_site_icon') ? em_site_site_icon('rubriques', 'dashicons-screenoptions') : 'dashicons-screenoptions';
+
     add_menu_page(
         __('RUBRIQUES', 'em-site'),
         __('RUBRIQUES', 'em-site'),
         'manage_options',
         'em-rubriques-overview',
         'em_site_overview_render',
-        'dashicons-screenoptions',
+        $rubriques_icon,
         $position
     );
 
@@ -41,8 +94,8 @@ function em_site_overview_menu(): void
     // Le slug « …&type=<slug> » ouvre la carte correspondante de l'aperçu.
     // Le libellé porte une icône Dashicon (rendu HTML accepté par le menu).
     foreach (em_site_ordered_types() as $slug => $type) {
-        $label = (string) ($type['label_plural'] ?? $type['label']);
-        $icon = (string) ($type['icon'] ?? 'dashicons-screenoptions');
+        $label = em_site_overview_type_label((string) $slug, $type);
+        $icon = em_site_overview_type_icon((string) $slug, $type);
         $menu_title = '<span class="dashicons ' . esc_attr($icon) . ' em-site-rubrique-submenu__icon" aria-hidden="true"></span>'
             . '<span class="em-site-rubrique-submenu__text">' . esc_html($label) . '</span>';
 
@@ -61,7 +114,7 @@ function em_site_overview_menu(): void
     // renomme en « Vue d'ensemble » → ouvre la page sans type (toutes fermées).
     global $submenu;
     if (isset($submenu['em-rubriques-overview'][0])) {
-        $submenu['em-rubriques-overview'][0][0] = '<span class="dashicons dashicons-screenoptions em-site-rubrique-submenu__icon" aria-hidden="true"></span>'
+        $submenu['em-rubriques-overview'][0][0] = '<span class="dashicons ' . esc_attr($rubriques_icon) . ' em-site-rubrique-submenu__icon" aria-hidden="true"></span>'
             . '<span class="em-site-rubrique-submenu__text">' . esc_html__('Vue d’ensemble', 'em-site') . '</span>';
     }
 }
@@ -233,7 +286,7 @@ function em_site_overview_summary_url(): string
  */
 function em_site_overview_render_focus_back(string $active_slug, array $type): void
 {
-    $label = (string) ($type['label_plural'] ?? $type['label'] ?? $active_slug);
+    $label = em_site_overview_type_label((string) $active_slug, $type);
     ?>
     <div class="em-site-overview__focus-bar" data-overview-focusbar>
         <a href="<?php echo esc_url(em_site_overview_summary_url()); ?>" class="em-site-overview__focus-back" data-overview-back title="<?php esc_attr_e('Retour au sommaire', 'em-site'); ?>" aria-label="<?php esc_attr_e('Retour au sommaire', 'em-site'); ?>">
@@ -296,8 +349,8 @@ function em_site_overview_render_directory(array $types, string $active_slug): v
                 $slug = (string) $slug;
                 $items = em_site_get_items($slug);
                 $count = count($items);
-                $label = (string) ($type['label_plural'] ?? $type['label'] ?? $slug);
-                $icon = (string) ($type['icon'] ?? 'dashicons-screenoptions');
+                $label = em_site_overview_type_label((string) $slug, $type);
+                $icon = em_site_overview_type_icon((string) $slug, $type);
                 $is_active = ($active_slug === $slug);
                 ?>
                 <a
@@ -425,6 +478,149 @@ function em_site_overview_render(): void
                 var firstInput = createTypePanel.querySelector('.em-site-create__name:not([disabled])');
                 if (firstInput) { firstInput.focus(); }
             } catch (err) {}
+        }
+
+        function setupCreateTypeIconChooser() {
+            if (!createTypePanel) { return; }
+
+            var chooser = createTypePanel.querySelector('[data-iconchooser]');
+            if (!chooser) { return; }
+
+            var valueInput = chooser.querySelector('[data-iconchooser-value]');
+            var trigger = chooser.querySelector('[data-iconchooser-trigger]');
+            var preview = chooser.querySelector('[data-iconchooser-preview] .dashicons');
+            var nameLabel = chooser.querySelector('[data-iconchooser-name]');
+            var defaultIcon = valueInput ? (valueInput.getAttribute('data-default-icon') || 'dashicons-screenoptions') : 'dashicons-screenoptions';
+            var placeholderText = nameLabel ? (nameLabel.getAttribute('data-iconchooser-placeholder') || 'Choisi une icône pour ta nouvelle rubrique') : 'Choisi une icône pour ta nouvelle rubrique';
+            var panel = chooser.querySelector('[data-iconchooser-panel]');
+            var items = Array.prototype.slice.call(chooser.querySelectorAll('[data-icon-value]'));
+            var groups = Array.prototype.slice.call(chooser.querySelectorAll('[data-iconchooser-group]'));
+
+            if (!valueInput || !trigger || !preview || !nameLabel || !panel || !items.length) {
+                return;
+            }
+
+            function isOpen() {
+                return !panel.hidden;
+            }
+
+            function formatIconLabel(iconName) {
+                return (iconName || '').replace(/^dashicons-/, '');
+            }
+
+            function setPanelPlacement() {
+                if (!isOpen()) { return; }
+
+                var rect = trigger.getBoundingClientRect();
+                var viewportH = window.innerHeight || document.documentElement.clientHeight || 0;
+                var viewportPadding = 24;
+                var panelGap = 12;
+                var spaceBelow = Math.max(0, viewportH - rect.bottom - viewportPadding - panelGap);
+                var spaceAbove = Math.max(0, rect.top - viewportPadding - panelGap);
+                var minPreferred = 280;
+                var openUp = spaceBelow < minPreferred && spaceAbove > spaceBelow;
+
+                chooser.classList.toggle('is-dropup', openUp);
+
+                var available = openUp ? spaceAbove : spaceBelow;
+                var maxAllowed = Math.max(0, viewportH - (viewportPadding * 2));
+                var panelMax = Math.floor(Math.min(maxAllowed, available));
+                var groupsMax = Math.max(40, Math.max(0, panelMax - 74));
+
+                panel.style.maxHeight = panelMax + 'px';
+
+                var groupsWrap = chooser.querySelector('[data-iconchooser-groups]');
+                if (groupsWrap) {
+                    groupsWrap.style.maxHeight = groupsMax + 'px';
+                }
+            }
+
+            function setOpen(open) {
+                panel.hidden = !open;
+                trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+                chooser.classList.toggle('is-open', open);
+
+                if (open) {
+                    setPanelPlacement();
+                    window.addEventListener('resize', setPanelPlacement);
+                    window.addEventListener('scroll', setPanelPlacement, true);
+                } else {
+                    window.removeEventListener('resize', setPanelPlacement);
+                    window.removeEventListener('scroll', setPanelPlacement, true);
+                }
+
+                if (!open) {
+                    return;
+                }
+
+                try {
+                    if (items.length) {
+                        items[0].focus();
+                    }
+                } catch (err) {}
+            }
+
+            function applySelection(iconName) {
+                var selectedIcon = (iconName || '').trim();
+
+                valueInput.value = selectedIcon;
+                nameLabel.textContent = selectedIcon ? formatIconLabel(selectedIcon) : placeholderText;
+
+                if (!selectedIcon) {
+                    selectedIcon = defaultIcon;
+                }
+
+                var keep = ['dashicons'];
+                selectedIcon.split(/\s+/).forEach(function (klass) {
+                    if (klass) { keep.push(klass); }
+                });
+                preview.className = keep.join(' ');
+
+                items.forEach(function (item) {
+                    var selected = valueInput.value !== '' && item.getAttribute('data-icon-value') === valueInput.value;
+                    item.classList.toggle('is-selected', selected);
+                    item.setAttribute('aria-pressed', selected ? 'true' : 'false');
+                });
+            }
+
+            trigger.addEventListener('click', function (event) {
+                event.preventDefault();
+                setOpen(!isOpen());
+            });
+
+            items.forEach(function (item) {
+                item.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    var iconName = item.getAttribute('data-icon-value') || '';
+                    applySelection(iconName);
+                    setOpen(false);
+                    trigger.focus();
+                });
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!isOpen()) { return; }
+                if (chooser.contains(event.target)) { return; }
+                setOpen(false);
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (!isOpen() || event.key !== 'Escape') { return; }
+                event.preventDefault();
+                setOpen(false);
+                trigger.focus();
+            });
+
+            var form = chooser.closest('form');
+            if (form) {
+                form.addEventListener('submit', function () {
+                    if ((valueInput.value || '').trim() === '') {
+                        valueInput.value = defaultIcon;
+                    }
+                });
+            }
+
+            applySelection(valueInput.value || '');
         }
 
         function setCreateOpenState(btn, box, isOpen) {
@@ -724,6 +920,7 @@ function em_site_overview_render(): void
                 setCreateTypePanelOpen(!createTypePanel || createTypePanel.hidden);
             });
         }
+        setupCreateTypeIconChooser();
         document.addEventListener('click', function (e) {
             var btn = e.target.closest('.em-site-card__additem');
             if (!btn) { return; }
@@ -864,7 +1061,7 @@ function em_site_overview_notice(): void
 function em_site_overview_render_type(string $slug, array $type, bool $open): void
 {
     $count = count(em_site_get_items($slug));
-    $label = (string) ($type['label_plural'] ?? $type['label']);
+    $label = em_site_overview_type_label((string) $slug, $type);
     $label_singular = (string) ($type['label'] ?? $label);
     $add_label = sprintf(__('Ajouter un item %s', 'em-site'), $label_singular);
     $is_special_fixed = function_exists('em_site_is_fixed_single_item_type')
@@ -892,7 +1089,7 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
         <summary class="em-site-collapse__summary em-site-card__head">
             <span class="em-site-card__drag dashicons dashicons-menu" title="<?php echo esc_attr($is_reorderable ? __('Glisser pour réordonner', 'em-site') : __('Ordre verrouillé', 'em-site')); ?>" aria-hidden="true"></span>
             <span class="em-site-collapse__chevron" aria-hidden="true"></span>
-            <span class="em-site-card__icon dashicons <?php echo esc_attr((string) ($type['icon'] ?? 'dashicons-screenoptions')); ?>"></span>
+            <span class="em-site-card__icon dashicons <?php echo esc_attr(em_site_overview_type_icon((string) $slug, $type)); ?>"></span>
             <button type="button" class="em-site-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>">
                 <span class="dashicons dashicons-edit" aria-hidden="true"></span>
             </button>
@@ -979,12 +1176,11 @@ function em_site_overview_render_delete_type_script(): void
  */
 function em_site_overview_render_create_type(): void
 {
-    $icons = [
-        'dashicons-screenoptions', 'dashicons-menu-alt3', 'dashicons-format-audio',
-        'dashicons-share', 'dashicons-video-alt3', 'dashicons-album', 'dashicons-megaphone',
-        'dashicons-star-filled', 'dashicons-heart', 'dashicons-images-alt2',
-        'dashicons-list-view', 'dashicons-admin-links',
-    ];
+    $icon_categories = function_exists('em_site_dashicons_categories')
+        ? em_site_dashicons_categories()
+        : ['Divers' => ['dashicons-screenoptions']];
+    $default_icon = 'dashicons-screenoptions';
+    $icon_placeholder = __('Choisi une icône pour ta nouvelle rubrique', 'em-site');
     ?>
     <div class="em-site-collapse em-site-create em-site-create--nochevron em-site-createtype" id="em-site-create-type-panel" hidden>
         <div class="em-site-collapse__body em-site-create__options">
@@ -993,14 +1189,50 @@ function em_site_overview_render_create_type(): void
                 <input type="hidden" name="action" value="em_site_create_type">
                 <span class="em-site-create__label"><span class="dashicons dashicons-screenoptions" aria-hidden="true"></span> <?php esc_html_e('Nom de la rubrique', 'em-site'); ?></span>
                 <input type="text" name="type_label" class="regular-text em-site-create__name" placeholder="<?php esc_attr_e('Ex. PARTENAIRES', 'em-site'); ?>" required>
-                <span class="em-site-iconpick" role="radiogroup" aria-label="<?php esc_attr_e('Icône de la rubrique', 'em-site'); ?>">
-                    <?php foreach ($icons as $i => $ic) : ?>
-                        <label class="em-site-iconpick__opt" title="<?php echo esc_attr($ic); ?>">
-                            <input type="radio" name="type_icon" value="<?php echo esc_attr($ic); ?>" <?php checked($i, 0); ?>>
-                            <span class="dashicons <?php echo esc_attr($ic); ?>" aria-hidden="true"></span>
-                        </label>
-                    <?php endforeach; ?>
-                </span>
+                <div class="em-site-iconchooser" data-iconchooser>
+                    <input type="hidden" name="type_icon" value="" data-iconchooser-value data-default-icon="<?php echo esc_attr($default_icon); ?>">
+                    <button
+                        type="button"
+                        class="em-site-iconchooser__trigger"
+                        data-iconchooser-trigger
+                        aria-expanded="false"
+                        aria-haspopup="dialog"
+                        aria-label="<?php esc_attr_e('Choisir une icône', 'em-site'); ?>"
+                    >
+                        <span class="em-site-iconchooser__preview" data-iconchooser-preview>
+                            <span class="dashicons <?php echo esc_attr($default_icon); ?>" aria-hidden="true"></span>
+                        </span>
+                        <span class="em-site-iconchooser__meta">
+                            <span class="em-site-iconchooser__meta-label"><?php esc_html_e('Icône', 'em-site'); ?></span>
+                            <span class="em-site-iconchooser__meta-name" data-iconchooser-name data-iconchooser-placeholder="<?php echo esc_attr($icon_placeholder); ?>"><?php echo esc_html($icon_placeholder); ?></span>
+                        </span>
+                        <span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>
+                    </button>
+
+                    <div class="em-site-iconchooser__panel" data-iconchooser-panel hidden>
+                        <div class="em-site-iconchooser__groups" data-iconchooser-groups>
+                            <?php foreach ($icon_categories as $category_label => $category_icons) : ?>
+                                <section class="em-site-iconchooser__group" data-iconchooser-group>
+                                    <h4 class="em-site-iconchooser__group-title"><?php echo esc_html($category_label); ?></h4>
+                                    <div class="em-site-iconchooser__items">
+                                        <?php foreach ($category_icons as $icon_name) : ?>
+                                            <?php $icon_display = preg_replace('/^dashicons-/', '', (string) $icon_name); ?>
+                                            <button
+                                                type="button"
+                                                class="em-site-iconchooser__item"
+                                                data-icon-value="<?php echo esc_attr($icon_name); ?>"
+                                                title="<?php echo esc_attr($icon_name); ?>"
+                                            >
+                                                <span class="dashicons <?php echo esc_attr($icon_name); ?>" aria-hidden="true"></span>
+                                                <span class="em-site-iconchooser__item-name"><?php echo esc_html((string) $icon_display); ?></span>
+                                            </button>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </section>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                </div>
                 <button type="submit" class="button button-primary"><span class="dashicons dashicons-plus-alt2"></span> <?php esc_html_e('Créer la rubrique', 'em-site'); ?></button>
             </form>
         </div>

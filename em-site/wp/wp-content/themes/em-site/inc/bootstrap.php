@@ -13,6 +13,7 @@ require_once __DIR__ . '/core/assets.php';
 require_once __DIR__ . '/core/login.php';
 require_once __DIR__ . '/core/login-off.php';
 require_once __DIR__ . '/admin/client-access.php';
+require_once __DIR__ . '/shared/icons/icons.php';
 require_once __DIR__ . '/shared/template/bootstrap.php';
 require_once __DIR__ . '/rubriques/bootstrap.php';
 require_once __DIR__ . '/shared/social-platforms.php';

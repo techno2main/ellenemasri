@@ -53,12 +53,18 @@ function em_site_admin_dashboard_render_card_create_link(string $url, string $ac
  */
 function em_site_admin_dashboard_action_icons(): array
 {
+    $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
+    $rubriques_icon = function_exists('em_site_site_icon') ? em_site_site_icon('rubriques', 'dashicons-screenoptions') : 'dashicons-screenoptions';
+    $medias_icon = function_exists('em_site_site_icon') ? em_site_site_icon('medias', 'dashicons-admin-media') : 'dashicons-admin-media';
+    $settings_icon = function_exists('em_site_site_icon') ? em_site_site_icon('settings', 'dashicons-admin-settings') : 'dashicons-admin-settings';
+    $catalogues_icon = function_exists('em_site_site_icon') ? em_site_site_icon('catalogues', 'dashicons-index-card') : 'dashicons-index-card';
+
     return [
-        'templates'  => 'dashicons dashicons-layout',
-        'catalogues' => 'dashicons dashicons-index-card',
-        'rubriques'  => 'dashicons dashicons-screenoptions',
-        'medias'     => 'dashicons dashicons-admin-media',
-        'settings'   => 'dashicons dashicons-admin-settings',
+        'templates'  => 'dashicons ' . $template_icon,
+        'catalogues' => 'dashicons ' . $catalogues_icon,
+        'rubriques'  => 'dashicons ' . $rubriques_icon,
+        'medias'     => 'dashicons ' . $medias_icon,
+        'settings'   => 'dashicons ' . $settings_icon,
     ];
 }
 

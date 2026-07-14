@@ -235,7 +235,7 @@ function em_site_admin_render_rubriques_page(): void
     $template_slug = em_site_get_editing_template_slug();
     $unique_mode = function_exists('em_site_template_unique_mode_enabled') && em_site_template_unique_mode_enabled();
     $map_title_default = $unique_mode
-        ? __('Squelette de mon site', 'em-site')
+        ? __('Squelette du site', 'em-site')
         : sprintf(
             /* translators: %s: template label */
             __('Squelette de %s', 'em-site'),
@@ -250,13 +250,14 @@ function em_site_admin_render_rubriques_page(): void
         );
     $has_proposable_rubriques = function_exists('em_site_admin_template_proposable_rubrique_definitions')
         && em_site_admin_template_proposable_rubrique_definitions() !== [];
+    $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
     ?>
     <div class="wrap em-site-rubriques-admin em-site-admin-module em-site-hub-sommaire" data-template-slug="<?php echo esc_attr($template_slug); ?>">
         <?php
         // Bandeau « template en cours d'édition » et barre d'onglets retirés : la
         // navigation se fait par la liste + le wireframe. L'état LIVE est rappelé à
         // côté du titre du squelette (voir plus bas).
-        em_site_admin_hub_render_sommaire_header('', 'dashicons-admin-page', false, false, null, null, true);
+        em_site_admin_hub_render_sommaire_header('', $template_icon, false, false, null, null, true);
         ?>
 
         <?php

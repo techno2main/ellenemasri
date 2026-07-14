@@ -85,8 +85,9 @@ function em_site_admin_native_settings_menu_order(): array
 {
     return [
         'themes.php',
-        'plugins.php',
         'options-general.php',
+        em_site_admin_dashicons_manager_page_slug(),
+        'plugins.php',
     ];
 }
 

@@ -14,13 +14,17 @@ if (!defined('ABSPATH')) {
  */
 function em_site_stream_register_admin(): void
 {
+    $stream_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('stream', 'dashicons-playlist-audio')
+        : 'dashicons-playlist-audio';
+
     add_menu_page(
         __('STREAM', 'em-site'),
         __('STREAM', 'em-site'),
         'manage_options',
         em_site_stream_page_slug(),
         'em_site_stream_render_admin_page',
-        'dashicons-playlist-audio',
+        $stream_icon,
         em_site_admin_menu_position_for_site_module('stream')
     );
 }

@@ -21,7 +21,7 @@ function em_site_rubrique_type_about(array $types): array
 {
     $types['about'] = [
         'label'        => __('ABOUT', 'em-site'),
-        'label_plural' => __('ABOUTS', 'em-site'),
+        'label_plural' => __('ABOUT', 'em-site'),
         'noun'         => __('About', 'em-site'),
         'icon'         => 'dashicons-star-filled',
         'layout'       => ['columns' => 1, 'align' => [1 => 'left']],

@@ -76,13 +76,15 @@ function em_site_admin_medias_register_menu(): void
         return;
     }
 
+    $medias_icon = function_exists('em_site_site_icon') ? em_site_site_icon('medias', 'dashicons-admin-media') : 'dashicons-admin-media';
+
     add_menu_page(
         __('MEDIAS', 'em-site'),
         __('MEDIAS', 'em-site'),
         em_site_admin_menu_capability(),
         em_site_admin_media_parent_menu_slug(),
         '__return_null',
-        'dashicons-admin-media',
+        $medias_icon,
         em_site_admin_menu_medias_parent_position()
     );
 }

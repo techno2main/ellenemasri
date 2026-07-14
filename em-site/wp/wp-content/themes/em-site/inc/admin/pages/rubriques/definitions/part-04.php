@@ -12,6 +12,11 @@ function em_site_admin_rubrique_skeleton_label(string $module_slug): string
         'release'         => __('RELEASE', 'em-site'),
         'cta'             => __('CTA', 'em-site'),
         'footer'          => __('FOOTER', 'em-site'),
+        'about'           => __('ABOUT', 'em-site'),
+        'abouts'          => __('ABOUT', 'em-site'),
+        'custom-about'    => __('ABOUT', 'em-site'),
+        'custom-abouts'   => __('ABOUT', 'em-site'),
+        'contact'         => __('CONTACT', 'em-site'),
         'custom-contacts' => __('CONTACT', 'em-site'),
         'contacts'        => __('CONTACT', 'em-site'),
     ];

@@ -345,6 +345,7 @@ function em_site_admin_render_template_create_page(): void
     $steps = function_exists('em_site_admin_template_wizard_onboarding_steps')
         ? em_site_admin_template_wizard_onboarding_steps()
         : [];
+    $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
 
     $page_class = 'em-site-templates-create-page em-site-templates-create-page--' . $view_mode;
     ?>
@@ -356,7 +357,7 @@ function em_site_admin_render_template_create_page(): void
         <?php } ?>
     >
         <?php
-        em_site_admin_hub_render_sommaire_header('', 'dashicons-layout', false, true, null, null, true);
+        em_site_admin_hub_render_sommaire_header('', $template_icon, false, true, null, null, true);
 
         em_site_admin_template_create_render_nav_tabs($view_mode, !$is_edit);
 

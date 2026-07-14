@@ -187,6 +187,14 @@ function em_site_is_template_rubrique_visible(string $template_slug, string $rub
         return true;
     }
 
+    $store = em_site_template_visibility_store();
+
+    if (isset($store[$template_slug])
+        && is_array($store[$template_slug])
+        && array_key_exists($rubrique_slug, $store[$template_slug])) {
+        return (bool) $store[$template_slug][$rubrique_slug];
+    }
+
     if ($rubrique_slug === 'header' && function_exists('em_site_get_header_rubrique_visibility')) {
         return em_site_get_header_rubrique_visibility($template_slug);
     }
@@ -195,17 +203,7 @@ function em_site_is_template_rubrique_visible(string $template_slug, string $rub
         return em_site_get_rubrique_enabled_for_template($rubrique_slug, $template_slug);
     }
 
-    $store = em_site_template_visibility_store();
-
-    if (!isset($store[$template_slug]) || !is_array($store[$template_slug])) {
-        return true;
-    }
-
-    if (!array_key_exists($rubrique_slug, $store[$template_slug])) {
-        return true;
-    }
-
-    return (bool) $store[$template_slug][$rubrique_slug];
+    return true;
 }
 
 /**
@@ -227,6 +225,11 @@ function em_site_set_template_rubrique_visibility(string $template_slug, string 
     }
 
     $store[$template_slug][$rubrique_slug] = $visible;
+
+    if (em_site_rubrique_uses_template_scoped_options($rubrique_slug)
+        && !em_site_set_rubrique_enabled_for_template($rubrique_slug, $visible, $template_slug)) {
+        return false;
+    }
 
     return update_option(em_site_template_visibility_option_name(), $store, false);
 }

@@ -14,13 +14,17 @@ if (!defined('ABSPATH')) {
  */
 function em_site_header_register_admin(): void
 {
+    $header_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('header', 'dashicons-align-wide')
+        : 'dashicons-align-wide';
+
     add_menu_page(
         __('HEADER', 'em-site'),
         __('HEADER', 'em-site'),
         'manage_options',
         em_site_header_page_slug(),
         'em_site_header_render_admin_page',
-        'dashicons-align-wide',
+        $header_icon,
         em_site_admin_menu_position_for_site_module('header')
     );
 }

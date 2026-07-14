@@ -36,7 +36,9 @@ function em_site_overview_notice(): void
 function em_site_overview_render_type(string $slug, array $type, bool $open): void
 {
     $count = count(em_site_get_items($slug));
-    $label = (string) ($type['label_plural'] ?? $type['label']);
+    $label = function_exists('em_site_overview_type_label')
+        ? em_site_overview_type_label((string) $slug, $type)
+        : (string) ($type['label_plural'] ?? $type['label']);
     $label_singular = (string) ($type['label'] ?? $label);
     $add_label = sprintf(__('Ajouter un item %s', 'em-site'), $label_singular);
     $is_special_fixed = function_exists('em_site_is_fixed_single_item_type')
@@ -64,7 +66,12 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
         <summary class="em-site-collapse__summary em-site-card__head">
             <span class="em-site-card__drag dashicons dashicons-menu" title="<?php echo esc_attr($is_reorderable ? __('Glisser pour réordonner', 'em-site') : __('Ordre verrouillé', 'em-site')); ?>" aria-hidden="true"></span>
             <span class="em-site-collapse__chevron" aria-hidden="true"></span>
-            <span class="em-site-card__icon dashicons <?php echo esc_attr((string) ($type['icon'] ?? 'dashicons-screenoptions')); ?>"></span>
+            <?php
+            $icon = function_exists('em_site_overview_type_icon')
+                ? em_site_overview_type_icon((string) $slug, $type)
+                : (string) ($type['icon'] ?? 'dashicons-screenoptions');
+            ?>
+            <span class="em-site-card__icon dashicons <?php echo esc_attr($icon); ?>"></span>
             <button type="button" class="em-site-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>">
                 <span class="dashicons dashicons-edit" aria-hidden="true"></span>
             </button>

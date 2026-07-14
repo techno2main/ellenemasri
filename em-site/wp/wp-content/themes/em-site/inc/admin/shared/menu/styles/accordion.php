@@ -57,6 +57,10 @@
             display: block !important;
         }
 
+        body.em-site-accordion-settings-open #adminmenu li.em-site-menu-accordion-settings-child:last-of-type {
+            margin-bottom: 28px !important;
+        }
+
         #adminmenu li.em-site-menu-accordion-parent .wp-submenu,
         #adminmenu li.em-site-menu-accordion-medias-parent .wp-submenu,
         #adminmenu #menu-upload .wp-submenu,

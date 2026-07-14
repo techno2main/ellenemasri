@@ -11,13 +11,17 @@ if (!defined('ABSPATH')) {
 
 function em_site_cta_register_admin(): void
 {
+    $cta_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('cta', 'dashicons-megaphone')
+        : 'dashicons-megaphone';
+
     add_menu_page(
         __('CTA', 'em-site'),
         __('CTA', 'em-site'),
         'manage_options',
         em_site_cta_page_slug(),
         'em_site_cta_render_admin_page',
-        'dashicons-megaphone',
+        $cta_icon,
         em_site_admin_menu_position_for_site_module('cta')
     );
 }

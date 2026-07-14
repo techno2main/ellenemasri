@@ -9,6 +9,20 @@
             background: #4e080e !important;
         }
 
+        body.em-site-admin-sidebar-chrome #adminmenuwrap,
+        body.em-site-admin-dashboard-screen #adminmenuwrap {
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            box-sizing: border-box;
+            padding-bottom: 64px !important;
+        }
+
+        body.em-site-admin-sidebar-chrome #adminmenu,
+        body.em-site-admin-dashboard-screen #adminmenu {
+            padding-bottom: 56px !important;
+            box-sizing: border-box;
+        }
+
         body.em-site-admin-sidebar-chrome #adminmenu a.menu-top,
         body.em-site-admin-sidebar-chrome #adminmenu .wp-submenu a,
         body.em-site-admin-dashboard-screen #adminmenu a.menu-top,

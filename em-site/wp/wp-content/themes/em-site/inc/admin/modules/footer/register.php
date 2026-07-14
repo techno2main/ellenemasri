@@ -11,13 +11,17 @@ if (!defined('ABSPATH')) {
 
 function em_site_footer_register_admin(): void
 {
+    $footer_icon = function_exists('em_site_rubrique_icon')
+        ? em_site_rubrique_icon('footer', 'dashicons-editor-insertmore')
+        : 'dashicons-editor-insertmore';
+
     add_menu_page(
         __('FOOTER', 'em-site'),
         __('FOOTER', 'em-site'),
         'manage_options',
         em_site_footer_page_slug(),
         'em_site_footer_render_admin_page',
-        'dashicons-editor-insertmore',
+        $footer_icon,
         em_site_admin_menu_position_for_site_module('footer')
     );
 }

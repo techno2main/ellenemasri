@@ -9,11 +9,12 @@ function em_site_overview_render(): void
     if (function_exists('em_site_admin_hub_breadcrumb_crumb')) {
         $breadcrumb[] = em_site_admin_hub_breadcrumb_crumb(__('Mes Rubriques', 'em-site'));
     }
+    $rubriques_icon = function_exists('em_site_site_icon') ? em_site_site_icon('rubriques', 'dashicons-screenoptions') : 'dashicons-screenoptions';
     ?>
     <div class="wrap em-site-overview em-site-admin-module em-site-hub-sommaire<?php echo $active_type !== '' ? ' is-focus-mode' : ''; ?>" data-initial-focus="<?php echo esc_attr($active_type); ?>">
         <?php
         if (function_exists('em_site_admin_hub_render_sommaire_header')) {
-            em_site_admin_hub_render_sommaire_header('', 'dashicons-screenoptions', false, true, null, $breadcrumb, false);
+            em_site_admin_hub_render_sommaire_header('', $rubriques_icon, false, true, null, $breadcrumb, false);
         }
         ?>
 

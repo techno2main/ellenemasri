@@ -14,13 +14,15 @@ if (!defined('ABSPATH')) {
  */
 function em_site_admin_dashboard_register_page(): void
 {
+    $dashboard_icon = function_exists('em_site_site_icon') ? em_site_site_icon('dashboard', 'dashicons-dashboard') : 'dashicons-dashboard';
+
     add_menu_page(
         __('Accueil EM-SITE', 'em-site'),
         __('Accueil', 'em-site'),
         'manage_options',
         em_site_admin_dashboard_page_slug(),
         'em_site_admin_render_dashboard_page',
-        'dashicons-dashboard',
+        $dashboard_icon,
         3
     );
 }
