@@ -1,7 +1,7 @@
 ﻿# REFONTE SYSTÈME DRAFT / LIVE
 
 Date : 2026-07-15
-Horodatage précis (Paris) : 2026-07-15 18:46:23
+Horodatage précis (Paris) : 2026-07-15 18:49:25
 Périmètre : em-site/wp/wp-content/themes/em-site
 Statut : phase 1 finalisée (Template stabilisé), phase 2 reportée
 
@@ -58,6 +58,12 @@ Branche dédiée : feature/refonte-draft-live-separation
 - Re-test terrain confirmé par l’utilisateur : le cas Header est désormais conforme.
 - Cas validé : changement d’item Header => bouton activé, retour à l’item initial => bouton désactivé sans refresh.
 - Phase 1 confirmée comme clôturée fonctionnellement.
+
+### 2026-07-15 18:49:25 (Paris) — MAJ doc globale demandée
+
+- Vérification complète du document effectuée.
+- Le bloc `Plan d’implémentation méthodique` est désormais statué explicitement phase par phase.
+- Conformité documentaire remise à niveau avant enchaînement Git et démarrage phase 2.
 
 ## Décision de cadrage
 
@@ -169,22 +175,22 @@ Important :
 
 ## Plan d’implémentation méthodique
 
-### Phase 1 - Simplification Template
+### Phase 1 - Simplification Template — ✅ FAIT
 - Renommer le bouton.
 - Centraliser la détection dirty globale de la page.
 - Ouvrir Preview uniquement après enregistrement draft réussi.
 
-### Phase 2 - Moteur de diff Preview
+### Phase 2 - Moteur de diff Preview — ⏳ À DÉMARRER
 - Construire snapshots Draft et Live normalisés.
 - Implémenter le diff réel unique.
 - Piloter l’UI Preview uniquement avec ce diff.
 
-### Phase 3 - Validation et publication
+### Phase 3 - Validation et publication — ⏳ EN ATTENTE
 - Activer `VALIDER LA MISE EN LIGNE` seulement si diff réel.
 - Gérer le cas sans diff avec message dédié.
 - Conserver un retour BO propre avec modale.
 
-### Phase 4 - Durcissement
+### Phase 4 - Durcissement — ⏳ EN ATTENTE
 - Tests complets multi-rubriques / multi-options.
 - Tests refresh, changements rapides, multi-onglets.
 - Vérification non-régression publication.
