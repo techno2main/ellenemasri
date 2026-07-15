@@ -1,9 +1,9 @@
 # PA - Refonte Rubriques
 
 Date : 2026-07-07
-Horodatage précis (Paris) : 2026-07-09 10:24:37
+Horodatage précis (Paris) : 2026-07-15 16:58:30
 Périmètre : em-site/wp/wp-content/themes/em-site
-Statut : Cadrage validé, implémentation en cours, preview HEADER ramené au layout vertical précédent (suivi opérationnel dans `documentation/suivi/SUIVI_REFONTE.md`)
+Statut : Cadrage validé, implémentation en cours, preview HEADER recadré sur la config live publiée pour corriger l'état du bouton (suivi opérationnel dans `documentation/suivi/SUIVI_REFONTE.md`)
 
 ## Objectif
 

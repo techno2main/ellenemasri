@@ -53,14 +53,14 @@ function em_site_admin_rubriques_render_list_item(string $module_slug, array $de
         && em_site_template_skeleton_can_remove_rubrique($module_slug);
     ?>
     <li
-        class="em-site-rubriques-admin__list-item<?php echo $is_sortable ? ' is-sortable' : ' is-pinned'; ?><?php echo $can_remove ? ' has-remove' : ''; ?><?php echo $is_hidden ? ' is-rubrique-hidden' : ''; ?><?php echo $is_open ? ' is-open' : ''; ?>"
+        class="em-site-rubriques-admin__list-item em-rubriques-admin__list-item<?php echo $is_sortable ? ' is-sortable' : ' is-pinned'; ?><?php echo $can_remove ? ' has-remove' : ''; ?><?php echo $is_hidden ? ' is-rubrique-hidden' : ''; ?><?php echo $is_open ? ' is-open' : ''; ?>"
         data-module-slug="<?php echo esc_attr($module_slug); ?>"
     >
-        <div class="em-site-rubriques-admin__list-row">
+        <div class="em-site-rubriques-admin__list-row em-rubriques-admin__list-row">
             <?php if ($can_toggle_visibility) { ?>
                 <button
                     type="button"
-                    class="em-site-rubriques-visibility-toggle<?php echo $is_hidden ? ' is-hidden' : ''; ?>"
+                    class="em-site-rubriques-visibility-toggle em-rubriques-visibility-toggle<?php echo $is_hidden ? ' is-hidden' : ''; ?>"
                     data-module-slug="<?php echo esc_attr($module_slug); ?>"
                     aria-pressed="<?php echo $is_hidden ? 'true' : 'false'; ?>"
                     aria-label="<?php echo esc_attr($is_hidden ? __('Afficher sur le site', 'em-site') : __('Masquer sur le site', 'em-site')); ?>"
@@ -72,30 +72,30 @@ function em_site_admin_rubriques_render_list_item(string $module_slug, array $de
             <?php if ($is_sortable) { ?>
                 <button
                     type="button"
-                    class="em-site-rubriques-sortable__handle"
+                    class="em-site-rubriques-sortable__handle em-rubriques-sortable__handle"
                     aria-label="<?php esc_attr_e('Réordonner', 'em-site'); ?>"
                 >
                     <i class="fa-solid fa-grip-vertical" aria-hidden="true"></i>
                 </button>
             <?php } elseif (!$can_toggle_visibility) { ?>
-                <span class="em-site-rubriques-admin__list-pin" aria-hidden="true">
+                <span class="em-site-rubriques-admin__list-pin em-rubriques-admin__list-pin" aria-hidden="true">
                     <i class="fa-solid fa-lock"></i>
                 </span>
             <?php } ?>
 
             <a
-                class="em-site-rubriques-admin__list-link<?php echo $is_coming_soon ? ' is-coming-soon' : ''; ?>"
+                class="em-site-rubriques-admin__list-link em-rubriques-admin__list-link<?php echo $is_coming_soon ? ' is-coming-soon' : ''; ?>"
                 href="<?php echo esc_url($item_url); ?>"
                 style="--em-rubrique-accent: <?php echo esc_attr($accent_color); ?>; --em-rubrique-text: <?php echo esc_attr($text_color); ?>"
                 <?php if ($preview_zone !== '') { ?>
                     data-preview-zone="<?php echo esc_attr($preview_zone); ?>"
                 <?php } ?>
             >
-                <span class="em-site-rubriques-admin__list-content">
-                    <span class="em-site-rubriques-admin__list-label">
+                <span class="em-site-rubriques-admin__list-content em-rubriques-admin__list-content">
+                    <span class="em-site-rubriques-admin__list-label em-rubriques-admin__list-label">
                         <?php echo esc_html($label); ?>
                         <?php if ($is_hidden) { ?>
-                            <span class="em-site-rubriques-admin__hidden-badge"><?php esc_html_e('Masqué', 'em-site'); ?></span>
+                            <span class="em-site-rubriques-admin__hidden-badge em-rubriques-admin__hidden-badge"><?php esc_html_e('Masqué', 'em-site'); ?></span>
                         <?php } ?>
                     </span>
                 </span>
@@ -104,7 +104,7 @@ function em_site_admin_rubriques_render_list_item(string $module_slug, array $de
             <?php if ($can_remove && $template_slug !== '') { ?>
                 <button
                     type="button"
-                    class="em-site-rubriques-admin__remove-button"
+                    class="em-site-rubriques-admin__remove-button em-rubriques-admin__remove-button"
                     data-rubrique-slug="<?php echo esc_attr($module_slug); ?>"
                     data-template-slug="<?php echo esc_attr($template_slug); ?>"
                     aria-label="<?php echo esc_attr(sprintf(

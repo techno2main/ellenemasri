@@ -12,15 +12,22 @@ if (!defined('ABSPATH')) {
 /**
  * Panneau « + » — rubriques proposables absentes du squelette (sous les onglets).
  */
-function em_site_admin_render_template_skeleton_add_panel(): void
+function em_site_admin_render_template_skeleton_add_panel(?array $proposable = null, ?array $positions = null): void
 {
     if (!current_user_can('manage_options')) {
         return;
     }
 
-    $proposable = em_site_admin_template_proposable_rubrique_definitions();
+    if ($proposable === null) {
+        $proposable = em_site_admin_template_proposable_rubrique_definitions();
+    }
+
     $template_slug = em_site_get_editing_template_slug();
-    $positions = em_site_admin_template_skeleton_insert_positions($template_slug);
+
+    if ($positions === null) {
+        $positions = em_site_admin_template_skeleton_insert_positions($template_slug);
+    }
+
     $position_values = array_column($positions, 'value');
     $default_position = in_array('__before_footer__', $position_values, true)
         ? '__before_footer__'
@@ -248,11 +255,14 @@ function em_site_admin_render_rubriques_page(): void
             __('Aperçu en images %s', 'em-site'),
             $editing_template_label
         );
-    $has_proposable_rubriques = function_exists('em_site_admin_template_proposable_rubrique_definitions')
-        && em_site_admin_template_proposable_rubrique_definitions() !== [];
+    $proposable_rubriques = function_exists('em_site_admin_template_proposable_rubrique_definitions')
+        ? em_site_admin_template_proposable_rubrique_definitions()
+        : [];
+    $has_proposable_rubriques = $proposable_rubriques !== [];
+    $skeleton_insert_positions = em_site_admin_template_skeleton_insert_positions($template_slug);
     $template_icon = function_exists('em_site_site_icon') ? em_site_site_icon('template', 'dashicons-layout') : 'dashicons-layout';
     ?>
-    <div class="wrap em-site-rubriques-admin em-site-admin-module em-site-hub-sommaire" data-template-slug="<?php echo esc_attr($template_slug); ?>">
+    <div class="wrap em-site-rubriques-admin em-rubriques-admin em-site-admin-module em-site-hub-sommaire" data-template-slug="<?php echo esc_attr($template_slug); ?>">
         <?php
         // Bandeau « template en cours d'édition » et barre d'onglets retirés : la
         // navigation se fait par la liste + le wireframe. L'état LIVE est rappelé à
@@ -264,12 +274,12 @@ function em_site_admin_render_rubriques_page(): void
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $open_module = sanitize_key((string) ($_GET['open'] ?? ''));
         ?>
-        <div class="em-site-rubriques-admin__layout">
-            <div class="em-site-rubriques-admin__main">
+        <div class="em-site-rubriques-admin__layout em-rubriques-admin__layout">
+            <div class="em-site-rubriques-admin__main em-rubriques-admin__main">
                 <?php if (current_user_can('manage_options') && $has_proposable_rubriques) { ?>
                     <button
                         type="button"
-                        class="button button-primary em-site-savebar__btn em-site-rubriques-admin__add-rubrique-toggle"
+                        class="button button-primary em-site-savebar__btn em-site-rubriques-admin__add-rubrique-toggle em-rubriques-admin__add-rubrique-toggle"
                         id="em-site-rubrique-skeleton-add-toggle"
                         aria-controls="em-site-rubrique-skeleton-add-panel"
                         aria-expanded="false"
@@ -280,12 +290,12 @@ function em_site_admin_render_rubriques_page(): void
 
                     <?php
                     if (function_exists('em_site_admin_render_template_skeleton_add_panel')) {
-                        em_site_admin_render_template_skeleton_add_panel();
+                        em_site_admin_render_template_skeleton_add_panel($proposable_rubriques, $skeleton_insert_positions);
                     }
                     ?>
                 <?php } ?>
 
-                <ul class="em-site-rubriques-admin__list">
+                <ul class="em-site-rubriques-admin__list em-rubriques-admin__list">
                     <?php
                     foreach ($definitions as $module_slug => $definition) {
                         em_site_admin_rubriques_render_list_item($module_slug, $definition);
@@ -299,8 +309,8 @@ function em_site_admin_render_rubriques_page(): void
             </div>
 
             <?php if (function_exists('em_site_admin_render_landing_map')) { ?>
-                <aside class="em-site-rubriques-admin__aside">
-                    <div class="em-site-rubriques-admin__map-wrap">
+                <aside class="em-site-rubriques-admin__aside em-rubriques-admin__aside">
+                    <div class="em-site-rubriques-admin__map-wrap em-rubriques-admin__map-wrap">
                         <div class="em-site-rubriques-admin__map-head">
                             <span class="em-site-rubriques-admin__map-title">
                                 <span

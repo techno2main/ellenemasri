@@ -9,6 +9,12 @@ Document de référence pour déléguer le debug de l’aperçu admin Rubriques,
 
 ## Situation actuelle
 
+### Mise à jour 2026-07-15 16:58:30 (Paris)
+
+- Le point de vérité du HEADER a été déplacé sur la config live publiée: les comparaisons d'état utilisent maintenant `data-live-config`.
+- Le flux Rubriques continue de transmettre explicitement `hasPendingChanges` pour l'activation du bouton `APERÇU AVANT MISE EN LIGNE`.
+- Reste à valider en runtime que le bouton s'active au premier changement puis se désactive au retour sur l'item publié.
+
 ### Mise à jour 2026-07-13 18:44:54 (Paris)
 
 - ✅ Correctif JS sur la page Rubriques: les actions AJAX de visibilit?/ordre/layout/add-remove d?clenchent maintenant l'?tat `draft modifi?`.

@@ -3,19 +3,20 @@
 
     var config = window.emWpTemplateSkeleton || {};
     var adminRoot = document.querySelector('.em-site-rubriques-admin');
-    var addToggle = document.getElementById('em-site-rubrique-skeleton-add-toggle');
-    var addPanel = document.getElementById('em-site-rubrique-skeleton-add-panel');
-
-    if (!adminRoot || !config.ajaxUrl || !config.nonce) {
-        return;
-    }
+    var hasAjaxConfig = !!(config.ajaxUrl && config.nonce);
 
     var statusDismissTimer = null;
     var lastStatusEl = null;
     var STATUS_DISMISS_MS = 3000;
-    var listRoot = adminRoot.querySelector('.em-site-rubriques-admin__list');
+    var listRoot = adminRoot ? adminRoot.querySelector('.em-site-rubriques-admin__list') : null;
     var pickerCache = Object.create(null);
     var activePickerRequestToken = 0;
+    var initialRubriqueOrder = listRoot ? Array.prototype.map.call(
+        listRoot.querySelectorAll('.em-site-rubriques-admin__list-item[data-module-slug]'),
+        function (item) {
+            return item.getAttribute('data-module-slug') || '';
+        }
+    ).filter(Boolean) : [];
 
     function setStatus(message, isError) {
         var statusEl = document.getElementById('em-site-rubrique-skeleton-add-status')
@@ -48,26 +49,75 @@
         }
     }
 
-    function closeAddPanel() {
-        if (!addPanel || !addToggle) {
+    function resolveAddPanelFromToggle(toggleButton) {
+        if (!toggleButton) {
+            return null;
+        }
+
+        var controlsId = toggleButton.getAttribute('aria-controls') || '';
+
+        if (controlsId !== '') {
+            return document.getElementById(controlsId);
+        }
+
+        if (adminRoot) {
+            return adminRoot.querySelector('#em-site-rubrique-skeleton-add-panel');
+        }
+
+        return document.getElementById('em-site-rubrique-skeleton-add-panel');
+    }
+
+    function closeAddPanel(toggleButton, panel) {
+        if (!toggleButton || !panel) {
             return;
         }
 
-        addPanel.hidden = true;
-        addToggle.setAttribute('aria-expanded', 'false');
+        panel.hidden = true;
+        toggleButton.setAttribute('aria-expanded', 'false');
     }
 
-    function openAddPanel() {
-        if (!addPanel || !addToggle) {
+    function openAddPanel(toggleButton, panel) {
+        if (!toggleButton || !panel) {
             return;
         }
 
-        addPanel.hidden = false;
-        addToggle.setAttribute('aria-expanded', 'true');
+        panel.hidden = false;
+        toggleButton.setAttribute('aria-expanded', 'true');
     }
+
+    if (!adminRoot) {
+        return;
+    }
+
+    adminRoot.addEventListener('click', function (event) {
+        var addToggleButton = event.target.closest('.em-site-rubriques-admin__add-rubrique-toggle');
+
+        if (!addToggleButton) {
+            return;
+        }
+
+        event.preventDefault();
+
+        var addPanel = resolveAddPanelFromToggle(addToggleButton);
+
+        if (!addPanel) {
+            return;
+        }
+
+        if (addPanel.hidden) {
+            openAddPanel(addToggleButton, addPanel);
+        } else {
+            closeAddPanel(addToggleButton, addPanel);
+        }
+    });
 
     function postSkeletonAction(action, templateSlug, rubriqueSlug, button, options) {
         options = options || {};
+
+        if (!hasAjaxConfig) {
+            setStatus((config.i18n && config.i18n.error) || 'Impossible de mettre a jour le squelette.', true);
+            return Promise.resolve();
+        }
 
         if (button) {
             button.disabled = true;
@@ -102,14 +152,19 @@
 
                 setStatus((payload.data && payload.data.message) || config.i18n.saved, false);
 
-                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
-                    window.EmSitePreviewButton.markReady();
-                }
+                var currentOrder = listRoot ? Array.prototype.map.call(
+                    listRoot.querySelectorAll('.em-site-rubriques-admin__list-item[data-module-slug]'),
+                    function (item) {
+                        return item.getAttribute('data-module-slug') || '';
+                    }
+                ).filter(Boolean) : [];
 
                 document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
                     detail: {
                         source: action,
                         rubriqueSlug: rubriqueSlug,
+                        draftKey: action + ':' + (templateSlug || 'default'),
+                        hasPendingChanges: JSON.stringify(currentOrder) !== JSON.stringify(initialRubriqueOrder),
                     },
                 }));
 
@@ -227,6 +282,10 @@
     }
 
     function fetchRubriquePicker(moduleSlug) {
+        if (!hasAjaxConfig) {
+            return Promise.reject(new Error((config.i18n && config.i18n.pickerLoadError) || 'Picker load error'));
+        }
+
         var body = new window.FormData();
         body.append('action', 'em_site_load_rubrique_picker');
         body.append('nonce', config.nonce);
@@ -296,16 +355,6 @@
                 syncOpenQueryParam('');
                 setStatus((error && error.message) || (config.i18n && config.i18n.pickerLoadError) || '', true);
             });
-    }
-
-    if (addToggle && addPanel) {
-        addToggle.addEventListener('click', function () {
-            if (addPanel.hidden) {
-                openAddPanel();
-            } else {
-                closeAddPanel();
-            }
-        });
     }
 
     function getRubriqueLabelFromButton(button) {
@@ -396,6 +445,10 @@
             var moduleSlug = listItem ? (listItem.getAttribute('data-module-slug') || '') : '';
 
             if (moduleSlug !== '') {
+                if (!hasAjaxConfig) {
+                    return;
+                }
+
                 event.preventDefault();
 
                 if (listItem.classList.contains('is-open')) {

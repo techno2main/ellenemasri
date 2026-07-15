@@ -38,6 +38,15 @@
         return order.filter(Boolean);
     }
 
+    function sameArray(left, right) {
+        return JSON.stringify(left || []) === JSON.stringify(right || []);
+    }
+
+    function getCurrentHeaderLayout(ctx) {
+        var group = ctx.mapBody ? ctx.mapBody.querySelector('.em-site-admin-landing-map__header-group') : null;
+        return group ? (group.getAttribute('data-header-layout') || 'hero_left') : 'hero_left';
+    }
+
     function reorderMapFlat(ctx, order) {
         order.forEach(function (slug) {
             if (slug === 'header') {
@@ -104,13 +113,12 @@
 
                 ns.setStatus(ctx, (payload.data && payload.data.message) || ctx.config.i18n.saved, false);
 
-                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
-                    window.EmSitePreviewButton.markReady();
-                }
-
                 document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
                     detail: {
                         source: 'rubrique-order',
+                        rubriqueSlug: 'rubrique-order',
+                        draftKey: 'rubrique-order:' + (ctx.config.templateSlug || 'default'),
+                        hasPendingChanges: !sameArray(getFullOrderFromList(ctx), ctx.initialOrder || []),
                     },
                 }));
             })
@@ -153,13 +161,12 @@
 
                 ns.setStatus(ctx, (payload.data && payload.data.message) || (ctx.config.i18n && ctx.config.i18n.layoutSaved), false);
 
-                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
-                    window.EmSitePreviewButton.markReady();
-                }
-
                 document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
                     detail: {
                         source: 'header-layout',
+                        rubriqueSlug: 'header-layout',
+                        draftKey: 'header-layout:' + (ctx.config.templateSlug || 'default'),
+                        hasPendingChanges: getCurrentHeaderLayout(ctx) !== (ctx.initialHeaderLayout || 'hero_left'),
                     },
                 }));
             })
@@ -232,6 +239,9 @@
         if (!ctx.list || !ctx.mapBody || !window.EmWpSlideSortable) {
             return;
         }
+
+        ctx.initialOrder = getFullOrderFromList(ctx);
+        ctx.initialHeaderLayout = getCurrentHeaderLayout(ctx);
 
         ctx.mapBody.addEventListener('click', function (event) {
             var swapBtn = event.target.closest('.em-site-admin-landing-map__swap-header');

@@ -17,8 +17,33 @@
             layoutSaving: false,
             statusDismissTimer: null,
             STATUS_DISMISS_MS: 3000,
+            initialVisibility: null,
         };
     };
+
+    function collectVisibilitySnapshot(ctx) {
+        var snapshot = {};
+
+        if (!ctx.list) {
+            return snapshot;
+        }
+
+        ctx.list.querySelectorAll('.em-site-rubriques-admin__list-item[data-module-slug]').forEach(function (item) {
+            var slug = item.getAttribute('data-module-slug') || '';
+            if (!slug) {
+                return;
+            }
+
+            var toggle = item.querySelector('.em-site-rubriques-visibility-toggle');
+            snapshot[slug] = !(toggle && toggle.classList.contains('is-hidden'));
+        });
+
+        return snapshot;
+    }
+
+    function sameSnapshot(left, right) {
+        return JSON.stringify(left || {}) === JSON.stringify(right || {});
+    }
 
     ns.setStatus = function (ctx, message, isError) {
         if (!ctx.statusEl) {
@@ -176,14 +201,13 @@
 
                 ns.setStatus(ctx, (payload.data && payload.data.message) || (ctx.config.i18n && ctx.config.i18n.visibilitySaved), false);
 
-                if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.markReady === 'function') {
-                    window.EmSitePreviewButton.markReady();
-                }
-
                 document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
                     detail: {
                         source: 'rubrique-visibility',
                         moduleSlug: moduleSlug,
+                        rubriqueSlug: 'rubrique-visibility',
+                        draftKey: 'rubrique-visibility:' + (ctx.config.templateSlug || 'default'),
+                        hasPendingChanges: !sameSnapshot(collectVisibilitySnapshot(ctx), ctx.initialVisibility || {}),
                     },
                 }));
             })
@@ -201,13 +225,16 @@
     };
 
     ns.bindVisibility = function (ctx) {
-        if (!ctx.adminRoot) {
-            return;
-        }
+        ctx.initialVisibility = collectVisibilitySnapshot(ctx);
 
-        ctx.adminRoot.addEventListener('click', function (event) {
+        document.addEventListener('click', function (event) {
             var toggle = event.target.closest('.em-site-rubriques-visibility-toggle');
             if (!toggle) {
+                return;
+            }
+
+            var pageRoot = toggle.closest('.em-site-rubriques-admin');
+            if (!pageRoot) {
                 return;
             }
 

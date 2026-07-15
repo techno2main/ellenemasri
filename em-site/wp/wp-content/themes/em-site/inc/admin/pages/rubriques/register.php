@@ -58,6 +58,25 @@ function em_site_admin_rubriques_enqueue(string $hook_suffix): void
     em_site_admin_hub_cards_enqueue_assets();
     em_site_admin_rubrique_enqueue_nav_assets($page_slug);
 
+    // Le parent TEMPLATE (page=em-template) force le contexte d'édition pendant
+    // le rendu de page. Or les enqueues passent avant ce rendu; sans ce pré-set,
+    // les scripts Rubriques (toggle, visibilité, drag&drop) ne sont pas chargés
+    // au premier affichage, puis semblent "magiquement" revenir après refresh.
+    if (!em_site_admin_has_template_context()) {
+        $active_slug = function_exists('em_site_get_active_template_slug')
+            ? em_site_template_sanitize_slug((string) em_site_get_active_template_slug())
+            : '';
+
+        if (
+            $active_slug !== ''
+            && function_exists('em_site_template_exists')
+            && em_site_template_exists($active_slug)
+            && function_exists('em_site_set_editing_template_slug')
+        ) {
+            em_site_set_editing_template_slug($active_slug);
+        }
+    }
+
     if (!em_site_admin_has_template_context()) {
         return;
     }

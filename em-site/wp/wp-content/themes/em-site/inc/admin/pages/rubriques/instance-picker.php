@@ -211,11 +211,21 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
             <?php else :
                 $items = em_site_get_items($module_slug);
                 $instance = $template !== '' ? em_site_get_instance($template, $module_slug) : [];
+                $live_instance = [];
+                if ($template !== '' && function_exists('em_site_instance_option_name') && function_exists('em_site_option_live_name_from_draft')) {
+                    $draft_option_name = em_site_instance_option_name($template, $module_slug);
+                    $live_option_name = em_site_option_live_name_from_draft($draft_option_name);
+                    $live_instance = function_exists('em_site_get_array_option')
+                        ? (array) em_site_get_array_option($live_option_name)
+                        : (array) get_option($live_option_name, []);
+                }
                 $selected = sanitize_key((string) ($instance['item'] ?? ''));
+                $live_selected = sanitize_key((string) ($live_instance['item'] ?? ''));
                 $single_only_modules = ['top-bar', 'footer'];
                 $is_single_only = in_array($module_slug, $single_only_modules, true);
                 $is_multi_enabled = !$is_single_only;
                 $display_mode = sanitize_key((string) ($instance['display_mode'] ?? 'single'));
+                $live_display_mode = sanitize_key((string) ($live_instance['display_mode'] ?? 'single'));
                 if (!in_array($display_mode, ['single', 'multi'], true)) {
                     $display_mode = 'single';
                 }
@@ -224,13 +234,21 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
                 }
                 $is_stream_module = $module_slug === 'stream';
                 $transition_mode = sanitize_key((string) ($instance['transition_mode'] ?? 'manual'));
+                $live_transition_mode = sanitize_key((string) ($live_instance['transition_mode'] ?? 'manual'));
                 if (!in_array($transition_mode, ['manual', 'auto'], true)) {
                     $transition_mode = 'manual';
                 }
+                if (!in_array($live_transition_mode, ['manual', 'auto'], true)) {
+                    $live_transition_mode = 'manual';
+                }
                 $is_multi_mode = $display_mode === 'multi';
                 $transition_timer = (int) ($instance['transition_timer'] ?? 6);
+                $live_transition_timer = (int) ($live_instance['transition_timer'] ?? 6);
                 if ($transition_timer < 2 || $transition_timer > 120) {
                     $transition_timer = 6;
+                }
+                if ($live_transition_timer < 2 || $live_transition_timer > 120) {
+                    $live_transition_timer = 6;
                 }
                 $effective = $selected !== '' ? $selected : em_site_rubrique_default_item_slug($module_slug);
 
@@ -261,6 +279,21 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
                 }
                 if ($first_item === '' && $item_slugs !== []) {
                     $first_item = (string) $item_slugs[0];
+                }
+
+                $live_hidden_items = [];
+                if (is_array($live_instance['hidden_items'] ?? null)) {
+                    foreach ((array) $live_instance['hidden_items'] as $hidden_slug) {
+                        $hidden_slug = sanitize_key((string) $hidden_slug);
+                        if ($hidden_slug !== '' && in_array($hidden_slug, $item_slugs, true)) {
+                            $live_hidden_items[] = $hidden_slug;
+                        }
+                    }
+                    $live_hidden_items = array_values(array_unique($live_hidden_items));
+                }
+                $live_first_item = sanitize_key((string) ($live_instance['first_item'] ?? ''));
+                if ($live_first_item === '' || !in_array($live_first_item, $item_slugs, true)) {
+                    $live_first_item = $live_selected !== '' ? $live_selected : $effective;
                 }
 
                 // La section branchée (utilisée par le template) toujours en premier.
@@ -302,11 +335,17 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
                         data-template="<?php echo esc_attr($template); ?>"
                         data-template-label="<?php echo esc_attr($template_label); ?>"
                         data-current="<?php echo esc_attr($effective); ?>"
+                        data-live-current="<?php echo esc_attr($live_selected); ?>"
                         data-display-mode="<?php echo esc_attr($display_mode); ?>"
+                        data-live-display-mode="<?php echo esc_attr($live_display_mode); ?>"
                         data-transition-mode="<?php echo esc_attr($transition_mode); ?>"
+                        data-live-transition-mode="<?php echo esc_attr($live_transition_mode); ?>"
                         data-transition-timer="<?php echo esc_attr((string) $transition_timer); ?>"
+                        data-live-transition-timer="<?php echo esc_attr((string) $live_transition_timer); ?>"
                         data-first-item="<?php echo esc_attr($first_item); ?>"
+                        data-live-first-item="<?php echo esc_attr($live_first_item); ?>"
                         data-hidden-items="<?php echo esc_attr((string) wp_json_encode($hidden_items)); ?>"
+                        data-live-hidden-items="<?php echo esc_attr((string) wp_json_encode($live_hidden_items)); ?>"
                         data-live="<?php echo $is_live ? '1' : '0'; ?>"
                     >
                         <?php foreach ($items as $slug => $item_label) :

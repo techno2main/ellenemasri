@@ -896,6 +896,16 @@ function em_site_admin_header_section_save(string $template, array $data): void
     $type = em_site_admin_header_catalog_type_slug();
     $items = function_exists('em_site_get_items') ? em_site_get_items($type) : [];
     $header_item = sanitize_key((string) ($data['header_item'] ?? ''));
+
+    if ($header_item !== '' && !isset($items[$header_item])) {
+        foreach (em_site_admin_header_slug_variants($header_item) as $candidate_slug) {
+            if (isset($items[$candidate_slug])) {
+                $header_item = $candidate_slug;
+                break;
+            }
+        }
+    }
+
     if ($header_item === '' || !isset($items[$header_item])) {
         $header_item = em_site_admin_header_ensure_catalog_item($template);
     }
@@ -1560,6 +1570,13 @@ function em_site_admin_render_header_item_editor(string $header_item_slug): void
     }
 
     $cfg = em_site_admin_header_item_config_get($header_item_slug);
+    $live_cfg = [];
+    if (function_exists('em_site_admin_header_item_config_option_name') && function_exists('em_site_option_live_name_from_draft')) {
+        $live_option_name = em_site_option_live_name_from_draft(em_site_admin_header_item_config_option_name($header_item_slug));
+        $live_cfg = function_exists('em_site_get_array_option')
+            ? (array) em_site_get_array_option($live_option_name)
+            : (array) get_option($live_option_name, []);
+    }
     $hero_type = em_site_admin_header_part_type_slug('hero');
     $slider_type = em_site_admin_header_part_type_slug('slider');
     $matrix = in_array((string) ($cfg['matrix'] ?? ''), ['hero', 'hero_slider', 'slider'], true)
@@ -1572,7 +1589,7 @@ function em_site_admin_render_header_item_editor(string $header_item_slug): void
         $editing_template = 'mayami';
     }
     ?>
-    <div class="em-site-header-picker em-site-header-item-editor" data-header-item="<?php echo esc_attr($header_item_slug); ?>" data-template="<?php echo esc_attr($editing_template); ?>" data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>" data-matrix="<?php echo esc_attr($matrix); ?>" data-position="<?php echo esc_attr((string) ($cfg['position'] ?? 'hero_left')); ?>">
+    <div class="em-site-header-picker em-site-header-item-editor" data-header-item="<?php echo esc_attr($header_item_slug); ?>" data-template="<?php echo esc_attr($editing_template); ?>" data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>" data-live-config="<?php echo esc_attr((string) wp_json_encode($live_cfg)); ?>" data-matrix="<?php echo esc_attr($matrix); ?>" data-position="<?php echo esc_attr((string) ($cfg['position'] ?? 'hero_left')); ?>">
         <details class="em-site-collapse em-site-builder__section em-site-header-item-editor__tab" data-item-section="appearance">
             <summary class="em-site-collapse__summary">
                 <span class="em-site-collapse__chevron" aria-hidden="true"></span>
@@ -1747,6 +1764,13 @@ function em_site_admin_render_header_appearance(array $appearance, string $ratio
 function em_site_admin_render_header_section_picker(string $template): void
 {
     $cfg = em_site_admin_header_section_get($template);
+    $live_cfg = [];
+    if ($template !== '' && function_exists('em_site_admin_header_section_option_name') && function_exists('em_site_option_live_name_from_draft')) {
+        $live_option_name = em_site_option_live_name_from_draft(em_site_admin_header_section_option_name($template));
+        $live_cfg = function_exists('em_site_get_array_option')
+            ? (array) em_site_get_array_option($live_option_name)
+            : (array) get_option($live_option_name, []);
+    }
     $is_live = $template !== ''
         && function_exists('em_site_get_active_template_slug')
         && em_site_get_active_template_slug() === $template;
@@ -1765,15 +1789,16 @@ function em_site_admin_render_header_section_picker(string $template): void
         data-matrix="<?php echo esc_attr($cfg['matrix']); ?>"
         data-position="<?php echo esc_attr($cfg['position']); ?>"
         data-config="<?php echo esc_attr((string) wp_json_encode($cfg)); ?>"
+        data-live-config="<?php echo esc_attr((string) wp_json_encode($live_cfg)); ?>"
     >
         <?php em_site_admin_render_display_mode_controls('em-site-header-display-mode', $display_mode, false, true); ?>
-
-        <?php em_site_admin_render_header_catalog_items($template); ?>
 
         <div class="em-site-header-picker__savebar">
             <button type="button" class="button button-primary em-site-header-picker__save" disabled><?php esc_html_e('Sauvegarder', 'em-site'); ?></button>
             <p class="em-site-instance-picker__status" aria-live="polite" hidden></p>
         </div>
+
+        <?php em_site_admin_render_header_catalog_items($template); ?>
     </div>
     <?php
 }

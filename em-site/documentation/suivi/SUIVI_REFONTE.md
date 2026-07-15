@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-14 16:42:56.
+3. Derni?re mise ? jour : 2026-07-15 16:58:30.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,12 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-15 16:58:30 (Paris)
+
+- Correction du référentiel HEADER: les comparaisons d'état s'appuient désormais sur la config live publiée via `data-live-config` au lieu d'un baseline de brouillon.
+- Harmonisation du suivi preview: les actions Rubriques continuent de remonter `hasPendingChanges` pour piloter le bouton `APERÇU AVANT MISE EN LIGNE` de manière explicite.
+- Validation technique effectuée sur les fichiers HEADER modifiés : `php -l` OK.
 
 ### 2026-07-14 16:42:56 (Paris)
 

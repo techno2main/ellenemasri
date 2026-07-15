@@ -11,10 +11,39 @@
 
         body.em-site-admin-sidebar-chrome #adminmenuwrap,
         body.em-site-admin-dashboard-screen #adminmenuwrap {
+            height: calc(100vh - 32px) !important;
+            max-height: calc(100vh - 32px) !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
             box-sizing: border-box;
             padding-bottom: 64px !important;
+        }
+
+        body.em-site-admin-sidebar-chrome #adminmenuwrap::-webkit-scrollbar,
+        body.em-site-admin-dashboard-screen #adminmenuwrap::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+            background: transparent;
+        }
+
+        body.em-site-admin-sidebar-chrome #adminmenuback,
+        body.em-site-admin-dashboard-screen #adminmenuback {
+            height: calc(100vh - 32px) !important;
+            max-height: calc(100vh - 32px) !important;
+        }
+
+        @media screen and (max-width: 782px) {
+            body.em-site-admin-sidebar-chrome #adminmenuwrap,
+            body.em-site-admin-dashboard-screen #adminmenuwrap,
+            body.em-site-admin-sidebar-chrome #adminmenuback,
+            body.em-site-admin-dashboard-screen #adminmenuback {
+                height: calc(100vh - 46px) !important;
+                max-height: calc(100vh - 46px) !important;
+            }
         }
 
         body.em-site-admin-sidebar-chrome #adminmenu,
