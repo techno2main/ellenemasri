@@ -1,9 +1,9 @@
 ﻿# REFONTE SYSTÈME DRAFT / LIVE
 
 Date : 2026-07-15
-Horodatage précis (Paris) : 2026-07-15 18:49:25
+Horodatage précis (Paris) : 2026-07-15 18:50:26
 Périmètre : em-site/wp/wp-content/themes/em-site
-Statut : phase 1 finalisée (Template stabilisé), phase 2 reportée
+Statut : phase 1 finalisée, phase 2 démarrée (implémentation diff Preview)
 
 Branche dédiée : feature/refonte-draft-live-separation
 
@@ -64,6 +64,16 @@ Branche dédiée : feature/refonte-draft-live-separation
 - Vérification complète du document effectuée.
 - Le bloc `Plan d’implémentation méthodique` est désormais statué explicitement phase par phase.
 - Conformité documentaire remise à niveau avant enchaînement Git et démarrage phase 2.
+
+### 2026-07-15 18:50:26 (Paris) — Démarrage phase 2
+
+- Implémentation du diff réel Draft vs Live sur la page Preview.
+- Ajout d’un calcul de snapshots normalisés (draft/live) et comparaison déterministe.
+- UI Preview branchée sur ce diff :
+  - affichage de `VALIDER LA MISE EN LIGNE` uniquement si diff réel,
+  - affichage de `AUCUNE MODIFICATION DÉTECTÉE` sinon.
+- Action de publication protégée : si aucun diff réel, redirection vers Preview sans publication.
+- Validation technique locale : lint PHP OK sur `inc/shared/template/active.php`.
 
 ## Décision de cadrage
 
@@ -180,12 +190,12 @@ Important :
 - Centraliser la détection dirty globale de la page.
 - Ouvrir Preview uniquement après enregistrement draft réussi.
 
-### Phase 2 - Moteur de diff Preview — ⏳ À DÉMARRER
+### Phase 2 - Moteur de diff Preview — ✅ FAIT
 - Construire snapshots Draft et Live normalisés.
 - Implémenter le diff réel unique.
 - Piloter l’UI Preview uniquement avec ce diff.
 
-### Phase 3 - Validation et publication — ⏳ EN ATTENTE
+### Phase 3 - Validation et publication — 🔄 EN COURS
 - Activer `VALIDER LA MISE EN LIGNE` seulement si diff réel.
 - Gérer le cas sans diff avec message dédié.
 - Conserver un retour BO propre avec modale.

@@ -356,6 +356,137 @@ function em_site_preview_admin_return_url(): string
 }
 
 /**
+ * Normalise récursivement une valeur pour une comparaison stable.
+ *
+ * @param mixed $value Valeur brute.
+ * @return mixed
+ */
+function em_site_option_normalize_for_diff($value)
+{
+    if (is_array($value)) {
+        $normalized = [];
+
+        foreach ($value as $key => $item) {
+            $normalized[$key] = em_site_option_normalize_for_diff($item);
+        }
+
+        if (!array_is_list($normalized)) {
+            ksort($normalized);
+        }
+
+        return $normalized;
+    }
+
+    if (is_object($value)) {
+        /** @var array<string,mixed> $arr */
+        $arr = (array) $value;
+        ksort($arr);
+
+        return em_site_option_normalize_for_diff($arr);
+    }
+
+    return $value;
+}
+
+/**
+ * Retourne une signature stable pour comparer deux valeurs d'option.
+ *
+ * @param mixed $value Valeur brute.
+ */
+function em_site_option_value_diff_signature($value): string
+{
+    $normalized = em_site_option_normalize_for_diff($value);
+    $encoded = wp_json_encode($normalized);
+
+    return is_string($encoded) ? $encoded : '';
+}
+
+/**
+ * Lit un snapshot des options d'un canal en base, indexé par suffixe.
+ *
+ * @return array<string,string>
+ */
+function em_site_option_diff_signature_map(string $prefix): array
+{
+    global $wpdb;
+
+    if (!isset($wpdb) || !is_object($wpdb)) {
+        return [];
+    }
+
+    $table = isset($wpdb->options) ? (string) $wpdb->options : '';
+
+    if ($table === '') {
+        return [];
+    }
+
+    $rows = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT option_name, option_value FROM {$table} WHERE option_name LIKE %s",
+            $wpdb->esc_like($prefix) . '%'
+        ),
+        ARRAY_A
+    );
+
+    if (!is_array($rows) || $rows === []) {
+        return [];
+    }
+
+    $map = [];
+    $prefix_len = strlen($prefix);
+
+    foreach ($rows as $row) {
+        $option_name = (string) ($row['option_name'] ?? '');
+
+        if ($option_name === '' || !str_starts_with($option_name, $prefix)) {
+            continue;
+        }
+
+        $suffix = substr($option_name, $prefix_len);
+        if ($suffix === '' || str_starts_with($suffix, 'live_')) {
+            continue;
+        }
+
+        $value = maybe_unserialize($row['option_value'] ?? null);
+        $map[$suffix] = em_site_option_value_diff_signature($value);
+    }
+
+    ksort($map);
+
+    return $map;
+}
+
+/**
+ * Indique si le brouillon enregistré diffère réellement du live publié.
+ */
+function em_site_draft_live_has_real_diff(): bool
+{
+    $draft_map = em_site_option_diff_signature_map(em_site_option_draft_prefix());
+    $live_map = em_site_option_diff_signature_map(em_site_option_live_prefix());
+
+    if ($draft_map === [] && $live_map === []) {
+        return false;
+    }
+
+    $keys = array_values(array_unique(array_merge(array_keys($draft_map), array_keys($live_map))));
+
+    foreach ($keys as $key) {
+        $has_draft = array_key_exists($key, $draft_map);
+        $has_live = array_key_exists($key, $live_map);
+
+        if ($has_draft !== $has_live) {
+            return true;
+        }
+
+        if ($has_draft && $has_live && $draft_map[$key] !== $live_map[$key]) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * Barre sticky d'aperçu front (publication + retour admin).
  */
 function em_site_front_render_preview_action_bar(): void
@@ -373,6 +504,7 @@ function em_site_front_render_preview_action_bar(): void
     ], admin_url('admin-post.php'));
 
     $back_url = em_site_preview_admin_return_url();
+    $has_real_diff = em_site_draft_live_has_real_diff();
     ?>
     <div id="em-site-preview-bar" class="em-site-preview-bar" role="status">
         <div class="em-site-preview-bar__inner">
@@ -380,9 +512,15 @@ function em_site_front_render_preview_action_bar(): void
                 <?php esc_html_e('APERÇU DU SITE AVANT MISE EN LIGNE', 'em-site'); ?>
             </span>
             <div class="em-site-preview-bar__actions">
-                <a class="em-site-preview-bar__publish" href="<?php echo esc_url($publish_url); ?>">
-                    <?php esc_html_e('VALIDER LA MISE EN LIGNE', 'em-site'); ?>
-                </a>
+                <?php if ($has_real_diff) : ?>
+                    <a class="em-site-preview-bar__publish" href="<?php echo esc_url($publish_url); ?>">
+                        <?php esc_html_e('VALIDER LA MISE EN LIGNE', 'em-site'); ?>
+                    </a>
+                <?php else : ?>
+                    <span class="em-site-preview-bar__nochange">
+                        <?php esc_html_e('AUCUNE MODIFICATION DÉTECTÉE', 'em-site'); ?>
+                    </span>
+                <?php endif; ?>
                 <a
                     class="em-site-preview-bar__back"
                     href="<?php echo esc_url($back_url); ?>"
@@ -449,6 +587,21 @@ function em_site_front_render_preview_action_bar(): void
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .03em;
+        }
+        #em-site-preview-bar .em-site-preview-bar__nochange {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            color: #5b4750;
+            background: #f3e8ec;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+            border: 1px solid #d9c4cc;
         }
         #em-site-preview-bar .em-site-preview-bar__publish {
             background: #0c8f4a;
@@ -1008,6 +1161,20 @@ function em_site_handle_publish_preview_template_action(): void
 
     if ($template_slug === '' || !em_site_template_exists($template_slug)) {
         wp_die(esc_html__('Template invalide.', 'em-site'), 400);
+    }
+
+    if (!em_site_draft_live_has_real_diff()) {
+        $preview_url = em_site_template_preview_url($template_slug);
+
+        if ($preview_url === '') {
+            $preview_url = home_url('/');
+        }
+
+        wp_safe_redirect(add_query_arg([
+            'no_changes' => '1',
+            'em_site_return' => $return_url,
+        ], $preview_url));
+        exit;
     }
 
     em_site_publish_copy_draft_options_to_live();
