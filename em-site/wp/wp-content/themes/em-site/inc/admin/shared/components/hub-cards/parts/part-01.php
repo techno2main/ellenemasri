@@ -144,6 +144,14 @@ function em_site_admin_hub_render_sommaire_header(
             $breadcrumb_html = em_site_admin_hub_breadcrumb_html($auto_crumbs);
         }
     }
+    $initial_dirty = false;
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $admin_page = sanitize_key((string) ($_GET['page'] ?? ''));
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $updated = sanitize_key((string) ($_GET['updated'] ?? ''));
+    if ($admin_page === 'em-rubriques-overview' && $updated === 'saved') {
+        $initial_dirty = true;
+    }
     ?>
     <h1 class="em-site-hub__greeting">
         <span class="<?php echo esc_attr($icon_class); ?> em-site-hub__greeting-icon" aria-hidden="true"></span>
@@ -167,6 +175,7 @@ function em_site_admin_hub_render_sommaire_header(
                 'icon_class' => 'dashicons dashicons-external',
                 'title' => __('Enregistrer les modifications puis ouvrir la prévisualisation dans un nouvel onglet', 'em-site'),
                 'label' => __('ENREGISTRER LES MODIFICATIONS', 'em-site'),
+                'initial_dirty' => $initial_dirty,
             ]);
         }
         ?>

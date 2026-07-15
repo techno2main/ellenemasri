@@ -756,12 +756,14 @@ function em_site_overview_render(): void
                 }) : '';
                 var label = titleItem ? titleItem.textContent.replace(/\s+/g, ' ').trim() : '';
                 var key = normalizeKey(label);
+                var itemSlug = (item.getAttribute('data-item-slug') || '').trim();
 
                 return {
                     node: item,
                     label: label,
                     icon: glyphClass || 'dashicons-align-center',
                     key: key,
+                    itemSlug: itemSlug,
                     active: !!item.open
                 };
             });
@@ -803,6 +805,12 @@ function em_site_overview_render(): void
                             radio.dispatchEvent(new Event('input', { bubbles: true }));
                             radio.dispatchEvent(new Event('change', { bubbles: true }));
                         });
+                    }
+
+                    var focusedSlug = wrap.getAttribute('data-focus-slug') || activeSlug || '';
+                    if (focusedSlug && window.history && window.history.replaceState) {
+                        var itemPart = tab.itemSlug ? ('&item=' + encodeURIComponent(tab.itemSlug)) : '';
+                        window.history.replaceState({}, document.title, summaryUrl + '&type=' + encodeURIComponent(focusedSlug) + itemPart);
                     }
 
                     syncFocusTitle(activeSlug);
@@ -955,6 +963,15 @@ function em_site_overview_render(): void
                     syncCardAddButton(card);
                     var focusedSlug = wrap.getAttribute('data-focus-slug') || '';
                     if (focusedSlug && card && card.id === ('em-site-card-' + focusedSlug)) {
+                        if (window.history && window.history.replaceState) {
+                            var activeItem = card.querySelector('.em-site-items > .em-site-item[open]');
+                            var activeItemSlug = activeItem ? String(activeItem.getAttribute('data-item-slug') || '').trim() : '';
+                            var nextUrl = summaryUrl + '&type=' + encodeURIComponent(focusedSlug);
+                            if (activeItemSlug) {
+                                nextUrl += '&item=' + encodeURIComponent(activeItemSlug);
+                            }
+                            window.history.replaceState({}, document.title, nextUrl);
+                        }
                         syncFocusTitle(focusedSlug);
                     }
                 });

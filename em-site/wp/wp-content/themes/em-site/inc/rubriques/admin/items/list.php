@@ -65,7 +65,7 @@ function em_site_render_footer_item(string $type_slug, string $item_slug, string
     $anchor = (string) (em_site_get_item($type_slug, $item_slug)['anchor'] ?? '');
     $show_inline_section_tabs = true;
     ?>
-    <details class="em-site-collapse em-site-item" <?php echo $open ? 'open' : ''; ?>>
+    <details class="em-site-collapse em-site-item" data-item-slug="<?php echo esc_attr($item_slug); ?>" <?php echo $open ? 'open' : ''; ?>>
         <summary class="em-site-collapse__summary">
             <span class="em-site-collapse__chevron" aria-hidden="true"></span>
             <span class="dashicons dashicons-align-center"></span>

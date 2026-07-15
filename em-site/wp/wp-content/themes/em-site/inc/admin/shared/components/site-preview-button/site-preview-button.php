@@ -76,6 +76,8 @@ function em_site_admin_render_site_preview_button(array $args = []): void
         return;
     }
 
+    $has_pending_changes = !empty($args['initial_dirty']);
+
     $classes = isset($args['class']) ? trim((string) $args['class']) : '';
     $label = isset($args['label']) && (string) $args['label'] !== ''
         ? (string) $args['label']
@@ -87,7 +89,7 @@ function em_site_admin_render_site_preview_button(array $args = []): void
         ? (string) $args['icon_class']
         : 'dashicons dashicons-external';
 
-    $full_class = trim('em-site-site-preview-btn is-disabled ' . $classes);
+    $full_class = trim('em-site-site-preview-btn ' . ($has_pending_changes ? '' : 'is-disabled') . ' ' . $classes);
     ?>
     <a
         class="<?php echo esc_attr($full_class); ?>"
@@ -96,8 +98,9 @@ function em_site_admin_render_site_preview_button(array $args = []): void
         title="<?php echo esc_attr($title); ?>"
         data-em-site-site-preview-btn="1"
         data-em-site-template-slug="<?php echo esc_attr($template_slug); ?>"
-        aria-disabled="true"
-        tabindex="-1"
+        data-em-site-initial-dirty="<?php echo $has_pending_changes ? '1' : '0'; ?>"
+        aria-disabled="<?php echo $has_pending_changes ? 'false' : 'true'; ?>"
+        <?php if (!$has_pending_changes) : ?>tabindex="-1"<?php endif; ?>
     >
         <span class="<?php echo esc_attr($icon_class); ?>" aria-hidden="true"></span>
         <span><?php echo esc_html($label); ?></span>

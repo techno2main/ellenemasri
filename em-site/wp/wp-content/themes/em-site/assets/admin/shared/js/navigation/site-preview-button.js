@@ -186,6 +186,15 @@
         publishPreviewButtonApi();
         draftDirtyFlags = Object.create(null);
 
+        getButtons().forEach(function (button) {
+            var initialDirty = String(button.getAttribute('data-em-site-initial-dirty') || '').trim();
+            if (initialDirty === '1') {
+                var templateSlug = String(button.getAttribute('data-em-site-template-slug') || '').trim();
+                var key = ['initial', templateSlug || 'default'].join(':');
+                draftDirtyFlags[key] = true;
+            }
+        });
+
         document.addEventListener('click', onClick);
         document.addEventListener('click', onSaveClick, true);
         document.addEventListener('submit', onSubmit, true);

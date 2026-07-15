@@ -1,7 +1,7 @@
 ﻿# REFONTE SYSTÈME DRAFT / LIVE
 
 Date : 2026-07-15
-Horodatage précis (Paris) : 2026-07-15 19:02:06
+Horodatage précis (Paris) : 2026-07-15 19:30:50
 Périmètre : em-site/wp/wp-content/themes/em-site
 Statut : phases 1, 2 et 3 validées sur le flux nominal ; phase 4 démarrée (durcissement non-régression publication)
 
@@ -103,6 +103,31 @@ Branche dédiée : feature/refonte-draft-live-separation
 - Cause racine traitée : purge explicite de l’état mémoire du bouton dans l’onglet BO au retour post-publication.
 - Portée : cohérence BO après publication, sans dépendre d’un rechargement de la page Template.
 - Phase 4 démarrée avec ce premier correctif de durcissement validé terrain.
+
+### 2026-07-15 19:05:15 (Paris) — Cadrage détaillé phase 4
+
+- La phase 4 n’est pas terminée.
+- État réel :
+  - plusieurs correctifs de durcissement ont déjà été appliqués,
+  - mais la couverture de non-régression complète n’est pas encore validée.
+- Périmètre explicite phase 4 :
+  - page `Template`,
+  - page `Rubriques`,
+  - bouton partagé `ENREGISTRER LES MODIFICATIONS`,
+  - flux `BO → Preview → publication → retour BO`.
+- Règle métier : le comportement doit être strictement identique entre Template et Rubriques dès lors que le bouton partagé est utilisé.
+- Suite attendue : validation terrain séquentielle, test par test, avec éventuels correctifs code si un cas échoue.
+
+### 2026-07-15 19:30:50 (Paris) — Correctifs phase 4 Rubriques (URL + état bouton)
+
+- Correctif 1 appliqué (Rubriques, édition ciblée) : la synchronisation d’URL inclut désormais `&item=<slug-item>` aussi lors d’un clic direct dans la liste des items (pas uniquement via les onglets de focus).
+- Résultat attendu du correctif 1 : ouverture de `RELEASE MAYAMI` puis `RELEASE OUR LAND` dans la liste => l’URL reflète immédiatement l’item actif.
+- Validation terrain utilisateur reçue : le comportement URL est conforme (`les url sont ok`).
+- Correctif 2 appliqué (bouton partagé) : suppression de l’activation initiale basée sur un diff global Draft/Live, responsable d’un faux état actif « sans changement local ».
+- Nouveau comportement du bouton top :
+  - ouverture standard Rubriques sans action locale => bouton inactif ;
+  - retour après sauvegarde item (`updated=saved`) => activation initiale autorisée pour passage Preview/publication.
+- Portée : alignement du comportement Rubriques avec la règle métier du flux nominal, sans réintroduire d’état dirty global parasite.
 
 ## Décision de cadrage
 
@@ -235,6 +260,16 @@ Important :
 - Tests complets multi-rubriques / multi-options.
 - Tests refresh, changements rapides, multi-onglets.
 - Vérification non-régression publication.
+- Couvre explicitement les pages `Template` et `Rubriques`.
+
+#### Matrice de validation phase 4
+
+1. `Rubriques` : afficher/masquer une rubrique, publier, retour BO, bouton redevenu inactif.
+2. `Rubriques` : changer un item, ouvrir Preview, publier, retour BO cohérent.
+3. `Rubriques` : réordonner une rubrique, ouvrir Preview, publier, retour BO cohérent.
+4. `Template` : changement simple, Preview, publication, retour BO cohérent.
+5. `Template` + `Rubriques` : vérifier qu’un écran n’hérite pas d’un état dirty obsolète de l’autre.
+6. Changements rapides successifs : absence d’état bloqué du bouton.
 
 ## Règle de conduite
 
