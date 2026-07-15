@@ -1,9 +1,9 @@
 ﻿# REFONTE SYSTÈME DRAFT / LIVE
 
 Date : 2026-07-15
-Horodatage précis (Paris) : 2026-07-15 18:50:26
+Horodatage précis (Paris) : 2026-07-15 18:57:25
 Périmètre : em-site/wp/wp-content/themes/em-site
-Statut : phase 1 finalisée, phase 2 démarrée (implémentation diff Preview)
+Statut : phases 1, 2 et 3 validées sur le flux nominal ; phase 4 en attente
 
 Branche dédiée : feature/refonte-draft-live-separation
 
@@ -74,6 +74,28 @@ Branche dédiée : feature/refonte-draft-live-separation
   - affichage de `AUCUNE MODIFICATION DÉTECTÉE` sinon.
 - Action de publication protégée : si aucun diff réel, redirection vers Preview sans publication.
 - Validation technique locale : lint PHP OK sur `inc/shared/template/active.php`.
+
+### 2026-07-15 18:51:44 (Paris) — Correction de statut phase 2
+
+- La phase 2 a été implémentée, mais elle n’a pas encore été validée fonctionnellement par l’utilisateur.
+- Correction documentaire appliquée : aucun statut `FAIT` ou `validé` ne doit être conservé sans protocole de test exécuté et confirmé.
+- La phase 3 reste bloquée tant que les scénarios Preview ne sont pas validés terrain.
+
+### 2026-07-15 18:51:44 (Paris) — Ajustement du protocole de test phase 2
+
+- Le scénario `Preview sans diff` n’est pas atteignable depuis le flux nominal Template.
+- Cause fonctionnelle : si le draft redevient identique à l’état précédent avant enregistrement, le bouton `ENREGISTRER LES MODIFICATIONS` se désactive et l’ouverture Preview n’est plus possible depuis le BO.
+- Conséquence : le message `AUCUNE MODIFICATION DÉTECTÉE` ne constitue pas un cas de validation principal du workflow Template → Preview.
+- Ce message reste un garde-fou défensif pour accès direct / URL d’aperçu / tentative de publication sans diff, mais pas un scénario utilisateur standard depuis le Template.
+
+### 2026-07-15 18:57:25 (Paris) — Validation utilisateur phase 2/3 (flux nominal)
+
+- Cas A validé par l’utilisateur : avec diff réel, la Preview affiche bien `VALIDER LA MISE EN LIGNE`.
+- Cas D validé par l’utilisateur : la publication depuis la Preview fonctionne correctement sur le flux nominal.
+- Validation retenue :
+  - phase 2 validée sur le chemin nominal `Template → enregistrement draft → Preview avec diff réel` ;
+  - phase 3 validée sur le chemin nominal `Preview avec diff réel → publication → retour BO propre`.
+- Le cas `aucun diff réel` reste documenté comme garde-fou défensif hors flux nominal et ne bloque plus la clôture fonctionnelle des phases 2/3.
 
 ## Décision de cadrage
 
@@ -179,7 +201,7 @@ Important :
 
 1. Sur Template, le bouton `ENREGISTRER LES MODIFICATIONS` reflète uniquement l’existence de changements locaux.
 2. Sur Preview, la disponibilité de `VALIDER LA MISE EN LIGNE` dépend uniquement du diff réel Draft vs Live.
-3. Si aucun diff réel : affichage explicite `Aucune modification détectée`.
+3. Si aucun diff réel et qu’une Preview est tout de même ouverte par un chemin non nominal, affichage explicite `Aucune modification détectée`.
 4. Le comportement est identique sur toutes les rubriques/options, pas seulement Header.
 5. Aucun état visuel contradictoire entre Template et Preview.
 
@@ -190,12 +212,14 @@ Important :
 - Centraliser la détection dirty globale de la page.
 - Ouvrir Preview uniquement après enregistrement draft réussi.
 
-### Phase 2 - Moteur de diff Preview — ✅ FAIT
+### Phase 2 - Moteur de diff Preview — ✅ VALIDÉE SUR FLUX NOMINAL
 - Construire snapshots Draft et Live normalisés.
 - Implémenter le diff réel unique.
 - Piloter l’UI Preview uniquement avec ce diff.
+- Validation nominale attendue : cas `diff réel présent` confirmé depuis le flux Template → Preview.
+- Validation défensive complémentaire : cas `aucun diff réel` seulement si la Preview est ouverte par un chemin non nominal.
 
-### Phase 3 - Validation et publication — 🔄 EN COURS
+### Phase 3 - Validation et publication — ✅ VALIDÉE SUR FLUX NOMINAL
 - Activer `VALIDER LA MISE EN LIGNE` seulement si diff réel.
 - Gérer le cas sans diff avec message dédié.
 - Conserver un retour BO propre avec modale.
