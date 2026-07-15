@@ -420,6 +420,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $allowed
     );
 
+    // Conserve l'ancienne icône quand un item change d'icône, pour qu'elle
+    // reste disponible ensuite dans les sélecteurs.
+    $site_overrides_current = function_exists('em_site_site_icons_overrides')
+      ? (array) em_site_site_icons_overrides()
+      : [];
+    $rubrique_overrides_current = function_exists('em_site_rubrique_icons_overrides')
+      ? (array) em_site_rubrique_icons_overrides()
+      : [];
+
+    foreach ($site_overrides_posted as $key => $icon) {
+      $previous_icon = isset($site_overrides_current[$key]) ? (string) $site_overrides_current[$key] : '';
+
+      if ($previous_icon !== '' && $previous_icon !== $icon && !in_array($previous_icon, $selected, true)) {
+        $selected[] = $previous_icon;
+      }
+    }
+
+    foreach ($rubrique_overrides_posted as $key => $icon) {
+      $previous_icon = isset($rubrique_overrides_current[$key]) ? (string) $rubrique_overrides_current[$key] : '';
+
+      if ($previous_icon !== '' && $previous_icon !== $icon && !in_array($previous_icon, $selected, true)) {
+        $selected[] = $previous_icon;
+      }
+    }
+
     foreach ([$site_overrides_posted, $rubrique_overrides_posted] as $override_map) {
       foreach ($override_map as $icon) {
         if (!in_array($icon, $selected, true)) {
