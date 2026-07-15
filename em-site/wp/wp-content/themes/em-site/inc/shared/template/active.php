@@ -865,6 +865,14 @@ function em_site_front_maybe_close_after_publish(): void
 
             if (window.opener && !window.opener.closed) {
                 try {
+                    if (window.opener.EmSitePreviewButton && typeof window.opener.EmSitePreviewButton.clearReady === 'function') {
+                        window.opener.EmSitePreviewButton.clearReady();
+                    }
+                } catch (e0) {
+                    // no-op
+                }
+
+                try {
                     if (targetHref && window.opener.location && window.opener.location.href !== targetHref) {
                         window.opener.location.href = targetHref;
                     }

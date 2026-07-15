@@ -1,9 +1,9 @@
 ﻿# REFONTE SYSTÈME DRAFT / LIVE
 
 Date : 2026-07-15
-Horodatage précis (Paris) : 2026-07-15 18:57:25
+Horodatage précis (Paris) : 2026-07-15 19:02:06
 Périmètre : em-site/wp/wp-content/themes/em-site
-Statut : phases 1, 2 et 3 validées sur le flux nominal ; phase 4 en attente
+Statut : phases 1, 2 et 3 validées sur le flux nominal ; phase 4 démarrée (durcissement non-régression publication)
 
 Branche dédiée : feature/refonte-draft-live-separation
 
@@ -96,6 +96,13 @@ Branche dédiée : feature/refonte-draft-live-separation
   - phase 2 validée sur le chemin nominal `Template → enregistrement draft → Preview avec diff réel` ;
   - phase 3 validée sur le chemin nominal `Preview avec diff réel → publication → retour BO propre`.
 - Le cas `aucun diff réel` reste documenté comme garde-fou défensif hors flux nominal et ne bloque plus la clôture fonctionnelle des phases 2/3.
+
+### 2026-07-15 19:02:06 (Paris) — Durcissement post-publication validé
+
+- Cas de non-régression validé par l’utilisateur : après mise en ligne d’une rubrique masquée/affichée depuis la Preview, retour sur Template avec bouton `ENREGISTRER LES MODIFICATIONS` redevenu inactif.
+- Cause racine traitée : purge explicite de l’état mémoire du bouton dans l’onglet BO au retour post-publication.
+- Portée : cohérence BO après publication, sans dépendre d’un rechargement de la page Template.
+- Phase 4 démarrée avec ce premier correctif de durcissement validé terrain.
 
 ## Décision de cadrage
 
@@ -224,7 +231,7 @@ Important :
 - Gérer le cas sans diff avec message dédié.
 - Conserver un retour BO propre avec modale.
 
-### Phase 4 - Durcissement — ⏳ EN ATTENTE
+### Phase 4 - Durcissement — 🔄 EN COURS
 - Tests complets multi-rubriques / multi-options.
 - Tests refresh, changements rapides, multi-onglets.
 - Vérification non-régression publication.
