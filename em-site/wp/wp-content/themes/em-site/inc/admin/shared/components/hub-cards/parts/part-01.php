@@ -165,8 +165,8 @@ function em_site_admin_hub_render_sommaire_header(
             em_site_admin_render_site_preview_button([
                 'class' => 'em-site-site-preview-btn--top',
                 'icon_class' => 'dashicons dashicons-external',
-                'title' => __('Prévisualiser le site avant mise en ligne dans un nouvel onglet', 'em-site'),
-                'label' => __('APERÇU AVANT MISE EN LIGNE', 'em-site'),
+                'title' => __('Enregistrer les modifications puis ouvrir la prévisualisation dans un nouvel onglet', 'em-site'),
+                'label' => __('ENREGISTRER LES MODIFICATIONS', 'em-site'),
             ]);
         }
         ?>

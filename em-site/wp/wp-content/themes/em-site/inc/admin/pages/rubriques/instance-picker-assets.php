@@ -230,6 +230,19 @@ function em_site_admin_render_rubrique_items_picker_assets(): void
             list.setAttribute('data-baseline-state', pickerStateKey(currentPickerState(list)));
         }
 
+        function baselinePickerItem(list) {
+            if (!list) {
+                return '';
+            }
+
+            var liveItem = String(list.getAttribute('data-live-current') || '').trim();
+            if (liveItem !== '') {
+                return liveItem;
+            }
+
+            return String(list.getAttribute('data-current') || '').trim();
+        }
+
         function hasPendingPickerChanges(list) {
             if (!list) {
                 return false;
@@ -461,12 +474,6 @@ function em_site_admin_render_rubrique_items_picker_assets(): void
                     window.EmSitePreviewButton.clearReady();
                 }
             } else {
-                try {
-                    window.localStorage.setItem('emSitePreviewReady', hasPendingChanges ? '1' : '0');
-                } catch (e) {
-                    // no-op
-                }
-
                 document.querySelectorAll('[data-em-site-site-preview-btn="1"]').forEach(function (button) {
                     button.classList.toggle('is-disabled', !hasPendingChanges);
                     button.setAttribute('aria-disabled', hasPendingChanges ? 'false' : 'true');

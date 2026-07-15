@@ -229,6 +229,17 @@ function em_site_admin_render_header_section_assets(): void
         var NOCHANGE = '<?php echo esc_js(__('Aucune modification.', 'em-site')); ?>';
         var BADGE_FIRST = '<?php echo esc_js(__('Premier item', 'em-site')); ?>';
         var SAVE_PRINCIPLE_FIRST = '<?php echo esc_js(__('Enregistre d\'abord le principe d\'affichage.', 'em-site')); ?>';
+        var headerSaveSeq = new window.WeakMap();
+
+        function beginHeaderSave(root) {
+            var next = (headerSaveSeq.get(root) || 0) + 1;
+            headerSaveSeq.set(root, next);
+            return next;
+        }
+
+        function isLatestHeaderSave(root, seq) {
+            return (headerSaveSeq.get(root) || 0) === seq;
+        }
 
         function partList(root, part) { return root.querySelector('.em-site-header-picker__items[data-part="' + part + '"]'); }
         function headerList(root) { return partList(root, 'header-item'); }
@@ -436,22 +447,21 @@ function em_site_admin_render_header_section_assets(): void
             try { return JSON.parse(root.getAttribute('data-config') || '{}'); } catch (e) { return {}; }
         }
         function normalize(c) {
-            c = c || {}; var a = c.appearance || {};
+            c = c || {};
+            var mode = c.display_mode || 'single';
+            var normalizedFirstItem = mode === 'multi' ? (c.first_item || '') : '';
+            var normalizedHiddenItems = mode === 'multi'
+                ? (Array.isArray(c.hidden_items) ? c.hidden_items.slice().sort() : [])
+                : [];
+
+            // Comparaison limitée au périmètre réellement piloté par le picker HEADER.
             return JSON.stringify({
                 header_item: c.header_item || '',
-                display_mode: c.display_mode || 'single',
+                display_mode: mode,
                 transition_mode: c.transition_mode || 'manual',
                 transition_timer: parseInt(c.transition_timer, 10) || 6,
-                first_item: c.first_item || '',
-                hidden_items: Array.isArray(c.hidden_items) ? c.hidden_items.slice().sort() : [],
-                matrix: c.matrix || 'hero', position: c.position || 'hero_left',
-                hero: c.hero || '', slider: c.slider || '', ratio: c.ratio || '60-40',
-                appearance: {
-                    bg: (a.bg || '').toLowerCase(), img: parseInt(a.bg_image_id, 10) || 0, pos: a.bg_image_pos || 'cover',
-                    op: parseInt(a.bg_image_opacity, 10) || 0, mirror: !!a.bg_image_mirror,
-                    pt: parseInt(a.pt, 10) || 0, pb: parseInt(a.pb, 10) || 0,
-                    pl: parseInt(a.pl, 10) || 0, pr: parseInt(a.pr, 10) || 0
-                }
+                first_item: normalizedFirstItem,
+                hidden_items: normalizedHiddenItems
             });
         }
 
@@ -599,9 +609,20 @@ function em_site_admin_render_header_section_assets(): void
             return baseline !== normalize(cfg || collectConfig(root));
         }
 
-        function notifyHeaderDraftChanged(root, cfg) {
+        function liveHeaderItem(root) {
+            var live = liveConfig(root);
+            return String((live && live.header_item) || '').trim();
+        }
+
+        function isPendingHeaderItemChange(root, headerItem) {
+            return liveHeaderItem(root) !== String(headerItem || '').trim();
+        }
+
+        function notifyHeaderDraftChanged(root, cfg, forcedHasPending) {
             var currentConfig = cfg || collectConfig(root);
-            var hasPendingChanges = hasPendingHeaderChanges(root, currentConfig);
+            var hasPendingChanges = typeof forcedHasPending === 'boolean'
+                ? forcedHasPending
+                : hasPendingHeaderChanges(root, currentConfig);
             var draftKey = headerDraftKey(root);
 
             if (window.EmSitePreviewButton && typeof window.EmSitePreviewButton.setDraftDirty === 'function') {
@@ -615,12 +636,6 @@ function em_site_admin_render_header_section_assets(): void
                     window.EmSitePreviewButton.clearReady();
                 }
             } else {
-                try {
-                    window.localStorage.setItem('emSitePreviewReady', hasPendingChanges ? '1' : '0');
-                } catch (e) {
-                    // no-op
-                }
-
                 document.querySelectorAll('[data-em-site-site-preview-btn="1"]').forEach(function (button) {
                     button.classList.toggle('is-disabled', !hasPendingChanges);
                     button.setAttribute('aria-disabled', hasPendingChanges ? 'false' : 'true');
@@ -679,7 +694,9 @@ function em_site_admin_render_header_section_assets(): void
 
         function saveHeader(root, cfg, options) {
             options = options || {};
+            var requestSeq = beginHeaderSave(root);
             var reloadOnSuccess = options.reloadOnSuccess !== false;
+            var forcedHasPending = typeof options.forcedHasPending === 'boolean' ? options.forcedHasPending : null;
             var a = cfg.appearance || {};
             var body = new URLSearchParams();
             body.set('action', 'em_site_set_header');
@@ -708,9 +725,13 @@ function em_site_admin_render_header_section_assets(): void
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: body.toString()
             }).then(function (r) { return parseJsonPayload(r); }).then(function (res) {
+                if (!isLatestHeaderSave(root, requestSeq)) {
+                    return;
+                }
+
                 if (res && res.success) {
                     setPrevConfig(root, cfg);
-                    notifyHeaderDraftChanged(root, cfg);
+                    notifyHeaderDraftChanged(root, cfg, forcedHasPending);
 
                     if (reloadOnSuccess) {
                         // Le changement de principe (mode/transition) reconstruit la structure.
@@ -724,7 +745,14 @@ function em_site_admin_render_header_section_assets(): void
                     setStatus(root, SAVED, '#2f7a37');
                 }
                 else { revert(root); setStatus(root, ERR, '#b32d2e'); }
-            }).catch(function () { revert(root); setStatus(root, ERR, '#b32d2e'); });
+            }).catch(function () {
+                if (!isLatestHeaderSave(root, requestSeq)) {
+                    return;
+                }
+
+                revert(root);
+                setStatus(root, ERR, '#b32d2e');
+            });
         }
 
         // Active/désactive le bouton « Sauvegarder » selon qu'il y a des changements.
@@ -782,7 +810,10 @@ function em_site_admin_render_header_section_assets(): void
                     return;
                 }
 
-                saveHeader(root, cfg, { reloadOnSuccess: false });
+                saveHeader(root, cfg, {
+                    reloadOnSuccess: false,
+                    forcedHasPending: isPendingHeaderItemChange(root, cfg.header_item)
+                });
                 return;
             }
 
@@ -823,6 +854,17 @@ function em_site_admin_render_header_section_assets(): void
         var SAVED = '<?php echo esc_js(__('Composition du HEADER enregistrée.', 'em-site')); ?>';
         var ERR = '<?php echo esc_js(__('Échec de l’enregistrement.', 'em-site')); ?>';
         var previewTimers = new WeakMap();
+        var itemSaveSeq = new WeakMap();
+
+        function beginItemSave(root) {
+            var next = (itemSaveSeq.get(root) || 0) + 1;
+            itemSaveSeq.set(root, next);
+            return next;
+        }
+
+        function isLatestItemSave(root, seq) {
+            return (itemSaveSeq.get(root) || 0) === seq;
+        }
 
         function readJsonAttr(el, attr) {
             try { return JSON.parse(el.getAttribute(attr) || '{}'); } catch (e) { return {}; }
@@ -1055,6 +1097,7 @@ function em_site_admin_render_header_section_assets(): void
             if (root) { toggleImageOptions(root, id > 0); }
         }
         function saveItem(root) {
+            var requestSeq = beginItemSave(root);
             var cfg = currentConfig(root);
             var itemSlug = root.getAttribute('data-header-item') || '';
             var template = root.getAttribute('data-template') || '';
@@ -1088,6 +1131,10 @@ function em_site_admin_render_header_section_assets(): void
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: body.toString()
             }).then(function (r) { return parseJsonPayload(r); }).then(function (res) {
+                if (!isLatestItemSave(root, requestSeq)) {
+                    return;
+                }
+
                 if (res && res.success) {
                     var hasPendingChanges = normalizeConfig(cfg) !== normalizeConfig(liveConfig(root));
                     root.setAttribute('data-config', JSON.stringify(cfg));
@@ -1113,6 +1160,10 @@ function em_site_admin_render_header_section_assets(): void
                     setStatus(root, ERR, '#b32d2e');
                 }
             }).catch(function () {
+                if (!isLatestItemSave(root, requestSeq)) {
+                    return;
+                }
+
                 setStatus(root, ERR, '#b32d2e');
             });
         }

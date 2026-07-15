@@ -10,58 +10,11 @@
         return Array.prototype.slice.call(document.querySelectorAll('[data-em-site-site-preview-btn="1"]'));
     }
 
-    function storageKey() {
-        return 'emSitePreviewReady';
-    }
 
     var draftDirtyFlags = Object.create(null);
 
     function hasDraftDirtyFlags() {
         return Object.keys(draftDirtyFlags).length > 0;
-    }
-
-    function readStoredDraftKeys() {
-        try {
-            var raw = window.localStorage.getItem(storageKey());
-            if (!raw) {
-                return [];
-            }
-
-            if (raw === '1') {
-                return ['legacy'];
-            }
-
-            if (raw === '0') {
-                return [];
-            }
-
-            var parsed = JSON.parse(raw);
-            if (Array.isArray(parsed)) {
-                return parsed.map(function (key) {
-                    return String(key || '').trim();
-                }).filter(Boolean);
-            }
-
-            return [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function persistDraftKeys(keys) {
-        var normalized = Array.isArray(keys) ? keys.map(function (key) {
-            return String(key || '').trim();
-        }).filter(Boolean) : [];
-
-        try {
-            window.localStorage.setItem(storageKey(), JSON.stringify(normalized));
-        } catch (e) {
-            // no-op
-        }
-    }
-
-    function syncStoredDraftKeys() {
-        persistDraftKeys(Object.keys(draftDirtyFlags));
     }
 
     function isPreviewReady() {
@@ -74,8 +27,6 @@
         } else {
             delete draftDirtyFlags.legacy;
         }
-
-        syncStoredDraftKeys();
     }
 
     function setButtonEnabled(button, enabled) {
@@ -108,7 +59,6 @@
 
     function clearReadyAndRefresh() {
         draftDirtyFlags = Object.create(null);
-        persistDraftKeys([]);
         refreshButtonsState();
     }
 
@@ -120,7 +70,6 @@
 
         if (isDirty) {
             draftDirtyFlags[safeKey] = true;
-            syncStoredDraftKeys();
         } else {
             delete draftDirtyFlags[safeKey];
 
@@ -128,8 +77,6 @@
                 clearReadyAndRefresh();
                 return;
             }
-
-            syncStoredDraftKeys();
         }
 
         refreshButtonsState();
@@ -142,33 +89,31 @@
         window.EmSitePreviewButton.setDraftDirty = setDraftDirtyAndRefresh;
     }
 
-    function clearReadyFromPublishedSignal(rawValue) {
-        if (!rawValue) {
-            return false;
+    function saveDraftIfNeeded() {
+        var formDirty = window.EmWpModuleFormDirty;
+        if (!formDirty || typeof formDirty.hasForm !== 'function' || !formDirty.hasForm()) {
+            return Promise.resolve(true);
         }
 
-        var payload = null;
-        try {
-            payload = JSON.parse(rawValue);
-        } catch (e) {
-            payload = null;
+        if (typeof formDirty.isDirty === 'function' && !formDirty.isDirty()) {
+            return Promise.resolve(true);
         }
 
-        if (!payload || typeof payload !== 'object') {
-            return false;
+        if (typeof formDirty.saveSilentlyThen === 'function') {
+            return new Promise(function (resolve) {
+                formDirty.saveSilentlyThen(function (saved) {
+                    resolve(!!saved);
+                });
+            });
         }
 
-        clearReadyAndRefresh();
-
-        // Signal one-shot: une fois consommé, on l'efface pour ne pas réappliquer
-        // la désactivation aux futurs chargements.
-        try {
-            window.localStorage.removeItem('emSiteLastPublishedTemplate');
-        } catch (e) {
-            // no-op
+        if (typeof formDirty.requestSave === 'function') {
+            return formDirty.requestSave({ useFetch: true }).then(function (saved) {
+                return !!saved;
+            });
         }
 
-        return true;
+        return Promise.resolve(true);
     }
 
     function openPreview(button) {
@@ -201,7 +146,14 @@
         }
 
         event.preventDefault();
-        openPreview(button);
+
+        saveDraftIfNeeded().then(function (saved) {
+            if (!saved) {
+                return;
+            }
+
+            openPreview(button);
+        });
     }
 
     function onSubmit(event) {
@@ -232,18 +184,7 @@
         }
 
         publishPreviewButtonApi();
-
-        var storedDraftKeys = readStoredDraftKeys();
         draftDirtyFlags = Object.create(null);
-        storedDraftKeys.forEach(function (key) {
-            draftDirtyFlags[key] = true;
-        });
-
-        try {
-            clearReadyFromPublishedSignal(window.localStorage.getItem('emSiteLastPublishedTemplate'));
-        } catch (e) {
-            // no-op
-        }
 
         document.addEventListener('click', onClick);
         document.addEventListener('click', onSaveClick, true);
@@ -269,22 +210,6 @@
             }
 
             setDraftDirtyAndRefresh(draftKey, detail.hasPendingChanges);
-        });
-        window.addEventListener('storage', function (event) {
-            if (!event || !event.key) {
-                return;
-            }
-
-            if (event.key === storageKey()) {
-                refreshButtonsState();
-                return;
-            }
-
-            if (event.key !== 'emSiteLastPublishedTemplate') {
-                return;
-            }
-
-            clearReadyFromPublishedSignal(event.newValue || '');
         });
         refreshButtonsState();
     }

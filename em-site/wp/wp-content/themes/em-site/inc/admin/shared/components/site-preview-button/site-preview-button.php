@@ -1,6 +1,6 @@
 <?php
 /**
- * Bouton mutualise de preview site (avant mise en ligne).
+ * Bouton mutualise d'enregistrement avant passage par la preview.
  *
  * @package em-site
  */
@@ -30,7 +30,7 @@ function em_site_admin_site_preview_url(string $template_slug = ''): string
 }
 
 /**
- * Enqueue des assets partages du bouton preview site.
+ * Enqueue des assets partages du bouton d'enregistrement/preview.
  */
 function em_site_admin_site_preview_button_enqueue_assets(string $hook_suffix): void
 {
@@ -60,7 +60,7 @@ function em_site_admin_site_preview_button_enqueue_assets(string $hook_suffix): 
 add_action('admin_enqueue_scripts', 'em_site_admin_site_preview_button_enqueue_assets', 40);
 
 /**
- * Rendu du bouton preview site mutualise.
+ * Rendu du bouton d'enregistrement mutualise.
  *
  * @param array<string,mixed> $args Arguments d'affichage.
  */
@@ -79,10 +79,10 @@ function em_site_admin_render_site_preview_button(array $args = []): void
     $classes = isset($args['class']) ? trim((string) $args['class']) : '';
     $label = isset($args['label']) && (string) $args['label'] !== ''
         ? (string) $args['label']
-        : __('APERÇU AVANT MISE EN LIGNE', 'em-site');
+        : __('ENREGISTRER LES MODIFICATIONS', 'em-site');
     $title = isset($args['title']) && (string) $args['title'] !== ''
         ? (string) $args['title']
-        : __('Prévisualiser le site avant mise en ligne dans un nouvel onglet', 'em-site');
+        : __('Enregistrer les modifications puis ouvrir la prévisualisation dans un nouvel onglet', 'em-site');
     $icon_class = isset($args['icon_class']) && (string) $args['icon_class'] !== ''
         ? (string) $args['icon_class']
         : 'dashicons dashicons-external';

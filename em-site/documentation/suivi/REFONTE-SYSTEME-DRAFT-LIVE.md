@@ -1,11 +1,63 @@
 ﻿# REFONTE SYSTÈME DRAFT / LIVE
 
 Date : 2026-07-15
-Horodatage précis (Paris) : 2026-07-15 17:43:18
+Horodatage précis (Paris) : 2026-07-15 18:46:23
 Périmètre : em-site/wp/wp-content/themes/em-site
-Statut : version de refonte validée, base unique de travail
+Statut : phase 1 finalisée (Template stabilisé), phase 2 reportée
 
 Branche dédiée : feature/refonte-draft-live-separation
+
+## Avancement d'implémentation
+
+### 2026-07-15 17:51:38 (Paris)
+
+- Démarrage effectif sur la branche dédiée.
+- Bouton top renommé en `ENREGISTRER LES MODIFICATIONS` (libellé et title).
+- Retrait de la persistance locale `emSitePreviewReady` dans le contrôleur central du bouton.
+- Retrait des fallbacks `localStorage` dans les flux Rubriques (`instance-picker` et `header-section`).
+- Validation syntaxique PHP effectuée sur tous les fichiers touchés.
+
+### 2026-07-15 18:23:30 (Paris)
+
+- Nettoyage des reliquats hors périmètre phase 1 finalisé.
+- Correctif robuste Header ajouté : protection anti-réponses AJAX obsolètes sur les enregistrements, pour garantir la cohérence du bouton quand on revient à l’item initial.
+- Vérification OK : sur Header, retour à l’item précédent désactive correctement le bouton comme sur les autres rubriques.
+- Phase 1 déclarée terminée.
+- Phase 2 (diff réel Draft vs Live en Preview) explicitement reportée.
+
+### 2026-07-15 18:26:06 (Paris)
+
+- Ajustement complémentaire Header appliqué après re-test KO.
+- Correction de la normalisation de comparaison : en mode `single`, les champs multi (`first_item`, `hidden_items`) sont neutralisés pour éviter un faux état dirty résiduel.
+- Résultat attendu : retour à l’item initial du Header => désactivation correcte du bouton global.
+
+### 2026-07-15 18:41:15 (Paris) — Diagnostic expert KO persistant
+
+- Inspection globale effectuée :
+  - rendu/attributs picker HEADER (`data-config`, `data-live-config`) ;
+  - logique JS de dirty Header (`collectConfig`, `normalize`, `hasPendingHeaderChanges`, `notifyHeaderDraftChanged`) ;
+  - agrégation globale du bouton top (`EmSitePreviewButton.setDraftDirty`) ;
+  - pipeline save AJAX Header (`em_site_set_header`, `em_site_admin_header_section_save/get`).
+- Cause probable (forte) : comparaison dirty Header sur un périmètre trop large par rapport aux champs réellement pilotés par le picker HEADER.
+- Cause certaine : la comparaison précédente incluait des champs de composition d’item (`matrix`, `hero`, `slider`, `appearance`, etc.) non pilotés par la sélection d’item du picker principal, ce qui permettait un état dirty résiduel malgré retour à l’item initial.
+- Inconnues restantes : éventuels cas UX non couverts en mode `multi` avec transitions rapides côté navigateur.
+- Correction minimale appliquée : normalisation Header restreinte au périmètre piloté par le picker principal (`header_item`, `display_mode`, `transition_mode`, `transition_timer`, `first_item`, `hidden_items`).
+- Validation technique locale : lint PHP OK sur le fichier modifié.
+- Validation fonctionnelle terrain : en attente de re-test utilisateur (aucune déclaration de résolution sans preuve de reproduction complète).
+
+### 2026-07-15 18:41:15 (Paris) — Correctif runtime ciblé KO persistant
+
+- Nouveau correctif minimal appliqué sur le flux `isItemControl` du picker Header.
+- Pour les changements d’item Header, `hasPendingChanges` est désormais forcé via une comparaison explicite avec l’item live (`live.header_item`) au moment du save AJAX.
+- Objectif : aligner le comportement Header sur les autres rubriques (dirty = item courant différent de l’item live), sans dépendre d’un état de config plus large.
+- Validation technique locale : lint PHP OK.
+- Validation fonctionnelle terrain : en attente (ne pas conclure sans preuve utilisateur).
+
+### 2026-07-15 18:46:23 (Paris) — Validation fonctionnelle utilisateur
+
+- Re-test terrain confirmé par l’utilisateur : le cas Header est désormais conforme.
+- Cas validé : changement d’item Header => bouton activé, retour à l’item initial => bouton désactivé sans refresh.
+- Phase 1 confirmée comme clôturée fonctionnellement.
 
 ## Décision de cadrage
 

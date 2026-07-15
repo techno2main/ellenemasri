@@ -704,24 +704,11 @@ function em_site_front_maybe_close_after_publish(): void
         return;
     }
 
-    // phpcs:disable WordPress.Security.NonceVerification.Recommended
-    $published_template = sanitize_key((string) wp_unslash($_GET['published_template'] ?? ''));
-    // phpcs:enable WordPress.Security.NonceVerification.Recommended
     $return_url = em_site_preview_admin_return_url();
     ?>
     <script>
         (function () {
-            var publishedTemplate = <?php echo wp_json_encode($published_template); ?>;
             var targetHref = <?php echo wp_json_encode($return_url); ?>;
-
-            try {
-                window.localStorage.setItem('emSiteLastPublishedTemplate', JSON.stringify({
-                    template: publishedTemplate || '',
-                    at: Date.now()
-                }));
-            } catch (e) {
-                // no-op
-            }
 
             if (window.opener && !window.opener.closed) {
                 try {
