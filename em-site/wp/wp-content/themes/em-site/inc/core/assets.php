@@ -43,10 +43,12 @@ function em_site_enqueue_front_assets(): void
 		null
 	);
 
+	wp_enqueue_style('dashicons');
+
 	wp_enqueue_style(
 		'em-site-front-layout',
 		$base_uri . '/assets/front/shared/css/layout.css',
-		['em-site-style', 'em-site-font-archivo-black'],
+		['em-site-style', 'em-site-font-archivo-black', 'dashicons'],
 		em_site_asset_version('assets/front/shared/css/layout.css')
 	);
 

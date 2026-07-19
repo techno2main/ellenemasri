@@ -75,6 +75,26 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
         return;
     }
 
+    if ($type === 'text_icon' || $type === 'icon_text') {
+        $ti = em_site_rubrique_text_icon_value($value);
+        ?>
+        <input type="text" class="em-site-chip__titext" value="<?php echo esc_attr($ti['text']); ?>" placeholder="<?php esc_attr_e('Contenu…', 'em-site'); ?>">
+        <input type="url" class="em-site-chip__tlink" value="<?php echo esc_url($ti['link']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
+        <?php if (function_exists('em_site_admin_render_dashicon_chooser')) {
+            em_site_admin_render_dashicon_chooser([
+                'value_class' => 'em-site-chip__dashicon',
+                'selected' => $ti['icon'],
+                'default_icon' => 'dashicons-screenoptions',
+                'placeholder' => __('Choisir une icône BO', 'em-site'),
+                'compact' => true,
+            ]);
+        } else {
+            em_site_render_dashicon_select($ti['icon']);
+        } ?>
+        <?php
+        return;
+    }
+
     if ($type === 'text_text') {
         $tt = em_site_rubrique_text_text_value($value);
         ?>
@@ -228,6 +248,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
         ?>
         <input type="text" class="em-site-chip__ptitle" value="<?php echo esc_attr($block['label']); ?>" placeholder="<?php esc_attr_e('Titre (ex. LISTEN ON)', 'em-site'); ?>" title="<?php esc_attr_e('Sur-titre de la carte', 'em-site'); ?>">
         <?php em_site_render_platform_select($block['platform']); ?>
+        <?php em_site_render_stream_target_select((string) $block['platform'], (string) ($block['stream_item'] ?? ''), (string) $block['url']); ?>
         <input type="url" class="em-site-chip__url" value="<?php echo esc_url($block['url']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
         <?php
         return;
@@ -236,6 +257,7 @@ function em_site_render_chip_value(string $type, string $value, string $key = ''
     if ($type === 'icon') {
         $icon = em_site_rubrique_icon_value($value);
         em_site_render_platform_select($icon['platform']);
+        em_site_render_stream_target_select((string) $icon['platform'], (string) ($icon['stream_item'] ?? ''), (string) $icon['url']);
         ?>
         <input type="url" class="em-site-chip__url" value="<?php echo esc_url($icon['url']); ?>" placeholder="<?php esc_attr_e('Lien (https://… ou #ancre)', 'em-site'); ?>">
         <?php
@@ -257,6 +279,77 @@ function em_site_render_platform_select(string $selected): void
         <option value=""><?php esc_html_e('— Choisir —', 'em-site'); ?></option>
         <?php foreach (em_site_rubrique_platform_choices() as $pkey => $choice) : ?>
             <option value="<?php echo esc_attr($pkey); ?>" data-icon="<?php echo esc_attr($choice['icon']); ?>" data-color="<?php echo esc_attr((string) ($choice['color'] ?? '')); ?>" data-label="<?php echo esc_attr($choice['label']); ?>" <?php selected($selected, $pkey); ?>><?php echo esc_html($choice['group'] . ' — ' . $choice['label']); ?></option>
+        <?php endforeach; ?>
+    </select>
+    <?php
+}
+
+/**
+ * Liste déroulante des Dashicons BO mutualisée.
+ */
+function em_site_render_dashicon_select(string $selected): void
+{
+    ?>
+    <select class="em-site-chip__dashicon">
+        <option value=""><?php esc_html_e('— Choisir —', 'em-site'); ?></option>
+        <?php foreach ((function_exists('em_site_dashicons_all') ? em_site_dashicons_all() : ['dashicons-screenoptions']) as $icon) : ?>
+            <option value="<?php echo esc_attr($icon); ?>"<?php selected($selected, $icon); ?>><?php echo esc_html($icon); ?></option>
+        <?php endforeach; ?>
+    </select>
+    <?php
+}
+
+/**
+ * Sélecteur de cible Stream inline (global + items existants).
+ */
+function em_site_render_stream_target_select(string $platform, string $selected_stream_item, string $selected_url): void
+{
+    $selected_stream_item = sanitize_key($selected_stream_item);
+    $selected_url = trim($selected_url);
+    $is_stream_platform = str_starts_with($platform, 'stream:');
+
+    if ($selected_stream_item === '' && str_starts_with($selected_url, '#stream-')) {
+        $selected_stream_item = sanitize_key(ltrim($selected_url, '#'));
+    }
+
+    $links = [];
+    if (function_exists('em_site_get_items')) {
+        foreach (em_site_get_items('stream') as $stream_slug => $stream_item) {
+            $stream_slug = sanitize_key((string) $stream_slug);
+            if ($stream_slug === '') {
+                continue;
+            }
+
+            $anchor = strpos($stream_slug, 'stream-') === 0
+                ? ('#' . $stream_slug)
+                : ('#stream-' . $stream_slug);
+
+            $label_raw = is_array($stream_item)
+                ? (string) ($stream_item['label'] ?? $stream_slug)
+                : $stream_slug;
+            $label_raw = trim($label_raw);
+            if ($label_raw === '') {
+                $label_raw = $stream_slug;
+            }
+
+            $label_clean = preg_replace('/^stream\s*[-_:]?\s*/i', '', $label_raw);
+            $label_clean = trim((string) $label_clean);
+            if ($label_clean === '') {
+                $label_clean = $stream_slug;
+            }
+
+            $links[] = [
+                'url' => $anchor,
+                'label' => 'Stream ' . ucwords(str_replace(['-', '_'], ' ', $label_clean)),
+            ];
+        }
+    }
+    ?>
+    <select class="em-site-chip__streamtarget" title="<?php esc_attr_e('Cible stream inline', 'em-site'); ?>"<?php echo $is_stream_platform ? '' : ' hidden disabled'; ?>>
+        <option value="#stream"<?php selected($selected_stream_item === '' ? '#stream' : '', '#stream'); ?>><?php esc_html_e('Stream Global', 'em-site'); ?> (#stream)</option>
+        <?php foreach ($links as $link) : ?>
+            <?php $stream_slug = sanitize_key(ltrim((string) $link['url'], '#')); ?>
+            <option value="<?php echo esc_attr((string) $link['url']); ?>" data-stream-slug="<?php echo esc_attr($stream_slug); ?>"<?php selected($selected_stream_item, $stream_slug); ?>><?php echo esc_html((string) $link['label']); ?> (<?php echo esc_html((string) $link['url']); ?>)</option>
         <?php endforeach; ?>
     </select>
     <?php

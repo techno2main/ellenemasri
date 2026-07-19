@@ -1,7 +1,7 @@
 ﻿# REFONTE SYSTÈME DRAFT / LIVE
 
-Date : 2026-07-15
-Horodatage précis (Paris) : 2026-07-15 19:30:50
+Date : 2026-07-19
+Horodatage précis (Paris) : 2026-07-19 20:09:54
 Périmètre : em-site/wp/wp-content/themes/em-site
 Statut : phases 1, 2 et 3 validées sur le flux nominal ; phase 4 démarrée (durcissement non-régression publication)
 
@@ -128,6 +128,47 @@ Branche dédiée : feature/refonte-draft-live-separation
   - ouverture standard Rubriques sans action locale => bouton inactif ;
   - retour après sauvegarde item (`updated=saved`) => activation initiale autorisée pour passage Preview/publication.
 - Portée : alignement du comportement Rubriques avec la règle métier du flux nominal, sans réintroduire d’état dirty global parasite.
+
+### 2026-07-19 20:09:54 (Paris) — Correctifs phase 4 Template / Preview / publication (implémentation technique)
+
+- Correctif appliqué sur le rendu front : la page d’accueil ne suit plus un ordre codé en dur ; elle rend désormais les rubriques selon l’ordre résolu du template/squelette.
+- Correctif appliqué sur la sauvegarde d’ordre Rubriques/Template : le flag dirty du bouton partagé consomme maintenant un `has_pending_changes` renvoyé par le serveur (source de vérité Draft vs Live), au lieu d’un baseline local périmé après publication.
+- Portée : cohérence du flux `Template → Preview → publication → retour BO` pour les changements d’ordre et meilleure stabilité du bouton partagé.
+- Validation technique locale : lint PHP/JS/CSS OK sur les fichiers touchés.
+- Validation terrain : non effectuée dans cette séquence de commit.
+
+### 2026-07-19 20:09:54 (Paris) — Stream inline ciblé + résolution des liens top-bar/footer (implémentation technique)
+
+- Réactivation du moteur embed STREAM côté front (chargement partagé hors admin) et rétablissement des conteneurs player inline attendus par le JS front.
+- Correctifs appliqués sur le module STREAM :
+  - ouverture inline robuste des cartes de plateforme ;
+  - ciblage d’un item Stream précis depuis top-bar/footer ;
+  - différenciation métier `#stream` (navigation simple) vs item Stream ciblé (ouverture inline explicite).
+- Refonte de la logique BO top-bar/footer pour les plateformes Stream :
+  - un choix `Stream Global` garde `#stream` ;
+  - un choix d’item Stream dédié stocke désormais le vrai lien plateforme (Spotify/Apple/Deezer/...) dans le champ URL ;
+  - l’item Stream ciblé est stocké séparément pour piloter l’ouverture inline côté front.
+- Portée : cohérence entre les liens top-bar/footer et les vraies URLs de la rubrique Stream ciblée, sans pseudo-transformation fragile d’ancre.
+- Validation technique locale : lint PHP/JS OK.
+- Validation terrain : non effectuée dans cette séquence de commit.
+
+### 2026-07-19 20:09:54 (Paris) — Nouveaux champs icône+texte + mutualisation chooser Dashicons (implémentation technique)
+
+- Nouveau composant partagé `dashicon-chooser` ajouté et branché dans le builder Rubriques, en réutilisant le catalogue Dashicons déjà employé par la page Icônes BO / création de rubrique.
+- Deux nouveaux types de champ ajoutés :
+  - `Texte + Icône` ;
+  - `Icône + Texte`.
+- Raccords réalisés sur toutes les couches :
+  - registre des types ;
+  - rendu BO persistant ;
+  - création dynamique de chips ;
+  - sérialisation/sauvegarde ;
+  - aperçu builder ;
+  - rendu front ;
+  - chargement Dashicons côté front.
+- Correctif mutualisé appliqué en front pour l’espacement entre deux flèches adjacentes (`em-rubrique__arrow-link`) sur toutes les rubriques, au lieu d’un patch local Stream.
+- Validation technique locale : lint PHP/CSS/JS OK.
+- Validation terrain : non effectuée dans cette séquence de commit.
 
 ## Décision de cadrage
 

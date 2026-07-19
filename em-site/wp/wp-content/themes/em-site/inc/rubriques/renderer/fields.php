@@ -151,6 +151,22 @@ function em_site_rubrique_item_field_html(array $field, $value): string
             }
             return '<div class="em-rubrique__textimg">' . $ti_text_html . $ti_img_html . '</div>';
 
+        case 'text_icon':
+        case 'icon_text':
+            $ti = em_site_rubrique_text_icon_value($value);
+            $ti_text = (string) $ti['text'];
+            $ti_style = em_site_rubrique_text_style_css($ti['style']);
+            $ti_text_html = $ti_text !== ''
+                ? '<p class="em-rubrique__field"' . ($ti_style !== '' ? ' style="' . esc_attr($ti_style) . '"' : '') . '>' . em_site_rubrique_text_link_wrap($ti_text, (string) $ti['link']) . '</p>'
+                : '';
+            $ti_icon_html = $ti['icon'] !== ''
+                ? '<span class="em-rubrique__texticon-icon dashicons ' . esc_attr($ti['icon']) . '" aria-hidden="true"></span>'
+                : '';
+            if ($ti_text_html === '' && $ti_icon_html === '') {
+                return '';
+            }
+            return '<div class="em-rubrique__texticon">' . ($type === 'icon_text' ? ($ti_icon_html . $ti_text_html) : ($ti_text_html . $ti_icon_html)) . '</div>';
+
         case 'text_text':
             $tt = em_site_rubrique_text_text_value($value);
             $tt1 = (string) $tt['text'];
@@ -182,7 +198,19 @@ function em_site_rubrique_item_field_html(array $field, $value): string
                     ? em_site_platform_stream_slug($icon_data['platform'])
                     : '';
                 if ($open_slug !== '') {
-                    return '<a class="em-rubrique__link em-rubrique__link--media top-bar-platform-link" href="' . esc_url($icon_data['url']) . '" data-open-platform="' . esc_attr($open_slug) . '">' . $glyph . '</a>';
+                    $stream_target = sanitize_key((string) ($icon_data['stream_item'] ?? ''));
+                    $is_anchor = strpos((string) $icon_data['url'], '#') === 0;
+
+                    // Règle métier:
+                    // - #stream => simple navigation ancre (pas d'ouverture inline)
+                    // - item stream dédié => ouverture inline ciblée
+                    if ($stream_target !== '') {
+                        return '<a class="em-rubrique__link em-rubrique__link--media top-bar-platform-link" href="' . esc_url($icon_data['url']) . '" data-open-platform="' . esc_attr($open_slug) . '" data-open-stream-item="' . esc_attr(sanitize_key($stream_target)) . '">' . $glyph . '</a>';
+                    }
+
+                    $target = $is_anchor ? '' : ' target="_blank" rel="noopener noreferrer"';
+
+                    return '<a class="em-rubrique__link em-rubrique__link--media" href="' . esc_url($icon_data['url']) . '"' . $target . '>' . $glyph . '</a>';
                 }
             }
             return '<a class="em-rubrique__link em-rubrique__link--media" href="' . esc_url($icon_data['url']) . '" target="_blank" rel="noopener noreferrer">' . $glyph . '</a>';

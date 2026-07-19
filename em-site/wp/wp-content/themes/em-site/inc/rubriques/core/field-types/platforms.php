@@ -79,24 +79,25 @@ function em_site_rubrique_platform_color(string $key): string
 }
 
 /**
- * Décode la valeur d'un champ icône en { platform, url }.
+ * Décode la valeur d'un champ icône en { platform, url, stream_item }.
  *
  * Accepte le format JSON {platform,url} ou, en repli, une simple clé de plateforme.
  *
  * @param mixed $value
- * @return array{platform:string, url:string}
+ * @return array{platform:string, url:string, stream_item:string}
  */
 function em_site_rubrique_icon_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['platform' => (string) $value, 'url' => ''];
+        return ['platform' => (string) $value, 'url' => '', 'stream_item' => ''];
     }
 
     return [
         'platform' => (string) ($decoded['platform'] ?? ''),
         'url'      => (string) ($decoded['url'] ?? ''),
+        'stream_item' => sanitize_key((string) ($decoded['stream_item'] ?? '')),
     ];
 }
 
@@ -121,19 +122,19 @@ function em_site_rubrique_field_label_optional(string $type): bool
 }
 
 /**
- * Décode la valeur d'un Bloc Plateforme en { platform, url, label }.
+ * Décode la valeur d'un Bloc Plateforme en { platform, url, label, stream_item }.
  *
  * `label` = sur-titre personnalisable de la carte (« LISTEN ON »).
  *
  * @param mixed $value
- * @return array{platform:string, url:string, label:string}
+ * @return array{platform:string, url:string, label:string, account:string, stream_item:string}
  */
 function em_site_rubrique_platform_block_value($value): array
 {
     $decoded = is_array($value) ? $value : json_decode((string) $value, true);
 
     if (!is_array($decoded)) {
-        return ['platform' => (string) $value, 'url' => '', 'label' => '', 'account' => ''];
+        return ['platform' => (string) $value, 'url' => '', 'label' => '', 'account' => '', 'stream_item' => ''];
     }
 
     return [
@@ -141,6 +142,7 @@ function em_site_rubrique_platform_block_value($value): array
         'url'      => (string) ($decoded['url'] ?? ''),
         'label'    => (string) ($decoded['label'] ?? ''),
         'account'  => (string) ($decoded['account'] ?? ''),
+        'stream_item' => sanitize_key((string) ($decoded['stream_item'] ?? '')),
     ];
 }
 
@@ -157,14 +159,18 @@ function em_site_field_sanitize_platform_block($value): string
     $url = esc_url_raw($parsed['url']);
     $label = sanitize_text_field($parsed['label']);
     $account = sanitize_text_field($parsed['account']);
+    $stream_item = sanitize_key($parsed['stream_item']);
 
-    if ($platform === '' && $url === '' && $label === '' && $account === '') {
+    if ($platform === '' && $url === '' && $label === '' && $account === '' && $stream_item === '') {
         return '';
     }
 
     $data = ['platform' => $platform, 'url' => $url, 'label' => $label];
     if ($account !== '') {
         $data['account'] = $account;
+    }
+    if ($stream_item !== '') {
+        $data['stream_item'] = $stream_item;
     }
 
     return (string) wp_json_encode($data);
@@ -180,10 +186,16 @@ function em_site_field_sanitize_icon($value): string
     $parsed = em_site_rubrique_icon_value($value);
     $platform = sanitize_text_field($parsed['platform']);
     $url = esc_url_raw($parsed['url']);
+    $stream_item = sanitize_key($parsed['stream_item']);
 
-    if ($platform === '' && $url === '') {
+    if ($platform === '' && $url === '' && $stream_item === '') {
         return '';
     }
 
-    return (string) wp_json_encode(['platform' => $platform, 'url' => $url]);
+    $data = ['platform' => $platform, 'url' => $url];
+    if ($stream_item !== '') {
+        $data['stream_item'] = $stream_item;
+    }
+
+    return (string) wp_json_encode($data);
 }

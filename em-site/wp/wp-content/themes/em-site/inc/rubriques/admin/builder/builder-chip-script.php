@@ -37,6 +37,58 @@ window.EmSiteChip = (function () {
     ?>;
     var TYPE_ICONS = <?php echo wp_json_encode($em_site_ti); ?>;
     var NETWORKS = <?php echo wp_json_encode(em_site_rubrique_network_choices()); ?>;
+    var DASHICONS = <?php echo wp_json_encode(function_exists('em_site_dashicons_all') ? em_site_dashicons_all() : ['dashicons-screenoptions']); ?>;
+    var STREAM_LINKS = <?php
+        $em_site_stream_links = [];
+        if (function_exists('em_site_get_items')) {
+            foreach (em_site_get_items('stream') as $em_site_stream_slug => $em_site_stream_item) {
+                $em_site_stream_slug = sanitize_key((string) $em_site_stream_slug);
+                if ($em_site_stream_slug === '') {
+                    continue;
+                }
+
+                $em_site_stream_anchor = strpos($em_site_stream_slug, 'stream-') === 0
+                    ? ('#' . $em_site_stream_slug)
+                    : ('#stream-' . $em_site_stream_slug);
+
+                $em_site_stream_label_raw = is_array($em_site_stream_item)
+                    ? (string) ($em_site_stream_item['label'] ?? $em_site_stream_slug)
+                    : $em_site_stream_slug;
+                $em_site_stream_label_raw = trim($em_site_stream_label_raw);
+                if ($em_site_stream_label_raw === '') {
+                    $em_site_stream_label_raw = $em_site_stream_slug;
+                }
+
+                $em_site_stream_label_clean = preg_replace('/^stream\s*[-_:]?\s*/i', '', $em_site_stream_label_raw);
+                $em_site_stream_label_clean = trim((string) $em_site_stream_label_clean);
+                if ($em_site_stream_label_clean === '') {
+                    $em_site_stream_label_clean = $em_site_stream_slug;
+                }
+
+                $em_site_stream_links[] = [
+                    'slug' => $em_site_stream_slug,
+                    'label' => 'Stream ' . ucwords(str_replace(['-', '_'], ' ', $em_site_stream_label_clean)),
+                    'url' => $em_site_stream_anchor,
+                    'platformUrls' => (function () use ($em_site_stream_slug) {
+                        $map = [];
+                        if (function_exists('em_site_get_item') && function_exists('em_site_stream_collect_platform_cards')) {
+                            $item = em_site_get_item('stream', $em_site_stream_slug);
+                            $content = is_array($item['content'] ?? null) ? $item['content'] : [];
+                            foreach (em_site_stream_collect_platform_cards($content, $item) as $card) {
+                                $platform_key = sanitize_key((string) ($card['platform_slug'] ?? ''));
+                                $platform_url = (string) ($card['url'] ?? '');
+                                if ($platform_key !== '' && $platform_url !== '') {
+                                    $map[$platform_key] = $platform_url;
+                                }
+                            }
+                        }
+                        return $map;
+                    })(),
+                ];
+            }
+        }
+        echo wp_json_encode($em_site_stream_links);
+    ?>;
     var TXT = {
         image: '<?php echo esc_js(__('Choisir une image', 'em-site')); ?>',
         tape: '<?php echo esc_js(__('Scotch', 'em-site')); ?>',
@@ -135,7 +187,7 @@ window.EmSiteChip = (function () {
     }
 
     function isTextFamily(type) {
-        return ['text', 'textarea', 'text_image', 'text_text'].indexOf(type) !== -1;
+        return ['text', 'textarea', 'text_image', 'text_icon', 'icon_text', 'text_text'].indexOf(type) !== -1;
     }
 
     function toggleHtml() {
@@ -155,6 +207,40 @@ window.EmSiteChip = (function () {
             opts += '<option value="' + esc(k) + '" data-icon="' + esc(p.icon) + '" data-color="' + esc(p.color || '') + '" data-label="' + esc(p.label) + '">' + esc(p.group + ' — ' + p.label) + '</option>';
         });
         return '<select class="em-site-chip__platform">' + opts + '</select>';
+    }
+
+    function dashiconSelectHtml() {
+        var items = '';
+        DASHICONS.forEach(function (icon) {
+            var label = String(icon || '').replace(/^dashicons-/, '');
+            items += '<button type="button" class="em-site-iconchooser__item" data-icon-value="' + esc(icon) + '" aria-pressed="false" title="' + esc(icon) + '">' +
+                '<span class="dashicons ' + esc(icon) + '" aria-hidden="true"></span>' +
+                '<span class="em-site-iconchooser__item-name">' + esc(label) + '</span>' +
+                '</button>';
+        });
+
+        return '<div class="em-site-iconchooser em-site-iconchooser--compact" data-iconchooser>' +
+            '<input type="hidden" value="" class="em-site-chip__dashicon" data-iconchooser-value data-default-icon="dashicons-screenoptions">' +
+            '<button type="button" class="em-site-iconchooser__trigger" data-iconchooser-trigger aria-expanded="false" aria-haspopup="dialog" aria-label="' + esc('<?php echo esc_js(__('Choisir une icône', 'em-site')); ?>') + '">' +
+                '<span class="em-site-iconchooser__preview" data-iconchooser-preview><span class="dashicons dashicons-screenoptions" aria-hidden="true"></span></span>' +
+                '<span class="em-site-iconchooser__meta"><span class="em-site-iconchooser__meta-label"><?php echo esc_js(__('Icône', 'em-site')); ?></span><span class="em-site-iconchooser__meta-name" data-iconchooser-name data-iconchooser-placeholder="<?php echo esc_js(__('Choisir une icône BO', 'em-site')); ?>"><?php echo esc_js(__('Choisir une icône BO', 'em-site')); ?></span></span>' +
+                '<span class="dashicons dashicons-arrow-down-alt2" aria-hidden="true"></span>' +
+            '</button>' +
+            '<div class="em-site-iconchooser__panel" data-iconchooser-panel hidden><div class="em-site-iconchooser__groups" data-iconchooser-groups><section class="em-site-iconchooser__group" data-iconchooser-group><h4 class="em-site-iconchooser__group-title"><?php echo esc_js(__('Icônes BO', 'em-site')); ?></h4><div class="em-site-iconchooser__items">' + items + '</div></section></div></div>' +
+        '</div>';
+    }
+
+    function streamTargetSelectHtml() {
+        if (!STREAM_LINKS.length) {
+            return '';
+        }
+
+        var opts = '<option value="#stream">' + esc('<?php echo esc_js(__('Stream Global', 'em-site')); ?>') + ' (#stream)</option>';
+        STREAM_LINKS.forEach(function (item) {
+            opts += '<option value="' + esc(item.url || '') + '" data-stream-slug="' + esc(item.slug || '') + '">' + esc((item.label || item.slug || 'stream') + ' (' + (item.url || '') + ')') + '</option>';
+        });
+
+        return '<select class="em-site-chip__streamtarget" title="' + esc('<?php echo esc_js(__('Cible stream inline', 'em-site')); ?>') + '">' + opts + '</select>';
     }
 
     var colorUid = 0;
@@ -254,6 +340,11 @@ window.EmSiteChip = (function () {
                 textStyleHtml(key) +
                 '<span class="em-site-chip__ti-image">' + imageHtml() + '</span>';
         }
+        if (type === 'text_icon' || type === 'icon_text') {
+            return '<input type="text" class="em-site-chip__titext" placeholder="' + esc(TXT.content) + '">' +
+                '<input type="url" class="em-site-chip__tlink" placeholder="' + esc(TXT.link) + '">' +
+            dashiconSelectHtml();
+        }
         if (type === 'text_text') {
             return '<span class="em-site-chip__tt-part"><input type="text" class="em-site-chip__titext" placeholder="' + esc(TXT.text1) + '"><input type="url" class="em-site-chip__tlink" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>' +
                 '<span class="em-site-chip__tt-part"><input type="text" class="em-site-chip__titext2" placeholder="' + esc(TXT.text2) + '"><input type="url" class="em-site-chip__tlink2" placeholder="' + esc(TXT.link) + '">' + textStyleHtml(key) + '</span>';
@@ -264,6 +355,7 @@ window.EmSiteChip = (function () {
         if (type === 'platform_block') {
             return '<input type="text" class="em-site-chip__ptitle" placeholder="' + esc(TXT.ptitle) + '">' +
                 platformSelectHtml() +
+                streamTargetSelectHtml() +
                 '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
         if (type === 'button') {
@@ -304,6 +396,7 @@ window.EmSiteChip = (function () {
         }
         if (type === 'icon') {
             return platformSelectHtml() +
+                streamTargetSelectHtml() +
                 '<input type="url" class="em-site-chip__url" placeholder="' + esc(TXT.link) + '">';
         }
         var input = '<input type="text" class="em-site-chip__value" placeholder="' + esc(TXT.content) + '">';
@@ -350,6 +443,9 @@ window.EmSiteChip = (function () {
             actionsHtml();
         chip.querySelector('.em-site-chip__label').value = label;
         chip.querySelector('.em-site-chip__remove').setAttribute('data-label', label);
+        if (window.EmSiteDashiconChooser && typeof window.EmSiteDashiconChooser.init === 'function') {
+            window.EmSiteDashiconChooser.init(chip);
+        }
         return chip;
     }
 
@@ -409,6 +505,7 @@ window.EmSiteChip = (function () {
         readMedia: readMedia,
         setFocal: setFocal,
         readStyle: readStyle,
+        streamLinks: STREAM_LINKS,
         fonts: FONTS,
         hasTextStyle: function (type) { return TEXT_STYLE.indexOf(type) !== -1; },
         decorative: function (type) { return DECOR[type] !== undefined; },

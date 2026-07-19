@@ -52,6 +52,16 @@ function em_site_field_types_builtin(array $types): array
             'default'  => '',
             'sanitize' => 'em_site_field_sanitize_text_image',
         ],
+        'text_icon' => [
+            'label'    => __('Texte + Icône', 'em-site'),
+            'default'  => '',
+            'sanitize' => 'em_site_field_sanitize_text_icon',
+        ],
+        'icon_text' => [
+            'label'    => __('Icône + Texte', 'em-site'),
+            'default'  => '',
+            'sanitize' => 'em_site_field_sanitize_text_icon',
+        ],
         'text_text' => [
             'label'    => __('Texte + Texte', 'em-site'),
             'default'  => '',

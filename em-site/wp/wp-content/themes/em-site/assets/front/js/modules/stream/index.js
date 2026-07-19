@@ -22,7 +22,6 @@
 			timerSeconds = 6;
 		}
 
-		var topBarPlatformLinks = document.querySelectorAll('.top-bar-platform-link[data-open-platform]');
 		var activePlatform = null;
 		var activeInstanceIndex = 0;
 		var autoTimer = null;
@@ -50,6 +49,17 @@
 		function getVisiblePlayer(platformName) {
 			var players = getPlayerElements(platformName);
 			return isMobileViewport() ? players.mobile : players.desktop;
+		}
+
+		function getPlayerElementsForInstance(instance, platformName) {
+			if (!instance) {
+				return { mobile: null, desktop: null };
+			}
+
+			return {
+				mobile: instance.querySelector('[data-platform-player="mobile"][data-platform="' + platformName + '"]'),
+				desktop: instance.querySelector('[data-platform-player="desktop"][data-platform="' + platformName + '"]')
+			};
 		}
 
 		function hideAllPlayers() {
@@ -124,7 +134,7 @@
 			target.scrollIntoView({ behavior: behavior || 'smooth', block: 'start' });
 		}
 
-		function openPlatform(platformName, sourceCard) {
+		function openPlatform(platformName, sourceCard, forceOpen) {
 			var visiblePlayer = getVisiblePlayer(platformName);
 			var scope = getCurrentInstance();
 
@@ -132,7 +142,7 @@
 				return false;
 			}
 
-			if (activePlatform === platformName) {
+			if (!forceOpen && activePlatform === platformName) {
 				hideAllPlayers();
 				if (sourceCard) {
 					sourceCard.setAttribute('aria-expanded', 'false');
@@ -159,6 +169,17 @@
 			return true;
 		}
 
+		function normalizeStreamItemSlug(itemSlug) {
+			var raw = String(itemSlug || '').trim().toLowerCase();
+			if (!raw) {
+				return '';
+			}
+			if (raw.charAt(0) === '#') {
+				raw = raw.slice(1);
+			}
+			return raw;
+		}
+
 		function findInstanceIndexForPlatform(platformName) {
 			for (var i = 0; i < instances.length; i++) {
 				if (instances[i].querySelector('.platform-card[data-platform="' + platformName + '"]')) {
@@ -169,17 +190,53 @@
 		}
 
 		function findInstanceIndexBySlug(itemSlug) {
-			if (!itemSlug) {
+			var normalized = normalizeStreamItemSlug(itemSlug);
+			if (!normalized) {
 				return -1;
 			}
 
+			var variants = [normalized];
+			if (normalized.indexOf('stream-') === 0) {
+				variants.push(normalized.slice(7));
+			} else {
+				variants.push('stream-' + normalized);
+			}
+
 			for (var i = 0; i < instances.length; i++) {
-				if ((instances[i].getAttribute('data-stream-item') || '') === itemSlug) {
+				var instanceSlug = normalizeStreamItemSlug(instances[i].getAttribute('data-stream-item') || '');
+				if (variants.indexOf(instanceSlug) !== -1) {
 					return i;
 				}
 			}
 
 			return -1;
+		}
+
+		function openPlatformInInstance(instance, platformName) {
+			var players = getPlayerElementsForInstance(instance, platformName);
+			var visiblePlayer = isMobileViewport() ? players.mobile : players.desktop;
+			if (!visiblePlayer) {
+				return false;
+			}
+
+			hideAllPlayers();
+			streamSection.querySelectorAll('.platform-card').forEach(function (card) {
+				card.setAttribute('aria-expanded', 'false');
+			});
+
+			visiblePlayer.classList.add('is-active');
+			activePlatform = platformName;
+
+			var matchingCard = instance.querySelector('.platform-card[data-platform="' + platformName + '"]');
+			if (matchingCard) {
+				matchingCard.setAttribute('aria-expanded', 'true');
+			}
+
+			window.requestAnimationFrame(function () {
+				scrollToTarget(visiblePlayer, 'smooth');
+			});
+
+			return true;
 		}
 
 		function handleStreamHash(rawHash, behavior) {
@@ -224,22 +281,39 @@
 			}
 
 			event.preventDefault();
-			openPlatform(link.dataset.platform, link);
+			openPlatform(link.dataset.platform, link, false);
 		});
 
-		function openFromTopBar(platformName) {
+		function openFromTopBar(platformName, preferredItemSlug) {
 			var streamAnchor = document.querySelector('#stream');
 			if (streamAnchor) {
 				scrollToTarget(streamAnchor, 'smooth');
 			}
 
-			var targetIndex = findInstanceIndexForPlatform(platformName);
+			var targetIndex = -1;
+			var targetInstance = null;
+			if (preferredItemSlug) {
+				targetIndex = findInstanceIndexBySlug(preferredItemSlug);
+				if (targetIndex >= 0) {
+					targetInstance = instances[targetIndex] || null;
+				}
+			}
+			if (targetIndex < 0) {
+				targetIndex = findInstanceIndexForPlatform(platformName);
+				if (targetIndex >= 0) {
+					targetInstance = instances[targetIndex] || null;
+				}
+			}
 			if (targetIndex >= 0) {
 				showInstance(targetIndex);
 			}
 
 			window.setTimeout(function () {
-				if (openPlatform(platformName, null)) {
+				if (preferredItemSlug && targetInstance && openPlatformInInstance(targetInstance, platformName)) {
+					return;
+				}
+
+				if (openPlatform(platformName, null, true)) {
 					return;
 				}
 
@@ -265,21 +339,25 @@
 			}, 220);
 		}
 
-		topBarPlatformLinks.forEach(function (link) {
-			link.addEventListener('click', function (event) {
-				event.preventDefault();
-				event.stopPropagation();
-				if (typeof event.stopImmediatePropagation === 'function') {
-					event.stopImmediatePropagation();
-				}
+		document.addEventListener('click', function (event) {
+			var streamLink = event.target.closest('.top-bar-platform-link[data-open-platform]');
+			if (!streamLink) {
+				return;
+			}
 
-				var platformName = this.getAttribute('data-open-platform');
-				if (!platformName) {
-					return;
-				}
+			event.preventDefault();
+			event.stopPropagation();
+			if (typeof event.stopImmediatePropagation === 'function') {
+				event.stopImmediatePropagation();
+			}
 
-				openFromTopBar(platformName);
-			});
+			var platformName = streamLink.getAttribute('data-open-platform');
+			if (!platformName) {
+				return;
+			}
+			var preferredItemSlug = streamLink.getAttribute('data-open-stream-item') || '';
+
+			openFromTopBar(platformName, preferredItemSlug);
 		});
 
 		dots.forEach(function (dot) {

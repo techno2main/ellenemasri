@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
  */
 function em_site_rubrique_text_style_types(): array
 {
-    return ['text', 'textarea'];
+    return ['text', 'textarea', 'text_icon', 'icon_text'];
 }
 
 /**

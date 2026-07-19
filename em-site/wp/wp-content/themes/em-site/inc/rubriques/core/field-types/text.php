@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
  */
 function em_site_rubrique_field_is_text_family(string $type): bool
 {
-    return in_array($type, ['text', 'textarea', 'text_image', 'text_text'], true);
+    return in_array($type, ['text', 'textarea', 'text_image', 'text_icon', 'icon_text', 'text_text'], true);
 }
 
 /**
@@ -176,6 +176,61 @@ function em_site_field_sanitize_text_image($value): string
         'link'  => $link,
         'style' => em_site_rubrique_normalize_text_style($ti['style']),
         'image' => $image,
+    ]);
+}
+
+/**
+ * Décode la valeur d'un champ « Texte + Icône » en { text, link, icon, style }.
+ *
+ * @param mixed $value
+ * @return array{text:string, link:string, icon:string, style:array{size:int,font:string,color:string,align:string}}
+ */
+function em_site_rubrique_text_icon_value($value): array
+{
+    $decoded = is_array($value) ? $value : json_decode((string) $value, true);
+
+    if (!is_array($decoded)) {
+        $decoded = [];
+    }
+
+    $icon = trim((string) ($decoded['icon'] ?? ''));
+    if (!function_exists('em_site_dashicon_is_allowed') || !em_site_dashicon_is_allowed($icon)) {
+        $icon = '';
+    }
+
+    return [
+        'text'  => (string) ($decoded['text'] ?? ''),
+        'link'  => (string) ($decoded['link'] ?? ''),
+        'icon'  => $icon,
+        'style' => em_site_rubrique_normalize_text_style($decoded['style'] ?? []),
+    ];
+}
+
+/**
+ * Sanitise un champ « Texte + Icône » : texte + lien + dashicon + style, en JSON.
+ *
+ * @param mixed $value
+ */
+function em_site_field_sanitize_text_icon($value): string
+{
+    $ti = em_site_rubrique_text_icon_value($value);
+    $text = sanitize_text_field($ti['text']);
+    $link = esc_url_raw($ti['link']);
+    $icon = trim((string) $ti['icon']);
+
+    if ($icon !== '' && function_exists('em_site_dashicon_is_allowed') && !em_site_dashicon_is_allowed($icon)) {
+        $icon = '';
+    }
+
+    if ($text === '' && $link === '' && $icon === '') {
+        return '';
+    }
+
+    return (string) wp_json_encode([
+        'text'  => $text,
+        'link'  => $link,
+        'icon'  => $icon,
+        'style' => em_site_rubrique_normalize_text_style($ti['style']),
     ]);
 }
 

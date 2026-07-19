@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  */
 function em_site_builder_field_types(): array
 {
-    return ['text', 'textarea', 'email', 'image', 'text_image', 'text_text', 'icon', 'platform_block', 'button', 'animated_badge', 'video_url', 'video_file', 'audio_file', 'audio_url', 'network_block', 'slider', 'sep_line', 'sep_blank', 'arrow_up', 'arrow_down'];
+    return ['text', 'textarea', 'email', 'image', 'text_image', 'text_icon', 'icon_text', 'text_text', 'icon', 'platform_block', 'button', 'animated_badge', 'video_url', 'video_file', 'audio_file', 'audio_url', 'network_block', 'slider', 'sep_line', 'sep_blank', 'arrow_up', 'arrow_down'];
 }
 
 /**
@@ -30,7 +30,7 @@ function em_site_builder_field_types(): array
 function em_site_builder_field_groups(): array
 {
     return [
-        __('Texte et contenu', 'em-site') => ['text', 'textarea', 'url', 'email', 'text_image', 'text_text', 'button', 'animated_badge'],
+        __('Texte et contenu', 'em-site') => ['text', 'textarea', 'url', 'email', 'text_image', 'text_icon', 'icon_text', 'text_text', 'button', 'animated_badge'],
         __('Media', 'em-site') => ['image', 'video_url', 'video_file', 'audio_file', 'audio_url', 'slider'],
         __('Plateformes et reseaux', 'em-site') => ['icon', 'platform_block', 'network_block'],
         __('Structure et navigation', 'em-site') => ['sep_line', 'sep_blank', 'arrow_up', 'arrow_down'],

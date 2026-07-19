@@ -97,6 +97,8 @@ function em_site_field_type_default_icon(string $key): string
         'email'          => 'dashicons-email',
         'image'          => 'dashicons-format-image',
         'text_image'     => 'dashicons-align-pull-left',
+        'text_icon'      => 'dashicons-format-status',
+        'icon_text'      => 'dashicons-format-status',
         'text_text'      => 'dashicons-editor-paragraph',
         'icon'           => 'dashicons-share-alt',
         'platform_block' => 'dashicons-album',

@@ -226,6 +226,15 @@ function em_site_render_preview_script(): void
                 if (!tiTextHtml && !tiImgHtml) { return '<span class="em-rubrique__field">[' + esc('texte + image') + ']</span>'; }
                 return '<div class="em-rubrique__textimg">' + tiTextHtml + tiImgHtml + '</div>';
             }
+            if (item.type === 'text_icon' || item.type === 'icon_text') {
+                var tic = {}; try { tic = JSON.parse(item.value || '{}'); } catch (e) { tic = {}; }
+                var ticStyle = textStyleCss(tic.style);
+                var ticText = tic.text || '';
+                var ticIcon = tic.icon ? '<span class="em-rubrique__texticon-icon dashicons ' + esc(tic.icon) + '" aria-hidden="true"></span>' : '';
+                var ticBody = (ticText ? '<p class="em-rubrique__field"' + (ticStyle ? ' style="' + ticStyle + '"' : '') + '>' + textLink(ticText, tic.link) + '</p>' : '');
+                if (!ticText && !tic.icon) { return '<span class="em-rubrique__field">[' + esc('texte + icône') + ']</span>'; }
+                return '<div class="em-rubrique__texticon">' + (item.type === 'icon_text' ? (ticIcon + ticBody) : (ticBody + ticIcon)) + '</div>';
+            }
             if (item.type === 'text_text') {
                 var tt = {}; try { tt = JSON.parse(item.value || '{}'); } catch (e) { tt = {}; }
                 var s1 = textStyleCss(tt.style), s2 = textStyleCss(tt.style2);

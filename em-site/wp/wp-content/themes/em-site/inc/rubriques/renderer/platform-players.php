@@ -121,7 +121,7 @@ function em_site_players_html(): string
     $players = '';
     foreach (['mobile', 'desktop'] as $variant) {
         foreach ($acc as $player) {
-            $players .= '<div id="player-' . $variant . '-' . esc_attr($player['slug']) . '" class="em-stream__player platform-player-' . $variant . '">'
+            $players .= '<div id="player-' . $variant . '-' . esc_attr($player['slug']) . '" class="em-stream__player platform-player-' . $variant . '" data-platform-player="' . esc_attr($variant) . '" data-platform="' . esc_attr((string) $player['slug']) . '">'
                 . '<iframe title="' . esc_attr((string) $player['label']) . ' player" src="' . esc_url((string) $player['embed']) . '"'
                 . ' width="100%" height="' . esc_attr((string) (int) $player['height']) . '"'
                 . ' allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>'

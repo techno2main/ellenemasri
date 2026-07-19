@@ -49,6 +49,7 @@ if (is_admin()) {
     require_once __DIR__ . '/admin/assets.php';
     require_once __DIR__ . '/admin/builder/builder-preview-script.php';
     require_once __DIR__ . '/admin/builder/builder-save-handler.php';
+    require_once __DIR__ . '/../admin/shared/components/dashicon-chooser/dashicon-chooser.php';
     require_once __DIR__ . '/../admin/shared/components/scotchs-control/scotchs-control.php';
     require_once __DIR__ . '/admin/builder/builder-chip-media-render.php';
     require_once __DIR__ . '/admin/builder/builder-chip-render.php';

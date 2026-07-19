@@ -116,6 +116,9 @@ function em_site_builder_assets(): void
     }
 
     $done = true;
+    if (function_exists('em_site_admin_dashicon_chooser_assets')) {
+        em_site_admin_dashicon_chooser_assets();
+    }
     em_site_render_preview_script();
     require __DIR__ . '/builder-mini-preview-script.php';
     require __DIR__ . '/builder-appearance-script.php';

@@ -30,7 +30,7 @@ function em_site_render_stream(): void
 		}
 
 		$cards = em_site_stream_collect_platform_cards($content, $item);
-		$players_html = '';
+		$players_html_legacy = '';
 		if ($cards !== []) {
 			ob_start();
 			?>
@@ -51,13 +51,13 @@ function em_site_render_stream(): void
 				<?php endforeach; ?>
 			</div>
 			<?php
-			$players_html = (string) ob_get_clean();
+			$players_html_legacy = (string) ob_get_clean();
 		}
 
 		$entries[] = [
 			'slug' => $slug,
 			'content' => $content,
-			'players_html' => $players_html,
+			'players_html' => $players_html_legacy,
 		];
 	}
 
@@ -88,7 +88,9 @@ function em_site_render_stream(): void
 		<?php foreach ($entries as $entry_index => $entry) :
 			$item_slug = (string) $entry['slug'];
 			$content = is_array($entry['content'] ?? null) ? $entry['content'] : [];
-			$players_html = (string) ($entry['players_html'] ?? '');
+			if (function_exists('em_site_players_reset')) {
+				em_site_players_reset();
+			}
 			$footer_html = em_site_front_render_rubrique_footer(
 				'stream',
 				$item_slug,
@@ -101,6 +103,13 @@ function em_site_render_stream(): void
 			);
 			if ($footer_html === '') {
 				continue;
+			}
+			$players_html = '';
+			if (function_exists('em_site_players_html')) {
+				$players_html = (string) em_site_players_html();
+			}
+			if ($players_html === '') {
+				$players_html = (string) ($entry['players_html'] ?? '');
 			}
 			if ($players_html !== '') {
 				$footer_html = em_site_front_footer_append_html($footer_html, $players_html);

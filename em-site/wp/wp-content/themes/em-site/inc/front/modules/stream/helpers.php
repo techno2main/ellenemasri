@@ -216,11 +216,53 @@ function em_site_stream_font_stack(string $slug): string
 
 function em_site_stream_platform_slug(string $platform): string
 {
-	return sanitize_key(str_replace('stream:', '', $platform));
+	$normalized = em_site_stream_normalize_platform_key($platform);
+
+	return sanitize_key(str_replace('stream:', '', $normalized));
+}
+
+function em_site_stream_normalize_platform_key(string $platform, string $url = ''): string
+{
+	$platform = trim((string) $platform);
+
+	if ($platform === '') {
+		return '';
+	}
+
+	if (strpos($platform, 'stream:') === 0) {
+		$slug = sanitize_key(substr($platform, 7));
+
+		return $slug !== '' ? 'stream:' . $slug : '';
+	}
+
+	$plain = sanitize_key($platform);
+
+	if ($plain === '') {
+		return '';
+	}
+
+	if (function_exists('em_site_stream_detect_stream_platform_key')) {
+		$detected = sanitize_key((string) em_site_stream_detect_stream_platform_key($plain, $url));
+		if ($detected !== '') {
+			return 'stream:' . $detected;
+		}
+	}
+
+	return 'stream:' . $plain;
 }
 
 function em_site_stream_platform_icon(string $platform): string
 {
+	$normalized = em_site_stream_normalize_platform_key($platform);
+
+	if (function_exists('em_site_rubrique_platform_icon')) {
+		$icon = (string) em_site_rubrique_platform_icon($normalized);
+
+		if ($icon !== '') {
+			return $icon;
+		}
+	}
+
 	$map = [
 		'stream:spotify' => 'fa-spotify',
 		'stream:apple-music' => 'fa-apple',
@@ -230,11 +272,21 @@ function em_site_stream_platform_icon(string $platform): string
 		'stream:soundcloud' => 'fa-soundcloud',
 	];
 
-	return (string) ($map[$platform] ?? 'fa-link');
+	return (string) ($map[$normalized] ?? 'fa-link');
 }
 
 function em_site_stream_platform_label(string $platform): string
 {
+	$normalized = em_site_stream_normalize_platform_key($platform);
+
+	if (function_exists('em_site_rubrique_platform_label')) {
+		$label = (string) em_site_rubrique_platform_label($normalized);
+
+		if ($label !== '') {
+			return $label;
+		}
+	}
+
 	$map = [
 		'stream:spotify' => 'Spotify',
 		'stream:apple-music' => 'Apple Music',
@@ -244,11 +296,21 @@ function em_site_stream_platform_label(string $platform): string
 		'stream:soundcloud' => 'SoundCloud',
 	];
 
-	return (string) ($map[$platform] ?? 'Platform');
+	return (string) ($map[$normalized] ?? 'Platform');
 }
 
 function em_site_stream_platform_color(string $platform): string
 {
+	$normalized = em_site_stream_normalize_platform_key($platform);
+
+	if (function_exists('em_site_rubrique_platform_color')) {
+		$color = (string) em_site_rubrique_platform_color($normalized);
+
+		if ($color !== '') {
+			return $color;
+		}
+	}
+
 	$map = [
 		'stream:spotify' => '#1DB954',
 		'stream:apple-music' => '#fa243c',
@@ -258,45 +320,55 @@ function em_site_stream_platform_color(string $platform): string
 		'stream:soundcloud' => '#ff5500',
 	];
 
-	return (string) ($map[$platform] ?? '#100421');
+	return (string) ($map[$normalized] ?? '#100421');
 }
 
 function em_site_stream_has_player(string $platform): bool
 {
-	$with_player = [
-		'stream:spotify',
-		'stream:apple-music',
-		'stream:amazon-music',
-		'stream:deezer',
-		'stream:youtube-music',
-	];
+	$with_player = ['spotify', 'apple-music', 'amazon-music', 'deezer', 'youtube-music', 'soundcloud'];
+	$normalized = em_site_stream_normalize_platform_key($platform);
+	$platform_key = sanitize_key(str_replace('stream:', '', $normalized));
 
-	return in_array($platform, $with_player, true);
+	return in_array($platform_key, $with_player, true);
 }
 
 function em_site_stream_embed_src(string $platform, string $url): string
 {
+	$normalized = em_site_stream_normalize_platform_key($platform, $url);
+	$platform_key = sanitize_key(str_replace('stream:', '', $normalized));
+
+	if ($platform_key !== ''
+		&& function_exists('em_site_stream_detect_stream_platform_key')
+		&& function_exists('em_site_stream_build_stream_embed_src')) {
+		$detected_key = sanitize_key((string) em_site_stream_detect_stream_platform_key($platform_key, $url));
+		$embed = (string) em_site_stream_build_stream_embed_src($detected_key !== '' ? $detected_key : $platform_key, $url);
+
+		if ($embed !== '') {
+			return $embed;
+		}
+	}
+
 	$parts = wp_parse_url($url);
 	$host = strtolower((string) ($parts['host'] ?? ''));
 	$path = (string) ($parts['path'] ?? '');
 
-	if ($platform === 'stream:spotify' && preg_match('~/(?:intl-[^/]+/)?track/([A-Za-z0-9]+)~', $path, $m)) {
+	if ($platform_key === 'spotify' && preg_match('~/(?:intl-[^/]+/)?track/([A-Za-z0-9]+)~', $path, $m)) {
 		return 'https://open.spotify.com/embed/track/' . $m[1] . '?utm_source=generator';
 	}
 
-	if ($platform === 'stream:apple-music' && $host !== '' && $path !== '') {
+	if ($platform_key === 'apple-music' && $host !== '' && $path !== '') {
 		return 'https://embed.music.apple.com' . $path;
 	}
 
-	if ($platform === 'stream:amazon-music' && preg_match('~/tracks/([A-Za-z0-9]+)~', $path, $m)) {
+	if ($platform_key === 'amazon-music' && preg_match('~/tracks/([A-Za-z0-9]+)~', $path, $m)) {
 		return 'https://music.amazon.com/embed/' . $m[1] . '/';
 	}
 
-	if ($platform === 'stream:deezer' && preg_match('~/track/([0-9]+)~', $path, $m)) {
+	if ($platform_key === 'deezer' && preg_match('~/track/([0-9]+)~', $path, $m)) {
 		return 'https://widget.deezer.com/widget/dark/track/' . $m[1];
 	}
 
-	if ($platform === 'stream:youtube-music') {
+	if ($platform_key === 'youtube-music') {
 		if ($host === 'youtu.be') {
 			$video = ltrim($path, '/');
 			if ($video !== '') {
@@ -317,10 +389,12 @@ function em_site_stream_embed_src(string $platform, string $url): string
 
 function em_site_front_stream_player_height(string $platform): int
 {
-	if ($platform === 'stream:spotify') {
+	$platform_key = sanitize_key(str_replace('stream:', '', em_site_stream_normalize_platform_key($platform)));
+
+	if ($platform_key === 'spotify') {
 		return 152;
 	}
-	if ($platform === 'stream:apple-music') {
+	if ($platform_key === 'apple-music') {
 		return 190;
 	}
 
@@ -361,17 +435,20 @@ function em_site_stream_collect_platform_cards(array $content, array $item = [])
 			continue;
 		}
 
+		$normalized_platform = em_site_stream_normalize_platform_key($platform, $url);
+		$embed_src = em_site_stream_embed_src($normalized_platform, $url);
+
 		$cards[] = [
-			'platform' => $platform,
+			'platform' => $normalized_platform,
 			'url' => $url,
 			'label' => $label,
-			'platform_slug' => em_site_stream_platform_slug($platform),
-			'icon' => em_site_stream_platform_icon($platform),
-			'title' => em_site_stream_platform_label($platform),
-			'icon_color' => em_site_stream_platform_color($platform),
-			'has_player' => em_site_stream_has_player($platform),
-			'embed_src' => em_site_stream_embed_src($platform, $url),
-			'player_height' => em_site_front_stream_player_height($platform),
+			'platform_slug' => em_site_stream_platform_slug($normalized_platform),
+			'icon' => em_site_stream_platform_icon($normalized_platform),
+			'title' => em_site_stream_platform_label($normalized_platform),
+			'icon_color' => em_site_stream_platform_color($normalized_platform),
+			'has_player' => $embed_src !== '' && em_site_stream_has_player($normalized_platform),
+			'embed_src' => $embed_src,
+			'player_height' => em_site_front_stream_player_height($normalized_platform),
 		];
 	}
 

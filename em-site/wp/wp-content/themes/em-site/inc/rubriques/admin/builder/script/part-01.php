@@ -257,6 +257,14 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
                 applyRichColor(color);
                 syncRichValue(color.closest('.em-site-chip'));
             }
+            var platformSel = e.target && e.target.classList && e.target.classList.contains('em-site-chip__platform') ? e.target : null;
+            if (platformSel) {
+                syncChipStreamDefaultLink(platformSel.closest('.em-site-chip'), false);
+            }
+            var streamTargetSel = e.target && e.target.classList && e.target.classList.contains('em-site-chip__streamtarget') ? e.target : null;
+            if (streamTargetSel) {
+                syncChipStreamDefaultLink(streamTargetSel.closest('.em-site-chip'), true);
+            }
             var align = e.target && e.target.classList && e.target.classList.contains('em-site-chip__talign') ? e.target : null;
             if (align) {
                 syncRichAlign(align.closest('.em-site-chip'));
@@ -304,6 +312,7 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
             installReleaseTools(builder, update);
         }
         builder.querySelectorAll('.em-site-chip').forEach(function (chip) { syncRichAlign(chip); });
+        builder.querySelectorAll('.em-site-chip').forEach(function (chip) { syncChipStreamDefaultLink(chip, false); });
         builder.querySelectorAll('.em-site-row__title').forEach(function (box) { renderRowTitleText(box); });
         update();
         ready = true;
@@ -527,6 +536,9 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
         }
         if (type === 'icon' || type === 'platform_block' || type === 'network_block') {
             var sel = chip.querySelector('.em-site-chip__platform'), urlEl = chip.querySelector('.em-site-chip__url');
+            var streamTarget = chip.querySelector('.em-site-chip__streamtarget');
+            var streamTargetOpt = streamTarget && streamTarget.options ? streamTarget.options[streamTarget.selectedIndex] : null;
+            var streamItemSlug = streamTargetOpt ? String(streamTargetOpt.getAttribute('data-stream-slug') || '') : '';
             var opt = sel && sel.options ? sel.options[sel.selectedIndex] : null;
             item.icon = opt ? opt.getAttribute('data-icon') : '';
             item.color = opt ? (opt.getAttribute('data-color') || '') : '';
@@ -536,13 +548,16 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
                 var ti = chip.querySelector('.em-site-chip__ptitle');
                 item.label = ti ? ti.value : '';
                 var blockVal = { platform: sel ? sel.value : '', url: item.link, label: item.label };
+                if (streamItemSlug) { blockVal.stream_item = streamItemSlug; }
                 if (type === 'network_block') {
                     var ac = chip.querySelector('.em-site-chip__paccount');
                     if (ac && ac.value) { blockVal.account = ac.value; }
                 }
                 item.value = JSON.stringify(blockVal);
             } else {
-                item.value = JSON.stringify({ platform: sel ? sel.value : '', url: item.link });
+                var iconVal = { platform: sel ? sel.value : '', url: item.link };
+                if (streamItemSlug) { iconVal.stream_item = streamItemSlug; }
+                item.value = JSON.stringify(iconVal);
             }
         }
         if (type === 'button') {
@@ -599,6 +614,12 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
             item.imageUrl = tmd ? tmd.getAttribute('data-url') : '';
             item.value = JSON.stringify({ text: val(chip, '.em-site-chip__titext'), link: tilk ? tilk.value : '', style: window.EmSiteChip.readStyle(chip), image: readImage(chip) });
         }
+        if (type === 'text_icon' || type === 'icon_text') {
+            var tik = chip.querySelector('.em-site-chip__tlink');
+            var dic = chip.querySelector('.em-site-chip__dashicon');
+            item.link = tik ? tik.value : '';
+            item.value = JSON.stringify({ text: val(chip, '.em-site-chip__titext'), link: item.link, icon: dic ? dic.value : '', style: window.EmSiteChip.readStyle(chip) });
+        }
         if (type === 'text_text') {
             var ttp = chip.querySelectorAll('.em-site-chip__tt-part');
             var l1 = chip.querySelector('.em-site-chip__tlink'), l2 = chip.querySelector('.em-site-chip__tlink2');
@@ -633,6 +654,53 @@ require dirname(__DIR__) . '/builder-slider-slides-script.php';
     function val(scope, selector) {
         var el = scope.querySelector(selector);
         return el ? el.value : '';
+    }
+
+    function syncChipStreamDefaultLink(chip, force) {
+        if (!chip) { return; }
+        var type = chip.getAttribute('data-type') || '';
+        if (type !== 'icon' && type !== 'platform_block') { return; }
+
+        var platform = chip.querySelector('.em-site-chip__platform');
+        var urlEl = chip.querySelector('.em-site-chip__url');
+        var targetSel = chip.querySelector('.em-site-chip__streamtarget');
+        if (!platform || !urlEl) { return; }
+
+        var currentPlatform = String(platform.value || '');
+        var isStreamPlatform = currentPlatform.indexOf('stream:') === 0;
+
+        if (targetSel) {
+            targetSel.hidden = !isStreamPlatform;
+            targetSel.disabled = !isStreamPlatform;
+        }
+
+        if (!isStreamPlatform) { return; }
+
+        var targetUrl = targetSel && targetSel.value ? String(targetSel.value) : '#stream';
+        var targetOption = targetSel && targetSel.options ? targetSel.options[targetSel.selectedIndex] : null;
+        var currentUrl = String(urlEl.value || '').trim();
+        var canAutofill = force || currentUrl === '' || currentUrl === '#stream' || (targetSel && currentUrl.indexOf('#stream-') === 0);
+
+        var resolvedUrl = targetUrl;
+        if (targetSel && targetUrl !== '#stream') {
+            var selectedStreamSlug = String(targetOption && targetOption.getAttribute('data-stream-slug') || '');
+            var platformSlug = currentPlatform.replace(/^stream:/, '');
+            if (selectedStreamSlug && platformSlug) {
+                var streamDef = null;
+                if (window.EmSiteChip && window.EmSiteChip.streamLinks) {
+                    streamDef = window.EmSiteChip.streamLinks.find(function (entry) {
+                        return String(entry.slug || '') === selectedStreamSlug;
+                    }) || null;
+                }
+                if (streamDef && streamDef.platformUrls && streamDef.platformUrls[platformSlug]) {
+                    resolvedUrl = String(streamDef.platformUrls[platformSlug]);
+                }
+            }
+        }
+
+        if (canAutofill) {
+            urlEl.value = resolvedUrl;
+        }
     }
 
     function onClick(e, builder, update) {
