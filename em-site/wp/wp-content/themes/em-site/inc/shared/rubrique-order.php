@@ -450,18 +450,26 @@ if (is_admin()) {
             && function_exists('em_site_save_template_skeleton_order')
         ) {
             $order = em_site_save_template_skeleton_order($template_slug, $decoded);
+            $has_pending_changes = function_exists('em_site_draft_live_has_real_diff')
+                ? em_site_draft_live_has_real_diff()
+                : true;
 
             wp_send_json_success([
-                'order'   => $order,
-                'message' => __('Ordre enregistré.', 'em-site'),
+                'order'               => $order,
+                'has_pending_changes' => $has_pending_changes,
+                'message'             => __('Ordre enregistré.', 'em-site'),
             ]);
         }
 
         $order = em_site_save_site_rubrique_order($decoded);
+        $has_pending_changes = function_exists('em_site_draft_live_has_real_diff')
+            ? em_site_draft_live_has_real_diff()
+            : true;
 
         wp_send_json_success([
-            'order'   => $order,
-            'message' => __('Ordre enregistré.', 'em-site'),
+            'order'               => $order,
+            'has_pending_changes' => $has_pending_changes,
+            'message'             => __('Ordre enregistré.', 'em-site'),
         ]);
     }
     add_action('wp_ajax_em_site_save_site_rubrique_order', 'em_site_ajax_save_site_rubrique_order');

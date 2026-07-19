@@ -182,18 +182,59 @@ function em_site_front_render_module_or_fallback(
 }
 
 /**
+ * Résout les callbacks de rendu d'un module front (avec alias legacy).
+ *
+ * @return array{render:string,ready:string}|null
+ */
+function em_site_front_module_callbacks(string $module_slug): ?array
+{
+	$map = [
+		'top-bar' => ['render' => 'em_site_render_top_bar', 'ready' => 'em_site_top_bar_is_ready'],
+		'header'  => ['render' => 'em_site_render_header', 'ready' => 'em_site_header_is_ready'],
+		'stream'  => ['render' => 'em_site_render_stream', 'ready' => 'em_site_stream_is_ready'],
+		'social'  => ['render' => 'em_site_render_social', 'ready' => 'em_site_social_is_ready'],
+		'video'   => ['render' => 'em_site_render_video', 'ready' => 'em_site_video_is_ready'],
+		'release' => ['render' => 'em_site_render_release', 'ready' => 'em_site_release_is_ready'],
+		'cta'     => ['render' => 'em_site_render_cta', 'ready' => 'em_site_cta_is_ready'],
+		'contact' => ['render' => 'em_site_render_contact', 'ready' => 'em_site_contact_is_ready'],
+		'about'   => ['render' => 'em_site_render_about', 'ready' => 'em_site_about_is_ready'],
+		'footer'  => ['render' => 'em_site_render_footer', 'ready' => 'em_site_footer_is_ready'],
+	];
+
+	foreach (em_site_front_module_slug_aliases($module_slug) as $alias) {
+		if (isset($map[$alias])) {
+			return $map[$alias];
+		}
+	}
+
+	return null;
+}
+
+/**
  * Affiche la landing front minimale.
  */
 function em_site_render_front_page(): void
 {
-	em_site_front_render_module_or_fallback('top-bar', 'em_site_render_top_bar', 'em_site_top_bar_is_ready');
-	em_site_front_render_module_or_fallback('header', 'em_site_render_header', 'em_site_header_is_ready');
-	em_site_front_render_module_or_fallback('stream', 'em_site_render_stream', 'em_site_stream_is_ready');
-	em_site_front_render_module_or_fallback('social', 'em_site_render_social', 'em_site_social_is_ready');
-	em_site_front_render_module_or_fallback('video', 'em_site_render_video', 'em_site_video_is_ready');
-	em_site_front_render_module_or_fallback('release', 'em_site_render_release', 'em_site_release_is_ready');
-	em_site_front_render_module_or_fallback('cta', 'em_site_render_cta', 'em_site_cta_is_ready');
-	em_site_front_render_module_or_fallback('contact', 'em_site_render_contact', 'em_site_contact_is_ready');
-	em_site_front_render_module_or_fallback('about', 'em_site_render_about', 'em_site_about_is_ready');
-	em_site_front_render_module_or_fallback('footer', 'em_site_render_footer', 'em_site_footer_is_ready');
+	$template_slug = em_site_front_active_template_slug();
+	$order = function_exists('em_site_get_rubrique_order_for_template')
+		? em_site_get_rubrique_order_for_template($template_slug)
+		: ['top-bar', 'header', 'stream', 'social', 'video', 'release', 'cta', 'contact', 'about', 'footer'];
+
+	$seen = [];
+
+	foreach ($order as $module_slug) {
+		$module_slug = sanitize_key((string) $module_slug);
+
+		if ($module_slug === '' || isset($seen[$module_slug])) {
+			continue;
+		}
+
+		$callbacks = em_site_front_module_callbacks($module_slug);
+		if ($callbacks === null) {
+			continue;
+		}
+
+		em_site_front_render_module_or_fallback($module_slug, $callbacks['render'], $callbacks['ready']);
+		$seen[$module_slug] = true;
+	}
 }

@@ -113,12 +113,16 @@
 
                 ns.setStatus(ctx, (payload.data && payload.data.message) || ctx.config.i18n.saved, false);
 
+                var hasPendingChanges = (payload && payload.data && typeof payload.data.has_pending_changes === 'boolean')
+                    ? payload.data.has_pending_changes
+                    : !sameArray(getFullOrderFromList(ctx), ctx.initialOrder || []);
+
                 document.dispatchEvent(new window.CustomEvent('emSiteDraftChanged', {
                     detail: {
                         source: 'rubrique-order',
                         rubriqueSlug: 'rubrique-order',
                         draftKey: 'rubrique-order:' + (ctx.config.templateSlug || 'default'),
-                        hasPendingChanges: !sameArray(getFullOrderFromList(ctx), ctx.initialOrder || []),
+                        hasPendingChanges: hasPendingChanges,
                     },
                 }));
             })
