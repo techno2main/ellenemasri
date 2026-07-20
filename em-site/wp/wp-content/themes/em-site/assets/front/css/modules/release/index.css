@@ -96,12 +96,10 @@
 }
 
 .em-section--release .em-rubrique__texttext {
-	justify-content: space-between;
 	gap: 16px;
 }
 
 .em-section--release .em-rubrique__texttext .em-rubrique__field:last-child {
-	text-align: right;
 	font-size: clamp(1rem, 2.5vw, 1.25rem);
 }
 
