@@ -1,0 +1,10 @@
+Package: c:\xampp\htdocs\web-am\dev.tad\MyWebsites\ellenemasri.com\www\em-site\documentation\suivi\release-packages\em-site-prod-package-20260720_172225.zip
+CreatedAt: 2026-07-20 17:22:47
+SourceWp: c:\xampp\htdocs\web-am\dev.tad\MyWebsites\ellenemasri.com\www\em-site\wp
+Included: wp-admin
+Included: wp-includes
+Included: root files (except wp-config.php, .htaccess, web.config)
+Included: wp-content/themes/em-site
+Included plugins: NO (theme only + mu-plugins if any)
+Included uploads: NO
+Included wp-config.php: NO
