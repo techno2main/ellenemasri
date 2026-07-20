@@ -55,9 +55,11 @@
 		display: none;
 	}
 
-	.em-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__imgwrap .em-rubrique__image {
-		width: 170px !important;
-		max-width: 170px;
+	.em-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__imgwrap .em-rubrique__image,
+	.em-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__col[data-em-col="1"] > .em-rubrique__image,
+	.em-section--footer .em-rubrique__row[data-em-row="1"] .em-rubrique__col[data-em-col="1"] .em-rubrique__link--media > .em-rubrique__image {
+		width: 108px !important;
+		max-width: 108px;
 		height: auto;
 	}
 
