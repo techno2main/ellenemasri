@@ -143,8 +143,8 @@ body.admin-bar .em-section--top-bar {
 
 	.em-section--top-bar > .em-rubrique .em-rubrique__texticon .em-rubrique__field {
 		margin: 0;
-		font-size: .95rem;
-		font-weight: 700;
+		font-size: .90rem;
+		font-weight: 500;
 		line-height: 1.2;
 	}
 
@@ -153,10 +153,10 @@ body.admin-bar .em-section--top-bar {
 	}
 
 	.em-section--top-bar > .em-rubrique .em-rubrique__texticon .em-rubrique__texticon-icon {
-		width: 18px;
-		height: 18px;
-		font-size: 18px;
-		line-height: 18px;
+		width: 15px;
+		height: 15px;
+		font-size: 15px;
+		line-height: 15px;
 	}
 
 	.em-section--top-bar > .em-rubrique .top-bar-platform-link .em-rubrique__icon {
