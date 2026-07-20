@@ -65,14 +65,22 @@
         margin-top: 0;
     }
 
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__field--stream_share) {
+        display: block !important;
+        grid-column: 2;
+        margin-top: 4px;
+    }
+
     .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col,
     .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__image) .em-rubrique__col,
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__field--stream_share) .em-rubrique__col,
     .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col {
         display: none;
     }
 
     .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__imgwrap) .em-rubrique__col:has(.em-rubrique__imgwrap),
     .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__image) .em-rubrique__col:has(.em-rubrique__image),
+    .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.em-rubrique__field--stream_share) .em-rubrique__col:has(.em-rubrique__field--stream_share),
     .em-section--top-bar > .em-rubrique > .em-rubrique__row:has(.top-bar-platform-link) .em-rubrique__col:has(.top-bar-platform-link) {
         display: block;
     }
@@ -118,19 +126,27 @@
         margin: 0 6px;
     }
 
-    .em-section--top-bar > .em-rubrique .em-rubrique__col:has(.top-bar-platform-link)::after {
-        content: "Mayami, My Miami";
-        display: block;
-        margin-top: 10px;
+    .em-section--top-bar > .em-rubrique .em-rubrique__field--stream_share,
+    .em-section--top-bar > .em-rubrique .em-rubrique__field--stream_share .em-rubrique__link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        white-space: nowrap;
+        line-height: 1.2;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__field--stream_share {
+        margin-top: 8px;
         padding-right: 6px;
         color: #f4d03c;
-        font-family: "Brush Script MT", "Segoe Script", cursive;
-        font-size: 0.95rem;
-        font-weight: 400;
-        line-height: 1;
-        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+        font-size: .95rem;
+        font-weight: 700;
         text-align: right;
-        white-space: nowrap;
+    }
+
+    .em-section--top-bar > .em-rubrique .em-rubrique__col:has(.top-bar-platform-link)::after {
+        content: none;
     }
 
     .em-section > .em-rubrique > .em-rubrique__row {
