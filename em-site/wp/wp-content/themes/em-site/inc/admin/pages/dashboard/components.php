@@ -298,9 +298,18 @@ function em_site_admin_dashboard_render_settings_badge(): void
         && function_exists('em_site_client_admin_gate_settings_admin_url')
         && em_site_admin_is_power_user()) {
         $entries[] = [
-            'label' => __('VERROU CLIENT', 'em-site'),
+            'label' => __('VERROU TEMPORAIRE', 'em-site'),
             'url'   => em_site_client_admin_gate_settings_admin_url(),
         ];
+
+        if (function_exists('em_site_vlb_toggle_for_admin_ellene_url') && function_exists('em_site_vlb_visible_for_admin_ellene')) {
+            $entries[] = [
+                'label' => em_site_vlb_visible_for_admin_ellene()
+                    ? __('TOGGLE VLB ELLENE: MASQUER', 'em-site')
+                    : __('TOGGLE VLB ELLENE: AFFICHER', 'em-site'),
+                'url'   => em_site_vlb_toggle_for_admin_ellene_url(),
+            ];
+        }
     }
 
     em_site_admin_hub_render_catalog_entry_links_badge(

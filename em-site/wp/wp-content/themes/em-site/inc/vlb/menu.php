@@ -10,6 +10,148 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+/**
+ * Option de visibilité du menu VLB pour admin-ellene.
+ */
+function em_site_vlb_visible_for_admin_ellene(): bool
+{
+    return (bool) get_option('em_site_vlb_visible_for_admin_ellene', false);
+}
+
+/**
+ * Login admin ciblé par la règle VLB.
+ */
+function em_site_vlb_target_login_for_visibility(): string
+{
+    return 'admin-ellene';
+}
+
+/**
+ * Indique si le VLB doit être masqué pour l'utilisateur courant.
+ */
+function em_site_vlb_should_hide_for_current_user(): bool
+{
+    if (!is_admin() || !current_user_can('manage_options')) {
+        return false;
+    }
+
+    $current_login = function_exists('em_site_admin_user_login')
+        ? em_site_admin_user_login()
+        : strtolower((string) (wp_get_current_user()->user_login ?? ''));
+
+    if ($current_login !== em_site_vlb_target_login_for_visibility()) {
+        return false;
+    }
+
+    return !em_site_vlb_visible_for_admin_ellene();
+}
+
+/**
+ * URL d'action pour le toggle VLB (admin-tyson).
+ */
+function em_site_vlb_toggle_for_admin_ellene_url(): string
+{
+    $url = add_query_arg(
+        [
+            'action' => 'em_site_toggle_vlb_for_admin_ellene',
+            'redirect_to' => rawurlencode(
+                function_exists('em_site_admin_dashboard_admin_url')
+                    ? em_site_admin_dashboard_admin_url()
+                    : admin_url('index.php')
+            ),
+        ],
+        admin_url('admin-post.php')
+    );
+
+    return wp_nonce_url($url, 'em_site_toggle_vlb_for_admin_ellene');
+}
+
+/**
+ * Toggle visibilité VLB pour admin-ellene (réservé admin-tyson).
+ */
+function em_site_toggle_vlb_for_admin_ellene(): void
+{
+    if (!current_user_can('manage_options') || !function_exists('em_site_admin_is_power_user') || !em_site_admin_is_power_user()) {
+        wp_die(esc_html__('You are not allowed to do this.', 'em-site'), 403);
+    }
+
+    check_admin_referer('em_site_toggle_vlb_for_admin_ellene');
+
+    $current = em_site_vlb_visible_for_admin_ellene();
+    update_option('em_site_vlb_visible_for_admin_ellene', $current ? 0 : 1, false);
+
+    $redirect_to = isset($_GET['redirect_to'])
+        ? rawurldecode(sanitize_text_field(wp_unslash((string) $_GET['redirect_to'])))
+        : '';
+
+    if ($redirect_to === '' || !wp_http_validate_url($redirect_to)) {
+        $redirect_to = function_exists('em_site_admin_dashboard_admin_url')
+            ? em_site_admin_dashboard_admin_url()
+            : admin_url('index.php');
+    }
+
+    wp_safe_redirect($redirect_to);
+    exit;
+}
+add_action('admin_post_em_site_toggle_vlb_for_admin_ellene', 'em_site_toggle_vlb_for_admin_ellene');
+
+/**
+ * Masque les entrées VLB du menu latéral pour admin-ellene selon option.
+ */
+function em_site_vlb_hide_menu_for_target_user(): void
+{
+    if (!em_site_vlb_should_hide_for_current_user()) {
+        return;
+    }
+
+    $vlb_slugs = [
+        'mayami_visual_links_builder',
+        'mayami_visual_links_builder_new',
+        'mayami_visual_links_drafts',
+    ];
+
+    foreach ($vlb_slugs as $slug) {
+        remove_menu_page($slug);
+    }
+}
+add_action('admin_menu', 'em_site_vlb_hide_menu_for_target_user', 200000);
+
+/**
+ * Bloque l'accès direct aux pages VLB quand le menu est masqué.
+ */
+function em_site_vlb_block_hidden_pages_for_target_user(): void
+{
+    if (!em_site_vlb_should_hide_for_current_user()) {
+        return;
+    }
+
+    global $pagenow;
+
+    if ($pagenow !== 'admin.php') {
+        return;
+    }
+
+    $page = isset($_GET['page']) ? sanitize_key((string) $_GET['page']) : '';
+    $blocked = [
+        'mayami_visual_links_builder',
+        'mayami_visual_links_builder_new',
+        'mayami_visual_links_drafts',
+        'mayami_visual_links_preview',
+    ];
+
+    if (!in_array($page, $blocked, true)) {
+        return;
+    }
+
+    $redirect = function_exists('em_site_admin_dashboard_admin_url')
+        ? em_site_admin_dashboard_admin_url()
+        : admin_url('index.php');
+
+    wp_safe_redirect($redirect);
+    exit;
+}
+add_action('admin_init', 'em_site_vlb_block_hidden_pages_for_target_user', 20);
+
 function mayami_register_visual_links_html_menu() {
     $root_slug = 'mayami_visual_links_builder';
     $vlb_icon = function_exists('em_site_site_icon') ? em_site_site_icon('vlb', 'dashicons-format-image') : 'dashicons-format-image';
