@@ -71,6 +71,53 @@ function em_site_render_preview_script(): void
             return /^#[0-9a-fA-F]{3,8}$/.test(value || '') ? value : '';
         }
 
+        function isPrivateHost(hostname) {
+            var host = String(hostname || '').toLowerCase();
+            if (!host) { return false; }
+            if (host === 'localhost' || host === '127.0.0.1' || host === '::1') { return true; }
+            if (/^(10\.|192\.168\.|169\.254\.)/.test(host)) { return true; }
+            if (/^172\.(1[6-9]|2[0-9]|3[0-1])\./.test(host)) { return true; }
+            return /\.(local|lan|home|home\.arpa)$/.test(host);
+        }
+
+        // Filet de sécurité côté client: remappe les URLs locales/privées vers
+        // l'origine courante (cas legacy encore stockés en base).
+        function normalizeMediaUrl(url) {
+            var raw = String(url || '').trim();
+            if (!raw) { return ''; }
+
+            if (/^(data:|blob:|about:|#|\/\/)/i.test(raw)) {
+                return raw;
+            }
+
+            var parsed;
+            try {
+                parsed = new URL(raw, window.location.href);
+            } catch (e) {
+                return raw;
+            }
+
+            var proto = String(parsed.protocol || '').toLowerCase();
+            if (proto !== 'http:' && proto !== 'https:') {
+                return raw;
+            }
+
+            var page = window.location;
+            var parsedHost = String(parsed.hostname || '').toLowerCase();
+            var pageHost = String(page.hostname || '').toLowerCase();
+            var local = isPrivateHost(parsedHost);
+            var insecureSameHost = page.protocol === 'https:' && parsed.protocol === 'http:' && parsedHost === pageHost;
+
+            if (!local && !insecureSameHost) {
+                return parsed.toString();
+            }
+
+            parsed.protocol = page.protocol;
+            parsed.hostname = page.hostname;
+            parsed.port = page.port;
+            return parsed.toString();
+        }
+
         // Position d'une image de fond -> { size, repeat, position } (cf. PHP).
         function bgPosCss(pos) {
             switch (pos) {
@@ -96,6 +143,7 @@ function em_site_render_preview_script(): void
 
         // Balise image (redimension/recadrage + lien éventuel). '' si pas d'URL.
         function imageMarkup(url, iv, alt, hasLink) {
+            url = normalizeMediaUrl(url);
             if (!url) { return ''; }
             iv = iv || {};
             var w = parseInt(iv.w, 10) || 0, h = parseInt(iv.h, 10) || 0, st = '';
@@ -159,14 +207,17 @@ function em_site_render_preview_script(): void
                             ? '<iframe src="https://www.youtube.com/embed/' + esc(info.id) + '?enablejsapi=1&rel=0&modestbranding=1&playsinline=1&mute=1&autoplay=1" title="" loading="lazy" allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
                             : '<span class="em-slider__ph">YouTube</span>';
                     } else if (sl.type === 'tiktok') {
-                        if (sl.tiktok_video_url) {
+                        var tiktokVideoUrl = normalizeMediaUrl(sl.tiktok_video_url || '');
+                        var tiktokImage = normalizeMediaUrl(sl.image || '');
+                        if (tiktokVideoUrl) {
                             hasTikTokVideo = true;
-                            inner = '<div class="em-slider__video-wrap"><video class="em-slider__tiktok-video" src="' + esc(sl.tiktok_video_url) + '"' + (sl.image ? ' poster="' + esc(sl.image) + '"' : '') + ' playsinline preload="auto" muted></video></div>';
+                            inner = '<div class="em-slider__video-wrap"><video class="em-slider__tiktok-video" src="' + esc(tiktokVideoUrl) + '"' + (tiktokImage ? ' poster="' + esc(tiktokImage) + '"' : '') + ' playsinline preload="auto" muted></video></div>';
                         } else {
-                            inner = sl.image ? '<img src="' + esc(sl.image) + '" alt="">' : '<span class="em-slider__ph">TikTok</span>';
+                            inner = tiktokImage ? '<img src="' + esc(tiktokImage) + '" alt="">' : '<span class="em-slider__ph">TikTok</span>';
                         }
                     } else {
-                        inner = sl.image ? '<img src="' + esc(sl.image) + '" alt="">' : '<span class="em-slider__ph"></span>';
+                        var slideImage = normalizeMediaUrl(sl.image || '');
+                        inner = slideImage ? '<img src="' + esc(slideImage) + '" alt="">' : '<span class="em-slider__ph"></span>';
                     }
                     var delayMs = (parseInt(sl.duration, 10) || 5) * 1000;
                     figs += '<figure class="em-slider__slide' + (i === 0 ? ' is-active' : '') + '" data-type="' + esc(sl.type || 'image') + '" data-delay="' + delayMs + '">' + inner + '</figure>';
@@ -291,6 +342,7 @@ function em_site_render_preview_script(): void
                 var tapesHidden = item.tapesHidden !== undefined ? item.tapesHidden : !!vd.tapes_hidden;
                 var tapesColor = color(item.tapesColor || vd.tapes_color || '');
                 var custom = item.thumbUrl || '';
+                custom = normalizeMediaUrl(custom);
                 var poster = clickable ? (custom || autoThumb(vurl)) : custom;
                 if (!poster) { return videoEmbed(vurl); }
                 var facade = '<span class="em-rubrique__video-facade"><img class="em-rubrique__video-poster" src="' + esc(poster) + '" alt=""><span class="em-rubrique__video-play" aria-hidden="true"></span></span>';
@@ -305,9 +357,18 @@ function em_site_render_preview_script(): void
                     + rightTape
                     + frame + '</span>';
             }
-            if (item.type === 'video_file') { return item.url ? '<video class="em-rubrique__video" controls preload="metadata" src="' + esc(item.url) + '"></video>' : '<span class="em-rubrique__field">[' + esc('vidéo') + ']</span>'; }
-            if (item.type === 'audio_file') { return item.url ? '<audio class="em-rubrique__audio" controls preload="none" src="' + esc(item.url) + '"></audio>' : '<span class="em-rubrique__field">[' + esc('son') + ']</span>'; }
-            if (item.type === 'audio_url') { return item.value ? '<audio class="em-rubrique__audio" controls preload="none" src="' + esc(item.value) + '"></audio>' : ''; }
+            if (item.type === 'video_file') {
+                var videoFileUrl = normalizeMediaUrl(item.url || '');
+                return videoFileUrl ? '<video class="em-rubrique__video" controls preload="metadata" src="' + esc(videoFileUrl) + '"></video>' : '<span class="em-rubrique__field">[' + esc('vidéo') + ']</span>';
+            }
+            if (item.type === 'audio_file') {
+                var audioFileUrl = normalizeMediaUrl(item.url || '');
+                return audioFileUrl ? '<audio class="em-rubrique__audio" controls preload="none" src="' + esc(audioFileUrl) + '"></audio>' : '<span class="em-rubrique__field">[' + esc('son') + ']</span>';
+            }
+            if (item.type === 'audio_url') {
+                var audioUrl = normalizeMediaUrl(item.value || '');
+                return audioUrl ? '<audio class="em-rubrique__audio" controls preload="none" src="' + esc(audioUrl) + '"></audio>' : '';
+            }
             if (item.type === 'slider') {
                 var cfg = {};
                 try { cfg = JSON.parse(item.value || '{}') || {}; } catch (e) { cfg = {}; }
@@ -429,7 +490,10 @@ function em_site_render_preview_script(): void
             if (colors && colors.font) { style += '--em-rubrique-font:' + colors.font + ';'; }
             if (colors && colors.bgImage) {
                 var bp = bgPosCss(colors.bgPos);
-                style += "--em-rubrique-bg-image:url('" + colors.bgImage.replace(/'/g, "%27") + "');";
+                var bgImageUrl = normalizeMediaUrl(colors.bgImage || '');
+                if (bgImageUrl) {
+                    style += "--em-rubrique-bg-image:url('" + bgImageUrl.replace(/'/g, "%27") + "');";
+                }
                 style += '--em-rubrique-bg-size:' + bp.size + ';--em-rubrique-bg-repeat:' + bp.repeat + ';--em-rubrique-bg-position:' + bp.position + ';';
                 var op = (colors.bgOpacity === undefined || colors.bgOpacity === '') ? 100 : Math.max(0, Math.min(100, parseInt(colors.bgOpacity, 10) || 0));
                 style += '--em-rubrique-bg-opacity:' + (op / 100) + ';';

@@ -131,13 +131,18 @@ function em_site_rubrique_slide_normalize(array $item): array
         $type = 'image';
     }
 
+    $image = em_site_rubrique_normalize_media_url(esc_url_raw((string) ($item['image'] ?? '')));
+    $video_url = em_site_rubrique_normalize_media_url(esc_url_raw((string) ($item['video_url'] ?? '')));
+    $tiktok_url = em_site_rubrique_normalize_media_url(esc_url_raw((string) ($item['tiktok_url'] ?? '')));
+    $tiktok_video_url = em_site_rubrique_normalize_media_url(esc_url_raw((string) ($item['tiktok_video_url'] ?? '')));
+
     return [
         'type'             => $type,
         'name'             => sanitize_text_field((string) ($item['name'] ?? '')),
-        'image'            => esc_url_raw((string) ($item['image'] ?? '')),
-        'video_url'        => esc_url_raw((string) ($item['video_url'] ?? '')),
-        'tiktok_url'       => esc_url_raw((string) ($item['tiktok_url'] ?? '')),
-        'tiktok_video_url' => esc_url_raw((string) ($item['tiktok_video_url'] ?? '')),
+        'image'            => $image,
+        'video_url'        => $video_url,
+        'tiktok_url'       => $tiktok_url,
+        'tiktok_video_url' => $tiktok_video_url,
         'alt_text'         => sanitize_text_field((string) ($item['alt_text'] ?? '')),
         'duration'         => max(1, (int) ($item['duration'] ?? 5)),
         'hidden'           => !empty($item['hidden']),
