@@ -79,3 +79,5 @@ em-site/docker/
 # Documentations & exports SQL locaux (sensibles/volumineux)
 em-site/documentation/arborescence/
 em-site/documentation/bdd/
+
+em-site/documentation/suivi/release-packages/em-site-prod-package-20260720_172225
