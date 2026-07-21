@@ -95,7 +95,7 @@ function em_site_admin_menu_layout_purge_out_of_context_rubriques(): void
     if (function_exists('em_site_admin_should_show_rubrique_menus') && !em_site_admin_should_show_rubrique_menus()) {
         $purge_slugs = array_merge(
             $known_rubrique_slugs,
-            ['separator-em-site-site-top', 'separator-em-site-bottom']
+            ['separator-em-site-site-top']
         );
 
         if (function_exists('em_site_admin_rubriques_page_slug')) {

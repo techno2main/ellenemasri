@@ -279,6 +279,12 @@ function em_site_admin_dashboard_render_settings_badge(): void
 {
     $entries = [
         [
+            'label' => __('ICÔNES BO', 'em-site'),
+            'url'   => function_exists('em_site_admin_dashicons_manager_admin_url')
+                ? em_site_admin_dashicons_manager_admin_url()
+                : admin_url('admin.php?page=' . em_site_admin_dashicons_manager_page_slug()),
+        ],
+        [
             'label' => __('APPARENCE', 'em-site'),
             'url'   => admin_url('themes.php'),
         ],
