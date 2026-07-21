@@ -323,3 +323,55 @@ function em_site_overview_render_rename_script(): void
     <?php
 }
 
+/**
+ * Correctif a11y: attribue un id unique aux champs sans id ni name.
+ */
+function em_site_overview_render_accessibility_script(): void
+{
+    static $done = false;
+
+    if ($done) {
+        return;
+    }
+
+    $done = true;
+    ?>
+    <script>
+    (function () {
+        var nextId = 0;
+
+        function ensureFieldIds(scope) {
+            if (!scope || !scope.querySelectorAll) { return; }
+            scope.querySelectorAll('input, select, textarea').forEach(function (field) {
+                if (field.id || field.name) { return; }
+                nextId += 1;
+                field.id = 'em-site-a11y-field-' + nextId;
+            });
+        }
+
+        function run() {
+            ensureFieldIds(document);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', run);
+        } else {
+            run();
+        }
+
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                mutation.addedNodes.forEach(function (node) {
+                    if (node && node.nodeType === 1) {
+                        ensureFieldIds(node);
+                    }
+                });
+            });
+        });
+
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+    })();
+    </script>
+    <?php
+}
+

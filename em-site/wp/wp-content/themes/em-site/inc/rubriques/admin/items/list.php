@@ -63,6 +63,8 @@ function em_site_render_footer_item(string $type_slug, string $item_slug, string
     $del_ack = sprintf(__('Je confirme la suppression de %1$s %2$s.', 'em-site'), $n['dem'], $n['singular']);
     $del_tip = sprintf(__('Supprimer la Section %s', 'em-site'), $type_label . ' ' . $label);
     $anchor = (string) (em_site_get_item($type_slug, $item_slug)['anchor'] ?? '');
+    $name_input_id = 'em-site-item-name-' . sanitize_html_class($type_slug . '-' . $item_slug);
+    $anchor_input_id = 'em-site-item-anchor-' . sanitize_html_class($type_slug . '-' . $item_slug);
     $show_inline_section_tabs = true;
     ?>
     <details class="em-site-collapse em-site-item" data-item-slug="<?php echo esc_attr($item_slug); ?>" <?php echo $open ? 'open' : ''; ?>>
@@ -73,74 +75,77 @@ function em_site_render_footer_item(string $type_slug, string $item_slug, string
                 <span class="em-site-item__prefix"><?php echo esc_html($type_label); ?></span>
                 <span class="em-site-item__name"><?php echo esc_html($label); ?></span>
             </strong>
-            <button type="button" class="em-site-item__edit" data-target="<?php echo esc_attr($target); ?>" title="<?php esc_attr_e('Renommer', 'em-site'); ?>" aria-label="<?php esc_attr_e('Renommer', 'em-site'); ?>">
-                <span class="dashicons dashicons-edit"></span>
-            </button>
-            <input type="text" class="em-site-item__nameinput" data-target="<?php echo esc_attr($target); ?>" data-type="<?php echo esc_attr($type_slug); ?>" data-item="<?php echo esc_attr($item_slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
-            <button type="button" class="em-site-item__confirm" title="<?php esc_attr_e('Valider', 'em-site'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-site'); ?>" hidden>
-                <span class="dashicons dashicons-yes" aria-hidden="true"></span>
-            </button>
-            <button type="button" class="em-site-item__cancel" title="<?php esc_attr_e('Annuler', 'em-site'); ?>" aria-label="<?php esc_attr_e('Annuler', 'em-site'); ?>" hidden>
-                <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
-            </button>
-            <span class="em-site-item__preview">
-                <button type="button" class="em-site-preview__toggle" aria-pressed="false" title="<?php esc_attr_e('Afficher / masquer l’aperçu', 'em-site'); ?>" aria-label="<?php esc_attr_e('Afficher / masquer l’aperçu', 'em-site'); ?>">
-                    <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="em-site-preview__popout" title="<?php esc_attr_e('Ouvrir l’aperçu dans une nouvelle fenêtre', 'em-site'); ?>" aria-label="<?php esc_attr_e('Ouvrir l’aperçu dans une nouvelle fenêtre', 'em-site'); ?>">
-                    <span class="dashicons dashicons-external" aria-hidden="true"></span>
-                </button>
-            </span>
-            <button type="button" class="em-site-item__delete em-site-delete" data-deleteform="<?php echo esc_attr($del_form_id); ?>" data-label="<?php echo esc_attr($type_label . ' ' . $label); ?>" data-title="<?php echo esc_attr($del_title); ?>" data-ack="<?php echo esc_attr($del_ack); ?>" title="<?php echo esc_attr($del_tip); ?>" aria-label="<?php echo esc_attr($del_tip); ?>">
-                <span class="dashicons dashicons-trash" aria-hidden="true"></span>
-            </button>
-            <span class="em-site-item__anchor" title="<?php esc_attr_e('Ancre #section pour la navigation (flèches / liens #). Laisser vide = ancre par défaut.', 'em-site'); ?>">
-                <span class="em-site-item__anchor-hash" aria-hidden="true">#</span>
-                <input
-                    type="text"
-                    class="em-site-item__anchorinput"
-                    data-type="<?php echo esc_attr($type_slug); ?>"
-                    data-item="<?php echo esc_attr($item_slug); ?>"
-                    value="<?php echo esc_attr($anchor); ?>"
-                    placeholder="<?php esc_attr_e('ancre', 'em-site'); ?>"
-                    spellcheck="false"
-                    autocomplete="off"
-                >
-            </span>
             <span class="em-site-item__slug" title="<?php esc_attr_e('Slug technique (lecture seule).', 'em-site'); ?>">
                 <span class="em-site-item__slug-label">slug</span>
                 <span class="em-site-item__slug-value"><?php echo esc_html($item_slug); ?></span>
             </span>
-            <?php if ($show_inline_section_tabs) : ?>
-                <span class="em-site-item__section-tabs" role="tablist" aria-label="<?php esc_attr_e('Navigation rapide section item', 'em-site'); ?>">
-                    <button
-                        type="button"
-                        class="em-site-item__section-tab"
-                        data-item-section-target="appearance"
-                        role="tab"
-                        aria-selected="false"
-                        title="<?php esc_attr_e('Ouvrir la section Apparence', 'em-site'); ?>"
-                        aria-label="<?php esc_attr_e('Ouvrir la section Apparence', 'em-site'); ?>"
-                    >
-                        <span class="dashicons dashicons-art" aria-hidden="true"></span>
-                        <span><?php esc_html_e('Apparence', 'em-site'); ?></span>
-                    </button>
-                    <button
-                        type="button"
-                        class="em-site-item__section-tab"
-                        data-item-section-target="<?php echo esc_attr($type_slug === 'headers' ? 'composition' : 'content'); ?>"
-                        role="tab"
-                        aria-selected="false"
-                        title="<?php echo esc_attr($type_slug === 'headers' ? __('Ouvrir la section Composition', 'em-site') : __('Ouvrir la section Contenu', 'em-site')); ?>"
-                        aria-label="<?php echo esc_attr($type_slug === 'headers' ? __('Ouvrir la section Composition', 'em-site') : __('Ouvrir la section Contenu', 'em-site')); ?>"
-                    >
-                        <span class="dashicons <?php echo esc_attr($type_slug === 'headers' ? 'dashicons-screenoptions' : 'dashicons-media-text'); ?>" aria-hidden="true"></span>
-                        <span><?php echo esc_html($type_slug === 'headers' ? __('Composition', 'em-site') : __('Contenu', 'em-site')); ?></span>
-                    </button>
-                </span>
-            <?php endif; ?>
         </summary>
         <div class="em-site-collapse__body">
+            <div class="em-site-item__toolbar">
+                <button type="button" class="em-site-item__edit" data-target="<?php echo esc_attr($target); ?>" title="<?php esc_attr_e('Renommer', 'em-site'); ?>" aria-label="<?php esc_attr_e('Renommer', 'em-site'); ?>">
+                    <span class="dashicons dashicons-edit"></span>
+                </button>
+                <input id="<?php echo esc_attr($name_input_id); ?>" type="text" class="em-site-item__nameinput" data-target="<?php echo esc_attr($target); ?>" data-type="<?php echo esc_attr($type_slug); ?>" data-item="<?php echo esc_attr($item_slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
+                <button type="button" class="em-site-item__confirm" title="<?php esc_attr_e('Valider', 'em-site'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-site'); ?>" hidden>
+                    <span class="dashicons dashicons-yes" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="em-site-item__cancel" title="<?php esc_attr_e('Annuler', 'em-site'); ?>" aria-label="<?php esc_attr_e('Annuler', 'em-site'); ?>" hidden>
+                    <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
+                </button>
+                <span class="em-site-item__preview">
+                    <button type="button" class="em-site-preview__toggle" aria-pressed="false" title="<?php esc_attr_e('Afficher / masquer l’aperçu', 'em-site'); ?>" aria-label="<?php esc_attr_e('Afficher / masquer l’aperçu', 'em-site'); ?>">
+                        <span class="dashicons dashicons-visibility" aria-hidden="true"></span>
+                    </button>
+                    <button type="button" class="em-site-preview__popout" title="<?php esc_attr_e('Ouvrir l’aperçu dans une nouvelle fenêtre', 'em-site'); ?>" aria-label="<?php esc_attr_e('Ouvrir l’aperçu dans une nouvelle fenêtre', 'em-site'); ?>">
+                        <span class="dashicons dashicons-external" aria-hidden="true"></span>
+                    </button>
+                </span>
+                <button type="button" class="em-site-item__delete em-site-delete" data-deleteform="<?php echo esc_attr($del_form_id); ?>" data-label="<?php echo esc_attr($type_label . ' ' . $label); ?>" data-title="<?php echo esc_attr($del_title); ?>" data-ack="<?php echo esc_attr($del_ack); ?>" title="<?php echo esc_attr($del_tip); ?>" aria-label="<?php echo esc_attr($del_tip); ?>">
+                    <span class="dashicons dashicons-trash" aria-hidden="true"></span>
+                </button>
+                <span class="em-site-item__anchor" title="<?php esc_attr_e('Ancre #section pour la navigation (flèches / liens #). Laisser vide = ancre par défaut.', 'em-site'); ?>">
+                    <span class="em-site-item__anchor-hash" aria-hidden="true">#</span>
+                    <input
+                        id="<?php echo esc_attr($anchor_input_id); ?>"
+                        type="text"
+                        class="em-site-item__anchorinput"
+                        data-type="<?php echo esc_attr($type_slug); ?>"
+                        data-item="<?php echo esc_attr($item_slug); ?>"
+                        value="<?php echo esc_attr($anchor); ?>"
+                        placeholder="<?php esc_attr_e('ancre', 'em-site'); ?>"
+                        spellcheck="false"
+                        autocomplete="off"
+                    >
+                </span>
+                <?php if ($show_inline_section_tabs) : ?>
+                    <span class="em-site-item__section-tabs" role="tablist" aria-label="<?php esc_attr_e('Navigation rapide section item', 'em-site'); ?>">
+                        <button
+                            type="button"
+                            class="em-site-item__section-tab"
+                            data-item-section-target="appearance"
+                            role="tab"
+                            aria-selected="false"
+                            title="<?php esc_attr_e('Ouvrir la section Apparence', 'em-site'); ?>"
+                            aria-label="<?php esc_attr_e('Ouvrir la section Apparence', 'em-site'); ?>"
+                        >
+                            <span class="dashicons dashicons-art" aria-hidden="true"></span>
+                            <span><?php esc_html_e('Apparence', 'em-site'); ?></span>
+                        </button>
+                        <button
+                            type="button"
+                            class="em-site-item__section-tab"
+                            data-item-section-target="<?php echo esc_attr($type_slug === 'headers' ? 'composition' : 'content'); ?>"
+                            role="tab"
+                            aria-selected="false"
+                            title="<?php echo esc_attr($type_slug === 'headers' ? __('Ouvrir la section Composition', 'em-site') : __('Ouvrir la section Contenu', 'em-site')); ?>"
+                            aria-label="<?php echo esc_attr($type_slug === 'headers' ? __('Ouvrir la section Composition', 'em-site') : __('Ouvrir la section Contenu', 'em-site')); ?>"
+                        >
+                            <span class="dashicons <?php echo esc_attr($type_slug === 'headers' ? 'dashicons-screenoptions' : 'dashicons-media-text'); ?>" aria-hidden="true"></span>
+                            <span><?php echo esc_html($type_slug === 'headers' ? __('Composition', 'em-site') : __('Contenu', 'em-site')); ?></span>
+                        </button>
+                    </span>
+                <?php endif; ?>
+            </div>
             <?php
             if ($type_slug === 'headers' && function_exists('em_site_admin_render_header_item_editor')) {
                 $preview_template = function_exists('em_site_get_editing_template_slug')

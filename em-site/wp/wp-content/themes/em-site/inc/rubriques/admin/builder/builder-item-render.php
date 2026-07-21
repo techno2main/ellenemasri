@@ -79,13 +79,15 @@ function em_site_render_item_builder(string $type, string $item): void
                 <span class="em-site-collapse__chevron"></span>
                 <strong><?php esc_html_e('Contenu', 'em-site'); ?></strong>
                 <span class="em-site-gridmap" role="grid" aria-label="<?php esc_attr_e('Aperçu de la grille (cliquer pour naviguer)', 'em-site'); ?>"></span>
-                <button type="button" class="em-site-gridmap__eye" aria-pressed="true" title="<?php esc_attr_e('Afficher / masquer l’aperçu de la section', 'em-site'); ?>" aria-label="<?php esc_attr_e('Afficher / masquer l’aperçu de la section', 'em-site'); ?>">
-                    <span class="dashicons dashicons-hidden" aria-hidden="true"></span>
-                </button>
                 <span class="em-site-miniprev"><span class="em-site-miniprev__stage"></span></span>
                 <span class="em-site-miniprev em-site-partprev" hidden title="<?php esc_attr_e('Aperçu de la colonne en cours d’édition', 'em-site'); ?>"><span class="em-site-miniprev__stage"></span></span>
             </summary>
             <div class="em-site-collapse__body">
+                <div class="em-site-builder__content-toolbar">
+                    <button type="button" class="em-site-gridmap__eye" aria-pressed="true" title="<?php esc_attr_e('Afficher / masquer l’aperçu de la section', 'em-site'); ?>" aria-label="<?php esc_attr_e('Afficher / masquer l’aperçu de la section', 'em-site'); ?>">
+                        <span class="dashicons dashicons-hidden" aria-hidden="true"></span>
+                    </button>
+                </div>
                 <div class="em-site-rows">
                     <?php for ($row = 1; $row <= $row_count; $row++) : ?>
                         <?php em_site_render_row($row, $layout, $grid[$row] ?? [], $content); ?>

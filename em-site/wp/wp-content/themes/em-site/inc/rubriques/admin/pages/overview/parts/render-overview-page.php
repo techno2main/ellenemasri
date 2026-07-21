@@ -36,6 +36,7 @@ function em_site_overview_render(): void
     <?php em_site_overview_render_reorder_script(); ?>
     <?php em_site_overview_render_rename_script(); ?>
     <?php em_site_overview_render_delete_type_script(); ?>
+    <?php em_site_overview_render_accessibility_script(); ?>
     <script>
     (function () {
         var wrap = document.querySelector('.em-site-overview');

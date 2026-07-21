@@ -219,21 +219,27 @@ function em_site_render_row(int $row, array $layout, array $row_grid, array $con
             <span class="em-site-collapse__chevron"></span>
             <span class="em-site-row__left">
                 <span class="em-site-row__label" aria-hidden="true"></span>
+                <span class="em-site-row__titleview" title="<?php esc_attr_e('Titre de la ligne', 'em-site'); ?>">
+                    <span class="em-site-row__titleprefix" aria-hidden="true"></span>
+                    <span class="em-site-row__titletxt" data-empty="<?php echo $title !== '' ? '0' : '1'; ?>"><?php echo esc_html($title_display); ?></span>
+                </span>
+            </span>
+            <span class="em-site-row__right">
+                <?php em_site_render_row_colcount($columns); ?>
+            </span>
+        </summary>
+        <div class="em-site-row__body">
+            <div class="em-site-row__toolbar">
                 <span class="em-site-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-site'); ?>">
                     <span class="em-site-row__titleprefix" aria-hidden="true"></span>
                     <span class="em-site-row__titletxt" data-empty="<?php echo $title !== '' ? '0' : '1'; ?>"><?php echo esc_html($title_display); ?></span>
                     <input type="text" class="em-site-row__titleinput" value="<?php echo esc_attr($title); ?>" placeholder="<?php esc_attr($title_placeholder); ?>" hidden>
                     <button type="button" class="em-site-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-site'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-site'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
                 </span>
-            </span>
-            <span class="em-site-row__right">
-                <?php em_site_render_row_colcount($columns); ?>
                 <?php em_site_render_row_colnames($row, $columns, $layout, $row_grid); ?>
-            </span>
-            <button type="button" class="em-site-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-site'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
-            <button type="button" class="em-site-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-site'); ?>">&times;</button>
-        </summary>
-        <div class="em-site-row__body">
+                <button type="button" class="em-site-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-site'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
+                <button type="button" class="em-site-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-site'); ?>">&times;</button>
+            </div>
             <div class="em-site-col-tabs" role="tablist">
                 <?php for ($c = 1; $c <= $columns; $c++) : ?>
                     <?php em_site_render_col_tab($c, em_site_rubrique_layout_align_for($layout, $row, $c), $c === 1, $row, em_site_col_name_for($layout, $row, $c, $row_grid[$c] ?? [])); ?>
@@ -363,21 +369,27 @@ function em_site_render_templates(): void
                 <span class="em-site-collapse__chevron"></span>
                 <span class="em-site-row__left">
                     <span class="em-site-row__label" aria-hidden="true"></span>
+                    <span class="em-site-row__titleview" title="<?php esc_attr_e('Titre de la ligne', 'em-site'); ?>">
+                        <span class="em-site-row__titleprefix" aria-hidden="true"></span>
+                        <span class="em-site-row__titletxt" data-empty="1"><?php esc_html_e('Titre de ligne', 'em-site'); ?></span>
+                    </span>
+                </span>
+                <span class="em-site-row__right">
+                    <?php em_site_render_row_colcount(1); ?>
+                </span>
+            </summary>
+            <div class="em-site-row__body">
+                <div class="em-site-row__toolbar">
                     <span class="em-site-row__title" data-editing="0" title="<?php esc_attr_e('Titre de la ligne', 'em-site'); ?>">
                         <span class="em-site-row__titleprefix" aria-hidden="true"></span>
                         <span class="em-site-row__titletxt" data-empty="1"><?php esc_html_e('Titre de ligne', 'em-site'); ?></span>
                         <input type="text" class="em-site-row__titleinput" value="" placeholder="<?php esc_attr_e('Titre de ligne', 'em-site'); ?>" hidden>
                         <button type="button" class="em-site-row__titleedit" title="<?php esc_attr_e('Modifier le titre de la ligne', 'em-site'); ?>" aria-label="<?php esc_attr_e('Modifier le titre de la ligne', 'em-site'); ?>"><span class="dashicons dashicons-edit" aria-hidden="true"></span></button>
                     </span>
-                </span>
-                <span class="em-site-row__right">
-                    <?php em_site_render_row_colcount(1); ?>
                     <?php em_site_render_row_colnames(1, 1, ['rows' => [['columns' => 1, 'align' => [1 => 'center'], 'col_titles' => [1 => '']]]], [1 => []]); ?>
-                </span>
-                <button type="button" class="em-site-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-site'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
-                <button type="button" class="em-site-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-site'); ?>">&times;</button>
-            </summary>
-            <div class="em-site-row__body">
+                    <button type="button" class="em-site-row__add" title="<?php esc_attr_e('Insérer une ligne en dessous', 'em-site'); ?>"><span class="dashicons dashicons-plus-alt2"></span></button>
+                    <button type="button" class="em-site-row__remove" title="<?php esc_attr_e('Supprimer la ligne', 'em-site'); ?>">&times;</button>
+                </div>
                 <div class="em-site-col-tabs" role="tablist"><?php em_site_render_col_addbtn(); ?></div>
                 <div class="em-site-col-panels"></div>
             </div>
