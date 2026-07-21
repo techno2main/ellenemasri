@@ -406,7 +406,9 @@ function em_site_admin_render_rubrique_items_picker(string $module_slug, bool $w
                                     // Rendu front réel de la section, calé sur la largeur
                                     // d'écran de référence puis mis à l'échelle en JS afin
                                     // de respecter EXACTEMENT les proportions du front.
-                                    echo em_site_rubrique_render($module_slug, ['item' => $slug]); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                                    echo function_exists('em_site_admin_preview_defer_media_html')
+                                        ? em_site_admin_preview_defer_media_html(em_site_rubrique_render($module_slug, ['item' => $slug]))
+                                        : em_site_rubrique_render($module_slug, ['item' => $slug]); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                                     ?>
                                 </div>
                             </div>

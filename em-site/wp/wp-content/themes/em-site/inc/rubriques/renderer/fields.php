@@ -42,6 +42,10 @@ function em_site_rubrique_image_html(array $img_data, string $alt): string
 {
     $url = $img_data['id'] ? wp_get_attachment_image_url((int) $img_data['id'], 'large') : '';
 
+    if (is_string($url) && $url !== '' && function_exists('em_site_rubrique_normalize_media_url')) {
+        $url = em_site_rubrique_normalize_media_url($url);
+    }
+
     if ($url === '') {
         return '';
     }

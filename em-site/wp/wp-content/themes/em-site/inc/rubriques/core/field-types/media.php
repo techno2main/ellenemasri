@@ -11,6 +11,31 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Normalise une URL média potentiellement locale (localhost/IP privée) vers l'hôte courant.
+ */
+function em_site_rubrique_normalize_media_url(string $media_url): string
+{
+    $media_url = trim($media_url);
+
+    if ($media_url === '') {
+        return '';
+    }
+
+    if (!function_exists('em_site_slider_front_media_url')) {
+        $slider_helpers = get_template_directory() . '/inc/front/modules/slider/helpers.php';
+        if (is_readable($slider_helpers)) {
+            require_once $slider_helpers;
+        }
+    }
+
+    if (function_exists('em_site_slider_front_media_url')) {
+        return em_site_slider_front_media_url($media_url);
+    }
+
+    return $media_url;
+}
+
+/**
  * Décode un ID de média (vidéo/son fichier). @return int
  *
  * @param mixed $value
@@ -249,11 +274,7 @@ function em_site_rubrique_slides_collect(array $slides): array
     $out = [];
 
     $normalize_media = static function (string $media_url): string {
-        if (function_exists('em_site_slider_front_media_url')) {
-            return em_site_slider_front_media_url($media_url);
-        }
-
-        return $media_url;
+        return em_site_rubrique_normalize_media_url($media_url);
     };
 
     foreach ($slides as $index => $slide) {

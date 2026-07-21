@@ -1110,7 +1110,12 @@ function em_site_admin_render_header_catalog_items(string $template): void
                     ?>
                     <div class="em-site-instance-picker__preview" data-item="<?php echo esc_attr($slug); ?>" hidden>
                         <div class="em-site-instance-picker__stage" data-module-slug="header">
-                            <?php echo em_site_admin_header_composite_html_for_item($template, $slug); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                            <?php
+                            $preview_html = em_site_admin_header_composite_html_for_item($template, $slug);
+                            echo function_exists('em_site_admin_preview_defer_media_html')
+                                ? em_site_admin_preview_defer_media_html($preview_html)
+                                : $preview_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            ?>
                         </div>
                     </div>
                 <?php endforeach; ?>

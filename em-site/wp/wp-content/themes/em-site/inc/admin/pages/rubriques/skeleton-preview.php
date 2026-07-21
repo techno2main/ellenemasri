@@ -17,6 +17,61 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Empêche les previews cachées de déclencher des téléchargements médias au chargement.
+ *
+ * Les attributs src/srcset sont déplacés en data-em-src/data-em-srcset.
+ * Ils seront restaurés à la demande en JS au moment de l'aperçu.
+ */
+function em_site_admin_preview_defer_media_html(string $html): string
+{
+    if ($html === '') {
+        return $html;
+    }
+
+    $html = preg_replace_callback('/<img\b([^>]*)>/i', static function (array $matches): string {
+        $attrs = (string) ($matches[1] ?? '');
+
+        if ($attrs === '' || stripos($attrs, 'src=') === false) {
+            return '<img' . $attrs . '>';
+        }
+
+        $attrs = (string) preg_replace('/\sloading\s*=\s*("[^"]*"|\'[^\']*\')/i', '', $attrs);
+        $attrs = (string) preg_replace('/\sdecoding\s*=\s*("[^"]*"|\'[^\']*\')/i', '', $attrs);
+        $attrs = (string) preg_replace('/\sfetchpriority\s*=\s*("[^"]*"|\'[^\']*\')/i', '', $attrs);
+
+        $attrs = (string) preg_replace_callback('/\ssrcset\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $srcset_match): string {
+            $value = isset($srcset_match[2]) && $srcset_match[2] !== '' ? $srcset_match[2] : (string) ($srcset_match[3] ?? '');
+            return ' data-em-srcset="' . esc_attr($value) . '"';
+        }, $attrs);
+
+        $attrs = (string) preg_replace_callback('/\ssrc\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $src_match): string {
+            $value = isset($src_match[2]) && $src_match[2] !== '' ? $src_match[2] : (string) ($src_match[3] ?? '');
+            return ' data-em-src="' . esc_attr($value) . '"';
+        }, $attrs);
+
+        return '<img' . $attrs . ' loading="lazy" decoding="async" fetchpriority="low">';
+    }, $html) ?? $html;
+
+    $html = preg_replace_callback('/<iframe\b([^>]*)>/i', static function (array $matches): string {
+        $attrs = (string) ($matches[1] ?? '');
+
+        if ($attrs === '' || stripos($attrs, 'src=') === false) {
+            return '<iframe' . $attrs . ' loading="lazy">';
+        }
+
+        $attrs = (string) preg_replace('/\sloading\s*=\s*("[^"]*"|\'[^\']*\')/i', '', $attrs);
+        $attrs = (string) preg_replace_callback('/\ssrc\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $src_match): string {
+            $value = isset($src_match[2]) && $src_match[2] !== '' ? $src_match[2] : (string) ($src_match[3] ?? '');
+            return ' data-em-src="' . esc_attr($value) . '"';
+        }, $attrs);
+
+        return '<iframe' . $attrs . ' loading="lazy">';
+    }, $html) ?? $html;
+
+    return $html;
+}
+
+/**
  * Slug de l'item branché (effectif) d'une rubrique pour le template courant.
  */
 function em_site_admin_skeleton_effective_item(string $type_slug, string $template): string
@@ -54,7 +109,7 @@ function em_site_admin_render_skeleton_full_preview(array $definitions, string $
 
             if ($html !== '') {
                 $sources .= '<div class="em-site-instance-picker__stage" data-module-slug="header">'
-                    . $html // déjà échappé par le moteur de rendu
+                    . em_site_admin_preview_defer_media_html($html) // déjà échappé par le moteur de rendu
                     . '</div>';
             }
 
@@ -74,7 +129,7 @@ function em_site_admin_render_skeleton_full_preview(array $definitions, string $
         }
 
         $sources .= '<div class="em-site-instance-picker__stage" data-module-slug="' . esc_attr($module_slug) . '">'
-            . $html // déjà échappé par le moteur de rendu
+            . em_site_admin_preview_defer_media_html($html) // déjà échappé par le moteur de rendu
             . '</div>';
     }
 
@@ -292,6 +347,33 @@ function em_site_admin_render_skeleton_preview_assets(): void
             });
         }
 
+        function activateDeferredMedia(stage) {
+            if (!stage || !stage.querySelectorAll) {
+                return;
+            }
+
+            stage.querySelectorAll('img[data-em-src], source[data-em-src]').forEach(function (node) {
+                var src = node.getAttribute('data-em-src');
+                if (src) {
+                    node.setAttribute('src', src);
+                    node.removeAttribute('data-em-src');
+                }
+                var srcset = node.getAttribute('data-em-srcset');
+                if (srcset) {
+                    node.setAttribute('srcset', srcset);
+                    node.removeAttribute('data-em-srcset');
+                }
+            });
+
+            stage.querySelectorAll('iframe[data-em-src]').forEach(function (node) {
+                var src = node.getAttribute('data-em-src');
+                if (src) {
+                    node.setAttribute('src', src);
+                    node.removeAttribute('data-em-src');
+                }
+            });
+        }
+
         // Injecte un stage (cloné) dans une zone, en masquant son contenu propre.
         function inject(zone, stageNode) {
             Array.prototype.slice.call(zone.children).forEach(function (n) {
@@ -301,6 +383,7 @@ function em_site_admin_render_skeleton_preview_assets(): void
             var holder = document.createElement('div');
             holder.className = 'em-site-instance-picker__zone-preview';
             var stage = stageNode.cloneNode(true);
+            activateDeferredMedia(stage);
             holder.appendChild(stage);
             zone.appendChild(holder);
             zone.classList.add('em-site-admin-landing-map__zone--previewing');
