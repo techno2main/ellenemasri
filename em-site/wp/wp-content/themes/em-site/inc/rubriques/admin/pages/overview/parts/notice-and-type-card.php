@@ -48,7 +48,6 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
     $can_add_items = !$is_special_fixed;
     $can_delete_type = !$is_special_fixed && !$is_header_container;
     $delete_form_id = 'em-site-delete-type-' . $slug;
-    $name_input_id = 'em-site-card-name-' . sanitize_html_class($slug);
     $delete_title = __('Supprimer la rubrique', 'em-site');
     $delete_tip = __('Supprimer cette rubrique', 'em-site');
     $delete_ack = __('Je confirme la suppression définitive de cette rubrique et de ses sections.', 'em-site');
@@ -73,37 +72,31 @@ function em_site_overview_render_type(string $slug, array $type, bool $open): vo
                 : (string) ($type['icon'] ?? 'dashicons-screenoptions');
             ?>
             <span class="em-site-card__icon dashicons <?php echo esc_attr($icon); ?>"></span>
+            <button type="button" class="em-site-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>">
+                <span class="dashicons dashicons-edit" aria-hidden="true"></span>
+            </button>
             <strong class="em-site-card__name"><?php echo esc_html($label); ?></strong>
+            <input type="text" class="em-site-card__nameinput" data-slug="<?php echo esc_attr($slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
+            <button type="button" class="em-site-card__confirm" title="<?php esc_attr_e('Valider', 'em-site'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-site'); ?>" hidden>
+                <span class="dashicons dashicons-yes" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="em-site-card__cancel" title="<?php esc_attr_e('Annuler', 'em-site'); ?>" aria-label="<?php esc_attr_e('Annuler', 'em-site'); ?>" hidden>
+                <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
+            </button>
             <span class="em-site-card__count" title="<?php echo esc_attr(sprintf(_n('%d item', '%d items', $count, 'em-site'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
+            <?php if ($can_add_items) { ?>
+                <button type="button" class="em-site-card__additem" data-create-target="em-site-create-<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($add_label); ?>" aria-label="<?php echo esc_attr($add_label); ?>" aria-expanded="false">
+                    <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
+                    <span><?php echo esc_html($add_label); ?></span>
+                </button>
+            <?php } ?>
+            <?php if ($can_delete_type) { ?>
+                <button type="button" class="em-site-card__delete em-site-type-delete" data-deleteform="<?php echo esc_attr($delete_form_id); ?>" data-label="<?php echo esc_attr($label); ?>" data-title="<?php echo esc_attr($delete_title); ?>" data-ack="<?php echo esc_attr($delete_ack); ?>" title="<?php echo esc_attr($delete_tip); ?>" aria-label="<?php echo esc_attr($delete_tip); ?>">
+                    <span class="dashicons dashicons-trash" aria-hidden="true"></span>
+                </button>
+            <?php } ?>
         </summary>
         <div class="em-site-collapse__body">
-            <div class="em-site-card__toolbar">
-                <span class="em-site-card__toolbar-spacer" aria-hidden="true"></span>
-                <span class="em-site-card__toolbar-spacer" aria-hidden="true"></span>
-                <span class="em-site-card__toolbar-spacer" aria-hidden="true"></span>
-                <button type="button" class="em-site-card__edit" title="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>" aria-label="<?php esc_attr_e('Renommer la rubrique', 'em-site'); ?>">
-                    <span class="dashicons dashicons-edit" aria-hidden="true"></span>
-                </button>
-                <input id="<?php echo esc_attr($name_input_id); ?>" type="text" class="em-site-card__nameinput" data-slug="<?php echo esc_attr($slug); ?>" data-original="<?php echo esc_attr($label); ?>" value="<?php echo esc_attr($label); ?>" hidden>
-                <button type="button" class="em-site-card__confirm" title="<?php esc_attr_e('Valider', 'em-site'); ?>" aria-label="<?php esc_attr_e('Valider', 'em-site'); ?>" hidden>
-                    <span class="dashicons dashicons-yes" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="em-site-card__cancel" title="<?php esc_attr_e('Annuler', 'em-site'); ?>" aria-label="<?php esc_attr_e('Annuler', 'em-site'); ?>" hidden>
-                    <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
-                </button>
-                <span class="em-site-card__count" title="<?php echo esc_attr(sprintf(_n('%d item', '%d items', $count, 'em-site'), $count)); ?>"><?php echo esc_html((string) $count); ?></span>
-                <?php if ($can_add_items) { ?>
-                    <button type="button" class="em-site-card__additem" data-create-target="em-site-create-<?php echo esc_attr($slug); ?>" title="<?php echo esc_attr($add_label); ?>" aria-label="<?php echo esc_attr($add_label); ?>" aria-expanded="false">
-                        <span class="dashicons dashicons-plus-alt2" aria-hidden="true"></span>
-                        <span><?php echo esc_html($add_label); ?></span>
-                    </button>
-                <?php } ?>
-                <?php if ($can_delete_type) { ?>
-                    <button type="button" class="em-site-card__delete em-site-type-delete" data-deleteform="<?php echo esc_attr($delete_form_id); ?>" data-label="<?php echo esc_attr($label); ?>" data-title="<?php echo esc_attr($delete_title); ?>" data-ack="<?php echo esc_attr($delete_ack); ?>" title="<?php echo esc_attr($delete_tip); ?>" aria-label="<?php echo esc_attr($delete_tip); ?>">
-                        <span class="dashicons dashicons-trash" aria-hidden="true"></span>
-                    </button>
-                <?php } ?>
-            </div>
             <?php em_site_render_items_section($slug); ?>
         </div>
         <?php if ($can_delete_type) { ?>
