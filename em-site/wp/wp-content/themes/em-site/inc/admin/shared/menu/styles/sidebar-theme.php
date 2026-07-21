@@ -52,6 +52,44 @@
             box-sizing: border-box;
         }
 
+        /* Garde-fou: si WP active le mode folded, conserver une sidebar pleine largeur
+           pour eviter les libelles tronques sur les pages Rubriques/admin em-site. */
+        body.em-site-admin-sidebar-chrome.folded #adminmenuwrap,
+        body.em-site-admin-sidebar-chrome.folded #adminmenuback,
+        body.em-site-admin-dashboard-screen.folded #adminmenuwrap,
+        body.em-site-admin-dashboard-screen.folded #adminmenuback {
+            width: 160px !important;
+        }
+
+        body.em-site-admin-sidebar-chrome.folded #adminmenu,
+        body.em-site-admin-dashboard-screen.folded #adminmenu {
+            width: 160px !important;
+        }
+
+        body.em-site-admin-sidebar-chrome.folded #wpcontent,
+        body.em-site-admin-sidebar-chrome.folded #wpfooter,
+        body.em-site-admin-dashboard-screen.folded #wpcontent,
+        body.em-site-admin-dashboard-screen.folded #wpfooter {
+            margin-left: 160px !important;
+        }
+
+        body.em-site-admin-sidebar-chrome.folded #adminmenu li.menu-top,
+        body.em-site-admin-dashboard-screen.folded #adminmenu li.menu-top {
+            width: 160px !important;
+        }
+
+        body.em-site-admin-sidebar-chrome.folded #adminmenu a.menu-top,
+        body.em-site-admin-dashboard-screen.folded #adminmenu a.menu-top {
+            width: auto !important;
+        }
+
+        body.em-site-admin-sidebar-chrome.folded #adminmenu .wp-menu-name,
+        body.em-site-admin-dashboard-screen.folded #adminmenu .wp-menu-name {
+            position: static !important;
+            left: auto !important;
+            display: block !important;
+        }
+
         body.em-site-admin-sidebar-chrome #adminmenu a.menu-top,
         body.em-site-admin-sidebar-chrome #adminmenu .wp-submenu a,
         body.em-site-admin-dashboard-screen #adminmenu a.menu-top,
