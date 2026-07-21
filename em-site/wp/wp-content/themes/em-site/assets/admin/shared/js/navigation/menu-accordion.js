@@ -6,14 +6,9 @@
     /**
      * Accordéons « navigation » (MEDIAS, CATALOGUES, TEMPLATES) : le clic suit le lien
      * natif du menu (sommaire / hub). L’ouverture visuelle est gérée côté PHP
-     * (admin_body_class). Seul PARAMÈTRES reste en toggle JS sans navigation.
+     * (admin_body_class). PARAMÈTRES reste toujours ouvert et n'est plus toggle.
      */
-    var toggleOnlyGroups = [
-        {
-            parentClass: 'em-site-menu-accordion-settings-parent',
-            bodyClass: 'em-site-accordion-settings-open',
-        },
-    ];
+    var toggleOnlyGroups = [];
 
     function bindAccordionDelegation() {
         var adminMenu = document.getElementById('adminmenu');

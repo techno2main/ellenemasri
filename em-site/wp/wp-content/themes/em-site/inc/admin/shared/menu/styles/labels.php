@@ -7,8 +7,8 @@
         }
 
         #adminmenu li.em-site-menu-wp-settings-label.em-site-menu-accordion-settings-parent {
-            cursor: pointer;
-            pointer-events: auto;
+            cursor: default;
+            pointer-events: none;
             margin: 0;
             padding: 0;
         }
@@ -19,12 +19,6 @@
             box-shadow: none !important;
             padding: 12px 12px 2px;
             margin: 0;
-        }
-
-        #adminmenu li.em-site-menu-wp-settings-label.em-site-menu-accordion-settings-parent:hover > a,
-        #adminmenu li.em-site-menu-wp-settings-label.em-site-menu-accordion-settings-parent:focus > a {
-            background: rgba(255, 255, 255, 0.08) !important;
-            color: rgba(255, 255, 255, 0.85) !important;
         }
 
         #adminmenu li.em-site-menu-wp-settings-label:hover > a,

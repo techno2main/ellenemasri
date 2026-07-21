@@ -373,6 +373,9 @@ function em_site_admin_menu_accordion_body_class($classes)
         return $classes;
     }
 
+    // Le bloc Paramètres reste toujours déroulé dans la sidebar admin.
+    $classes .= ' em-site-accordion-settings-open';
+
     global $pagenow;
 
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -382,16 +385,8 @@ function em_site_admin_menu_accordion_body_class($classes)
         $classes .= ' em-site-accordion-medias-open';
     }
 
-    if (in_array($pagenow, em_site_admin_menu_accordion_settings_page_slugs(), true)) {
-        $classes .= ' em-site-accordion-settings-open';
-    }
-
     if ($page_slug === em_site_admin_media_parent_menu_slug()) {
         $classes .= ' em-site-accordion-medias-open';
-    }
-
-    if ($page_slug === em_site_admin_dashicons_manager_page_slug()) {
-        $classes .= ' em-site-accordion-settings-open';
     }
 
     if ($pagenow !== 'admin.php') {
