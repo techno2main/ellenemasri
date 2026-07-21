@@ -61,6 +61,10 @@ function em_site_render_video_url_value(string $value): void
 {
     $v = em_site_rubrique_video_url_value($value);
     $thumb_url = $v['thumb'] ? (string) wp_get_attachment_image_url($v['thumb'], 'medium') : '';
+
+    if ($thumb_url !== '' && function_exists('em_site_rubrique_normalize_media_url')) {
+        $thumb_url = em_site_rubrique_normalize_media_url($thumb_url);
+    }
     ?>
     <input type="url" class="em-site-chip__vurl" value="<?php echo esc_url($v['url']); ?>" placeholder="<?php esc_attr_e('URL YouTube ou TikTok…', 'em-site'); ?>">
     <span class="em-site-chip__media em-site-chip__media--av em-site-chip__vthumb" data-url="<?php echo esc_attr($thumb_url); ?>" data-mtype="image">
@@ -90,6 +94,11 @@ function em_site_render_av_value(string $value, string $mtype, string $btn): voi
 {
     $id = em_site_rubrique_media_id_value($value);
     $url = $id > 0 ? wp_get_attachment_url($id) : '';
+
+    if ($url !== '' && function_exists('em_site_rubrique_normalize_media_url')) {
+        $url = em_site_rubrique_normalize_media_url((string) $url);
+    }
+
     $name = $url ? wp_basename($url) : '';
     ?>
     <span class="em-site-chip__media em-site-chip__media--av" data-url="<?php echo esc_attr((string) $url); ?>" data-mtype="<?php echo esc_attr($mtype); ?>">

@@ -281,6 +281,14 @@ function em_site_render_appearance_bg_image(array $field, array $content): void
     $id = (int) $value['id'];
     $thumb = $id > 0 ? (string) wp_get_attachment_image_url($id, 'medium') : '';
     $full = $id > 0 ? (string) wp_get_attachment_image_url($id, 'full') : '';
+
+    if ($thumb !== '' && function_exists('em_site_rubrique_normalize_media_url')) {
+        $thumb = em_site_rubrique_normalize_media_url($thumb);
+    }
+
+    if ($full !== '' && function_exists('em_site_rubrique_normalize_media_url')) {
+        $full = em_site_rubrique_normalize_media_url($full);
+    }
     ?>
     <div class="em-site-appearance__item em-site-appearance__bgimg" data-role="background_image">
         <span class="em-site-appearance__label"><?php echo esc_html((string) $field['label']); ?></span>

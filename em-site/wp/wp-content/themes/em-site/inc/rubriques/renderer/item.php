@@ -14,6 +14,106 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Normalise une URL média du rendu rubrique vers l'hôte courant.
+ */
+function em_site_rubrique_render_normalize_media_url(string $url): string
+{
+    $url = trim($url);
+
+    if ($url === '') {
+        return '';
+    }
+
+    if (function_exists('em_site_rubrique_normalize_media_url')) {
+        return em_site_rubrique_normalize_media_url($url);
+    }
+
+    if (!function_exists('em_site_slider_front_media_url')) {
+        $helpers = get_template_directory() . '/inc/front/modules/slider/helpers.php';
+        if (is_readable($helpers)) {
+            require_once $helpers;
+        }
+    }
+
+    if (function_exists('em_site_slider_front_media_url')) {
+        return em_site_slider_front_media_url($url);
+    }
+
+    return $url;
+}
+
+/**
+ * Normalise chaque URL candidate d'un srcset.
+ */
+function em_site_rubrique_render_normalize_srcset(string $srcset): string
+{
+    $srcset = trim($srcset);
+    if ($srcset === '') {
+        return '';
+    }
+
+    $candidates = preg_split('/\s*,\s*/', $srcset) ?: [];
+    $normalized = [];
+
+    foreach ($candidates as $candidate) {
+        $candidate = trim((string) $candidate);
+        if ($candidate === '') {
+            continue;
+        }
+
+        $parts = preg_split('/\s+/', $candidate, 2) ?: [];
+        $url = em_site_rubrique_render_normalize_media_url((string) ($parts[0] ?? ''));
+        $descriptor = isset($parts[1]) ? trim((string) $parts[1]) : '';
+        $normalized[] = $descriptor !== '' ? ($url . ' ' . $descriptor) : $url;
+    }
+
+    return implode(', ', $normalized);
+}
+
+/**
+ * Filet de sécurité: normalise src/srcset/poster + url(...) dans le HTML rendu.
+ */
+function em_site_rubrique_normalize_rendered_media_html(string $html): string
+{
+    if ($html === '') {
+        return '';
+    }
+
+    $html = preg_replace_callback('/\s(src|poster)\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $m): string {
+        $attr = strtolower((string) ($m[1] ?? 'src'));
+        $value = isset($m[3]) && $m[3] !== '' ? $m[3] : (string) ($m[4] ?? '');
+        $value = em_site_rubrique_render_normalize_media_url($value);
+        return ' ' . $attr . '="' . esc_attr($value) . '"';
+    }, $html) ?? $html;
+
+    $html = preg_replace_callback('/\ssrcset\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $m): string {
+        $value = isset($m[2]) && $m[2] !== '' ? $m[2] : (string) ($m[3] ?? '');
+        $value = em_site_rubrique_render_normalize_srcset($value);
+        return ' srcset="' . esc_attr($value) . '"';
+    }, $html) ?? $html;
+
+    $html = preg_replace_callback('/url\(("([^\"]*)"|\'([^\']*)\'|([^\)]+))\)/i', static function (array $matches): string {
+        $quote = '';
+        $url = '';
+
+        if (isset($matches[2]) && $matches[2] !== '') {
+            $quote = '"';
+            $url = (string) $matches[2];
+        } elseif (isset($matches[3]) && $matches[3] !== '') {
+            $quote = '\'';
+            $url = (string) $matches[3];
+        } else {
+            $url = trim((string) ($matches[4] ?? ''));
+        }
+
+        $normalized = em_site_rubrique_render_normalize_media_url($url);
+        return 'url(' . $quote . $normalized . $quote . ')';
+    }, $html) ?? $html;
+
+    return $html;
+}
+
+/**
  * Rend un item en HTML.
  *
  * @param array<string, mixed>|null $content_override
@@ -84,7 +184,9 @@ function em_site_rubrique_render_item(string $type_slug, string $item_slug, ?arr
     </footer>
     <?php
 
-    return (string) ob_get_clean();
+    $html = (string) ob_get_clean();
+
+    return em_site_rubrique_normalize_rendered_media_html($html);
 }
 
 /**
@@ -131,7 +233,7 @@ function em_site_rubrique_item_grid(array $fields, array $content, array $layout
             if ((int) $img['id'] > 0) {
                 $url = (string) wp_get_attachment_image_url((int) $img['id'], 'full');
                 if ($url !== '') {
-                    $bg_image_url = $url;
+                    $bg_image_url = em_site_rubrique_render_normalize_media_url($url);
                 }
             }
             continue;

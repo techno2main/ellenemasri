@@ -17,6 +17,35 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Normalise une URL média affichée dans le builder HEADER admin.
+ */
+function em_site_admin_header_normalize_media_url(string $url): string
+{
+    $url = trim($url);
+
+    if ($url === '') {
+        return '';
+    }
+
+    if (function_exists('em_site_rubrique_normalize_media_url')) {
+        return em_site_rubrique_normalize_media_url($url);
+    }
+
+    if (!function_exists('em_site_slider_front_media_url')) {
+        $helpers = get_template_directory() . '/inc/front/modules/slider/helpers.php';
+        if (is_readable($helpers)) {
+            require_once $helpers;
+        }
+    }
+
+    if (function_exists('em_site_slider_front_media_url')) {
+        return em_site_slider_front_media_url($url);
+    }
+
+    return $url;
+}
+
+/**
  * Slug de la section HEADER dans le squelette.
  */
 function em_site_admin_header_section_slug(): string
@@ -185,6 +214,7 @@ function em_site_admin_header_shell_style_vars(array $config): array
 
     $bg_image_id = (int) ($appearance['bg_image_id'] ?? 0);
     $bg_url = $bg_image_id > 0 ? (string) wp_get_attachment_image_url($bg_image_id, 'full') : '';
+    $bg_url = $bg_url !== '' ? em_site_admin_header_normalize_media_url($bg_url) : '';
 
     if ($bg_url !== '' && function_exists('em_site_header_bg_position_css')) {
         $bg_pos = em_site_header_bg_position_css((string) ($appearance['bg_image_pos'] ?? 'cover'));
@@ -1679,6 +1709,7 @@ function em_site_admin_render_header_appearance(array $appearance, string $ratio
     $pos = (string) ($appearance['bg_image_pos'] ?? 'cover');
     $bg_image_id = (int) ($appearance['bg_image_id'] ?? 0);
     $bg_thumb = $bg_image_id > 0 ? (string) wp_get_attachment_image_url($bg_image_id, 'medium') : '';
+    $bg_thumb = $bg_thumb !== '' ? em_site_admin_header_normalize_media_url($bg_thumb) : '';
     $has_bg_image = $bg_image_id > 0;
     $bg_field_id = 'em-site-header-appr-bg';
     $scope_key = sanitize_html_class($scope_key);

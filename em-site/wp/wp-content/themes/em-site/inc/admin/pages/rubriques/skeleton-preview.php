@@ -17,6 +17,91 @@ if (!defined('ABSPATH')) {
 }
 
 /**
+ * Normalise une URL média d'aperçu admin vers l'hôte courant.
+ */
+function em_site_admin_preview_normalize_media_url(string $url): string
+{
+    $url = trim($url);
+
+    if ($url === '') {
+        return '';
+    }
+
+    if (function_exists('em_site_rubrique_normalize_media_url')) {
+        return em_site_rubrique_normalize_media_url($url);
+    }
+
+    if (!function_exists('em_site_slider_front_media_url')) {
+        $helpers = get_template_directory() . '/inc/front/modules/slider/helpers.php';
+        if (is_readable($helpers)) {
+            require_once $helpers;
+        }
+    }
+
+    if (function_exists('em_site_slider_front_media_url')) {
+        return em_site_slider_front_media_url($url);
+    }
+
+    return $url;
+}
+
+/**
+ * Normalise chaque URL d'un srcset.
+ */
+function em_site_admin_preview_normalize_srcset(string $srcset): string
+{
+    $srcset = trim($srcset);
+    if ($srcset === '') {
+        return '';
+    }
+
+    $candidates = preg_split('/\s*,\s*/', $srcset) ?: [];
+    $normalized = [];
+
+    foreach ($candidates as $candidate) {
+        $candidate = trim((string) $candidate);
+        if ($candidate === '') {
+            continue;
+        }
+
+        $parts = preg_split('/\s+/', $candidate, 2) ?: [];
+        $url = em_site_admin_preview_normalize_media_url((string) ($parts[0] ?? ''));
+        $descriptor = isset($parts[1]) ? trim((string) $parts[1]) : '';
+        $normalized[] = $descriptor !== '' ? ($url . ' ' . $descriptor) : $url;
+    }
+
+    return implode(', ', $normalized);
+}
+
+/**
+ * Normalise les URLs médias présentes dans des styles inline (url(...)).
+ */
+function em_site_admin_preview_normalize_style_urls(string $html): string
+{
+    if ($html === '') {
+        return $html;
+    }
+
+    return preg_replace_callback('/url\(("([^\"]*)"|\'([^\']*)\'|([^\)]+))\)/i', static function (array $matches): string {
+        $quote = '';
+        $url = '';
+
+        if (isset($matches[2]) && $matches[2] !== '') {
+            $quote = '"';
+            $url = (string) $matches[2];
+        } elseif (isset($matches[3]) && $matches[3] !== '') {
+            $quote = '\'';
+            $url = (string) $matches[3];
+        } else {
+            $url = trim((string) ($matches[4] ?? ''));
+        }
+
+        $normalized = em_site_admin_preview_normalize_media_url($url);
+        return 'url(' . $quote . $normalized . $quote . ')';
+    }, $html) ?? $html;
+}
+
+/**
  * Empêche les previews cachées de déclencher des téléchargements médias au chargement.
  *
  * Les attributs src/srcset sont déplacés en data-em-src/data-em-srcset.
@@ -27,6 +112,8 @@ function em_site_admin_preview_defer_media_html(string $html): string
     if ($html === '') {
         return $html;
     }
+
+    $html = em_site_admin_preview_normalize_style_urls($html);
 
     $html = preg_replace_callback('/<img\b([^>]*)>/i', static function (array $matches): string {
         $attrs = (string) ($matches[1] ?? '');
@@ -41,11 +128,13 @@ function em_site_admin_preview_defer_media_html(string $html): string
 
         $attrs = (string) preg_replace_callback('/\ssrcset\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $srcset_match): string {
             $value = isset($srcset_match[2]) && $srcset_match[2] !== '' ? $srcset_match[2] : (string) ($srcset_match[3] ?? '');
+            $value = em_site_admin_preview_normalize_srcset($value);
             return ' data-em-srcset="' . esc_attr($value) . '"';
         }, $attrs);
 
         $attrs = (string) preg_replace_callback('/\ssrc\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $src_match): string {
             $value = isset($src_match[2]) && $src_match[2] !== '' ? $src_match[2] : (string) ($src_match[3] ?? '');
+            $value = em_site_admin_preview_normalize_media_url($value);
             return ' data-em-src="' . esc_attr($value) . '"';
         }, $attrs);
 
@@ -62,6 +151,7 @@ function em_site_admin_preview_defer_media_html(string $html): string
         $attrs = (string) preg_replace('/\sloading\s*=\s*("[^"]*"|\'[^\']*\')/i', '', $attrs);
         $attrs = (string) preg_replace_callback('/\ssrc\s*=\s*("([^"]*)"|\'([^\']*)\')/i', static function (array $src_match): string {
             $value = isset($src_match[2]) && $src_match[2] !== '' ? $src_match[2] : (string) ($src_match[3] ?? '');
+            $value = em_site_admin_preview_normalize_media_url($value);
             return ' data-em-src="' . esc_attr($value) . '"';
         }, $attrs);
 
