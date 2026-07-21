@@ -210,12 +210,13 @@ function em_site_admin_menu_position_registry(): array
         }
 
         $rubriques_item_count = $idx;
-
-        $registry['separator-em-site-bottom'] = $rub_base + $idx;
     }
 
     $media_base = em_site_admin_menu_vlb_separator_position() - 4;
-    $media_after_rubriques = $rub_base + $rubriques_item_count + 2;
+    $separator_after_rubriques = $rub_base + $rubriques_item_count;
+    $media_after_rubriques = $separator_after_rubriques + 1;
+
+    $registry['separator-em-site-bottom'] = $separator_after_rubriques;
 
     if ($media_base < $media_after_rubriques) {
         $media_base = $media_after_rubriques;

@@ -222,7 +222,6 @@ function em_site_admin_hide_rubrique_chrome_without_context(): void
 
     $chrome_slugs = [
         'separator-em-site-site-top',
-        'separator-em-site-bottom',
     ];
 
     if (function_exists('em_site_admin_rubriques_page_slug')) {
