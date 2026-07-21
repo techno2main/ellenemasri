@@ -54,3 +54,11 @@
         #adminmenu li.wp-menu-separator:not(.separator-em-site-site-top):not(.separator-em-site-bottom):not(.separator-em-site-before-vlb):not(.separator-em-site-after-medias):not(.separator-em-site-after-catalog):not(.separator-em-site-after-templates):not(.separator-em-site-before-settings) {
             display: none !important;
         }
+
+        /* Filet de secours: séparation explicite RUBRIQUES -> MEDIAS. */
+        body.em-site-admin-sidebar-chrome #adminmenu li.em-site-menu-accordion-medias-parent,
+        body.em-site-admin-dashboard-screen #adminmenu li.em-site-menu-accordion-medias-parent {
+            border-top: 1px solid rgba(255, 255, 255, 0.42) !important;
+            margin-top: 10px !important;
+            padding-top: 8px !important;
+        }

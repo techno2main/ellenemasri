@@ -194,7 +194,14 @@ function em_site_admin_menu_position_registry(): array
         $registry[em_site_admin_rubriques_page_slug()] = $rub_base - 1;
     }
 
-    if (function_exists('em_site_admin_site_rubrique_modules') && function_exists('em_site_admin_site_rubrique_definitions')) {
+    $show_rubrique_children = !function_exists('em_site_admin_should_show_rubrique_menus')
+        || em_site_admin_should_show_rubrique_menus();
+
+    if (
+        $show_rubrique_children
+        && function_exists('em_site_admin_site_rubrique_modules')
+        && function_exists('em_site_admin_site_rubrique_definitions')
+    ) {
         $definitions = em_site_admin_site_rubrique_definitions();
         $idx = 0;
 
