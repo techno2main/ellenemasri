@@ -139,18 +139,10 @@ function em_site_admin_menu_position_registry(): array
 
     $p = em_site_admin_menu_main_nav_base();
 
-    // Ordre principal voulu : TEMPLATE puis RUBRIQUES puis MEDIAS puis VLB.
-    if (function_exists('em_site_admin_template_parent_page_slug')) {
-        $registry[em_site_admin_template_parent_page_slug()] = $p++;
-
-        if (function_exists('em_site_template_registry') && function_exists('em_site_admin_template_entry_page_slug')) {
-            foreach (array_keys(em_site_template_registry()) as $template_slug) {
-                $registry[em_site_admin_template_entry_page_slug($template_slug)] = $p++;
-            }
-        }
-
-        $registry['separator-em-site-after-templates'] = $p++;
-    }
+    $registry[em_site_admin_media_parent_menu_slug()] = $p++;
+    $registry['upload.php'] = $p++;
+    $registry['media-new.php'] = $p++;
+    $registry['separator-em-site-after-medias'] = $p++;
 
     $catalog_legacy_enabled = function_exists('em_site_catalog_legacy_admin_enabled')
         ? em_site_catalog_legacy_admin_enabled()
@@ -186,22 +178,26 @@ function em_site_admin_menu_position_registry(): array
 
     }
 
+    if (function_exists('em_site_admin_template_parent_page_slug')) {
+        $registry[em_site_admin_template_parent_page_slug()] = $p++;
+
+        if (function_exists('em_site_template_registry') && function_exists('em_site_admin_template_entry_page_slug')) {
+            foreach (array_keys(em_site_template_registry()) as $template_slug) {
+                $registry[em_site_admin_template_entry_page_slug($template_slug)] = $p++;
+            }
+        }
+
+        $registry['separator-em-site-after-templates'] = $p++;
+    }
+
     $rub_base = em_site_admin_menu_rubrique_block_base();
-    $rubriques_item_count = 0;
     $registry['separator-em-site-site-top'] = $rub_base - 2;
 
     if (function_exists('em_site_admin_rubriques_page_slug')) {
         $registry[em_site_admin_rubriques_page_slug()] = $rub_base - 1;
     }
 
-    $show_rubrique_children = !function_exists('em_site_admin_should_show_rubrique_menus')
-        || em_site_admin_should_show_rubrique_menus();
-
-    if (
-        $show_rubrique_children
-        && function_exists('em_site_admin_site_rubrique_modules')
-        && function_exists('em_site_admin_site_rubrique_definitions')
-    ) {
+    if (function_exists('em_site_admin_site_rubrique_modules') && function_exists('em_site_admin_site_rubrique_definitions')) {
         $definitions = em_site_admin_site_rubrique_definitions();
         $idx = 0;
 
@@ -216,29 +212,8 @@ function em_site_admin_menu_position_registry(): array
             $idx++;
         }
 
-        $rubriques_item_count = $idx;
+        $registry['separator-em-site-bottom'] = $rub_base + $idx;
     }
-
-    $visible_rubriques_count = $rubriques_item_count;
-
-    if (function_exists('em_site_admin_rubrique_menu_child_slugs')) {
-        $visible_rubriques_count = count(em_site_admin_rubrique_menu_child_slugs());
-    }
-
-    $media_base = em_site_admin_menu_vlb_separator_position() - 4;
-    $separator_after_rubriques = $rub_base + $visible_rubriques_count;
-    $media_after_rubriques = $separator_after_rubriques + 1;
-
-    $registry['separator-em-site-bottom'] = $separator_after_rubriques;
-
-    if ($media_base < $media_after_rubriques) {
-        $media_base = $media_after_rubriques;
-    }
-
-    $registry[em_site_admin_media_parent_menu_slug()] = $media_base;
-    $registry['upload.php'] = $media_base + 1;
-    $registry['media-new.php'] = $media_base + 2;
-    $registry['separator-em-site-after-medias'] = $media_base + 3;
 
     $registry['separator-em-site-before-vlb'] = em_site_admin_menu_vlb_separator_position();
     $registry[em_site_admin_menu_vlb_parent_slug()] = em_site_admin_menu_vlb_position();

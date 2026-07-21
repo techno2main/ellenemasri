@@ -55,10 +55,3 @@
             display: none !important;
         }
 
-        /* Filet de secours: séparation explicite RUBRIQUES -> MEDIAS. */
-        body.em-site-admin-sidebar-chrome #adminmenu li.em-site-menu-accordion-medias-parent,
-        body.em-site-admin-dashboard-screen #adminmenu li.em-site-menu-accordion-medias-parent {
-            border-top: 1px solid rgba(255, 255, 255, 0.42) !important;
-            margin-top: 10px !important;
-            padding-top: 8px !important;
-        }
