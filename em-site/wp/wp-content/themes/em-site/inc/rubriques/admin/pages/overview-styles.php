@@ -967,12 +967,19 @@ if (!defined('ABSPATH')) {
     .em-site-card__icon { color:#4e080e; }
    .em-site-card__icon { grid-column:3; }
    .em-site-card__name { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-   .em-site-card__name { grid-column:5; }
-   .em-site-card__nameinput { width:100%; max-width:none; text-transform:uppercase; font-weight:700; min-width:0; margin:0; }
-   .em-site-card__nameinput { grid-column:5; }
-   .em-site-card__toolbar { display:grid; grid-template-columns:18px 10px 18px 18px minmax(100px, 135px) 22px 22px 46px minmax(260px, 340px) 24px; align-items:center; column-gap:10px; justify-content:start; padding:8px 14px 10px; }
-   .em-site-card__toolbar-spacer { display:block; width:100%; height:1px; }
-   .em-site-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 8px; margin-left:0; justify-self:center; grid-column:8; background:#fff; color:var(--em-site-overview-accent-strong); border:1px solid var(--em-site-overview-border-strong); border-radius:999px; font-size:11px; font-weight:700; line-height:1; }
+   .em-site-card__nameinput { width:100%; max-width:240px; text-transform:uppercase; font-weight:700; min-width:0; margin:0; }
+   .em-site-card__toolbar {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:nowrap;
+      justify-content:flex-start;
+      padding:8px 14px 10px;
+   }
+   .em-site-card__toolbar-spacer { display:block; flex:0 0 auto; width:18px; height:1px; }
+   .em-site-card__toolbar-spacer:nth-of-type(2) { width:10px; }
+   .em-site-card__toolbar-spacer:nth-of-type(3) { width:18px; }
+   .em-site-card__count { display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 8px; margin-left:0; background:#fff; color:var(--em-site-overview-accent-strong); border:1px solid var(--em-site-overview-border-strong); border-radius:999px; font-size:11px; font-weight:700; line-height:1; }
     /* Réordonnancement des rubriques (glisser-déposer) */
     .em-site-card__drag { color:#a7aaae; cursor:grab; font-size:18px; width:18px; height:18px; flex:0 0 auto; }
     .em-site-card__drag:hover { color:#646970; }
@@ -982,20 +989,30 @@ if (!defined('ABSPATH')) {
     .em-site-card.is-dragging { opacity:.6; outline:2px dashed #2271b1; outline-offset:2px; }
     /* Renommage d'une rubrique (crayon + champ inline) */
    .em-site-card__edit { background:none; border:0; cursor:pointer; color:#2271b1; padding:0 2px; margin-left:0; display:inline-flex; align-items:center; justify-content:center; }
-   .em-site-card__edit { grid-column:4; }
     .em-site-card__edit:hover { color:#135e96; }
     .em-site-card__edit .dashicons { font-size:16px; width:16px; height:16px; }
-   .em-site-card__confirm { grid-column:6; margin-left:0; }
-   .em-site-card__cancel { grid-column:7; margin-left:0; }
-   .em-site-card__additem { grid-column:9; justify-self:start; }
-   .em-site-card__delete { grid-column:10; justify-self:end; width:22px; height:22px; padding:0; border:0; background:transparent; color:#b32d2e; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
+   .em-site-card__confirm { margin-left:0; }
+   .em-site-card__cancel { margin-left:0; }
+   .em-site-card__additem { justify-self:start; }
+   .em-site-card__delete { margin-left:auto; width:22px; height:22px; padding:0; border:0; background:transparent; color:#b32d2e; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; }
    .em-site-card__delete:hover { color:#8a2424; }
    .em-site-card__delete .dashicons { font-size:18px; width:18px; height:18px; }
    .em-site-card:not([open]) .em-site-card__delete { display:none; }
 
     .em-site-item__title { display:inline-flex; align-items:center; gap:6px; }
     .em-site-item__prefix, .em-site-item__name { text-transform:uppercase; font-weight:600; }
-   .em-site-item__toolbar { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 10px; padding:8px 0 10px; border-bottom:1px dashed #e5e7eb; }
+   .em-site-item__toolbar {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      overflow-y:hidden;
+      margin:0 0 10px;
+      padding:8px 0 10px;
+      border-bottom:1px dashed #e5e7eb;
+   }
+   .em-site-item__toolbar > * { flex:0 0 auto; }
    .em-site-item:not([open]):hover .em-site-collapse__chevron,
    .em-site-item:not([open]):focus-within .em-site-collapse__chevron,
    .em-site-item:not([open]):hover .em-site-item__title,
