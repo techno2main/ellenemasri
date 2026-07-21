@@ -326,6 +326,92 @@ function em_site_admin_dashboard_render_vlb_ellene_visibility_toggle(): void
     $status_label = $is_visible ? __('Affiché', 'em-site') : __('Masqué', 'em-site');
     $status_class = $is_visible ? 'is-visible' : 'is-hidden';
     $toggle_class = $is_visible ? 'is-on' : 'is-off';
+
+    static $toggle_styles_printed = false;
+
+    if (!$toggle_styles_printed) {
+        $toggle_styles_printed = true;
+        ?>
+        <style id="em-site-dashboard-vlb-toggle-styles">
+            .em-site-dashboard__vlb-toggle-row {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                margin: 8px 0 0;
+                font-size: 11px;
+                line-height: 1;
+            }
+
+            .em-site-dashboard__vlb-toggle-title {
+                font-weight: 700;
+                letter-spacing: 0.04em;
+                text-transform: uppercase;
+                color: #3c434a;
+            }
+
+            .em-site-dashboard__vlb-toggle-status {
+                display: inline-flex;
+                align-items: center;
+                padding: 2px 7px;
+                border-radius: 999px;
+                font-weight: 700;
+                font-size: 10px;
+                letter-spacing: 0.03em;
+                text-transform: uppercase;
+            }
+
+            .em-site-dashboard__vlb-toggle-status.is-visible {
+                color: #0f5132;
+                background: #d1e7dd;
+                box-shadow: inset 0 0 0 1px rgba(15, 81, 50, 0.2);
+            }
+
+            .em-site-dashboard__vlb-toggle-status.is-hidden {
+                color: #842029;
+                background: #f8d7da;
+                box-shadow: inset 0 0 0 1px rgba(132, 32, 41, 0.2);
+            }
+
+            .em-site-dashboard__vlb-toggle-switch {
+                position: relative;
+                width: 30px;
+                height: 18px;
+                border-radius: 999px;
+                display: inline-flex;
+                align-items: center;
+                padding: 2px;
+                text-decoration: none;
+                transition: background 0.2s ease;
+            }
+
+            .em-site-dashboard__vlb-toggle-switch.is-on {
+                background: #198754;
+            }
+
+            .em-site-dashboard__vlb-toggle-switch.is-off {
+                background: #dc3545;
+            }
+
+            .em-site-dashboard__vlb-toggle-knob {
+                width: 14px;
+                height: 14px;
+                border-radius: 999px;
+                background: #ffffff;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+                transition: transform 0.2s ease;
+            }
+
+            .em-site-dashboard__vlb-toggle-switch.is-on .em-site-dashboard__vlb-toggle-knob {
+                transform: translateX(12px);
+            }
+
+            .em-site-dashboard__vlb-toggle-switch:focus-visible {
+                outline: 2px solid rgba(117, 24, 32, 0.35);
+                outline-offset: 2px;
+            }
+        </style>
+        <?php
+    }
     ?>
     <p class="em-site-dashboard__vlb-toggle-row">
         <span class="em-site-dashboard__vlb-toggle-title"><?php esc_html_e('VLB', 'em-site'); ?></span>
