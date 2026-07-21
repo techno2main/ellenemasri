@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-21 23:59:18.
+3. Derni?re mise ? jour : 2026-07-22 00:47:05.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,13 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-22 00:47:05 (Paris)
+
+- R?gression Rubriques corrig?e sur les titres de colonnes apr?s comparaison stricte avec la r?f?rence release du 2026-07-20.
+- Cause racine identifi?e dans le commit e4448f3 du 2026-07-21 : d?placement du bloc titre/colonnes/boutons hors du summary dans `builder-rows-render.php`.
+- Correctif appliqu? de mani?re minimale : restauration de la structure baseline dans `inc/rubriques/admin/builder/builder-rows-render.php` (titre de ligne, titres de colonnes cliquables, boutons add/remove dans le summary).
+- Validation technique effectu?e : diff no-index align? avec la baseline 20/07 sur ce fichier, puis contr?le syntaxe sans erreur.
 
 ### 2026-07-21 23:59:18 (Paris)
 
