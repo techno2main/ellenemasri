@@ -70,16 +70,16 @@ function em_site_admin_template_render_nav_tabs(): void
             <?php } ?>
             <?php if ($create_url !== '') { ?>
                 <li class="em-site-catalog-edit__nav-item em-site-catalog-edit__nav-item--add">
-                    <a
+                    <button
+                        type="button"
                         class="em-site-catalog-edit__nav-link em-site-catalog-edit__nav-link--add"
-                        href="<?php echo esc_url($create_url); ?>"
                         data-template-section="create"
                         data-em-site-new-template-open
                         aria-label="<?php esc_attr_e('Nouveau template', 'em-site'); ?>"
                         title="<?php esc_attr_e('Nouveau template', 'em-site'); ?>"
                     >
                         <i class="fa-solid fa-plus em-site-catalog-edit__nav-icon" aria-hidden="true"></i>
-                    </a>
+                    </button>
                 </li>
             <?php } ?>
         </ul>

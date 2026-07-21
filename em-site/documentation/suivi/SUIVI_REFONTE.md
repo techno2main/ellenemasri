@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-22 00:47:05.
+3. Derni?re mise ? jour : 2026-07-22 00:48:58.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,12 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-22 00:48:58 (Paris)
+
+- Int?gration au flow GH de deux correctifs potentiels sur la page Template : `assets/admin/js/template/wizard/wizard-draft.js` et `inc/admin/pages/rubriques/render-template-picker.php`.
+- Statut de ce lot : **EN ATTENTE - sous r?serve de disparition de la r?gression Template** (validation fonctionnelle utilisateur requise).
+- D?cision de suivi : conserver ces changements dans un commit isol? pour faciliter rollback cibl? si la r?gression persiste.
 
 ### 2026-07-22 00:47:05 (Paris)
 

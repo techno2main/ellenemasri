@@ -1072,7 +1072,7 @@
 
                     event.preventDefault();
                     self.requestLeave(targetUrl);
-                });
+                }, true);
             });
         },
 
