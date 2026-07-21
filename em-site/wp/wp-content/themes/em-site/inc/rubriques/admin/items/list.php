@@ -55,7 +55,8 @@ function em_site_render_items_section(string $type_slug): void
  */
 function em_site_render_footer_item(string $type_slug, string $item_slug, string $label, bool $open): void
 {
-    $type_label = (string) (em_site_rubrique_type_get($type_slug)['label'] ?? mb_strtoupper($type_slug));
+    $fallback_type_label = function_exists('mb_strtoupper') ? mb_strtoupper($type_slug, 'UTF-8') : strtoupper($type_slug);
+    $type_label = (string) (em_site_rubrique_type_get($type_slug)['label'] ?? $fallback_type_label);
     $target = em_site_item_form_id($type_slug, $item_slug) . '-label';
     $del_form_id = em_site_item_form_id($type_slug, $item_slug) . '-delete';
     $n = em_site_rubrique_type_nouns($type_slug);

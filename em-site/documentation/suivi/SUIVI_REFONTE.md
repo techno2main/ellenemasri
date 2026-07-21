@@ -3,7 +3,7 @@
 ## Horodatage temps r?el (Paris)
 1. Fuseau de r?f?rence : Europe/Paris.
 2. Format obligatoire : YYYY-MM-DD HH:mm:ss.
-3. Derni?re mise ? jour : 2026-07-15 16:58:30.
+3. Derni?re mise ? jour : 2026-07-21 23:59:18.
 
 ## R?gles de suivi
 1. Une ?tape = un objectif concret v?rifiable.
@@ -27,6 +27,14 @@
 13. Tests obligatoires entre lots : aucun passage au lot/?tape suivant sans tests ex?cut?s et valid?s.
 
 ## Journal d'avancement
+
+### 2026-07-21 23:59:18 (Paris)
+
+- Investigation complète des régressions Rubriques par comparaison entre la référence release du 2026-07-20 et les commits du 2026-07-21.
+- Cause racine confirmée sur la régression titre/renommage rubrique : déplacement des contrôles de renommage hors du summary, puis aggravation CSS; structure rétablie dans `overview.php` sans recasser la zone item ouverte.
+- Correctif de stabilité runtime sur Rubriques : garde `function_exists(...)` ajouté avant l'appel de `em_site_overview_render_accessibility_script` pour empêcher le fatal en fin de page.
+- Correctif de robustesse sur la liste des items : fallback `strtoupper` lorsque `mb_strtoupper` n'est pas disponible, pour éviter un crash serveur selon l'environnement PHP.
+- Correction de l'erreur console Template (`AbortError: Transition was skipped`) via garde `unhandledrejection` ciblée dans `wizard-main.js`, sans masquer les autres erreurs.
 
 ### 2026-07-15 16:58:30 (Paris)
 
