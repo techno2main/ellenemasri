@@ -35,39 +35,13 @@ function em_site_overview_menu(): void
         $position
     );
 
-    // Un sous-menu par rubrique (pas les items détaillés), dans l'ordre du site.
-    // Le slug « …&type=<slug> » ouvre la carte correspondante de l'aperçu.
-    // Le libellé porte une icône Dashicon (rendu HTML accepté par le menu).
-    foreach (em_site_ordered_types() as $slug => $type) {
-        $label = function_exists('em_site_overview_type_label')
-            ? em_site_overview_type_label((string) $slug, $type)
-            : (string) ($type['label_plural'] ?? $type['label']);
-        $icon = function_exists('em_site_overview_type_icon')
-            ? em_site_overview_type_icon((string) $slug, $type)
-            : (string) ($type['icon'] ?? 'dashicons-screenoptions');
-        $menu_title = '<span class="dashicons ' . esc_attr($icon) . ' em-site-rubrique-submenu__icon" aria-hidden="true"></span>'
-            . '<span class="em-site-rubrique-submenu__text">' . esc_html($label) . '</span>';
-
-        add_submenu_page(
-            'em-rubriques-overview',
-            $label,
-            $menu_title,
-            'manage_options',
-            'em-rubriques-overview&type=' . $slug,
-            'em_site_overview_render'
-        );
-    }
-
-    // Le 1er sous-menu auto a le même slug que le parent : NE PAS le supprimer
-    // (sinon « RUBRIQUES » pointerait vers le 1er type, ex. TOP-BARS). On le
-    // renomme en « Vue d'ensemble » → ouvre la page sans type (toutes fermées).
-    global $submenu;
-    if (isset($submenu['em-rubriques-overview'][0])) {
-        $submenu['em-rubriques-overview'][0][0] = '<span class="dashicons dashicons-screenoptions em-site-rubrique-submenu__icon" aria-hidden="true"></span>'
-            . '<span class="em-site-rubrique-submenu__text">' . esc_html__('Vue d’ensemble', 'em-site') . '</span>';
-    }
 }
 add_action('admin_menu', 'em_site_overview_menu', 100);
+
+// Masque les sous-menus sous RUBRIQUES: on conserve uniquement l'entrée parent.
+add_action('admin_menu', static function (): void {
+    remove_submenu_page('em-rubriques-overview', 'em-rubriques-overview');
+}, 999);
 
 /**
  * Assets de la page Rubriques EM-SITE (inclut le header admin partage).
