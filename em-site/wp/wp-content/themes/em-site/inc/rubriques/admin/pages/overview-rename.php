@@ -318,6 +318,21 @@ function em_site_overview_render_rename_script(): void
             if (e.target.closest('.em-site-overview__focus-nameinput')) { e.stopPropagation(); }
             if (e.target.closest('.em-site-card__nameinput')) { e.stopPropagation(); }
         });
+
+        // Garde-fou visuel: au chargement, repartir en mode titre normal.
+        // Evite qu'un etat de renommage reste affiche apres un rerender partiel.
+        function resetRenameUiState() {
+            closeFocusRename(true);
+            document.querySelectorAll('.em-site-card').forEach(function (card) {
+                close(card);
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', resetRenameUiState);
+        } else {
+            resetRenameUiState();
+        }
     })();
     </script>
     <?php
