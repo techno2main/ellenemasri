@@ -49,6 +49,24 @@
 
     function initMenuAccordion() {
         bindAccordionDelegation();
+        relabelCollapseMenu();
+    }
+
+    function relabelCollapseMenu() {
+        var button = document.getElementById('collapse-button');
+
+        if (!button) {
+            return;
+        }
+
+        var label = button.querySelector('.collapse-button-label');
+
+        if (label) {
+            label.textContent = 'Replier Menu';
+        }
+
+        button.setAttribute('aria-label', 'Replier Menu');
+        button.setAttribute('title', 'Replier Menu');
     }
 
     if (runtime && typeof runtime.domReady === 'function') {

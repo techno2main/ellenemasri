@@ -266,3 +266,19 @@
             content: none !important;
             display: none !important;
         }
+
+        /* TEMPLATE : plus de chevron/toggle visuel, même hors écran Template. */
+        #adminmenu li.em-site-menu-accordion-templates-parent > a.menu-top::after {
+            content: none !important;
+            display: none !important;
+        }
+
+        /* Lien/bouton de bas de sidebar : séparation visuelle avec PARAMÈTRES. */
+        #collapse-menu {
+            margin-top: 12px !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        #collapse-menu #collapse-button {
+            padding-top: 12px !important;
+        }
