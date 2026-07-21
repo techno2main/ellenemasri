@@ -103,3 +103,91 @@ function em_site_admin_rename_appearance_menu(): void
     }
 }
 add_action('admin_menu', 'em_site_admin_rename_appearance_menu', 999);
+
+/**
+ * Libellé harmonisé de l'onglet navigateur selon l'écran admin courant.
+ */
+function em_site_admin_tab_page_label(): string
+{
+    if (!is_admin()) {
+        return '';
+    }
+
+    global $pagenow;
+
+    // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $page = sanitize_key((string) ($_GET['page'] ?? ''));
+
+    if ($pagenow === 'index.php' || $page === 'em-dashboard') {
+        return 'Dashboard';
+    }
+
+    if ($pagenow === 'upload.php') {
+        return 'Librairie';
+    }
+
+    if ($pagenow === 'media-new.php') {
+        return 'Upload';
+    }
+
+    if ($pagenow === 'themes.php') {
+        return 'Thème';
+    }
+
+    if ($pagenow === 'options-general.php') {
+        return 'Settings';
+    }
+
+    if ($pagenow === 'profile.php' || $pagenow === 'user-edit.php') {
+        return 'Profil';
+    }
+
+    if ($pagenow !== 'admin.php') {
+        return '';
+    }
+
+    if ($page === 'em-rubriques-overview' || $page === 'em-rubriques') {
+        return 'Rubriques';
+    }
+
+    if ($page === 'em-template' || $page === 'em-templates' || str_starts_with($page, 'em-template-')) {
+        return 'Template';
+    }
+
+    if ($page === 'em-medias') {
+        return 'Médias';
+    }
+
+    if ($page === 'mayami_visual_links_builder') {
+        return 'VLB';
+    }
+
+    if ($page === 'mayami_visual_links_builder_new') {
+        return 'Nouveau VLB';
+    }
+
+    if ($page === 'mayami_visual_links_drafts') {
+        return 'Listes des VLB';
+    }
+
+    if ($page === 'em-site-dashicons-manager') {
+        return 'Icônes BO';
+    }
+
+    return '';
+}
+
+/**
+ * Titre navigateur harmonisé : EM Site - {Page}.
+ */
+function em_site_admin_harmonize_tab_title(string $admin_title): string
+{
+    $label = em_site_admin_tab_page_label();
+
+    if ($label === '') {
+        return $admin_title;
+    }
+
+    return 'EM Site - ' . $label;
+}
+add_filter('admin_title', 'em_site_admin_harmonize_tab_title', 999);
